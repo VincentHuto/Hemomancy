@@ -10,11 +10,11 @@ The Harbinger Path follows the **Hematic Order**, a secret society that treats b
 
 **Philosophy:** Blood magic is a gift and an inherited art. The path treats mastery as the goal.
 
-**Goal:** Ascend through seven degrees of initiation, mastering blood manipulation and eventually confronting the cosmic truth behind the Order.
+**Goal:** Ascend through the Degrees of initiation (seven, then the eighth's two ends), mastering blood manipulation and eventually confronting the cosmic truth behind the Order.
 
 **Key Features:**
 - Progressive degree system with clear milestones
-- Hundreds of blood manipulations across eight tempers
+- 115 blood manipulations across eight tempers
 - Bloodline creation and follower recruitment
 - Morphling incubation and puppeteering; Drudge creation is post-alpha WIP
 - Cardinal rites for advancement and utility
@@ -26,7 +26,7 @@ The Harbinger Path follows the **Hematic Order**, a secret society that treats b
 
 ## The Seven Degrees (+ One)
 
-The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eighth threshold reached only after the fungal revelation.
+The Hematic Order publicly recognizes seven degrees. The eighth is hidden and splits into two equal ends after the fungal revelation: Apotheos and Silentium.
 
 ### Degree 1: Neophyte
 
@@ -40,17 +40,18 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 
 - **Promotion:** Vicar return after First Bloodcraft
 - **Theme:** Hematic Covenant; choosing to remain infected
-- **Core progression:** the seven blood tempers and deeper vascular practice
+- **Core progression:** the eight blood tempers and deeper vascular practice
 - The Alchemist assigns **First Separation** and the first Ghastly Alembic distillation at Degree 2. Report the assigned enzyme spin, then personally collect a completed Alembic result. Both proofs are needed before the Alchemist supplies Concentrated Blood. Microscopy and injection lessons are also available; see [Clinical Blood Tools](Clinical-Blood-Tools.md). Red Taxonomy, Living Bestiary, and enzyme mastery remain optional catalogues.
-- A Fungal Podium may be encountered, but it cannot open the Fungal Gardens without the Degree-7 ninth-pome Spine.
+- A Fungal Podium may be encountered, but it cannot open the Fungal Gardens without the Degree-7 ninth-pome Spine, and after the first crossing it lies dormant like the Spine.
 
 ### Degree 3: Initiate
 
-- **Promotion:** Inject Concentrated Blood and complete a night of sleep
-- Leaving the bed early keeps the injection pending without granting Degree 3. Save and reload do not require another vial; complete a later night's sleep.
+- **Promotion:** Inject Concentrated Blood and lie in a bed for about five seconds (100 ticks); the night does not have to pass
+- Getting up sooner keeps the injection pending without granting Degree 3. Save and reload do not require another vial. The Charm of Vascularium must be worn, and waking without it says so.
 - **Theme:** Incarnadine Fane; blood becomes shaped memory and external craft
-- **Core progression:** deliberate puppeteering and advanced non-Canon Somatic Loom work; Drudges and every Saint trial, including Hemorath, are post-release expansion content
-- Ask the Mnemonist for a one-time, two-minute guided Chamber glimpse. Items you rearrange or craft with during the glimpse are temporary copies. It returns your original inventory and equipment without permanently attuning you. Dreams and guided visits block world interaction, pickup, and dropping; a rejected inventory-screen drop keeps its item on the cursor. Finish any item transfer before beginning the visit. Holding a tool does not prevent entry.
+- **Core progression:** deliberate puppeteering and advanced non-Canon Somatic Loom work; Drudges are post-alpha WIP; the Saint fights are Degree 8 content (see [Saints and Encounters](Saints-and-Encounters.md))
+- Ask the Mnemonist for a one-time, two-minute guided Chamber glimpse. Items you rearrange or craft with during the glimpse are temporary copies. It returns your original inventory and equipment without permanently attuning you. Dreams and guided visits block world interaction, pickup, and dropping; a rejected inventory-screen drop keeps its item on the cursor. Finish any item transfer before beginning the visit. Holding a tool does not prevent entry. The lesson counts only when the glimpse runs out or you leave by the paired chair; logging out or being saved from death brings you back without completing it, so you can try again.
+- Weave a Blood Shot memory at the Somatic Loom to open the Rite of the Sanguine Brotherhood. Having the Mnemonist index your blank first is optional Side work.
 
 ### Degree 4: Adept
 
@@ -80,7 +81,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 
 Ordinary bed dreams begin at Degrees 1-2. The Degree 3 guided lesson and timed chair visits are practice, not the independent Degree 6 attunement rite. Chair visits last five minutes at Degree 3, ten at Degree 4, and twenty from Degree 5. The Degree 4 Mnemonist lesson explains completed chair sleep and empty-hand sneak-use for direct entry; leaving sleep early does not count as completed rest.
 
-Chair entry cannot overlap another visit or Fungal projection. An unavailable destination rejects entry before granting new chair binding; existing binding is retained. Use the owner-paired Seat beside the Arbor to return early.
+Chair entry cannot overlap another visit or the Spine's crossing. An unavailable destination rejects entry before granting new chair binding; existing binding is retained. The Degree 6 Rite of the Chamber of Will follows the same rule: if no visit can begin, the rite will not start, and it attunes you only when the visit begins. Use the owner-paired Seat beside the Arbor to return early.
 
 The Chamber remains one private per-player cell and grows through four existing tiers: 9x9 at tier 0, 13x13 after the Vein-Mason Degree-6 milestone or Degree 7, 17x17 once Qliphoth begins or Silence is chosen, and 21x21 at Apotheos. Newly earned edge bands appear immediately when progression changes inside the Chamber. Existing player construction is not overwritten, old floor is never removed if progression is reduced, and the corner lights move outward only when their old manager-placed crystals are still present.
 
@@ -94,7 +95,7 @@ The **Orb of Perspective** is a reusable late-game focus crafted from four Monol
 - **Core progression:** shatter the Sanguine Monolith, grow the Qliphoth, consume all nine pomes, and receive the Fungal Spine
 - The first Spine use is a two-minute consciousness projection. Forced return presents the endgame response. This is the only time an Archon sees the Fungal Gardens dimension.
 - **Pruning:** sever the owned Bloom, enter its owner-only Chamber wound, and defeat both Vesper phases. Failed attempts are retryable; victory seals the severed Bloom as a trophy and leaves you Vesper's memory. Drawing it in through a lit Iron Brazier makes you Degree 8 Silentium.
-- **Apotheosis:** unlock the hidden eighth rite.
+- **Apotheos:** perform the Rite of Apotheos, one of the eighth Degree's two ends.
 
 ### Degree 8: Apotheos or Silentium
 
@@ -102,8 +103,8 @@ The eighth Degree has two equal ranks. Each has a home domain and a costly way i
 
 | | Apotheos | Silentium |
 |---|---|---|
-| How | Rite of Apotheosis | Pruning (the Severance of your own Qliphoth tree), both Vesper phases, then absorbing the Memory of Vesper |
-| Home | The Fungal Gardens: physical travel at will by Spine or Podium | The Saint mausoleums: complete the Chapels, then open the ring door with your blood for a proper Saint fight and a whole Hallowed Residuum |
+| How | Rite of Apotheos | Pruning (the Severance of your own Qliphoth tree), both Vesper phases, then absorbing the Memory of Vesper |
+| Home | The Fungal Gardens: physical travel by the Rite of Visitation (the Spine and Podium make only the first crossing) | The Saint mausoleums: complete the Chapels, then open the ring door with your blood for a proper Saint fight and a whole Hallowed Residuum |
 | Trespass | Shatter a mausoleum's ring door: an enraged Saint, a residuum fragment, and hallowed ground that burns spore load, then health | The Rite of Possession: walk the Gardens as a facsimile of a surrogate, guarded only by Concentration; ejection leaves you Mind Broken |
 
 Mausoleum outer halls stay open to every Harbinger from about Degree 3–4; only the warded threshold, Chapels and Saint fights need Degree 8. Unstained and unaligned players never enter the Gardens dimension. The Overworld Fungal Gardens biome is a separate place anyone can walk.
@@ -119,12 +120,13 @@ Mausoleum outer halls stay open to every Harbinger from about Degree 3–4; only
 
 #### Silentium
 
-- **Route:** choose Silence after the first projection, prune the owned Bloom, defeat both Vesper phases, then draw the Memory of Vesper in through a lit Iron Brazier
+- **Route:** choose Silence after the first crossing, prune the owned Bloom, defeat both Vesper phases, then draw the Memory of Vesper in through a lit Iron Brazier
 - **Theme:** refusal kept by will; the Archon cuts the antenna that tied them to the hive
 - **Gardens access:** possession only, never in the body
 - **Mausoleums:** the ring door answers a Silentium, and hallowed ground tolerates them
+- **At the outpost:** the Vicar, Alchemist, Mnemonist and Artificer each greet a Silentium in their own way, and the Hermit has a line of his own. None of them knows more than the old stories. The Artificer is where you learn the Silent Archon vestments.
 
-Only an Apotheos travels to the Fungal Gardens in the body after the first projection.
+Only an Apotheos travels to the Fungal Gardens in the body after the first crossing.
 
 ---
 
@@ -138,7 +140,7 @@ Besides degree advancement, the Cardinal Altar enables **utility rites** for pra
 - **Communion:** a Polished Venous Stone and Blood Wood checker.
 - **Working:** Polished Venous Stone Bricks with a Bone Block cross and diagonal. Harbinger floors never use copper.
 
-**Special floors.** The three Degree 7 rites that stand apart have grand floors of their own:
+**Special floors.** Four rites stand apart (`"special": true`). The three Degree 7 ones have grand floors of their own, and the Degree 8 Rite of Possession borrows the inverted tree:
 - **The Hush** (Rite of Apotheos): Polished Venous Stone, rings of Chiseled Polished Venous Stone two and four blocks out, and Hematic Iron Blocks on the Focus's four sides. Its membrane mirrors the Apotheos Chamber: dark ribbed slate crossed by pale white and gold tendrils, banded around a black mouth ringed in prismatic light and circled by a molten orange trench, and its heart barely beats.
 - **The inverted tree** (Bloom of the Qliphoth): Calcified Hyphae, Hyphae Block paths and nine Shroomlight husks. The husks swell with each beat.
 - **The lineage** (Rite of Ancestral Communion): Polished Venous Stone Bricks, a Blood Wood border, a Mnemonic Ambergris ring and ambergris threads to the corners. Flecks of remembered blood drift out along the threads.
@@ -147,7 +149,7 @@ Besides degree advancement, the Cardinal Altar enables **utility rites** for pra
 
 Once the floor is complete, a living membrane spreads from the Focus across it and tears a round gash just inside its edge. A rite answers any lit brazier inside the cube its floor is the base of (a 7×7 floor reaches six blocks up): stand braziers on the floor, mount them on a wall or hang them from a ceiling. Only the column over the Focus and the few floor spots where an anchor sore opens stay clear. A standing brazier sits in a mound of flesh, and the gash swings out around the back of any on it like a moat. A sconce or hanging brazier falls, spilling its offering, if its wall or ceiling is broken. A broken floor withers. Keep a craft's braziers off the side its structure stands on.
 
-The Artificer teaches Living Staff construction at D2, while its formation remains craftable at D1. Forming it earns the bond: select **Conjure Staff** with an empty hand to recall it. Select **Blood Absorption** or **Blood Projection**, then hold the Staff to channel that utility. Selecting a Thelemic memory does not leave the previous Staff utility running. Staff ownership does not raise your degree; positive-degree Harbinger rites require active blood before the server plants or escrows it. Planting the Staff in a Cardinal Focus leaves a Blood Projection hand in its place with Projection selected, ready to feed the anchors. When the rite ends, the Staff returns to that hand.
+The Artificer teaches Living Staff construction at D2, while its formation remains craftable at D1. Forming it earns the bond: select **Conjure Staff** with an empty hand to recall it. Hold the Staff to channel your active verb, **Blood Absorption** or **Blood Projection**; the verb key (`Y` default) switches it, and no selection changes it. A quick tap that moves no blood calls your Primal Morphling instead. Staff ownership does not raise your degree; positive-degree Harbinger rites require active blood before the server plants or escrows it. Planting the Staff in a Cardinal Focus leaves a Blood Projection hand in its place with Projection as the active verb, ready to feed the anchors. When the rite ends, the Staff returns to that hand.
 
 As a Cardinal Rite deepens, the world around it changes with each filled ring, the seal, the procession and culmination: blood-coloured fog, a filling trench, membrane creeping over the ground, a vortex gathering in the sky, blood rain, and a red eye opening overhead at the end. Strain shows as closing fog, guttering braziers and a bruised, receding creep. The top-of-screen rite panel is off by default; set `cardinalRiteHud` to `FULL` in the client config to bring it back.
 
@@ -190,7 +192,7 @@ while Founding Fane uses Sanguine Quintessence.
 - **Planting.** The Living Staff strikes the Focus and a shock runs through the floor. The membrane quickens for as long as the rite lives.
 - **Consecration.** Each anchor you fill sends a pulse along the floor toward it and seals its arc of the boundary.
 - **Ordeal.** A wave announces itself first: warning bolts strike from the fog where its threats will step out a second later. Answer it before its deadline. A covenant-pressure wave presses blood out of every anchor until you trace the Seal sigil it demands.
-- **Instability** bruises the floor and breaks anchors before it collapses the rite. Once strained, the outer anchors bleed; once rupturing, the ordeal's threats grow stronger. Repair broken anchors with projected blood.
+- **Instability** bruises the floor and breaks anchors before it collapses the rite. Once strained, the outer anchors bleed; once rupturing, the ordeal's threats grow stronger. Repair broken anchors with projected blood. A dry anchor takes your blood as fill first and is repaired once it is full.
 - **The finale waits** if something the rite needs is missing, such as bloodline members online for the Scarlet Summons or a clear space for the Earthen Vein. It holds in a still interval and tells you why, without consuming your offerings. Fix it, or recall the rite.
 - **Offerings.** The daemon hovers over the staff while the floor draws each burning offering into it along the trench, one after another; each one swells it. Then it merges into you.
 - **The Reservoir pays back.** If you awakened the optional Reservoir sigil and the rite held together cleanly (little instability and no broken anchor), it returns half of the anchors' blood.
@@ -237,9 +239,11 @@ Carry the gourd or equip it in the Scarlet Vanity's gourd slot. Use a carried go
 
 ### Hematic Unbinding
 - **Purpose:** Dissolve the caster's entire bloodline
-- **Safety:** The leader must complete the rite twice against the same bloodline
-  within ten minutes
-- **Effect:** Frees all members, returns shared blood, and removes owned fanes
+- **Safety:** The leader's first activation only warns and takes nothing. Activate the
+  formation again within ten minutes to start the rite; one Nether Star in all
+- **Effect:** Frees all members, returns shared blood, and removes owned fanes. Each member gets an equal share
+  of the pool, as far as their vessel has room; a member who is away is paid when they next log in. The ledger's
+  free Disband returns no blood
 
 More utility rites exist. For the exact authored list, use the Sanguine Conduit's Rites & Crafts tab, where rites are grouped by what they are for: Self, World, Making or Bond.
 
@@ -256,16 +260,15 @@ At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline**, 
 - Can have multiple members across degrees
 
 ### Recruiting Members
-- **Other Players:** Invite them to join your bloodline
+- **Other Players:** Hand them a signed ledger. A player of the first Degree or higher with active blood can use it
+  to ask; their name waits on your ledger screen's petition row until you Admit or Refuse it (at most 16 wait). If
+  either of you is away, the answer reaches them at their next login
 - **NPCs:** Current recruitable outpost teachers are the Vicar, Alchemist, and Mnemonist. A bloodline can recruit one of each entity type across all outposts, and only one NPC from each outpost.
 - An ordinary recruit's death frees its profession and outpost slots and removes its shared-pool capacity. Temporary absence does not. A replacement still needs normal recruitment; Succession residents follow their separate remnant recovery route.
 - Recruited NPCs can aid in defense, provide unique dialogue, participate in rituals, and offer services based on their calling.
 
 ### NPC Callings
-- **Warblood**: Combat specialist, guards your Fane
-- **Fleshwright**: Crafter and ritualist, assists with rites
-- **Cordwainer**: Merchant and supplier, trades rare components
-- **Bloodletter**: Healer and physician, manages blood health
+A recruited outpost NPC keeps its own profession. The five Succession professions (`data/hemomancy/succession_profession/`) are the Alchemist, Artificer, Cicatrix Anchorite, Mnemonist and Vicar; see [Hematic Succession](Hematic-Succession.md).
 
 ### Bloodline Benefits
 - Shared Fane buffs
@@ -274,7 +277,20 @@ At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline**, 
 - Practical aid in survival and progression
 
 ### Severing Bloodline Members
-As Archon, you can ritually sever members who betray the covenant. Being cut from the bloodline resets their degree and breaks all blood ties. (This is not the Severance, which is an Archon's own cut of their Qliphoth tree.)
+The bloodline's leader, its progenitor, can cut a member from the line on the bloodline pool screen. Founding a line takes the fifth Degree, so a leader is at least that; no Archon rank is needed. The member loses the bloodline and its shared pool. Their degree does not change. (This is not the Severance, which is an Archon's own cut of their Qliphoth tree.)
+
+Any ledger of the line written before the cut crumbles to ash in the removed player's hands, then or whenever one
+reaches their inventory later. A ledger written after it is a fresh invitation, which you must still admit.
+
+### Leaving a Bloodline
+A member can leave from the ledger screen (click Leave twice) or, with no ledger, ask the Vicar to strike their name.
+Leaving follows the same ledger rule, takes no share of the pool and keeps every proof already earned. The
+progenitor cannot leave: disband the line or perform the Hematic Unbinding instead.
+
+### The Covenant Throne
+Any member of a line can bind a Covenant Throne that stands in their line's Fane: sit in it to set your return point
+there. The Covenant Trance belongs to the progenitor alone. When the line ends, or you leave it or are cut from it,
+your Throne bond and its return point go too. A Living Covenant you already completed is kept.
 
 ---
 
@@ -309,7 +325,7 @@ The **Mnemonic Reliquary** becomes available at Degree 3. Known Noetic manipulat
 
 At Degree 5, the **Dendritic Distributor** stores named patterns of your equipped memories. Save an empty pattern, rename an existing one, or apply it to restore its memories and preferred selection. Overwrite requires a second confirmation click. Save and confirmed overwrite each cost **100 mL blood and 25 raw XP**, not 25 levels; Apply and Rename are free. You start with three pattern slots, with Synaptic Memory increasing storage to seven.
 
-Fixed Blood Absorption, Blood Projection, and Conjure Staff utilities are not stored in patterns and remain available through equip normalization. Applying a pattern turns off running Thelemic memories omitted from it without consuming their remaining reserve. Saved patterns must still fit your current capacity and contain memories you know.
+Conjure Staff is not stored in patterns and remains available through equip normalization; Blood Absorption and Blood Projection are verbs, chosen with the verb key, and never sit in a pattern. Applying a pattern turns off running Thelemic memories omitted from it without consuming their remaining reserve. Saved patterns must still fit your current capacity and contain memories you know.
 
 Save and overwrite remember only learned Noetic and Thelemic memories. If none of the equipped custom memories are learned, neither operation changes the old pattern or spends blood or XP.
 
@@ -423,25 +439,13 @@ In Creative mode, right-click the Ghastly Alembic, Resonant Forge, Hematic Armat
 
 ### Armor Sets
 
-**Blood Lust Armor** (Early-Mid Game)
-- Craftable with blood-infused materials
-- Provides blood regeneration bonus
-- Reduces manipulation costs slightly
-- Multiple variants (mask styles, lineage colors)
+Armour is raised at the **Hematic Armature**, worn piece by piece (see the reference, section 22):
 
-**Hematic Armature** (Mid-Late Game)
-- Modular armor system
-- Upgrade pieces with different components
-- Customizable per-piece bonuses
-- Strong protection with blood synergy
-- JEI integration for upgrade paths
-
-**Silent Archon Vestments** (Endgame)
-- Silentium-only armor (Degree 8)
-- Massive bonuses to all blood systems
-- Intimidation effect on enemies
-- Visual indicator of your status
-- Unique model and textures
+- **Hematic Iron**: the base set; blood regeneration as a full set.
+- **Barbed, Chitinite, Prismatic** (Degree 3 forks): thorns with Blood Loss and Poison; toughness and projectile reduction; swim speed.
+- **Blood Lust** (Degree 5, Crimson Lacquer on a fork): lifesteal, with Tengu, Lodestone, Grinning and Velorum masks.
+- **Edacious, Sheolic and Phantasmal Bloodlust** (Degree 7, at a Monolithic Armature): flight, infernal defence, displacement.
+- **Silent Archon Vestments** (Degree 8 Silentium only): incorporeal physical defence, Silent Severance, Silent Slipping and a blood-spending death refusal.
 
 ### Weapons
 
@@ -453,36 +457,18 @@ In Creative mode, right-click the Ghastly Alembic, Resonant Forge, Hematic Armat
 - **Torch:** channels a seven-block fan of pink and crimson fire with black smoky tips and outward-moving blood cells.
 - **Claws:** with a claw in each hand, clicking or holding attack alternates left and right arm strikes. Each hit draws three separated black Umbral cuts with violet cores, rotated to a fresh random angle.
 
-**Sanguis Lance** (Annetta's Weapon)
-- Unique thrown/held weapon
-- Custom rendering and particle effects
-- High damage, blood-cost attacks
-- Obtainable through Annetta Knowles encounter
-
-**Blood-Infused Weapons**
-- Craft normal weapons with blood components
-- Gain lifesteal properties
-- Scale with blood temper
-- Various types available
+**Sanguis Lancea** and **Annetta's Sanguis Lancea**
+- A thrown and held blood lance; Annetta's comes from her encounter
 
 ### Tools and Utilities
 
-**Charm of Vascularium** (Curios integration dormant)
-- Hemomancy bloodline/equipment item; dedicated Curios slot support is dormant on the NeoForge 1.21.1 branch
-- Permanent blood regeneration buff
-- Enhanced temper alignment
-- Protects against blood loss
+**Charm of Vascularium**
+- Worn in its own charm slot (default key B; Curios integration was removed on 2026-11-03)
+- Attaching it at the Mortal Display wakes your blood
+- Holds rune-slot items such as the Mycophant Tendril and the Listening Scar
 
-**Visceral Recaller**
-- Stores your respawn point in blood
-- Teleport back to marked location
-- Costs blood per use
-- Safer than beds in some situations
-
-**Blood Compass**
-- Points toward nearest Harbinger structure
-- Helps find Outposts and Mausoleums
-- Crafted with blood and redstone
+**Harbinger Lodestone**
+- Given at the Mortal Display; leads to a Harbinger Outpost
 
 ---
 
@@ -515,7 +501,7 @@ Different NPCs have different knowledge. Experiment!
 - If you're not a Harbinger, NPCs are cautious but not hostile
 - If you're Harbinger, they treat you as family
 - If you're Unstained, they may refuse to speak (or worse)
-- Outposts can be found using Blood Compass or natural exploration
+- Outposts can be found with the Harbinger Lodestone or natural exploration
 
 ---
 
@@ -552,7 +538,7 @@ The **Qliphoth** is a massive fungal structure that grows after performing Qliph
 - Fungal Whispers intensify dramatically
 
 ### Refusing the Qliphoth
-- Choose Silence after the first Fungal Spine projection; this records pending refusal, not victory, and leaves you at Degree 7 until Vesper's memory is drawn in
+- Choose Silence after the first Fungal Spine crossing; this records pending refusal, not victory, and leaves you at Degree 7 until Vesper's memory is drawn in
 - Strike the base of the owned spent Bloom with a base Living Weapon form, not the untransformed Staff, to shape the temporary Living Sickle
 - Cut the Bloom again to open Vesper's retryable wound
 - Defeat Vesper, then absorb his Memory through the Iron Brazier to permanently unlock `conjure_sickle` and become Degree 8 Silentium
@@ -663,7 +649,7 @@ A: No. They're people who've embraced a taboo art. Some are kind, some are dange
 
 The base Alembic holds 5,000 mL. Installing the Condenser increases maximum storage by 1.5× to 7,500 mL without adding blood or changing recipe costs. Athanor retains that capacity, supplies permanent heat without a block underneath, and processes every recipe twice as fast. Base and Condenser still need external heat and use ordinary recipe times. The installed tier determines these benefits after reloads and moving the station.
 
-Tinctures draw blood from the Ghastly Alembic's stored reservoir. Put Sanguine Formation in the main input and the matching enzyme in the catalyst slot. Put an empty Cured Clay Flask or Jug in the existing lower-right container input. At base or Condenser, a flask batch costs 2,500 mL and takes 200 ticks, yielding three doses; a jug costs 5,000 mL and takes 300 ticks, yielding six. Athanor halves those times to 100 and 150 ticks while keeping the costs and yields. Each batch consumes one formation, enzyme, and empty vessel. Fill the tank by projection or by placing a Bloody Flask/Jug in that same container input; move the returned empty vessel from the adjacent output back into the input to package a tincture. Valid tincture packaging is reserved while blood, heat, or output space is unavailable. Tinctures generate no blood byproduct, and rejected batches consume nothing. The separate tincture-blood slot has been removed; Catalyst 2 is now slot 5, available only at Athanor. Saved contents of the retired slot are preserved for recovery when opening/breaking the station.
+Tinctures draw blood from the Ghastly Alembic's stored reservoir. Put Sanguine Formation in the main input and the matching enzyme in the catalyst slot. Put an empty Cured Clay Flask or Jug in the existing lower-right container input. At base or Condenser, a flask batch costs 2,500 mL and takes 200 ticks, yielding three doses; a jug costs 4,000 mL and takes 300 ticks, yielding six. Athanor halves those times to 100 and 150 ticks while keeping the costs and yields. Each batch consumes one formation, enzyme, and empty vessel. Fill the tank by projection or by placing a Bloody Flask/Jug in that same container input; move the returned empty vessel from the adjacent output back into the input to package a tincture. Valid tincture packaging is reserved while blood, heat, or output space is unavailable. Tinctures generate no blood byproduct, and rejected batches consume nothing. The separate tincture-blood slot has been removed; Catalyst 2 is now slot 5, available only at Athanor. Saved contents of the retired slot are preserved for recovery when opening/breaking the station.
 
 ### Alchemist station projects at D4 and D6
 
@@ -688,3 +674,13 @@ Keep opposing vials balanced. The second fraction comes only from that specimen'
 The Calibrated centrifuge is recognizable by its broad front governor dial, four bearing braces, and low iron footing. The Fractionating tier keeps that equipment and adds two glass receivers beneath a raised split manifold. Both leave the spinning specimens visible, and the installed appearance stays with the machine when moved.
 
 The Centrifugal Governor Kit appears as a bone-rimmed red calibration dial on a short iron mount. The Fractionating Rotor Kit shows two glass fractions hanging from a forked iron crosshead; both have distinct native item sprites.
+
+## The core loop by Degree
+
+The everyday work of blood opens with the Degrees ([Blood Systems](Blood-Systems.md) has the detail). From the first
+Degree: the two verbs and their Sculptings, living blood and the Sanguine Condenser, fed ground and chum, gouge runs, and
+the body and the day. From the second: Temper and catalysts, reading a creature's blood, and the first strand skill,
+Long Strand. From the third: leading and keeping creatures, the brood, strain beds, living veins (and the
+carried crossing between two Earthen Veins), the Taut Line and Free Hand skills, and sutured machines. From the fifth:
+Whipcrack and Deep Brand; from the sixth: Second Strand, the twin. The outpost Harbingers teach each system as a lesson
+in their Conversation box, the Vein-Mason from the fourth Degree.

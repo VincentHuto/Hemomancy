@@ -60,6 +60,15 @@ final class DialogueRewards {
 		}
 	}
 
+	static final String TOO_FAR = "message.hemomancy.dialogue.refused.too_far";
+	static final String NOT_NOW = "message.hemomancy.dialogue.refused.not_now";
+
+	/** PT-28: a chosen option that gives nothing says why, in place of a silent return. */
+	static void refuse(ServerPlayer player, String key) {
+		player.displayClientMessage(net.minecraft.network.chat.Component.translatable(key)
+				.withStyle(net.minecraft.ChatFormatting.GRAY), false);
+	}
+
 	static void giveOrDrop(ServerPlayer player, ItemStack stack) {
 		if (!player.getInventory().add(stack)) player.drop(stack, false);
 	}

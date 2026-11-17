@@ -178,9 +178,8 @@ public final class PlaythroughAdeptGameTests {
 					helper.assertTrue(ready.offers(HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN),
 							"the Mnemonist takes the Woven Vessel turn-in: " + ready);
 					Outcome turnIn = p.choose(mnemonist, HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN);
-					turnIn.earned(adv(HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE));
-					Outcome kit = pickUp(p, mnemonist, ItemInit.bleeding_bulb.get(), ItemInit.vivacious_enzyme.get());
-					kit.gave(ItemInit.bleeding_bulb.get(), 1).gave(ItemInit.vivacious_enzyme.get(), 3);
+					turnIn.earned(adv(HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE))
+							.gave(ItemInit.bleeding_bulb.get(), 1).gave(ItemInit.vivacious_enzyme.get(), 3);
 					// ARRANGE: the Loom raised (its Working craft is the D3 band's).
 					set(helper, loomPos, BlockInit.somatic_loom.get());
 					MachineAccessEvents.awardMachineCrafted(p.player(), BlockInit.somatic_loom.get()); // ARRANGE: raised by this player
@@ -267,8 +266,7 @@ public final class PlaythroughAdeptGameTests {
 					helper.assertTrue(view.offers(HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE),
 							"the D4 Vicar sends the player to the Mason's Respite: " + view);
 					Outcome directive = p.choose(vicar, HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE);
-					directive.earned(adv(HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE));
-					p.pickUpNear(vicar.blockPosition(), ItemInit.masons_respite_map.get())
+					directive.earned(adv(HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE))
 							.gave(ItemInit.masons_respite_map.get(), 1);
 					p.moveTo(yard(helper));
 					DialogueView anchorite = p.talkTo(respite.anchorite());
@@ -337,9 +335,9 @@ public final class PlaythroughAdeptGameTests {
 	// The Vicar's directive and the map
 	// =================================================================================================================
 
-	/** The D4 Vicar sends the player to the Mason's Respite: the map drops once, and the next talk shows the follow-up. */
+	/** The D4 Vicar sends the player to the Mason's Respite: the map is given once, and the next talk shows the follow-up. */
 	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
-	public static void vicarDirectiveDropsTheMapOnce(GameTestHelper helper) {
+	public static void vicarDirectiveGivesTheMapOnce(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 12, 8));
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 12, 11));
 		PlaythroughStates.adeptD4(p); // ARRANGE
@@ -348,8 +346,9 @@ public final class PlaythroughAdeptGameTests {
 		helper.assertTrue(view.offers(HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE),
 				"the D4 Vicar offers the Mason's Respite directive: " + view);
 		Outcome directive = p.choose(vicar, HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE);
-		directive.said(RESPITE_MAP_SAID).earned(adv(HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE));
-		p.pickUpNear(vicar.blockPosition(), ItemInit.masons_respite_map.get()).gave(ItemInit.masons_respite_map.get(), 1);
+		directive.said(RESPITE_MAP_SAID).earned(adv(HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE))
+				.gave(ItemInit.masons_respite_map.get(), 1);
+		helper.assertTrue(directive.drops().isEmpty(), "the map is not dropped; " + directive);
 		DialogueView after = p.talkTo(vicar);
 		helper.assertFalse(after.offers(HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE),
 				"the directive is not offered twice: " + after);
@@ -376,9 +375,9 @@ public final class PlaythroughAdeptGameTests {
 		helper.succeed();
 	}
 
-	// DECISION: D-4 the Mason's Respite map is never reissued.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void lostMapIsNotReissued(GameTestHelper helper) {
+	// FIX: PT-4 (was D-4). A directed player who carries no map is offered the directive again and gets one more.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void lostMapIsReissued(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 12, 8));
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 12, 11));
 		PlaythroughStates.adeptD4(p); // ARRANGE
@@ -396,8 +395,10 @@ public final class PlaythroughAdeptGameTests {
 				+ asked.saidKeys().contains(RESPITE_KNOWN) + ", follow-up only="
 				+ again.hasNode("masons_respite_followup") + ", asking again said " + asked.saidKeys()
 				+ ", maps now " + p.count(ItemInit.masons_respite_map.get()));
-		helper.assertTrue(p.count(ItemInit.masons_respite_map.get()) >= 1,
-				"a player who lost the map can get another from the Vicar; asking said " + asked.saidKeys());
+		helper.assertTrue(offered, "the directive is offered again while no map is carried: " + again);
+		helper.assertTrue(p.count(ItemInit.masons_respite_map.get()) == 1,
+				"a player who lost the map gets exactly one more from the Vicar; asking said " + asked.saidKeys());
+		asked.said(RESPITE_KNOWN);
 		helper.succeed();
 	}
 
@@ -423,11 +424,11 @@ public final class PlaythroughAdeptGameTests {
 	}
 
 	/**
-	 * The first lesson: the kit drops at the Anchorite (pattern for the strongest temper, a blank, its catalyst and a
+	 * The first lesson: the kit goes to the player (pattern for the strongest temper, a blank, its catalyst and a
 	 * knapper), the lesson advancement and the Scar Practice Liber page. Asking again says known and gives nothing.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
-	public static void firstLessonDropsTheKit(GameTestHelper helper) {
+	public static void firstLessonGivesTheKit(GameTestHelper helper) {
 		PlaythroughSites.MasonsRespite respite = respite(helper);
 		PlaythroughPlayer p = adept(helper, yard(helper));
 		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.forPlayer(p.player());
@@ -438,10 +439,9 @@ public final class PlaythroughAdeptGameTests {
 					Outcome taught = p.choose(respite.anchorite(), HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON);
 					taught.earned(adv(HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON));
 					helper.assertTrue(taught.rewardDelivered(), "the lesson is delivered; " + taught);
-					Outcome kit = pickUp(p, respite.anchorite(), ItemInit.scar_pattern.get(), ItemInit.scar_blank.get(),
-							lesson.catalyst(), ItemInit.hematic_iron_knapper.get());
-					kit.gave(ItemInit.scar_pattern.get(), 1).gave(ItemInit.scar_blank.get(), 1)
+					taught.gave(ItemInit.scar_pattern.get(), 1).gave(ItemInit.scar_blank.get(), 1)
 							.gave(lesson.catalyst(), 1).gave(ItemInit.hematic_iron_knapper.get(), 1);
+					helper.assertTrue(taught.drops().isEmpty(), "nothing of the kit is dropped; " + taught);
 					helper.assertTrue(carries(p, pattern(lesson.patternScarId())),
 							"the pattern is for the strongest temper's scar " + lesson.patternScarId());
 				})
@@ -562,7 +562,9 @@ public final class PlaythroughAdeptGameTests {
 							"one scar costs 500 mL, not " + spent);
 					helper.assertTrue(p.has(adv(HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_PATTERN)),
 							"the charger earns first_effigy_pattern");
-					p.pickUpNear(respite.effigy(), ItemInit.scar_pattern.get()).gave(ItemInit.scar_pattern.get(), 1);
+					// NQ-10-10: the finished pattern goes to the preparer's pack, never to the floor.
+					helper.assertTrue(dropsOf(p, respite.effigy(), ItemInit.scar_pattern.get()) == 0,
+							"nothing falls at the Effigy");
 					helper.assertTrue(carries(p, pattern(lesson.patternScarId())), "the prepared pattern names the scar");
 				})
 				.run();
@@ -673,9 +675,10 @@ public final class PlaythroughAdeptGameTests {
 				.run();
 	}
 
-	// DECISION: D-14 the Vein-Mason lesson is recomputed from live temper (refused carve, free extra patterns).
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void temperDriftDuplicatesPatterns(GameTestHelper helper) {
+	// FIX: PT-14 (was D-14). The lesson the Mason issued is stored, so a temper drift neither refuses the carve nor
+	// offers a free extra pattern.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void temperDriftKeepsTheIssuedPattern(GameTestHelper helper) {
 		PlaythroughSites.MasonsRespite respite = respite(helper);
 		PlaythroughPlayer p = adept(helper, yard(helper));
 		VeinMasonScarLesson.Lesson given = takeFirstLesson(p, respite);
@@ -687,11 +690,12 @@ public final class PlaythroughAdeptGameTests {
 		BloodTemperamentEvents.syncTemperament(p.player(), temper);
 		VeinMasonScarLesson.Lesson now = VeinMasonScarLesson.forPlayer(p.player());
 		helper.assertTrue(!now.patternScarId().equals(given.patternScarId()), "the drift changes the strongest temper");
+		// The replacement offer is read while the given pattern is still carried; carving moves it into the station.
+		DialogueView view = p.talkTo(respite.anchorite());
+		boolean freeExtra = view.offers(HarbingerCicatrixAnchoriteDialogueTrees.EVENT_REPLACE_D4);
 		Outcome carve = carve(p, respite.station(), given);
 		boolean carved = station(p, respite.station()).getItem(2).is(given.scar().get());
 		p.closeMenu();
-		DialogueView view = p.talkTo(respite.anchorite());
-		boolean freeExtra = view.offers(HarbingerCicatrixAnchoriteDialogueTrees.EVENT_REPLACE_D4);
 		PlaythroughLog.note(helper, "drift " + given.patternScarId() + " -> " + now.patternScarId() + ": carve of the given "
 				+ "pattern " + (carved ? "worked" : "refused, said " + carve.saidKeys()) + "; the Anchorite offers a "
 				+ "replacement pattern=" + freeExtra + " (" + view.reachableEvents() + ")");
@@ -700,8 +704,8 @@ public final class PlaythroughAdeptGameTests {
 		helper.succeed();
 	}
 
-	// DECISION: D-3 a shared Effigy credits whoever finishes the charge, and its pattern drops unowned.
-	@GameTest(template = EMPTY, timeoutTicks = 600, batch = BATCH, required = false)
+	// RULING PT-3 (NQ-10-10, 2026-11-14): the finished pattern and its first-pattern credit go to the preparer.
+	@GameTest(template = EMPTY, timeoutTicks = 600, batch = BATCH)
 	public static void sharedEffigyChargeCredit(GameTestHelper helper) {
 		PlaythroughSites.MasonsRespite respite = respite(helper);
 		PlaythroughPlayer p1 = adept(helper, yard(helper));
@@ -730,6 +734,8 @@ public final class PlaythroughAdeptGameTests {
 					helper.assertTrue(p1Credit, "P1, who set the motif and paid most of it, is credited");
 					helper.assertTrue(p2.count(ItemInit.scar_pattern.get()) == 0,
 							"P1's pattern is not P2's to take");
+					helper.assertFalse(p2Credit, "P2, who only finished the charge, is not credited");
+					helper.assertTrue(carries(p1, pattern(lesson.patternScarId())), "the finished pattern is P1's");
 				})
 				.run();
 	}
@@ -860,9 +866,8 @@ public final class PlaythroughAdeptGameTests {
 		Outcome claim = p.choose(mason, HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD);
 		claim.earned(adv(HarbingerAdvancementGranter.ADV_VEIN_MASON_REWARD_CLAIMED));
 		helper.assertTrue(claim.rewardDelivered(), "the kit is delivered; " + claim);
-		pickUp(p, mason, ItemInit.scar_pattern.get(), ItemInit.scar_blank.get(), next.catalyst(),
-				ItemInit.runic_motif_paper.get())
-				.gave(ItemInit.scar_pattern.get(), 1).gave(ItemInit.scar_blank.get(), 1).gave(next.catalyst(), 1)
+		// PT-3: the kit is owed and lands in the pack, never at the Mason's feet.
+		claim.gave(ItemInit.scar_pattern.get(), 1).gave(ItemInit.scar_blank.get(), 1).gave(next.catalyst(), 1)
 				.gave(ItemInit.runic_motif_paper.get(), 4);
 		helper.assertTrue(carries(p, pattern(next.patternScarId())),
 				"the continuation pattern is the second temper's " + next.patternScarId());
@@ -966,11 +971,10 @@ public final class PlaythroughAdeptGameTests {
 					helper.assertTrue(view.offers(HarbingerCicatrixAnchoriteDialogueTrees.EVENT_D5_REWARD),
 							"the Mason offers the D5 reward: " + view);
 					VeinMasonScarLesson.Lesson tier2 = VeinMasonScarLesson.strongestForPlayer(p.player(), 2);
-					p.choose(mason, HarbingerCicatrixAnchoriteDialogueTrees.EVENT_D5_REWARD);
+					Outcome reward = p.choose(mason, HarbingerCicatrixAnchoriteDialogueTrees.EVENT_D5_REWARD);
 					helper.assertTrue(p.has(adv(VeinMasonAssignments.D5_REWARD)), "the D5 reward is recorded");
-					pickUp(p, mason, ItemInit.scar_pattern.get(), ItemInit.scar_blank.get(), tier2.catalyst(),
-							ItemInit.runic_motif_paper.get())
-							.gave(ItemInit.scar_pattern.get(), 1).gave(ItemInit.scar_blank.get(), 1)
+					// PT-3: the kit is owed and lands in the pack, never at the Mason's feet.
+					reward.gave(ItemInit.scar_pattern.get(), 1).gave(ItemInit.scar_blank.get(), 1)
 							.gave(tier2.catalyst(), 1).gave(ItemInit.runic_motif_paper.get(), 4);
 					helper.assertTrue(carries(p, pattern(tier2.patternScarId())), "the tier-2 pattern " + tier2.patternScarId());
 				})
@@ -1001,9 +1005,9 @@ public final class PlaythroughAdeptGameTests {
 		helper.succeed();
 	}
 
-	// DECISION: D-22 the D5 strain needs a not-Varicose to Varicose change; a pre-strained section never counts.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void preStrainedSectionNeverCounts(GameTestHelper helper) {
+	// FIX: PT-22 (was D-22). A section already Varicose at D5 counts once as the Mason's strain at the next cast.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void preStrainedSectionCountsOnce(GameTestHelper helper) {
 		PlaythroughSites.MasonsRespite respite = respite(helper);
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, yard(helper));
 		PlaythroughStates.adeptD4(p); // ARRANGE
@@ -1029,16 +1033,15 @@ public final class PlaythroughAdeptGameTests {
 		helper.succeed();
 	}
 
-	// DECISION: D-5 the Monolith speaks from D5, but it is a D6 craft and the D5 Vicar gives its blueprint.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	// RULING PT-5 (2026-11-13): the Monolith Working craft opens at D5, where the Vicar gives its blueprint.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void d5MonolithCannotSpeak(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 12, 8));
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 12, 11));
 		PlaythroughStates.illuminatusD5(p); // ARRANGE
 		DialogueView view = p.talkTo(vicar);
 		helper.assertTrue(view.offers("give_sanguine_monolith_blueprint"), "the D5 Vicar hands out the Monolith's scrap: " + view);
-		p.choose(vicar, "give_sanguine_monolith_blueprint");
-		p.pickUpNear(vicar.blockPosition(), ItemInit.mnemonic_blueprint.get()).gave(ItemInit.mnemonic_blueprint.get(), 1);
+		p.choose(vicar, "give_sanguine_monolith_blueprint").gave(ItemInit.mnemonic_blueprint.get(), 1);
 		p.wield(ItemInit.mnemonic_blueprint.get());
 		Outcome imprint = p.use(InteractionHand.MAIN_HAND);
 		CardinalRiteRecipe monolith = CardinalRiteRecipe.getRiteByLocation(p.player().level(),
@@ -1268,10 +1271,9 @@ public final class PlaythroughAdeptGameTests {
 					helper.assertTrue(p.has(adv(HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON)),
 							"a relog keeps the first lesson");
 					DialogueView after = p.talkTo(respite.anchorite());
-					PlaythroughLog.note(helper, "after a relog with the kit on the ground the Anchorite offers "
+					PlaythroughLog.note(helper, "after a relog with the kit in the pack the Anchorite offers "
 							+ after.reachableEvents());
-					pickUp(p, respite.anchorite(), ItemInit.scar_pattern.get(), ItemInit.scar_blank.get(), lesson.catalyst(),
-							ItemInit.hematic_iron_knapper.get()).gave(ItemInit.scar_blank.get(), 1);
+					helper.assertTrue(p.count(ItemInit.scar_blank.get()) == 1, "the kit is in the pack after the relog");
 					carve(p, respite.station(), lesson).earned(adv(HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_SCAR_CARVED));
 					p.quickMove(p.player().containerMenu, 4);
 					p.closeMenu();
@@ -1360,7 +1362,7 @@ public final class PlaythroughAdeptGameTests {
 
 	/**
 	 * A D5 Covenant rite's floor laid, its pillars and braziers set by the player. A D4 player plants the Staff and
-	 * the rite does not start (what they are told is logged); promoted to D5, the same planting starts it.
+	 * the rite does not start and they are told it needs Degree 5; promoted to D5, the same planting starts it.
 	 */
 	private static void covenantRiteOpensAtD5(GameTestHelper helper, String recipe) {
 		PlaythroughPlayer p = adept(helper, PlaythroughSites.stand(helper, 20, 12));
@@ -1386,6 +1388,7 @@ public final class PlaythroughAdeptGameTests {
 			CardinalRiteSavedData saved = CardinalRiteSavedData.get(p.player().serverLevel());
 			PlaythroughLog.note(helper, recipe + " at D4 said " + early.saidKeys());
 			helper.assertTrue(saved.getRite(p.uuid()) == null, recipe + " does not start at D4; " + early);
+			early.said("message.hemomancy.cardinal_rite_activation.this_rite_requires");
 			PlaythroughStates.illuminatusD5(p); // ARRANGE: the Crimson Lodge is its own test
 			tools(p); // ARRANGE
 			PlaythroughStates.blood(p, 3000); // ARRANGE
@@ -1435,9 +1438,9 @@ public final class PlaythroughAdeptGameTests {
 
 	// --- Decision probes -------------------------------------------------------------------------------------------
 
-	/** The Vicar's Monolith scrap asked for twice at D5: one per player, or one only while none is carried. */
-	// DECISION: D-27 the D5 Monolith scrap can be taken again and again.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	/** The Vicar's Monolith scrap asked for three times at D5, then lost and asked for again. */
+	// RULING PT-27 (NQ-10-7, 2026-11-14): a scrap whenever none is carried or owed, never a second while one is held.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void monolithScrapIsRepeatable(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 12, 8));
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 12, 11));
@@ -1445,11 +1448,13 @@ public final class PlaythroughAdeptGameTests {
 		for (int ask = 0; ask < 3; ask++) {
 			p.talkTo(vicar);
 			p.choose(vicar, "give_sanguine_monolith_blueprint");
-			p.pickUpNear(vicar.blockPosition(), ItemInit.mnemonic_blueprint.get());
 		}
 		int carried = p.count(ItemInit.mnemonic_blueprint.get());
-		PlaythroughLog.note(helper, "D-27 three asks for the Monolith scrap: " + carried + " carried");
-		helper.assertTrue(carried <= 1, "D-27 expected: one Monolith scrap at a time; " + carried + " carried");
+		PlaythroughLog.note(helper, "PT-27 three asks for the Monolith scrap: " + carried + " carried");
+		helper.assertTrue(carried == 1, "PT-27: one Monolith scrap at a time; " + carried + " carried");
+		removeAll(p, ItemInit.mnemonic_blueprint.get()); // ARRANGE: the scrap is lost
+		p.talkTo(vicar);
+		p.choose(vicar, "give_sanguine_monolith_blueprint").gave(ItemInit.mnemonic_blueprint.get(), 1);
 		helper.succeed();
 	}
 
@@ -1457,9 +1462,9 @@ public final class PlaythroughAdeptGameTests {
 	 * A reward the Anchorite refuses (the D5 reward before D5_READY) moves the dialogue to a node that may say it was
 	 * given. Logs the option's next node and what the server did; expects a refusal line at least.
 	 */
-	// DECISION: D-28 a refused reward leaves the client on a "claimed" node with no refusal line.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void refusedRewardNodeContradictsServer(GameTestHelper helper) {
+	// FIX: PT-28 (was D-28). Wherever a reward can be refused, the refusal says why.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void refusedRewardSaysWhy(GameTestHelper helper) {
 		PlaythroughSites.MasonsRespite respite = respite(helper);
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, yard(helper));
 		PlaythroughStates.illuminatusD5(p); // ARRANGE: D5, the strain not yet caused
@@ -1471,15 +1476,14 @@ public final class PlaythroughAdeptGameTests {
 		String next = option.map(o -> o.nextNodeId()).orElse("(not shown)");
 		PlaythroughLog.note(helper, "D-28 early D5 reward: shown=" + option.isPresent() + ", next node " + next + ", server "
 				+ asked.describe());
-		// The premise holds only when the option is shown before it is ready; a hidden option leaves no player there.
-		helper.assertTrue(option.isEmpty() || asked.rewardDelivered() || !asked.saidKeys().isEmpty(),
-				"D-28 expected: a refused reward says why; the client was sent to " + next);
+		helper.assertFalse(asked.rewardDelivered(), "the early D5 reward is refused; " + asked);
+		asked.said("hemomancy.dialogue.event.anchorite_reward_unready");
 		helper.succeed();
 	}
 
-	/** With the vascular-degradation server config off, the D5 Mason strain can never be recorded. */
-	// DECISION: D-29 the D5 Mason chapter needs VASCULAR_DEGRADATION_ON_MANIP_ENABLED on.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	/** With the vascular-degradation server config off, the first Thelemic cast after the D4 reward is the strain. */
+	// RULING PT-29 (NQ-10-11, 2026-11-14): the fallback strain route for a server that turns degradation off.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void d5StrainWithDegradationOff(GameTestHelper helper) {
 		PlaythroughSites.MasonsRespite respite = respite(helper);
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, yard(helper));
@@ -1507,7 +1511,26 @@ public final class PlaythroughAdeptGameTests {
 		PlaythroughLog.note(helper, "D-29 degradation off: " + casts + " casts, arms "
 				+ HemoCapabilityAccess.getVascularSystem(sp).getVascularSystem().get(EnumVeinSections.ARMS)
 				+ ", strain recorded=" + counted + ", the Mason says " + view.lineKeys());
-		helper.assertTrue(counted, "D-29 expected: a server with degradation off still has a way through the D5 strain");
+		helper.assertTrue(counted, "PT-29: a server with degradation off still has a way through the D5 strain");
+		helper.succeed();
+	}
+
+	/** PT-22: a section Varicose before the chapter counts once when the Mason's fifth-Degree tree opens. */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void varicoseSectionCountsWhenTheMasonTreeOpens(GameTestHelper helper) {
+		PlaythroughSites.MasonsRespite respite = respite(helper);
+		PlaythroughPlayer p = PlaythroughPlayer.create(helper, yard(helper));
+		PlaythroughStates.illuminatusD5(p); // ARRANGE
+		ServerPlayer sp = p.player();
+		var vascular = HemoCapabilityAccess.getVascularSystem(sp);
+		vascular.getVascularSystem().put(EnumVeinSections.LEGS, 30.0F); // ARRANGE: Varicose before any cast
+		VascularSystemEvents.syncVascular(sp, vascular);
+		helper.assertFalse(p.has(adv(VeinMasonAssignments.D5_VARICOSE)), "no strain is recorded before the talk");
+		DialogueView view = p.talkTo(respite.anchorite());
+		helper.assertTrue(p.has(adv(VeinMasonAssignments.D5_VARICOSE)),
+				"the Varicose legs count once the Mason's tree opens: " + view.lineKeys());
+		helper.assertTrue(view.offers(HarbingerCicatrixAnchoriteDialogueTrees.EVENT_DIAGNOSIS),
+				"the Mason offers the diagnosis: " + view);
 		helper.succeed();
 	}
 
@@ -1528,32 +1551,6 @@ public final class PlaythroughAdeptGameTests {
 		PlaythroughLog.note(helper, "D-30 lost blank: the Anchorite offers " + offered + "; blanks now "
 				+ p.count(ItemInit.scar_blank.get()));
 		helper.assertTrue(p.count(ItemInit.scar_blank.get()) >= 1, "D-30 expected: a lost blank can be replaced");
-		helper.succeed();
-	}
-
-	/** Which D4 teacher, if any, names the Sporitic Thurible, including item inquiries while holding a spore sac. */
-	// DECISION: D-31 no Harbinger NPC teaches the D4 Sporitic Thurible.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void d4ThuribleHasATeacher(GameTestHelper helper) {
-		PlaythroughSites.MasonsRespite respite = respite(helper);
-		PlaythroughPlayer p = adept(helper, yard(helper));
-		p.give(new ItemStack(ItemInit.spore_sac.get())); // ARRANGE: a spore sac in hand
-		p.wield(ItemInit.spore_sac.get());
-		List<Entity> teachers = List.of(PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 14, 6)),
-				PlaythroughNpcs.alchemist(helper, PlaythroughSites.stand(helper, 14, 8)),
-				PlaythroughNpcs.artificer(helper, PlaythroughSites.stand(helper, 6, 12)),
-				PlaythroughNpcs.mnemonist(helper, PlaythroughSites.stand(helper, 6, 14)), respite.anchorite());
-		List<String> pointers = new ArrayList<>();
-		for (Entity teacher : teachers) {
-			p.approach(teacher);
-			DialogueView view = p.talkTo(teacher);
-			for (String key : view.lineKeys()) {
-				String text = net.minecraft.locale.Language.getInstance().getOrDefault(key, key);
-				if (key.contains("thurible") || text.contains("Thurible")) pointers.add(PlaythroughPlayer.describe(teacher) + ": " + key);
-			}
-		}
-		PlaythroughLog.note(helper, "D-31 Thurible pointers at D4: " + pointers);
-		helper.assertFalse(pointers.isEmpty(), "D-31 expected: some D4 teacher names the Sporitic Thurible");
 		helper.succeed();
 	}
 
@@ -1637,18 +1634,16 @@ public final class PlaythroughAdeptGameTests {
 			vascular.getVascularSystem().put(section, 30.0F);
 		}
 		VascularSystemEvents.syncVascular(sp, vascular);
-		VeinMasonAssignments.onThelemicStrain(sp, EnumBloodFlow.STABLE, EnumBloodFlow.VARICOSE);
+		VeinMasonAssignments.onThelemicStrain(sp, EnumBloodFlow.VARICOSE);
 		p.helper().assertTrue(p.has(adv(VeinMasonAssignments.D5_VARICOSE)), "the strain is recorded for the Mason");
 	}
 
-	/** The first lesson taken for real: talk, choose, pick the kit up at the Anchorite's feet. */
+	/** The first lesson taken for real: talk and choose; the kit goes to the pack. */
 	private static VeinMasonScarLesson.Lesson takeFirstLesson(PlaythroughPlayer p, PlaythroughSites.MasonsRespite respite) {
 		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.forPlayer(p.player());
 		p.talkTo(respite.anchorite());
 		Outcome taught = p.choose(respite.anchorite(), HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON);
 		p.helper().assertTrue(taught.rewardDelivered(), "the first lesson is delivered; " + taught);
-		pickUp(p, respite.anchorite(), ItemInit.scar_pattern.get(), ItemInit.scar_blank.get(), lesson.catalyst(),
-				ItemInit.hematic_iron_knapper.get());
 		return lesson;
 	}
 
@@ -1767,13 +1762,6 @@ public final class PlaythroughAdeptGameTests {
 			if (what.test(inventory.getItem(slot))) return true;
 		}
 		return false;
-	}
-
-	/** Walks over each of {@code items} lying at {@code npc}'s feet; one outcome for the whole kit. */
-	private static Outcome pickUp(PlaythroughPlayer p, Entity npc, ItemLike... items) {
-		Outcome.Probe probe = Outcome.begin(p, npc, "pick up the kit at " + PlaythroughPlayer.describe(npc));
-		for (ItemLike item : items) p.pickUpNear(npc.blockPosition(), item);
-		return probe.finish();
 	}
 
 	private static int dropsOf(PlaythroughPlayer p, BlockPos near, ItemLike item) {

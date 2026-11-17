@@ -13,13 +13,19 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public final class BestiaryEntityPreview {
@@ -27,6 +33,8 @@ public final class BestiaryEntityPreview {
 	public static final float ZOOM_MAX = 2.75F;
 	private static final int ANIMATION_LOOP_TICKS = 240;
 	private static final float PREVIEW_GUI_DEPTH = 150.0F;
+	/** Kinds that could not be built for a preview this session; they show the plain panel. */
+	private static final Set<String> FAILED = new HashSet<>();
 
 	private static final Map<ResourceLocation, Supplier<? extends EntityType<? extends LivingEntity>>> PREVIEW_TYPES = Map.ofEntries(
 			Map.entry(Hemomancy.rloc("barbed_urchin"), EntityInit.barbed_urchin),
@@ -51,8 +59,25 @@ public final class BestiaryEntityPreview {
 	private BestiaryEntityPreview() {
 	}
 
+	/**
+	 * Whether {@code id} can be shown turning in the preview: an authored roster type, or (P6) any registered kind with
+	 * living attributes. A kind that then fails to build or draw falls back to the plain panel.
+	 */
 	public static boolean hasPreview(ResourceLocation id) {
-		return id != null && PREVIEW_TYPES.containsKey(id);
+		if (id == null) return false;
+		if (PREVIEW_TYPES.containsKey(id)) return true;
+		if (FAILED.contains(id.toString())) return false;
+		EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
+		return type != null && livingType(type);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static boolean livingType(EntityType<?> type) {
+		try {
+			return DefaultAttributes.hasSupplier((EntityType<? extends LivingEntity>) type);
+		} catch (RuntimeException notLiving) {
+			return false;
+		}
 	}
 
 	public static float clampZoom(float zoom) {
@@ -114,15 +139,17 @@ public final class BestiaryEntityPreview {
 			return null;
 		}
 		ResourceLocation id = entry.previewId();
-		Supplier<? extends EntityType<? extends LivingEntity>> type = PREVIEW_TYPES.get(id);
-		if (type == null) {
+		if (id == null || !hasPreview(id)) {
 			return null;
 		}
 		String key = id.toString();
 		if (state.previewEntity != null && key.equals(state.previewKey) && state.previewLevel == mc.level) {
 			return state.previewEntity;
 		}
-		LivingEntity entity = type.get().create(mc.level);
+		LivingEntity entity = create(id, mc.level);
+		if (entity == null) {
+			FAILED.add(key);
+		}
 		if (entity != null) {
 			if (entity instanceof Mob mob) {
 				mob.setNoAi(true);
@@ -134,6 +161,22 @@ public final class BestiaryEntityPreview {
 		state.previewLevel = mc.level;
 		state.previewEntity = entity;
 		return entity;
+	}
+
+	/**
+	 * A fresh entity of {@code id} for the preview. The roster's types come from the fast table; any other kind is built
+	 * from the registry inside a guard, because some mod creatures expect a server level or spawn data and must not take
+	 * the Progress screen down with them.
+	 */
+	private static LivingEntity create(ResourceLocation id, Level level) {
+		try {
+			Supplier<? extends EntityType<? extends LivingEntity>> known = PREVIEW_TYPES.get(id);
+			Entity made = known != null ? known.get().create(level)
+					: BuiltInRegistries.ENTITY_TYPE.getOptional(id).map(type -> type.create(level)).orElse(null);
+			return made instanceof LivingEntity living ? living : null;
+		} catch (RuntimeException unbuildable) {
+			return null;
+		}
 	}
 
 	private static int previewEntityScale(LivingEntity entity, int availableH) {

@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.client.screen.overlay.SporeLoadOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.SaintMeterLayer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.event.*;
-import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
 import com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects;
 import net.neoforged.api.distmarker.Dist;
@@ -55,6 +54,9 @@ public final class GuiLayerRegistrar {
                 BlackheartedOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight())));
         event.registerAboveAll(Hemomancy.rloc("manipulation_charge"), hud((graphics, deltaTracker) ->
                 ManipulationChargeOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight())));
+        // The verb being channelled, the selected Sculpting and whether it claims the aimed-at target.
+        event.registerAboveAll(Hemomancy.rloc("verb_channel"), hud((graphics, deltaTracker) ->
+                VerbChannelOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight())));
         event.registerAboveAll(Hemomancy.rloc("arbor_fruit_name"), hud((graphics, deltaTracker) ->
                 ArborFruitHudOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight())));
         event.registerAboveAll(Hemomancy.rloc("mnemonic_blueprint_progress"), hud((graphics, deltaTracker) ->
@@ -127,7 +129,6 @@ public final class GuiLayerRegistrar {
             graphics.pose().pushPose();
             graphics.pose().translate(0.0F, 0.0F, -graphics.pose().last().pose().m32());
             EarthenVeinTravelClientEvents.renderTooltip(graphics);
-            ManipulationVisualRenderer.hud(graphics);
             AntecedentClientEffects.render(graphics);
             graphics.pose().popPose();
         }));

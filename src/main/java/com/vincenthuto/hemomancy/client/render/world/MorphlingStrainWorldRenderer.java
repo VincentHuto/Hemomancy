@@ -39,6 +39,8 @@ public final class MorphlingStrainWorldRenderer {
 	static final int VIOLET = 0x9C88FF, VIOLET_CORE = 0xE0D8FF, GOLD = 0xF6C45A, GOLD_DEEP = 0xD9822B;
 	static final int STONE = 0xB49A8A, BONE = 0xEFE4D2, MARROW_RED = 0xD8343C, FROST = 0xCFE6F6, COBALT = 0x5878E0;
 	private static final double CHEST = 0.62;
+	/** How dark the ink thread under a Dead Man's Rope strand is. */
+	private static final float STRAND_INK = 0.6F;
 	/** How far a Woven Current member reaches to tie in to the nearest other member. */
 	public static final double COURT_LINK_RANGE = 12.0;
 
@@ -173,6 +175,9 @@ public final class MorphlingStrainWorldRenderer {
 		}
 		if (self) points = points.subList(Math.min(points.size() - 2, segments / 8 + 1), points.size());
 		double width = reeling ? 0.1 : 0.07;
+		// A dark ink thread under the glow, so the strand still reads against a bright daytime sky.
+		OutpouringBrushes.ribbonPath(view.p, OutpouringBrushes.flow(Mat.UMBRA), points, width * 1.6, width * 1.3,
+				OutpouringBrushes.RIBBON, seed + 3, VIOLET, STRAND_INK);
 		OutpouringBrushes.ribbonPath(view.p, OutpouringBrushes.flow(Mat.LUX), points, width * 3.0, width * 2.4,
 				OutpouringBrushes.WISP, seed, VIOLET, 0.4F);
 		OutpouringBrushes.ribbonPath(view.p, OutpouringBrushes.flow(Mat.DUCTILIS), points, width * 0.7, width * 0.55,
@@ -257,6 +262,8 @@ public final class MorphlingStrainWorldRenderer {
 				points.add(view.local(at.add(side + sway, 0.55 - Math.min(0.5, i * 0.02), sway * 0.5)));
 			}
 			if (points.size() < 2) continue;
+			OutpouringBrushes.ribbonPath(view.p, OutpouringBrushes.flow(Mat.UMBRA), points, 0.12, 0.03,
+					OutpouringBrushes.RIBBON, seed + s + 9, VIOLET, STRAND_INK);
 			OutpouringBrushes.ribbonPath(view.p, OutpouringBrushes.flow(Mat.LUX), points, 0.16, 0.04,
 					OutpouringBrushes.WISP, seed + s + 5, VIOLET, 0.4F);
 			OutpouringBrushes.ribbonPath(view.p, OutpouringBrushes.flow(Mat.LUX), points, 0.08, 0.02,

@@ -1,16 +1,23 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeTitles;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.overlay.bloodhud.HudHeartbeat;
+import com.vincenthuto.hemomancy.client.screen.overlay.BloodHudLayout.Rect;
+import com.vincenthuto.hemomancy.client.screen.overlay.BloodHudLayout.Reserve;
+import com.vincenthuto.hemomancy.client.screen.overlay.bloodhud.HudAssembly;
+import com.vincenthuto.hemomancy.client.screen.overlay.bloodhud.LivingHudRenderer;
+import com.vincenthuto.hemomancy.client.screen.overlay.bloodhud.TemperReading;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeTitles;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.TitrationBandolierItem;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeClientPacket;
@@ -19,7 +26,6 @@ import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.component.DataComponents;
@@ -29,29 +35,31 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
 /**
- * Blood volume HUD overlay.
- * The main Harbinger vessel is assembled from static texture layers so the HUD
- * does not rebuild the crown, frame, and Apotheos helix pixel-by-pixel each frame.
+ * The living hematic HUD: the body vessel, an equipped reserve grafted on its inward flank, the Morphling jar and
+ * the Temper vials, all wrapped in one binding grown around whatever is showing. The degree frames, liquid fills,
+ * reserve art and Apotheos helix are drawn unchanged and never flipped.
  */
 public class BloodVolumeOverlay {
 
-    private static final int OVERLAY_W = 76;
-    private static final int OVERLAY_H = 126;
-    private static final float OVERLAY_SCALE = 0.6f;
-    private static final int VESSEL_W = 32;
-    private static final int VESSEL_H = 92;
-    private static final int VESSEL_TOP = 26;
+    static final int OVERLAY_W = BloodHudLayout.VESSEL_W;
+    private static final int OVERLAY_H = BloodHudLayout.VESSEL_H;
+    static final float OVERLAY_SCALE = BloodHudLayout.SCALE;
+    /** The blood window's rows in the vessel texture. */
+    private static final int VESSEL_TOP = 27;
+    private static final int VESSEL_H = 87;
     private static final int VESSEL_BOTTOM = VESSEL_TOP + VESSEL_H;
     private static final int APOTHEOS_FILL_FRAMES = 16;
     private static final int[][] POME_POINTS = {
-            {0, -20}, {-15, -14}, {15, -14}, {-27, 5}, {27, 5},
-            {-28, 23}, {28, 23}, {-28, 40}, {28, 40}
+            {0, -20}, {-13, -14}, {13, -14}, {-15, 3}, {15, 3},
+            {-17, 24}, {17, 24}, {-17, 43}, {17, 43}
     };
     private static final int GOURD_W = GourdHudFillPixels.WIDTH;
     private static final int GOURD_H = GourdHudFillPixels.HEIGHT;
@@ -77,11 +85,14 @@ public class BloodVolumeOverlay {
     private static final ResourceLocation[] DEGREE_BASE_TEXTURES = textureRange("base_degree_", 9);
     private static final ResourceLocation[] POME_TEXTURES = textureRange("pomes_", 10);
     private static final ResourceLocation[] APOTHEOS_FILL_TEXTURES = textureRange("fill_apotheos_", APOTHEOS_FILL_FRAMES);
+    private static final ResourceLocation JAR_BACK_TEXTURE = Hemomancy.rloc("textures/gui/blood_hud/morphling_jar_back.png");
+    private static final ResourceLocation JAR_FRONT_TEXTURE = Hemomancy.rloc("textures/gui/blood_hud/morphling_jar_front.png");
 
     public static BloodVolumeOverlay instance;
 
     private final Minecraft mc = Minecraft.getInstance();
     private final BloodHudRefreshClock refreshClock = new BloodHudRefreshClock();
+    private final LivingHudRenderer living = new LivingHudRenderer();
     private DynamicTexture gourdFillTexture;
     private ResourceLocation gourdFillTextureId;
     private int lastGourdFrame = Integer.MIN_VALUE;
@@ -107,6 +118,7 @@ public class BloodVolumeOverlay {
 
     public void clearCaches() {
         refreshClock.reset();
+        living.clear();
         hornFillMask = null;
         ribFillMask = null;
         vesselFillMask = null;
@@ -140,130 +152,165 @@ public class BloodVolumeOverlay {
         }
     }
 
-    public static boolean isConfiguredOnLeftSide() {
-        int positionLoc = HemoClientConfig.HUD_LOCATION.get();
-        return positionLoc == 0 || positionLoc == 2;
+    /**
+     * Whether any of the HUD can show for {@code player}: active blood, not barred by the Unstained path, and the
+     * Vascularium Charm (vessel, reserve, jar) or the Titration Bandolier (Temper vials) worn.
+     */
+    public static boolean isHudAvailable(Player player) {
+        if (player == null) return false;
+        if (UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player))) return false;
+        var bloodCap = HemoCapabilityAccess.getBloodVolume(player);
+        if (bloodCap == null || !bloodCap.isActive()) return false;
+        return HudVisibilityRules.showsAnything(wearsCharm(player), wearsBandolier(player));
     }
 
-    public static int getConfiguredBarX(int screenWidth) {
-        int positionLoc = HemoClientConfig.HUD_LOCATION.get();
-        return switch (positionLoc) {
-            case 1, 3 -> screenWidth - getBarWidth() - 4;
-            default -> 4;
-        };
+    private static boolean wearsCharm(Player player) {
+        return HemoCapabilityAccess.getEquipment(player).getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX)
+                .getItem() instanceof VasculariumCharmItem;
     }
 
-    public static int getConfiguredBarY(Player player, int screenHeight) {
-        int positionLoc = HemoClientConfig.HUD_LOCATION.get();
-        return switch (positionLoc) {
-            case 1 -> player != null && player.getActiveEffects().isEmpty() ? 4 : 30;
-            case 2, 3 -> screenHeight - getBarHeight() - 30;
-            default -> 4;
-        };
+    private static boolean wearsBandolier(Player player) {
+        return HemoCapabilityAccess.getEquipment(player).getStackInSlot(HarbingerEquipmentMenu.BANDOLIER_SLOT_INDEX)
+                .getItem() instanceof TitrationBandolierItem;
     }
 
-    public static int getBarWidth() {
-        return Math.round(OVERLAY_W * OVERLAY_SCALE);
+    public static BloodHudLayout layout(Player player) {
+        if (!isHudAvailable(player)) return new BloodHudLayout(false, Reserve.NONE, false, false, false);
+        boolean charm = HudVisibilityRules.showsCharmParts(wearsCharm(player), wearsBandolier(player));
+        boolean vials = HudVisibilityRules.showsVials(wearsCharm(player), wearsBandolier(player));
+        ItemStack reserve = HemoCapabilityAccess.getEquipment(player).getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
+        boolean shown = charm && HemoClientConfig.SHOW_GOURD_HUD.get() && reserve.getItem() instanceof BloodGourdItem
+                && HemoCapabilityAccess.getBloodVolume(reserve).isPresent();
+        Reserve shape = !shown ? Reserve.NONE : reserve.is(ItemInit.curved_horn.get()) ? Reserve.HORN
+                : reserve.is(ItemInit.hemorath_rib.get()) ? Reserve.RIB : Reserve.GOURD;
+        boolean jar = charm && EquippedMorphlingOverlay.shown(HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling());
+        int corner = HemoClientConfig.HUD_LOCATION.get();
+        return new BloodHudLayout(charm && HemoClientConfig.SHOW_BLOOD_VOLUME_HUD.get(), shape,
+                vials && HemoClientConfig.SHOW_TEMPER_HUD.get() && TemperMarksOverlay.hasSeen(player), jar,
+                corner == 1 || corner == 3);
     }
 
-    public static int getBarHeight() {
-        return Math.round(OVERLAY_H * OVERLAY_SCALE);
+    /** Whether the HUD currently shows {@code player}'s Morphling in its jar. */
+    public static boolean showsMorphlingJar(Player player) {
+        return player != null && layout(player).jar();
     }
 
-    static float getVesselEdgeX(boolean barOnLeft, int barX) {
-        return barX + (OVERLAY_W / 2.0f + (barOnLeft ? VESSEL_W : -VESSEL_W) / 2.0f) * OVERLAY_SCALE;
+    /** The HUD's current assembly for {@code player}, or null before client setup has made the overlay. */
+    @Nullable
+    public static HudAssembly assembly(Player player) {
+        return instance == null ? null : instance.living.assembly(layout(player));
     }
 
-    static float getVesselCenterY(int barY) {
-        return barY + (VESSEL_TOP + VESSEL_H / 2.0f) * OVERLAY_SCALE;
+    public static BloodHudLayout.Placement placement(Player player, int width, int height) {
+        int corner = HemoClientConfig.HUD_LOCATION.get();
+        return layout(player).place(width, height, corner == 0 || corner == 2, corner < 2, showsEffectIcons(player),
+                (int) Minecraft.getInstance().getWindow().getGuiScale());
+    }
+
+    /** Whether vanilla draws any effect icon in the top-right row; a Morphling's hidden passive does not count. */
+    private static boolean showsEffectIcons(Player player) {
+        return player != null && player.getActiveEffects().stream()
+                .anyMatch(effect -> effect.showIcon() && IClientMobEffectExtensions.of(effect).isVisibleInGui(effect));
     }
 
     public void renderHUD(GuiGraphics gfx, int width, int height, float partialTicks) {
-        LocalPlayer player = this.mc.player;
-        if (player == null) return;
+        LocalPlayer player = mc.player;
+        if (!isHudAvailable(player) || mc.level == null) return;
+        BloodHudLayout layout = layout(player);
+        if (layout.empty()) return;
+        if (refreshClock.due(player.tickCount)) PacketHandler.sendToServer(new BloodVolumeClientPacket());
+        HudAssembly assembly = living.assembly(layout);
+        BloodHudLayout.Placement anchor = placement(player, width, height);
+        float time = HudHeartbeat.seconds(mc.level.getGameTime(), partialTicks);
 
-        var cap = HemoCapabilityAccess.getUnstainedProgress(player);
-        if (UnstainedAccessRules.blocksKnownBloodPowerUse(cap)) return;
-
-        var bloodCap = HemoCapabilityAccess.getBloodVolume(player);
-        if (bloodCap == null || !bloodCap.isActive()) return;
-        var inv = HemoCapabilityAccess.getEquipment(player);
-                            if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem) {
-                                if (refreshClock.due(player.tickCount)) {
-                                    PacketHandler.sendToServer(new BloodVolumeClientPacket());
-                                }
-
-                                int posX = getConfiguredBarX(width);
-                                int posY = getConfiguredBarY(player, height);
-        						float animationTime = EquippedMorphlingOverlayPlacement.animationTimeSeconds(
-        								mc.level.getGameTime(), partialTicks);
-        						renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, animationTime, width, height);
-        						var morphlingCap = HemoCapabilityAccess.getEquippedMorphling(player);
-        						ItemStack equipped = morphlingCap.getEquippedMorphling();
-        						if (EquippedMorphlingOverlay.instance != null) {
-        							EquippedMorphlingOverlay.instance.renderForBloodBar(gfx, equipped,
-        									isConfiguredOnLeftSide(), posX, posY, getBarWidth(), getBarHeight(),
-        									animationTime);
-        						}
-                            }
-    }
-
-    private void renderBloodBar(GuiGraphics gfx, int posX, int posY, IBloodVolume bloodCap,
-                                Player player, ClientLevel world, float animationTime, int screenWidth, int screenHeight) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(posX, posY, 0);
-        gfx.pose().scale(OVERLAY_SCALE, OVERLAY_SCALE, 1.0f);
-        renderBloodBarScaled(gfx, 0, 0, bloodCap, player, world, animationTime,
-                Math.round((screenWidth - posX) / OVERLAY_SCALE),
-                Math.round((screenHeight - posY) / OVERLAY_SCALE));
-        gfx.pose().popPose();
-    }
-
-    private void renderBloodBarScaled(GuiGraphics gfx, int posX, int posY, IBloodVolume bloodCap,
-                                      Player player, ClientLevel world, float animationTime, int screenWidth, int screenHeight) {
-        Font fr = mc.font;
-        float time = animationTime;
-
-        double vol = bloodCap.getBloodVolume();
+        IBloodVolume bloodCap = HemoCapabilityAccess.getBloodVolume(player);
         double maxVol = bloodCap.getMaxBloodVolume();
-        double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
-
-        int pomeProgress = HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed();
-        pomeProgress = Mth.clamp(pomeProgress, 0, 9);
-
+        double ratio = maxVol > 0 ? Mth.clamp(bloodCap.getBloodVolume() / maxVol, 0, 1) : 0;
         int actualDegree = Mth.clamp(HemoCapabilityAccess.getPlayerDegreeNumber(player), 0, 8);
         EnumArchonPath archonPath = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
         // The vessel's eighth-degree art belongs to the Apotheos; a Silentium keeps the seventh vessel.
         int degreeNumber = archonPath == EnumArchonPath.APOTHEOS ? actualDegree : Math.min(actualDegree, 7);
-        if (actualDegree >= 8) {
-            pomeProgress = 9;
-        }
-        boolean isApotheos = degreeNumber >= 8;
+        boolean apotheos = degreeNumber >= 8;
+        int pomeProgress = actualDegree >= 8 ? 9
+                : Mth.clamp(HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed(), 0, 9);
+        ItemStack morphling = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
 
-        int centerX = posX + OVERLAY_W / 2;
-
+        gfx.pose().pushPose();
+        gfx.pose().translate(anchor.x(), anchor.y(), 0);
+        gfx.pose().scale(anchor.scale(), anchor.scale(), 1);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
+        living.drawBinding(gfx, assembly, actualDegree, apotheos, time, (float) ratio);
+        // The reserve is grafted behind the vessel's flank: draw its chamber first so the vessel overlaps it.
+        if (layout.gourd()) renderEquippedGourd(gfx, player, layout.reserveRect().x(), layout.reserveRect().y(),
+                degreeNumber, pomeProgress, time, layout);
+        if (layout.blood()) renderVessel(gfx, layout.vessel(), layout, ratio, bloodCap.getBloodVolume(), actualDegree,
+                archonPath, degreeNumber, pomeProgress, time);
+        if (layout.jar()) renderJar(gfx, layout, morphling, time);
+        if (layout.temper()) {
+            TemperReading[] readings = TemperMarksOverlay.readings(player);
+            // Streams and vials are a thousand-odd pixel fills: batch them into one draw instead of one each.
+            gfx.drawManaged(() -> {
+                if (layout.blood()) living.drawStreams(gfx, assembly, readings, ratio, time);
+                living.drawVials(gfx, assembly, readings);
+            });
+        }
+        RenderSystem.disableBlend();
+        gfx.pose().popPose();
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
+        if (layout.jar() && EquippedMorphlingOverlay.instance != null) {
+            boolean right = layout.mirrored();
+            EquippedMorphlingOverlay.instance.renderReadouts(gfx, morphling,
+                    Math.round(anchor.screenX(layout.jarMeterX())), Math.round(anchor.screenY(layout.jarMeterY())), right,
+                    Math.round(right ? anchor.screenX(layout.width()) : anchor.x()), Math.max(2, Math.round(anchor.y()) - 10),
+                    right);
+        }
+    }
+
+    private void renderJar(GuiGraphics gfx, BloodHudLayout layout, ItemStack morphling, float time) {
+        Rect jar = layout.jarRect();
+        Rect window = BloodHudLayout.JAR_WINDOW;
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        gfx.blit(JAR_BACK_TEXTURE, jar.x(), jar.y(), 0, 0, jar.w(), jar.h(), jar.w(), jar.h());
+        boolean item = EquippedMorphlingOverlay.instance != null
+                && EquippedMorphlingOverlay.instance.renderInJar(gfx, morphling, jar.x() + window.x() + window.w() / 2f,
+                        jar.y() + window.y() + window.h() / 2f, window.w(), layout.mirrored(), time);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        gfx.pose().pushPose();
+        if (item) gfx.pose().translate(0, 0, EquippedMorphlingOverlay.ITEM_GLASS_Z);
+        gfx.blit(JAR_FRONT_TEXTURE, jar.x(), jar.y(), 0, 0, jar.w(), jar.h(), jar.w(), jar.h());
+        gfx.pose().popPose();
+    }
+
+    private void renderVessel(GuiGraphics gfx, Rect vessel, BloodHudLayout layout, double ratio, double volume,
+                              int actualDegree, EnumArchonPath archonPath, int degreeNumber, int pomeProgress, float time) {
+        int posX = vessel.x();
+        int posY = vessel.y();
+        boolean isApotheos = degreeNumber >= 8;
         if (isApotheos) {
-            blitOverlay(gfx, APOTHEOS_HALO_TEXTURE, posX, posY);
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            // The helix halo is authored around the older 76×126 vessel box.
+            gfx.blit(APOTHEOS_HALO_TEXTURE, posX - 6, posY + 1, 0, 0, 76, 126, 76, 126);
         }
         blitOverlay(gfx, VESSEL_BACK_TEXTURE, posX, posY);
         renderLayeredBloodFill(gfx, posX, posY, ratio, degreeNumber, pomeProgress, time);
         blitOverlay(gfx, DEGREE_BASE_TEXTURES[degreeNumber], posX, posY);
+        living.drawVesselBeat(gfx, DEGREE_BASE_TEXTURES[degreeNumber], degreeNumber, posX, posY, isApotheos, time, (float) ratio);
         if (degreeNumber >= 7) {
             renderPomeSockets(gfx, posX, posY, pomeProgress);
         }
-        renderEquippedGourd(gfx, player, posX, posY, screenWidth, screenHeight,
-                degreeNumber, pomeProgress, time);
-
         RenderSystem.disableBlend();
 
-        drawScaledCenteredString(gfx, fr, DegreeTitles.title(actualDegree, archonPath),
-                centerX, posY  +125, 0xFFD9A29A, 0.55f);
-        String volText = String.format("%.0f", vol);
-        int textX = centerX - (fr.width(volText) / 2);
-        gfx.drawString(fr, Component.translatable("screen.hemomancy.blood_volume_overlay.ml", volText), textX, posY + 130, 0xFFE05A5A, true);
+        int centerX = posX + OVERLAY_W / 2;
+        String degreeKey = DegreeTitles.titleKey(actualDegree, archonPath).replace("hemomancy.degree.",
+                "screen.hemomancy.blood_volume_overlay.degree.");
+        drawScaledCenteredString(gfx, mc.font, Component.translatable(degreeKey), centerX, layout.degreeLabelY(), 0xFFD9A29A, 0.65f);
+        drawScaledCenteredString(gfx, mc.font, Component.translatable("screen.hemomancy.blood_volume_overlay.ml",
+                String.format("%.0f", volume)), centerX, layout.volumeLabelY(), 0xFFE05A5A, 0.8F);
     }
 
     private static ResourceLocation texture(String name) {
@@ -337,12 +384,12 @@ public class BloodVolumeOverlay {
             bloodFillTexture = new DynamicTexture(new NativeImage(mask.width(), mask.height(), false));
             bloodFillTextureId = mc.getTextureManager().register("blood_vessel_fill", bloodFillTexture);
         }
-        int frame = (int) (time * 60.0f);
+        int frame = BloodFillPixels.frame(time);
         if (frame != lastFillFrame || fillHeight != lastFillHeight || degree != lastFillDegree
                 || pomeProgress != lastFillPomes) {
             VesselFillMask mask = vesselFillMask();
             int[] pixels = BloodFillPixels.render(mask.pixels(), mask.width(), mask.height(),
-                    fillHeight / (double) VESSEL_H, degree, pomeProgress, frame / 60.0f);
+                    fillHeight / (double) VESSEL_H, degree, pomeProgress, frame / (float) BloodFillPixels.FILL_FPS);
             uploadPixels(bloodFillTexture, pixels, mask.width(), mask.height());
             lastFillFrame = frame;
             lastFillHeight = fillHeight;
@@ -352,10 +399,9 @@ public class BloodVolumeOverlay {
         blitOverlay(gfx, bloodFillTextureId, x, y);
 
         for (int local = fillOffset; local < fillBottom; local++) {
-            int vesselLocalY = Mth.clamp(local - VESSEL_TOP, 0, VESSEL_H - 1);
-            int halfInner = Math.max(1, vesselHalfWidth(vesselLocalY, false));
-            if (degree >= 6 && (vesselLocalY + (int) (time * 9.0f)) % 19 < 2) {
-                int veinX = centerX + Math.round(Mth.sin(time * 0.9f + vesselLocalY * 0.18f) * (halfInner - 3));
+            int halfInner = Math.max(1, vesselFillMask().halfWidth(local));
+            if (degree >= 6 && (local - VESSEL_TOP + (int) (time * 9.0f)) % 19 < 2) {
+                int veinX = centerX + Math.round(Mth.sin(time * 0.9f + (local - VESSEL_TOP) * 0.18f) * (halfInner - 3));
                 if (vesselFillMask().contains(veinX - x, local) && vesselFillMask().contains(veinX - x + 1, local))
                     gfx.fill(veinX, y + local, veinX + 2, y + local + 1,
                         alphaBlend(0x6635080A, ((int) (90 * corruption) << 24) | 0x00010002));
@@ -381,8 +427,7 @@ public class BloodVolumeOverlay {
                 continue;
             }
 
-            int vesselLocalY = Mth.clamp(localY - VESSEL_TOP, 0, VESSEL_H - 1);
-            int halfInner = Math.max(2, vesselHalfWidth(vesselLocalY, false) - 3);
+            int halfInner = Math.max(2, vesselFillMask().halfWidth(localY) - 2);
             int bubbleX = centerX - halfInner + bubbleRand.nextInt(Math.max(halfInner * 2, 1));
             int alpha = (int) (Mth.clamp((1.0f - Math.abs(progress - 0.5f) * 1.7f), 0.0f, 1.0f) * 72);
             int color = alphaBlend((alpha << 24) | 0x00FF4A40, ((int) (120 * corruption) << 24) | 0x00100616);
@@ -395,12 +440,10 @@ public class BloodVolumeOverlay {
     }
 
     private void renderFillMeniscus(GuiGraphics gfx, int x, int y, int fillOffset, int degree, int pomeProgress, float time) {
-        int localY = Mth.clamp(fillOffset - VESSEL_TOP, 0, VESSEL_H - 1);
-        int halfInner = Math.max(1, vesselHalfWidth(localY, false));
         int rowY = y + fillOffset;
         int meniscus = BloodFillPixels.meniscusColor(degree, pomeProgress);
-        int wave = Math.round(Mth.sin(time * 2.2f + localY * 0.3f) * 1.25f);
-        for (int localX = OVERLAY_W / 2 - halfInner; localX <= OVERLAY_W / 2 + halfInner; localX++) {
+        int wave = Math.round(Mth.sin(time * 2.2f + (fillOffset - VESSEL_TOP) * 0.3f) * 1.25f);
+        for (int localX = 0; localX < OVERLAY_W; localX++) {
             if (vesselFillMask().contains(localX, fillOffset + wave))
                 gfx.fill(x + localX, rowY + wave, x + localX + 1, rowY + wave + 1, meniscus);
         }
@@ -423,17 +466,23 @@ public class BloodVolumeOverlay {
         }
     }
 
+    /** The vessel back's opaque pixels, drawn 1:1, so art and mask coordinates agree. */
     private record VesselFillMask(int width, int height, boolean[] pixels) {
         boolean contains(int x, int y) {
-            if (x < 0 || x >= OVERLAY_W || y < 0 || y >= OVERLAY_H) return false;
-            int col = (int) ((x + 0.5) * width / OVERLAY_W);
-            int row = (int) ((y + 0.5) * height / OVERLAY_H);
-            return pixels[row * width + col];
+            return x >= 0 && y >= 0 && x < width && y < height && pixels[y * width + x];
         }
-    }
 
-    private int vesselHalfWidth(int py, boolean outer) {
-        return BloodVesselShape.halfWidth(py, outer);
+        /** Half the glass's width on this row, measured from the mask. */
+        int halfWidth(int y) {
+            if (y < 0 || y >= height) return 0;
+            int first = -1, last = -1;
+            for (int x = 0; x < width; x++) {
+                if (!pixels[y * width + x]) continue;
+                if (first < 0) first = x;
+                last = x;
+            }
+            return first < 0 ? 0 : (last - first) / 2;
+        }
     }
 
     private void drawScaledCenteredString(GuiGraphics gfx, Font font, Component text, int centerX, int y, int color, float scale) {
@@ -445,8 +494,8 @@ public class BloodVolumeOverlay {
         gfx.pose().popPose();
     }
 
-    private void renderEquippedGourd(GuiGraphics gfx, Player player, int posX, int posY, int screenWidth, int screenHeight,
-                                     int degreeNumber, int pomeProgress, float time) {
+    private void renderEquippedGourd(GuiGraphics gfx, Player player, int gourdX, int gourdY,
+                                     int degreeNumber, int pomeProgress, float time, BloodHudLayout layout) {
         var scars = HemoCapabilityAccess.getEquipment(player);
         ItemStack gourdStack = scars.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
         if (!(gourdStack.getItem() instanceof BloodGourdItem)) {
@@ -464,15 +513,6 @@ public class BloodVolumeOverlay {
         boolean rib = gourdStack.is(ItemInit.hemorath_rib.get());
         int iconW = GOURD_W;
         int iconH = curvedHorn ? HORN_H : rib ? RIB_H : GOURD_H;
-        int centerX = posX + OVERLAY_W / 2;
-        int gourdX = centerX - iconW / 2;
-        int gourdY = posY + VESSEL_BOTTOM + 30;
-
-        if (gourdY + iconH + 10 > screenHeight) {
-            gourdY = posY - iconH - 8;
-        }
-        gourdX = Mth.clamp(gourdX, 2, screenWidth - iconW - 2);
-
         int textColor = getGourdTextColor(gourdStack);
         if (isOpenGourd(gourdStack)) {
             ResourceLocation halo = curvedHorn ? HORN_HALO_TEXTURE : rib ? RIB_HALO_TEXTURE : GOURD_HALO_TEXTURE;
@@ -496,9 +536,9 @@ public class BloodVolumeOverlay {
         }
 
         String volumeText = String.format("%.0f", gourdVolume.getBloodVolume());
-        int textX = gourdX + (iconW / 2) - (mc.font.width(volumeText) / 2);
-        gfx.drawString(mc.font, Component.literal(volumeText), textX, gourdY + iconH + 1,
-                textColor, true);
+        int labelY = layout.reserveLabelY();
+        drawScaledCenteredString(gfx, mc.font, Component.literal(volumeText), gourdX + iconW / 2,
+                labelY, textColor, 0.8F);
     }
 
     private boolean isOpenGourd(ItemStack stack) {
@@ -524,10 +564,10 @@ public class BloodVolumeOverlay {
             gourdFillTextureId = mc.getTextureManager().register("blood_gourd_hud_fill", gourdFillTexture);
         }
 
-        int frame = (int) (time * 60.0f);
+        int frame = BloodFillPixels.frame(time);
         if (frame != lastGourdFrame || ratio != lastGourdRatio
                 || degree != lastGourdDegree || pomeProgress != lastGourdPomes) {
-            int[] pixels = GourdHudFillPixels.render(ratio, degree, pomeProgress, frame / 60.0f);
+            int[] pixels = GourdHudFillPixels.render(ratio, degree, pomeProgress, frame / (float) BloodFillPixels.FILL_FPS);
             uploadPixels(gourdFillTexture, pixels, GOURD_W, GOURD_H);
             lastGourdFrame = frame;
             lastGourdRatio = ratio;
@@ -574,7 +614,7 @@ public class BloodVolumeOverlay {
                 ribFillMask = mask;
             }
         }
-        int tickFrame = (int) (time * 60.0f);
+        int tickFrame = BloodFillPixels.frame(time);
         if (!maskId.equals(lastSpecialMaskId) || tickFrame != lastSpecialFrame || ratio != lastSpecialRatio
                 || degree != lastSpecialDegree || pomeProgress != lastSpecialPomes) {
             int[] pixels = SpecialGourdHudFillPixels.render(mask, height, ratio, degree, pomeProgress, time);

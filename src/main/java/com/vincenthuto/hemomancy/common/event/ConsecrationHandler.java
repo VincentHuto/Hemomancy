@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
@@ -8,7 +10,6 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,6 +26,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.Map;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 /**
  * Consecration mechanic: Unstained players at CLEANSING+ purity (50+) can
@@ -93,7 +95,7 @@ public class ConsecrationHandler {
 		}
 
 		// Perform the conversion
-		level.setBlock(pos, targetBlock.defaultBlockState(), 3);
+		if (!PlayerBlockEdits.replace(serverPlayer, pos, targetBlock.defaultBlockState(), 3)) return;
 		if (!player.isCreative()) {
 			held.shrink(1);
 		}
@@ -105,12 +107,12 @@ public class ConsecrationHandler {
 
 		// Visual & audio feedback
 		if (level instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.SCRAPE,
+			serverLevel.sendParticles(HemoParticleData.emberSpark(HemoPalette.VERDIGRIS, 0.04F, 0.9F, 24),
 					pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-					12, 0.4, 0.4, 0.4, 0.02);
-			serverLevel.sendParticles(ParticleTypes.END_ROD,
+					12, 0.4, 0.4, 0.4, 0.01);
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE),
 					pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-					5, 0.3, 0.5, 0.3, 0.01);
+					5, 0.3, 0.5, 0.3, 0.005);
 		}
 		level.playSound(null, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0f, 1.2f);
 		level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.5f, 1.5f);

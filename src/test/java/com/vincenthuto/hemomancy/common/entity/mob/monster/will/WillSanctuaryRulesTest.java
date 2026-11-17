@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import org.junit.jupiter.api.Test;
+
 public final class WillSanctuaryRulesTest {
 	private WillSanctuaryRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		anySanctuaryInputBlocksWillSpawns();
 		noSanctuaryInputsAllowWillSpawns();
 	}

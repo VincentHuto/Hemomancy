@@ -686,7 +686,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			return;
 		}
 		if (burrowCooldown <= 0 && target != null && lastAttack != VesperPhaseOneAttack.BURROW
-				&& (hasWingsGrown() || getHealth() <= getMaxHealth() * 0.7F) && getRandom().nextFloat() < 0.35F) {
+				&& VesperCombatRules.mayGroundBurrow(getHealth(), getMaxHealth(), hasWingsGrown()) && getRandom().nextFloat() < 0.35F) {
 			startBurrow(false);
 			return;
 		}
@@ -727,7 +727,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		releaseRestrainedVictim(false);
 		setAttack(VesperPhaseOneAttack.IDLE);
 		entityData.set(DATA_ATTACK_TICK, 0);
-		idleTicks = getHealth() <= getMaxHealth() * 0.42F ? 24 : 36;
+		idleTicks = VesperCombatRules.groundedIdleTicks(getHealth(), getMaxHealth());
 	}
 
 	/** Telegraphed spawn points for the current move (spike volleys, puppet landings); never persisted. */

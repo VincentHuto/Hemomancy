@@ -24,6 +24,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 /**
  * Copper Brushing mechanic: right-clicking an unwaxed oxidized copper block
@@ -83,7 +84,7 @@ public class CopperBrushingHandler {
 
         // Build the new state, copying matching block-state properties
         BlockState newState = copyMatchingProperties(oldState, targetBlock.defaultBlockState());
-        level.setBlock(pos, newState, Block.UPDATE_ALL);
+        if (!PlayerBlockEdits.replace(serverPlayer, pos, newState)) return;
 
         // Drop one Virid Salis at the block centre
         Block.popResource(level, pos, new ItemStack(BlockInit.virid_salis_trail.get()));

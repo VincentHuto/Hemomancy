@@ -60,7 +60,7 @@ import java.util.UUID;
  * opens the bloodline pool monitor screen.
  */
 public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockBloodEndpoint {
-	private static final BloodAccounting.Source WELL_OFFERING = BloodAccounting.Source.of("consecrated_bloodwell", Category.BLOODLINE, false, false);
+	private static final BloodAccounting.Source WELL_OFFERING = BloodAccounting.Source.of("consecrated_bloodwell", Category.BLOODLINE, false);
 
 	public static final MapCodec<ConsecratedBloodwellBlock> CODEC = simpleCodec(ConsecratedBloodwellBlock::new);
 	/** Heart font: plinth, stepped dais, ribbed heart column and the wide rimmed basin. */

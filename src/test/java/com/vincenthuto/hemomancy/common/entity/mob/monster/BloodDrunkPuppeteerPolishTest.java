@@ -1,83 +1,53 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.vincenthuto.hemomancy.support.ResourceReader;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public final class BloodDrunkPuppeteerPolishTest {
-	private BloodDrunkPuppeteerPolishTest() {
-	}
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-	public static void main(String[] args) throws Exception {
-		assertEquals("puppeteer summons four dolls", 4, BloodDrunkPuppeteerTuning.DOLL_COUNT);
-		assertTrue("doll owner search supports combat spacing",
-				BloodDrunkPuppeteerTuning.DOLL_OWNER_SEARCH_RANGE >= 48.0);
-		assertTrue("summoned dolls are not a loot farm",
-				BloodDrunkPuppeteerTuning.SUMMONED_DOLLS_DROP_LOOT == false);
+class BloodDrunkPuppeteerPolishTest {
+	@Test
+	void puppeteerSummonsFourSpacedDollsThatDropNothing() {
+		assertEquals(4, BloodDrunkPuppeteerTuning.DOLL_COUNT, "puppeteer summons four dolls");
+		assertTrue(BloodDrunkPuppeteerTuning.DOLL_OWNER_SEARCH_RANGE >= 48.0,
+				"doll owner search supports combat spacing");
+		assertFalse(BloodDrunkPuppeteerTuning.SUMMONED_DOLLS_DROP_LOOT, "summoned dolls are not a loot farm");
 
 		Set<String> offsets = new HashSet<>();
 		for (int i = 0; i < BloodDrunkPuppeteerTuning.DOLL_COUNT; i++) {
 			double[] offset = BloodDrunkPuppeteerTuning.dollSpawnOffset(i);
 			offsets.add(offset[0] + "," + offset[2]);
 		}
-		assertEquals("dolls spawn with distinct offsets", BloodDrunkPuppeteerTuning.DOLL_COUNT, offsets.size());
+		assertEquals(BloodDrunkPuppeteerTuning.DOLL_COUNT, offsets.size(), "dolls spawn with distinct offsets");
+	}
 
-		assertFileContains("biome modifier", Path.of(
-						"src/main/resources/data/hemomancy/neoforge/biome_modifier/add_blood_drunk_puppeteer.json"),
-				"hemomancy:blood_drunk_puppeteer");
-		assertFileContains("biome modifier gives puppeteers a findable wild spawn weight", Path.of(
-						"src/main/resources/data/hemomancy/neoforge/biome_modifier/add_blood_drunk_puppeteer.json"),
+	@Test
+	void puppeteerHasAFindableWildSpawnAndItsLoot() {
+		String modifier = ResourceReader.text("data/hemomancy/neoforge/biome_modifier/add_blood_drunk_puppeteer.json");
+		SourceAssertions.assertContains("biome modifier", modifier, "hemomancy:blood_drunk_puppeteer");
+		SourceAssertions.assertContains("biome modifier gives puppeteers a findable wild spawn weight", modifier,
 				"\"weight\": 24");
-		assertFileContains("spawn biome tag", Path.of(
-						"src/main/resources/data/hemomancy/tags/worldgen/biome/blood_drunk_puppeteer_spawnlist.json"),
-				"minecraft:dark_forest");
-		assertFileContains("spawn biome tag includes mangroves for wild testing", Path.of(
-						"src/main/resources/data/hemomancy/tags/worldgen/biome/blood_drunk_puppeteer_spawnlist.json"),
+		String biomes = ResourceReader.text("data/hemomancy/tags/worldgen/biome/blood_drunk_puppeteer_spawnlist.json");
+		SourceAssertions.assertContains("spawn biome tag", biomes, "minecraft:dark_forest");
+		SourceAssertions.assertContains("spawn biome tag includes mangroves for wild testing", biomes,
 				"minecraft:mangrove_swamp");
-		assertFileContains("puppeteer loot", Path.of(
-						"src/main/resources/data/hemomancy/loot_table/entities/blood_drunk_puppeteer.json"),
+		SourceAssertions.assertContains("puppeteer loot",
+				ResourceReader.text("data/hemomancy/loot_table/entities/blood_drunk_puppeteer.json"),
 				"hemomancy:enthralling_filament");
-		String puppeteerEntity = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/BloodDrunkPuppeteerEntity.java"))
-				.replace("\r\n", "\n");
-		assertContains("puppeteer uses biome placement rules instead of vanilla darkness lottery",
-				puppeteerEntity, "&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);");
-		assertDoesNotContain("puppeteer should not use vanilla monster darkness rules for signature wild spawns",
-				puppeteerEntity, "checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom)");
 	}
 
-	private static void assertFileContains(String label, Path path, String needle) throws Exception {
-		if (!Files.exists(path)) {
-			throw new AssertionError(label + ": missing " + path);
-		}
-		String content = Files.readString(path);
-		if (!content.contains(needle)) {
-			throw new AssertionError(label + ": expected " + needle);
-		}
-	}
-
-	private static void assertEquals(String label, int expected, int actual) {
-		if (expected != actual) {
-			throw new AssertionError(label + ": expected " + expected + " but got " + actual);
-		}
-	}
-
-	private static void assertTrue(String label, boolean value) {
-		if (!value) {
-			throw new AssertionError(label);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
-		}
+	@Test
+	void puppeteersSpawnAtNightUnderTheMonsterLightRule() {
+		String puppeteerEntity = SourceAssertions.readMainJava("common/entity/mob/monster/BloodDrunkPuppeteerEntity.java");
+		SourceAssertions.assertContains("puppeteers spawn at night under the monster light rule (CR-3)",
+				puppeteerEntity, "return checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);");
+		SourceAssertions.assertNotContains("puppeteers no longer skip the light check (CR-3)",
+				puppeteerEntity, "checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom)");
 	}
 }

@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import org.junit.jupiter.api.Test;
+
 public final class MorphlingUpkeepRulesTest {
 	private MorphlingUpkeepRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		zeroCostMorphlingsUseConfiguredBaselineDrain();
 		disabledUpkeepDoesNotDrainPaidMorphlings();
 		positiveCostsScaleConfiguredUpkeep();

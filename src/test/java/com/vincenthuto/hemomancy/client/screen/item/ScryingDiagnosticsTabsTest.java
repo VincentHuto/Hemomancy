@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.support.EnglishText;
 
 import java.util.List;
@@ -8,7 +9,8 @@ public final class ScryingDiagnosticsTabsTest {
 	private ScryingDiagnosticsTabsTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		tabsUseRequestedOrderAndLabels();
 		tabDescriptorsMarkOnlyTheActiveTab();
 	}

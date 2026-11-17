@@ -98,7 +98,9 @@ public class MycelialLanternMenu extends HemoContainerMenu {
 
     private boolean isCulture(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        return level.getRecipeManager().getAllRecipesFor(RecipeInit.enzyme_fruiting_type.get())
+        // Seeds as well as spores: the cloche grows a crop under its bell (core-loop Track 7).
+        return com.vincenthuto.hemomancy.common.world.farm.ClochePlanting.plantable(stack)
+                || level.getRecipeManager().getAllRecipesFor(RecipeInit.enzyme_fruiting_type.get())
                 .stream()
                 .anyMatch(holder -> holder.value().matchesCulture(stack));
     }
@@ -121,6 +123,11 @@ public class MycelialLanternMenu extends HemoContainerMenu {
 
     public int getMaxBloodVolume() {
         return dataAccess.get(3);
+    }
+
+    /** The tank as its bar draws it: fresh blood over clot (core-loop Track 3). */
+    public com.vincenthuto.hemomancy.common.tile.ReservoirReading reading() {
+        return com.vincenthuto.hemomancy.common.tile.ReservoirReading.ofMenu(getBloodVolume(), getMaxBloodVolume(), te);
     }
 
     public int getScaledCraftProgress() {

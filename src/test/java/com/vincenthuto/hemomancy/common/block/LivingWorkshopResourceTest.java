@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.block;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class LivingWorkshopResourceTest {
 	private static final Path RESOURCES = Path.of("src/main/resources");
@@ -11,7 +14,8 @@ public final class LivingWorkshopResourceTest {
 	private LivingWorkshopResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String lantern = readResource("data/hemomancy/recipe/cardinal_rite/working/mycelial_lantern.json");
 		String tap = readResource("data/hemomancy/recipe/gourdvine_tap.json");
 		String salve = readResource("data/hemomancy/recipe/sanguine_salve.json");
@@ -31,7 +35,7 @@ public final class LivingWorkshopResourceTest {
 		assertContains("Salve uses Bleeding Bulb", salve, "hemomancy:bleeding_bulb");
 		assertContains("Poultice no longer duplicates the Salve", poultice, "\"count\": 1");
 		assertContains("all brewing outcomes are taught", language, "Umbral turns Night Vision into Invisibility");
-		assertContains("First Culture guidance names cost", language, "600 blood over 2,400 ticks");
+		assertContains("First Culture guidance names cost (CB-13)", language, "150 blood over 2,400 ticks");
 		assertContains("Lantern accepts an authored fruiting culture", lanternMenu,
 				"holder.value().matchesCulture(stack)");
 		assertContains("Tap harvest drops output when inventory is full", tapBlock,
@@ -40,9 +44,5 @@ public final class LivingWorkshopResourceTest {
 
 	private static String readResource(String relative) throws IOException {
 		return Files.readString(RESOURCES.resolve(relative));
-	}
-
-	private static void assertContains(String label, String text, String needle) {
-		if (!text.contains(needle)) throw new AssertionError(label + " missing: " + needle);
 	}
 }

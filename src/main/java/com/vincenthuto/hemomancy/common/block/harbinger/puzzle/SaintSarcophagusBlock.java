@@ -74,7 +74,7 @@ import javax.annotation.Nullable;
  * Saint's sarcophagus is restored where it stood ({@link #restoreDormant}).
  */
 public class SaintSarcophagusBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
-	private static final BloodAccounting.Source OFFERING = BloodAccounting.Source.of("saint_sarcophagus_offering", Category.RITE, false, false);
+	private static final BloodAccounting.Source OFFERING = BloodAccounting.Source.of("saint_sarcophagus_offering", Category.RITE, false);
 
 public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -646,19 +646,30 @@ public static double[] tombCentre(Direction facing, double y) {
 }
 
 /**
+ * The first cell of {@code tomb}'s footprint at {@code pos} that keeps it from closing again, or null when it has
+ * room. Every cell must be replaceable: air, water, or a mark such as the blood stain a slain body leaves (a /kill'd
+ * Saint can leave one in its own tomb cell), never a player's building.
+ */
+public static @Nullable BlockPos blockingCell(Level level, BlockPos pos, BlockState tomb) {
+	if (!level.getBlockState(pos).canBeReplaced()) return pos;
+	if (!tomb.hasProperty(FACING)) return null;
+	for (BlockPos offset : getRotatedOffsets(tomb.getValue(FACING))) {
+		if (!level.getBlockState(pos.offset(offset)).canBeReplaced()) return pos.offset(offset);
+	}
+	return null;
+}
+
+/**
  * Closes a Saint back into its tomb when its trial ends: {@code tomb} (the sarcophagus's state before the
  * encounter cleared it) returns at {@code pos}, holding {@code saint}, dormant, lid closed, unconsecrated, with no
- * offerings, nothing drawn and no cooldown. Only into air or water, and only with room for the whole tomb, so a
- * player's building is never overwritten. False when the tomb could not return.
+ * offerings and no cooldown (a sample once drawn stays drawn). Only into replaceable cells (air, water, a blood stain), with room for
+ * the whole tomb, so a player's building is never overwritten. False when the tomb could not return.
  */
 public static boolean restoreDormant(Level level, BlockPos pos, BlockState tomb, EnumSaintType saint) {
 	if (!(tomb.getBlock() instanceof SaintSarcophagusBlock block) || !tomb.hasProperty(FACING)) return false;
+	if (blockingCell(level, pos, tomb) != null) return false;
 	BlockState current = level.getBlockState(pos);
 	boolean water = current.is(Blocks.WATER);
-	if (!current.isAir() && !water) return false;
-	for (BlockPos offset : getRotatedOffsets(tomb.getValue(FACING))) {
-		if (!level.getBlockState(pos.offset(offset)).canBeReplaced()) return false;
-	}
 	// whoever stands where the tomb closes is lifted onto its lid rather than shut inside it
 	AABB footprint = new AABB(pos);
 	for (BlockPos offset : getRotatedOffsets(tomb.getValue(FACING))) footprint = footprint.minmax(new AABB(pos.offset(offset)));
@@ -678,16 +689,8 @@ private static boolean isPlayerAlignedWithSaint(Player player, EnumSaintType sai
 	if (temper == null) {
 		return false;
 	}
-	EnumBloodTemper dominant = null;
-	float dominantValue = 0.0F;
-	for (EnumBloodTemper candidate : EnumBloodTemper.values()) {
-		float value = temper.getAlignmentByTemper(candidate);
-		if (value > dominantValue) {
-			dominant = candidate;
-			dominantValue = value;
-		}
-	}
-	return dominant != null && dominantValue > 0.0F && saint.isAligned(dominant);
+	EnumBloodTemper dominant = temper.strongestTemper();
+	return dominant != null && saint.isAligned(dominant);
 }
 
 private static void triggerSaintEncounter(Level worldIn, BlockPos pos, Player player,

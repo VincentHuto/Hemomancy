@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.compat.jei.AdvancedBrewingRecipeCategory;
 import com.vincenthuto.hemomancy.compat.jei.BloodInfusionRecipeCategory;
+import com.vincenthuto.hemomancy.compat.jei.BrazierTransmutationRecipeCategory;
 import com.vincenthuto.hemomancy.compat.jei.EnzymeFruitingRecipeCategory;
 import com.vincenthuto.hemomancy.compat.jei.JEIPlugin;
 import com.vincenthuto.hemomancy.compat.jei.MorphicNectarRecipeCategory;
@@ -25,7 +26,9 @@ import java.util.List;
 
 /**
  * With hemomancy.jeiReview (run jeiReviewClient), opens every Hemomancy JEI category in turn once a world is loaded
- * and captures each page into build/jei-client-review/screenshots, then stops the client. Excluded from release jars.
+ * and captures each page into build/jei-client-review/screenshots, then stops the client. -PjeiReviewOnly=a,b keeps the
+ * categories whose uid path is named, and -PjeiReviewPages=n also captures the next n pages of each. Excluded from
+ * release jars.
  */
 @JeiPlugin
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
@@ -33,15 +36,19 @@ public final class JeiClientReview implements IModPlugin {
     private static IJeiRuntime runtime;
     private static int ticks;
     private static int shot;
+    private static int page;
+    private static List<RecipeType<?>> types;
 
     private static final List<RecipeType<?>> TYPES = List.of(
             JEIPlugin.memory_weaving_type, JEIPlugin.ghastly_distillation_recipe_type, JEIPlugin.pallid_distillation_recipe_type,
-            AdvancedBrewingRecipeCategory.TYPE, BloodInfusionRecipeCategory.JEI_TYPE, EnzymeFruitingRecipeCategory.JEI_TYPE,
+            AdvancedBrewingRecipeCategory.TYPE, BloodInfusionRecipeCategory.JEI_TYPE, BrazierTransmutationRecipeCategory.JEI_TYPE,
+            EnzymeFruitingRecipeCategory.JEI_TYPE,
             JEIPlugin.armature_upgrade_type, JEIPlugin.incubator_recipe_type, JEIPlugin.living_weapon_graft_type,
             MycelialCrucibleRecipeCategory.JEI_TYPE, MorphicNectarRecipeCategory.JEI_TYPE,
             WhiteHumorPurificationRecipeCategory.JEI_TYPE, JEIPlugin.scar_station_recipe_type, SuccessionRecipeCategory.TYPE,
             JEIPlugin.blood_structure_recipe_type, JEIPlugin.threshold_rite_recipe_type,
-            JEIPlugin.dominion_rite_recipe_type, JEIPlugin.working_craft_recipe_type, JEIPlugin.communion_rite_recipe_type);
+            JEIPlugin.dominion_rite_recipe_type, JEIPlugin.working_craft_recipe_type, JEIPlugin.communion_rite_recipe_type,
+            com.vincenthuto.hemomancy.compat.jei.GougeCatalystRecipeCategory.JEI_TYPE);
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -64,17 +71,31 @@ public final class JeiClientReview implements IModPlugin {
             mc.resizeDisplay();
         }
         if (ticks < 100) return;
+        if (types == null) {
+            List<String> only = List.of(System.getProperty("hemomancy.jeiReview.only", "").split(","));
+            types = TYPES.stream().filter(type -> only.equals(List.of("")) || only.contains(type.getUid().getPath())).toList();
+        }
+        int pages = Integer.getInteger("hemomancy.jeiReview.pages", 0);
         int local = (ticks - 100) % 50;
         if (local == 0) {
-            if (shot == TYPES.size()) { mc.stop(); return; }
-            runtime.getRecipesGui().showTypes(List.of(TYPES.get(shot)));
+            if (shot == types.size()) { mc.stop(); return; }
+            if (page == 0) {
+                runtime.getRecipesGui().showTypes(List.of(types.get(shot)));
+            } else if (mc.screen != null) {
+                // JEI's next-page key.
+                mc.screen.keyPressed(org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN, 0, 0);
+            }
             mc.mouseHandler.releaseMouse();
         }
         if (local == 40) {
-            String name = TYPES.get(shot).getUid().getPath();
-            Screenshot.grab(mc.gameDirectory, "jei-" + shot + "-" + name + ".png", mc.getMainRenderTarget(), message -> {});
-            Hemomancy.LOGGER.info("JEI_REVIEW captured {} {}", shot, name);
-            shot++;
+            String name = types.get(shot).getUid().getPath();
+            String file = "jei-" + shot + "-" + name + (page == 0 ? "" : "-p" + page) + ".png";
+            Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), message -> {});
+            Hemomancy.LOGGER.info("JEI_REVIEW captured {} {} page {}", shot, name, page);
+            if (++page > pages) {
+                page = 0;
+                shot++;
+            }
         }
     }
 }

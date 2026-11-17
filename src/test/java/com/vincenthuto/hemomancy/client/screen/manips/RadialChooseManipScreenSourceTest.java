@@ -51,10 +51,14 @@ class RadialChooseManipScreenSourceTest {
 				"ManipulationIconResolver.overlay(ref.id())");
 		assertContains("generic radial reads per-item background colors", menu,
 				"item.getBackgroundColor");
-		assertContains("absorption is added before projection for the top inner half", screen,
-				"ManipulationEquipHelper.BLOOD_ABSORPTION");
-		assertContains("projection is added to the second inner half", screen,
-				"ManipulationEquipHelper.BLOOD_PROJECTION");
+		assertContains("Absorption sits on the inner wheel as a verb pick", screen,
+				"addVerb(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION, Verb.ABSORB");
+		assertContains("Projection sits on the inner wheel as a verb pick", screen,
+				"addVerb(allManips, ManipulationEquipHelper.BLOOD_PROJECTION, Verb.PROJECT");
+		assertContains("a verb pick goes to the server as the plain verb", screen,
+				"new BloodVerbChoicePacket(verb)");
+		assertContains("Conjure Staff keeps its fixed inner entry", screen,
+				"ManipulationEquipHelper.CONJURE_STAFF");
 		assertContains("outer ring uses the shared memorized wheel order", screen,
 				"ManipulationWheelOrder.resolve(allManips, equippedNames)");
 		assertContains("reliquary uses the shared memorized wheel order", reliquary,

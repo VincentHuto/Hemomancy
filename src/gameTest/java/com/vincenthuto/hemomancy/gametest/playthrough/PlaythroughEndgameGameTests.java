@@ -17,7 +17,6 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
-import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterRules;
 import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantYieldRules;
@@ -26,6 +25,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.event.PossessionEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -82,6 +82,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -132,7 +133,6 @@ public final class PlaythroughEndgameGameTests {
 	private static final String WRONG_PATH_RITE = "message.hemomancy.cardinal_rite_activation.this_rite_cannot_answer_your_current";
 	private static final String RITE_REQUIRES = "message.hemomancy.cardinal_rite_activation.this_rite_requires";
 	/** The layered floor's line when it filters out every rite the player may not attempt (the D-32 family). */
-	private static final String FLOOR_NO_RITE = "message.hemomancy.cardinal_rite_activation.the_floor_answers_but_no_structure";
 	private static final String ANCESTRAL_SILENT = "message.hemomancy.cardinal_rite_activation.ancestral_communion_silentium";
 	private static final String IMPRINTED = "item.hemomancy.mnemonic_blueprint.imprinted";
 	private static final String BODY_REFUSES = "message.hemomancy.apotheos_body.refuses_it";
@@ -144,6 +144,7 @@ public final class PlaythroughEndgameGameTests {
 	private static final String SYNAPSE_NOT_IN_GARDENS = "block.hemomancy.mycelial_synapse.not_in_gardens";
 	private static final String STRUCTURE_DEGREE = "message.hemomancy.blood_structure_crafting_helper.this_formation_requires_and_demands";
 	private static final String VISITATION_NOT_APOTHEOS = "message.hemomancy.visitation.not_apotheos";
+	private static final String VISITATION_AWAY = "message.hemomancy.visitation.away";
 	private static final String NO_GARDENS = "message.hemomancy.possession.no_gardens";
 	private static final String POSSESSION_NOT_SILENTIUM = "message.hemomancy.possession.not_silentium";
 	private static final String POSSESSION_MIND_BROKEN = "message.hemomancy.possession.mind_broken";
@@ -170,6 +171,7 @@ public final class PlaythroughEndgameGameTests {
 	private static final String WHISPER_SILENCED = "hemomancy.whisper.silenced";
 	private static final String WHISPER_PENDING = "hemomancy.whisper.pending";
 	private static final String SPINE_REFUSED = "message.hemomancy.fungal_garden_travel_helper.the_spine_will_not_carry_you";
+	private static final String SPINE_DORMANT = "message.hemomancy.fungal_garden_travel_helper.spine_dormant";
 	private static final String ENDING_PREFIX = "hemomancy.dialogue.ending.";
 	private static final String WARD_REFUSED = "message.hemomancy.mausoleum_ward.refused";
 	private static final String HALLOWED_BURN = "message.hemomancy.hallowed_ground";
@@ -182,6 +184,7 @@ public final class PlaythroughEndgameGameTests {
 	private static final String RING_CONTESTED = "message.hemomancy.ring_door.contested";
 	private static final String RECOLLECTION_TAKEN = "message.hemomancy.recollection.taken";
 	private static final String MYCOPHANT_REMATCH_KEY = "hemomancy:mycophant_rematch";
+	private static final String MYCOPHANT_CLAIM_KEY = "hemomancy:mycophant_claim_ticks";
 
 	private static final String[] TEACHERS = {"vicar", "alchemist", "artificer", "mnemonist"};
 	private static final PlaythroughNpcs.Role[] TEACHER_ROLES = {PlaythroughNpcs.Role.VICAR, PlaythroughNpcs.Role.ALCHEMIST,
@@ -308,18 +311,10 @@ public final class PlaythroughEndgameGameTests {
 		PlaythroughStates.apotheosPendingD7(p); // ARRANGE
 		PlaythroughStates.assertAt(helper, p, PlaythroughStates.Checkpoint.APOTHEOS_PENDING_D7);
 		int[] mark = new int[1];
-		int[] rescues = new int[1];
 		PlaythroughClock clock = PlaythroughClock.start(helper);
 		clock.then(() -> mark[0] = p.mark());
-		// The ORDEAL deadlock CHAIN-1 is not the deck's doing: with the deck pinned free of the draining waves the woken
-		// rings still came up dry and damaged and needed 2 rescues. So this required test keeps the ARRANGE rescue and
-		// reports its count (a pass with rescues is DEGRADED); apotheosRiteWithoutRescue keeps the question open.
-		apotheosRite(helper, p, clock, helper.absolutePos(GRAND_ORIGIN), rescues);
+		apotheosRite(helper, p, clock, helper.absolutePos(GRAND_ORIGIN));
 		clock.then(() -> {
-			if (rescues[0] > 0) {
-				PlaythroughNotRun.degraded(helper, "the Rite of Apotheos passed with " + rescues[0] + " ARRANGE rescue(s) of"
-						+ " dry anchors (decision CHAIN-1)");
-			}
 			helper.assertTrue(p.degree() == 8, "the Rite of Apotheos promotes to degree 8, not " + p.degree() + "; " + p.last());
 			helper.assertTrue(path(p) == EnumArchonPath.APOTHEOS, "the path is APOTHEOS, not " + path(p));
 			helper.assertTrue(saidSince(p, mark[0], DEGREE_LINE) && saidSince(p, mark[0], TITLE_APOTHEOS),
@@ -328,33 +323,23 @@ public final class PlaythroughEndgameGameTests {
 					"an Apotheos has the Truth in the Liber");
 			helper.assertTrue(p.count(ItemInit.living_staff.get()) == 1, "the planted Staff comes back once");
 			PlaythroughStates.assertAt(helper, p, PlaythroughStates.Checkpoint.APOTHEOS_D8);
-			PlaythroughLog.note(helper, "apotheosRiteByPlay: passed with CHAIN-1 rescues=" + rescues[0]);
 		}).run();
 	}
 
 	/**
 	 * The Rite of Apotheos by a solo caster with no ARRANGE rescue: once the woken ring runs dry in the ordeal (the
-	 * covenant pressure drains every anchor until its Seal is traced; a missed wave adds instability), can the caster
-	 * still climb out with bare Projection?
+	 * covenant pressure drains every anchor until its Seal is traced; a missed wave adds instability), the caster climbs
+	 * out with bare Projection. A dry anchor takes the blood as fill before its repair (PT-88), so the caster fills the
+	 * dry anchors first and mends the rest after.
 	 */
-	// DECISION CHAIN-1: in a grand rite's ORDEAL, dry anchors raise the deficit pressure every second
-	// (ActiveCardinalRite.applyAnchorDeficitPressure from CardinalRiteOrdealEngine), which re-breaks or re-threatens the
-	// same anchors by damage priority, and CardinalRiteInteractionHandler.tryProject takes a 50 mL repair before it fills
-	// a damaged anchor. Two repairs a second are 100 mL, all bare Projection gives (5 mL a tick), so a solo caster never
-	// refills and the wave never clears ("The ordeal cannot advance while the cardinal stations run dry"). A floor's
-	// sleeping support sigil (the Hematic Lattice, stability 20) buys one window, not enough. Seen on the Rite of Apotheos
-	// and the Bloom of the Qliphoth; the deck is not the cause (with the draining waves pinned out, the rings woken at
-	// waves 2 and 3 still came up dry and damaged and deadlocked). Options: let Projection fill a dry anchor before (or while) repairing it / press only
-	// anchors that are not under repair / slow the pressure or cheapen the repair at grand rites / keep (helpers or a
-	// planned Seal trace are the answer, and say so).
-	@GameTest(template = EMPTY, timeoutTicks = GRAND_TIMEOUT, batch = "playthrough_d8_apotheos_rite_solo", required = false)
+	@GameTest(template = EMPTY, timeoutTicks = GRAND_TIMEOUT, batch = "playthrough_d8_apotheos_rite_solo")
 	public static void apotheosRiteWithoutRescue(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 2, 22));
 		PlaythroughStates.apotheosPendingD7(p); // ARRANGE
 		PlaythroughClock clock = PlaythroughClock.start(helper);
-		apotheosRite(helper, p, clock, helper.absolutePos(GRAND_ORIGIN), null);
+		apotheosRite(helper, p, clock, helper.absolutePos(GRAND_ORIGIN));
 		clock.then(() -> helper.assertTrue(p.degree() == 8,
-				"CHAIN-1 expected: a solo caster finishes the Rite of Apotheos without help; degree " + p.degree())).run();
+				"a solo caster finishes the Rite of Apotheos without help; degree " + p.degree())).run();
 	}
 
 	/**
@@ -426,17 +411,20 @@ public final class PlaythroughEndgameGameTests {
 	}
 
 	/**
-	 * At APOTHEOS_PENDING without the Truth memo, the Rite of Apotheos is not discovered (its Liber gate is the
-	 * Truth entry) and a blank Mnemonic Blueprint cannot be imprinted with it, though planting the Staff on its floor
-	 * would start it. The Truth comes from an optional whisper memo, or at Degree 8 itself.
+	 * The Eighth Degree chosen from the core-witness whisper, with no Truth memo read: the choice opens the Truth entry,
+	 * so the Rite of Apotheos is discovered and a blank Mnemonic Blueprint takes it.
 	 */
-	// DECISION D8-3: the Apotheos rite is discoverable only through an optional memo (or at D8, too late). Should the
-	// Truth unlock at APOTHEOS_PENDING? Options: unlock the entry at APOTHEOS_PENDING / a pointer line from a teacher or
-	// the choice whisper / keep (memo or discovery by building the floor).
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
-	public static void apotheosRiteNotInTheLiber(GameTestHelper helper) {
+	// FIX: PT-82 (D8-3) FungalWhisperDialogueEvents unlocks LiberEntryDefinitions.TRUTH (source DIALOGUE) with the
+	// archon_choice_eighth_degree choice. The D6 Eternal Covenant shares the gate and is discovered with it.
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
+	public static void apotheosRiteInTheLiberAtTheChoice(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 6, 6));
-		PlaythroughStates.apotheosPendingD7(p); // ARRANGE (no memo read)
+		PlaythroughStates.choicePendingD7(p); // ARRANGE (no memo read)
+		PendingWhispers.enqueue(p.player(), FungalWhisperDialogueTrees.coreWitnessDialogue()); // ARRANGE: as the forced return queues it
+		p.openWhisper();
+		p.chooseWhisper("archon_choice_eighth_degree").said("hemomancy.dialogue.event.archon_choice_eighth_degree");
+		helper.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(p.player()).getArchonPath() == EnumArchonPath.APOTHEOS_PENDING,
+				"the choice sets APOTHEOS_PENDING");
 		ResourceLocation rite = Hemomancy.rloc("cardinal_rite/apotheos_rite");
 		boolean memo = LiberKnowledgeHelper.knowsMemo(p.player(), MemoDefinitions.FUNGAL_WHISPER_TRUTH.id());
 		boolean entry = LiberKnowledgeHelper.hasEntry(p.player(), LiberEntryDefinitions.TRUTH);
@@ -446,10 +434,10 @@ public final class PlaythroughEndgameGameTests {
 		ImprintMnemonicBlueprintPacket.handle(new ImprintMnemonicBlueprintPacket(new MnemonicBlueprintTarget(
 				MnemonicBlueprintTarget.Type.CARDINAL_RITE, rite)), PayloadContexts.of(p.player()));
 		Outcome imprint = probe.finish();
-		PlaythroughLog.note(helper, "D8-3: at APOTHEOS_PENDING memo=" + memo + " truthEntry=" + entry + " riteDiscovered="
+		PlaythroughLog.note(helper, "PT-82: at APOTHEOS_PENDING memo=" + memo + " truthEntry=" + entry + " riteDiscovered="
 				+ discovered + "; imprint " + imprint.describe());
-		helper.assertTrue(discovered && imprint.saidKeys().contains(IMPRINTED),
-				"DECISION D8-3: a player who chose the Eighth Degree can find the Rite of Apotheos in the Liber and imprint it; "
+		helper.assertTrue(entry && discovered && imprint.saidKeys().contains(IMPRINTED),
+				"PT-82: a player who chose the Eighth Degree can find the Rite of Apotheos in the Liber and imprint it; "
 						+ "discovered=" + discovered + ", imprint said " + imprint.saidKeys());
 		helper.succeed();
 	}
@@ -641,23 +629,24 @@ public final class PlaythroughEndgameGameTests {
 
 	/**
 	 * The heart-node respawn trap: an Apotheos whose node is planted in the Gardens respawns there after every death.
-	 * The Gardens are not loaded here, so the test says NOT RUN.
+	 * Expected (PT-80, NQ-12-4 A): the node stays the respawn; Leave the Gardens on its screen, or the Spine with no
+	 * return point, takes the owner free to the bed they had before the node, else the world spawn. The Gardens are not
+	 * loaded here, so the test says NOT RUN; the destination itself is proved by
+	 * {@code HeartNodeScreenGameTests.theWayHomeFindsTheBedElseTheWorldSpawn}.
 	 */
-	// DECISION D8-1: an Apotheos whose heart-node forces respawn has no way home after any death (HR 5.6 says return is
-	// never gated). Which destination should a stranded Apotheos return to? Options: world spawn / their bed / the last
-	// Overworld position (the Spine's return point) / keep.
 	@GameTest(template = EMPTY, timeoutTicks = 20, batch = BATCH, required = false)
 	public static void heartNodeRespawnTrap(GameTestHelper helper) {
 		PlaythroughNotRun.require(helper, FungalGardenTravelHelper.FUNGAL_GARDENS,
-				"the heart-node respawn trap (a node planted in the Gardens, a death, the forced respawn)",
+				"the heart-node respawn trap (a node planted in the Gardens, a death, Leave the Gardens to the bed)",
 				PlaythroughNotRun.HEART_NODE);
-		PlaythroughNotRun.notRun(helper, "DECISION D8-1 awaits the user before the trap has an expected destination",
+		PlaythroughNotRun.notRun(helper, "the way home is walked in the Gardens by the heart-node review client",
 				PlaythroughNotRun.HEART_NODE);
 	}
 
 	/**
 	 * The Rite of Visitation and the Rite of Possession planted on their floors, refused in order. Visitation: a D7 is
-	 * below the rite, a Silentium is not an Apotheos, an Apotheos is told the Gardens cannot be reached. Possession:
+	 * below the rite, a Silentium is not an Apotheos, an Apotheos on a Chamber visit is away from their body, an
+	 * Apotheos is told the Gardens cannot be reached. Possession:
 	 * an Apotheos is not a Silentium; a Silentium with a broken mind, with no surrogate, with another's pet, with an
 	 * unbound bat, and with an armor stand (held by nature) that ends at {@code no_gardens}.
 	 */
@@ -682,11 +671,13 @@ public final class PlaythroughEndgameGameTests {
 		PlaythroughRites.prepare(clock, apotheos, visit);
 		PlaythroughRites.prepare(clock, silentium, possess);
 		clock.then(() -> {
-			// A D7 below the rite: the degree line, the wrong-path line, or (pending D-32, not re-decided here) the layered
-			// floor's "no rite matches", which it says when it filters out every rite the player may not attempt.
-			refusedAtFocus(helper, archon, visit, List.of(RITE_REQUIRES, WRONG_PATH_RITE, FLOOR_NO_RITE),
-					"a D7 Archon at the Rite of Visitation");
+			// A D7 below the rite is told the Degree it needs (PT-32).
+			refusedAtFocus(helper, archon, visit, RITE_REQUIRES, "a D7 Archon at the Rite of Visitation");
 			refusedAtFocus(helper, silentium, visit, VISITATION_NOT_APOTHEOS, "a Silentium at the Rite of Visitation");
+			// FX-17: a body whose will is away (here a Chamber visit) is not carried. ARRANGE: the visit's root flag.
+			apotheos.player().getPersistentData().putBoolean("hemomancy:chamber_visit_active", true);
+			refusedAtFocus(helper, apotheos, visit, VISITATION_AWAY, "an Apotheos on a Chamber visit at the Rite of Visitation");
+			apotheos.player().getPersistentData().remove("hemomancy:chamber_visit_active");
 			refusedAtFocus(helper, apotheos, visit, NO_GARDENS, "an Apotheos at the Rite of Visitation");
 
 			refusedAtFocus(helper, apotheos, possess, POSSESSION_NOT_SILENTIUM, "an Apotheos at the Rite of Possession");
@@ -708,13 +699,29 @@ public final class PlaythroughEndgameGameTests {
 		}).run();
 	}
 
+	/** V-12-5: Mind Broken has no cure, and dying is not one; the body that respawns keeps the time left. */
+	@GameTest(template = EMPTY, timeoutTicks = 40, batch = BATCH)
+	public static void mindBrokenSurvivesADeath(GameTestHelper helper) {
+		PlaythroughPlayer dead = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 2, 2));
+		PlaythroughPlayer respawned = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 6, 2));
+		PlaythroughStates.silentiumD8(dead); // ARRANGE
+		dead.player().addEffect(new MobEffectInstance(EffectInit.mind_broken, 4321)); // ARRANGE: a broken possession
+		PossessionEvents.onClone(new PlayerEvent.Clone(respawned.player(), dead.player(), true));
+		MobEffectInstance kept = respawned.player().getEffect(EffectInit.mind_broken);
+		helper.assertTrue(kept != null && kept.getDuration() == 4321, "the respawned body is still Mind Broken with its time left: " + kept);
+		PlaythroughPlayer travelled = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 10, 2));
+		PossessionEvents.onClone(new PlayerEvent.Clone(travelled.player(), dead.player(), false));
+		helper.assertTrue(!travelled.player().hasEffect(EffectInit.mind_broken), "a clone that is not a death is left to vanilla, which copies every effect itself");
+		helper.succeed();
+	}
+
 	/**
 	 * The Rite of Ancestral Communion by a solo D7 Archon, the late game's hardest helper requirement: three recruits,
 	 * one NPC per type and per outpost, so a Vicar, an Alchemist and a Mnemonist from three different outposts are
 	 * pledged by their own dialogue option. The ledger's summon is used, then at INSCRIPTION two are assigned by a
 	 * right-click; the seal is refused while the third station is empty (the helpers line), then the third is assigned
-	 * and the rite completes. The fungal voice opens (its tree has English and no dead end) and an ending option is
-	 * chosen; {@code voices_in_the_vein} is earned. The wave deck is pinned without the draining waves (ARRANGE,
+	 * and the rite completes. The fungal voice opens (its tree has English, no dead end and a closing option), the
+	 * communion is counted once and {@code voices_in_the_vein} is earned. The wave deck is pinned without the draining waves (ARRANGE,
 	 * CHAIN-1); a recruit who has not reached his station 200 ticks after his assignment is set on it (ARRANGE: the walk).
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = GRAND_TIMEOUT, batch = "playthrough_d8_ancestral")
@@ -732,6 +739,7 @@ public final class PlaythroughEndgameGameTests {
 		String helpersRefused = "message.hemomancy.cardinal_rite_interaction_handler.required_bloodline_helpers_must_take_their";
 		int[] mark = new int[1];
 		boolean[] refusedWithTwo = new boolean[1];
+		int[] communionsBefore = {HemoCapabilityAccess.getInitiatoryDegree(p.player()).getAncestralCommunions()};
 		PlaythroughClock clock = PlaythroughClock.start(helper);
 		clock.then(() -> {
 			for (Entity npc : recruits) {
@@ -780,10 +788,14 @@ public final class PlaythroughEndgameGameTests {
 			helper.assertTrue(!opened.isEmpty(), "the fungal voice opens a dialogue");
 			DialogueView voice = new DialogueView(opened.getLast().tree());
 			voice.assertLangKeys(helper, "the Ancestral Communion voice").assertNoDeadEnds(helper, "the Ancestral Communion voice");
-			String end = voice.reachableEvents().stream().filter(event -> event.startsWith("communion_")).findFirst().orElse(null);
-			helper.assertTrue(end != null, "the voice offers a way to end the communion: " + voice.describe());
-			Outcome chosen = p.forgeOption(end, 0); // the option the open screen offers, sent as the screen sends it
-			PlaythroughLog.note(helper, "ancestral: chose " + end + ": " + chosen.describe());
+			// The voice's options post no events since the 2026-11-03 cleanup (d5a7ddbfa): its trees close on a plain
+			// option, so the way out is an option that leads nowhere.
+			helper.assertTrue(voice.tree().getStartNode().options().stream()
+							.anyMatch(option -> option.nextNodeId() == null),
+					"the voice offers a way to end the communion: " + voice.describe());
+			int communions = HemoCapabilityAccess.getInitiatoryDegree(p.player()).getAncestralCommunions();
+			helper.assertTrue(communions == communionsBefore[0] + 1, "the communion is counted once: "
+					+ communionsBefore[0] + " -> " + communions);
 		}).run();
 	}
 
@@ -903,11 +915,11 @@ public final class PlaythroughEndgameGameTests {
 
 	/**
 	 * The Mycophant yields for 120 ticks before the victory is settled. One owner logs out in that time and another
-	 * dies (the death is caught by the encounter and expels them): neither keeps the win.
+	 * dies (the death is caught by the encounter): both keep the win, the logout's at the next login.
 	 */
-	// DECISION D8-2 (the D-20 pattern): a Mycophant victory is lost if the owner logs out or dies during the 120-tick
-	// yield. Options: record the win by UUID and settle it at the next login / settle at the killing blow / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 1000, batch = "playthrough_d8_mycophant_yield", required = false)
+	// RULING PT-81 (D8-2): the win is recorded by owner UUID at the killing blow and settled at the next login; a death
+	// in the yield settles it at once.
+	@GameTest(template = EMPTY, timeoutTicks = 1000, batch = "playthrough_d8_mycophant_yield")
 	public static void mycophantYieldLogout(GameTestHelper helper) {
 		PlaythroughPlayer leaver = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughPlayer dier = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 20));
@@ -915,11 +927,18 @@ public final class PlaythroughEndgameGameTests {
 		PlaythroughStates.apotheosD8(dier); // ARRANGE
 		MycophantEntity first = PlaythroughNpcs.ownedMycophant(helper, leaver, PlaythroughSites.stand(helper, 14, 4));
 		MycophantEntity second = PlaythroughNpcs.ownedMycophant(helper, dier, PlaythroughSites.stand(helper, 14, 20));
+		// ARRANGE: neither boss fells its owner before the killing blow; the second fights the dier through the leaver's blows.
+		leaver.player().setInvulnerable(true);
+		dier.player().setInvulnerable(true);
 		PlaythroughClock.start(helper)
 				.step(lastBlows(helper, leaver, () -> first))
-				.then(leaver::offline)
+				.then(() -> {
+					leaver.player().setInvulnerable(false);
+					leaver.offline();
+				})
 				.step(lastBlows(helper, dier, () -> second))
 				.then(() -> {
+					dier.player().setInvulnerable(false);
 					Outcome died = dier.die();
 					PlaythroughLog.note(helper, "the owner dies in the yield: " + died.describe());
 				})
@@ -932,20 +951,27 @@ public final class PlaythroughEndgameGameTests {
 					PlaythroughLog.note(helper, "D8-2: logged out in the yield won=" + leaverWon + " tendril="
 							+ leaver.count(ItemInit.mycophant_tendril.get()) + "; died in the yield won=" + dierWon + " tendril="
 							+ dier.count(ItemInit.mycophant_tendril.get()) + " said " + dier.chat());
-					helper.assertTrue(leaverWon && dierWon, "DECISION D8-2: a Mycophant felled by the owner stays won through a "
+					helper.assertTrue(leaverWon && dierWon, "PT-81: a Mycophant felled by the owner stays won through a "
 							+ "logout or a death in the yield; logout won=" + leaverWon + ", death won=" + dierWon);
+					for (PlaythroughPlayer winner : List.of(leaver, dier)) {
+						helper.assertTrue(winner.count(ItemInit.mycophant_tendril.get()) == 1
+								&& winner.owed(MycophantEncounterManager.TENDRIL).isEmpty(),
+								"PT-81: the settled win hands the Tendril once: " + winner.count(ItemInit.mycophant_tendril.get()));
+						helper.assertTrue(!winner.player().getPersistentData().getBoolean(PlaythroughNpcs.MYCOPHANT_ACTIVE_KEY),
+								"PT-81: the settled win leaves the Nursery");
+						helper.assertTrue(winner.player().isAlive(), "PT-81: the owner is alive after the settled win");
+					}
 				})
 				.run();
 	}
 
 	/**
 	 * A failed rematch (the owner dies in the Nursery after a lure): the expelled line promises the hive will remember
-	 * after five minutes in the Gardens, but a defeated Apotheos's hunt never re-arms on its own; only a new lure
-	 * starts a rematch.
+	 * after five minutes in the Gardens. Once the cooldown has run in the Gardens the rematch comes back by itself, and
+	 * it does so after every loss until the player wins.
 	 */
-	// DECISION D8-5: the expelled line ("It will remember after five minutes in the Gardens") promises a retry that a
-	// rematch does not give. Options: reword the line for a rematch / re-arm the rematch after the cooldown / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = "playthrough_d8_mycophant_rematch", required = false)
+	// RULING PT-84 (D8-5), NQ-07-4: the rematch re-arms after the cooldown, after every lost rematch until a win.
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = "playthrough_d8_mycophant_rematch")
 	public static void mycophantRematchLine(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.apotheosD8(p); // ARRANGE
@@ -957,14 +983,19 @@ public final class PlaythroughEndgameGameTests {
 		Outcome died = p.die();
 		died.said(MYCOPHANT_EXPELLED);
 		int cooldown = degree.getMycophantRetryCooldownTicks();
-		boolean rearms = MycophantEncounterRules.shouldAccumulate(degree.getDegreeNumber(), degree.getArchonPath(),
-				degree.isMycophantDefeated(), true, true, false, false, false);
-		boolean lure = MycophantEncounterRules.canUseLure(degree.getDegreeNumber(), degree.getArchonPath(),
-				degree.isMycophantDefeated(), 0, false, true, true);
+		helper.assertTrue(cooldown > 0 && degree.isMycophantRematchOwed(),
+				"PT-84: a lost rematch is owed back after the cooldown; cooldown=" + cooldown
+						+ ", owed=" + degree.isMycophantRematchOwed());
+		for (int tick = 1; tick < cooldown; tick++) MycophantEncounterManager.tickHunt(p.player()); // ACT: the Gardens time
+		helper.assertTrue(!p.player().getPersistentData().contains(MYCOPHANT_CLAIM_KEY),
+				"PT-84: the rematch waits for the whole cooldown");
+		MycophantEncounterManager.tickHunt(p.player()); // ACT: the cooldown's last Gardens tick
+		boolean claimed = p.player().getPersistentData().contains(MYCOPHANT_CLAIM_KEY);
+		boolean asRematch = p.player().getPersistentData().getBoolean(MYCOPHANT_REMATCH_KEY);
 		PlaythroughLog.note(helper, "D8-5: expelled after a rematch: " + died.describe() + "; cooldown " + cooldown
-				+ " ticks; after it the hunt re-arms=" + rearms + ", a new lure works=" + lure);
-		helper.assertTrue(rearms, "DECISION D8-5: the expelled line promises the Gardens remember the player after five "
-				+ "minutes, so a defeated Apotheos's rematch comes back by itself; re-arms=" + rearms + ", lure=" + lure);
+				+ " ticks; after it the claim began=" + claimed + " as a rematch=" + asRematch);
+		helper.assertTrue(claimed && asRematch, "PT-84: once the cooldown has run in the Gardens the rematch comes back by "
+				+ "itself; claimed=" + claimed + ", rematch=" + asRematch);
 		helper.succeed();
 	}
 
@@ -1293,7 +1324,8 @@ public final class PlaythroughEndgameGameTests {
 
 	/**
 	 * What a Silentium can no longer do: the Rite of Ancestral Communion is refused at planting, a whisper queued
-	 * before the cut is not heard (the inbox says the thread was cut and clears), the Spine will not carry them, and
+	 * before the cut is not heard (the inbox says the thread was cut and clears), the Spine lies dormant after its one
+	 * crossing and carries them nowhere, and
 	 * the Silent Archon armature recipes answer a Silentium only (not a Silence still pending, not an Apotheos).
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 1500, batch = RITES)
@@ -1324,8 +1356,13 @@ public final class PlaythroughEndgameGameTests {
 			apotheos.openWhisper();
 			helper.assertTrue(apotheos.openWhisperId().isPresent(), "an Apotheos still hears the hive");
 
+			// The Spine made its one crossing before D8: it lies dormant (ruled 2026-11-06), which is checked before the
+			// path refusal, so a Silentium hears the dormant line and is carried nowhere.
 			silent.wield(ItemInit.fungal_spine.get());
-			silent.use(InteractionHand.MAIN_HAND).said(SPINE_REFUSED);
+			Outcome spine = silent.use(InteractionHand.MAIN_HAND).said(SPINE_DORMANT).didNotSay(SPINE_REFUSED);
+			helper.assertTrue(!FungalGardenTravelHelper.isProjectionActive(silent.player()),
+					"the dormant Spine starts no projection; " + spine);
+			helper.assertTrue(spine.bloodAfter() == spine.bloodBefore(), "the dormant Spine takes no blood; " + spine);
 
 			ResourceLocation recipeId = Hemomancy.rloc("armature_upgrade/blood_lust_to_silent_archon_helm");
 			var holder = helper.getLevel().getRecipeManager().byKey(recipeId);
@@ -1351,7 +1388,8 @@ public final class PlaythroughEndgameGameTests {
 	/**
 	 * The Vicar, Alchemist, Artificer and Mnemonist each add exactly one ending line to their greeting for each of the
 	 * six late states (undecided, silent_pending, silent_absorb, silent_archon, apotheos_pending, apotheos): 24 keys,
-	 * each with English, each at its own state only.
+	 * each with English, each at its own state only. After Communion with the Spine unused, the Alchemist alone says
+	 * a seventh (communed, PT-78): 25 keys.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void endingLinesPerPath(GameTestHelper helper) {
@@ -1363,7 +1401,10 @@ public final class PlaythroughEndgameGameTests {
 			for (Map.Entry<String, Entity> teacher : teachers.entrySet()) {
 				p.approach(teacher.getValue());
 				DialogueView view = p.talkTo(teacher.getValue());
-				String want = ENDING_PREFIX + teacher.getKey() + "." + state.getKey();
+				// PT-78: only the Alchemist has a line of their own for an unused Spine; the others stay undecided.
+				String shown = state.getKey().equals("communed") && !teacher.getKey().equals("alchemist") ? "undecided"
+						: state.getKey();
+				String want = ENDING_PREFIX + teacher.getKey() + "." + shown;
 				List<String> endings = endingKeys(view);
 				if (!endings.equals(List.of(want))) problems.add(teacher.getKey() + " at " + state.getKey() + " shows " + endings);
 				if (!LangKeys.exists(want)) problems.add(want + " has no English");
@@ -1371,19 +1412,17 @@ public final class PlaythroughEndgameGameTests {
 						.toList());
 			}
 		}
-		PlaythroughLog.note(helper, "ending lines: " + (problems.isEmpty() ? "all 24 at their states" : problems));
+		PlaythroughLog.note(helper, "ending lines: " + (problems.isEmpty() ? "all 25 at their states" : problems));
 		helper.assertTrue(problems.isEmpty(), "the teachers' ending lines: " + problems);
 		helper.succeed();
 	}
 
 	/**
-	 * A D8 Silentium greets the teachers and hears the same greeting tree as a D7 Archon (only the ending line
-	 * differs), while an Apotheos gets the eighth-degree tree.
+	 * PT-83 (2026-11-13): a D8 Silentium gets a greeting tree of their own from each teacher, not the D7 Archon tree
+	 * and not the Apotheos tree, and every line of it has English.
 	 */
-	// DECISION D8-4: a D8 Silentium is greeted with the D7 Archon tree (HarbingerPathPermissions.greetingDegree). Options:
-	// a Silentium tree of its own / keep the Archon tree with the ending line as the only acknowledgement.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void silentiumGreetedAsArchon(GameTestHelper helper) {
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void silentiumHasAGreetingOfTheirOwn(GameTestHelper helper) {
 		Map<String, Entity> teachers = teachers(helper);
 		PlaythroughPlayer archon = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 2, 2));
 		PlaythroughPlayer silentium = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 8, 2));
@@ -1391,18 +1430,23 @@ public final class PlaythroughEndgameGameTests {
 		PlaythroughStates.archonD7(archon); // ARRANGE
 		PlaythroughStates.silentiumD8(silentium); // ARRANGE
 		PlaythroughStates.apotheosD8(apotheos); // ARRANGE
-		List<String> sameAsArchon = new ArrayList<>();
+		List<String> problems = new ArrayList<>();
 		for (Map.Entry<String, Entity> teacher : teachers.entrySet()) {
 			Set<String> asArchon = signature(archon, teacher.getValue());
 			Set<String> asSilentium = signature(silentium, teacher.getValue());
 			Set<String> asApotheos = signature(apotheos, teacher.getValue());
-			PlaythroughLog.note(helper, "D8-4 " + teacher.getKey() + ": Silentium tree "
-					+ (asSilentium.equals(asArchon) ? "is the Archon's" : "differs from the Archon's") + "; Apotheos tree "
-					+ (asApotheos.equals(asArchon) ? "is the Archon's" : "differs"));
-			if (asSilentium.equals(asArchon)) sameAsArchon.add(teacher.getKey());
+			String greeting = "greeting: hemomancy." + teacher.getKey() + ".silentium.line2";
+			PlaythroughLog.note(helper, "PT-83 " + teacher.getKey() + ": Silentium tree "
+					+ (asSilentium.equals(asArchon) ? "is the Archon's" : "differs from the Archon's") + ", "
+					+ (asSilentium.equals(asApotheos) ? "is the Apotheos's" : "differs from the Apotheos's"));
+			if (asSilentium.equals(asArchon)) problems.add(teacher.getKey() + " greets a Silentium as an Archon");
+			if (asSilentium.equals(asApotheos)) problems.add(teacher.getKey() + " greets a Silentium as an Apotheos");
+			if (!asSilentium.contains(greeting)) problems.add(teacher.getKey() + " lacks " + greeting);
+			silentium.approach(teacher.getValue());
+			problems.addAll(silentium.talkTo(teacher.getValue()).missingLangKeys().stream()
+					.map(key -> teacher.getKey() + ": " + key).toList());
 		}
-		helper.assertTrue(sameAsArchon.isEmpty(), "DECISION D8-4: a D8 Silentium is greeted as what they are, not with the D7 "
-				+ "Archon tree; the same tree from " + sameAsArchon);
+		helper.assertTrue(problems.isEmpty(), "PT-83: a D8 Silentium is greeted as what they are: " + problems);
 		helper.succeed();
 	}
 
@@ -1713,7 +1757,9 @@ public final class PlaythroughEndgameGameTests {
 				.until(100, () -> saint[0].isRemoved(), "the killed Saint leaves the world")
 				.then(() -> {
 					helper.assertTrue(level.getBlockState(tomb).is(BlockInit.saint_sarcophagus.get()),
-							"a /kill sends the Saint back into its tomb");
+							"a /kill sends the Saint back into its tomb; the tomb cell holds " + level.getBlockState(tomb)
+									+ ", blocked at " + (saint[0].getTombState() == null ? "no bound tomb"
+									: SaintSarcophagusBlock.blockingCell(level, tomb, saint[0].getTombState())));
 					helper.assertTrue(residuum(level, complex) == 0, "a /kill rolls no reward");
 					saint[0] = wake(helper, p, tomb, complex);
 				})
@@ -1805,16 +1851,6 @@ public final class PlaythroughEndgameGameTests {
 
 	/** The Rite of Apotheos played on its grand floor at {@code origin}, as steps on {@code clock}. Returns the floor. */
 	static PlaythroughSites.RiteFloor apotheosRite(GameTestHelper helper, PlaythroughPlayer p, PlaythroughClock clock, BlockPos origin) {
-		return apotheosRite(helper, p, clock, origin, new int[1]);
-	}
-
-	/**
-	 * As {@link #apotheosRite(GameTestHelper, PlaythroughPlayer, PlaythroughClock, BlockPos)}; an ORDEAL deadlock that
-	 * outlasts the floor's sleeping support sigil is rescued (ARRANGE, DEGRADED, decision CHAIN-1) when {@code rescues}
-	 * is not null, each rescue counted in it.
-	 */
-	static PlaythroughSites.RiteFloor apotheosRite(GameTestHelper helper, PlaythroughPlayer p, PlaythroughClock clock,
-			BlockPos origin, @Nullable int[] rescues) {
 		PlaythroughSites.RiteFloor floor = PlaythroughSites.riteFloor(p, origin, "apotheos_rite");
 		tools(p);
 		armed(helper, p);
@@ -1827,12 +1863,10 @@ public final class PlaythroughEndgameGameTests {
 				})
 				.step(() -> PlaythroughClock.rite(p, floor.focus(),
 						refilling(RitePlan.standard().fightThreats().releaseOnStill()
-								.extraAim(PlaythroughRites.stabilizeWhenDeadlocked(p, PlaythroughArchonGameTests.sigilsAndTraces(p), rescues))
+								.extraAim(PlaythroughArchonGameTests.sigilsAndTraces(p))
 								.traceFirst().weapon(Items.NETHERITE_SWORD), p, refills)))
 				.then(() -> PlaythroughLog.note(helper, "the Rite of Apotheos ended at degree " + p.degree() + " path " + path(p)
-						+ "; the pool was refilled " + refills[0] + " times (ARRANGE)"
-						+ (rescues == null ? "" : "; CHAIN-1 rescues " + rescues[0] + (rescues[0] > 0 ? " (DEGRADED)" : ""))
-						+ "; " + p.last()));
+						+ "; the pool was refilled " + refills[0] + " times (ARRANGE); " + p.last()));
 		return floor;
 	}
 
@@ -2079,10 +2113,11 @@ public final class PlaythroughEndgameGameTests {
 		return teachers;
 	}
 
-	/** One player at each of the six late states the ending lines answer, each standing apart. */
+	/** One player at each of the seven late states the ending lines answer, each standing apart. */
 	private static Map<String, PlaythroughPlayer> endingStates(GameTestHelper helper) {
 		Map<String, PlaythroughPlayer> states = new LinkedHashMap<>();
 		states.put("undecided", stateAt(helper, 2, PlaythroughStates::choicePendingD7));
+		states.put("communed", stateAt(helper, 2, 7, PlaythroughStates::communedD7));
 		states.put("silent_pending", stateAt(helper, 7, PlaythroughStates::silentPendingD7));
 		states.put("silent_absorb", stateAt(helper, 12, PlaythroughStates::vesperBeatenD7));
 		states.put("silent_archon", stateAt(helper, 17, PlaythroughStates::silentiumD8));
@@ -2092,7 +2127,11 @@ public final class PlaythroughEndgameGameTests {
 	}
 
 	private static PlaythroughPlayer stateAt(GameTestHelper helper, int x, Consumer<PlaythroughPlayer> state) {
-		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, x, 2));
+		return stateAt(helper, x, 2, state);
+	}
+
+	private static PlaythroughPlayer stateAt(GameTestHelper helper, int x, int z, Consumer<PlaythroughPlayer> state) {
+		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, x, z));
 		state.accept(p); // ARRANGE
 		return p;
 	}

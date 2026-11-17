@@ -182,6 +182,11 @@ public final class ScriptoriumOperationCharacterisationGameTests {
 			var progress = HemoCapabilityAccess.stationUpgrades(player);
 			CompoundTag saved = station.saveWithoutMetadata(helper.getLevel().registryAccess());
 			saved.remove("MachineIdentity");
+			// The tank's feeding and draw stamps are game times, which differ run to run (core-loop Track 3, CL-14).
+			CompoundTag blood = saved.getCompound("neoforge:attachments").getCompound("hemomancy:block_blood_volume");
+			blood.remove("LastFed");
+			blood.remove("SettledAt");
+			blood.remove("LastDrawn");
 			lines.add("    " + label + ": mode=" + menu.mode() + " tier=" + menu.tier() + " degree=" + menu.playerDegree()
 					+ " selected=[" + selected + "]" + data
 					+ " item=" + enchantments + " provenance=" + item.get(DataComponentInit.SCRIPTORIUM_PROVENANCE.get())

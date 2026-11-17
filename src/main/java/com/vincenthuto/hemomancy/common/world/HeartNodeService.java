@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.world;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.MycelialSynapseBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.MoltingService;
+import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.event.HeartNodeEnvelopeSync;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -95,6 +96,43 @@ public final class HeartNodeService {
 		data.setSettings(player.getUUID(), settings);
 		HeartNodeEnvelopeSync.syncAround(level, pos);
 		return true;
+	}
+
+	/**
+	 * The owner leaves the Gardens from their node's screen (NQ-12-4): free, like the Spine's return, to where they came
+	 * in from, else the bed they had before the node, else the world spawn. False when they are not in the Gardens.
+	 */
+	public static boolean leaveTheGardens(ServerPlayer player) {
+		if (!FungalGardensPlaces.inDimension(player.serverLevel()) || FungalGardenTravelHelper.isProjectionActive(player)) return false;
+		FungalGardenTravelHelper.returnHome(player);
+		return true;
+	}
+
+	/**
+	 * A player who is no longer an Apotheos loses their sanctum (FX-16): the node withers, its synapses go inert and
+	 * their old respawn comes back, as when the node is broken.
+	 */
+	public static void forsake(ServerPlayer player) {
+		ServerLevel gardens = player.server.getLevel(FungalGardenTravelHelper.FUNGAL_GARDENS);
+		if (gardens != null) forsake(player, gardens);
+	}
+
+	/** {@link #forsake(ServerPlayer)} on the level that holds the sanctum. */
+	public static void forsake(ServerPlayer player, ServerLevel gardens) {
+		HeartNodeSavedData data = HeartNodeSavedData.get(gardens);
+		HeartNodeEntry entry = data.entry(player.getUUID());
+		if (entry == null) return;
+		if (gardens.getBlockState(entry.heart()).is(BlockInit.heart_node.get())) {
+			gardens.removeBlock(entry.heart(), false);
+		}
+		if (data.entry(player.getUUID()) != null) {
+			// No block answered for the record: forget it and give the respawn back here.
+			data.remove(player.getUUID(), entry.heart()).ifPresent(gone -> MycelialSynapseBlock.witherAll(gardens, gone.synapses()));
+			if (gardens.dimension().equals(player.getRespawnDimension()) && entry.heart().above().equals(player.getRespawnPosition())) {
+				data.takeRemovedSpawnRecord(player.getUUID(), entry.heart().above())
+						.ifPresent(lost -> PriorRespawn.restore(player, lost.prior()));
+			}
+		}
 	}
 
 	/** The owner's recorded caches, forgetting any whose loaded block is no longer a cache. */

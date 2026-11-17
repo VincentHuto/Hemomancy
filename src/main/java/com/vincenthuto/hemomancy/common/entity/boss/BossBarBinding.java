@@ -62,6 +62,14 @@ public final class BossBarBinding {
 		event.setName(name);
 	}
 
+	public Component name() {
+		return event.getName();
+	}
+
+	public float progress() {
+		return event.getProgress();
+	}
+
 	public void setVisible(boolean visible) {
 		event.setVisible(visible);
 	}

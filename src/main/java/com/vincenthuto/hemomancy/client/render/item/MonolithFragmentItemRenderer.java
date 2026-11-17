@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -46,7 +47,7 @@ public class MonolithFragmentItemRenderer extends BlockEntityWithoutLevelRendere
 		RenderTuning tuning = resolveRenderTuning(displayContext);
 		applyContextScale(poseStack, tuning);
 
-		float timeSeconds = (System.currentTimeMillis() % (long) TIME_CYCLE_MS) / 1000.0f;
+		float timeSeconds = (float) (AnimationTime.itemMillis() % TIME_CYCLE_MS) / 1000.0f;
 		float morphPhase = timeSeconds * MORPH_PHASE_RATE;
 		poseStack.mulPose(Axis.YP.rotationDegrees(timeSeconds * GUI_ROTATION_DEGREES_PER_SECOND));
 		poseStack.mulPose(Axis.XP.rotationDegrees(

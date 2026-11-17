@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "hemomancy.refmap.json",
   "mixins": [
-    "TroupeNoiseGeneratorAccessor",
     "MixinPelagicAquaticVegetation",
     "MixinPelagicMonument",
     "PelagicMonumentChildrenAccessor",
@@ -55,7 +54,11 @@
     "MixinVigilFixtureRemoval",
     "MixinListeningScar",
     "BlazeChargeInvoker",
-    "MixinFacsimileBlazeEmbers"
+    "MixinFacsimileBlazeEmbers",
+    "StemBlockAccessor",
+    "FurnaceFuelAccessor",
+    "MixinLivingVeinWater",
+    "MixinFishingHook"
   ],
   "client": [
     "MixinApotheosSense",
@@ -72,6 +75,8 @@
     "MixinHumanoidModel",
     "MixinLivingEntityRenderer",
     "MixinLocalPlayer",
+    "MixinMouseHandler",
+    "MixinDialogueLineRecorder",
     "MixinParalysisLocalPlayer",
     "MixinPlayerItemInHandLayer",
     "MixinPlayerRenderer",

@@ -8,4 +8,23 @@ public final class HudVisibilityRules {
 	public static boolean shows(boolean hideGui, boolean spectator) {
 		return !hideGui && !spectator;
 	}
+
+	/** The vessel, reserve and Morphling jar belong to the Vascularium Charm. */
+	public static boolean showsCharmParts(boolean charm, boolean bandolier) {
+		return charm;
+	}
+
+	/** The Temper vials belong to the Titration Bandolier, worn with or without the charm. */
+	public static boolean showsVials(boolean charm, boolean bandolier) {
+		return bandolier;
+	}
+
+	public static boolean showsAnything(boolean charm, boolean bandolier) {
+		return showsCharmParts(charm, bandolier) || showsVials(charm, bandolier);
+	}
+
+	/** A Morphling's passive icon leaves vanilla's effect row while the hematic HUD's jar already shows it. */
+	public static boolean showsMorphlingEffectIcon(boolean jarShown) {
+		return !jarShown;
+	}
 }

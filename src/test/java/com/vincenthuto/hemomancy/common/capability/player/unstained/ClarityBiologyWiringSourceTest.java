@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -7,7 +8,8 @@ public final class ClarityBiologyWiringSourceTest {
 	private ClarityBiologyWiringSourceTest() {
 	}
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		String mixins = Files.readString(Path.of("src/main/resources/hemomancy.mixins.json"));
 		assertContains(mixins, "MixinHealOrHarmMobEffect");
 		assertContains(mixins, "MixinRegenerationMobEffect");

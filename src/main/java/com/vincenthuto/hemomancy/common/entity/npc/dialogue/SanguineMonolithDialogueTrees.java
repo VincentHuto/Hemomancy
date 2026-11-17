@@ -58,16 +58,17 @@ public final class SanguineMonolithDialogueTrees {
 	 * What the stone opens for a player of the fifth Degree or above, whatever is in hand: the same decorators as the
 	 * Vicar, so a held item is one card among the Inquiries instead of the whole conversation.
 	 */
-	public static DialogueTree hub(ServerPlayer player, int degree) {
-		DialogueTree tree = DialogueItemInquiryNodes.withInventoryItemInquiries(forPlayer(player, degree), player, SPEAKER_ID);
+	public static DialogueTree hub(ServerPlayer player, int degree, boolean mayShatter) {
+		DialogueTree tree = DialogueItemInquiryNodes.withInventoryItemInquiries(forPlayer(player, degree, mayShatter), player, SPEAKER_ID);
 		return DialogueHubFactory.decorate(tree, SPEAKER_ID, player);
 	}
 
-	private static DialogueTree forPlayer(ServerPlayer player, int degree) {
+	private static DialogueTree forPlayer(ServerPlayer player, int degree, boolean mayShatter) {
 		if (degree >= 7) {
 			return archon(HemoCapabilityAccess.stationUpgrades(player).claimState(player,
 					StationUpgradeCatalog.get(UpgradeStation.ARMATURE, 2)),
-					ProgressionGates.hasDegree(player, 8) || ChamberOfWillManager.get(player.server).hasGateway(player.getUUID()));
+					ProgressionGates.hasDegree(player, 8) || ChamberOfWillManager.get(player.server).hasGateway(player.getUUID()),
+					mayShatter);
 		}
 		CovenantProgress covenant = CovenantProgress.of(player);
 		return degree == 6 ? sanctified(covenant) : illuminatus(covenant);
@@ -103,17 +104,24 @@ public final class SanguineMonolithDialogueTrees {
 	 * Degree 7+ — Archon. The lodestone speaks with intimate recognition; pressing further, the hub's glowing button,
 	 * reveals the shatter warning, and a second deliberate choice triggers it through the validated block conversation.
 	 * A player who has already carried a Seed out of a stone can still press this one, but it is no longer their next step.
+	 * Only the stone's builder is offered the press ({@code mayShatter}, PT-73).
 	 */
 	public static DialogueTree archon(ClaimState cornerstone, boolean pastTheSeed) {
+		return archon(cornerstone, pastTheSeed, true);
+	}
+
+	public static DialogueTree archon(ClaimState cornerstone, boolean pastTheSeed, boolean mayShatter) {
 		String node = cornerstone == ClaimState.CLAIMED ? CORNERSTONE_NODE + "_claimed"
 				: cornerstone == ClaimState.READY ? CORNERSTONE_NODE : CORNERSTONE_NODE + "_unready";
 		List<DialogueOption> quests = List.of(new DialogueOption(OPTION + "anchor_armature", node, null).withQuest());
-		List<DialogueNode> nodes = new ArrayList<>(List.of(new DialogueNode("press_again", List.of(
-				"hemomancy.monolith.archon.press_again"
-		), List.of(
+		// D-23: while the free Cornerstone is still the player's to take, the warning says breaking the stone loses it.
+		List<String> warning = cornerstone == ClaimState.CLAIMED ? List.of("hemomancy.monolith.archon.press_again")
+				: List.of("hemomancy.monolith.archon.press_again", "hemomancy.monolith.archon.press_again.cornerstone");
+		List<DialogueNode> nodes = new ArrayList<>();
+		if (mayShatter) nodes.add(new DialogueNode("press_again", warning, List.of(
 				new DialogueOption(OPTION + "press_further", null, EVENT_SHATTER, DialogueOptionPresentation.specialAction()),
 				new DialogueOption(BACK, ROOT, null)
-		))));
+		)));
 		if (cornerstone == ClaimState.CLAIMED) {
 			nodes.add(answer(node, List.of("hemomancy.dialogue.event.monolith_cornerstone_known")));
 		} else {
@@ -130,8 +138,9 @@ public final class SanguineMonolithDialogueTrees {
 					new DialogueOption(LEAVE, null, null)
 			)));
 		}
-		return stone(FEVER_ICON, "archon", counsel(List.of(pastTheSeed ? "past_the_seed" : "press_further")), quests, nodes,
-				new DialogueOption(OPTION + "press_further", "press_again", null, DialogueOptionPresentation.specialAction()),
+		String step = pastTheSeed ? "past_the_seed" : !mayShatter ? "not_your_stone" : "press_further";
+		return stone(FEVER_ICON, "archon", counsel(List.of(step)), quests, nodes,
+				mayShatter ? new DialogueOption(OPTION + "press_further", "press_again", null, DialogueOptionPresentation.specialAction()) : null,
 				new Lore("ripening", 2), new Lore("what_opens", 2), new Lore("what_remains", 2));
 	}
 

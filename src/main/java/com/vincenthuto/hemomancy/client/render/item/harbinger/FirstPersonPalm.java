@@ -20,9 +20,10 @@ public final class FirstPersonPalm {
     private static final float PALM_Y = 10, RIGHT_PALM_X = -1, LEFT_PALM_X = 1;
     private static final long STALE_NANOS = 150_000_000L;
 
-    private static Vector3f palm, fingers;
+    /** Each arm's palm, finger direction and record time, by {@link HumanoidArm#ordinal()}: both hands may be drawn. */
+    private static final Vector3f[] PALMS = new Vector3f[2], FINGERS = new Vector3f[2];
+    private static final long[] RECORDED = new long[2];
     private static HumanoidArm arm;
-    private static long recorded;
     private static double worldFocal = HAND_FOCAL;
 
     private FirstPersonPalm() {
@@ -38,15 +39,16 @@ public final class FirstPersonPalm {
         armPart.translateAndRotate(stack);
         Matrix4f m = stack.last().pose();
         float x = (side == HumanoidArm.RIGHT ? RIGHT_PALM_X : LEFT_PALM_X) / 16f;
-        palm = m.transformPosition(x, PALM_Y / 16f, 0, new Vector3f());
-        fingers = m.transformDirection(0, 1, 0, new Vector3f()).normalize();
+        PALMS[side.ordinal()] = m.transformPosition(x, PALM_Y / 16f, 0, new Vector3f());
+        FINGERS[side.ordinal()] = m.transformDirection(0, 1, 0, new Vector3f()).normalize();
         arm = side;
-        recorded = System.nanoTime();
+        RECORDED[side.ordinal()] = System.nanoTime();
     }
 
     /** Diagnostics for review harnesses: the recorded view-space palm, its age and the projection ratio. */
     public static String describe() {
-        return "palm=" + palm + " fingers=" + fingers + " arm=" + arm + " ageMs=" + (System.nanoTime() - recorded) / 1_000_000
+        int i = arm == null ? 0 : arm.ordinal();
+        return "palm=" + PALMS[i] + " fingers=" + FINGERS[i] + " arm=" + arm + " ageMs=" + (System.nanoTime() - RECORDED[i]) / 1_000_000
                 + " k=" + HAND_FOCAL / worldFocal;
     }
 
@@ -58,14 +60,14 @@ public final class FirstPersonPalm {
 
     /** Whether a palm was drawn this frame or last for {@code side}. */
     public static boolean fresh(HumanoidArm side) {
-        return palm != null && arm == side && System.nanoTime() - recorded < STALE_NANOS;
+        return side != null && PALMS[side.ordinal()] != null && System.nanoTime() - RECORDED[side.ordinal()] < STALE_NANOS;
     }
 
     /** The palm in world space, or null when no cell hand was drawn in first person just now. */
     public static Vec3 world(HumanoidArm side) {
         if (!fresh(side)) return null;
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        return camera.getPosition().add(posedToWorld(palm, camera));
+        return camera.getPosition().add(posedToWorld(PALMS[side.ordinal()], camera));
     }
 
     /**
@@ -83,7 +85,8 @@ public final class FirstPersonPalm {
         if (!fresh(side)) return null;
         // Map a point a little way along the fingers too, so the direction bends with the view the same way.
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        Vector3f tip = new Vector3f(fingers).mul(0.2f).add(palm);
+        Vector3f palm = PALMS[side.ordinal()];
+        Vector3f tip = new Vector3f(FINGERS[side.ordinal()]).mul(0.2f).add(palm);
         Vec3 dir = posedToWorld(tip, camera).subtract(posedToWorld(palm, camera));
         return dir.lengthSqr() < 1e-8 ? null : dir.normalize();
     }

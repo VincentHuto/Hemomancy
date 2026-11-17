@@ -55,7 +55,8 @@ public final class ThelemicMemoryWorldEvents {
 
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
-        if (!(event.getPlayer() instanceof ServerPlayer player) || event.isCanceled()) return;
+        if (!(event.getPlayer() instanceof ServerPlayer player) || event.isCanceled()
+                || com.vincenthuto.hemomancy.common.util.PlayerBlockEdits.isCheckingBreak()) return;
         float hardness = event.getState().getDestroySpeed(player.level(), event.getPos());
         if (!ThelemicMemoryPowerRules.laboringEligible(player.isCreative(), hardness,
                 player.hasCorrectToolForDrops(event.getState(), player.level(), event.getPos()))) return;
@@ -135,11 +136,7 @@ public final class ThelemicMemoryWorldEvents {
         ThelemicMemoryState state = HemoCapabilityAccess.thelemicMemory(player);
         boolean armed = state.isOverexertionArmed(ThelemicMemory.PREDATORY_EYES, player.level().getGameTime());
         double radius = armed ? 24D : (signature ? 12D : 16D);
-        List<Monster> targets = player.level().getEntitiesOfClass(Monster.class,
-                new AABB(player.blockPosition()).inflate(radius), target -> ManipulationCombatHelper.canHarm(player, target, Reach.MONSTER_FILTER)
-                        && target.getDeltaMovement().horizontalDistanceSqr() > .0004D
-                        && (armed || signature || player.hasLineOfSight(target)));
-        targets.sort(Comparator.comparingDouble(player::distanceToSqr));
+        List<Monster> targets = predatoryEyesPrey(player, radius, armed || signature);
         if (targets.isEmpty()) return;
         var trigger = ThelemicMemoryActivationService.tryTriggerDetailed(
                 player, ThelemicMemory.PREDATORY_EYES, 100, 200);
@@ -149,6 +146,16 @@ public final class ThelemicMemoryWorldEvents {
             targets.get(i).addEffect(new MobEffectInstance(MobEffects.GLOWING,
                     trigger.overexerted() ? 200 : 100, 0, false, false));
         }
+    }
+
+    /** The moving monsters Predatory Eyes may mark within {@code radius}, nearest first. */
+    public static List<Monster> predatoryEyesPrey(ServerPlayer player, double radius, boolean throughWalls) {
+        List<Monster> targets = player.level().getEntitiesOfClass(Monster.class,
+                new AABB(player.blockPosition()).inflate(radius), target -> ManipulationCombatHelper.canHarm(player, target, Reach.MONSTER_FILTER)
+                        && target.getDeltaMovement().horizontalDistanceSqr() > .0004D
+                        && (throughWalls || player.hasLineOfSight(target)));
+        targets.sort(Comparator.comparingDouble(player::distanceToSqr));
+        return targets;
     }
 
     private static void handleEnduring(ServerPlayer player, TickSnapshot previous, FoodData food) {

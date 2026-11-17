@@ -14,6 +14,9 @@ public class CentrifugeOutputSlot extends OutputSlot {
 
 	@Override
 	public boolean mayPickup(Player player) {
+		// NQ-10-10: an assigned output is its player's alone.
+		java.util.UUID owner = FirstSeparationAssignment.assignedPlayer(getItem());
+		if (owner != null && !owner.equals(player.getUUID())) return false;
 		return !(container instanceof com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity te)
 				|| !te.isRiteLocked();
 	}

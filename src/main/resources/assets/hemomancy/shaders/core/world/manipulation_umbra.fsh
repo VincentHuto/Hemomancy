@@ -50,6 +50,18 @@ void main() {
         highlight = exp(-pow((d - 0.1) * 24.0, 2.0)) * n;
         if (abs(flowShape - 7.0) < 0.5)
             slashCore = exp(-d * d * 220.0) * (.8 + .2 * n);
+    } else if (abs(flowShape - 14.0) < 0.5) {
+        // Wisp: a round puff of shadow that thins to nothing at its edge.
+        float r = length(p + warp * 0.25);
+        float density = smoothstep(0.25, 0.7, n);
+        alpha = (1.0 - smoothstep(0.35 + density * 0.25, 0.98, r)) * (0.45 + density * 0.4);
+        highlight = smoothstep(0.55, 0.85, n) * (1.0 - r) * 0.3;
+    } else if (abs(flowShape - 15.0) < 0.5) {
+        // Focus: a dense dark core gathered inside a violet-lit rim.
+        float r = length(p + warp * 0.12);
+        alpha = (1.0 - smoothstep(0.55 + n * 0.12, 0.95, r)) * 0.9;
+        slashCore = exp(-pow((r - 0.62 - n * 0.06) * 18.0, 2.0)) * 0.55;
+        highlight = smoothstep(0.6, 0.85, n) * 0.2;
     } else {
         float lobes = flow((p + warp * 0.65) * 2.2 - t * 0.09);
         float density = smoothstep(0.30, 0.67, n * 0.62 + lobes * 0.38);

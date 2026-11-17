@@ -33,7 +33,7 @@ import net.minecraft.core.particles.ParticleOptions;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class SporiticThuribleEvents {
-	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("sporitic_thurible", Category.TOOL, true, true);
+	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("sporitic_thurible", Category.TOOL, true);
 	private static final Map<UUID, Float> LAST_YAW = new ConcurrentHashMap<>();
 
 	/** Called by {@code TransientServerStateEvents} when the player logs out. */
@@ -86,7 +86,8 @@ public class SporiticThuribleEvents {
 	private static boolean hasValidHarbingerState(Player player) {
 		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
 				.isActive();
-		return bloodActive && HemoCapabilityAccess.getPlayerDegreeNumber(player) >= SporiticThuribleRules.REQUIRED_DEGREE;
+		return bloodActive && SporiticThuribleRules.mayBurn(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+				HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath());
 	}
 
 	private static boolean drainUpkeep(ServerPlayer player, ItemStack stack, double intensity) {

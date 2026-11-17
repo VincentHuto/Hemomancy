@@ -1,9 +1,13 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.support.SourceAssertions;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class ScryingPodiumDiagnosticsResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -12,7 +16,8 @@ public final class ScryingPodiumDiagnosticsResourceTest {
 	private ScryingPodiumDiagnosticsResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String scryingPodium = readSource(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/ScryingPodiumBlock.java");
 		String packetHandler = readSource("com/vincenthuto/hemomancy/common/network/PacketHandler.java");
@@ -32,7 +37,7 @@ public final class ScryingPodiumDiagnosticsResourceTest {
 				"PacketHandler.sendToServer(new PacketOpenScryingDiagnostics(pos));");
 		assertContains("scrying podium should keep its shift-use unstained conversion", scryingPodium,
 				"BlockInit.unstained_podium");
-		assertDoesNotContain("scrying podium should not reopen the equipment inventory", scryingPodium,
+		assertNotContains("scrying podium should not reopen the equipment inventory", scryingPodium,
 				"PacketOpenScarsInv");
 
 		assertContains("diagnostic packet should validate the scrying podium block", openPacket,
@@ -83,24 +88,5 @@ public final class ScryingPodiumDiagnosticsResourceTest {
 
 	private static String readResource(String path) throws IOException {
 		return read(RESOURCE_ROOT.resolve(path));
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 }

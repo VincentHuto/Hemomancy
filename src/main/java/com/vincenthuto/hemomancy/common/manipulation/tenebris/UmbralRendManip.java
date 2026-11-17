@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastSounds;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import net.minecraft.core.BlockPos;
@@ -72,8 +73,8 @@ public class UmbralRendManip extends BloodManipulation {
 					struck++;
 				}
 			}
-			level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS,
-					0.8F, struck > 1 ? 0.55F : 0.7F);
+			ManipulationCastSounds.play(level, player.blockPosition(), SoundSource.PLAYERS, "umbral_rend",
+					struck > 1 ? 0.55F : 0.7F);
 			level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_SCREAM, SoundSource.PLAYERS, 0.25F, 0.5F);
 		}
 	}

@@ -10,6 +10,14 @@ The client config includes HUD and render-layer options, such as blood volume HU
 
 The client `[boss_presentation]` section holds three switches, all on by default. `bossBarFrames` draws each Hemomancy boss's bar in its own frame. `cinematicBossScenes` lets boss openings move the camera; with it off the letterbox and title card still play, but the view stays the player's. `bossSceneShake` shakes the view during openings. None of them change a fight's timing: the server decides when a boss can act.
 
+## Living Blood
+
+The server configuration section `living_blood` sets how a pour into a tank that holds clot revives it.
+`clotReviveShare` (default `0.5`, range `0` to `1`) is the share of blood projected or sutured in that goes to the
+clot; what does not fit as fresh blood goes there too. `clotReviveYield` (default `2.0`) is how much clot each mL of
+Blood Projection spent on it wakes, and `suturedClotReviveYield` (default `4.0`) is the same for a Hematic Suture's
+draw. The spent blood is used up. Flask, gourd, gutter and courier pours never revive clot.
+
 ## Hematic Succession
 
 The server configuration section `succession` contains `per_bloodline_cap` and `global_cap`. Both default to `0`, disabling numeric caps so compatible workplaces limit residents. Profession workplace blocks are reloadable datapack lists under `data/hemomancy/succession_profession/`.

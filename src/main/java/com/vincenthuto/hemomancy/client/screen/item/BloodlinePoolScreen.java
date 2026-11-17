@@ -352,7 +352,7 @@ public class BloodlinePoolScreen extends Screen {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		Bloodline bloodline = volume.getBloodLine();
 		graphics.drawCenteredString(this.font, bloodline.isValid()
-				? Component.literal(bloodline.getName()).withStyle(s -> s.withColor(0xFFDD6666).withBold(true))
+				? bloodline.displayName().copy().withStyle(s -> s.withColor(0xFFDD6666).withBold(true))
 				: Component.translatable("screen.hemomancy.bloodline_pool.you_are_not_in_a_bloodline")
 						.withStyle(s -> s.withColor(0xFFAA4444)), centerX, py(20), 0xFFFFFFFF);
 
@@ -360,6 +360,7 @@ public class BloodlinePoolScreen extends Screen {
 		panel(graphics, EDGE, TITHE_TOP, LEFT_WIDTH, TITHE_HEIGHT, "screen.hemomancy.bloodline_pool.section.tithes");
 		panel(graphics, EDGE, KIN_TOP, LEFT_WIDTH, KIN_HEIGHT, "screen.hemomancy.bloodline_pool.section.bloodline");
 		renderPool(graphics, volume, partialTick);
+		donateButton.active = poolActive && !poolIsFull();
 		renderTitheLabels(graphics);
 		renderBanishRow(graphics, player, bloodline);
 		List<Component> mapTooltip = new ArrayList<>();
@@ -407,6 +408,12 @@ public class BloodlinePoolScreen extends Screen {
 				textX, py(barY + 14), TEXT, false);
 		graphics.drawString(this.font, HemoText.translatable("screen.hemomancy.bloodline_pool.members",
 				BloodlinePoolClientData.getMemberCount()), textX, py(barY + 38), MUTED, false);
+	}
+
+	/** A full pool greys the lump offering instead of refusing it with a line. */
+	private static boolean poolIsFull() {
+		float max = BloodlinePoolClientData.getPoolMax();
+		return max > 0 && BloodlinePoolClientData.getPoolVolume() >= max;
 	}
 
 	/** Each field's label, right-aligned against it, centred on the row. */

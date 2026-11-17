@@ -4,15 +4,17 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleBursts;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -28,6 +30,9 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
 public final class LivingSicklePruning {
+	private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
+	private static final ParticleColor CLOT = new ParticleColor(70, 6, 14);
+	private static final ParticleColor CRIMSON_SPORE = new ParticleColor(150, 40, 58);
 	public static final String STORED_WEAPON_KEY = "HemomancyStoredLivingWeapon";
 	public static final String BLOOM_DIMENSION_KEY = "HemomancySickleBloomDimension";
 	public static final String BLOOM_POS_KEY = "HemomancySickleBloomPos";
@@ -58,10 +63,12 @@ public final class LivingSicklePruning {
 			player.setItemInHand(hand, restoredWeaponStack(held, player.registryAccess()));
 			HarbingerCardinalRiteEvents.syncQliphothBlooms(serverLevel.getServer());
 			serverLevel.playSound(null, pos, SoundEvents.WITHER_BREAK_BLOCK, SoundSource.BLOCKS, 1.1F, 0.55F);
-			serverLevel.sendParticles(ParticleTypes.SQUID_INK, pos.getX() + 0.5D, pos.getY() + 1.1D,
-					pos.getZ() + 0.5D, 30, 0.8D, 1.0D, 0.8D, 0.04D);
-			serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE, pos.getX() + 0.5D, pos.getY() + 1.1D,
-					pos.getZ() + 0.5D, 45, 0.8D, 1.0D, 0.8D, 0.025D);
+			serverLevel.sendParticles(HemoParticleData.darkGlow(CLOT), pos.getX() + 0.5D, pos.getY() + 1.1D,
+					pos.getZ() + 0.5D, 20, 0.8D, 1.0D, 0.8D, 0.02D);
+			HemoParticleBursts.upward(serverLevel, HemoParticleData.bloodCell(BLOOD), pos.getX() + 0.5D, pos.getY() + 0.1D,
+					pos.getZ() + 0.5D, 20, 2.5D, 0.35D, 0.03D);
+			serverLevel.sendParticles(HemoParticleData.sporiticSpore(CRIMSON_SPORE), pos.getX() + 0.5D, pos.getY() + 1.1D,
+					pos.getZ() + 0.5D, 30, 0.8D, 1.0D, 0.8D, 0.0125D);
 			serverPlayer.displayClientMessage(Component.translatable("message.hemomancy.living_sickle_pruning.the_living_edge_parts_the_trunk").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD), false);
 			return true;
 		}

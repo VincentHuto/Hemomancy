@@ -14,11 +14,12 @@
                     "ductilis":  0,
                     "lux":  0,
                     "mortem":  0,
-                    "congeatio":  1,
+                    "congeatio":  2,
                     "ferric":  0,
-                    "tenebris":  1
+                    "tenebris":  2
                 },
-    "blood":  100,
+    "blood":  300,
+    "required_degree":  8,
     "result":  "hemomancy:memory_endless_hour",
     "count":  1
 }

@@ -1,10 +1,15 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class ChamberOfWillEffectsSourceTest {
 	private static final Path WRAPPER = Path.of(
@@ -51,7 +56,8 @@ public final class ChamberOfWillEffectsSourceTest {
     private ChamberOfWillEffectsSourceTest() {
     }
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    void allChecksPass() throws IOException {
         String source = read(WRAPPER) + "\n" + read(THEME_EFFECTS) + "\n" + read(ABSTRACT_EFFECTS) + "\n" + read(HELPERS)
 				+ "\n" + read(QLIPHOTH_EFFECTS) + "\n" + read(SILENT_ARCHON_EFFECTS);
 		String clientEvents = Files.readString(CLIENT_EVENTS).replace("\r\n", "\n");
@@ -569,22 +575,6 @@ public final class ChamberOfWillEffectsSourceTest {
                 "cornerTop[sideCount] = cornerTop[0];");
         assertNotContains("pillar faces must not compute independent right-edge radii", source,
                 "float r1 = radius * (0.86F + ((seed + side * 23 + 3) % 7) * 0.035F);");
-    }
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-    private static void assertContains(String label, String source, String expected) {
-        if (!source.contains(expected)) {
-            throw new AssertionError(label + ": missing " + expected);
-        }
-    }
-
-    private static void assertNotContains(String label, String source, String unexpected) {
-        if (source.contains(unexpected)) {
-            throw new AssertionError(label + ": still contains " + unexpected);
-        }
     }
 
     private static void assertBefore(String label, String source, String first, String second) {

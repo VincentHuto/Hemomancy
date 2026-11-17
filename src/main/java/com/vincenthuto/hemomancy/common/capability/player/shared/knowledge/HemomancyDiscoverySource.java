@@ -26,4 +26,6 @@ public enum HemomancyDiscoverySource implements IDiscoverySource {
 	RITE_FRAGMENT,
 	/** Entry was unlocked by meeting personal machine-practice eligibility. */
 	PRACTICE,
+	/** Entry was unlocked when a boss fight first began. */
+	ENCOUNTER,
 }

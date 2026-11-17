@@ -29,12 +29,6 @@ public final class ChamberVisitService {
 	private static final String FOOD = PREFIX + "food";
 	private static final String SATURATION = PREFIX + "saturation";
 	private static final String EXHAUSTION = PREFIX + "exhaustion";
-	// The earned-access root keys before the ChamberAccess attachment (S-1c, sunset 2027-04-23).
-	private static final String LEGACY_DREAM_ATTEMPTS = PREFIX + "dream_attempts";
-	private static final String LEGACY_DREAM_SEEN = PREFIX + "dream_seen";
-	private static final String LEGACY_GUIDED_COMPLETE = PREFIX + "guided_complete";
-	private static final String LEGACY_CHAIR_BOUND = PREFIX + "chair_bound";
-	private static final String LEGACY_ATTUNED = PREFIX + "attuned";
 
 	private ChamberVisitService() {
 	}
@@ -134,10 +128,22 @@ public final class ChamberVisitService {
 			player.displayClientMessage(Component.translatable("message.hemomancy.chamber_visit.rite_degree"), true);
 			return false;
 		}
-		attune(player);
-		if (startVisit(player, ChamberVisitMode.ATTUNED)) return true;
+		Component refusal = riteRefusal(player);
+		if (refusal == null) {
+			attune(player);
+			if (startVisit(player, ChamberVisitMode.ATTUNED)) return true;
+		}
 		player.displayClientMessage(Component.translatable("message.hemomancy.chamber_visit.rite_unavailable"), false);
 		return false;
+	}
+
+	/**
+	 * Why the Rite of the Chamber of Will cannot end in a visit now, or null. The rite refuses rather than attune a
+	 * player no visit can take: a visit already running, a projection or possession, standing in the Chamber, or no
+	 * Chamber at all.
+	 */
+	public static Component riteRefusal(ServerPlayer player) {
+		return canStartVisit(player) ? null : Component.translatable("message.hemomancy.chamber_visit.rite_unavailable");
 	}
 
 	/**
@@ -295,7 +301,7 @@ public final class ChamberVisitService {
 			if (ticks <= 0) {
 				data.remove(EXIT_SLEEP_TICKS);
 				player.stopSleepInBed(false, false);
-				returnFromVisit(player);
+				returnFromVisit(player, true);
 			} else {
 				data.putInt(EXIT_SLEEP_TICKS, ticks);
 			}
@@ -305,7 +311,7 @@ public final class ChamberVisitService {
 		int remaining = data.getInt(REMAINING) - 1;
 		data.putInt(REMAINING, remaining);
 		if (remaining <= 0) {
-			returnFromVisit(player);
+			returnFromVisit(player, true);
 			return;
 		}
 		if (remaining % 20 == 0) {
@@ -320,7 +326,13 @@ public final class ChamberVisitService {
 		if (remaining % 20 == 0) sync(player);
 	}
 
+	/** Ends the visit early (a logout, death protection, the gate, an admin): a guided lesson stays incomplete. */
 	public static void returnFromVisit(ServerPlayer player) {
+		returnFromVisit(player, false);
+	}
+
+	/** {@code finished}: the visit ran out or ended at the paired chair, the only ends that complete a guided lesson (PT-24). */
+	private static void returnFromVisit(ServerPlayer player, boolean finished) {
 		if (!isActive(player)) {
 			if (player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
 				ChamberOfWillManager.get(player.getServer()).exitChamber(player);
@@ -333,7 +345,7 @@ public final class ChamberVisitService {
 			return;
 		}
 		var data = player.getPersistentData();
-		boolean guidedReturn = mode(player) == ChamberVisitMode.GUIDED
+		boolean guidedReturn = finished && mode(player) == ChamberVisitMode.GUIDED
 				&& player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (isObservational(player) && data.contains(DREAM_INVENTORY)) clearObservationalCopies(player);
 		else if (player.containerMenu != player.inventoryMenu) player.closeContainer();

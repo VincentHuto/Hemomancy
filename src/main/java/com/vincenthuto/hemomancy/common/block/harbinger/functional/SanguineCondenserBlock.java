@@ -40,6 +40,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 /**
  * A cauldron that has taken projected blood. Stage 0 keeps the vanilla cauldron's body; the Working rites
@@ -63,11 +65,24 @@ public class SanguineCondenserBlock extends BaseEntityBlock {
     /** Fills an empty vanilla cauldron's place with a stage-0 Condenser owned by the projecting player. */
     @Nullable
     public static SanguineCondenserBlockEntity convertCauldron(ServerLevel level, BlockPos pos, ServerPlayer owner) {
-        if (!level.getBlockState(pos).is(Blocks.CAULDRON)) return null;
-        level.setBlock(pos, BlockInit.sanguine_condenser.get().defaultBlockState()
-                .setValue(FACING, owner.getDirection().getOpposite()), Block.UPDATE_ALL);
+        if (!level.getBlockState(pos).is(Blocks.CAULDRON)
+                || !PlayerBlockEdits.replace(owner, pos, BlockInit.sanguine_condenser.get().defaultBlockState()
+                        .setValue(FACING, owner.getDirection().getOpposite()))) return null;
         if (!(level.getBlockEntity(pos) instanceof SanguineCondenserBlockEntity condenser)) return null;
         condenser.claimOwner(owner);
+        return condenser;
+    }
+
+    /**
+     * A plain cauldron under a scab drip (core-loop Track 7) seats a Condenser by itself: nobody's edit, but the blood
+     * is the drop's, so the Condenser belongs to {@code owner}, whoever owns the tank the drop fell from. A tank nobody
+     * owns seats a Condenser anyone may collect from. Null when the cauldron is not plain.
+     */
+    public static SanguineCondenserBlockEntity convertCauldronByDrip(ServerLevel level, BlockPos pos, @Nullable UUID owner) {
+        if (!level.getBlockState(pos).is(Blocks.CAULDRON)) return null;
+        level.setBlockAndUpdate(pos, BlockInit.sanguine_condenser.get().defaultBlockState());
+        if (!(level.getBlockEntity(pos) instanceof SanguineCondenserBlockEntity condenser)) return null;
+        if (owner != null) condenser.claimOwner(owner);
         return condenser;
     }
 

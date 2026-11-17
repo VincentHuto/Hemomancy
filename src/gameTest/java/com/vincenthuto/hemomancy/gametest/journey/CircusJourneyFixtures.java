@@ -51,6 +51,9 @@ final class CircusJourneyFixtures {
 		}
 		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
+		// D-30: the pact asks Degree 4 and one school report.
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(player)
+				.putBoolean("quest.empty_ring", true);
 		player.teleportTo(level, origin.getX() + 0.5D, origin.getY() + 1.0D, origin.getZ() - 7.5D, 0.0F, 0.0F);
 	}
 

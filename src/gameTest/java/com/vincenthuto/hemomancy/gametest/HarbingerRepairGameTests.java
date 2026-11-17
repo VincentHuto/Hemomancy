@@ -732,8 +732,9 @@ public final class HarbingerRepairGameTests {
         initiationSupply(helper, false);
     }
 
+    /** PT-16: a full pack keeps the starter flasks owed (never dropped) and they land once there is room. */
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair", timeoutTicks = 240)
-    public static void fullInventoryInitiationDropsStarterBloodOnlyOnce(GameTestHelper helper) throws Exception {
+    public static void fullInventoryInitiationOwesStarterBloodOnlyOnce(GameTestHelper helper) throws Exception {
         initiationSupply(helper, true);
     }
 
@@ -753,10 +754,307 @@ public final class HarbingerRepairGameTests {
             int drops = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
                     new net.minecraft.world.phys.AABB(pos).inflate(4), e -> e.getItem().is(ItemInit.bloody_flask.get()))
                     .stream().mapToInt(e -> e.getItem().getCount()).sum();
-            helper.assertTrue(player.getInventory().countItem(ItemInit.bloody_flask.get()) + drops == 4, "Starter blood missing or duplicated");
+            int owed = com.vincenthuto.hemomancy.common.mission.shared.OwedRewards.CLAIM.owed().apply(player).stream()
+                    .filter(stack -> stack.is(ItemInit.bloody_flask.get())).mapToInt(ItemStack::getCount).sum();
+            helper.assertTrue(drops == 0 && player.getInventory().countItem(ItemInit.bloody_flask.get()) + owed == 4,
+                    "Starter blood missing, dropped or duplicated");
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, vicar), "Ceremony repeated rewards");
+            if (fullInventory) {
+                for (int slot = 0; slot < 3; slot++) player.getInventory().setItem(slot, ItemStack.EMPTY);
+                com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(player);
+                com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(player);
+                helper.assertTrue(player.getInventory().countItem(ItemInit.bloody_flask.get()) == 4,
+                        "the owed starter blood did not land exactly once");
+            }
             player.discard(); vicar.discard(); helper.succeed();
         });
+    }
+
+    /** F-4: a death another handler cancels, even at a late priority, leaves a Scale Grip-bound item where it was. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void cancelledDeathLeavesScaleGripItemInPlace(GameTestHelper helper) {
+        var player = player(helper);
+        boolean keep = helper.getLevel().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_KEEPINVENTORY);
+        helper.getLevel().getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_KEEPINVENTORY).set(false, helper.getLevel().getServer());
+        ItemStack pick = new ItemStack(net.minecraft.world.item.Items.DIAMOND_PICKAXE);
+        com.vincenthuto.hemomancy.common.item.shared.ScaleGripEvents.markProtected(pick);
+        player.getInventory().setItem(0, pick);
+        java.util.function.Consumer<net.neoforged.neoforge.event.entity.living.LivingDeathEvent> cancel = event -> {
+            if (event.getEntity() == player) event.setCanceled(true);
+        };
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOW, cancel);
+        try {
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(
+                    new net.neoforged.neoforge.event.entity.living.LivingDeathEvent(player, player.damageSources().generic()));
+        } finally {
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.unregister(cancel);
+            helper.getLevel().getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_KEEPINVENTORY).set(keep, helper.getLevel().getServer());
+        }
+        helper.assertTrue(com.vincenthuto.hemomancy.common.item.shared.ScaleGripEvents.isProtected(player.getInventory().getItem(0))
+                && HemoCapabilityAccess.scaleGripReturns(player).owed().isEmpty(), "a cancelled death stripped the bound item");
+        player.discard();
+        helper.succeed();
+    }
+
+    /**
+     * PT-3, PT-16: an owed NPC reward waits while the player is dead, during an observational Chamber visit and while a
+     * Creative full pack would discard it; it survives a save, a load and the death copy, then lands exactly once.
+     */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void owedNpcRewardWaitsUntilItReallyLandsThenArrivesOnce(GameTestHelper helper) {
+        var original = player(helper);
+        original.setHealth(0);
+        com.vincenthuto.hemomancy.common.mission.shared.OwedRewards.owe(original,
+                java.util.List.of(new ItemStack(ItemInit.hematic_iron_scrap.get(), 4)));
+        com.vincenthuto.hemomancy.common.mission.shared.OwedRewards.deliver(original);
+        helper.assertTrue(original.getInventory().countItem(ItemInit.hematic_iron_scrap.get()) == 0
+                && owedCount(original) == 4, "a dead player was handed the reward");
+        var relogged = player(helper);
+        relogged.load(original.saveWithoutId(new net.minecraft.nbt.CompoundTag()));
+        var respawned = player(helper);
+        respawned.restoreFrom(relogged, false);
+        helper.assertTrue(owedCount(respawned) == 4, "the owed reward did not survive the save and the death copy");
+        respawned.getPersistentData().putBoolean(Hemomancy.MOD_ID + ":chamber_visit_active", true);
+        respawned.getPersistentData().putString(Hemomancy.MOD_ID + ":chamber_visit_mode", "DREAM");
+        com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(respawned);
+        helper.assertTrue(owedCount(respawned) == 4, "a reward was delivered during an observational visit");
+        respawned.getPersistentData().remove(Hemomancy.MOD_ID + ":chamber_visit_active");
+        respawned.getPersistentData().remove(Hemomancy.MOD_ID + ":chamber_visit_mode");
+        respawned.getAbilities().instabuild = true;
+        for (int i = 0; i < respawned.getInventory().items.size(); i++)
+            respawned.getInventory().items.set(i, new ItemStack(net.minecraft.world.item.Items.STONE, 64));
+        com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(respawned);
+        helper.assertTrue(owedCount(respawned) == 4, "a Creative full-pack discard counted as delivered");
+        respawned.getAbilities().instabuild = false;
+        respawned.getInventory().items.set(0, ItemStack.EMPTY);
+        com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(respawned);
+        com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(respawned);
+        helper.assertTrue(respawned.getInventory().countItem(ItemInit.hematic_iron_scrap.get()) == 4
+                && owedCount(respawned) == 0, "the reward did not land exactly once");
+        original.discard(); relogged.discard(); respawned.discard();
+        helper.succeed();
+    }
+
+    private static int owedCount(ServerPlayer player) {
+        return com.vincenthuto.hemomancy.common.mission.shared.OwedRewards.CLAIM.owed().apply(player).stream()
+                .mapToInt(ItemStack::getCount).sum();
+    }
+
+    /** PT-3: the First Bloodcraft kit, earned through a full pack, is owed whole and lands once. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void fullPackOwesFirstBloodcraftKitThenLandsOnce(GameTestHelper helper) {
+        owedRewardThroughFullPack(helper, EntityInit.harbinger_vicar.get(), player -> {
+            HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(1);
+            HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(4600.0D);
+            com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordAbsorption(player, 500.0D);
+            com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordFormation(player);
+            com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordVenousStone(player);
+            com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordStructure(player,
+                    new ItemStack(ItemInit.liber_sanguinum.get()));
+        }, com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD,
+                player -> com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.rewardStacks());
+    }
+
+    /** PT-3: the Hermit Road ash, earned through a full pack, is owed whole and lands once. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void fullPackOwesHermitRoadAshThenLandsOnce(GameTestHelper helper) {
+        owedRewardThroughFullPack(helper, EntityInit.harbinger_vicar.get(),
+                player -> com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(player,
+                        com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
+                com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees.EVENT_HERMIT_ROAD_REPORT,
+                player -> java.util.List.of(new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.befouling_ash_trail.get(), 4)));
+    }
+
+    /** PT-3: the Mason's Respite map, earned through a full pack, is owed and lands once. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void fullPackOwesMasonsRespiteMapThenLandsOnce(GameTestHelper helper) {
+        owedRewardThroughFullPack(helper, EntityInit.harbinger_vicar.get(),
+                player -> HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4),
+                com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE,
+                player -> java.util.List.of(new ItemStack(ItemInit.masons_respite_map.get())));
+    }
+
+    /** PT-3: the Mnemonist's starter memory, earned through a full pack, is owed and lands once. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void fullPackOwesMnemonistStarterMemoryThenLandsOnce(GameTestHelper helper) {
+        owedRewardThroughFullPack(helper, EntityInit.harbinger_mnemonist.get(),
+                player -> HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2),
+                com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice.BLOOD_SHOT.eventId(),
+                player -> java.util.List.of(new ItemStack(ItemInit.crude_memory_blood_shot.get())));
+    }
+
+    /** PT-3: the Woven Vessel kit, earned through a full pack, is owed whole and lands once. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void fullPackOwesWovenVesselKitThenLandsOnce(GameTestHelper helper) {
+        owedRewardThroughFullPack(helper, EntityInit.harbinger_mnemonist.get(), player -> {
+            HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
+            player.getInventory().add(new ItemStack(ItemInit.hematic_memory.get()));
+            player.getInventory().add(new ItemStack(net.minecraft.world.item.Items.BOOK, 2));
+            player.getInventory().add(new ItemStack(net.minecraft.world.item.Items.INK_SAC, 2));
+            player.getInventory().add(new ItemStack(net.minecraft.world.item.Items.PAPER, 4));
+        }, com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN,
+                player -> java.util.List.of(new ItemStack(ItemInit.bleeding_bulb.get()),
+                        new ItemStack(ItemInit.vivacious_enzyme.get(), 3)));
+    }
+
+    /** PT-3: the Worn Vow scrap, earned through a full pack, is owed whole and lands once. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void fullPackOwesWornVowScrapThenLandsOnce(GameTestHelper helper) {
+        owedRewardThroughFullPack(helper, EntityInit.harbinger_artificer.get(), player -> {
+            HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
+            for (var advancement : java.util.List.of(
+                    com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments.WORN_VOW_BRIEFED,
+                    com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_ARTIFICER_ARMATURE_PLACED,
+                    com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE))
+                com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(player, advancement);
+        }, com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerArtificerDialogueTrees.EVENT_CLAIM_WORN_VOW_REWARD,
+                player -> java.util.List.of(new ItemStack(ItemInit.hematic_iron_scrap.get(), 4)));
+    }
+
+    /** PT-3: the Vein-Mason's first lesson kit, earned through a full pack, is owed whole and lands once. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void fullPackOwesVeinMasonFirstLessonKitThenLandsOnce(GameTestHelper helper) {
+        owedRewardThroughFullPack(helper, EntityInit.harbinger_cicatrix_anchorite.get(), player -> {
+            HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
+            HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+        }, com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON,
+                player -> java.util.List.of(new ItemStack(ItemInit.scar_pattern.get()),
+                        new ItemStack(ItemInit.scar_blank.get()),
+                        new ItemStack(com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson.forPlayer(player).catalyst()),
+                        new ItemStack(ItemInit.hematic_iron_knapper.get())));
+    }
+
+    /**
+     * Earns one NPC reward with every pack slot taken. Nothing may drop: the reward stays owed while the player is dead
+     * and while a Creative full pack would discard it, lands in part when only part fits, then lands whole exactly once.
+     */
+    private static void owedRewardThroughFullPack(GameTestHelper helper,
+            net.minecraft.world.entity.EntityType<?> npcType,
+            java.util.function.Consumer<ServerPlayer> earn, String event,
+            java.util.function.Function<ServerPlayer, java.util.List<ItemStack>> reward) {
+        var player = player(helper);
+        player.setPos(helper.absoluteVec(new net.minecraft.world.phys.Vec3(2.5, 2, 2.5)));
+        var npc = npcType.create(helper.getLevel());
+        npc.setPos(player.position().add(1, 0, 0));
+        npc.setNoGravity(true);
+        helper.getLevel().addFreshEntity(npc);
+        try {
+            earn.accept(player);
+            for (int slot = 0; slot < 36; slot++)
+                if (player.getInventory().items.get(slot).isEmpty())
+                    player.getInventory().items.set(slot, new ItemStack(net.minecraft.world.item.Items.BARRIER, 64));
+            com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.DialogueEventRouter.onDialogueOption(
+                    new com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent(player, event, npc.getId()));
+            var expected = reward.apply(player);
+            int total = expected.stream().mapToInt(ItemStack::getCount).sum();
+            var nearby = new net.minecraft.world.phys.AABB(player.blockPosition()).inflate(8);
+            helper.assertTrue(helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, nearby).isEmpty(),
+                    event + " dropped its reward at a full pack");
+            for (ItemStack stack : expected)
+                helper.assertTrue(owedOf(player, stack.getItem()) == stack.getCount(),
+                        event + " did not owe " + stack.getCount() + " " + stack.getItem() + " at a full pack");
+            helper.assertTrue(owedCount(player) == total, event + " owed more than its reward");
+
+            player.setHealth(0);
+            com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(player);
+            helper.assertTrue(owedCount(player) == total, event + " was handed to a dead player");
+            player.setHealth(player.getMaxHealth());
+            player.getAbilities().instabuild = true;
+            com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(player);
+            helper.assertTrue(owedCount(player) == total, event + " counted a Creative discard as delivered");
+            player.getAbilities().instabuild = false;
+
+            ItemStack first = expected.getFirst();
+            boolean partial = expected.size() > 1 || first.getCount() > 1;
+            if (expected.size() > 1) player.getInventory().items.set(0, ItemStack.EMPTY);
+            else if (first.getCount() > 1)
+                player.getInventory().items.set(0, first.copyWithCount(first.getMaxStackSize() - first.getCount() + 1));
+            java.util.Map<net.minecraft.world.item.Item, Integer> before = new java.util.HashMap<>();
+            for (ItemStack stack : expected) before.put(stack.getItem(), player.getInventory().countItem(stack.getItem()));
+            java.util.function.IntSupplier landed = () -> before.entrySet().stream()
+                    .mapToInt(entry -> player.getInventory().countItem(entry.getKey()) - entry.getValue()).sum();
+            if (partial) {
+                com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(player);
+                helper.assertTrue(landed.getAsInt() > 0 && owedCount(player) > 0
+                                && landed.getAsInt() + owedCount(player) == total,
+                        event + " did not land in part and keep the rest owed");
+            }
+            for (int slot = 0; slot < 36; slot++)
+                if (player.getInventory().items.get(slot).is(net.minecraft.world.item.Items.BARRIER))
+                    player.getInventory().items.set(slot, ItemStack.EMPTY);
+            com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(player);
+            com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(player);
+            helper.assertTrue(landed.getAsInt() == total && owedCount(player) == 0,
+                    event + " did not land exactly once: landed " + landed.getAsInt() + " of " + total);
+            helper.assertTrue(helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, nearby).isEmpty(),
+                    event + " dropped its reward after room was made");
+        } finally {
+            npc.discard();
+            player.discard();
+        }
+        helper.succeed();
+    }
+
+    private static int owedOf(ServerPlayer player, net.minecraft.world.item.Item item) {
+        return com.vincenthuto.hemomancy.common.mission.shared.OwedRewards.CLAIM.owed().apply(player).stream()
+                .filter(stack -> stack.is(item)).mapToInt(ItemStack::getCount).sum();
+    }
+
+    /** F-4: the parked item lives in a death-copied attachment, survives a save and load, and returns once. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void scaleGripItemSurvivesARelogBeforeRespawnAndReturnsOnce(GameTestHelper helper) {
+        var original = player(helper);
+        boolean keep = helper.getLevel().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_KEEPINVENTORY);
+        helper.getLevel().getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_KEEPINVENTORY).set(false, helper.getLevel().getServer());
+        ItemStack pick = new ItemStack(net.minecraft.world.item.Items.DIAMOND_PICKAXE);
+        com.vincenthuto.hemomancy.common.item.shared.ScaleGripEvents.markProtected(pick);
+        original.getInventory().setItem(0, pick);
+        try {
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(
+                    new net.neoforged.neoforge.event.entity.living.LivingDeathEvent(original, original.damageSources().generic()));
+        } finally {
+            helper.getLevel().getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_KEEPINVENTORY).set(keep, helper.getLevel().getServer());
+        }
+        helper.assertTrue(original.getInventory().getItem(0).isEmpty()
+                && HemoCapabilityAccess.scaleGripReturns(original).owed().size() == 1, "the bound item was not parked");
+        var saved = original.saveWithoutId(new net.minecraft.nbt.CompoundTag());
+        var relogged = player(helper);
+        relogged.load(saved);
+        relogged.setHealth(0);
+        com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(relogged);
+        helper.assertTrue(relogged.getInventory().countItem(net.minecraft.world.item.Items.DIAMOND_PICKAXE) == 0
+                && HemoCapabilityAccess.scaleGripReturns(relogged).owed().size() == 1, "a dead player was handed the item");
+        var respawned = player(helper);
+        respawned.restoreFrom(relogged, false);
+        com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(respawned);
+        com.vincenthuto.hemomancy.common.capability.PendingDelivery.deliverAll(respawned);
+        helper.assertTrue(respawned.getInventory().countItem(net.minecraft.world.item.Items.DIAMOND_PICKAXE) == 1
+                && HemoCapabilityAccess.scaleGripReturns(respawned).owed().isEmpty(), "the item did not return exactly once");
+        int slot = respawned.getInventory().findSlotMatchingItem(new ItemStack(net.minecraft.world.item.Items.DIAMOND_PICKAXE));
+        helper.assertTrue(slot >= 0 && !com.vincenthuto.hemomancy.common.item.shared.ScaleGripEvents.isProtected(
+                respawned.getInventory().getItem(slot)), "the protection was not spent");
+        original.discard(); relogged.discard(); respawned.discard();
+        helper.succeed();
+    }
+
+    /** S-5b: a Creative full pack does not swallow a replacement Concentrated vial; what did not land is dropped. */
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void creativeFullPackDropsAGivenVialInsteadOfDiscardingIt(GameTestHelper helper) {
+        var player = player(helper);
+        var pos = helper.absolutePos(new net.minecraft.core.BlockPos(0, 5, 0));
+        player.setPos(net.minecraft.world.phys.Vec3.atCenterOf(pos));
+        player.getAbilities().instabuild = true;
+        for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(net.minecraft.world.item.Items.BARRIER, 64));
+        com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.giveReplacement(player);
+        var dropped = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                new net.minecraft.world.phys.AABB(pos).inflate(4),
+                e -> com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(e.getItem()));
+        helper.assertTrue(dropped.size() == 1 && dropped.get(0).getItem().getCount() == 1,
+                "the vial was discarded instead of dropped: " + dropped.size());
+        dropped.forEach(net.minecraft.world.entity.Entity::discard);
+        player.discard();
+        helper.succeed();
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
@@ -1277,9 +1575,15 @@ public final class HarbingerRepairGameTests {
                         && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(learner),
                         "Entry alone must not complete the lesson");
                 com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.returnFromVisit(learner);
+                helper.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(learner),
+                        "PT-24: a visit ended early does not complete the lesson");
+                helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginGuidedVisit(learner),
+                        "The lesson can be retried after an early return");
+                learner.getPersistentData().putInt("hemomancy:chamber_visit_remaining", 1);
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.tick(learner);
                 helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(learner)
                         && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(learner),
-                        "Only a valid return completes the lesson; it does not grant rite attunement");
+                        "Only a visit that runs out completes the lesson; it does not grant rite attunement");
             }
         } finally {
             if (com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(learner))

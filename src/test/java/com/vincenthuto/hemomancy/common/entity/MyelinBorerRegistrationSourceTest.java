@@ -1,18 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 class MyelinBorerRegistrationSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
-
-	private static String read(String relativePath) throws IOException {
-		return Files.readString(ROOT.resolve(relativePath));
-	}
 
 	@Test
 	void entityTypeIsRegistered() throws IOException {

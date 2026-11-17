@@ -17,10 +17,6 @@ public final class LuminalCicadaResourceTest {
 
 	@Test
 	void resourcesAreComplete() throws IOException {
-		main(new String[0]);
-	}
-
-	public static void main(String[] args) throws IOException {
 		String entityInit = source("com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String itemInit = source("com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		String clientEvents = source("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");

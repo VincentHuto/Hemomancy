@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
@@ -386,9 +388,47 @@ public final class StationUpgradeGameTests {
         helper.assertTrue(progress.claim(player, tier) && progress.hasPending(UpgradeStation.SCRIPTORIUM, 1),
                 "full-inventory claim was not held");
         player.getInventory().items.set(0, ItemStack.EMPTY);
-        progress.deliver(player);
+        PendingDelivery.deliver(player, StationUpgradeProgress.KITS);
         helper.assertTrue(!progress.hasPending(UpgradeStation.SCRIPTORIUM, 1)
                 && player.getInventory().contains(new ItemStack(ItemInit.rubricators_quill.get())), "pending quill not delivered");
+        player.discard();
+        helper.succeed();
+    }
+
+    /**
+     * F-19: a claimed kit is a PendingDelivery claim. It stays owed while the player is dead, during an observational
+     * Chamber visit and when a Creative full pack would discard it, then lands exactly once.
+     */
+    @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade_claims")
+    public static void kitWaitsUntilItReallyLandsThenArrivesOnce(GameTestHelper helper) {
+        ServerPlayer player = claimant(helper, 5);
+        StationUpgradeTier tier = StationUpgradeCatalog.get(UpgradeStation.SCRIPTORIUM, 1);
+        ItemStack quill = new ItemStack(ItemInit.rubricators_quill.get());
+        var progress = HemoCapabilityAccess.stationUpgrades(player);
+        progress.recordUse(UpgradeStation.SCRIPTORIUM, StationUpgradeCatalog.ENCHANT);
+        player.setHealth(0);
+        helper.assertTrue(progress.claim(player, tier) && progress.hasPending(UpgradeStation.SCRIPTORIUM, 1)
+                && !player.getInventory().contains(quill), "a dead player's kit was not held");
+        player.setHealth(player.getMaxHealth());
+        player.getPersistentData().putBoolean(Hemomancy.MOD_ID + ":chamber_visit_active", true);
+        player.getPersistentData().putString(Hemomancy.MOD_ID + ":chamber_visit_mode", "DREAM");
+        PendingDelivery.deliver(player, StationUpgradeProgress.KITS);
+        helper.assertTrue(progress.hasPending(UpgradeStation.SCRIPTORIUM, 1) && !player.getInventory().contains(quill),
+                "a kit was delivered during an observational visit");
+        player.getPersistentData().remove(Hemomancy.MOD_ID + ":chamber_visit_active");
+        player.getPersistentData().remove(Hemomancy.MOD_ID + ":chamber_visit_mode");
+        player.getAbilities().instabuild = true;
+        for (int i = 0; i < player.getInventory().items.size(); i++)
+            player.getInventory().items.set(i, new ItemStack(Items.STONE, 64));
+        PendingDelivery.deliver(player, StationUpgradeProgress.KITS);
+        helper.assertTrue(progress.hasPending(UpgradeStation.SCRIPTORIUM, 1),
+                "a Creative full-pack discard counted as delivered");
+        player.getAbilities().instabuild = false;
+        player.getInventory().items.set(0, ItemStack.EMPTY);
+        PendingDelivery.deliver(player, StationUpgradeProgress.KITS);
+        PendingDelivery.deliver(player, StationUpgradeProgress.KITS);
+        helper.assertTrue(!progress.hasPending(UpgradeStation.SCRIPTORIUM, 1)
+                && player.getInventory().countItem(quill.getItem()) == 1, "the kit did not land exactly once");
         player.discard();
         helper.succeed();
     }

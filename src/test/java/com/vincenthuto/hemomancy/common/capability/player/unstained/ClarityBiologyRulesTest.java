@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import org.junit.jupiter.api.Test;
+
 public final class ClarityBiologyRulesTest {
 	private ClarityBiologyRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertClose("Purity alone must not alter biology", 1.0F,
 				ClarityBiologyRules.potionResponseMultiplier(false, 100.0F));
 		assertClose("Clarity starts without an immediate penalty", 1.0F,

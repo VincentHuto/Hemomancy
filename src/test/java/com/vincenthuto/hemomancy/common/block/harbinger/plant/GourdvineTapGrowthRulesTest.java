@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
+import org.junit.jupiter.api.Test;
+
 public final class GourdvineTapGrowthRulesTest {
 	private GourdvineTapGrowthRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertEquals("paste advances one stage", 2, GourdvineTapGrowthRules.advance(1, 1));
 		assertEquals("enzyme advances two stages", 3, GourdvineTapGrowthRules.advance(1, 2));
 		assertEquals("growth clamps at mature", 3, GourdvineTapGrowthRules.advance(2, 2));

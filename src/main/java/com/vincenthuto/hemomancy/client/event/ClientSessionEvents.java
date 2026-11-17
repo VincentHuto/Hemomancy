@@ -32,6 +32,10 @@ public final class ClientSessionEvents {
         QliphothBloomClientData.clear();
         NpcProgressionMarkerClientState.clear();
         com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.clear();
+        com.vincenthuto.hemomancy.client.data.StrandClientState.clear();
+        com.vincenthuto.hemomancy.client.player.LashCamera.reset();
+        com.vincenthuto.hemomancy.client.data.OnlookerVerbState.clear();
+        com.vincenthuto.hemomancy.client.data.VerbRefusalClientState.clear();
     }
 
     @SubscribeEvent
@@ -44,6 +48,10 @@ public final class ClientSessionEvents {
         NaeglerophaeonCaptureOverlay.clear();
         com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.clear();
         com.vincenthuto.hemomancy.client.screen.overlay.LidlessPassageView.clear();
+        com.vincenthuto.hemomancy.client.data.StrandClientState.clear();
+        com.vincenthuto.hemomancy.client.player.LashCamera.reset();
+        com.vincenthuto.hemomancy.client.data.OnlookerVerbState.clear();
+        com.vincenthuto.hemomancy.client.data.VerbRefusalClientState.clear();
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
         com.vincenthuto.hemomancy.client.render.world.MorphlingStrainTrails.clear();

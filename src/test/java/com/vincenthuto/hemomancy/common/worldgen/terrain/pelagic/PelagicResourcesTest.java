@@ -10,6 +10,7 @@ class PelagicResourcesTest {
     private static final Path ROOT = Path.of("src/main/resources");
     private static final String[] SPECIES = {"chiton", "pyrosome", "pelagic_herring", "siphonophore", "bloody_belly_comb_jelly", "hagfish"};
     private JsonObject json(String path) throws Exception { return JsonParser.parseString(Files.readString(ROOT.resolve(path))).getAsJsonObject(); }
+    private static String firstDrop(JsonArray pools) { return pools.get(0).getAsJsonObject().getAsJsonArray("entries").get(0).getAsJsonObject().get("name").getAsString(); }
 
     @Test void pyrosomesHavePopulationRoomIndependentOfLargeSwimmers() throws Exception {
         for (var layer : List.of(PelagicLayer.OPEN, PelagicLayer.TWILIGHT)) {
@@ -55,10 +56,11 @@ class PelagicResourcesTest {
 
     @Test void sharedMaterialsDoNotInventAnIngredientForEveryCreature() throws Exception {
         var allowed = Set.of("hemomancy:chitinous_husk", "hemomancy:cuttlefish_chromatophores",
-                "hemomancy:ganglion_cluster", "hemomancy:raw_pelagic_herring");
+                "hemomancy:ganglion_cluster", "hemomancy:raw_pelagic_herring", "minecraft:slime_ball");
         for (var id : SPECIES) {
             var pools = json("data/hemomancy/loot_table/entities/" + id + ".json").getAsJsonArray("pools");
-            if (id.equals("pyrosome") || id.equals("hagfish")) assertTrue(pools.isEmpty(), id);
+            if (id.equals("pyrosome")) assertEquals("hemomancy:cuttlefish_chromatophores", firstDrop(pools), id);
+            if (id.equals("hagfish")) assertEquals("minecraft:slime_ball", firstDrop(pools), id);
             for (var pool : pools) for (var entry : pool.getAsJsonObject().getAsJsonArray("entries"))
                 assertTrue(allowed.contains(entry.getAsJsonObject().get("name").getAsString()), id);
         }

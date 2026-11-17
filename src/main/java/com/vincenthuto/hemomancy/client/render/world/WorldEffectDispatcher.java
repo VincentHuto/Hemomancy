@@ -69,6 +69,13 @@ public final class WorldEffectDispatcher {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) {
             // Before entities and translucent blocks, so the echo, threads and water inside draw over the Chamber sky.
             com.vincenthuto.hemomancy.client.render.world.chamberofwill.SomaticLoomDomeRenderer.render(event);
+            // The ground network's lit runs and Lux traces lie on block faces. They draw before translucent blocks so
+            // water lying over a gouge (round two P8) and glass in front of one blend over them instead of hiding them
+            // by depth; every rite visual still draws over them later. The block-layer stages run before the level
+            // renderer pushes the camera onto the model-view stack, so the camera's matrix is applied here.
+            com.mojang.blaze3d.vertex.PoseStack groundPose = new com.mojang.blaze3d.vertex.PoseStack();
+            groundPose.mulPose(event.getModelViewMatrix());
+            GroundRunRenderer.render(groundPose, event.getPartialTick().getGameTimeDeltaPartialTick(true));
         }
 
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
@@ -107,7 +114,8 @@ public final class WorldEffectDispatcher {
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
             HematicSutureLinkRenderer.render(event.getPoseStack(), partialTick);
             TendonLineRenderer.render(event.getPoseStack(), partialTick);
-            MemoryThreadLineRenderer.render(event.getPoseStack(), partialTick);
+            LivingLandRenderer.render(event.getPoseStack(), partialTick);
+            ClingVeinRenderer.render(event.getPoseStack(), partialTick);
             VeinSpiderCourierRenderer.render(event.getPoseStack(), partialTick);
             com.vincenthuto.hemomancy.client.render.entity.npc.SuccessionBrazierLabels.renderWorld(event.getPoseStack());
         }

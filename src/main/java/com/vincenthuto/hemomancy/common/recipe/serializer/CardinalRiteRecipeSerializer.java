@@ -90,8 +90,12 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				JsonObject anchor = element.getAsJsonObject();
 				int ring = GsonHelper.getAsInt(anchor, "ring", 0);
 				int order = GsonHelper.getAsInt(anchor, "order", anchors.size());
-				anchors.add(CardinalRiteRingTuning.anchor(
-						ring, order, GsonHelper.getAsInt(anchor, "y", 1)));
+				int y = GsonHelper.getAsInt(anchor, "y", 1);
+				// The codec writes each anchor's resolved x and z, so a layout's anchors read back where they stood.
+				anchors.add(anchor.has("x") && anchor.has("z")
+						? new CardinalRiteCeremonyDefinition.Anchor(GsonHelper.getAsInt(anchor, "x"), y,
+								GsonHelper.getAsInt(anchor, "z"), ring, order)
+						: CardinalRiteRingTuning.anchor(ring, order, y));
 			}
 		} else if (ceremony.has("layout")) {
 			CardinalRiteCeremonyCatalog.Layout layout = CardinalRiteCeremonyCatalog.Layout.byName(
@@ -108,11 +112,12 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		List<CardinalRiteCeremonyDefinition.SupportSocket> sockets = new ArrayList<>();
 		for (JsonElement element : ceremony.getAsJsonArray("support_sockets")) {
 			JsonObject socket = element.getAsJsonObject();
+			requireCeremonyField(socket, recipeId, "required");
 			sockets.add(new CardinalRiteCeremonyDefinition.SupportSocket(
 					GsonHelper.getAsInt(socket, "x"), GsonHelper.getAsInt(socket, "y", 0),
 					GsonHelper.getAsInt(socket, "z"),
 					GsonHelper.getAsString(socket, "suggested_sigil", ""),
-					GsonHelper.getAsBoolean(socket, "required")));
+					RecipeCodecJson.booleanField(socket, "required", false)));
 		}
 		List<String> waves = stringList(ceremony, "waves");
 		List<String> guaranteed = stringList(ceremony, "guaranteed_waves");
@@ -156,8 +161,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				GsonHelper.getAsInt(ceremony, "still_interval_ticks"),
 				new CardinalRiteCeremonyDefinition.Atmosphere(
 						GsonHelper.getAsString(atmosphere, "fog"),
-						GsonHelper.getAsBoolean(atmosphere, "lightning"),
-						GsonHelper.getAsBoolean(atmosphere, "dome")),
+						RecipeCodecJson.booleanField(atmosphere, "lightning", false),
+						RecipeCodecJson.booleanField(atmosphere, "dome", false)),
 				GsonHelper.getAsString(ceremony, "failure"),
 				GsonHelper.getAsInt(ceremony, "wave_count", -1),
 				GsonHelper.getAsString(ceremony, "culmination", ""));
@@ -205,7 +210,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				JsonObject structure = GsonHelper.getAsJsonObject(pJson, "required_structure");
 				recipe.setRequiredStructure(CardinalRitePatternJson.parse(structure));
 				recipe.setConsumeRequiredStructure(
-						GsonHelper.getAsBoolean(structure, "consume_on_success", false));
+						RecipeCodecJson.booleanField(structure, "consume_on_success", false));
 			}
 			recipe.setBrazierSignature(brazierSignatureFromJson(pJson, jsonOps));
 			recipe.setOptionalOfferings(optionalOfferingsFromJson(pJson, jsonOps));
@@ -304,7 +309,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			result.add(new CardinalRiteRecipe.BrazierRequirement(
 					ingredient, GsonHelper.getAsInt(entry, "count", 1),
 					CardinalRiteOfferingConsumptionRules.fromNullable(entry.has("consume_on_success")
-							? entry.get("consume_on_success").getAsBoolean() : null)));
+							? RecipeCodecJson.booleanField(entry, "consume_on_success", true) : null)));
 		}
 		return List.copyOf(result);
 	}
@@ -333,7 +338,48 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		prefix.add("riteType", ops.createString(recipe.getRiteType().getSerializedName()));
 		prefix.add("riteName", ops.createString(recipe.getRiteName()));
 		prefix.add("riteDescription", ops.createString(recipe.getRiteDescription()));
-		// pattern / key are complex — handled via stream codec
+		if (recipe.getPattern() != null) {
+			prefix.add("pattern", JsonOps.INSTANCE.convertTo(ops, patternJson(recipe.getPattern())));
+			prefix.add("key", JsonOps.INSTANCE.convertTo(ops, keyJson(recipe.getPattern())));
+		}
+		DynamicOps<JsonElement> jsonOps = RecipeCodecJson.jsonOps(ops);
+		if (recipe.hasLayeredStation()) {
+			prefix.add("floor", ops.createString(recipe.getFloorId().toString()));
+			if (recipe.getRequiredStructure() != null) {
+				JsonObject structure = patternOwnerJson(recipe.getRequiredStructure());
+				structure.addProperty("consume_on_success", recipe.shouldConsumeRequiredStructure());
+				prefix.add("required_structure", JsonOps.INSTANCE.convertTo(ops, structure));
+			}
+			if (!recipe.getBrazierSignature().isEmpty()) {
+				JsonArray braziers = new JsonArray();
+				for (CardinalRiteRecipe.BrazierRequirement requirement : recipe.getBrazierSignature()) {
+					JsonObject entry = new JsonObject();
+					entry.add("ingredient", Ingredient.CODEC_NONEMPTY.encodeStart(jsonOps, requirement.ingredient()).getOrThrow());
+					entry.addProperty("count", requirement.count());
+					entry.addProperty("consume_on_success", requirement.consumeOnSuccess());
+					braziers.add(entry);
+				}
+				prefix.add("brazier_signature", JsonOps.INSTANCE.convertTo(ops, braziers));
+			}
+			if (!recipe.getOptionalOfferings().isEmpty()) {
+				JsonArray optional = new JsonArray();
+				for (CardinalRiteRecipe.OptionalOffering offering : recipe.getOptionalOfferings()) {
+					JsonObject entry = new JsonObject();
+					entry.add("ingredient", Ingredient.CODEC_NONEMPTY.encodeStart(jsonOps, offering.ingredient()).getOrThrow());
+					entry.addProperty("effect", offering.effect());
+					optional.add(entry);
+				}
+				prefix.add("optional_offerings", JsonOps.INSTANCE.convertTo(ops, optional));
+			}
+			if (recipe.isWorkingCraft()) {
+				JsonObject subject = patternOwnerJson(recipe.getSubject());
+				subject.addProperty("feed", recipe.getSubjectFeedMl());
+				prefix.add("subject", JsonOps.INSTANCE.convertTo(ops, subject));
+			}
+		}
+		if (recipe.getCeremony() != null) {
+			prefix.add("ceremony", JsonOps.INSTANCE.convertTo(ops, ceremonyJson(recipe.getCeremony())));
+		}
 		if (!recipe.getResult().isEmpty()) {
 			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResult()));
 		}
@@ -356,6 +402,98 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			prefix.add("puppeteer_trial", JsonOps.INSTANCE.convertTo(ops, trial));
 		}
 		return prefix;
+	}
+
+	private static JsonObject patternOwnerJson(MultiblockPattern pattern) {
+		JsonObject owner = new JsonObject();
+		owner.add("pattern", patternJson(pattern));
+		owner.add("key", keyJson(pattern));
+		return owner;
+	}
+
+	private static JsonArray patternJson(MultiblockPattern pattern) {
+		JsonArray aisles = new JsonArray();
+		for (String[] aisle : pattern.getPatternArray()) {
+			JsonArray rows = new JsonArray();
+			for (String row : aisle) rows.add(row);
+			aisles.add(rows);
+		}
+		return aisles;
+	}
+
+	private static JsonObject keyJson(MultiblockPattern pattern) {
+		JsonObject keys = new JsonObject();
+		pattern.getKeyList().forEach((symbol, key) -> {
+			if (" ".equals(symbol)) return;
+			JsonObject entry = new JsonObject();
+			String fallback = BuiltInRegistries.BLOCK.getKey(key.fallbackBlock()).toString();
+			if (key.isTag()) {
+				entry.addProperty("tag", key.tagId().toString());
+				entry.addProperty("fallback", fallback);
+			} else {
+				entry.addProperty("block", fallback);
+			}
+			keys.add(symbol, entry);
+		});
+		return keys;
+	}
+
+	private static JsonObject ceremonyJson(CardinalRiteCeremonyDefinition ceremony) {
+		JsonObject json = new JsonObject();
+		json.addProperty("profile", ceremony.profile().name().toLowerCase(java.util.Locale.ROOT));
+		JsonArray anchors = new JsonArray();
+		for (CardinalRiteCeremonyDefinition.Anchor anchor : ceremony.anchors()) {
+			JsonObject entry = new JsonObject();
+			entry.addProperty("x", anchor.x());
+			entry.addProperty("y", anchor.y());
+			entry.addProperty("z", anchor.z());
+			entry.addProperty("ring", anchor.ring());
+			entry.addProperty("order", anchor.order());
+			anchors.add(entry);
+		}
+		json.add("anchors", anchors);
+		JsonArray sockets = new JsonArray();
+		for (CardinalRiteCeremonyDefinition.SupportSocket socket : ceremony.supportSockets()) {
+			JsonObject entry = new JsonObject();
+			entry.addProperty("x", socket.x());
+			entry.addProperty("y", socket.y());
+			entry.addProperty("z", socket.z());
+			entry.addProperty("suggested_sigil", socket.suggestedSigil());
+			entry.addProperty("required", socket.required());
+			sockets.add(entry);
+		}
+		json.add("support_sockets", sockets);
+		json.add("waves", stringArray(ceremony.waves()));
+		json.add("guaranteed_waves", stringArray(ceremony.guaranteedWaves()));
+		JsonArray fragile = new JsonArray();
+		for (BlockPos offset : ceremony.fragileOffsets()) {
+			JsonArray cell = new JsonArray();
+			cell.add(offset.getX());
+			cell.add(offset.getY());
+			cell.add(offset.getZ());
+			fragile.add(cell);
+		}
+		json.add("fragile_offsets", fragile);
+		json.addProperty("target_duration_ticks", ceremony.targetDurationTicks());
+		json.addProperty("focus", ceremony.focusMode());
+		json.addProperty("required_helpers", ceremony.requiredHelpers());
+		json.add("helper_roles", stringArray(ceremony.helperRoles()));
+		json.addProperty("still_interval_ticks", ceremony.stillIntervalTicks());
+		JsonObject atmosphere = new JsonObject();
+		atmosphere.addProperty("fog", ceremony.atmosphere().fog());
+		atmosphere.addProperty("lightning", ceremony.atmosphere().lightning());
+		atmosphere.addProperty("dome", ceremony.atmosphere().dome());
+		json.add("atmosphere", atmosphere);
+		json.addProperty("failure", ceremony.failureProfile());
+		json.addProperty("wave_count", ceremony.waveCount());
+		json.addProperty("culmination", ceremony.culmination());
+		return json;
+	}
+
+	private static JsonArray stringArray(List<String> values) {
+		JsonArray array = new JsonArray();
+		for (String value : values) array.add(value);
+		return array;
 	}
 
 	private static final StreamCodec<RegistryFriendlyByteBuf, CardinalRiteRecipe> STREAM_CODEC = StreamCodec.of(

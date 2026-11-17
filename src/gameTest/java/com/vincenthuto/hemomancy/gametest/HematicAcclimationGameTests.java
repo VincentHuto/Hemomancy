@@ -115,6 +115,47 @@ public final class HematicAcclimationGameTests {
 		}
 	}
 
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void aFullBodyLosesTheBloodUnlessSatedSiphonSendsItToTheGourd(GameTestHelper helper) {
+		ServerPlayer player = player(helper);
+		Cow first = helper.spawn(EntityType.COW, new BlockPos(1, 1, 1));
+		Cow second = helper.spawn(EntityType.COW, new BlockPos(3, 1, 1));
+		try {
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
+			blood.setActive(true);
+			blood.setMaxBloodVolume(1000.0D);
+			blood.setBloodVolume(1000.0D);
+			helper.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionChannelRules
+					.canDrainLivingTarget(blood.isActive()), "a full body may not draw (CQ-9)");
+			net.minecraft.world.item.ItemStack gourd = new net.minecraft.world.item.ItemStack(
+					com.vincenthuto.hemomancy.common.init.ItemInit.blood_gourd_white.get());
+			HemoCapabilityAccess.getEquipment(player).setStackInSlot(
+					com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX, gourd);
+			var worn = HemoCapabilityAccess.getEquipment(player)
+					.getStackInSlot(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
+			double gourdBefore = HemoCapabilityAccess.getBloodVolume(worn).map(v -> v.getBloodVolume()).orElse(0.0D);
+
+			double lost = BloodAbsorptionItem.absorbFromTarget(helper.getLevel(), player, first, 2.0D);
+			helper.assertTrue(lost > 0.0D, "a full body drew nothing from the cow");
+			assertClose(helper, 1000.0D, blood.getBloodVolume(), "a full body held more than its cap");
+			assertClose(helper, gourdBefore, HemoCapabilityAccess.getBloodVolume(worn).map(v -> v.getBloodVolume()).orElse(0.0D),
+					"without Sated Siphon the lost blood reached the gourd");
+
+			HemoCapabilityAccess.getSkillProgress(player).setSkill(
+					com.vincenthuto.hemomancy.common.init.SkillPointInit.skill_sated_siphon,
+					com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates.UNLOCKED, 1);
+			double sent = BloodAbsorptionItem.absorbFromTarget(helper.getLevel(), player, second, 2.0D);
+			assertClose(helper, 1000.0D, blood.getBloodVolume(), "Sated Siphon overfilled the body");
+			assertClose(helper, gourdBefore + sent, HemoCapabilityAccess.getBloodVolume(worn).map(v -> v.getBloodVolume()).orElse(0.0D),
+					"Sated Siphon did not send the lost blood to the worn gourd");
+			helper.succeed();
+		} finally {
+			first.discard();
+			second.discard();
+			player.discard();
+		}
+	}
+
 	private static void assertClose(GameTestHelper helper, double expected, double actual, String message) {
 		helper.assertTrue(Math.abs(expected - actual) <= EPSILON,
 				message + ": expected " + expected + " but got " + actual);

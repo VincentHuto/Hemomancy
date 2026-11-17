@@ -21,6 +21,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 public class BloodStainedStoneItem extends Item {
 
@@ -51,9 +52,11 @@ public class BloodStainedStoneItem extends Item {
 		}
 
 		if (!level.isClientSide()) {
-			level.setBlock(placePos, state, 11);
-			level.playSound(null, placePos, SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 0.6F, 1.0F);
 			Player player = context.getPlayer();
+			if (!PlayerBlockEdits.place(player, placePos, state, 11)) {
+				return InteractionResult.FAIL;
+			}
+			level.playSound(null, placePos, SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 0.6F, 1.0F);
 			if (player == null || !player.isCreative()) {
 				context.getItemInHand().shrink(1);
 			}

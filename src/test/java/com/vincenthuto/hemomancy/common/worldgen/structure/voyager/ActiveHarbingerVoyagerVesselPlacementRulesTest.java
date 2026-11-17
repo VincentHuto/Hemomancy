@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure.voyager;
 
+import org.junit.jupiter.api.Test;
+
 final class ActiveHarbingerVoyagerVesselPlacementRulesTest {
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		rejectsDryOrShallowColumns();
 		acceptsValidOceanSurfaceColumns();
 		rejectsRoughOceanSurface();

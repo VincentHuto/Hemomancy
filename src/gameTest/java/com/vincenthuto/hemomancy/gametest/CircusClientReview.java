@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEn
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusSiteStateService;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
@@ -77,7 +78,10 @@ import java.util.function.Supplier;
 /**
  * With hemomancy.circusReview, films the Crimson Troupe as numbered frame sequences for video: the performers' wound-up
  * defense moves against a husk, the puppets on the Marionette Crossbar, the pavilion at night, the perception overlay at
- * four acclimation scores, and both finales (Succession, Liberation) played by the client player on real copies of the
+ * four acclimation scores, the site kit sampler (scene {@code kit}), the rebuilt pavilion by day (scene {@code pavilion}),
+ * the five camps and the abandoned stage by day and night, then the ruin and the tenancy laid on the pavilions (scene
+ * {@code sites}),
+ * and both finales (Succession, Liberation) played by the client player on real copies of the
  * shipped {@code crimson_troupe_pavilion}. The server runs at {@link #RATE} ticks a second, so every game tick gets
  * one captured frame (written as {@code <scene>-<nnnnn>.png} into the game dir's screenshots). The camera is a
  * client-only armor stand moved each client tick, so the owner of the finale stays a real survival player.
@@ -118,7 +122,7 @@ public final class CircusClientReview {
 	private static int prep = -1;
 	private static final List<Scene> SCENES = new ArrayList<>();
 	private static int sceneIndex = -1, sceneTick;
-	private static BlockPos arena, siteA, siteB;
+	private static BlockPos arena, siteA, siteB, kitSite, campSite;
 	private static String camKey;
 
 	private CircusClientReview() {
@@ -428,6 +432,8 @@ public final class CircusClientReview {
 			arena = new BlockPos(spawn.getX() - 200, Y, spawn.getZ());
 			siteA = new BlockPos(spawn.getX() - 32, Y, spawn.getZ() - 32);
 			siteB = new BlockPos(spawn.getX() + 200, Y, spawn.getZ() - 32);
+			kitSite = new BlockPos(spawn.getX() - 32, Y, spawn.getZ() + 200);
+			campSite = new BlockPos(spawn.getX() - 32, Y, spawn.getZ() + 320);
 			player.setGameMode(GameType.SURVIVAL);
 			armUp(player, -1);
 		} else if (p == 2) {
@@ -436,7 +442,11 @@ public final class CircusClientReview {
 			buildPavilion(level, siteA);
 		} else if (p == 6) {
 			buildPavilion(level, siteB);
-		} else if (p == 8) {
+		} else if (p == 7) {
+			buildKit(level, kitSite);
+		} else if (p == 9) {
+			buildCamps(level, campSite);
+		} else if (p == 10) {
 			player.teleportTo(level, siteA.getX() + 32.5D, Y + 1, siteA.getZ() + 10.5D, 0.0F, 10.0F);
 		} else if (p == 80) {
 			castPavilion(level, siteA);
@@ -448,7 +458,7 @@ public final class CircusClientReview {
 			String only = System.getProperty("hemomancy.circusReview.only", "");
 			List<String> wanted = only.isBlank() ? List.of() : Arrays.asList(only.split(","));
 			for (Scene scene : List.of(new Performers(), new Puppets(), new Lanterns(), new Perception(),
-					new Succession(), new Liberation())) {
+					new Succession(), new Liberation(), new Kit(), new Pavilion(), new Sites())) {
 				if (wanted.isEmpty() || wanted.contains(scene.name())) SCENES.add(scene);
 			}
 			command(player, "tick rate " + RATE);
@@ -480,32 +490,71 @@ public final class CircusClientReview {
 		fill(level, arena.offset(0, 1, 26), arena.offset(40, 5, 26), Blocks.RED_WOOL.defaultBlockState());
 	}
 
+	/**
+	 * A pavilion site's cells. A site's position is the big top's core origin; since the side rings (2026-11-16) the
+	 * template starts {@link #MARGIN} cells west of it, so every scene coordinate stays a core one.
+	 */
 	private static BoundingBox pavilionBox(BlockPos origin) {
-		return BoundingBox.fromCorners(origin, origin.offset(64, 13, 64));
+		return BoundingBox.fromCorners(origin.offset(-MARGIN, 0, 0), origin.offset(64 + MARGIN, 22, 64));
 	}
 
+	private static final int MARGIN = 8;
+
 	private static void buildPavilion(ServerLevel level, BlockPos origin) {
-		BlockPos min = origin.offset(-8, 0, -8), max = origin.offset(72, 0, 72);
+		BlockPos min = origin.offset(-8 - MARGIN, 0, -8), max = origin.offset(72 + MARGIN, 0, 72);
 		force(level, min, max);
 		fill(level, min.below(2), max.below(), Blocks.DIRT.defaultBlockState());
 		fill(level, min, max, Blocks.GRASS_BLOCK.defaultBlockState());
 		fill(level, min.above(), max.above(24), Blocks.AIR.defaultBlockState());
 		var template = level.getStructureManager().get(Hemomancy.rloc("crimson_troupe_pavilion")).orElseThrow();
-		template.placeInWorld(level, origin, origin, new StructurePlaceSettings(), level.getRandom(), Block.UPDATE_CLIENTS);
+		BlockPos corner = origin.offset(-MARGIN, 0, 0);
+		template.placeInWorld(level, corner, corner, new StructurePlaceSettings(), level.getRandom(), Block.UPDATE_CLIENTS);
 		CircusPavilionSavedData.get(level).removeSite(level, origin.offset(32, 1, 32));
+	}
+
+	/** The Circus site kit's sampler (chunk 15 T7) on a grass field, for the kit scene. */
+	private static void buildKit(ServerLevel level, BlockPos origin) {
+		BlockPos min = origin.offset(-8, 0, -8), max = origin.offset(74, 0, 56);
+		force(level, min, max);
+		fill(level, min.below(2), max.below(), Blocks.DIRT.defaultBlockState());
+		fill(level, min, max, Blocks.GRASS_BLOCK.defaultBlockState());
+		fill(level, min.above(), max.above(26), Blocks.AIR.defaultBlockState());
+		var template = level.getStructureManager()
+				.get(ResourceLocation.fromNamespaceAndPath("crimson_troupe_validation", "circus_kit_sampler")).orElseThrow();
+		template.placeInWorld(level, origin, origin, new StructurePlaceSettings(), level.getRandom(), Block.UPDATE_CLIENTS);
+	}
+
+	private static final List<String> CAMPS = List.of("air", "blades", "pageantry", "embers", "memory");
+
+	/**
+	 * Chunk 15 T10: the five teaching camps in a row 40 blocks apart and the abandoned stage after them, on a grass
+	 * field; each template's row 1 lands on the field, as worldgen lands it on the top ground block.
+	 */
+	private static void buildCamps(ServerLevel level, BlockPos origin) {
+		BlockPos min = origin.offset(-24, 0, -24), max = origin.offset(240, 0, 56);
+		force(level, min, max);
+		fill(level, min.below(2), max.below(), Blocks.DIRT.defaultBlockState());
+		fill(level, min, max, Blocks.GRASS_BLOCK.defaultBlockState());
+		fill(level, min.above(), max.above(40), Blocks.AIR.defaultBlockState());
+		for (int i = 0; i <= CAMPS.size(); i++) {
+			String name = i < CAMPS.size() ? "troupe_camp_" + CAMPS.get(i) : "troupe_abandoned_stage";
+			BlockPos at = origin.offset(i * 40, -1, 0);
+			level.getStructureManager().get(Hemomancy.rloc(name)).orElseThrow()
+					.placeInWorld(level, at, at, new StructurePlaceSettings(), level.getRandom(), Block.UPDATE_CLIENTS);
+		}
 	}
 
 	/** Places any troupe member the template did not bring on its template mark, as the playthrough harness does. */
 	private static void castPavilion(ServerLevel level, BlockPos origin) {
 		Object[][] marks = {
-				{ EntityInit.circus_ringmaster.get(), new Vec3(32.5, 8, 37.5) },
+				{ EntityInit.circus_ringmaster.get(), new Vec3(32.5, 8, 45.5) },
 				{ EntityInit.impaled_procession.get(), new Vec3(32.5, 1, 32.5) },
 				{ EntityInit.circus_fire_eater.get(), new Vec3(28.5, 1, 28.5) },
 				{ EntityInit.circus_acrobat.get(), new Vec3(36.5, 1, 28.5) },
 				{ EntityInit.circus_stilt_walker.get(), new Vec3(28.5, 1, 36.5) },
 				{ EntityInit.circus_knife_thrower.get(), new Vec3(36.5, 1, 36.5) },
 				{ EntityInit.circus_threadkeeper.get(), new Vec3(8.5, 1, 7.5) },
-				{ EntityInit.circus_understudy.get(), new Vec3(56.5, 1, 55.5) },
+				{ EntityInit.circus_understudy.get(), new Vec3(56.5, 1, 53.5) },
 				{ EntityInit.circus_strongman.get(), new Vec3(8.5, 1, 26.5) },
 				{ EntityInit.circus_beast_tamer.get(), new Vec3(57.5, 1, 26.5) } };
 		AABB box = AABB.of(pavilionBox(origin)).inflate(2.0D);
@@ -880,6 +929,148 @@ public final class CircusClientReview {
 		}
 	}
 
+	// --- the rebuilt pavilion by day: the midway, the big top, both galleries, the box, the backyard -----------------
+
+	private static final class Pavilion extends Scene {
+		String name() {
+			return "pavilion";
+		}
+
+		int maxTicks() {
+			return 680;
+		}
+
+		void start(ServerPlayer player) {
+			nightVision(player, false);
+			invisible(player, true);
+			command(player, "time set 6000");
+			place(player, at(siteA, 32.5, 1, 2.5), at(siteA, 32.5, 4, 13));
+			List<Key> keys = new ArrayList<>();
+			keys.add(new Key(0, at(siteA, 32.5, 9, -14), at(siteA, 32.5, 6, 14)));
+			keys.add(new Key(50, at(siteA, 32.5, 3, 6), at(siteA, 32.5, 3, 20)));
+			keys.add(new Key(90, at(siteA, 32.5, 3.2, 16), at(siteA, 32.5, 4, 40)));
+			keys.add(new Key(140, at(siteA, 18.5, 4, 24), at(siteA, 40, 8, 46)));
+			keys.add(new Key(190, at(siteA, 20.5, 9.6, 48.5), at(siteA, 32.5, 8.5, 45)));
+			keys.add(new Key(240, at(siteA, 31.2, 9.6, 46.4), at(siteA, 32.5, 2, 30)));
+			keys.add(new Key(290, at(siteA, 46.5, 7.6, 15.5), at(siteA, 25, 6, 15)));
+			keys.add(new Key(340, at(siteA, 44.5, 12, 22), at(siteA, 20, 8, 40)));
+			keys.add(new Key(390, at(siteA, 66, 10, 66), at(siteA, 44, 3, 55)));
+			keys.add(new Key(440, at(siteA, 70, 14, 34), at(siteA, 40, 5, 34)));
+			// The side rings (2026-11-16): over the Beast Tamer's from the north, then across to the Strongman's.
+			keys.add(new Key(500, at(siteA, 63, 13, 13), at(siteA, 63, 1, 32)));
+			keys.add(new Key(560, at(siteA, 63, 13, 13), at(siteA, 63, 1, 32)));
+			keys.add(new Key(600, at(siteA, 1, 13, 13), at(siteA, 1, 1, 32)));
+			keys.add(new Key(660, at(siteA, 1, 13, 13), at(siteA, 1, 1, 32)));
+			setCam("pavilion", () -> new Path(keys));
+		}
+
+		boolean tick(ServerPlayer player, int t) {
+			return t >= 670;
+		}
+
+		void end(ServerPlayer player) {
+			invisible(player, false);
+		}
+	}
+
+	// --- chunk 15 T10, T11: the camps and the stage by day and night, then the ruin and the tenancy ------------------
+
+	private static final class Sites extends Scene {
+		String name() {
+			return "sites";
+		}
+
+		int maxTicks() {
+			return 640;
+		}
+
+		void start(ServerPlayer player) {
+			nightVision(player, false);
+			invisible(player, true);
+			command(player, "time set 6000");
+			place(player, at(campSite, 13, 1, 34), at(campSite, 13, 1, 13));
+			List<Key> keys = new ArrayList<>();
+			for (int i = 0; i < CAMPS.size(); i++) {
+				double x = i * 40;
+				keys.add(new Key(i * 50, at(campSite, x + 13, 10, 36), at(campSite, x + 13, 2, 14)));
+				keys.add(new Key(i * 50 + 30, at(campSite, x + 1, 8, 27), at(campSite, x + 14, 2, 11)));
+			}
+			keys.add(new Key(250, at(campSite, 206, 8, 24), at(campSite, 207, 2, 6)));
+			keys.add(new Key(290, at(campSite, 197, 5, 12), at(campSite, 205, 3, 5)));
+			// night: the air camp, the embers camp and the stage again, from near their lamps
+			keys.add(new Key(310, at(campSite, 2, 5, 18), at(campSite, 13, 2, 15)));
+			keys.add(new Key(360, at(campSite, 141, 5, 24), at(campSite, 133, 2, 13)));
+			keys.add(new Key(410, at(campSite, 199, 5, 9), at(campSite, 205, 4, 5)));
+			// by day: the ruin laid over one pavilion, then the successor's banner behind the podium in the other
+			keys.add(new Key(450, at(siteB, 20.5, 7, 20.5), at(siteB, 32.5, 2, 32.5)));
+			keys.add(new Key(520, at(siteB, 44.5, 9, 44.5), at(siteB, 24, 12, 26)));
+			keys.add(new Key(560, at(siteA, 32.5, 11.5, 38.5), at(siteA, 32.5, 10, 47)));
+			keys.add(new Key(630, at(siteA, 32.5, 10.4, 44.8), at(siteA, 32.5, 10.2, 47)));
+			setCam("sites", () -> new Path(keys));
+		}
+
+		boolean tick(ServerPlayer player, int t) {
+			if (t == 300) command(player, "time set 18000");
+			if (t == 430) {
+				command(player, "time set 6000");
+				place(player, at(siteB, 20.5, 1, 20.5), at(siteB, 32.5, 2, 32.5));
+				ServerLevel level = player.serverLevel();
+				CircusSiteStateService.begin(level, siteB.offset(32, 1, 32), CircusSiteStateService.State.RUIN, null);
+				CircusSiteStateService.begin(level, siteA.offset(32, 1, 32), CircusSiteStateService.State.TENANCY,
+						player.getGameProfile().getName());
+			}
+			if (t == 545) place(player, at(siteA, 32.5, 8, 44.5), at(siteA, 32.5, 10, 47));
+			return t >= 635;
+		}
+
+		void end(ServerPlayer player) {
+			invisible(player, false);
+		}
+	}
+
+	// --- the site kit: every set piece on the sampler, by day ------------------------------------------------------
+
+	private static final class Kit extends Scene {
+		String name() {
+			return "kit";
+		}
+
+		int maxTicks() {
+			return 400;
+		}
+
+		void start(ServerPlayer player) {
+			nightVision(player, false);
+			invisible(player, true);
+			command(player, "time set 6000");
+			place(player, at(kitSite, 33, 1, 24), at(kitSite, 33, 2, 24));
+			List<Key> keys = new ArrayList<>();
+			// close passes: the ring, the box and gallery, the seating, the tower; the wagon, cookhouse, tent, booth and
+			// wreck; then the camps' apparatus
+			keys.add(new Key(0, at(kitSite, 11, 4, 6), at(kitSite, 11, 1, 13)));
+			keys.add(new Key(40, at(kitSite, 11, 9, 10), at(kitSite, 11, 7, 23)));
+			keys.add(new Key(80, at(kitSite, 5, 3, 18), at(kitSite, 10, 2, 20)));
+			keys.add(new Key(110, at(kitSite, 20, 6, 12), at(kitSite, 25, 4, 13)));
+			keys.add(new Key(150, at(kitSite, 34, 4, 1), at(kitSite, 34, 2, 7)));
+			keys.add(new Key(180, at(kitSite, 43, 4, 0), at(kitSite, 43, 2, 4)));
+			keys.add(new Key(210, at(kitSite, 51, 4, 0), at(kitSite, 51, 2, 6)));
+			keys.add(new Key(240, at(kitSite, 33, 4, 12), at(kitSite, 36, 3, 17)));
+			keys.add(new Key(270, at(kitSite, 50, 5, 14), at(kitSite, 55, 2, 19)));
+			keys.add(new Key(300, at(kitSite, 40, 4, 30), at(kitSite, 42, 1, 34)));
+			keys.add(new Key(330, at(kitSite, 49, 5, 31), at(kitSite, 52, 1, 36)));
+			keys.add(new Key(360, at(kitSite, 58, 4, 31), at(kitSite, 58, 1, 36)));
+			setCam("kit", () -> new Path(keys));
+		}
+
+		boolean tick(ServerPlayer player, int t) {
+			return t >= 370;
+		}
+
+		void end(ServerPlayer player) {
+			invisible(player, false);
+		}
+	}
+
 	// --- 6: the perception overlay -------------------------------------------------------------------------------
 
 	private static final class Perception extends Scene {
@@ -892,19 +1083,24 @@ public final class CircusClientReview {
 		}
 
 		int maxTicks() {
-			return 520;
+			return 900;
 		}
 
 		void start(ServerPlayer player) {
-			nightVision(player, true);
+			nightVision(player, false);
 			invisible(player, false);
 			command(player, "time set 6000");
 			progress(player, CircusRouteRules.Route.NEUTRAL, 0, 0);
-			place(player, at(siteA, 32.5, 1, 19.5), at(siteA, 32.5, 2, 32.5));
-			cam = new PlayerView(0.0F, 8.0F, 22.0F, 45.0F);
+			// In the ring below the box, so the upper gallery's rails and decks, the rigging and the curb are in view.
+			place(player, at(siteA, 32.5, 1, 36.5), at(siteA, 32.5, 8, 47));
+			cam = new PlayerView(0.0F, -14.0F, 30.0F, 45.0F);
 			camKey = "perception";
 		}
 
+		/**
+		 * The phantom show (2026-11-16): each stage from the ring floor by day, the full show at night, from the upper
+		 * gallery, then the ruin's hollow echo on the other pavilion.
+		 */
 		boolean tick(ServerPlayer player, int t) {
 			int score = t < 110 ? 0 : t < 230 ? 300 : t < 350 ? 700 : 1000;
 			if (t == 0 || t == 110 || t == 230 || t == 350) {
@@ -912,7 +1108,22 @@ public final class CircusClientReview {
 				Hemomancy.LOGGER.info("CIRCUS_REVIEW perception {} at frame {} inside {}", score, t,
 						HemoCapabilityAccess.circusProgress(player).inside());
 			}
-			return t >= 470;
+			if (t == 470) command(player, "time set 18000");
+			if (t == 580) {
+				place(player, at(siteA, 31.2, 8, 46.4), at(siteA, 32.5, 2, 30));
+				setCam("perception-gallery", () -> new PlayerView(175.0F, 20.0F, 25.0F, 60.0F));
+			}
+			if (t == 690) {
+				command(player, "time set 6000");
+				CircusSiteStateService.begin(player.serverLevel(), siteB.offset(32, 1, 32),
+						CircusSiteStateService.State.RUIN, null);
+				place(player, at(siteB, 20.5, 1, 20.5), at(siteB, 32.5, 2, 32.5));
+				setCam("perception-ruin", () -> new PlayerView(-45.0F, -8.0F, 25.0F, 50.0F));
+			}
+			if (t == 760) Hemomancy.LOGGER.info("CIRCUS_REVIEW perception ruin inside {} ruined {}",
+					HemoCapabilityAccess.circusProgress(player).inside(),
+					HemoCapabilityAccess.circusProgress(player).ruined());
+			return t >= 860;
 		}
 	}
 
@@ -956,6 +1167,11 @@ public final class CircusClientReview {
 			if (t == SETTLE - 15) place(player, at(origin, 32.5, 1, 24.5), at(origin, 32.5, 4, 37.5));
 			if (t == SETTLE - 2) {
 				progress(player, CircusRouteRules.Route.NEUTRAL, 0, 1000);
+				// D-30: the finale rechecks the pact gate, Degree 4 and one school report.
+				HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(Math.max(4,
+						HemoCapabilityAccess.getPlayerDegreeNumber(player)));
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(player)
+						.putBoolean("quest.empty_ring", true);
 				CircusPlayerProgress.chooseRoute(player, route());
 				for (int c = 0; c < 5; c++) {
 					if (route() == CircusRouteRules.Route.SUCCESSION || c < 2) CircusPlayerProgress.completeChallenge(player, c, 0);
@@ -969,9 +1185,9 @@ public final class CircusClientReview {
 		}
 
 		List<CircusPerformerEntity> troupe(ServerPlayer player) {
-			return player.serverLevel().getEntitiesOfClass(CircusPerformerEntity.class,
-					new AABB(carousel.encounterOrigin()).inflate(20.0D),
-					p -> p.isAlive() && p.participatesInFinale());
+			// The finale counts its cast by the ring's membership (chunk 15 T13), so the review downs the same bodies.
+			return com.vincenthuto.hemomancy.common.entity.npc.circus.CircusArena.of(carousel.encounterOrigin())
+					.troupe(player.serverLevel()).stream().filter(CircusPerformerEntity::isAlive).toList();
 		}
 
 		boolean tick(ServerPlayer player, int t) {

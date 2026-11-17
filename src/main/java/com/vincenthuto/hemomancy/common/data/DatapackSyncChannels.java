@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.network.DatapackSyncPacket;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
+import com.vincenthuto.hemomancy.common.world.ground.GougeCatalysts;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -41,7 +42,10 @@ public final class DatapackSyncChannels {
 					BloodInjectionData::receive, false),
 			new Channel(Hemomancy.rloc("cardinal_rite_floor"), CardinalRiteFloorRegistry.MAX_SYNCED_FLOORS,
 					CardinalRiteFloorRegistry.MAX_SYNCED_JSON_LENGTH, CardinalRiteFloorRegistry::syncSnapshot,
-					CardinalRiteFloorRegistry::receiveSync, true));
+					CardinalRiteFloorRegistry::receiveSync, true),
+			new Channel(Hemomancy.rloc("gouge_catalysts"), GougeCatalysts.MAX_SYNCED_FUNCTIONS,
+					GougeCatalysts.MAX_SYNCED_JSON_LENGTH, GougeCatalysts::syncSnapshot,
+					GougeCatalysts::receiveSync, true));
 
 	private DatapackSyncChannels() {
 	}

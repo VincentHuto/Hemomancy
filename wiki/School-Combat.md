@@ -40,6 +40,23 @@ Hematic Riposte cancels a parried hit at NORMAL priority, after school preparati
 
 Blood-volume drain/transfer, vascular damage, Blood Loss, Grave Debt, Insatiable Hunger, and Hemolysis purification remain separate. Healing suppression uses the strongest applicable reduction instead of multiplying penalties. Cauterizing Rebuke and Lumen Suture cures remove their relevant replacement states; Night Vision, mining Haste, and authored defensive trade-offs remain.
 
+**Who an area effect reaches (G-2b, F-16; ruled 2026-11-13).** Every `Monster.class` gather (Still Arts, the Glacier
+scar, Crimson Wake, the Prismatic flash, the Pale Silver Bell, the Sporitic Thurible, Predatory Eyes, the Rite of the
+Closed Vein, Phantasmal Masquerade's hostile check) spares the caster's own puppets, pets, allies and impressed mobs. A
+Drudge's work asks `canHarmFor(drudge, monster)`, so it spares its owner's puppets and allies. Silent Severance,
+Autoimmune Edge, Silver Rebuke, the Saprovitta trail and Sheolic Crimson Retribution ask the strict `canHarm`, so
+PvP-off players are spared too, and their damage names the player (`indirectMagic(player, player)`): the kill counts
+for blood on kill, Temper, skill points and purity. The source is not a melee type, so it never picks up a held weapon's school.
+The unused morphling look target is gone, and the Verdigris Aura asks `canHarmFor`, so it spares an ally's Hemomancy
+mobs (2026-11-14).
+
+**The order a hit is settled in (G-1, F-18; built 2026-11-14).** Once armour and effects have had their turn, one
+table settles the final amount: the attacker's bonuses (Sanguine Fists, the Absolved +2, the Penumbral ambush), then
+the victim's reductions (Second Pulse and Silver Ward first, then the stances, Iron Will, the avatar and the armour
+sets), then the death-save (the one armed Last Rite), then what reads the
+result: wound blood, vein strain and the Mnemonist puppet's memory. Reductions stack with no cap. A saved hit costs
+blood only for the damage that got through.
+
 ## Sanguine Marionette
 
 Marionette is a Ductilis / Animus command: a Hematic Rebuke family form at mastery two, before Impressment at mastery three. It is no longer a Blood Binding form; players who already knew it keep it, and their saved entry adopts the new school. It acquires one eligible blood-bearing mob within eight blocks and maintains a mobile tendon for at most eight seconds. It never applies stationary Blood Binding to the moving body; casting it on a creature already held by Blood Binding releases that binding and takes the body as the puppet.
@@ -54,7 +71,7 @@ Base cost is 50 mL per existing one-second channel pulse, including the first, w
 
 This table is an inventory of authored assignments, not proof that a combat scenario passed. It was checked against the live registry. **Apply** means an ordinary direct hit applies its primary state; a non-damaging utility does not acquire damage merely because it has school metadata. **Exploit** is the named pre-state follow-up. Deferred periodic/reaction children are **damage only** regardless of the launch role.
 
-Every listed manipulation has its player path. Entity indicates a supported entity cast (attached in `ManipulationInit`, run through `EntityManipulationEffects`) used by non-player casters; Drudge indicates an actual supported action, not the unsupported sentinel. Family forms retain their existing availability restrictions. No additional alternate casting path was enabled merely to fill this table.
+Every listed manipulation has its player path (the fifteen retired ids were removed from the registry and from this table). Entity indicates a supported entity cast (attached in `ManipulationInit`, run through `EntityManipulationEffects`) used by non-player casters; Drudge indicates an actual supported action, not the unsupported sentinel. Family forms retain their existing availability restrictions. No additional alternate casting path was enabled merely to fill this table.
 
 | Ability ID | Primary | Secondary | Direct role | Entity | Drudge |
 | --- | --- | --- | --- | --- | --- |
@@ -67,8 +84,6 @@ Every listed manipulation has its player path. Entity indicates a supported enti
 | `blood_binding` | ANIMUS | DUCTILIS | Apply | — | — |
 | `blood_cloud` | ANIMUS | MORTEM | Apply | Yes | Yes |
 | `blood_eclipse` | TENEBRIS | LUX | Apply | Yes | Yes |
-| `blood_eclipse_mantle` | TENEBRIS | FLAMMEUS | Apply | — | Yes |
-| `blood_lamp` | LUX | — | Apply | — | Yes |
 | `blood_lattice` | ANIMUS | DUCTILIS | Apply | — | — |
 | `blood_needle` | FERRIC | ANIMUS | Apply | Yes | Yes |
 | `blood_needle_fan` | FERRIC | ANIMUS | Apply | — | — |
@@ -76,7 +91,7 @@ Every listed manipulation has its player path. Entity indicates a supported enti
 | `blood_projection` | FERRIC | ANIMUS | Apply | — | — |
 | `blood_rush` | ANIMUS | FLAMMEUS | Apply | — | Yes |
 | `blood_shot` | ANIMUS | — | Apply | Yes | Yes |
-| `bloom_of_rot` | MORTEM | ANIMUS | Apply | Yes | Yes |
+| `bloom_of_rot` | MORTEM | FLAMMEUS | Apply (rot); the Ignition (Flammeus) exploits Necrosis | — | — |
 | `canopy_mortis` | MORTEM | ANIMUS | Apply | — | — |
 | `carrion_communion` | MORTEM | — | Apply | — | — |
 | `cauterizing_rebuke` | FLAMMEUS | ANIMUS | Apply | — | Yes |
@@ -93,32 +108,25 @@ Every listed manipulation has its player path. Entity indicates a supported enti
 | `conjure_torch` | FLAMMEUS | LUX | Apply | — | — |
 | `crimson_coronation` | ANIMUS | — | Apply | — | — |
 | `crimson_flame_conjuration` | FLAMMEUS | ANIMUS | Apply | Yes | Yes |
-| `crimson_harvest` | DUCTILIS | ANIMUS | Apply | — | Yes |
-| `crimson_sight` | LUX | TENEBRIS | Apply | — | Yes |
-| `crimson_tithe` | MORTEM | ANIMUS | Apply | — | — |
+| `crimson_tithe` | ANIMUS | FERRIC | Apply (latch); the release exploits Pressure | — | — |
 | `cruor_javelin` | CONGEATIO | FERRIC | Apply | — | — |
 | `cryogenic_pulse` | CONGEATIO | FLAMMEUS | Apply | Yes | Yes |
 | `deadly_gaze` | DUCTILIS | TENEBRIS | Apply | Yes | Yes |
 | `eclipse_well` | TENEBRIS | — | Apply | — | — |
-| `endless_hour` | CONGEATIO | LUX | Apply | — | Yes |
+| `endless_hour` | CONGEATIO | TENEBRIS | Apply | — | — |
 | `expansive_blood_cloud` | ANIMUS | MORTEM | Apply | — | — |
 | `expulsive_updraft` | FLAMMEUS | DUCTILIS | Apply | — | — |
 | `exsanguinate` | MORTEM | DUCTILIS | Apply | Yes | Yes |
 | `ferric_rampart` | FERRIC | DUCTILIS | Apply | — | — |
-| `ferric_resonance` | FERRIC | FLAMMEUS | Apply | — | — |
 | `ferric_spikes` | FERRIC | DUCTILIS | Apply | — | — |
-| `ferric_transmutation` | FERRIC | DUCTILIS | Apply | — | Yes |
 | `fruiting_contagion` | MORTEM | ANIMUS | Apply | — | — |
 | `funeral_bell` | MORTEM | — | Exploit | — | — |
 | `furnace_veins` | FLAMMEUS | — | Apply | — | — |
-| `glacial_bastion` | CONGEATIO | FERRIC | Apply | — | Yes |
-| `glacial_circulation` | CONGEATIO | ANIMUS | Apply | — | — |
 | `glacial_grasp` | CONGEATIO | TENEBRIS | Apply | Yes | Yes |
 | `glacial_rampart` | CONGEATIO | FERRIC | Apply | Yes | Yes |
 | `gloam_laceration` | TENEBRIS | MORTEM | Apply | Yes | Yes |
 | `grave_debt` | MORTEM | ANIMUS | Apply | Yes | Yes |
 | `guided_blood_shot` | ANIMUS | — | Apply | — | — |
-| `hematic_ballast` | FERRIC | — | Apply | — | — |
 | `hematic_beacon` | LUX | ANIMUS | Apply | Yes | Yes |
 | `hematic_flare` | LUX | FLAMMEUS | Apply | Yes | Yes |
 | `hematic_impressment` | DUCTILIS | ANIMUS | Apply | — | — |
@@ -127,7 +135,6 @@ Every listed manipulation has its player path. Entity indicates a supported enti
 | `hematic_riposte` | ANIMUS | DUCTILIS | Apply | — | — |
 | `hemolymphal_pulse` | DUCTILIS | ANIMUS | Apply | Yes | Yes |
 | `hemorrhage` | MORTEM | ANIMUS | Apply | Yes | Yes |
-| `hemosynthesis` | LUX | ANIMUS | Apply | — | Yes |
 | `insatiable_hunger` | MORTEM | ANIMUS | Apply | Yes | Yes |
 | `iron_choir` | FERRIC | — | Apply | — | — |
 | `iron_retort` | FERRIC | DUCTILIS | Apply | Yes | Yes |
@@ -145,7 +152,6 @@ Every listed manipulation has its player path. Entity indicates a supported enti
 | `pyretic_forge` | FLAMMEUS | FERRIC | Apply | Yes | Yes |
 | `radiant_wake` | LUX | — | Apply | — | — |
 | `rimebound_sentence` | CONGEATIO | — | Apply | — | — |
-| `sanguine_excavation` | FERRIC | MORTEM | Apply | — | Yes |
 | `sanguine_halo` | ANIMUS | — | Apply | — | — |
 | `sanguine_ignition` | FLAMMEUS | ANIMUS | Apply | Yes | Yes |
 | `sanguine_magnetism` | FERRIC | DUCTILIS | Apply | Yes | Yes |
@@ -162,7 +168,6 @@ Every listed manipulation has its player path. Entity indicates a supported enti
 | `summon_avatar_arms` | ANIMUS | — | Apply | — | — |
 | `summon_avatar_complete` | ANIMUS | — | Apply | — | — |
 | `summon_avatar_legs` | ANIMUS | — | Apply | — | — |
-| `summon_thrall` | ANIMUS | — | Apply | — | — |
 | `suspended_updraft` | FLAMMEUS | DUCTILIS | Apply | — | — |
 | `synaptic_jolt` | DUCTILIS | — | Apply | Yes | Yes |
 | `synaptic_storm` | DUCTILIS | — | Apply | — | — |
@@ -170,12 +175,9 @@ Every listed manipulation has its player path. Entity indicates a supported enti
 | `umbral_rend` | TENEBRIS | MORTEM | Exploit | — | — |
 | `umbral_reversal` | TENEBRIS | ANIMUS | Apply | — | — |
 | `umbral_step` | TENEBRIS | DUCTILIS | Apply | Yes | Yes |
-| `unclosing_eye` | LUX | MORTEM | Apply | Yes | Yes |
+| `unclosing_eye` | LUX | DUCTILIS | Apply (first pulse); the Burst exploits Illuminated | — | — |
 | `vascular_dowsing` | FERRIC | LUX | Apply | — | — |
-| `venous_travel` | DUCTILIS | ANIMUS | Apply | — | — |
-| `vigil_of_glass` | LUX | — | Apply | — | — |
 | `vital_effusion` | ANIMUS | DUCTILIS | Apply | — | Yes |
-| `vital_reservoir` | MORTEM | ANIMUS | Apply | — | Yes |
 | `vitric_combustion` | FLAMMEUS | — | Exploit | Yes | Yes |
 | `void_shroud` | TENEBRIS | MORTEM | Apply | Yes | Yes |
 | `white_verdict` | LUX | — | Exploit | — | — |
@@ -268,13 +270,13 @@ Each school adds its own flourish:
 
 A secondary school adds two thin rays. Reaction payoff bursts and bespoke impacts such as the Riposte strike and the Blood Shot splash still draw on top.
 
-To review, run the casting harness with `-PcastingImpactsOnly=true` (`tools/oneoff/casting-animation-review.init.gradle`). It captures 8 schools × 5 views (four deliveries plus an attacker's-eye melee) at the flash, the burst and the fray, plus one hit through the real `CastImpacts.landed` path.
+To review, run the casting harness with `-PcastingImpactsOnly=true` (`tools/review/casting-animation-review.init.gradle`). It captures 8 schools × 5 views (four deliveries plus an attacker's-eye melee) at the flash, the burst and the fray, plus one hit through the real `CastImpacts.landed` path.
 
 Each state has its own status icon and counter tooltip. Body-relative buildup uses the existing authored school materials: pressure droplets, Necrosis wounds, iron signatures, crimson burns, layered Rime, a broken action cue, a Lux halo, and shadow wisps. Marionette has a moving hand-to-body tendon and separate move/attack order markers. These world cues remain visible with Minimal particles.
 
 Dedicated tests cover actual native damage/absorption, raised shields, immunity, captured projectile attribution and weapon switching, affinity, state expiry/refresh/cleanse/save/reload, thermal opposition, rupture/shatter/combustion/exposure, conduction budgets, skeleton ranged perception, melee pursuit, Brain perception, boss continuity, and real Marionette navigation and attacks. Pure JVM rules test numeric caps and channel limits. Source inventory assertions are bookkeeping only, not combat acceptance.
 
-An opt-in disposable harness is in `SchoolCombatClientAcceptance`, configured by `tools/school-combat-acceptance.init.gradle`. Use a fresh `-PschoolRun` directory for each full scene run, precompile once before launching clients, and skip compilation on concurrent client launches to avoid shared Gradle output races. On fresh test profiles, complete Minecraft accessibility onboarding before Quick Play. It never activates in ordinary play. Three real clients (caster, observer, then a late observer) verified matching state owners/meters and empty cleanup snapshots. Minimal particles and darkness intensity 0/1 were exercised. Saved client frames exposed and guided fixes for subtle state cues and the first-person tether anchor. These controlled scenes are not a complete survival-progression or long-session multiplayer soak test.
+An opt-in disposable harness is in `SchoolCombatClientAcceptance`, configured by `tools/review/school-combat-acceptance.init.gradle`. Use a fresh `-PschoolRun` directory for each full scene run, precompile once before launching clients, and skip compilation on concurrent client launches to avoid shared Gradle output races. On fresh test profiles, complete Minecraft accessibility onboarding before Quick Play. It never activates in ordinary play. Three real clients (caster, observer, then a late observer) verified matching state owners/meters and empty cleanup snapshots. Minimal particles and darkness intensity 0/1 were exercised. Saved client frames exposed and guided fixes for subtle state cues and the first-person tether anchor. These controlled scenes are not a complete survival-progression or long-session multiplayer soak test.
 
 Verification on 2026-09-12:
 
@@ -284,3 +286,14 @@ Verification on 2026-09-12:
 - Whitespace validation for the edited source/resource/test/wiki paths passed. The unscoped Git check encounters an unrelated missing staged `gource.webm` object, which was left untouched.
 
 Client evidence is under `build/school-acceptance3-{Caster,Observer,Late}/screenshots` and the matching logs. The separate `school-acceptance5` run completed the final dominant-hand Marionette anchor check after serial recompilation. Frames 10-35 and 10-50 show the continuous crimson connection following the moving body. Server-driven screenshots sample movement and confirm tracking/cleanup, but do not establish frame-time stability over a long multiplayer session.
+
+## Strands (core loop)
+
+Besides R casts, three combat memories put out a **strand** on held Projection: Blood Lash, Searing Lash and Gloam
+Laceration, each a lash that hurts by how you move it. Eight more hold a mechanic of their own under held Projection
+(Blood Eclipse, Glacial Grasp, Cruor Javelin, Ferric Spikes, Hematic Flare, Synaptic Jolt, Blood Needle Lance and
+Crimson Flame Conjuration). Every hit goes through the same school-state and harm rules as a cast. No memory holds a
+jet, spray, plant or brand since 2026-11-12. The six strand
+skills on the Living Staff branch (Long Strand, Taut Line, Free Hand, Whipcrack, Deep Brand, Second Strand) and the
+off-hand twin are described in [Blood Systems](Blood-Systems.md#strands). Absorption reads the school state a strand
+leaves (the same state table this page describes).

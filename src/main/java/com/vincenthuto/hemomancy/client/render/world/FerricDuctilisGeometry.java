@@ -24,8 +24,6 @@ final class FerricDuctilisGeometry {
         public VertexConsumer setNormal(float x,float y,float z){return this;}
     };
     static final int NERVE=0xFFE8A0, BLOOD=0x9C263B;
-    /** Ferric wraps seeds into 128 tiles where the other materials use {@link MaterialQuads#SEED_TILES} (decision V-3b, pending). */
-    private static final int FERRIC_SEED_TILES=128;
     private static int ribbons;
     private FerricDuctilisGeometry() {}
     static void begin(){ribbons=0;}
@@ -39,8 +37,13 @@ final class FerricDuctilisGeometry {
 
     static void draw(ManipulationVisualPacket packet,PoseStack p,VertexConsumer iron,VertexConsumer flow,
             Vec3 camera,Vec3 right,Vec3 up,double time,float age,float formation,float opacity,LivingEntity body) {
+        draw(packet,p,iron,flow,camera,right,up,time,age,formation,opacity,body,0);
+    }
+
+    static void draw(ManipulationVisualPacket packet,PoseStack p,VertexConsumer iron,VertexConsumer flow,
+            Vec3 camera,Vec3 right,Vec3 up,double time,float age,float formation,float opacity,LivingEntity body,long salt) {
         if(opacity<.002)return;
-        int seed=packet.entityId()>=0?packet.entityId():packet.from().hashCode();
+        int seed=CueSeed.of(packet,salt);
         double height=body==null?1.8:body.getBbHeight(),width=body==null?.65:body.getBbWidth();
         Vec3 end=packet.to().subtract(packet.from());
         Vec3 aim=body==null?end.normalize():body.getViewVector((float)(time-Math.floor(time)));
@@ -200,6 +203,11 @@ final class FerricDuctilisGeometry {
                 for(int x=0;x<5;x++)for(int row=0;row<3;row++)
                     shard(p,iron,new Vec3(x-2,.5+row,((x+row)%2==0?.045:-.045)),new Vec3(0,1.5,0),1,1,.285,seed+x*3+row,formation*Math.min(1f,opacity*2.5f),apart);
             }
+            // One block of a swept rampart: three staggered plates, so a run of them reads as one wall.
+            case SEGMENT -> {
+                for(int row=0;row<3;row++)
+                    shard(p,iron,new Vec3(0,.5+row,row%2==0?.045:-.045),new Vec3(0,1.5,0),1,1,.285,seed+row,formation*Math.min(1f,opacity*2.5f),apart);
+            }
             case SPIKE -> spike(p,iron,1.5,.36,seed,formation*opacity);
             case PILLAR -> {
                 for(int row=0;row<4;row++)shard(p,iron,new Vec3(0,.35+row*.7,0),new Vec3(0,1.4,0),.75,.7,.75,seed+row,formation*Math.min(1f,opacity*2.5f),apart);
@@ -208,7 +216,7 @@ final class FerricDuctilisGeometry {
             default -> { }
         }
         p.popPose();
-        if(formation<1 || opacity<1)gather(p,flow,new Vec3(0,.15,0),entity.constructKind()==com.vincenthuto.hemomancy.common.manipulation.ferric.FerricConstructShapes.Kind.WALL?2.5:.5,
+        if(formation<1 || opacity<1)gather(p,flow,new Vec3(0,.15,0),switch(entity.constructKind()){case WALL->2.5;case SEGMENT->.8;default->.5;},
                 1-Math.min(formation,opacity),time,seed,camera,Math.max(.3f,opacity));
         if(entity instanceof com.vincenthuto.hemomancy.common.entity.summon.EntityIronPillar)field(p,flow,Vec3.ZERO,8,time,seed,camera,opacity);
         if(entity.energizedUntil()>time) {
@@ -333,12 +341,9 @@ final class FerricDuctilisGeometry {
     }
 
     static void quad(PoseStack p,VertexConsumer v,Vec3 a,Vec3 b,Vec3 c,Vec3 d,int shape,int seed,int color,float alpha) {
-        MaterialQuads.quad(v,p.last().pose(),a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,d.x,d.y,d.z,shape,seedTile(seed),color,alpha,0,1,false);
+        MaterialQuads.quad(v,p.last().pose(),a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,d.x,d.y,d.z,shape,MaterialQuads.seedTile(seed),color,alpha,0,1,false);
     }
     private static void vertex(PoseStack p,VertexConsumer v,Vec3 at,int shape,int seed,float u,float w,int color,float alpha) {
-        MaterialQuads.vertex(v,p.last().pose(),at.x,at.y,at.z,color,alpha,shape*2+u,seedTile(seed)*2+w);
-    }
-    private static int seedTile(int seed) {
-        return Math.floorMod(seed,FERRIC_SEED_TILES);
+        MaterialQuads.vertex(v,p.last().pose(),at.x,at.y,at.z,color,alpha,shape*2+u,MaterialQuads.seedTile(seed)*2+w);
     }
 }

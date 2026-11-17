@@ -103,7 +103,7 @@ public class ResonantForgeScreen extends AbstractContainerScreen<ResonantForgeMe
 
         float time = minecraft == null || minecraft.player == null ? 0 : AnimationTime.age(minecraft.player, partialTick) / 20F;
         bloodBounds = BloodVolumeBarWidget.render(g, x + 105, y + 31, 10, 90,
-                menu.blood(), menu.capacity(), time, OUTER, INNER);
+                menu.reading(), time, OUTER, INNER);
     }
 
     @Override protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
@@ -182,7 +182,7 @@ public class ResonantForgeScreen extends AbstractContainerScreen<ResonantForgeMe
         renderBackground(g, mouseX, mouseY, partialTick);
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
-        BloodVolumeBarWidget.renderTooltip(g, font, bloodBounds, menu.blood(), menu.capacity(), mouseX, mouseY);
+        BloodVolumeBarWidget.renderTooltip(g, font, bloodBounds, menu.reading(), mouseX, mouseY);
         if (inside(mouseX, mouseY, leftPos + 124, topPos + 84, 82, 10))
             g.renderTooltip(font, Component.translatable("screen.hemomancy.resonant_forge.selection.tooltip"), mouseX, mouseY);
         if (menu.getCarried().isEmpty() && hoveredSlot != null && hoveredSlot.index < ResonantForgeBlockEntity.SLOT_COUNT

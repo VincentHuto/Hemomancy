@@ -3,14 +3,14 @@
 
 // Saint Velorum's floor: blood arrested as dark cruor under pale frost, and the liquid dark that thins sight (revision
 // 2026-11-06). The vertex colour is state, never a tint; alpha is strength. Shapes:
-//   0 seam: a crack with dark blood in it under a frost lip; red frost, green cruor set in it, blue glint. U along / 32.
+//   0 seam: a crack with dark blood in it, dark lips; red frost, green cruor set in it, blue glint. U along / 32.
 //   1 rime, 2 cruor sheet, 4 trench bed, 9 gloom: ground patches; U and V the ground position / 32, plus one.
 //   3 trench wall: U along the wall / 32, V from the lip (0) to the bottom (1).
 //   5 fold, 6 pool, 7 shade, 8 light, 10 trail: cards, U and V from 0 to 1.
 //   11 liquid dark: a ground patch whose alpha is its coverage, torn at every edge; red is strength.
 //   12 smoke: a torn tatter of dark smoke, a card; green is how far it has torn away, red its frost-light rim.
 //   13 seam blood: a ground patch over the floor's own block seams; red how far blood has welled into them, green how far
-//      it has set into cruor under a frost lip, blue the cruor's glow (the Eclipse's red grid).
+//      it has set into cruor, blue the cruor's glow (the Eclipse's red grid).
 //   14 stain: spilled blood on the floor, a card; red how deep it has soaked, green beading up, blue a frozen ring.
 //   15 cut: a gloam cut, a crescent of liquid dark (V runs from its torn trailing edge to its leading edge); blue glint.
 //   16 ridge: a frozen vein along a strip, a raised cruor ridge with a frost crust; red frost, blue its running bead.
@@ -129,8 +129,9 @@ void main() {
     float fog = 0.35;
 
     if (shape < 0.5) {
-        // A seam: a dark gap with old blood glossy in it, a frost lip, hoarfrost feathering out from both lips; as the
-        // cruor sets the blood darkens and the gap narrows; the glint is frost light along its lip at a commit.
+        // A seam: a dark gap with old blood glossy in it, hoarfrost feathering out from both lips; as the cruor sets the
+        // blood darkens and the gap narrows; the glint is frost light along its lip at a commit. SM-12 (2026-11-13): the
+        // lip is the seam's dark haze, not frost-white, except while the glint lights it.
         float along = floor(uv.x * SPAN * 16.0) / 16.0;
         float a = abs(uv.y * 2.0 - 1.0);
         float gap = max(0.05, (0.16 + 0.14 * noise(vec2(along * 1.4, seed))) * (1.0 - 0.5 * ice));
@@ -143,9 +144,8 @@ void main() {
             colour = mix(colour, cruor(vec2(along, depth * 2.0)), ice * 0.7);
             alpha = 0.96;
         } else if (a < gap + lip) {
-            colour = HOAR * (0.6 + 0.4 * noise(vec2(along * 9.0, seed + 2.0))) * (0.55 + 0.45 * frost);
-            colour = mix(colour, CORE, glint * 0.4);
-            alpha = 0.85 * (0.55 + 0.45 * frost);
+            colour = mix(mix(SHADOW, CRUOR_DEEP, frost * 0.6), CORE, glint * 0.4);
+            alpha = max(frost * 0.22, glint * 0.85);
         } else {
             float room = max(0.001, 1.0 - gap - lip);
             float beyond = a - gap - lip;
@@ -310,7 +310,8 @@ void main() {
         fog = 1.0;
     } else if (abs(shape - 13.0) < 0.5) {
         // The floor's own block seams, where the congregation's old blood lies: it wells up glossy and black-red along
-        // them, then sets into cruor under a frost lip; in the Eclipse every seam glows dull red, a grid across the floor.
+        // them, then sets into cruor; in the Eclipse every seam glows dull red, a grid across the floor. SM-12
+        // (2026-11-13): a welled seam has no frost-white lip.
         vec2 p = floor((uv - 1.0) * SPAN * 16.0) / 16.0 + 1.0 / 32.0;
         vec2 f = fract(p);
         vec2 d2 = min(f, 1.0 - f);
@@ -334,11 +335,6 @@ void main() {
             float under = exp(-(d - gap) / 0.06) * (0.3 + 0.7 * run);
             colour = mix(CRUOR_DEEP, GLOW, 0.45);
             alpha = glint * 0.3 * under;
-        } else if (d < gap + 0.07) {
-            // the frost lip on a welled seam: patchy along it, never a white grid
-            float spotty = smoothstep(0.35, 0.65, noise(vec2(along * 1.3, seed + 4.0)));
-            colour = HOAR * 0.85;
-            alpha = ice * well * 0.45 * spotty * (0.6 + 0.4 * noise(p * 9.0 + seed));
         }
     } else if (abs(shape - 14.0) < 0.5) {
         // Spilled blood soaked into the floor where a challenger stood still or bled: glossy and dark, spreading and

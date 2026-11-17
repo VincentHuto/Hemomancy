@@ -37,7 +37,6 @@ import com.vincenthuto.hemomancy.client.render.item.harbinger.ChitiniteShieldIte
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingAxeItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingBladeItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingFlailItemRenderer;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingPistolItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSickleItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSpearItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingTorchItemRenderer;
@@ -85,7 +84,6 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingAxeItem
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingBaghnakhItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingBladeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingPistolItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSickleItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSpearItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
@@ -151,8 +149,8 @@ public final class ItemClientExtensions {
 			Map.entry(LivingBaghnakhItem.class, ItemClientExtensions::livingBaghnakhItem),
 			Map.entry(LivingBladeItem.class, ItemClientExtensions::livingBladeItem),
 			Map.entry(LivingFlailItem.class, ItemClientExtensions::livingFlailItem),
-			Map.entry(LivingPistolItem.class, ItemClientExtensions::livingPistolItem),
 			Map.entry(LivingSickleItem.class, ItemClientExtensions::livingSickleItem),
+			Map.entry(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingPickaxeItem.class, ItemClientExtensions::livingPickaxeItem),
 			Map.entry(LivingSpearItem.class, ItemClientExtensions::livingSpearItem),
 			Map.entry(LivingSyringeItem.class, item -> LivingSyringeRenderer.EXTENSIONS),
 			Map.entry(LivingTorchItem.class, ItemClientExtensions::livingTorchItem),
@@ -566,12 +564,12 @@ public final class ItemClientExtensions {
 		return RenderPropLivingFlail.INSTANCE;
 	}
 
-	static IClientItemExtensions livingPistolItem(Item item) {
-		return RenderPropPistol.INSTANCE;
-	}
-
 	static IClientItemExtensions livingSickleItem(Item item) {
 		return LivingSickleItemClientExtensions.INSTANCE;
+	}
+
+	static IClientItemExtensions livingPickaxeItem(Item item) {
+		return LivingPickaxeItemClientExtensions.INSTANCE;
 	}
 
 	static IClientItemExtensions livingSpearItem(Item item) {
@@ -973,16 +971,6 @@ public final class ItemClientExtensions {
 		}
 	}
 
-	static final class RenderPropPistol implements IClientItemExtensions {
-
-		public static RenderPropPistol INSTANCE = new RenderPropPistol();
-
-		@Override
-		public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-			return new LivingPistolItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-					Minecraft.getInstance().getEntityModels());
-		}
-	}
 
 	private static final class LivingSickleItemClientExtensions implements IClientItemExtensions {
 		@Override
@@ -997,6 +985,17 @@ public final class ItemClientExtensions {
 		public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 			return new LivingSickleItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
 					Minecraft.getInstance().getEntityModels());
+		}
+	}
+
+	/** The pickaxe form is held and swung in first person like a vanilla pickaxe, so mining reads as mining. */
+	private static final class LivingPickaxeItemClientExtensions implements IClientItemExtensions {
+		private static final LivingPickaxeItemClientExtensions INSTANCE = new LivingPickaxeItemClientExtensions();
+
+		@Override
+		public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+			return new com.vincenthuto.hemomancy.client.render.item.harbinger.LivingPickaxeItemRenderer(
+					Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
 		}
 	}
 

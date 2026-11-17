@@ -1,9 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile;
 
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeTransferRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
@@ -15,9 +13,29 @@ import javax.annotation.Nullable;
 public interface IBloodReservoir extends ProjectedBloodSink {
 	@Nullable
 	default IBloodVolume getBloodCapability() {
-		return this instanceof BlockEntity blockEntity
-				? blockEntity.getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME)
-				: null;
+		return this instanceof BlockEntity blockEntity ? ReservoirBlood.settled(blockEntity) : null;
+	}
+
+	/**
+	 * A living vessel (the Gourdvine Tap; later vats and living veins) keeps its blood fresh: it never clots. Every
+	 * other reservoir is an inert container and clots by {@link CoagulationRules}.
+	 */
+	default boolean isLivingVessel() {
+		return false;
+	}
+
+	/**
+	 * A store keeps blood for others (the Venous Basin, the Gourdvine Tap, vats); every other tank is a machine. A
+	 * machine under its working reserve pulls blood down a living vein; a store pulls only while something draws from it
+	 * (NQ-02-3).
+	 */
+	default boolean isBloodStore() {
+		return isLivingVessel();
+	}
+
+	/** False for a block that answers projection but keeps no tank (the Somatic Loom, the Covenant Throne). */
+	default boolean holdsBlood() {
+		return true;
 	}
 
 	default void sendUpdates() {
@@ -56,19 +74,20 @@ public interface IBloodReservoir extends ProjectedBloodSink {
 	}
 
 	/**
-	 * Projection fills the reservoir's own attachment, as the old generic projection did, and charges the player.
-	 * F-12 (pending approval): unlike {@link #receiveBlood}, it does not ask {@link #canReceiveBlood()}, so a
-	 * rite-locked station still takes projected blood.
+	 * Projection fills the reservoir's own attachment and charges the player. While the tank holds clot, part of the
+	 * pour wakes it ({@link BlockBloodVolume#revive}, CQ-6, LP-3); the player pays only what the tank took.
+	 * A station that refuses blood ({@link #canReceiveBlood()}, a rite lock among others) takes none and costs
+	 * nothing (F-12).
 	 */
 	@Override
 	default double takeProjectedBlood(Player player, BlockPos hitPos, double rate, boolean livingStaff) {
-		if (!(this instanceof BlockEntity blockEntity)) return 0.0D;
-		IBloodVolume volume = blockEntity.getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME);
-		double accepted = BloodVolumeTransferRules.transferableAmount(volume,
-				HemoCapabilityAccess.getBloodVolume(player), rate);
+		if (!canReceiveBlood() || !(this instanceof BlockEntity blockEntity)) return 0.0D;
+		BlockBloodVolume volume = ReservoirBlood.settled(blockEntity);
+		double offered = Math.min(rate, Math.max(0.0D, HemoCapabilityAccess.getBloodVolume(player).getBloodVolume()));
+		double accepted = volume.pourOf(offered, CoagulationRules.reviveShare(), CoagulationRules.reviveYield()).taken();
 		if (accepted <= 0.0D) return 0.0D;
 		BloodAccounting.pay(player, accepted, PROJECTION);
-		volume.fill(accepted);
+		volume.revive(accepted, CoagulationRules.reviveShare(), CoagulationRules.reviveYield());
 		sendUpdates();
 		return accepted;
 	}

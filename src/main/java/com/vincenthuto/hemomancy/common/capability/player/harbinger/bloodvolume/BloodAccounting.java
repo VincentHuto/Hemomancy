@@ -18,13 +18,13 @@ public final class BloodAccounting {
 	}
 
 	/**
-	 * Who is charging, for the diagnostics, and how. {@code countsAsSpend} adds a satisfied payment to the Hemorath
-	 * blood debt; {@code reserveProtected} keeps Sanguine Reserve's floor out of reach.
+	 * Who is charging, for the diagnostics, and how. {@code reserveProtected} keeps Sanguine Reserve's floor out of
+	 * reach.
 	 */
-	public record Source(String id, String label, Category category, boolean countsAsSpend, boolean reserveProtected) {
+	public record Source(String id, String label, Category category, boolean reserveProtected) {
 		/** A source labelled by the key {@code blood_source.hemomancy.<id>}. */
-		public static Source of(String id, Category category, boolean countsAsSpend, boolean reserveProtected) {
-			return new Source(id, "blood_source.hemomancy." + id, category, countsAsSpend, reserveProtected);
+		public static Source of(String id, Category category, boolean reserveProtected) {
+			return new Source(id, "blood_source.hemomancy." + id, category, reserveProtected);
 		}
 	}
 
@@ -72,7 +72,7 @@ public final class BloodAccounting {
 		boolean reserveEnabled = source.reserveProtected()
 				&& SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_sanguine_reserve);
 		BloodPaymentRules.Outcome outcome = BloodPaymentRules.settle(volume, amount, source.reserveProtected(),
-				reserveEnabled, source.countsAsSpend(), terms);
+				reserveEnabled, terms);
 		if (player instanceof ServerPlayer serverPlayer) {
 			int interval = Math.max(1, intervalTicks);
 			BloodFlowLedger.recordApplied(serverPlayer, source.id(), source.label(), source.category(),

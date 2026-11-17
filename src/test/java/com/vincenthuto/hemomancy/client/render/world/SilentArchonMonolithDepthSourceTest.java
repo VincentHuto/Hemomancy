@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class SilentArchonMonolithDepthSourceTest {
 	private static final Path SILENT_ARCHON_EFFECTS = Path.of(
@@ -22,7 +27,8 @@ public final class SilentArchonMonolithDepthSourceTest {
 	private SilentArchonMonolithDepthSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String silentArchonEffects = read(SILENT_ARCHON_EFFECTS);
 		String vesperFloorRenderer = read(VESPER_FLOOR_RENDERER);
 		String shaderInit = read(SHADER_INIT);
@@ -69,25 +75,9 @@ public final class SilentArchonMonolithDepthSourceTest {
 				"fog-aware Monolith surface shader family");
 	}
 
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertMissing(String label, Path path) {
 		if (Files.exists(path)) {
 			throw new AssertionError(label + ": still exists " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
 		}
 	}
 }

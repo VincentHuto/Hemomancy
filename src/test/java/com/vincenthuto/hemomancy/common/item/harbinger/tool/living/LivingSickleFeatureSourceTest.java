@@ -8,6 +8,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 final class LivingSickleFeatureSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -122,9 +123,5 @@ final class LivingSickleFeatureSourceTest {
 		assertTrue(renderer.contains("if (context == ItemDisplayContext.GUI)"));
 		assertTrue(renderer.contains("poseStack.translate(0.0D, 0.18D, -0.1D)"));
 		assertTrue(renderer.contains("Axis.ZP.rotationDegrees(-24.0F)"));
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
 	}
 }

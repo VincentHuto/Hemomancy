@@ -1,16 +1,18 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LivingArsenalInventoryGuardSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private LivingArsenalInventoryGuardSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String guard = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingArsenalInventoryGuard.java");
 		String conjuration = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/ferric/ConjurationManip.java");
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffWeaponFormEvents.java");
@@ -32,6 +34,7 @@ public final class LivingArsenalInventoryGuardSourceTest {
 		assertContains("guard knows living crossbow", guard, "ItemInit.living_crossbow");
 		assertContains("guard knows living torch", guard, "ItemInit.living_torch");
 		assertContains("guard knows living flail", guard, "ItemInit.living_flail");
+		assertContains("guard knows living pickaxe (Track 8)", guard, "ItemInit.living_pickaxe");
 
 		assertContains("conjure staff uses guard", conjuration,
 				"LivingArsenalInventoryGuard.summonOrRecoverStaff");
@@ -48,15 +51,5 @@ public final class LivingArsenalInventoryGuardSourceTest {
 		assertContains("living staff rejects container items", staff, "canFitInsideContainerItems()");
 		assertContains("living crossbow rejects container items", crossbow, "canFitInsideContainerItems()");
 		assertContains("docs mention arsenal guard", docs, "Living arsenal guard");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
 	}
 }

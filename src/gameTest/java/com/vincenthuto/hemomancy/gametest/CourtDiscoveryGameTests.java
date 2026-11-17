@@ -4,6 +4,11 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtDiscoveryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtProgress;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenRules;
+import com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -141,8 +146,8 @@ public final class CourtDiscoveryGameTests {
 			Entity voyager = spawn(h, EntityInit.harbinger_voyager.get());
 			h.assertTrue(post(captured.player, CourtDiscoveryDialogue.VOYAGER_LETTER, voyager), "a Voyager hears it out");
 			h.assertTrue(CourtDiscoveryProgress.knownBy(captured.player) == CourtProgress.Route.LETTER, "the letter is the route");
-			h.assertTrue(charts(h).size() == 1, "and the Voyager offers the Relay Chart");
-			charts(h).forEach(Entity::discard);
+			// PT-3: the chart is owed and delivered into the pack, never dropped at the Voyager.
+			h.assertTrue(carriedCharts(captured.player) == 1 && charts(h).isEmpty(), "and the Voyager gives the Relay Chart");
 			discard(voyager);
 		}
 		h.succeed();
@@ -171,6 +176,26 @@ public final class CourtDiscoveryGameTests {
 		h.succeed();
 	}
 
+	/** NQ-16-3 A: the Liber's Court chapter opens with the Court, and each follower's page as its fight begins. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void theCourtChapterOpensAsTheCourtIsMet(GameTestHelper h) {
+		try (CapturedPlayer captured = player(h, 5)) {
+			ServerPlayer player = captured.player;
+			h.assertFalse(LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.COURT_HOUSES), "no Court page before the Court");
+			CourtDiscoveryProgress.markKnown(player, CourtProgress.Route.VOYAGER);
+			h.assertTrue(LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.COURT_HOUSES), "the houses page opens with the Court");
+			h.assertFalse(LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.BLOOM_WARDEN)
+					|| LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.KINDLED_CHAMPION), "the fights' pages wait for the fights");
+			Entity warden = BloomWardenEntity.wake(player, BloomWardenRules.GROWTH, player.blockPosition());
+			Entity champion = KindledChampionEntity.callOut(h.getLevel(), player.blockPosition().east(6), 0.0F, "kindled_elder", player);
+			h.assertTrue(LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.BLOOM_WARDEN)
+					&& LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.KINDLED_CHAMPION), "each page opens as its fight begins");
+			warden.discard();
+			champion.discard();
+		}
+		h.succeed();
+	}
+
 	// --- The Relay Chart -----------------------------------------------------------------------------------------
 
 	@GameTest(template = EMPTY, timeoutTicks = 40)
@@ -182,16 +207,13 @@ public final class CourtDiscoveryGameTests {
 			CourtDiscoveryProgress.markKnown(player, CourtProgress.Route.FOUND);
 			h.assertTrue(post(player, CourtDiscoveryDialogue.VOYAGER_CHART, voyager), "known: a chart is drawn");
 			h.assertTrue(CourtDiscoveryProgress.progress(player).chartIssued(), "the issue is recorded");
-			List<ItemEntity> drawn = charts(h);
-			h.assertTrue(drawn.size() == 1, "one chart at the Voyager");
-			player.getInventory().add(drawn.getFirst().getItem().copy());
-			drawn.forEach(Entity::discard);
+			// PT-3: the chart is owed and delivered into the pack, never dropped at the Voyager.
+			h.assertTrue(carriedCharts(player) == 1 && charts(h).isEmpty(), "one chart, in the pack");
 			h.assertFalse(post(player, CourtDiscoveryDialogue.VOYAGER_CHART, voyager), "not while carrying one");
-			h.assertTrue(charts(h).isEmpty(), "no second chart");
+			h.assertTrue(carriedCharts(player) == 1, "no second chart");
 			player.getInventory().clearContent();
 			h.assertTrue(post(player, CourtDiscoveryDialogue.VOYAGER_CHART, voyager), "a lost chart is reissued");
-			h.assertTrue(charts(h).size() == 1, "the reissued chart");
-			charts(h).forEach(Entity::discard);
+			h.assertTrue(carriedCharts(player) == 1, "the reissued chart");
 			discard(voyager);
 		}
 		h.succeed();
@@ -335,6 +357,10 @@ public final class CourtDiscoveryGameTests {
 
 	private static List<ItemEntity> letters(GameTestHelper h) {
 		return dropped(h, () -> ItemInit.brine_sealed_letter.get());
+	}
+
+	private static int carriedCharts(ServerPlayer player) {
+		return player.getInventory().countItem(ItemInit.relay_chart.get());
 	}
 
 	private static List<ItemEntity> charts(GameTestHelper h) {

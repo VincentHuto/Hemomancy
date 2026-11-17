@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class MnemonicLowtideLakeSourceTest {
 	private static final Path LOWTIDE_EFFECTS = Path.of(
@@ -44,7 +49,8 @@ public final class MnemonicLowtideLakeSourceTest {
 	private MnemonicLowtideLakeSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertFileExists("lowtide effects class", LOWTIDE_EFFECTS);
 		assertFileExists("lowtide shader json", SHADER_JSON);
 		assertFileExists("lowtide vertex shader", SHADER_VERTEX);
@@ -491,10 +497,6 @@ public final class MnemonicLowtideLakeSourceTest {
 				"hanging fibrous ceiling roots");
 	}
 
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertFileExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
@@ -504,18 +506,6 @@ public final class MnemonicLowtideLakeSourceTest {
 	private static void assertFileDoesNotExist(String label, Path path) {
 		if (Files.exists(path)) {
 			throw new AssertionError(label + ": should not exist " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
 		}
 	}
 }

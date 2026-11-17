@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+
 public final class CellHandItemRendererParticleOriginTest {
 	private static final Path EFFECTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/CellHandParticleEffects.java");
@@ -25,7 +28,8 @@ public final class CellHandItemRendererParticleOriginTest {
 		verifyProjectionParticleOrigin();
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		verifyProjectionParticleOrigin();
 	}
 
@@ -42,8 +46,10 @@ public final class CellHandItemRendererParticleOriginTest {
 		assertContains("projection particles target the struck surface, or a feeding craft's fill line",
 				effects, ": trace.getLocation();");
 		assertContains("projection particles use the shared gameplay reach",
-				effects, "SanguineProjectionTargeting.PROJECTION_REACH");
-		assertDoesNotContain("projection endpoints must not be lifted above the selected surface",
+				effects, "VerbReach.of(living, Verb.PROJECT)");
+		assertContains("a claiming Sculpting's stream lands where the server acts",
+				effects, "SculptingDispatcher.currentClaim(player, verb)");
+		assertNotContains("projection endpoints must not be lifted above the selected surface",
 				effects, "trace.getLocation().add(0.0D, 1.05D, 0.0D)");
 		assertOccurrences("only absorption may turn the animated hand into a particle destination",
 				effects, "particle.setFirstPersonTargetAnchor(anchor);", 1);
@@ -52,34 +58,22 @@ public final class CellHandItemRendererParticleOriginTest {
 		String palm = Files.readString(EFFECTS.resolveSibling("FirstPersonPalm.java")).replace("\r\n", "\n");
 		assertContains("the shared first-person palm applies the arm part's own pivot and rotation",
 				palm, "armPart.translateAndRotate(stack);");
-		assertDoesNotContain("the posed hand is already in world axes; rotating it by the camera again flips it behind the player",
+		assertNotContains("the posed hand is already in world axes; rotating it by the camera again flips it behind the player",
 				palm, "rotation().transform");
 		assertContains("third-person origin follows the parent model arm",
 				thirdPersonLayer, "getParentModel().translateToHand(side, poseStack)");
 		assertContains("third-person origin is captured from the rendered pose",
 				thirdPersonLayer, "CellHandRenderOrigin.fromPose");
-		assertDoesNotContain("third-person origin must not use a fixed body-yaw approximation",
+		assertNotContains("third-person origin must not use a fixed body-yaw approximation",
 				thirdPersonLayer, "double bodyYaw = Math.toRadians(living.yBodyRot)");
 		assertSharedProjectionTargeting("blood projection fallback", projectionItem);
 		assertSharedProjectionTargeting("block projection endpoints", blockInteractions);
 		assertSharedProjectionTargeting("cardinal rite projection", cardinalRiteHandler);
 	}
 
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
-	}
-
 	private static void assertSharedProjectionTargeting(String label, String source) {
 		assertContains(label + " uses the common ray", source, "SanguineProjectionTargeting.pick");
-		assertContains(label + " uses the common reach", source, "SanguineProjectionTargeting.PROJECTION_REACH");
+		assertContains(label + " uses the common reach", source, "VerbReach.of(");
 	}
 
 	private static void assertOccurrences(String label, String text, String expected, int count) {

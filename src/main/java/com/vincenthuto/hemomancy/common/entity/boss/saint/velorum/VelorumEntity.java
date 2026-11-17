@@ -1378,9 +1378,10 @@ public class VelorumEntity extends SaintTrialEntity {
 		return null;
 	}
 
+	/** {@link #onHitTaken} sounds every blow at the hit; a hurt sound here would double it. */
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return openings().isOpen() ? SoundEvents.GLASS_BREAK : SoundEvents.GLASS_HIT;
+		return null;
 	}
 
 	@Override

@@ -43,6 +43,27 @@ class PackageLayoutGuardrailTest {
 		}
 	}
 
+	/**
+	 * The core loop overhaul (2026-11-09) was planned as tracks, but its code files by function like everything else:
+	 * verbs under {@code manipulation/verb}, living blood under {@code tile}, the ground under {@code world/ground}.
+	 * No folder anywhere in source or resources is named for the overhaul itself.
+	 */
+	@Test
+	void noFolderIsNamedForTheCoreLoop() throws Exception {
+		List<String> found = new java.util.ArrayList<>();
+		for (Path root : List.of(RepoPaths.ROOT.resolve("src/main"), RepoPaths.ROOT.resolve("src/gameTest"),
+				RepoPaths.ROOT.resolve("src/test"))) {
+			if (!Files.isDirectory(root)) continue;
+			try (Stream<Path> dirs = Files.walk(root)) {
+				dirs.filter(Files::isDirectory)
+						.map(dir -> dir.getFileName().toString().toLowerCase(java.util.Locale.ROOT).replace("_", ""))
+						.filter(name -> name.equals("coreloop"))
+						.forEach(found::add);
+			}
+		}
+		assertEquals(List.of(), found);
+	}
+
 	private static List<String> packages(String side) throws Exception {
 		try (Stream<Path> dirs = Files.list(RepoPaths.mainJava(side))) {
 			return dirs.filter(Files::isDirectory)

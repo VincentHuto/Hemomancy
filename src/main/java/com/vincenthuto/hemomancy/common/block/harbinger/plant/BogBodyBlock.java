@@ -38,6 +38,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
     private static final float BOG_REVENANT_BREAK_SPAWN_CHANCE = 0.05F;
+    /** The pale grey-yellow of scraped corpse wax. */
+    private static final ParticleColor CORPSE_WAX = new ParticleColor(214, 204, 168);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty HARVESTED = BooleanProperty.create("harvested");
@@ -142,8 +144,8 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
           InteractionHand hand) {
         worldIn.setBlock(pos, state.setValue(HARVESTED, true), 10);
         worldIn.playSound(player, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0F, 0.8F);
-        worldIn.levelEvent(player, 3004, pos, 0);
         if (!worldIn.isClientSide) {
+          HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos, HemoParticleData.glow(CORPSE_WAX));
           axe.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
           worldIn.addFreshEntity(new ItemEntity(worldIn, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
               new ItemStack(ItemInit.adipocere.get())));

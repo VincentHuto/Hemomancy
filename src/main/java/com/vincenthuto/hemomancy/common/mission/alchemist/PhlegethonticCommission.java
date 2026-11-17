@@ -38,7 +38,7 @@ public final class PhlegethonticCommission {
     public static PhlegethonticCommissionProgress progress(ServerPlayer player) {
         boolean reported = data(player).getBoolean(REPORTED);
         return new PhlegethonticCommissionProgress(
-                reported || validSample(player.getMainHandItem()),
+                reported || validSample(player.getMainHandItem()) || validSample(player.getOffhandItem()),
                 reported ? 5 : Math.min(5, player.getInventory().countItem(BlockInit.escharian_scyphus.get().asItem())),
                 reported);
     }
@@ -46,11 +46,13 @@ public final class PhlegethonticCommission {
     public static boolean report(ServerPlayer player, Entity teacher) {
         if (!(teacher instanceof HarbingerAlchemistEntity) || !EarlyInitiation.near(player, teacher)
                 || !eligible(player) || !progress(player).ready()) return false;
+        AlchemistCommissionReward.owe(player);
         CompoundTag data = data(player);
         data.putBoolean(REPORTED, true);
         save(player, data);
         player.displayClientMessage(Component.translatable("hemomancy.alchemist.phlegethontic_commission.recorded")
                 .withStyle(ChatFormatting.DARK_RED), false);
+        AlchemistCommissionReward.pay(player);
         return true;
     }
 

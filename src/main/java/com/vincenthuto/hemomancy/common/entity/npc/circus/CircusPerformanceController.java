@@ -19,7 +19,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -53,10 +52,10 @@ public final class CircusPerformanceController {
 		if (challenge < 0 || (route == CircusRouteRules.Route.NEUTRAL
 				&& (challenge != 0 || !CircusProgressRules.canReceivePact(CircusPlayerProgress.acclimation(player))))
 				|| (route != CircusRouteRules.Route.NEUTRAL && route != CircusRouteRules.Route.SUCCESSION)) return false;
-		if (!CircusPavilionSavedData.get(player.serverLevel()).beginPerformance(player.serverLevel(), origin,
-				player.getUUID(), route)) {
-			player.displayClientMessage(Component.translatable("hemomancy.circus.finale.claimed")
-					.withStyle(ChatFormatting.DARK_GRAY), false);
+		CircusPavilionSavedData data = CircusPavilionSavedData.get(player.serverLevel());
+		if (!data.beginPerformance(player.serverLevel(), origin, player.getUUID(), route)) {
+			player.displayClientMessage(Component.translatable(CircusPavilionStateRules.refusalKey(
+					data.site(player.serverLevel(), origin).outcome())).withStyle(ChatFormatting.DARK_GRAY), false);
 			return false;
 		}
 		act(player).beginAct(challenge, origin.asLong());
@@ -90,8 +89,7 @@ public final class CircusPerformanceController {
 	private static void armAct(ServerPlayer player, BlockPos origin, int challenge) {
 		if (challenge < 2) return;
 		// Only the original cast performs; the school's faculty stays out of the ring and keeps teaching.
-		List<CircusPerformerEntity> troupe = player.serverLevel().getEntitiesOfClass(CircusPerformerEntity.class,
-				new AABB(origin).inflate(20.0D), CircusPerformerEntity::participatesInFinale);
+		List<CircusPerformerEntity> troupe = CircusArena.of(origin).troupe(player.serverLevel());
 		for (CircusPerformerEntity performer : troupe) {
 			if (challenge == 2 && performer instanceof CircusKnifeThrowerEntity) continue;
 			if (challenge == 3 && !(performer instanceof CircusKnifeThrowerEntity)) continue;
@@ -108,7 +106,7 @@ public final class CircusPerformanceController {
 		if (challenge < 0) return;
 		BlockPos origin = BlockPos.of(act(player).actOrigin());
 		// A dead or spectating owner fails the act: spectators earn nothing in the pavilion.
-		if (!player.isAlive() || player.isSpectator() || player.distanceToSqr(origin.getCenter()) > 24.0D * 24.0D) {
+		if (!player.isAlive() || player.isSpectator() || !CircusArena.of(origin).holds(player.position())) {
 			reset(player, origin, true);
 			return;
 		}
@@ -146,8 +144,7 @@ public final class CircusPerformanceController {
 	}
 
 	private static void reset(ServerPlayer player, BlockPos origin, boolean failed) {
-		player.serverLevel().getEntitiesOfClass(CircusPerformerEntity.class, new AABB(origin).inflate(20.0D))
-				.forEach(CircusPerformerEntity::resetFinale);
+		CircusArena.of(origin).troupe(player.serverLevel()).forEach(CircusPerformerEntity::resetFinale);
 		clearPlayerState(player);
 		CircusPavilionSavedData.get(player.serverLevel()).reset(player.serverLevel(), origin, player.getUUID());
 		if (failed) player.displayClientMessage(Component.translatable("hemomancy.circus.challenge.failed")

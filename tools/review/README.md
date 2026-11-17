@@ -16,6 +16,7 @@ script with `-I`, from the project root:
 | `animus-mortem-review.init.gradle` | `client` for the Animus Mortem review (`hemomancy.animusMortem*`) | `-PbloodObserver` for the observer |
 | `gameplay-campaign.init.gradle` | `alphaJourneyClient` as a scripted campaign player | `-PgameplayRole=<role>` |
 | `review-blood-observer.ps1`, `review-ferric-observer.ps1`, `review-thermal-observer.ps1` | a second, observer client beside a running multiplayer review, reusing its launch arguments | `pwsh tools/review/review-thermal-observer.ps1 -Label casts` |
+| `review-onlooker.ps1` | the onlooker review (round two P11): one Gradle call that exits, then `onlookerReviewClient` (host, publishes port 25581) and `onlookerObserverClient` as bare java, so no Gradle runs beside them | `powershell -NoProfile -ExecutionPolicy Bypass -File tools/review/review-onlooker.ps1 -Only tendon` |
 
 Screenshots land in each run's game directory under `build/`. Don't edit code under review while a run is
 going: a review client builds whatever source is on disk when it starts.

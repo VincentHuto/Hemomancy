@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTopic;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerArtificerDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerMnemonistDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SpecimenJarLessonDialogue;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
@@ -28,6 +29,7 @@ import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.SpecimenJarLesson;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
@@ -337,8 +339,11 @@ public final class PlaythroughInitiateGameTests {
 			helper.assertTrue(hasCard(view, key), "the Mnemonist shows the " + card + " card: " + view.describe());
 		}
 		helper.assertTrue(view.offers(GUIDED), "the guided Chamber lesson is offered: " + view.describe());
-		helper.assertFalse(hasCard(view, "hemomancy.dialogue.mnemonist.option.ask_about_circus"),
-				"the Circus card is still hidden at D3: " + view.describe());
+		// D-32: the Circus card shows at D3 with the teaser; the Waybill still waits for D4.
+		helper.assertTrue(hasCard(view, "hemomancy.dialogue.mnemonist.option.ask_about_circus"),
+				"the Circus teaser card shows at D3: " + view.describe());
+		helper.assertFalse(view.offers(HarbingerMnemonistDialogueTrees.EVENT_CIRCUS_WAYBILL),
+				"no Waybill at D3: " + view.describe());
 		helper.succeed();
 	}
 
@@ -374,7 +379,7 @@ public final class PlaythroughInitiateGameTests {
 		level.setBlock(table, Blocks.CRAFTING_TABLE.defaultBlockState(), Block.UPDATE_ALL); // ARRANGE: a table nearby
 		// ARRANGE: the materials a D3 gathers (the neurotic enzyme from a Centrifuge spin) and the archive set.
 		player.give(new ItemStack(BlockInit.venous_stone.get(), 4));
-		player.give(new ItemStack(ItemInit.sanguine_formation.get(), 8));
+		player.give(new ItemStack(ItemInit.sanguine_formation.get(), 4));
 		player.give(new ItemStack(Items.REDSTONE, 4));
 		player.give(new ItemStack(ItemInit.neurotic_enzyme.get()));
 		player.give(new ItemStack(Items.BOOK));
@@ -394,14 +399,8 @@ public final class PlaythroughInitiateGameTests {
 		helper.assertTrue(turnIn.delta(Items.BOOK) == -1 && turnIn.delta(Items.INK_SAC) == -1
 				&& turnIn.delta(Items.PAPER) == -3 && turnIn.delta(ItemInit.hematic_memory.get()) == 0,
 				"the turn-in takes the archive set and leaves the blank; " + turnIn);
-		helper.assertTrue(turnIn.dropped(ItemInit.bleeding_bulb.get(), Outcome.Near.ANY) == 1
-				&& turnIn.dropped(ItemInit.vivacious_enzyme.get(), Outcome.Near.ANY) == 3,
-				"the bulb and three enzymes are given; " + turnIn);
-		PlaythroughLog.note(helper, "wovenVesselTurnIn", "kit landed: " + turnIn.drops());
-		player.pickUpNear(mnemonist.blockPosition(), ItemInit.bleeding_bulb.get());
-		player.pickUpNear(mnemonist.blockPosition(), ItemInit.vivacious_enzyme.get());
-		helper.assertTrue(player.count(ItemInit.bleeding_bulb.get()) == 1 && player.count(ItemInit.vivacious_enzyme.get()) == 3,
-				"the player walks over the kit and holds it; " + player.last());
+		turnIn.gave(ItemInit.bleeding_bulb.get(), 1).gave(ItemInit.vivacious_enzyme.get(), 3);
+		helper.assertTrue(turnIn.drops().isEmpty(), "the bulb and three enzymes go to the pack, nothing drops; " + turnIn);
 
 		DialogueView after = player.talkTo(mnemonist);
 		helper.assertFalse(after.offers(TURN_IN), "the turn-in is no longer offered: " + after.describe());
@@ -587,10 +586,10 @@ public final class PlaythroughInitiateGameTests {
 	}
 
 	/**
-	 * DECISION: D-6 WOVEN_VESSEL is satisfied by any Blood Shot weave; the Mnemonist's index (turn-in) is optional.
-	 * Expected by a player reading the ledger: the Brotherhood stays sealed until the vessel is indexed.
+	 * PT-6: any Blood Shot weave opens the Brotherhood; the Mnemonist's index is optional Side work, and the ledger and
+	 * the Mnemonist say so.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 800, batch = BATCH, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 800, batch = BATCH)
 	public static void weaveWithoutMnemonistUnlocksD4(GameTestHelper helper) {
 		ServerLevel level = helper.getLevel();
 		PlaythroughPlayer player = d3(helper);
@@ -613,16 +612,22 @@ public final class PlaythroughInitiateGameTests {
 			boolean started = CardinalRiteSavedData.get(level).getRite(player.uuid()) != null;
 			PlaythroughLog.note(helper, "weaveWithoutMnemonistUnlocksD4", "WOVEN_VESSEL granted=" + chapter
 					+ " without the index; Brotherhood started=" + started + "; " + plant.saidKeys());
-			helper.assertTrue(!started && plant.saidKeys().contains(SEALED),
-					"the Brotherhood stays sealed until the Mnemonist indexes the vessel; started=" + started);
+			helper.assertTrue(chapter, "the weave alone completes the Woven Vessel chapter");
+			helper.assertTrue(started && !plant.saidKeys().contains(SEALED),
+					"the weave alone opens the Brotherhood; " + plant.saidKeys());
+			for (String key : List.of("screen.hemomancy.harbinger_assignment_ledger.woven_vessel.desc",
+					"hemomancy.mnemonist.woven_vessel.archive.line1")) {
+				String text = english(key).toLowerCase(Locale.ROOT);
+				helper.assertTrue(text.contains("optional") || text.contains("not for your degree"),
+						key + " says the index is optional: " + text);
+			}
 		}).run();
 	}
 
 	/**
-	 * DECISION: D-20 A weaver who is offline when the climax completes loses the first-weave milestone. Expected: the
-	 * milestone is there when they come back.
+	 * PT-20: a weaver who is offline when the climax completes has the first-weave milestone when they come back.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 800, batch = BATCH, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 800, batch = BATCH)
 	public static void weaverOfflineDuringClimax(GameTestHelper helper) {
 		PlaythroughPlayer player = d3(helper);
 		BlockPos loomPos = helper.absolutePos(LOOM);
@@ -647,11 +652,8 @@ public final class PlaythroughInitiateGameTests {
 	// Hints and pointers
 	// =============================================================================================================
 
-	/**
-	 * DECISION: D-7 The Vicar's D3 degree hint says to study the Bloodline system. Expected: it names the real gate,
-	 * the Loom or the Woven Vessel weave.
-	 */
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
+	/** PT-7: the Vicar's D3 degree hint names the real gate, the Loom weave. */
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void vicarD3HintNamesTheRealGate(GameTestHelper helper) {
 		Entity vicar = wing(helper, PlaythroughNpcs.Role.VICAR).get(PlaythroughNpcs.Role.VICAR);
 		PlaythroughPlayer player = d3(helper);
@@ -668,12 +670,27 @@ public final class PlaythroughInitiateGameTests {
 		helper.succeed();
 	}
 
+	/** PT-33: a player who reached D3 without the Specimen Jar lesson is still offered it, and it teaches. */
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
+	public static void specimenJarLessonOfferedAtD3(GameTestHelper helper) {
+		Entity alchemist = wing(helper, PlaythroughNpcs.Role.ALCHEMIST).get(PlaythroughNpcs.Role.ALCHEMIST);
+		PlaythroughPlayer player = d3(helper);
+		helper.assertTrue(SpecimenJarLesson.canTeach(player.player()), "the D3 player was never taught the jar lesson");
+		DialogueView view = player.approach(alchemist).talkTo(alchemist);
+		helper.assertTrue(view.offers(SpecimenJarLessonDialogue.TEACH), "the D3 Alchemist offers the Specimen Jar lesson: "
+				+ view.describe());
+		player.choose(alchemist, SpecimenJarLessonDialogue.TEACH);
+		helper.assertFalse(SpecimenJarLesson.canTeach(player.player()), "the lesson is taught once");
+		helper.assertFalse(player.talkTo(alchemist).offers(SpecimenJarLessonDialogue.TEACH), "a taught lesson is not offered again");
+		helper.succeed();
+	}
+
 	/**
-	 * DECISION: D-21 D3 puppetry is gated on Circus instruction, but the Circus is hidden until D4. Expected: a D3
-	 * player's teachers point them toward the Circus.
+	 * PT-21, D-32: D3 puppetry is gated on Circus instruction, and the Mnemonist's D3 teaser points a D3 player toward
+	 * the Circus, with no Waybill yet.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
-	public static void d3PuppetryHasNoPointer(GameTestHelper helper) {
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
+	public static void d3PuppetryHasAPointer(GameTestHelper helper) {
 		PlaythroughSites.OutpostWing wing = wing(helper, PlaythroughNpcs.Role.MNEMONIST, PlaythroughNpcs.Role.VICAR,
 				PlaythroughNpcs.Role.ALCHEMIST, PlaythroughNpcs.Role.ARTIFICER);
 		PlaythroughPlayer player = d3(helper);
@@ -687,8 +704,14 @@ public final class PlaythroughInitiateGameTests {
 				}
 			}
 		}
-		PlaythroughLog.note(helper, "d3PuppetryHasNoPointer", "Circus pointers a D3 player is shown: " + pointers);
+		PlaythroughLog.note(helper, "d3PuppetryHasAPointer", "Circus pointers a D3 player is shown: " + pointers);
 		helper.assertFalse(pointers.isEmpty(), "some teacher points a D3 player toward the Circus");
+		DialogueView mnemonist = player.talkTo(wing.get(PlaythroughNpcs.Role.MNEMONIST));
+		helper.assertTrue(!mnemonist.unreachableNodes().contains("circus")
+						&& mnemonist.tree().getNode("circus").lines().contains("hemomancy.mnemonist.circus.teaser.line1"),
+				"the Mnemonist's D3 teaser can be read: " + mnemonist.describe());
+		helper.assertFalse(mnemonist.offers(HarbingerMnemonistDialogueTrees.EVENT_CIRCUS_WAYBILL),
+				"no Waybill is offered below the fourth Degree");
 		helper.succeed();
 	}
 
@@ -1122,12 +1145,11 @@ public final class PlaythroughInitiateGameTests {
 	}
 
 	/**
-	 * Two players in the guided Chamber: one logs out mid-visit, the other takes lethal damage inside. Each gets the
-	 * original inventory back, nothing is duplicated, and neither has the lesson completed by leaving early. Needs the
-	 * Chamber of Will loaded; on the GameTest server it fails as NOT RUN. Read from the code, ChamberVisitEvents'
-	 * logout and death handlers call returnFromVisit, which completes the guided lesson.
+	 * PT-24: two players in the guided Chamber: one logs out mid-visit, the other takes lethal damage inside. Each gets
+	 * the original inventory back, nothing is duplicated, and neither has the lesson completed by leaving early: only
+	 * the timeout and the paired chair exit complete it. Needs the Chamber of Will loaded; on the GameTest server it
+	 * fails as NOT RUN.
 	 */
-	// DECISION: D-24 a guided visit left early (logout or death protection) completes the lesson.
 	@GameTest(template = EMPTY, timeoutTicks = 400, batch = BATCH, required = false)
 	public static void guidedChamberLogoutAndLethalDamage(GameTestHelper helper) {
 		Entity mnemonist = wing(helper, PlaythroughNpcs.Role.MNEMONIST).get(PlaythroughNpcs.Role.MNEMONIST);
@@ -1258,16 +1280,19 @@ public final class PlaythroughInitiateGameTests {
 	}
 
 	/**
-	 * DECISION: D-3 Quest rewards drop unowned at the NPC's feet. Expected: a second player cannot take the first
-	 * player's Woven Vessel kit.
+	 * FIX: PT-3 (was D-3). One-time NPC rewards are owed to the claimant through PendingDelivery: a second player
+	 * cannot take the first player's Woven Vessel kit.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void twoPlayersWovenVesselKit(GameTestHelper helper) {
 		Entity mnemonist = wing(helper, PlaythroughNpcs.Role.MNEMONIST).get(PlaythroughNpcs.Role.MNEMONIST);
 		PlaythroughPlayer first = d3(helper);
 		PlaythroughPlayer second = d3(helper, mnemonist.blockPosition());
 		archiveSet(first);
 		first.give(new ItemStack(ItemInit.hematic_memory.get())); // ARRANGE: crafted (wovenVesselTurnIn crafts it)
+		// The D2 kit already carries a vivacious enzyme (the catalyst lesson): count what each player gains.
+		int firstEnzymes = first.count(ItemInit.vivacious_enzyme.get());
+		int secondEnzymes = second.count(ItemInit.vivacious_enzyme.get());
 		first.talkTo(mnemonist);
 		Outcome turnIn = first.choose(mnemonist, TURN_IN);
 		helper.assertTrue(turnIn.rewardDelivered(), "the first player's turn-in is accepted; " + turnIn);
@@ -1279,8 +1304,11 @@ public final class PlaythroughInitiateGameTests {
 				+ first.count(ItemInit.vivacious_enzyme.get()) + "; second has bulb=" + second.count(ItemInit.bleeding_bulb.get())
 				+ " enzymes=" + second.count(ItemInit.vivacious_enzyme.get()) + "; landed " + turnIn.drops();
 		PlaythroughLog.note(helper, "twoPlayersWovenVesselKit", who);
-		helper.assertTrue(first.count(ItemInit.bleeding_bulb.get()) == 1 && first.count(ItemInit.vivacious_enzyme.get()) == 3
-				&& second.count(ItemInit.bleeding_bulb.get()) == 0, "the Woven Vessel kit stays the first player's: " + who);
+		helper.assertTrue(first.count(ItemInit.bleeding_bulb.get()) == 1
+				&& first.count(ItemInit.vivacious_enzyme.get()) - firstEnzymes == 3
+				&& second.count(ItemInit.bleeding_bulb.get()) == 0
+				&& second.count(ItemInit.vivacious_enzyme.get()) == secondEnzymes,
+				"the Woven Vessel kit stays the first player's: " + who);
 		helper.succeed();
 	}
 
@@ -1529,7 +1557,6 @@ public final class PlaythroughInitiateGameTests {
 		player.quickMove(menu, 0);
 		helper.assertTrue(player.count(ItemInit.blood_stained_stone.get()) == 4,
 				"four Blood-Stained Stone are crafted; " + player.last());
-		for (int slot : new int[] {1, 3, 7, 9}) placeOne(player, menu, slot, ItemInit.sanguine_formation.get());
 		for (int slot : new int[] {2, 4, 6, 8}) placeOne(player, menu, slot, ItemInit.blood_stained_stone.get());
 		placeOne(player, menu, 5, ItemInit.neurotic_enzyme.get());
 		player.quickMove(menu, 0);

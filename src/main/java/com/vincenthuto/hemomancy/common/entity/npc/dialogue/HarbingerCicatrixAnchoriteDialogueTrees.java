@@ -69,7 +69,9 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 	}
 
 	private static DialogueTree d5(int entityId, AnchoriteProgressSnapshot p) {
-		String line = !p.d5Varicose() ? "hemomancy.anchorite.d5.cause_strain"
+		String line = !p.d5Varicose() ? (com.vincenthuto.hemomancy.config.HemoConfigValues.get(
+				com.vincenthuto.hemomancy.config.HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED, true)
+				? "hemomancy.anchorite.d5.cause_strain" : "hemomancy.anchorite.d5.cause_strain.undegraded")
 				: !p.d5Diagnosed() ? "hemomancy.anchorite.d5.return_diagnosis"
 				: !p.d5Treated() ? "hemomancy.anchorite.d5.recover"
 				: !p.fortified() ? "hemomancy.anchorite.d5.fortify" : "hemomancy.anchorite.d5.complete";

@@ -11,8 +11,11 @@ public class HemoClientConfig {
     public static ModConfigSpec.BooleanValue DIALOGUE_BRIEF_MODE;
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
+	public static ModConfigSpec.BooleanValue SHOW_BLOOD_VOLUME_HUD;
+	public static ModConfigSpec.BooleanValue SHOW_GOURD_HUD;
+	public static ModConfigSpec.BooleanValue SHOW_TEMPER_HUD;
 	public static ModConfigSpec.EnumValue<MorphlingHudMode> MORPHLING_HUD_MODE;
-	public static ModConfigSpec.DoubleValue MORPHLING_HUD_SCALE;
+	public static ModConfigSpec.DoubleValue LASH_CAMERA_DAMPING;
 	public static ModConfigSpec.BooleanValue USE_COOLDOWN_VIGNETTE;
 	public static ModConfigSpec.BooleanValue RENDER_CROWN_POMES_AS_ITEMS;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_GOURD_LAYER;
@@ -81,13 +84,20 @@ public class HemoClientConfig {
                 .comment("Location of Blood Volume Hud(Top Left =0,Top Right =1,Bottom Left =2,Bottom Right =3")
                 .defineInRange("location", 0, 0, 3);
 
+        SHOW_BLOOD_VOLUME_HUD = CLIENT_BUILDER.translation("hemomancy.configuration.showBloodVolumeHud")
+                .comment("Show the blood vessel in the adaptive hematic HUD.").define("showBloodVolumeHud", true);
+        SHOW_GOURD_HUD = CLIENT_BUILDER.translation("hemomancy.configuration.showGourdHud")
+                .comment("Show an equipped gourd, horn or rib inside the hematic HUD.").define("showGourdHud", true);
+        SHOW_TEMPER_HUD = CLIENT_BUILDER.translation("hemomancy.configuration.showTemperHud")
+                .comment("Show discovered Temper phials around the hematic HUD.").define("showTemperHud", true);
+
 	MORPHLING_HUD_MODE = CLIENT_BUILDER
 		.comment("Equipped morphling display: ATTACHED uses a static 32px gripping sprite, LEGACY_ICON uses the item sprite, and OFF hides it.")
 		.defineEnum("morphlingHudMode", MorphlingHudMode.ATTACHED);
 
-	MORPHLING_HUD_SCALE = CLIENT_BUILDER
-		.comment("Scale the attached Morphling around its feeding point on the vessel. 1.0 displays a 32px sprite.")
-		.defineInRange("morphlingHudScale", 1.0D, 0.25D, 4.0D);
+	LASH_CAMERA_DAMPING = CLIENT_BUILDER.translation("hemomancy.configuration.lashCameraDamping")
+		.comment("How much the view is held steady while a lash is swung. 1.0 caps how fast the view may turn so a flick swings the lash and only nudges the view; 0.0 turns the view with the mouse as usual and the lash follows the crosshair.")
+		.defineInRange("lashCameraDamping", 1.0D, 0.0D, 1.0D);
 
 	USE_COOLDOWN_VIGNETTE = CLIENT_BUILDER
 		.comment("Render Still Art cooldowns as full-screen vignette overlays. If false, they render as compact numerical timers beside the relevant HUD gauge.")
@@ -197,6 +207,10 @@ public class HemoClientConfig {
 
 	public static FaneBoundaryStyle faneBoundaryStyle() {
 		return FANE_BOUNDARY_STYLE == null ? FaneBoundaryStyle.SURFACE : FANE_BOUNDARY_STYLE.get();
+	}
+
+	public static double lashCameraDamping() {
+		return LASH_CAMERA_DAMPING == null ? 1.0D : LASH_CAMERA_DAMPING.get();
 	}
 
 	public static boolean dialogueBriefMode() {

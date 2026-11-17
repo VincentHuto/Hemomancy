@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -15,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -61,8 +59,7 @@ public class GraveDebtManip extends BloodManipulation {
 		LivingEntity target = target(player);
 		if (target == null) return;
 
-		target.addEffect(new MobEffectInstance(EffectInit.grave_debt, DURATION_TICKS, 0, false, true, true));
-		SchoolHitHelper.markGraveDebt(target, player, DURATION_TICKS);
+		SchoolHitHelper.markGraveDebt(target, player, DURATION_TICKS, paidForCurrentCast());
 		ManipulationVisuals.attached(target, ManipulationVisuals.Form.GRAVE, 1, DURATION_TICKS, 1); world.playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS,
 				0.45F, 0.55F);
 	        }

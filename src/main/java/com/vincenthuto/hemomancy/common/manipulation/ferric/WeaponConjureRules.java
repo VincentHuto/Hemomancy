@@ -9,8 +9,9 @@ import com.vincenthuto.hemomancy.common.util.HemoEasing;
  * weapon-local plane: {@code a} runs from the grip toward the business end, {@code b} across the weapon's flat.
  */
 public final class WeaponConjureRules {
-    public static final int BLADE = 0, AXE = 1, SPEAR = 2, CLAWS = 3, CROSSBOW = 4, TORCH = 5, FLAIL = 6, SICKLE = 7, STAFF = 8;
-    public static final int WEAPONS = 9;
+    public static final int BLADE = 0, AXE = 1, SPEAR = 2, CLAWS = 3, CROSSBOW = 4, TORCH = 5, FLAIL = 6, SICKLE = 7, STAFF = 8,
+            PICKAXE = 9;
+    public static final int WEAPONS = 10;
 
     /** Client cue length, matched to the staff morph's 8-tick dissolve and 8-tick form. */
     public static final int VISUAL_TICKS = 24;
@@ -55,6 +56,8 @@ public final class WeaponConjureRules {
             {s(.03, -.15, 0, .26, 0), e(.035, .26, 0, .42, .12, .45, .3, .36, .43, .2, .47)},
             // Staff: a long shaft with a crook at its head.
             {s(.035, -.75, 0, .9, 0), e(.03, .9, 0, 1.0, .06, 1.02, .14, .95, .18)},
+            // Pickaxe: a haft and a head whose long spike and short chisel both hook back toward the hand.
+            {s(.03, -.25, 0, .72, 0), e(.035, .7, 0, .74, .16, .66, .34), e(.035, .7, 0, .73, -.12, .67, -.22)},
     };
 
     private WeaponConjureRules() {
@@ -71,13 +74,14 @@ public final class WeaponConjureRules {
             case "conjure_torch" -> TORCH;
             case "conjure_flail" -> FLAIL;
             case "conjure_sickle" -> SICKLE;
+            case "conjure_pickaxe" -> PICKAXE;
             default -> STAFF;
         };
     }
 
     public static School school(int weapon) {
         return switch (weapon) {
-            case AXE, STAFF -> School.FERRIC;
+            case AXE, STAFF, PICKAXE -> School.FERRIC;
             case SPEAR -> School.LUX;
             case CLAWS -> School.UMBRA;
             case CROSSBOW -> School.DUCTILIS;

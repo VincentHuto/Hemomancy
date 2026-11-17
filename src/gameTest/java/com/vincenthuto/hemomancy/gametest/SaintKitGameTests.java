@@ -123,7 +123,11 @@ public final class SaintKitGameTests {
 		float factor = 1.0F;
 
 		KitSaint(Level level) {
-			super(EntityInit.hemorath.get(), level, 0, new BossBarBinding("entity.hemomancy.hemorath",
+			this(level, 0);
+		}
+
+		KitSaint(Level level, int xp) {
+			super(EntityInit.hemorath.get(), level, xp, new BossBarBinding("entity.hemomancy.hemorath",
 					BossPresentationIds.FRAME_HEMORATH, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS));
 		}
 
@@ -142,6 +146,10 @@ public final class SaintKitGameTests {
 
 		void endNow() {
 			beginEnding(SaintEnding.Spec.IMMEDIATE, null, () -> true);
+		}
+
+		void endFor(net.minecraft.world.entity.player.Player victor) {
+			endTrial(victor, null);
 		}
 
 		@Override
@@ -194,6 +202,27 @@ public final class SaintKitGameTests {
 		h.assertTrue(saint.isRemoved() && saint.hasTrialEnded(), "the immediate ending ran endTrial and discarded the Saint");
 		h.assertTrue(h.getLevel().getBlockState(cell).equals(original), "endTrial put the edited cell back");
 		h.assertTrue(hazard.isRemoved(), "the owned hazard went with the trial");
+		sweepItems(h);
+		h.succeed();
+	}
+
+	/** CR-22: the trial's experience comes once through endTrial, to the reward's recipient; a death gives none. */
+	@GameTest(template = TEMPLATE, timeoutTicks = 40)
+	public static void endTrialGivesTheRecipientTheTrialExperienceOnce(GameTestHelper h) {
+		clearStage(h);
+		KitSaint saint = new KitSaint(h.getLevel(), 80);
+		saint.setNoGravity(true);
+		saint.moveTo(h.absoluteVec(Vec3.atBottomCenterOf(SAINT_AT)));
+		h.getLevel().addFreshEntity(saint);
+		h.assertTrue(saint.getExperienceReward(h.getLevel(), null) == 0, "a Saint's body carries no death experience");
+		var victor = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+		int before = victor.totalExperience;
+		saint.endFor(victor);
+		h.assertTrue(victor.totalExperience - before == 80, "the victor took " + (victor.totalExperience - before)
+				+ " experience, not the trial's 80");
+		saint.endFor(victor);
+		h.assertTrue(victor.totalExperience - before == 80, "a second endTrial gave the experience again");
+		saint.discard();
 		sweepItems(h);
 		h.succeed();
 	}

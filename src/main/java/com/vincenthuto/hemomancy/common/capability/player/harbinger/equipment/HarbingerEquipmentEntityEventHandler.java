@@ -4,6 +4,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
+import com.vincenthuto.hemomancy.common.damage.DamageStages;
+import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -26,7 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -59,26 +62,34 @@ public class HarbingerEquipmentEntityEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void playerHurt(LivingDeathEvent event) {
-
-        if (event.getEntity() instanceof Player player && !event.getEntity().level().isClientSide) {
-
-            var equipment = HemoCapabilityAccess.getEquipment(player);
-            // slot 5 is the special curved-horn slot, not a regular scar slot
-            ItemStack itemstack = equipment.getStackInSlot(5);
-            if (itemstack.getItem() == ItemInit.curved_horn.get()) {
-                itemstack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-                player.addEffect(new MobEffectInstance(EffectInit.blood_rush, 200, 1));
-                player.setHealth(1.0f);
-                ServerLevel world = (ServerLevel) player.level();
-                world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundSource.AMBIENT, 0.5f, 0.5f);
-                PacketHandler.sendToPlayer((ServerPlayer) player, new PacketCurvedHornAnimation());
-
-                event.setCanceled(true);
-            }
+    /** The Horn in the charm slot is a Last Rite: it arms only while nothing else is armed. */
+    public static void syncCurvedHornRite(Player player) {
+        if (player.level().isClientSide()) return;
+        if (HemoCapabilityAccess.getEquipment(player).getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.curved_horn.get())) {
+            if (!LastRiteHelper.hasArmedSource(player)) LastRiteHelper.arm(player, LastRiteHelper.CURVED_HORN_ID);
+        } else {
+            LastRiteHelper.clearIfArmed(player, LastRiteHelper.CURVED_HORN_ID);
         }
+    }
 
+    /**
+     * A Last Rite of the death-save stage in {@link DamageStages}: when the Horn is the armed rite and the shared
+     * cooldown is over, a lethal hit is cut to leave the player at 1 health, for 1 durability.
+     */
+    public static boolean tryCurvedHornSave(ServerPlayer player, LivingDamageEvent.Pre event) {
+        ItemStack horn = HemoCapabilityAccess.getEquipment(player).getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
+        if (!horn.is(ItemInit.curved_horn.get()) || !DamageStages.isLethal(player, event)
+                || !LastRiteHelper.canFire(player, LastRiteHelper.CURVED_HORN_ID)) {
+            return false;
+        }
+        LastRiteHelper.consume(player, LastRiteHelper.CURVED_HORN_ID);
+        horn.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        player.addEffect(new MobEffectInstance(EffectInit.blood_rush, 200, 1));
+        DamageStages.leaveBarelyAlive(player, event);
+        ServerLevel world = player.serverLevel();
+        world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundSource.AMBIENT, 0.5f, 0.5f);
+        PacketHandler.sendToPlayer(player, new PacketCurvedHornAnimation());
+        return true;
     }
 
     @SubscribeEvent
@@ -142,6 +153,7 @@ public class HarbingerEquipmentEntityEventHandler {
         Player player = event.getEntity();
         // tick equipment item handler (non-scar equipment)
         HemoCapabilityAccess.getEquipment(player).tick();
+        syncCurvedHornRite(player);
         // Fungal Elytra needs the modifier too so canFallFly() returns ALLOW (onGlideTick does the gliding)
         AttributeModifiers.sync(player.getAttribute(AttributeInit.getFlightAttribute()), AttributeInit.getElytraModifier(),
                 player.getItemBySlot(EquipmentSlot.CHEST).canElytraFly(player) || player.hasEffect(EffectInit.noctifly_agaric));

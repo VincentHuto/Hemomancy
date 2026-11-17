@@ -20,22 +20,6 @@ public final class AbocipherEmitterPlacement {
 		placeNear(level, fullBox, random, origin, 4, 1, AbocipherEmitterBlockEntity.Profile.BLOOD_TEMPLE);
 	}
 
-	public static void placeHarbingerOutpostEmitters(WorldGenLevel level, BoundingBox fullBox, RandomSource random,
-			int centerX, int centerZ, int minY, int maxY) {
-		int quarterX = Math.max(2, (fullBox.maxX() - fullBox.minX()) / 4);
-		int quarterZ = Math.max(2, (fullBox.maxZ() - fullBox.minZ()) / 4);
-		int lowerY = AbocipherEmitterPlacementRules.harbingerOutpostEmitterY(minY, maxY, 0);
-		int middleY = AbocipherEmitterPlacementRules.harbingerOutpostEmitterY(minY, maxY, 1);
-		int upperY = AbocipherEmitterPlacementRules.harbingerOutpostEmitterY(minY, maxY, 2);
-
-		placeNear(level, fullBox, random, new BlockPos(centerX, lowerY, centerZ), 4, 2,
-				AbocipherEmitterBlockEntity.Profile.HARBINGER_OUTPOST);
-		placeNear(level, fullBox, random, new BlockPos(centerX - quarterX, middleY, centerZ + quarterZ), 3, 2,
-				AbocipherEmitterBlockEntity.Profile.HARBINGER_OUTPOST);
-		placeNear(level, fullBox, random, new BlockPos(centerX + quarterX, upperY, centerZ - quarterZ), 3, 2,
-				AbocipherEmitterBlockEntity.Profile.HARBINGER_OUTPOST);
-	}
-
 	private static boolean placeNear(WorldGenLevel level, BoundingBox fullBox, RandomSource random, BlockPos origin,
 			int horizontalSpread, int verticalSpread, AbocipherEmitterBlockEntity.Profile profile) {
 		for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {

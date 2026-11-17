@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotContribution.Category;
 
 import java.util.List;
@@ -8,7 +9,8 @@ public final class ManipulationSlotRulesTest {
 	private ManipulationSlotRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		baseDegreeAndSkillStackUntilCap();
 		skillLevelsPastCapAreReportedAsExcess();
 		negativeSlotTotalsClampToZero();

@@ -23,9 +23,25 @@ public final class SaintEnrageRules {
 		return "FORCED".equals(doorMode);
 	}
 
-	/** An Apotheos who reaches the tomb without opening its door (pistons, machines) still wakes the Saint enraged. */
-	public static String effectiveMode(String doorMode, boolean apotheosWaker) {
-		return apotheosWaker && "NONE".equals(doorMode) ? "FORCED" : doorMode;
+	/**
+	 * An Apotheos who reaches the tomb without opening its door (pistons, machines) still wakes the Saint enraged, and
+	 * so does an unopened tomb woken by anyone while an Apotheos stands in the chamber (SM-1).
+	 */
+	public static String effectiveMode(String doorMode, boolean apotheosPresent) {
+		return apotheosPresent && "NONE".equals(doorMode) ? "FORCED" : doorMode;
+	}
+
+	/** Whether the waker, or any living, non-spectator player in the chamber, is an Apotheos. */
+	public static boolean apotheosPresent(boolean apotheosWaker, List<Boolean> chamberApotheos) {
+		return apotheosWaker || chamberApotheos.contains(Boolean.TRUE);
+	}
+
+	/**
+	 * Only a fragment comes out of a forced fight, and out of a fight no door was opened for once an Apotheos has
+	 * joined it. A late Apotheos does not enrage the Saint mid-fight.
+	 */
+	public static boolean fragmentOnly(String awakening, String tombRecord, boolean apotheosChallenger) {
+		return enraged(awakening) || "NONE".equals(tombRecord) && apotheosChallenger;
 	}
 
 	/** What goes back onto the tomb when the Saint returns: only a door actually opened, never an inferred wake. */

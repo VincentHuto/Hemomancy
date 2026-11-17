@@ -1,16 +1,17 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class RegistryCreativeOrderSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private RegistryCreativeOrderSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		String blockInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
 
@@ -68,10 +69,6 @@ public final class RegistryCreativeOrderSourceTest {
 				"unstained_podium = MODELEDBLOCKS.register",
 				"altar_of_cleansing = MODELEDBLOCKS.register",
 				"pallid_retort = MODELEDBLOCKS.register");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
 	}
 
 	private static void assertInOrder(String label, String text, String... expected) {

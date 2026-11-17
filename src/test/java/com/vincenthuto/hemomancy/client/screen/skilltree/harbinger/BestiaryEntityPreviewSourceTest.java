@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -7,7 +8,8 @@ public final class BestiaryEntityPreviewSourceTest {
 	private BestiaryEntityPreviewSourceTest() {
 	}
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		String previewSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/BestiaryEntityPreview.java"));
 		assertTrue("chitinite should have a preview entity", previewSource.contains("\"chitinite\""));

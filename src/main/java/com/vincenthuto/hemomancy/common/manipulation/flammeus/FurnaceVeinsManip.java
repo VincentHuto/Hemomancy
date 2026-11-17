@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +45,8 @@ public class FurnaceVeinsManip extends BloodManipulation {
 				player.blockPosition().offset(5, 5, 5))) {
 			if ((level.getBlockState(pos).is(Blocks.FROSTED_ICE) || level.getBlockState(pos).is(BlockInit.frozen_cruor.get()))
 					&& ManipulationCombatHelper.mayAlter(player, pos)) {
-				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+				// The caster melts it: the break checks (and a claim's break event) still apply.
+				PlayerBlockEdits.lift(player, pos.immutable());
 			}
 		}
 		ManipulationVisuals.attached(player, ManipulationVisuals.Form.FURNACE, 5, 25, 1);

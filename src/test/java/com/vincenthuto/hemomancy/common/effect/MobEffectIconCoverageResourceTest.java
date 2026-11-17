@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,7 +15,8 @@ public final class MobEffectIconCoverageResourceTest {
 	private MobEffectIconCoverageResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String source = Files.readString(EFFECT_INIT);
 		Matcher matcher = EFFECT_REGISTRATION.matcher(source);
 		while (matcher.find()) {

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
 import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
-import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -37,11 +36,11 @@ public final class CircusFacultyEntity extends CircusPerformerEntity {
     }
     @Override protected void telegraphDefense(ServerLevel server, LivingEntity target, int tick, BossMoveTimeline move) {
         CircusEffects.gather(server, position().add(0, getBbHeight() * 0.85, 0), CircusEffects.BONE, tick / (float) move.windup());
-        if (tick % 3 == 0) BossTelegraphs.cone(server, position(), target.position().subtract(position()), 2.0, 90.0, CircusEffects.CRIMSON);
+        CircusEffects.coneFootprint(server, position(), target.position().subtract(position()), 2.0, 90.0, tick / (float) move.windup());
     }
     @Override protected void strikeDefense(LivingEntity target) {
         swing(net.minecraft.world.InteractionHand.MAIN_HAND);
-        if (distanceToSqr(target) < 4 && doHurtTarget(target) && level() instanceof ServerLevel server)
+        if (distanceToSqr(target) < 4 && canStrike(target) && doHurtTarget(target) && level() instanceof ServerLevel server)
             CircusEffects.impact(server, target.position().add(0, 1, 0), 0.6);
     }
 }

@@ -27,6 +27,7 @@ public final class VisitationService {
 	@Nullable
 	public static Component refusal(ServerPlayer caster) {
 		if (!ApotheosBodyEvents.isApotheos(caster)) return Component.translatable("message.hemomancy.visitation.not_apotheos");
+		if (ChamberVisitService.isAway(caster)) return Component.translatable("message.hemomancy.visitation.away");
 		if (caster.level().dimension().equals(FungalGardenTravelHelper.FUNGAL_GARDENS))
 			return Component.translatable("message.hemomancy.visitation.already");
 		if (caster.server.getLevel(FungalGardenTravelHelper.FUNGAL_GARDENS) == null)

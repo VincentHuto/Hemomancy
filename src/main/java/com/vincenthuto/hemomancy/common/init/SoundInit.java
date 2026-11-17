@@ -1,10 +1,15 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastSounds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SoundInit {
 	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT,
@@ -336,8 +341,8 @@ public class SoundInit {
 			"entity.mycophant.death");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_SUMMON = registerSoundEvent(
 			"entity.mycophant.summon");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_TELEPORT = registerSoundEvent(
-			"entity.mycophant.teleport");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_SPLIT = registerSoundEvent(
+			"entity.mycophant.split");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_MUSIC = registerSoundEvent(
 			"entity.mycophant.music");
 
@@ -389,5 +394,24 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_PUTRICIEL_FLARE = registerSoundEvent("mausoleum.putriciel.flare");
 	// Velorum's monastery is near silent: once in a long while the ice creaks somewhere in the walls.
 	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_VELORUM_CREAK = registerSoundEvent("mausoleum.velorum.creak");
+	// D-36: the Crimson Troupe's cues, from the 2026-11-13 sound audit's candidates; the music event has no track yet.
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CIRCUS_RINGMASTER_PHASE_CHANGE = registerSoundEvent("entity.circus_ringmaster.phase_change");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CIRCUS_RINGMASTER_FINALE_COLLAPSE = registerSoundEvent("entity.circus_ringmaster.finale_collapse");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CIRCUS_RINGMASTER_HURT = registerSoundEvent("entity.circus_ringmaster.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CIRCUS_RINGMASTER_MUSIC = registerSoundEvent("entity.circus_ringmaster.music");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_IMPALED_PROCESSION_THREAD_SEVER = registerSoundEvent("entity.impaled_procession.thread_sever");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_IMPALED_PROCESSION_ANCHOR_BREAK = registerSoundEvent("entity.impaled_procession.anchor_break");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CIRCUS_PERFORMER_WINDUP = registerSoundEvent("entity.circus_performer.windup");
 
+
+	// UN-12: one cast event per manipulation, read by player casts and EntityCasts.
+	public static final Map<String, DeferredHolder<SoundEvent, SoundEvent>> MANIPULATION_CAST = registerCastEvents(ManipulationCastSounds.CAST_EVENTS);
+
+	private static Map<String, DeferredHolder<SoundEvent, SoundEvent>> registerCastEvents(List<String> manipulations) {
+		Map<String, DeferredHolder<SoundEvent, SoundEvent>> events = new LinkedHashMap<>();
+		for (String manipulation : manipulations) {
+			events.put(manipulation, registerSoundEvent("manipulation." + manipulation + ".cast"));
+		}
+		return Map.copyOf(events);
+	}
 }

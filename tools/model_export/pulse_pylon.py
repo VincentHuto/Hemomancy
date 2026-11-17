@@ -19,7 +19,7 @@ atlas (`pulse_pylon`, `pulse_pylon_anchor`, `pulse_pylon_pyre`, `pulse_pylon_fro
 
 Emits per style the lower, middle and upper block models (`pulse_pylon[_anchor|_pyre|_frost]_<part>`), the ring
 model (all but the pyre), the atlas and an editable Blockbench project, and one blockstate (facing x part x style; the
-`charge` property is a wildcard). The item model `item/pulse_pylon` is the whole venous pylon and ring at half scale.
+`charge` property is a wildcard). The item model `item/pulse_pylon` is the whole venous pylon and ring at full scale.
 Python 3 + Pillow + NumPy. `--preview` writes build/model-previews/pulse_pylon.png, pulse_pylon_item.png,
 pulse_pylon_ring.png, pulse_pylon_anchor.png, pulse_pylon_ring_anchor.png, pulse_pylon_pyre.png, pulse_pylon_frost.png,
 pulse_pylon_ring_frost.png and pulse_pylon_compare.png (venous over anchor).
@@ -684,18 +684,19 @@ def blockstate():
     return {'variants': variants}
 
 
-# The item is the whole venous pylon with its ring at half scale, centred on the block's middle (y -4 to 20); its
-# display scales are set for that 24-pixel height.
-ITEM_SCALE = .5
+# The item is the whole venous pylon with its ring at full scale, so its texels read as the block's. Its 48 pixels
+# fill vanilla's -16..32 element bounds exactly (y -16 to 32), centred on the block's middle as the old half-scale
+# item was; its display scales are half those of a 24-pixel item.
+ITEM_SCALE = 1
 ITEM_DISPLAY = {
-    'gui': {'rotation': [30, 225, 0], 'translation': [0, 0, 0], 'scale': [0.55, 0.55, 0.55]},
-    'ground': {'translation': [0, 3, 0], 'scale': [0.25, 0.25, 0.25]},
-    'fixed': {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale': [0.55, 0.55, 0.55]},
-    'head': {'translation': [0, 8, 0], 'scale': [0.6, 0.6, 0.6]},
-    'thirdperson_righthand': {'rotation': [75, 45, 0], 'translation': [0, 2.5, 0], 'scale': [0.3, 0.3, 0.3]},
-    'thirdperson_lefthand': {'rotation': [75, 45, 0], 'translation': [0, 2.5, 0], 'scale': [0.3, 0.3, 0.3]},
-    'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, 1, 0], 'scale': [0.3, 0.3, 0.3]},
-    'firstperson_lefthand': {'rotation': [0, 225, 0], 'translation': [0, 1, 0], 'scale': [0.3, 0.3, 0.3]},
+    'gui': {'rotation': [30, 225, 0], 'translation': [0, 0, 0], 'scale': [0.275, 0.275, 0.275]},
+    'ground': {'translation': [0, 3, 0], 'scale': [0.125, 0.125, 0.125]},
+    'fixed': {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale': [0.275, 0.275, 0.275]},
+    'head': {'translation': [0, 8, 0], 'scale': [0.3, 0.3, 0.3]},
+    'thirdperson_righthand': {'rotation': [75, 45, 0], 'translation': [0, 2.5, 0], 'scale': [0.15, 0.15, 0.15]},
+    'thirdperson_lefthand': {'rotation': [75, 45, 0], 'translation': [0, 2.5, 0], 'scale': [0.15, 0.15, 0.15]},
+    'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, 1, 0], 'scale': [0.15, 0.15, 0.15]},
+    'firstperson_lefthand': {'rotation': [0, 225, 0], 'translation': [0, 1, 0], 'scale': [0.15, 0.15, 0.15]},
 }
 
 
@@ -733,8 +734,10 @@ def export(body, special, atlas_name, particle, suffix, title, with_ring=True, w
         stacked.append((models['ring'], 32))
     joined = model_json(item_elements(*stacked), atlas_name, h, particle)
     if with_item:
-        outputs['item/pulse_pylon'] = model_json(scaled(joined['elements'], ITEM_SCALE, (8, 0, 8), (0, -4, 0)),
-                                                 atlas_name, h, particle, ITEM_DISPLAY)
+        item = scaled(joined['elements'], ITEM_SCALE, (8, 0, 8), (0, 8 - 24 * ITEM_SCALE, 0))
+        for el in item:
+            assert all(-16 <= v <= 32 for v in el['from'] + el['to']), (el['name'], el['from'], el['to'])
+        outputs['item/pulse_pylon'] = model_json(item, atlas_name, h, particle, ITEM_DISPLAY)
     write(outputs, f'pulse_pylon{suffix}', joined)
     print(f'Exported {title}: {len(lower)} lower + {len(middle)} middle + {len(upper)} upper cubes, '
           f'{len(halo)} ring cubes, {moved} faces separated, 128x{h} atlas')
@@ -761,7 +764,7 @@ def main():
     if args.preview:
         preview(joined['elements'], ATLAS, 'Pulse Pylon - lower + middle + upper + charge ring, actual atlas',
                 'pulse_pylon', lift=16, size=400, scale=7)
-        preview(item['elements'], ATLAS, 'Pulse Pylon item - the whole venous pylon at half scale', 'pulse_pylon_item')
+        preview(item['elements'], ATLAS, 'Pulse Pylon item - the whole venous pylon at full scale', 'pulse_pylon_item')
         preview(halo['elements'], ATLAS,
                 f'Pulse Pylon ring - BER model, upper-cell space, centre y={RING_Y:g}', 'pulse_pylon_ring')
         preview(anchor_joined['elements'], ANCHOR_ATLAS,

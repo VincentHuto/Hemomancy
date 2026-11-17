@@ -142,6 +142,9 @@ public final class HemoCommandCharacterisationGameTests {
 						1, Integer::sum);
 				entity.discard();
 			}
+			// The core-loop fixtures (/hemo tank, vat, gouge) leave blocks and run clocks standing for their player; the
+			// next probe is a new player, so take them away once what the command spawned is counted.
+			com.vincenthuto.hemomancy.common.command.CoreLoopFixtures.clear(player);
 			String line = command + " -> " + result + " said=" + captured.chat
 					+ " saved=" + PlayerFingerprints.diff(before, after) + " spawned=" + spawned;
 			return PlayerFingerprints.normalise(line, player, null);

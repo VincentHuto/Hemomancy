@@ -12,8 +12,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTemperamentServerPacket;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import net.minecraft.ChatFormatting;
@@ -38,8 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScarDefinition {
-	/** Not reserve-protected, as before; F-13 (pending) would protect it. */
-	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("scar_upkeep", Category.SCAR, false, false);
+	/** Reserve-protected (F-13): upkeep stops at the Sanguine Reserve floor. */
+	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("scar_upkeep", Category.SCAR, true);
 	private final ScarType scarType;
 	private EnumBloodTemper assignedTemper;
 	private float deepenAmount;
@@ -96,7 +94,7 @@ public class ScarDefinition {
 					.orElseThrow(IllegalArgumentException::new);
 			if (coven != null) {
 				coven.addTransientAlignment(getAssignedTemper(), getDeepenAmount());
-				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTemperamentServerPacket(coven.getTemper()));
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents.syncTemperament((ServerPlayer) player, coven);
 			}
 
 			for (ScarModifier mod : passiveModifiers) {
@@ -119,7 +117,7 @@ public class ScarDefinition {
 					.orElseThrow(IllegalArgumentException::new);
 			if (coven != null) {
 				coven.addTransientAlignment(getAssignedTemper(), -getDeepenAmount());
-				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTemperamentServerPacket(coven.getTemper()));
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents.syncTemperament((ServerPlayer) player, coven);
 			}
 
 			for (ScarModifier mod : passiveModifiers) {
@@ -178,7 +176,17 @@ public class ScarDefinition {
 				BloodAccounting.pay(player, effectiveUpkeep, UPKEEP);
 			}
 		}
+		if (entity instanceof Player && entity.tickCount % 20 == 0) restorePassiveEffects(entity);
 		applyTierThreeTickEffect(entity);
+	}
+
+	/** F-14: milk, death or {@code /effect clear} cost a worn scar's passive effect at most a second. */
+	private void restorePassiveEffects(LivingEntity entity) {
+		for (ScarEffectEntry eff : passiveEffects) {
+			if (!entity.hasEffect(eff.effect())) {
+				entity.addEffect(new MobEffectInstance(eff.effect(), -1, eff.amplifier(), true, false));
+			}
+		}
 	}
 
 	protected void applyTierThreeTickEffect(LivingEntity entity) {
@@ -188,7 +196,9 @@ public class ScarDefinition {
 			if (tier >= 2 && entity.tickCount % 40 == 0) {
 				int dur = (int) (60 * masteryMult);
 				AABB area = entity.getBoundingBox().inflate(5.0);
-				entity.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(entity, candidate, Reach.MONSTER_FILTER_ANY_STATE))
+				entity.level().getEntitiesOfClass(Monster.class, area, candidate -> entity instanceof Player
+						? ManipulationCombatHelper.canHarm(entity, candidate, Reach.MONSTER_FILTER_ANY_STATE)
+						: ManipulationCombatHelper.canHarmFor(entity, candidate))
 						.forEach(mob -> mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, dur, 0)));
 			}
 			if (tier >= 3 && entity.tickCount % 40 == 0) {

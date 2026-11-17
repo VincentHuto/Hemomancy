@@ -9,23 +9,23 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
  */
 public final class HemorathSources {
 	/** The drain round his body. */
-	public static final Source PRESENCE = Source.of("hemorath_presence", Category.HAZARD, false, false);
+	public static final Source PRESENCE = Source.of("hemorath_presence", Category.HAZARD, false);
 	/** Raking Claw's bite. */
-	public static final Source CLAW = Source.of("hemorath_claw", Category.HAZARD, false, false);
+	public static final Source CLAW = Source.of("hemorath_claw", Category.HAZARD, false);
 	/** Marrow Siphon's draw. */
-	public static final Source SIPHON = Source.of("hemorath_siphon", Category.HAZARD, false, false);
+	public static final Source SIPHON = Source.of("hemorath_siphon", Category.HAZARD, false);
 	/** The tide standing on the boss floor. */
-	public static final Source TIDE = Source.of("hemorath_tide", Category.HAZARD, false, false);
+	public static final Source TIDE = Source.of("hemorath_tide", Category.HAZARD, false);
 	/** The Last Thirst's running gutters. */
-	public static final Source THIRST = Source.of("hemorath_thirst", Category.HAZARD, false, false);
+	public static final Source THIRST = Source.of("hemorath_thirst", Category.HAZARD, false);
 	/** The Gorge's drained burst on contact. */
-	public static final Source GORGE = Source.of("hemorath_gorge", Category.HAZARD, false, false);
+	public static final Source GORGE = Source.of("hemorath_gorge", Category.HAZARD, false);
 	/** Held Projection into his open ribs (Gorged, Strained, the Last Thirst). */
-	public static final Source VESSEL_OFFERING = Source.of("hemorath_vessel_offering", Category.HAZARD, false, false);
+	public static final Source VESSEL_OFFERING = Source.of("hemorath_vessel_offering", Category.HAZARD, false);
 	/** Held Projection along the Tithe's chain. */
-	public static final Source TITHE_PAYMENT = Source.of("hemorath_tithe_payment", Category.HAZARD, false, false);
+	public static final Source TITHE_PAYMENT = Source.of("hemorath_tithe_payment", Category.HAZARD, false);
 	/** Held Projection into one of his wells. */
-	public static final Source WELL_OFFERING = Source.of("hemorath_well_offering", Category.HAZARD, false, false);
+	public static final Source WELL_OFFERING = Source.of("hemorath_well_offering", Category.HAZARD, false);
 
 	private HemorathSources() {
 	}

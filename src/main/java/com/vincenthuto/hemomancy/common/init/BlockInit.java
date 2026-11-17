@@ -126,7 +126,7 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> pointed_blood_scorched_scab = BASEBLOCKS.register(
 			"pointed_blood_scorched_scab", () -> new BloodScabPointedDripstoneBlock(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.COLOR_BLACK).forceSolidOn().instrument(NoteBlockInstrument.BASEDRUM)
-					.noOcclusion().sound(SoundType.POINTED_DRIPSTONE).strength(1.5F, 3F).dynamicShape()
+					.noOcclusion().sound(SoundType.POINTED_DRIPSTONE).strength(1.5F, 3F).dynamicShape().randomTicks()
 					.offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)
 					.isRedstoneConductor((state,level,pos) -> false)));
 	public static final DeferredHolder<Block, com.vincenthuto.hemomancy.common.block.harbinger.EscharianScyphusBlock> escharian_scyphus = MODELEDBLOCKS.register(
@@ -472,7 +472,7 @@ public class BlockInit {
 					.lightLevel((state) -> 10).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> sclerite_block = BASEBLOCKS.register("sclerite_block",
-			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.COPPER)
+			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.METAL)
 					.lightLevel((state) -> 10).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> organic_prism = BASEBLOCKS.register("organic_prism",
@@ -631,6 +631,39 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> ravenous_heartwood = COLUMNBLOCKS.register("ravenous_heartwood",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.CRIMSON_STEM).strength(3.0F, 4.0F)
 					.sound(SoundType.WOOD).lightLevel(state -> 7)));
+	/**
+	 * Driftwood inoculated with a voyager's salt (core-loop round two, P7): the Brined strains' substrate. The first is
+	 * cut from logs worked with a Salt-Stained Voyager Log; after that a timber seeds more logs with dried kelp.
+	 */
+	public static final DeferredHolder<Block, Block> salt_stained_timber = COLUMNBLOCKS.register("salt_stained_timber",
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).strength(2.0F)
+					.instrument(NoteBlockInstrument.BASS).sound(SoundType.WOOD).ignitedByLava()));
+	/** The fungal strains (core-loop round two, P7): one block per row of {@link FungalStrains}, planted from its spore. */
+	private static final Map<FungalStrains, DeferredHolder<Block, Block>> STRAIN_BLOCKS = registerStrains();
+	/** Catalyst crops (core-loop round two, P7): a weak Lux catalyst grown like a potato, and a weak Flammeus one. */
+	public static final DeferredHolder<Block, Block> glowroot = MODELEDBLOCKS.register("glowroot",
+			() -> new CatalystCropBlock(Hemomancy.rloc("glowroot"), BlockBehaviour.Properties.of().mapColor(MapColor.PLANT)
+					.noCollission().randomTicks().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)
+					.lightLevel(state -> state.getValue(CatalystCropBlock.AGE) == CatalystCropBlock.MAX_AGE ? 4 : 0)));
+	public static final DeferredHolder<Block, Block> emberpod = MODELEDBLOCKS.register("emberpod",
+			() -> new CatalystCropBlock(Hemomancy.rloc("emberpod"), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+					.noCollission().randomTicks().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
+
+	private static Map<FungalStrains, DeferredHolder<Block, Block>> registerStrains() {
+		Map<FungalStrains, DeferredHolder<Block, Block>> blocks = new java.util.EnumMap<>(FungalStrains.class);
+		for (FungalStrains strain : FungalStrains.values()) {
+			blocks.put(strain, MODELEDBLOCKS.register(strain.blockId(), () -> new FungalStrainBlock(strain, BlockBehaviour.Properties.of()
+					.mapColor(strain.substrate() == FungalStrains.Substrate.BRINED ? MapColor.TERRACOTTA_WHITE : MapColor.COLOR_RED)
+					.noCollission().instabreak().randomTicks().sound(SoundType.FUNGUS).pushReaction(PushReaction.DESTROY)
+					.lightLevel(state -> strain == FungalStrains.INCANDESCENT && state.getValue(FungalStrainBlock.AGE) == FungalStrainRules.MAX_AGE ? 3 : 0))));
+		}
+		return java.util.Collections.unmodifiableMap(blocks);
+	}
+
+	/** The block {@code strain} grows as. */
+	public static DeferredHolder<Block, Block> strain(FungalStrains strain) {
+		return STRAIN_BLOCKS.get(strain);
+	}
 	public static final DeferredHolder<Block, Block> blood_wood_leaves = BASEBLOCKS.register("blood_wood_leaves",
 			() -> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_LEAVES)
 					.mapColor(MapColor.COLOR_RED)));
@@ -936,11 +969,50 @@ public class BlockInit {
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.VenousBasinBlock(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.COLOR_RED).requiresCorrectToolForDrops().strength(2.0f, 6.0f).noOcclusion()
 					.sound(SoundType.STONE)));
+	// ── The ground network (core-loop Track 6) ──
+	/** Tier 1: blood lying on a face, wet to tacky to dry to gone. No item; plain Projection lays it. */
+	public static final DeferredHolder<Block, Block> blood_stain = MODELEDBLOCKS.register("blood_stain",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.ground.BloodStainBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).noCollission().instabreak().noLootTable().noOcclusion().randomTicks()
+					.sound(SoundType.SLIME_BLOCK).replaceable().pushReaction(PushReaction.DESTROY)));
+	/** Tier 2: a trench cut into a face, dormant until blood pulses along its run. No item; a Sculpting cuts it. */
+	public static final DeferredHolder<Block, Block> blood_gouge = MODELEDBLOCKS.register("blood_gouge",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.ground.BloodGougeBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).noCollission().instabreak().noLootTable().noOcclusion()
+					.sound(SoundType.SCULK_VEIN).lightLevel(com.vincenthuto.hemomancy.common.block.harbinger.ground.BloodGougeBlock::lightOf)
+					.pushReaction(PushReaction.DESTROY)));
+	/** Tier 3: a gouge grown through with living tissue from a vein node. No item. */
+	public static final DeferredHolder<Block, Block> living_vein = MODELEDBLOCKS.register("living_vein",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.ground.LivingVeinBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).noCollission().instabreak().noLootTable().noOcclusion()
+					.sound(SoundType.SCULK_VEIN).lightLevel(com.vincenthuto.hemomancy.common.block.harbinger.ground.BloodGougeBlock::lightOf)
+					.pushReaction(PushReaction.DESTROY)));
+	/** Hematic Beacon's fleeting line of light. No item; it dims a step a minute and goes out. */
+	public static final DeferredHolder<Block, Block> lux_trace = MODELEDBLOCKS.register("lux_trace",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.ground.LuxTraceBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_YELLOW).noCollission().instabreak().noLootTable().noOcclusion()
+					.sound(SoundType.AMETHYST_CLUSTER).replaceable()
+					.lightLevel(com.vincenthuto.hemomancy.common.block.harbinger.ground.LuxTraceBlock::lightOf)
+					.pushReaction(PushReaction.DESTROY)));
+	/** A knot of tissue at a gouge run's end: grows the run into living vein, and joins two tanks. */
+	public static final DeferredHolder<Block, Block> vein_node = MODELEDBLOCKS.register("vein_node",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.ground.VeinNodeBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).strength(1.0f).noOcclusion().sound(SoundType.SCULK)));
+	/** Holds one stack of gouge catalysts and keeps a lit run beside it lit. */
+	public static final DeferredHolder<Block, Block> catalyst_feeder = MODELEDBLOCKS.register("catalyst_feeder",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.ground.CatalystFeederBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(2.5f, 6.0f).noOcclusion()
+					.sound(SoundType.METAL)));
+	/** Tier 2 of fed ground (core-loop Track 7): a venous-stone bed of soil for one plant over a small clotting tank. */
+	public static final DeferredHolder<Block, Block> planting_basin = MODELEDBLOCKS.register("planting_basin",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.plant.PlantingBasinBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).requiresCorrectToolForDrops().strength(2.0f, 6.0f)
+					.sound(SoundType.STONE)));
 	/** A cyst in the Gardens' Archive holding one Saint's Recollection. No item; it withers when drawn. */
 	public static final DeferredHolder<Block, Block> recollection_cyst = MODELEDBLOCKS.register("recollection_cyst",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.plant.RecollectionCystBlock(BlockBehaviour.Properties.of()
-					.mapColor(MapColor.TERRACOTTA_WHITE).strength(0.6f).noLootTable().noOcclusion().noCollission()
-					.sound(SoundType.AMETHYST_CLUSTER).lightLevel(state -> 7).pushReaction(PushReaction.DESTROY)));
+					.mapColor(MapColor.TERRACOTTA_WHITE).strength(-1.0f, 3600000f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.AMETHYST_CLUSTER).lightLevel(state -> 7).pushReaction(PushReaction.BLOCK)));
 	public static final DeferredHolder<Block, Block> potted_puffball_fungus = POTTEDBLOCKS.register("potted_puffball_fungus",
 			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.puffball_fungus,
 					BlockBehaviour.Properties.of().noCollission()));
@@ -979,6 +1051,11 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> mycelium_erythrocytic_dirt = BASEBLOCKS.register("mycelium_erythrocytic_dirt",
 			() -> new ErythrocyticMyceliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
 					.randomTicks().strength(0.6F).sound(SoundType.GRASS)));
+
+	/** Grass that remembers spilled blood (core-loop Track 10); it turns back as the region quiets. */
+	public static final DeferredHolder<Block, Block> stained_sod = BASEBLOCKS.register("stained_sod",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.ground.StainedSodBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).randomTicks().strength(0.6F).sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> infected_stem = BASEBLOCKS.register("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
@@ -1093,6 +1170,10 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> specimen_jar = MODELEDBLOCKS.register("specimen_jar",
 			() -> new SpecimenJarBlock(BlockBehaviour.Properties.of().strength(0.3F, 1.0F)
 					.sound(SoundType.GLASS).noOcclusion()));
+	/** A two-block glass column in an iron cage for a creature up to about two blocks high (core-loop Track 5). */
+	public static final DeferredHolder<Block, Block> specimen_vat = MODELEDBLOCKS.register("specimen_vat",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.functional.SpecimenVatBlock(BlockBehaviour.Properties.of()
+					.requiresCorrectToolForDrops().strength(2.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> consecrated_bloodwell = MODELEDBLOCKS.register("consecrated_bloodwell",
 			() -> new ConsecratedBloodwellBlock(
@@ -1232,7 +1313,8 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> sanguine_vigil = MODELEDBLOCKS.register("sanguine_vigil",
 			() -> new SanguineVigilBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-							.strength(3.0F, 8.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 6).noOcclusion()));
+							.strength(3.0F, 8.0F).sound(SoundType.BONE_BLOCK)
+							.lightLevel(s -> s.getValue(SanguineVigilBlock.LIT) ? 6 : 0).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
 			() -> new MortalDisplayBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -1249,8 +1331,9 @@ public class BlockInit {
 			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 
+	/** Also a ward: blood spilled in its region counts for half (core-loop Track 10). */
 	public static final DeferredHolder<Block, Block> suspended_vivianite = MODELEDBLOCKS.register("suspended_vivianite",
-			() -> new com.vincenthuto.hemomancy.common.block.shared.SuspendedCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
+			() -> new com.vincenthuto.hemomancy.common.block.shared.SuspendedVivianiteBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST), com.vincenthuto.hemomancy.common.tile.harbinger.rite.SuspendedVivianiteBlockEntity::new));
 
 	public static final DeferredHolder<Block, Block> suspended_blood_crystal = MODELEDBLOCKS.register("suspended_blood_crystal",
@@ -1271,14 +1354,128 @@ public class BlockInit {
 			() -> new BloodBasinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(2.0F, 6.0F).sound(SoundType.STONE).noOcclusion()));
 
-    public static final DeferredHolder<Block, Block> circus_stage_record = MODELEDBLOCKS.register("circus_stage_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "stage"));
-    public static final DeferredHolder<Block, Block> circus_loft_record = MODELEDBLOCKS.register("circus_loft_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "loft"));
-    public static final DeferredHolder<Block, Block> circus_quarters_record = MODELEDBLOCKS.register("circus_quarters_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "quarters"));
-    public static final DeferredHolder<Block, Block> impaled_procession_record = MODELEDBLOCKS.register("impaled_procession_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "carousel"));
-    public static final DeferredHolder<Block, Block> laughing_mask = MODELEDBLOCKS.register("laughing_mask", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
-    public static final DeferredHolder<Block, Block> mourning_mask = MODELEDBLOCKS.register("mourning_mask", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
-    public static final DeferredHolder<Block, Block> blank_mask = MODELEDBLOCKS.register("blank_mask", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
-    public static final DeferredHolder<Block, Block> troupe_rigging = MODELEDBLOCKS.register("troupe_rigging", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), true));
+	// The Crimson Troupe's evidence records and masks, and the site kit (chunk 15 T7): structure set pieces from
+	// tools/model_export/circus_set_pieces.py, items for building and testing, no drops.
+	public static final DeferredHolder<Block, Block> circus_stage_record = MODELEDBLOCKS.register("circus_stage_record",
+			() -> new CircusEvidenceBlock(troupeWood(2).noOcclusion(), "stage", new double[] {1.5, 0, 8.5, 14.5, 15.5, 11.5}));
+	public static final DeferredHolder<Block, Block> circus_loft_record = MODELEDBLOCKS.register("circus_loft_record",
+			() -> new CircusEvidenceBlock(troupeWood(2).noOcclusion(), "loft", new double[] {1, 2, 11.5, 15, 14.5, 16}));
+	public static final DeferredHolder<Block, Block> circus_quarters_record = MODELEDBLOCKS.register("circus_quarters_record",
+			() -> new CircusEvidenceBlock(troupeWood(2).noOcclusion(), "quarters", new double[] {1.5, 0, 2.5, 14.5, 9.5, 13.5}));
+	public static final DeferredHolder<Block, Block> impaled_procession_record = MODELEDBLOCKS.register("impaled_procession_record",
+			() -> new CircusEvidenceBlock(troupeWood(2).noOcclusion().sound(SoundType.METAL), "carousel", new double[] {3, 0, 3.5, 13, 15, 12.5}));
+	public static final DeferredHolder<Block, Block> laughing_mask = MODELEDBLOCKS.register("laughing_mask",
+			() -> new TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), new double[] {3, 2, 7, 13, 14, 9}));
+	public static final DeferredHolder<Block, Block> mourning_mask = MODELEDBLOCKS.register("mourning_mask",
+			() -> new TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), new double[] {3, 2, 7, 13, 14, 9}));
+	public static final DeferredHolder<Block, Block> blank_mask = MODELEDBLOCKS.register("blank_mask",
+			() -> new TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), new double[] {3, 2, 7, 13, 14, 9}));
+	public static final DeferredHolder<Block, Block> troupe_rigging = MODELEDBLOCKS.register("troupe_rigging",
+			() -> new TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), new double[] {6, 0, 6, 10, 16, 10}));
+	// Big-top canvas walls and floors.
+	public static final DeferredHolder<Block, Block> circus_canvas = MODELEDBLOCKS.register("circus_canvas",
+			() -> new Block(troupeCanvas()));
+	public static final DeferredHolder<Block, Block> circus_laced_canvas = MODELEDBLOCKS.register("circus_laced_canvas",
+			() -> new Block(troupeCanvas()));
+	public static final DeferredHolder<Block, Block> circus_wainscot = MODELEDBLOCKS.register("circus_wainscot",
+			() -> new Block(troupeWood(2)));
+	/** The ring's floor: sawdust over a bed, not dirt, so nothing grows in the ring. */
+	public static final DeferredHolder<Block, Block> circus_sawdust = MODELEDBLOCKS.register("circus_sawdust",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND).strength(0.6f).noLootTable().sound(SoundType.SAND)));
+	public static final DeferredHolder<Block, Block> circus_wagon_panel = MODELEDBLOCKS.register("circus_wagon_panel",
+			() -> new Block(troupeWood(2)));
+	public static final DeferredHolder<Block, Block> circus_wrecked_panel = MODELEDBLOCKS.register("circus_wrecked_panel",
+			() -> new Block(troupeWood(1.5f).mapColor(MapColor.COLOR_BLACK)));
+	// The big top.
+	public static final DeferredHolder<Block, Block> circus_king_pole = MODELEDBLOCKS.register("circus_king_pole",
+			() -> new TroupePoleBlock(troupeWood(3).noOcclusion(), 5));
+	public static final DeferredHolder<Block, Block> circus_quarter_pole = MODELEDBLOCKS.register("circus_quarter_pole",
+			() -> new TroupePoleBlock(troupeWood(2).noOcclusion(), 3));
+	public static final DeferredHolder<Block, Block> circus_ring_curb = MODELEDBLOCKS.register("circus_ring_curb",
+			() -> new TroupeCurbBlock(troupeWood(2).noOcclusion()));
+	public static final DeferredHolder<Block, Block> circus_seating = MODELEDBLOCKS.register("circus_seating",
+			() -> new TroupePropBlock(troupeWood(2).noOcclusion(), new double[] {0, 0, 0.5, 16, 9.75, 13.5}, new double[] {0, 0, 13.5, 16, 16, 15.5}));
+	public static final DeferredHolder<Block, Block> circus_gallery_rail = MODELEDBLOCKS.register("circus_gallery_rail",
+			() -> new TroupePropBlock(troupeWood(2).noOcclusion(), new double[] {0, 0, 6.5, 16, 16, 9.5}));
+	public static final DeferredHolder<Block, Block> circus_trapeze = MODELEDBLOCKS.register("circus_trapeze",
+			() -> new TroupePropBlock(troupeWood(1).noOcclusion().noCollission(), new double[] {1.5, 2.75, 7, 14.5, 16, 9}));
+	/** The safety net under a rigging tower: it breaks a fall. */
+	public static final DeferredHolder<Block, Block> circus_net = MODELEDBLOCKS.register("circus_net",
+			() -> new TroupeNetBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.5f).noLootTable()
+					.noOcclusion().sound(SoundType.WOOL)));
+	public static final DeferredHolder<Block, Block> circus_valance = MODELEDBLOCKS.register("circus_valance",
+			() -> new TroupePropBlock(troupeCanvas().noOcclusion().noCollission(), new double[] {0, 1, 12.5, 16, 16, 15.5}));
+	public static final DeferredHolder<Block, Block> circus_guy_stake = MODELEDBLOCKS.register("circus_guy_stake",
+			() -> new TroupeGuyStakeBlock(troupeWood(1.5f).noOcclusion().sound(SoundType.BONE_BLOCK), new double[] {5.5, 0, 4, 10.5, 11, 11}));
+	public static final DeferredHolder<Block, Block> circus_podium = MODELEDBLOCKS.register("circus_podium",
+			() -> new TroupeTallPropBlock(troupeWood(2.5f).noOcclusion(), new double[][] {{2, 0, 2, 14, 16, 14}},
+					new double[][] {{2.5, 0, 1.5, 13.5, 4.5, 13.5}}));
+	/** The rebuilt big top's own crimson footlights (NQ-15-12 A: the Hematic Lantern stays amber). */
+	public static final DeferredHolder<Block, Block> circus_footlight = MODELEDBLOCKS.register("circus_footlight",
+			() -> new TroupePropBlock(troupeIron().noOcclusion().lightLevel(state -> 12), new double[] {1.5, 0, 8, 14.5, 6.5, 15}));
+	public static final DeferredHolder<Block, Block> circus_crossbar_rig = MODELEDBLOCKS.register("circus_crossbar_rig",
+			() -> new TroupePropBlock(troupeWood(1).noOcclusion().noCollission(), new double[] {1.5, 1, 2.5, 14.5, 16, 13.5}));
+	public static final DeferredHolder<Block, Block> circus_spindle_rack = MODELEDBLOCKS.register("circus_spindle_rack",
+			() -> new TroupePropBlock(troupeWood(1.5f).noOcclusion(), new double[] {1, 1.5, 10.5, 15, 15.5, 16}));
+	public static final DeferredHolder<Block, Block> circus_trophy = MODELEDBLOCKS.register("circus_trophy",
+			() -> new TroupePropBlock(troupeWood(1.5f).noOcclusion().sound(SoundType.BONE_BLOCK), new double[] {2, 1, 12.25, 14, 16, 16}));
+	public static final DeferredHolder<Block, Block> circus_pelt_drape = MODELEDBLOCKS.register("circus_pelt_drape",
+			() -> new TroupePropBlock(troupeCanvas().noOcclusion(), new double[] {0, 0.5, 9.75, 16, 15, 16}));
+	/** The plinth the Impaled Procession turns on. */
+	public static final DeferredHolder<Block, Block> circus_plinth = MODELEDBLOCKS.register("circus_plinth",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(3.0f, 6.0f).noLootTable()
+					.noOcclusion().sound(SoundType.STONE)));
+	// The backyard and the midway.
+	public static final DeferredHolder<Block, Block> circus_wagon_wheel = MODELEDBLOCKS.register("circus_wagon_wheel",
+			() -> new TroupeWagonWheelBlock(troupeWood(2).noOcclusion()));
+	public static final DeferredHolder<Block, Block> circus_cookpot = MODELEDBLOCKS.register("circus_cookpot",
+			() -> new TroupePropBlock(troupeIron().noOcclusion().lightLevel(state -> 9), new double[] {1, 0, 1, 15, 10, 15},
+					new double[] {13.5, 0, 7.5, 14.5, 15, 8.5}));
+	public static final DeferredHolder<Block, Block> circus_costume_rack = MODELEDBLOCKS.register("circus_costume_rack",
+			() -> new TroupePropBlock(troupeWood(1.5f).noOcclusion(), new double[] {0, 0, 5, 16, 16, 11}));
+	/** A costume trunk: set dressing, it does not open. */
+	public static final DeferredHolder<Block, Block> circus_trunk = MODELEDBLOCKS.register("circus_trunk",
+			() -> new TroupePropBlock(troupeWood(2.5f).noOcclusion(), new double[] {0.5, 0, 2.25, 15.5, 11.25, 13.5}));
+	public static final DeferredHolder<Block, Block> circus_ticket_window = MODELEDBLOCKS.register("circus_ticket_window",
+			() -> new TroupePropBlock(troupeWood(2).noOcclusion(), new double[] {0, 0, 1.5, 16, 10.75, 10},
+					new double[] {0, 10.5, 6.5, 16, 16, 9.5}));
+	public static final DeferredHolder<Block, Block> circus_pennant_line = MODELEDBLOCKS.register("circus_pennant_line",
+			() -> new TroupePropBlock(troupeCanvas().noOcclusion().noCollission(), new double[] {0, 7, 7.5, 16, 14.5, 8.5}));
+	// One apparatus per teaching camp.
+	public static final DeferredHolder<Block, Block> circus_knife_wheel = MODELEDBLOCKS.register("circus_knife_wheel",
+			() -> new TroupeTallPropBlock(troupeWood(2).noOcclusion(), new double[][] {{0, 0, 3.25, 16, 16, 15}},
+					new double[][] {{0, 0, 3.25, 16, 12, 10}}));
+	public static final DeferredHolder<Block, Block> circus_target_board = MODELEDBLOCKS.register("circus_target_board",
+			() -> new TroupePropBlock(troupeWood(2).noOcclusion(), new double[] {2, 0, 3.25, 14, 16, 11}));
+	public static final DeferredHolder<Block, Block> circus_stilt_rack = MODELEDBLOCKS.register("circus_stilt_rack",
+			() -> new TroupeTallPropBlock(troupeWood(1.5f).noOcclusion(), new double[][] {{1, 0, 9.5, 15, 16, 16}},
+					new double[][] {{0.5, 0, 9.5, 15.5, 15, 16}}));
+	public static final DeferredHolder<Block, Block> circus_weight_frame = MODELEDBLOCKS.register("circus_weight_frame",
+			() -> new TroupePropBlock(troupeIron().noOcclusion(), new double[] {0, 0, 2.5, 16, 15, 11.25}));
+	/** The Embers camp's pit: crimson coals in a venous-stone kerb, light without a flame that spreads. */
+	public static final DeferredHolder<Block, Block> circus_fire_pit = MODELEDBLOCKS.register("circus_fire_pit",
+			() -> new TroupePropBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(2.0f, 6.0f)
+					.noLootTable().noOcclusion().sound(SoundType.STONE).lightLevel(state -> 13), new double[] {0, 0, 0, 16, 4.5, 16}));
+	public static final DeferredHolder<Block, Block> circus_bellows_stand = MODELEDBLOCKS.register("circus_bellows_stand",
+			() -> new TroupePropBlock(troupeWood(1.5f).noOcclusion(), new double[] {1, 0, 0, 15, 12.25, 16}));
+	public static final DeferredHolder<Block, Block> circus_hound_hoop = MODELEDBLOCKS.register("circus_hound_hoop",
+			() -> new TroupePropBlock(troupeIron().noOcclusion().lightLevel(state -> 7), new double[] {2, 0, 6, 14, 16, 10}));
+	public static final DeferredHolder<Block, Block> circus_prompt_table = MODELEDBLOCKS.register("circus_prompt_table",
+			() -> new TroupePropBlock(troupeWood(2).noOcclusion(), new double[] {0, 0, 0.75, 16, 14.5, 15.25}));
+
+	private static BlockBehaviour.Properties troupeWood(float strength) {
+		return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(strength).noLootTable().sound(SoundType.WOOD);
+	}
+
+	private static BlockBehaviour.Properties troupeIron() {
+		return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(3.0f, 6.0f).noLootTable().sound(SoundType.METAL);
+	}
+
+	private static BlockBehaviour.Properties troupeCanvas() {
+		return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.8f).noLootTable().sound(SoundType.WOOL)
+				.ignitedByLava();
+	}
+
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
 		BASEBLOCKS.getEntries().stream().map(e -> e.get()).forEach(b -> blocks.add(b));
@@ -1323,6 +1520,7 @@ public class BlockInit {
 			Map.entry("hematic_armature", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("mycelial_crucible", b -> new MycelialCrucibleBlockItem(b, new Item.Properties())),
 			Map.entry("specimen_jar", b -> new SpecimenJarBlockItem(b, new Item.Properties())),
+			Map.entry("specimen_vat", b -> new com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenVatBlockItem(b, new Item.Properties())),
 			Map.entry("sanguine_monolith", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("hematic_stake", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("mycelial_synapse", b -> new BlockItem(b, new Item.Properties())),
@@ -1334,19 +1532,30 @@ public class BlockInit {
 			// Sits on the water like a lily pad; the house marker carries its house on the stack.
 			Map.entry("sunburst_bloom", b -> new net.minecraft.world.item.PlaceOnWaterBlockItem(b, new Item.Properties())),
 			Map.entry("house_marker", b -> new com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.HouseMarkerBlockItem(b, new Item.Properties())));
-	private static final Map<String, String> MANUAL_BLOCK_ITEMS = Map.of(
-			"gourd_stem", "gourd_seeds",
-			"active_befouling_ash_trail", "active_befouling_ash",
-			"active_smouldering_ash_trail", "active_smouldering_ash",
-			"placed_blood_stained_stone", "blood_stained_stone",
-			"lethean_poppy_wreath", "lethean_poppy_wreath",
-			"sanguine_conduit", "sanguine_conduit");
+	private static final Map<String, String> MANUAL_BLOCK_ITEMS = manualBlockItems();
+
+	/** Blocks placed by an item of another name: seeds, the ash trails, the strains (each by its spore), the catalyst crops. */
+	private static Map<String, String> manualBlockItems() {
+		java.util.Map<String, String> items = new java.util.HashMap<>(Map.ofEntries(
+				Map.entry("gourd_stem", "gourd_seeds"),
+				Map.entry("active_befouling_ash_trail", "active_befouling_ash"),
+				Map.entry("active_smouldering_ash_trail", "active_smouldering_ash"),
+				Map.entry("placed_blood_stained_stone", "blood_stained_stone"),
+				Map.entry("lethean_poppy_wreath", "lethean_poppy_wreath"),
+				Map.entry("sanguine_conduit", "sanguine_conduit"),
+				Map.entry("glowroot", "glowroot"),
+				Map.entry("emberpod", "emberpod")));
+		for (FungalStrains strain : FungalStrains.values()) items.put(strain.blockId(), strain.sporeId());
+		return Map.copyOf(items);
+	}
 	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "chamber_gate", "filler_block",
 			"somnolent_seat_filler", "abocipher_emitter", "qliphoth_bloom",
 			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
-			"witness_devotee", "warden_bloom");
+			"witness_devotee", "warden_bloom",
+			"blood_stain", "blood_gouge", "living_vein", "lux_trace", "stained_sod");
+	/** The legacy Dictation Table keeps its item and recipe but leaves the tab (F-22). */
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
-			"active_smouldering_ash_trail", "engram_block");
+			"active_smouldering_ash_trail", "engram_block", "dictation_table");
 
 	public static BlockItemDecision itemDecision(ResourceLocation blockId) {
 		String path = blockId.getPath();

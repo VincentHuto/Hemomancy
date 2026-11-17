@@ -25,6 +25,31 @@ final class FerricEchoCasts {
 		EchoCasts.register("ferric_spikes", FerricEchoCasts::spikes);
 		EchoCasts.register("iron_choir", FerricEchoCasts::choir);
 		EchoCasts.register("lodestone_collapse", FerricEchoCasts::lodestone);
+		EchoCasts.register("lode_draw", FerricEchoCasts::lodeDraw);
+		EchoCasts.register("hematic_hewing", FerricEchoCasts::hewing);
+	}
+
+	/** A lode lights in the floor block by block, then breaks loose under an iron blow (Lode Draw). */
+	private static void lodeDraw(EchoCast.EchoContext ctx) {
+		EchoFx.activate(ctx);
+		Vec3 start = ctx.targetFeet().subtract(0, ctx.scaled(0.5), 0);
+		for (int i = 0; i < 4; i++) {
+			Vec3 block = start.add(ctx.forward().scale(ctx.scaled(i * 0.55))).add(ctx.side().scale(ctx.scaled((i % 2) * 0.4)));
+			EchoScheduler.later(i * 4, () -> EchoFx.keyed(Form.ORE, block, block, ctx.scaled(0.45), 30, 1));
+		}
+		EchoScheduler.later(20, () -> EchoFx.cue(Form.FERRIC_IMPACT, start, start.add(0, ctx.scaled(1.0), 0),
+				ctx.scaled(0.7), 14, 1));
+	}
+
+	/** Three iron blows cut a face out of the air before the echo (Hematic Hewing). */
+	private static void hewing(EchoCast.EchoContext ctx) {
+		EchoFx.activate(ctx);
+		Vec3 face = ctx.targetFeet().add(0, ctx.scaled(0.9), 0);
+		for (int i = -1; i <= 1; i++) {
+			Vec3 at = face.add(ctx.side().scale(ctx.scaled(i * 0.6)));
+			EchoScheduler.later((i + 1) * 5, () -> EchoFx.cue(Form.FERRIC_IMPACT, at,
+					at.subtract(ctx.forward().scale(ctx.scaled(0.9))), ctx.scaled(0.6), 12, 1));
+		}
 	}
 
 	/** Forged needles gather in the hands and fly: a spread volley, a wide fan, or three piercing lances. */

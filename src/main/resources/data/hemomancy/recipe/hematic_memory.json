@@ -1,14 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "SBS",
+    " B ",
     "BRB",
-    "SBS"
+    " B "
   ],
   "key": {
-    "S": {
-      "item": "hemomancy:sanguine_formation"
-    },
     "B": {
       "item": "hemomancy:blood_stained_stone"
     },

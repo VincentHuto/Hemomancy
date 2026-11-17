@@ -79,6 +79,8 @@ public final class FirstBloodcraftAssignment {
 		return List.of(
 				new ItemStack(ItemInit.hematic_iron_scrap.get(), 4),
 				new ItemStack(BlockInit.befouling_ash_trail.get().asItem(), 8),
-				new ItemStack(ItemInit.sanguine_formation.get(), 2));
+				new ItemStack(ItemInit.sanguine_formation.get(), 2),
+				// The catalyst lesson (core loop Track 4): one Animus enzyme to dissolve when a cast runs dry.
+				new ItemStack(ItemInit.vivacious_enzyme.get(), 1));
 	}
 }

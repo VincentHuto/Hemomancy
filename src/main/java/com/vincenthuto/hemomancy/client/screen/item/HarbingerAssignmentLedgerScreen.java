@@ -1345,12 +1345,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				enzymeMasteryCount, 8, enzymeMasteryComplete);
 	}
 
+	private static final int WOVEN_VESSEL_STEPS = 2;
+
 	private void renderWovenVessel(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
 		int progress = wovenVesselProgress();
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.WOVEN_VESSEL, x, y, w, MNEMONIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title",
 				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.progress",
-				progress, 3, mnemonistFirstWeaveComplete)) {
+				progress, WOVEN_VESSEL_STEPS, mnemonistFirstWeaveComplete)) {
 			return;
 		}
 		int h = WOVEN_VESSEL_HEIGHT;
@@ -1360,7 +1362,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		gfx.fill(cardX, y, cardX + cardW, y + h, PANEL_DARK);
 		ScreenDrawUtils.drawBorder(gfx, cardX, y, cardW, h, BORDER, BORDER_MUTED);
 		renderWovenVesselHeader(gfx, cardX + 8, y + 6, cardW - 16, progress);
-		drawProgressBar(gfx, cardX + 8, y + 31, cardW - 16, 7, progress, 3);
+		drawProgressBar(gfx, cardX + 8, y + 31, cardW - 16, 7, progress, WOVEN_VESSEL_STEPS);
 		renderTruncatedDescription(gfx, Component.translatable(mnemonistFirstWeaveComplete
 						? "screen.hemomancy.harbinger_assignment_ledger.woven_vessel.complete"
 						: "screen.hemomancy.harbinger_assignment_ledger.woven_vessel.desc"),
@@ -1371,13 +1373,13 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderGroupHeader(gfx, AssignmentSection.WOVEN_VESSEL, x, y, w,
 				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title",
 				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.progress",
-				progress, 3, mnemonistFirstWeaveComplete);
+				progress, WOVEN_VESSEL_STEPS, mnemonistFirstWeaveComplete);
 	}
 
+	/** PT-6: the two required steps, the blank and the first weave. The Mnemonist's index is optional Side work. */
 	private int wovenVesselProgress() {
 		int completed = 0;
-		if (hasBlankHematicMemory) completed++;
-		if (mnemonistWovenVesselComplete) completed++;
+		if (hasBlankHematicMemory || mnemonistFirstWeaveComplete) completed++;
 		if (mnemonistFirstWeaveComplete) completed++;
 		return completed;
 	}

@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
 
 public final class AdvancedPotionUse {
-    private static final BloodAccounting.Source DOSE = BloodAccounting.Source.of("bound_brew_dose", Category.TOOL, false, false);
+    private static final BloodAccounting.Source DOSE = BloodAccounting.Source.of("bound_brew_dose", Category.TOOL, false);
     private AdvancedPotionUse() {}
 
     public static boolean isVessel(ItemStack stack) {

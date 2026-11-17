@@ -16,6 +16,8 @@ public final class CircusAcrobatModel extends HumanoidModel<CircusAcrobatEntity>
 	private final ModelPart aerialRibbon;
 	private final ModelPart leftTail;
 	private final ModelPart rightTail;
+	private final ModelPart rightCalf;
+	private final ModelPart leftCalf;
 	private final CircusDownedPose downedPose;
 	private final CircusWindupPose windup = new CircusWindupPose();
 
@@ -25,6 +27,8 @@ public final class CircusAcrobatModel extends HumanoidModel<CircusAcrobatEntity>
 		aerialRibbon = body.getChild("aerial_ribbon");
 		leftTail = head.getChild("left_tail");
 		rightTail = head.getChild("right_tail");
+		rightCalf = rightLeg.getChild("right_calf");
+		leftCalf = leftLeg.getChild("left_calf");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -131,5 +135,20 @@ public final class CircusAcrobatModel extends HumanoidModel<CircusAcrobatEntity>
 		leftArm.xRot = Mth.lerp(strike, leftArm.xRot, -1.55F);
 		body.xRot = Mth.lerp(strike, body.xRot, 0.15F);
 		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
+		if (!entity.onGround() && !entity.isPassenger() && entity.getActState() != ActState.DOWNED) tuckInTheAir();
+	}
+
+	/**
+	 * Audit E: off the ground the walk cycle threw the legs into a split; an airborne acrobat tucks both knees instead.
+	 * Runs after the downed pose, which resets the knees on the ground.
+	 */
+	private void tuckInTheAir() {
+		rightCalf.xRot = 1.75F;
+		leftCalf.xRot = 1.75F;
+		rightLeg.xRot = -1.15F;
+		leftLeg.xRot = -1.05F;
+		rightLeg.yRot = leftLeg.yRot = 0.0F;
+		rightLeg.zRot = 0.08F;
+		leftLeg.zRot = -0.08F;
 	}
 }

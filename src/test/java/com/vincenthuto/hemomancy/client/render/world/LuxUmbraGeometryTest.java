@@ -72,17 +72,6 @@ class LuxUmbraGeometryTest {
         }
     }
 
-    @Test void theEyeHasTwoCardsAndPreservesItsUvMaskWhenViewedSideways() {
-        Capture mesh = new Capture();
-        var packet = new ManipulationVisualPacket(Form.EYE, 4, Vec3.ZERO, Vec3.ZERO, 1, 100, 1);
-        LuxUmbraGeometry.draw(packet, new PoseStack(), mesh, new Vec3(6, 2, 0), new Vec3(0, 0, -1),
-                new Vec3(0, 1, 0), 100, 20, 1, 1);
-        assertEquals(8, mesh.points.size());
-        assertTrue(mesh.points.stream().allMatch(at -> Math.abs(at.x) < .02));
-        assertEquals(1, mesh.uvs.get(1)[0] - mesh.uvs.get(0)[0], .00001);
-        assertEquals(1, mesh.uvs.get(2)[1] - mesh.uvs.get(1)[1], .00001);
-    }
-
     @Test void wellStaysBelowTheAimingLaneAndDegenerateConnectionsAreSafe() {
         var well = draw(Form.WELL, Vec3.ZERO, 12);
         assertTrue(well.points.stream().allMatch(at -> at.y <= .66));

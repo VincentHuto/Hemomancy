@@ -1,35 +1,20 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BodyFormationDraw;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+/** The Blood Formation key; the work is {@link BodyFormationDraw}. */
 public class BloodFormationKeyPressPacket implements CustomPacketPayload {
-	private static final BloodAccounting.Source FORMATION = BloodAccounting.Source.of("blood_formation", Category.SKILL, false, false);
-
 	public static final Type<BloodFormationKeyPressPacket> TYPE = new Type<>(Hemomancy.rloc("blood_formation_key_press_packet"));
 	public static final StreamCodec<FriendlyByteBuf, BloodFormationKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodFormationKeyPressPacket::encode, BloodFormationKeyPressPacket::decode);
+
 	public static BloodFormationKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new BloodFormationKeyPressPacket();
@@ -41,31 +26,9 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 
 	public static void handle(final BloodFormationKeyPressPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Player player = ctx.player();
-			if (!(player instanceof ServerPlayer serverPlayer) || !ServerboundGuards.activePlayer(serverPlayer)
-					|| !ServerboundRateLimiter.tryAcquire(serverPlayer, "blood_formation", 10)) return;
-			if (com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isObservational(serverPlayer)) return;
-			if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) return;
-			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
-					;
-			ServerLevel sLevel = (ServerLevel) ctx.player().level();
-			if (player.getMainHandItem().getItem() instanceof SwordItem) {
-				if (bloodVolume.getBloodVolume() > 100) {
-					player.displayClientMessage(Component.translatable("message.hemomancy.blood_formation_key_press_packet.blood_has_been_drawn_for_a"), true);
-					BloodAccounting.pay(player, 100, FORMATION);
-					BlockPos pos = player.blockPosition();
-					RandomSource random = player.level().random;
-					for (int i = 0; i < 30; i++) {
-						sLevel.sendParticles(
-								new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255 * random.nextFloat(), 0, 0)),
-								pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
-								pos.getZ() + random.nextDouble(), 1, 0f, 0.2f, 0f, sLevel.random.nextInt(3) * 0.015f);
-					}
-					player.drop(new ItemStack(ItemInit.sanguine_formation.get(), random.nextInt(4)), false);
-				} else {
-					player.displayClientMessage(Component.translatable("message.hemomancy.blood_formation_key_press_packet.not_enough_blood_can_be_drawn"), true);
-				}
-			}
+			if (ctx.player() instanceof ServerPlayer player && ServerboundGuards.activePlayer(player)
+					&& ServerboundRateLimiter.tryAcquire(player, "blood_formation", 10))
+				BodyFormationDraw.draw(player);
 		});
 	}
 

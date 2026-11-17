@@ -10,11 +10,14 @@ public final class MycophantCombatRules {
 		ENGULFING
 	}
 
+	/** She splits into phase two at 60% health (CR-15). */
+	public static final float PHASE_TWO_FRACTION = 0.6F;
+
 	private MycophantCombatRules() {
 	}
 
 	public static int phase(float health, float maxHealth) {
-		return health <= maxHealth * 0.5F ? 2 : 1;
+		return health <= maxHealth * PHASE_TWO_FRACTION ? 2 : 1;
 	}
 
 	public static float pressureAfterEscape(float pressure, boolean empowered) {

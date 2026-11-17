@@ -17,7 +17,7 @@
     {"ingredient": {"item": "hemomancy:vicars_consecration_kit"}, "count": 1},
     {"ingredient": {"item": "minecraft:armor_stand"}, "count": 1},
     {"ingredient": {"item": "minecraft:chain"}, "count": 1},
-    {"ingredient": {"item": "hemomancy:tendon_line"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:sinew_cord"}, "count": 1},
     {"ingredient": {"item": "hemomancy:hemolytic_plating"}, "count": 1},
     {"ingredient": {"item": "hemomancy:sanguine_formation"}, "count": 1}
   ],

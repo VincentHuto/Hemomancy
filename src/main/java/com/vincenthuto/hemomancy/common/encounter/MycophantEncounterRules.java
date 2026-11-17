@@ -45,6 +45,14 @@ public final class MycophantEncounterRules {
 		};
 	}
 
+	/** PT-84, NQ-07-4: a lost rematch comes back by itself once the cooldown has run, after every loss until a win. */
+	public static boolean shouldRearmRematch(int degree, EnumArchonPath archonPath, boolean defeated, boolean owed,
+			int retryCooldownTicks, boolean inGardens, boolean alive, boolean creative, boolean spectator,
+			boolean encounterActive) {
+		return degree >= 8 && archonPath == EnumArchonPath.APOTHEOS && defeated && owed && retryCooldownTicks <= 0
+				&& inGardens && alive && !creative && !spectator && !encounterActive;
+	}
+
 	public static boolean canUseLure(int degree, EnumArchonPath archonPath, boolean defeated,
 			int retryCooldownTicks, boolean encounterActive, boolean inGardens, boolean alive) {
 		return degree >= 8 && archonPath == EnumArchonPath.APOTHEOS && defeated && retryCooldownTicks <= 0

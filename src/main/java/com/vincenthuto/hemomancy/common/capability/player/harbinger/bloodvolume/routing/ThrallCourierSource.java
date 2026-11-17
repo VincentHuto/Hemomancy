@@ -1,14 +1,25 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.tile.BlockBloodVolume;
 
+/**
+ * A Blood Thrall's load. Its blood keeps the age of the tank it came from and never wakes clot where it lands
+ * (NQ-01-5), so two tanks and a courier cannot keep blood fresh.
+ */
 public final class ThrallCourierSource implements IBloodSourceContract {
     private double carriedBlood;
     private final double maxRatePerTick;
+    private final long carriedAge;
 
     public ThrallCourierSource(double carriedBlood, double maxRatePerTick) {
+        this(carriedBlood, maxRatePerTick, 0L);
+    }
+
+    public ThrallCourierSource(double carriedBlood, double maxRatePerTick, long carriedAge) {
         this.carriedBlood = Math.max(0, carriedBlood);
         this.maxRatePerTick = maxRatePerTick;
+        this.carriedAge = Math.max(0L, carriedAge);
     }
 
     @Override
@@ -32,7 +43,11 @@ public final class ThrallCourierSource implements IBloodSourceContract {
         if (amount <= 0) {
             return 0;
         }
-        target.fill(amount);
+        if (target instanceof BlockBloodVolume block) {
+            block.fillAged(amount, carriedAge);
+        } else {
+            target.fill(amount);
+        }
         carriedBlood -= amount;
         return amount;
     }

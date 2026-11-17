@@ -50,7 +50,7 @@ import java.util.UUID;
 
 /**
  * The Mycophant, the Spawn Mother: the hivemind's brood cultivator. She does not hunt the Apotheos candidate, she
- * retrieves it, and at half health she stops retrieving a child and tries to join with an equal. The player wins by
+ * retrieves it, and at 60% health she stops retrieving a child and tries to join with an equal. The player wins by
  * surviving every claim; at zero health she yields and names them heir.
  *
  * <p>Locomotion, facing and the move timeline belong to {@link MycophantController}; every number lives in the
@@ -58,8 +58,8 @@ import java.util.UUID;
  */
 public class MycophantEntity extends Monster implements BroodMother {
 	/** The blood a filled meter or a released cocoon takes (MycophantLastBrood pays through it too). */
-	static final BloodAccounting.Source CLAIM = BloodAccounting.Source.of("mycophant_claim", Category.HAZARD, false, false);
-	private static final BloodAccounting.Source SIPHON = BloodAccounting.Source.of("mycophant_siphon", Category.HAZARD, false, false);
+	static final BloodAccounting.Source CLAIM = BloodAccounting.Source.of("mycophant_claim", Category.HAZARD, false);
+	private static final BloodAccounting.Source SIPHON = BloodAccounting.Source.of("mycophant_siphon", Category.HAZARD, false);
 	private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_STATE_TICK = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_ATTACK = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
@@ -692,6 +692,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 	@Override
 	public void die(DamageSource source) {
 		if (!this.level().isClientSide) {
+			if (this.encounterOwner != null) MycophantEncounterManager.recordWin(this);
 			releaseHold();
 			unlatchSiphon();
 			discardBrood();

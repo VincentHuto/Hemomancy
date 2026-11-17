@@ -1,10 +1,11 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingRules;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.tile.BlockBloodVolume;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.tile.ReservoirBlood;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,8 +24,8 @@ import java.util.List;
  */
 public class SemiSentientConstructBlockEntity extends BlockEntity implements IBloodReservoir {
 
-    /** Maximum blood the SSC can hold — generous so many drudges can be fed. */
-    public static final double MAX_BLOOD = 30_000.0;
+    /** A working buffer (core-loop Track 3): topped by its owner through a suture, or filled and spent. */
+    public static final double MAX_BLOOD = BloodRoutingRules.DEFAULT_WORKING_RESERVE;
 
     /**
      * How many game ticks between each Drudge-scan pass.
@@ -41,15 +42,16 @@ public class SemiSentientConstructBlockEntity extends BlockEntity implements IBl
     public void tick() {
         if (level == null || level.isClientSide) return;
 
-        IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(this).orElse(null);
-        if (vol != null && vol.getMaxBloodVolume() < MAX_BLOOD) {
+        BlockBloodVolume vol = ReservoirBlood.settled(this);
+        // The tank's full size, not its room: clot takes room and must not grow the tank.
+        if (vol.capacity() != MAX_BLOOD) {
             vol.setMaxBloodVolume(MAX_BLOOD);
         }
 
         if (--scanTimer > 0) return;
         scanTimer = SCAN_INTERVAL;
 
-        if (vol == null || vol.isEmpty()) return;
+        if (vol.isEmpty()) return;
 
         AABB scanBox = new AABB(worldPosition).inflate(3.0);
         List<DrudgeEntity> nearby = level.getEntitiesOfClass(DrudgeEntity.class, scanBox);

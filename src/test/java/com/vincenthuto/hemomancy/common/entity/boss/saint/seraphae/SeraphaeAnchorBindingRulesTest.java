@@ -50,6 +50,5 @@ class SeraphaeAnchorBindingRulesTest {
         assertEquals("seraphae_condensing_feed", SeraphaeAnchorBindingRules.CONDENSING_SOURCE.id());
         assertEquals("blood_source.hemomancy.seraphae_anchor_binding", SeraphaeAnchorBindingRules.SOURCE.label());
         assertFalse(SeraphaeAnchorBindingRules.SOURCE.reserveProtected());
-        assertTrue(SeraphaeAnchorBindingRules.SOURCE.countsAsSpend());
     }
 }

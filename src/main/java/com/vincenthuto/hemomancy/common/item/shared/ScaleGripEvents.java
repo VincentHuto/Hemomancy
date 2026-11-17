@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -10,26 +12,27 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.GameRules;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ScaleGripEvents {
-	private static final Map<UUID, List<ItemStack>> PENDING_RETURNS = new ConcurrentHashMap<>();
+	/** The bound stacks a death parked, handed back to the living player once they really land (F-4). */
+	public static final PendingDelivery.Claim RETURNS = new PendingDelivery.Claim("scale_grip_returns",
+			player -> HemoCapabilityAccess.scaleGripReturns(player).owed(), player -> true,
+			(player, left) -> HemoCapabilityAccess.scaleGripReturns(player).settle(left));
 
 	private ScaleGripEvents() {
 	}
 
-	@SubscribeEvent
+	/** Lowest priority, so a death another handler cancels never strips the bound items. */
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onLivingDeath(LivingDeathEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) {
 			return;
@@ -49,26 +52,10 @@ public final class ScaleGripEvents {
 			savedStacks.add(saved);
 		}
 		if (!savedStacks.isEmpty()) {
-			PENDING_RETURNS.put(player.getUUID(), savedStacks);
+			HemoCapabilityAccess.scaleGripReturns(player).park(savedStacks);
 			player.displayClientMessage(HemoText.translatable("message.hemomancy.scale_grip_events.scale_grip_coils_around_bound_item",
 					savedStacks.size(),
 					(savedStacks.size() == 1 ? "" : "s")).withStyle(ChatFormatting.DARK_GREEN), true);
-		}
-	}
-
-	@SubscribeEvent
-	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-		if (!(event.getEntity() instanceof ServerPlayer player)) {
-			return;
-		}
-		List<ItemStack> savedStacks = PENDING_RETURNS.remove(player.getUUID());
-		if (savedStacks == null || savedStacks.isEmpty()) {
-			return;
-		}
-		for (ItemStack saved : savedStacks) {
-			if (!saved.isEmpty() && !player.getInventory().add(saved)) {
-				player.drop(saved, false);
-			}
 		}
 	}
 

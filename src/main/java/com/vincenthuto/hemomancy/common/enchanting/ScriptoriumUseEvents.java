@@ -22,7 +22,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ScriptoriumUseEvents {
-    private static final BloodAccounting.Source INSCRIPTION = BloodAccounting.Source.of("scriptorium_inscription", Category.TOOL, false, false);
+    private static final BloodAccounting.Source INSCRIPTION = BloodAccounting.Source.of("scriptorium_inscription", Category.TOOL, false);
     private ScriptoriumUseEvents() {}
 
     @SubscribeEvent public static void breakBlock(BlockEvent.BreakEvent event) {

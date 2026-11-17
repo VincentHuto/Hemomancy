@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -77,8 +78,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE, 4.0D)
                 .add(Attributes.MAX_HEALTH, 20.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.25D)
-                .add(Attributes.ATTACK_DAMAGE, 4.0D);
+                .add(Attributes.MOVEMENT_SPEED, 0.25D);
     }
 
     @Override
@@ -168,6 +168,8 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
             if (degree >= 1) {
                 grantOrRecoverAssignmentLedger(serverPlayer);
             }
+            // Talking to him (not standing near him) is what stops other speakers sending a newcomer to a Vicar.
+            DialogueHubFactory.markMetVicar(serverPlayer);
             DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "vicar");
             tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withLetterInquiry(tree, "vicar",
@@ -185,27 +187,42 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
         Player player = serverPlayer;
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
         if (isPurifying(serverPlayer)) return HarbingerVicarDialogueTrees.purifying(this.getId());
-        DialogueTree tree = HarbingerVicarDialogueTrees.forDegree(HarbingerPathPermissions.greetingDegree(degree,
-                HemoCapabilityAccess.getInitiatoryDegree(serverPlayer).getArchonPath()), this.getId(), canShowRecruitment(player, this),
+        var path = HemoCapabilityAccess.getInitiatoryDegree(serverPlayer).getArchonPath();
+        DialogueTree tree = HarbingerPathPermissions.isSilentium(degree, path)
+                ? HarbingerVicarDialogueTrees.silentium(this.getId(), canShowRecruitment(player, this),
+                        isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(serverPlayer))
+                : HarbingerVicarDialogueTrees.forDegree(HarbingerPathPermissions.greetingDegree(degree,
+                path), this.getId(), canShowRecruitment(player, this),
                 isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(serverPlayer),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
-                hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
+                // PT-4: a directed player with no map carried or owed is offered the directive again, for a new map.
+                hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE)
+                        && OwedRewards.carriesOrOwed(serverPlayer, ItemInit.masons_respite_map.get()),
                 FirstBloodcraftAssignment.canClaim(serverPlayer), FirstBloodcraftAssignment.isClaimed(serverPlayer));
         if (degree >= 7 && hasPomeEmpowerment(serverPlayer)) {
             tree = HarbingerVicarDialogueTrees.withPomeEmpowerment(tree);
         }
+        tree = HarbingerVicarDialogueTrees.withHermitRoadReport(tree, degree,
+                hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
+                hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED));
+        tree = HarbingerVicarDialogueTrees.withMasonsRespiteReissue(tree, degree,
+                hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE)
+                        && !OwedRewards.carriesOrOwed(serverPlayer, ItemInit.masons_respite_map.get()));
         tree = EarlyInitiationDialogue.vicar(tree, serverPlayer);
         tree = HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
                 com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.ArtificerDialogueEvents.hasClaimedConsecrationKit(serverPlayer));
         if (degree == 5 || degree == 6) {
             var covenant = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CovenantProgress.of(serverPlayer);
-            tree = HarbingerVicarDialogueTrees.withCovenantGuidance(tree, degree, covenant.inBloodline(),
-                    covenant.faneComplete(), covenant.chamberReturned(), covenant.throneBound(), covenant.vigilComplete());
+            tree = HarbingerVicarDialogueTrees.withCovenantGuidance(tree, degree, covenant);
         }
+        var line = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(serverPlayer).getBloodLine();
+        tree = HarbingerVicarDialogueTrees.withLeaveBloodline(tree,
+                line.isValid() && !line.canManage(serverPlayer.getUUID()));
         tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue.append(tree, serverPlayer,
                 com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.CONDENSER, "hemomancy.dialogue.vicar.option.leave");
-        return withFieldResearch(tree, serverPlayer, degree);
+        // The core-loop lessons (round two P10) come last, so they sit after his errands in the Conversation box.
+        return CoreLoopLessonDialogue.append(withFieldResearch(tree, serverPlayer, degree), CoreLoopLessons.VICAR, serverPlayer);
     }
 
     private static DialogueTree withFieldResearch(DialogueTree tree, ServerPlayer player, int degree) {

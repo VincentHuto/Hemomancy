@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.CleatsFitting;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import mezz.jei.api.constants.VanillaTypes;
@@ -19,10 +21,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -71,6 +78,27 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 						"hemomancy.jei.armature.tier." + tier.serializedName() + ".desc").withStyle(ChatFormatting.GRAY)));
 	}
 
+	/**
+	 * One row per boot that takes Hematic Cleats: the worn boots and the cleats in a bowl become the same boots with the
+	 * cleats fitted, on any rack, for the blood of a hematic iron upgrade and no Degree of its own (CN-10).
+	 */
+	static List<ArmatureUpgradeRecipe> cleatsFittings() {
+		List<ArmatureUpgradeRecipe> rows = new ArrayList<>();
+		for (Holder<Item> boots : BuiltInRegistries.ITEM.getTagOrEmpty(CleatsFitting.TAKES_CLEATS)) {
+			ItemStack fitted = new ItemStack(boots);
+			CleatsFitting.fit(fitted);
+			rows.add(new ArmatureUpgradeRecipe(Hemomancy.rloc("cleats_fitting/" + BuiltInRegistries.ITEM.getKey(boots.value()).getPath()),
+					0, ArmatureUpgradeRules.ArmatureSlot.FEET, Ingredient.of(boots.value()),
+					Ingredient.of(ItemInit.hematic_cleats.get()), CleatsFitting.BLOOD_COST, fitted,
+					ArmatureUpgradeRules.ArmatureTier.BASE, null, null, null));
+		}
+		return rows;
+	}
+
+	private static boolean isFitting(ArmatureUpgradeRecipe recipe) {
+		return CleatsFitting.isFitted(recipe.getResultItem(null));
+	}
+
 	private static ItemStack tierItem(ArmatureUpgradeRules.ArmatureTier tier) {
 		return switch (tier) {
 			case VICAR_CONSECRATED -> new ItemStack(ItemInit.vicars_consecration_kit.get());
@@ -113,7 +141,8 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 			case "legs" -> 2;
 			default -> 3;
 		});
-		JeiPanel.title(gfx, font, t, Component.translatable("hemomancy.jei.armature.slot." + slotName), 17, 5, W - 23, W);
+		JeiPanel.title(gfx, font, t, Component.translatable(isFitting(recipe) ? "hemomancy.jei.armature.slot.cleats"
+				: "hemomancy.jei.armature.slot." + slotName), 17, 5, W - 23, W);
 
 		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.armature.worn"), BASE_X + 8, SLOT_Y - 11, t.muted());
 		JeiPanel.slot(gfx, t, BASE_X, SLOT_Y);

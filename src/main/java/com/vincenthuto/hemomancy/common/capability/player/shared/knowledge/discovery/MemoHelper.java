@@ -22,7 +22,7 @@ import net.minecraft.world.item.component.CustomData;
 import java.util.*;
 
 public final class MemoHelper {
-	private static final BloodAccounting.Source DICTATION = BloodAccounting.Source.of("memo_dictation", Category.OTHER, false, false);
+	private static final BloodAccounting.Source DICTATION = BloodAccounting.Source.of("memo_dictation", Category.OTHER, false);
 	public static final String EVENT_PREFIX = "memo_capture:";
 	public static final int DICTATION_BASE_BLOOD_COST = 100;
 	public static final int DICTATION_BLOOD_COST_PER_MEMO = 75;

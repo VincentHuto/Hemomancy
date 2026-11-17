@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 /**
  * Scratch-Engraving mechanic: a player can carve a crude engram block into the
@@ -102,7 +103,7 @@ public class ScratchEngramHandler {
                 .setValue(EngramBlock.CHARACTERINDEX, EngramBlock.randomCharacterIndex())
                 .setValue(EngramBlock.FACING, engramFacing)
                 .setValue(EngramBlock.LIT, false);
-        level.setBlockAndUpdate(targetPos, engramState);
+        if (!PlayerBlockEdits.place(player, targetPos, engramState)) return;
 
         // Cost: one heart.  Creative players are exempt from the damage.
         if (!player.isCreative()) {

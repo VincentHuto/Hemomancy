@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.lore;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LoreCanonAuthoritySourceTest {
 	private static final Path LORE = Path.of("docs/LORE_REFERENCE.md");
@@ -11,7 +15,8 @@ public final class LoreCanonAuthoritySourceTest {
 	private LoreCanonAuthoritySourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String lore = read(LORE);
 		String developer = read(DEVELOPER);
 
@@ -31,21 +36,5 @@ public final class LoreCanonAuthoritySourceTest {
 				"gameplay, dialogue, inquiries, item text, and wiki pages must be corrected to match the docs");
 		assertNotContains("code must not outrank settled lore", developer,
 				"Current code and data are authoritative when older prose");
-	}
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": still contains " + forbidden);
-		}
 	}
 }

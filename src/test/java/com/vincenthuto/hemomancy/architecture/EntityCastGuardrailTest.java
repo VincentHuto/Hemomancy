@@ -71,6 +71,22 @@ class EntityCastGuardrailTest {
 				readers, "cast through EntityManipulationEffects.cast");
 	}
 
+	/** UN-12: an entity's cast sounds through the manipulation's own cast event, the one a player cast reads. */
+	@Test
+	void entityCastsSoundThroughTheCastEvents() {
+		String casts = SourceAssertions.readMainJava("common/manipulation/EntityCasts.java");
+		SourceAssertions.assertNotContains("no vanilla cue picked per entity cast", casts, "SoundEvents.");
+		SourceAssertions.assertNotContains("no direct sound call", casts, ".playSound(");
+		SourceAssertions.assertNotContains("no level-event sound", casts, ".levelEvent(");
+		var sounds = com.vincenthuto.hemomancy.support.ResourceReader.asset("sounds.json");
+		TreeSet<String> missing = new TreeSet<>();
+		Matcher named = Pattern.compile("playEntityCast\\(context, [^;]*?\"(\\w+)\"").matcher(casts);
+		while (named.find()) {
+			if (!sounds.has("manipulation." + named.group(1) + ".cast")) missing.add(named.group(1));
+		}
+		assertEquals(new TreeSet<>(), missing, "every entity cast names a manipulation.<id>.cast event");
+	}
+
 	private static String camel(String snake) {
 		StringBuilder out = new StringBuilder();
 		boolean upper = false;

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -32,7 +32,7 @@ public final class MorphlingLock {
 
 	/** Pins a body for {@code ticks}, or the boss cap for a boss. */
 	public static void pin(LivingEntity entity, int ticks) {
-		int duration = ManipulationReactiveEvents.isBoss(entity)
+		int duration = HemoEntityPredicates.isBoss(entity)
 				? Math.min(ticks, DeadMansRopeRules.RED_ROPE_BOSS_ROOT_TICKS) : ticks;
 		entity.addEffect(new MobEffectInstance(EffectInit.pinned, duration, 0, false, true, true));
 		if (entity instanceof net.minecraft.world.entity.Mob mob) mob.getNavigation().stop();

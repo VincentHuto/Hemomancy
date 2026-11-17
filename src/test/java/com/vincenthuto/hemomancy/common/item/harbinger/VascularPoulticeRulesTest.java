@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 
 import java.util.EnumMap;
@@ -9,7 +10,8 @@ public final class VascularPoulticeRulesTest {
 	private VascularPoulticeRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		selectsMostDamagedSection();
 		healsMostDamagedSectionWithoutExceedingMaximum();
 		healsTwoDistinctDamagedSections();

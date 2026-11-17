@@ -1,11 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import org.junit.jupiter.api.Test;
 import net.minecraft.nbt.CompoundTag;
 
 public final class UnstainedCanonStateTest {
 	private UnstainedCanonStateTest() {}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		UnstainedProgress progress = new UnstainedProgress();
 		progress.setInfectionSuppressed(true);
 		progress.setClarityPrepared(true);

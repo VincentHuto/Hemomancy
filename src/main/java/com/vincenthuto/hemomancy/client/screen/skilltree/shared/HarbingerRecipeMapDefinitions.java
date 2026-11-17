@@ -18,7 +18,7 @@ public final class HarbingerRecipeMapDefinitions {
 	private static final Set<String> WORKING_CRAFTS = Set.of(
 			"resonant_forge", "scarlet_vanity", "somatic_loom", "mycelial_lantern", "fungal_implantation_pylon",
 			"sporitic_thurible", "enzymatic_scriptorium", "mnemonic_reliquary", "somnolent_seat",
-			"mason_effigy", "mind_spike", "runic_chisel_station", "dendritic_distributor", "morphling_incubator",
+			"mason_effigy", "runic_chisel_station", "dendritic_distributor", "morphling_incubator",
 			"morphling_cradle", "vacant_effigy", "sanguine_monolith", "covenant_throne", "vascular_effigy");
 
 	private static String craftingPath(String path) {
@@ -92,7 +92,7 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/initiate_rite", () -> new ItemStack(ItemInit.liber_sanguinum.get()));
 		iconRites("cardinal_rite/sanguine_brotherhood", () -> new ItemStack(ItemInit.sanguine_conduit.get()));
 		iconRites("cardinal_rite/illuminatus_rite", () -> new ItemStack(ItemInit.crimson_vestment_fitting.get()));
-		iconRites("cardinal_rite/sanctified_rite", () -> new ItemStack(ItemInit.vicars_consecration_kit.get()));
+		iconRites("cardinal_rite/sanctified_rite", () -> new ItemStack(ItemInit.enthralling_filament.get()));
 		iconRites("cardinal_rite/archon_rite", () -> new ItemStack(ItemInit.silent_archon_helm.get()));
 		iconRites("cardinal_rite/apotheos_rite", () -> new ItemStack(ItemInit.sanguine_quintessence.get()));
 
@@ -107,7 +107,7 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/hematic_unbinding", () -> new ItemStack(ItemInit.hematic_suture_needle.get()));
 		iconRites("cardinal_rite/scarlet_summons", () -> new ItemStack(ItemInit.blood_thrall_effigy.get()));
 		iconRites("cardinal_rite/covenant_vigil", () -> new ItemStack(BlockInit.sanguine_vigil.get()));
-		iconRites("cardinal_rite/possession_rite", () -> new ItemStack(ItemInit.sanguine_quintessence.get()));
+		iconRites("cardinal_rite/possession_rite", () -> new ItemStack(ItemInit.adipocere.get()));
 		iconRites("cardinal_rite/visitation_rite", () -> new ItemStack(BlockInit.heart_node.get()));
 		iconRites("cardinal_rite/sanguine_dominion", () -> new ItemStack(BlockInit.covenant_throne.get()));
 
@@ -120,7 +120,7 @@ public final class HarbingerRecipeMapDefinitions {
 
 		iconRites("cardinal_rite/exsanguination", () -> new ItemStack(ItemInit.memory_exsanguinate.get()));
 		iconRites("cardinal_rite/rooted_vein", () -> new ItemStack(BlockInit.earthen_vein.get()));
-		iconRites("cardinal_rite/hungering_earth", () -> new ItemStack(BlockInit.earthen_vein.get()));
+		iconRites("cardinal_rite/hungering_earth", () -> new ItemStack(ItemInit.sanguine_formation.get()));
 		iconRites("cardinal_rite/sanguine_fervor", () -> new ItemStack(ItemInit.blood_lust_helm.get()));
 		iconRites("cardinal_rite/sanguine_eclipse", () -> new ItemStack(ItemInit.memory_blood_eclipse.get()));
 		iconRites("cardinal_rite/pallid_shadow", () -> new ItemStack(ItemInit.pallid_icon.get()));
@@ -205,6 +205,10 @@ public final class HarbingerRecipeMapDefinitions {
 		linkCrafting("blood_structure/sanguine_monolith", "blood_structure/covenant_throne", RecipeMapLink.Kind.PROGRESSION);
 		linkCrafting("blood_structure/vacant_effigy", "blood_structure/vascular_effigy", RecipeMapLink.Kind.CONCEPTUAL);
 		// </recipe-map-editor>
+		// PT-5: the Monolith craft joined the deep fifth-Degree ring, which pressed the Sanguine Athanor against the
+		// Armature consecration. The Athanor sits on the outer edge of its sixth-Degree ring, keeping them 38 px apart.
+		RITE_POSITIONS.put(new RecipeMapKey(RecipeMapEntry.Kind.RITE, Hemomancy.rloc("cardinal_rite/sanguine_athanor")),
+				new RecipeMapLayout.AuthoredPosition(548, 739));
 	}
 
 	private HarbingerRecipeMapDefinitions() {}

@@ -275,7 +275,6 @@ public final class FungalWhisperDialogueTrees {
 			case 5 -> "hemomancy.whisper.spine_growth.degree5";
 			case 6 -> "hemomancy.whisper.spine_growth.degree6";
 			case 7 -> "hemomancy.whisper.spine_growth.degree7";
-			case 8 -> "hemomancy.whisper.spine_growth.degree8.canon";
 			default -> "hemomancy.whisper.spine_growth.degree5";
 		};
 
@@ -303,14 +302,11 @@ public final class FungalWhisperDialogueTrees {
 	}
 
 	/**
-	 * Fires when a degree-7 Archon interacts with the morphic pool (fungal podium)
-	 * in the Fungal Gardens for the first time. The Entity's voice presents the
-	 * Archon with two mutually exclusive paths: carry the truth in silence and
-	 * walk away, or commit to the Eighth Degree and become its finest spore.
-	 * <p>
-	 * This dialogue opens after the projection has already returned the Archon to
-	 * their body. The selected route is stored in the initiatory-degree capability;
-	 * the Silent route is finalized only by successfully pruning the Qliphoth.
+	 * The revelation choice, opened after the forced return from the Archon's first projection into the Fungal
+	 * Gardens (and served again from the inbox, the Spine and at login while it waits). The Entity's voice offers two
+	 * mutually exclusive ends of the eighth Degree: silence, or the Rite of Apotheos. The selected route is stored in
+	 * the initiatory-degree capability. Silence is not finished by pruning the Qliphoth alone: the Archon must also
+	 * defeat Vesper and absorb the Memory of Vesper to become Silentium.
 	 */
 	public static DialogueTree coreWitnessDialogue() {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)

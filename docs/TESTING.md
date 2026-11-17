@@ -1,5 +1,72 @@
 # Hemomancy testing
 
+## Current state (2026-11-16)
+
+The numbers below are the build 2 final check of 2026-11-16 ([build log](owner_answers/BUILD_LOG_2.md), "Report").
+Its outputs are in `build/build2/FINAL-*`. The tree is uncommitted. The older sections of this file are dated records
+and keep the counts of their day.
+
+| Suite | Command | Result |
+| --- | --- | --- |
+| JVM unit suite | `./gradlew.bat compileJava compileTestJava compileGameTestJava test --rerun --offline --console=plain` | 6,200 tests, 0 failures, 0 errors, 0 skipped (6,031 in the build 2 baseline) |
+| Combined GameTest run | `./gradlew.bat runGameTestServer --offline --console=plain` | "All 2013 required tests passed :)" in two runs in a row, no optional failure (1,917 in the baseline) |
+| Playthrough suite | `./gradlew.bat runPlaythroughGameTestServer --offline --console=plain` | "All 440 required tests passed :)", 17 optional failures, all in the baseline (`NOT RUN` probes and decisions that wait on open rows; 432 and 59 in the baseline) |
+
+Run one Gradle build at a time. `alphaCheck` was not run in build 2. It wraps the unit suite and the combined run.
+
+**Every test is JUnit (UN-71, 2026-11-16).** The 293 legacy `main()` test classes became ordinary `@Test` methods (288 as `allChecksPass`, four as the JUnit wrapper they already had), so `--tests` finds each by name. The reflective `LegacyMainTestAdapterTest`, its contract test and the redundant `LuxUmbraCombatContractTest` went to `removed_assets/src/test/`. `LegacyMainTestGuardrailTest` keeps `main()` out of test classes; the radial vein GPU review is the one listed entry point. The same pass replaced 431 private `read`/`assert*` helper copies with the `support/SourceAssertions` statics (`PrivateTestHelperRatchetTest` ceiling 593 down to 101).
+
+**Review rows no other doc names** (checked against `gradle/review-clients.gradle` on 2026-11-16; each saves into its game directory):
+
+| Row | Game directory |
+| --- | --- |
+| `axonalReviewClient` (`./gradlew.bat runAxonalReviewClient`) | `build/axonal-client` |
+| `bookKitPeerClient` (`./gradlew.bat runBookKitPeerClient`) | `build/book-kit-peer/book-kit-client` |
+| `brazierReviewClient` (`./gradlew.bat runBrazierReviewClient`) | `build/brazier-client-review` |
+| `canonGiftReviewClient` (`./gradlew.bat runCanonGiftReviewClient`) | `build/canon-gift-review` |
+| `crimsonDoeReviewClient` (`./gradlew.bat runCrimsonDoeReviewClient`) | `build/crimson-doe-review` |
+| `eruptusReviewClient` (`./gradlew.bat runEruptusReviewClient`) | `build/eruptus-review` |
+| `funglingReviewClient` (`./gradlew.bat runFunglingReviewClient`) | `build/fungling-review` |
+| `harbingerSitesReviewClient` (`./gradlew.bat runHarbingerSitesReviewClient`) | `build/harbinger-sites-review` |
+| `heartwoodTreeReviewClient` (`./gradlew.bat runHeartwoodTreeReviewClient`) | `build/heartwood-tree-review` |
+| `renderTypeProfileClient` (`./gradlew.bat runRenderTypeProfileClient`) | `build/render-type-profile` |
+| `screenChromeReviewClient` (`./gradlew.bat runScreenChromeReviewClient`) | `build/screen-chrome-review` |
+| `scriptoriumReviewClient` (`./gradlew.bat runScriptoriumReviewClient`) | `build/scriptorium-client` |
+| `sickleStrokeReviewClient` (`./gradlew.bat runSickleStrokeReviewClient`) | `build/sickle-stroke-review` |
+| `speculumPlantingReviewClient` (`./gradlew.bat runSpeculumPlantingReviewClient`) | `build/speculum-planting-review` |
+| `speculumReviewClient` (`./gradlew.bat runSpeculumReviewClient`) | `build/speculum-client-review` |
+| `vanityMirrorReviewClient` (`./gradlew.bat runVanityMirrorReviewClient`) | `build/vanity-mirror-review` |
+| `venousStriderReviewClient` (`./gradlew.bat runVenousStriderReviewClient`) | `build/venous-strider-review` |
+
+**Frozen snapshots.** The three goldens that went stale with the 2026-11-13 Titration Bandolier and tenth Harbinger
+equipment slot were refreshed in the build 2 baseline: `frozen/registry-ids.txt`, `frozen/creative-tab-order.txt` and
+three lines of `dialogue/route-fingerprints.txt`. To cut fresh frozen lists, set `HEMOMANCY_FROZEN_SNAPSHOT_OUT` to a
+folder before the combined run; `FrozenIdentifierGameTests` then writes the current lists there instead of comparing.
+The dialogue route test always writes `build/phlegethontic-gametest/dialogue-route-fingerprints.actual.txt`.
+
+**Opt-in suites.** After package B02 the clinical suite ("All 132 required tests passed :)") and the succession suite
+("All 22 required tests passed :)") are green. `allVesselsFillCorkTransferEquipAndSerialize` now feeds from the worn
+gourd only (FX-1). Two older tests were rewritten to rules that changed under them:
+`earnedScarLessonOpensPracticePageWithoutNewRewards` (the login backfill is gone, since `PlayerDataMigrations` stays empty
+before release; the advancement opens the page) and `effigyPatternIsAWorkingCraftNotHandFed` (the Vacant Effigy is a
+Working craft, so a hand projection into its frame is a hint and charges nothing).
+
+**Flakes seen on 2026-11-14, with their causes (B02).**
+- `chapelwavemobsleavenolootorexperience`: its control construct was an ordinary monster, and a monster despawns at
+  once when the nearest player is more than 128 blocks off. In a full run that player is another test's, so the
+  control sometimes vanished before it could drop experience. The control is now persistent.
+- `archonRiteWithHelper` and probably `afalteringwillstilltakestheprojection`: both failed with the grid more than
+  13,000,000 blocks from 0, where a float holds a coordinate only to the nearest block. The Will failure was an entity
+  lookup whose box overflowed the section index. `GameTestIsolation.ORIGIN_RANGE` now folds the random origin into
+  1,000,000 blocks of 0. Real players that far out could meet the same float limits; that is not tested.
+- The optional probe `apotheosritewithoutrescue` (PT-88) fails in most runs and passes now and then.
+
+**The GameTest world.** The combined run reuses `build/phlegethontic-gametest/world`, and each suite its own `world`.
+Run `./gradlew.bat cleanGameTestWorlds` at the start of a session, with no GameTest server running, to delete every
+suite's `world/` and any leaked `blood-profile-packs-*` or `blood-response-packs-*` folder. It keeps `logs/`. It is
+manual on purpose (NQ-17-5, 2026-11-14): parallel sessions share `build/`, so no run deletes a world by itself. Its first
+run on 2026-11-14 deleted 65 folders (the combined world was 29 GB).
+
 ## Priority repair verification (2026-10-02)
 
 The latest complete `alphaCheck build` gate passed 2,423 JVM tests (zero failures/errors/skips), all 705 required GameTests and resource/package checks (`build/priority-loom-preview-complete-gate.log`, exit 0), including the NPC, ordeal, activation, Communion and read-only Loom preview helpers below. A fresh minimal packaged client/server replay of Hemomancy SHA-256 `6FC3AAB7323E25E14DDD6C9C10757A29E690EEDCCE65A3C6FA80D6856308883E`, HutosLib 7.4.0 and TerraBlender 4.1.0.8 passed connected render/recipe setup, saving all dimensions and two normal exits. Explicit UNKNOWN category registration removed 61 reproduced machine-recipe warnings without changing effective categories; two unreferenced HutosLib backup PNGs are excluded from packaging and unused Ray uniform metadata is removed. Immutable archive checks preserve all other resources, recipes and shader code. Evidence: `build/priority-minimal-corrected-accepted.log`; red checks and configuration assists are recorded in the repair record. Visual/reload/locale and natural gameplay acceptance remain separate.
@@ -97,19 +164,113 @@ On 2026-10-01, twelve Dream/guided cases reproduced pending-claim loss through a
 
 Final `runClinicalGameTestServer test --tests '*FirstDraws*' --tests '*FirstSeparation*' --tests '*ClinicalBlood*' --tests '*ChamberVisit*' --tests '*Qliphoth*' --tests '*Vesper*' --tests '*Mycophant*' verifyGameTestResourceLog --console=plain` passed 129 clinical, 248 focused JVM and 700 combined required runtime cases plus resources (`build/chamber-pending-gifts-verified-current.log`, terminal exit 0). The corrected red run had exactly twelve intended failures; the initial red run also exposed a fixture count error, corrected before production edits. Review found no actionable issues; all sessions are terminal. Tests supply interrupted visit/earned-claim state, then check untouched temporary inventory, exact entry snapshot restoration, later item/component delivery, repeat refusal and unchanged degree. Actual loaded/native entry/exit, live login ordering, client sync, cold recovery, natural progression and multiplayer remain open; see Phase 8. The full-alpha result below predates this focused correction and remains red.
 
+## Deterministic GameTests
+
+A GameTest that fails once and passes on a re-run with no change is a defect (a flake). Find the cause and fix the
+test or the code; never re-run it away, weaken an assertion or mark it optional. The rules below come from the round-two
+flake hunt (`docs/archive/tracks/core_loop/BUILD_LOG_ROUND2.md`, P1).
+
+**The isolation harness.** Every test-grid GameTest server (`runGameTestServer` and each suite's `run<Suite>GameTestServer`,
+not the seeded-world generators) loads `gametest-isolation.mixins.json` (`src/gameTest/java/.../gametest/mixin/GameTest*Mixin`,
+settings in `gametest/GameTestIsolation`):
+- **Wide grid.** Vanilla packs test structures 5 blocks apart in x and 6 in z, and a test on the 1x1x1
+  `minecraft:bastion/mobs/empty` template works up to 14 blocks past its bounds, so neighbours shared blocks and
+  entities. The gap is now 64 blocks both ways.
+- **Margin chunks.** Vanilla forces only the chunks under a structure. A forced chunk is entity-ticking but its
+  neighbours only block-tick, so a mob a few blocks past the template stood frozen whenever the edge fell near a chunk
+  border. Two chunks round each structure are now forced too, and a test starts only once they are entity-ticking.
+  `-PgameTestMarginChunks=N` changes the margin.
+- **Chunk-aligned origin.** The run's grid still starts at a random place (the test world in the game directory is
+  reused between runs, so a fixed place would meet the last run's leftovers) but snapped to a chunk corner, so every
+  run has the same alignment. `-PgameTestOrigin=x,z` places the first structure exactly, for trying an awkward
+  alignment (for example `x % 16 = 15`).
+  The random place is folded into 1,000,000 blocks of 0 (`ORIGIN_RANGE`, 2026-11-14): vanilla's 15,000,000 put
+  some runs where floats round coordinates to whole blocks.
+- **Ruling (RV-39, 2026-11-13):** the owner kept the random, chunk-aligned origin with 2 margin chunks.
+A full combined run takes about 2.2 minutes with the harness, against about 1.4 without.
+
+**Writing a test that stays deterministic:**
+- **Stay inside your template.** Use a template that holds everything the test places and spawns. For a fixture
+  bigger than the 1x1 template, use `hemomancy:open_room` (all air, 32 x 18 x 32). Barrier walls and a barrier ceiling
+  go round every template's bounds; set `skyAccess = true` when the test reads sky light or the heightmap.
+  `GameTestHelper` positions count from the structure block, one below the template, so the 32 x 12 x 24 `empty`
+  templates' stone floor (template y 3) is helper y 4: a block at helper y 1 to 3 sits under that floor, in the dark.
+  `EcologyGameTests.peacockSpiderSpawnsInDaylight` passed for months only while the light engine still held the sky
+  light from before the floor was placed.
+- **Global state gets its own batch.** A test that changes server-wide state across ticks (PvP, difficulty, day time,
+  game rules, a session map another test reads) runs in its own `batch`. A change made and restored inside one
+  synchronous block is safe.
+- **Never read light in the tick you placed blocks.** The light engine runs off the server thread. Wait for the light
+  with `startSequence().thenWaitUntil(...)` and a generous `timeoutTicks` (see `FarmingGameTests.whenLit`).
+- **Seed or remove rolls.** A test that depends on `level.random` or an entity's random either seeds it
+  (`player.getRandom().setSeed(...)`, `RandomSource.create(seed)` passed in) or is written so every roll passes (drip
+  from the spike's lowest block, not the tip that a growth roll may have moved). A count of successes over N tries
+  compared with a threshold is a binomial draw: roll it on a fixed-seed `RandomSource` (`FarmingGameTests.growths`).
+- **Count your own entities.** Filter by owner, loom, UUID or the entity you spawned, not by everything in a box.
+- **Wait on conditions, not fixed delays.** Prefer `thenWaitUntil` over `runAfterDelay(n)` when the thing checked
+  needs entity ticks to happen; give it a timeout that covers a slow server.
+- **Real blocks for anchors.** A rule that prunes air anchors, or reads the block a test "ties" to, needs a block
+  there.
+- **Watch N.** A test whose template namespace is not enabled for a run is silently dropped and "passes" by absence.
+  Compare the "All N required tests passed" count before and after moving a test to another template namespace.
+- **A focused suite uses its own templates (UN-65, 2026-11-15).** NeoForge enables a test by its template's namespace,
+  and a suite's launcher enables only the suite's namespace, so a test in a focused suite on a `minecraft` template
+  never ran there (`runSculptingGameTestServer` ran nothing). The sculpting, living blood and Temper suites now carry
+  their own copy of the vanilla `bastion/mobs/empty` template (`src/gameTest/resources/data/<suite>/structure/`), and
+  `verifyGameTestSuites` refuses a `templateNamespace` other than the suite's own in a file whose suite has a launcher.
+- **Server-wide state gets its own batch.** `SculptingValidationGameTests` lends a registered manipulation a stub
+  Sculpting for the whole server, so its lending tests run in the batch `sculpting_lent`, apart from the tests that use
+  the same memories for real.
+
+## Combat Characterisation Goldens
+
+`combat_order_validation` (`runCombatOrderGameTestServer`, also in the combined run) holds two goldens written on
+2026-11-14 (chunk 17 T9) and re-cut the same day for the damage stages and the Curved Horn's Last Rite (G-1/F-18,
+F-17; build 2 B03, which explains each moved line):
+- `CombatStageCharacterisationGameTests.damageStagesKeepTheirAmounts` reads `src/gameTest/resources/combat/damage-stages.txt`.
+  A real 10-point hit on a 20-health player with active blood, through the whole event chain, for no modifier (one row
+  per hit kind), each modifier alone, two stacks and a hit zeroed at LOW. Each line gives final damage, blood lost and
+  total vein strain, and says how its modifier was armed. Its last two lines are a player's hit on a Desiccant with and
+  without the Absolved bonus.
+- `CombatStageCharacterisationGameTests.deathSavesKeepTheirOrder` reads `src/gameTest/resources/combat/death-saves.txt`.
+  A lethal 40-point magic hit with each death-save armed alone and in pairs: the armed Last Rite, who lived, health
+  after, blood paid, the Last Rite after the hit, the shared cooldown left, Endless Hour's deferred damage and the
+  Curved Horn's wear. `curvedHornSavesOnceInsideTheSharedCooldown` and `curvedHornYieldsToALaterLastRite` check the
+  Horn's cooldown and arming rule beside it.
+A changed line fails with its first difference, and the run writes `damage-stages.actual.txt` or
+`death-saves.actual.txt` in the suite's game directory. A deliberate change re-cuts the golden from that file in the
+same change and says why each line moved.
+
+`combat_targeting_validation` (`CombatTargetingMatrixGameTests`) has one row per wider-preset site and a kill-credit row
+for each damaging F-16 site. A ruling that changes who a site reaches flips its row in the same change.
+
 ## Player-Centric Playthroughs
 
 `./gradlew.bat runPlaythroughGameTestServer --offline` runs `playthrough_validation` (on demand, not in `alphaCheck`):
-426 GameTests that play the Harbinger path from a fresh D0 to Degree 8 on both roads (Apotheos and Silentium), with
+432 GameTests (2026-11-14; 427 before the overnight build) that play the Harbinger path from a fresh D0 to Degree 8 on both roads (Apotheos and Silentium), with
 the Brined Court and the Crimson Troupe, through the same entry points a client reaches (NPC right-clicks and option
 payloads, item use, placement, menu clicks, held projection and absorption, planted rites, real damage, respawn and
 relog), with edge cases (full packs, Creative, two players, wrong order, forged events, a unique NPC lost, a member
 expelled) and one-player full runs (`PlaythroughFullRunGameTests.harbingerD0ToD5`, `PlaythroughLateRunGameTests`). Its
-318 required tests must pass; of its 109 optional tests, the decision probes and `NOT RUN` probes (98 in the last run)
-fail until the user rules or a client proves them. Per-band coverage, the harness API, how to add a scenario, what the
-GameTest server cannot run (proof owed) and the open decisions (D-1 to D-90) are in
-[PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md). GameTest's summary line ("All 427 required tests passed") counts every
+required tests must pass; of its optional tests, the decision probes and `NOT RUN` probes (59 in the last run) fail
+until their ruling is built, the owner answers what is still open, or a client proves them. Per-band coverage, the
+harness API, how to add a scenario, what the GameTest server cannot run (proof owed), the owner's rulings on the probes
+and what each failing probe waits on are in [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md). The questions still open are
+in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md). GameTest's summary line ("All 432 required tests passed") counts every
 test, optional ones included.
+
+2026-11-14 (overnight build, final check): "All 432 required tests passed :)" and 59 optional failures. Every one of
+the 59 was in the 98 of 2026-11-11. 39 left that list: most were decision probes the answer sheet ruled, rewritten to
+the ruling and made required that night, and PT-88 `apotheosritewithoutrescue` happened to pass. Five tests are new.
+The sorted names are in `build/overnight/final-playthrough-optional.txt`, the older list in
+`build/overnight/baseline-playthrough-optional.txt`. The source marks about 70 tests optional; the exact required and
+optional split was not recounted.
+
+2026-11-11 (core loop round two, P2): under the isolation harness all 427 required tests pass with the same 98 optional
+probe failures on 5 consecutive runs; the eight failures the overhaul inherited and the two flakes are fixed or traced in
+`docs/archive/tracks/core_loop/BUILD_LOG_ROUND2.md` (P2). The round's final run (P12) read the same: "All 427 required tests passed :)"
+and the same 98 optional names. Far template sites now get `PlaythroughSites.SITE_READY_TICKS` (1000) to become
+entity-ticking, and a playthrough rite logs any block of its ground that changes while it runs.
 
 2026-11-02: all 315 required passed (`build/playthrough-final-run5.log`, BUILD SUCCESSFUL);
 `verifyGameTestSuites compileGameTestJava` and the JVM suite (4,896 tests in 1,149 classes, no failures) were rerun after this round's fixes.
@@ -317,7 +478,7 @@ From the project root on Windows:
 
 ## Ledger header fitting
 
-`HarbingerAssignmentLedgerCollapseSourceTest` guards the shared collapsed/expanded progress budget and title hover path. It is a legacy `main` contract, so invoke its compiled class directly for an isolated check or include `LegacyMainTestAdapterTest`; filtering Gradle by its own class name finds no JUnit tests. Native validation must inspect verbose labels such as the D4 Vein-Mason count in collapsed and expanded views, including full-wording hover and separation from the title. The 2026-10-01 1280x900 replay verified that case; other GUI scales/locales remain open.
+`HarbingerAssignmentLedgerCollapseSourceTest` guards the shared collapsed/expanded progress budget and title hover path. It is an ordinary JUnit test since UN-71 (2026-11-16), so `--tests '*HarbingerAssignmentLedgerCollapseSourceTest'` runs it alone. Native validation must inspect verbose labels such as the D4 Vein-Mason count in collapsed and expanded views, including full-wording hover and separation from the title. The 2026-10-01 1280x900 replay verified that case; other GUI scales/locales remain open.
 
 ## Held-sample teacher lessons
 
@@ -359,7 +520,7 @@ Actors, eligibility, pending claims, timer shortening, direct retry hooks, equip
 
 ## GameTest suite catalog
 
-`gradle/game-tests.gradle` is the source of truth for suite namespaces, focused launcher names, run directories, and inclusion in `alphaCheck`. Each entry must explicitly set `alpha: true`, or `alpha: false` with a reason and a focused launcher. The combined server includes the existing Hemomancy, blood-injection, harpoon, and item-inventory suites plus combat order, owner snapshots, distillation, registration, Unstained zone lifecycle, rite spaces (`runRiteSpaceGameTestServer`: a completed rite's floor keeps a rite space until a floor block breaks; the Sanguine Omen is set down only inside a Dominion space), and recipe codec plumbing. The vanilla `minecraft` template namespace remains enabled for legacy fixtures.
+`gradle/game-tests.gradle` is the source of truth for suite namespaces, focused launcher names, run directories, and inclusion in `alphaCheck`. Each entry must explicitly set `alpha: true`, or `alpha: false` with a reason and a focused launcher. The combined server includes the existing Hemomancy, blood-injection, harpoon, and item-inventory suites plus combat order, owner snapshots, distillation, registration, Unstained zone lifecycle, rite spaces (`runRiteSpaceGameTestServer`: a completed rite's floor keeps a rite space until a floor block breaks; the Sanguine Omen is set down only inside a Dominion space), and recipe codec plumbing. The vanilla `minecraft` template namespace remains enabled in the combined run for the `hemomancy` suite's legacy fixtures; a focused suite uses templates in its own namespace (UN-65).
 
 Existing focused encounter, clinical, brewing, Scriptorium, animation, and living-weapon suites remain explicitly opt-in; this change expands the combined gate with consolidation coverage. Fresh-world Phlegethontic validation remains separate because it requires seed/run parameters and validation mixins. Existing focused task names and directories are preserved. Living weapons now have a normal `runLivingWeaponGameTest` task instead of relying on the missing external init script.
 
@@ -395,6 +556,8 @@ Run `./gradlew.bat test --tests '*UnstainedWeapon*' --tests '*LivingWeaponPlayer
 ./gradlew.bat runPhlegethonticValidationServer -PphlegethonticSeed=42 -PphlegethonticRun=fresh-unique-name
 ./gradlew.bat runPhlegethonticValidationServer -PphlegethonticSeed=42 -PphlegethonticRun=reverse-unique-name -PphlegethonticOrder=reverse
 ```
+
+Crimson Troupe placement (chunk 15 T10): `./gradlew.bat runCircusValidationServer -PcircusSeed=42` (then 1337 and 8675309). Delete `build/circus-worlds/<seed>/world` first: a reused world keeps the structure starts of the run that made it. The run generates every potential pavilion, camp and stage start chunk within 4,096 blocks to structure starts, records each as accepted or refused (exclusion from a pavilion, a village, the biome, wet or high ground, too steep) and the nearest site of each kind, and writes `circus-report.json` in the game directory. It fails only when a kind has no site in that square; the owner's aim of a pavilion within about 1,500 blocks is reported, not asserted.
 
 Use a new run name for every fresh-world measurement. The validation server uses `build/phlegethontic-worlds/<seed>-<run>` and writes `phlegethontic-validation.json` there. It sets the actual world seed, adds a second TerraBlender Nether region and foreign-namespace Nether biome, generates 576 chunks, audits all feature writes, examines an inner 100-chunk sample, and advances 120 ticks with fluid ticking enabled. Its feature timings combine the queue, Basin materialization, and deferred vein completion per generated chunk; they exclude ore-reservation interception overhead and are not whole-generator overhead benchmarks.
 
@@ -542,8 +705,6 @@ The fixtures shorten passive Purity and Clarity accumulation by positioning the 
 5. Craft Infested Wood from one log and one Foul Paste. Leave air above it at brightness 7 or lower and wait for random growth; only Infected Fungus, Hyphae, or Stinkhorn Fungus may appear. Occupy the block above and confirm the growth never replaces it.
 6. Distill Devil's Tooth and confirm it produces two Foul Paste. Use JEI to follow Foul Paste into Infested Wood/Befouling Ash and Spore Sac into spores/Hyphal Substrate.
 
-## In-game scenario commands
-
 ## Chamber progression and perspective checks
 
 Use `/hemo chamber theme next [player]`, `previous`, and `cycle` to preview normal themes without player-eligibility filtering; use `set <theme>` to select any registered preview, including `vesper_fight` and `mycophant_nursery`, and `reset` to clear it. Use `/hemo chamber size set <radius> [player]` to override the player's accessible chamber radius from 3 through 10; `/hemo chamber size reset [player]` returns to progression sizing. The Orb of Perspective must never select either encounter theme.
@@ -551,6 +712,8 @@ Use `/hemo chamber theme next [player]`, `previous`, and `cycle` to preview norm
 For a live progression pass, enter the Chamber and move through tier radii 4, 6, 8, and 10. Confirm each newly unlocked band appears in the same server tick, the previous Sporitic Crystal corners move outward without replacing blocks substituted by the player, and placement, movement clamp, item rescue, safe return, and client border all follow the same radius. Repeat a progression change outside the Chamber, then enter and confirm heartbeat/login recovery builds the missing band.
 
 Craft the Orb with `MEM / EBE / MEM` (Monolith Fragment, Echo Shard, Blood Crystal Shard). Throw it beyond the platform and below floor Y minus 3. Verify stable progression-filtered cycling, persistence after logout/reload, rejection outside the owner's cell and during both encounters, one activation per toss, inventory-first return, and a beside-owner return with normal pickup delay when inventory is full. Also test two separated player cells and logout immediately after throwing.
+
+## In-game scenario commands
 
 Development client/server runs add the following operator-only commands beneath the existing `/hemo` root:
 
@@ -570,15 +733,40 @@ Development client/server runs add the following operator-only commands beneath 
 
 The initial catalog is:
 
-- `blood_structure_locked` — degree 5 must not satisfy the degree-6 Covenant Throne recipe.
-- `blood_structure_unlocked` — degree 6 must satisfy the same recipe.
+- `blood_structure_locked` — degree 5 must not satisfy the degree-6 Covenant Throne Working craft (`cardinal_rite/working/covenant_throne`; the scenario id keeps its old name).
+- `blood_structure_unlocked` — degree 6 must satisfy the same craft.
 - `artificer_assignment_ready` — a briefed player wearing complete Hematic Iron makes the Worn Vow fitting available.
 - `ArtificerProgressionGameTests` covers ordered D2 inspection, all three recorded fork reagents and real set responses, Blood Lust and Living Arsenal gameplay hooks, and all four D7 material/registered-ability routes against loaded registries.
 - `artificer_reward_claimed` — repeated reward-claim marking remains idempotent.
 
-- `uninitiated_cannot_pass_bloodcraft_degree_gate` — a Degree-0 player is rejected by the loaded degree-6 Covenant Throne bloodcraft gate.
+- `uninitiated_cannot_pass_bloodcraft_degree_gate` — a Degree-0 player is rejected by the loaded degree-6 Covenant Throne Working craft gate.
 - `sanguine_initiation_recipe_loaded` — the Sanguine Initiation recipe is available from the loaded server registry.
 - `sanguine_initiation_degree_mapping` — Sanguine Initiation retains its Degree-1 rank-up mapping and registered Sanguine Conduit reward.
+
+The core loop's fixtures are not `/hemo test` scenarios: since round two P11 they are dev-only `/hemo` branches of
+their own (`common/command/TemperPoolSubcommand`, `TankSubcommand`, `VatSubcommand`, `GougeSubcommand`, sharing
+`CoreLoopFixtures`). Each takes an optional trailing player, checks what it set up and says so (amounts only, no
+positions), and returns 0 when its check fails. World fixtures land two blocks ahead of the player; a player has one at
+a time, and each branch's `clear` takes away only its own kind:
+
+- `/hemo temperpool carried`: every school's Temper at the largest cap; a Humilis cast plans as tempered.
+- `/hemo temperpool dry`: every school empty; a Humilis cast with no catalyst runs dry.
+- `/hemo temperpool restore`: puts back the pool the first `carried` or `dry` replaced.
+- `/hemo tank clot` / `clear`: an Enzymatic Scriptorium fed 600 mL a full clot ago: all clot, no fresh blood.
+- `/hemo vat fill` / `clear`: a Specimen Vat owned by the player, holding a cow at 60 Vigor over a 400 mL living buffer.
+- `/hemo gouge light` / `clear`: a five-cell gouge run pulsed with the light function (the cells light outward over a
+  few ticks).
+
+What a player's fixture is, and the pool to restore, are session state: a relog forgets both, and the fixture's blocks
+stay where they are. `core_loop_validation` (`CoreLoopClosingGameTests`) runs each branch through the server's
+dispatcher, checks it and clears it; `hemo_command_validation` fingerprints every path (it clears each probe's fixture
+once what the command spawned is counted).
+
+**Play-test script.** For a played session of the core loop rather than a check, use
+[CORE_LOOP_PLAYTEST.md](CORE_LOOP_PLAYTEST.md): one sitting per system, each with its review client (stills only: every
+`*ReviewClient` places its scene, takes its shots and stops itself), the `/hemo` branches above or the manual setup that
+stands in for them, what to try in what order in `./gradlew.bat runClient`, and the feel and balance questions from both
+build logs with where each number lives.
 
 These are deliberately narrow pilots. They prove the harness through crafting locks, progression boundaries, assignment readiness, and reward claim state before more expensive end-to-end scenarios are added.
 
@@ -764,7 +952,7 @@ Each Saint has its own suite, all in `alphaCheck` and the combined gate: `./grad
 
 ### Phlegethosoma encounter validation
 
-The `phlegethosoma_validation` suite is included in the combined alpha gate. Run `gradlew.bat runPhlegethosomaGameTestServer` for the focused loaded-world checks of phases, phase persistence, clot cover/destruction/death cleanup, and lava/drop movement safety. Pure combat rules run with `gradlew.bat test --tests '*PhlegethosomaCombatRulesTest'`.
+The `phlegethosoma_validation` suite is included in the combined alpha gate. Run `gradlew.bat runPhlegethosomaGameTestServer` for the focused loaded-world checks of phases, phase persistence, clot cover/destruction/death cleanup, and lava/drop movement safety. Pure combat rules run with `gradlew.bat test --tests '*PhlegethosomaCombatRulesTest'`. The summons (CR-7) has its own batches in `PhlegethosomaSummonGameTests`: 500 mL calls one and a second call is refused, a narrow pool and ichor outside the Nether basin are refused, sleeping blood pours nothing and the Liber page opens at D5, a broken pour fades like chum, a targetless summons dives after a minute and leaves nothing, and an older summons dives when its caller has another. The test level is the Overworld, so they pour through `PhlegethosomaSummoning.pour` and check `tryProject` only for its basin refusal; the Nether biome check itself needs a client or a Basin world. `PhlegethosomaSummonRulesTest` covers the count, the fade and the dive timer.
 
 `gradlew.bat runPhlegethosomaReviewClient` uses the disposable `build/phlegethosoma-client` directory. The existing gameplay driver can create a fresh world through `operator/inbox`; the opt-in fixture presents the model and combat phases, records screenshots, then exits. This is assisted visual coverage, not natural spawning or Survival evidence. Natural Basin discovery, recurrence and two-client multiplayer acceptance require their own observed checks; automated fixtures do not establish them.
 
@@ -793,3 +981,110 @@ GameTest force-loads only a test's own template. An entity placed beyond it is i
 ## Mob despawning in GameTests
 
 `FixtureMobDespawnGuard` denies vanilla despawning on the GameTest server, because any test player anywhere counts as the nearest player and would discard mobs in other plots. A test of the despawn rule itself wraps its `checkDespawn` call in `FixtureMobDespawnGuard.exercisingDespawn`.
+
+## Liber pages review client (round two P9)
+
+`./gradlew.bat runLiberPagesReviewClient` opens a disposable client in `build/liber-pages-review` (`LiberPagesClientReview` in `src/gameTest`). After `"kind":"startup"` appears in `operator/journal.jsonl`, drop `{"op":"create","name":"LiberPages","seed":"1"}` (or `{"op":"open",...}` once the save exists; use a new name to see the toast again) into `operator/inbox/`. It stages a Harbinger only by real triggers: the Degree path to the eighth Degree, `LiberDiscoveryEvents.unlockForItem` for eight teaching items, a memory learned, every Hemomancy advancement but Stoked, then the purity and clarity stages for Liber Immaculatus. The `LIBER_PAGES_REVIEW staged` line lists every page of both books still hidden with the sources that would open it (rites, dialogue, memos and ground pickups the staging does not perform); no older page may appear there. Shots: Stoked's toast, the Manipulations and Temperament chapter lists, the first and last leaf of the forty older pages of both books, and the Hemomancy advancement tab centred on Sculpted, Kept and Set Through so all 27 core-loop firsts show. Shots land in `screenshots/liber-pages-<nnn>-<name>.png`; the log ends with `LIBER_PAGES_REVIEW captured N`. `LiberPageRegistrationGuardrailTest` and `CoreLoopClosingGameTests.theOlderPagesAreRegisteredAndOpenByDegreeItemAndMemory` hold the same rules without a client.
+
+## Lesson review client (round two P10)
+
+`./gradlew.bat runLessonReviewClient` opens a disposable client in `build/lesson-review` (`LessonClientReview` in `src/gameTest`). A fresh game directory first shows Minecraft's accessibility screen: click its Continue button with one `{"op":"click","x":213,"y":224}` op before the startup line appears. After `"kind":"startup"` appears in `operator/journal.jsonl`, drop `{"op":"create","name":"LessonReview","seed":1}` (or `{"op":"open","name":"LessonReview"}` once the save exists). The harness spawns the Hermit, Vicar, Alchemist, Mnemonist, Artificer and Vein-Mason in a ring three blocks round an awake reviewer at GUI scale 3, sets the Degree that shows all of a speaker's core-loop lessons (the Hermit 3, the rest 6), opens each hub, captures the Conversation box at its top, at its first lesson card and at its end, then opens every lesson and asks every branch as the screen does (so each lesson's event reaches the server), resetting the scroll as a click does so each node shot shows the top of what the speaker says. Each node logs `LESSON_REVIEW PASS/FAIL ... text N of M px`: whether the speaker's text fits the box without scrolling. A last pass turns on brief mode, captures a Mnemonist lesson in briefs and checks every lesson key has a brief. It ends with `LESSON_REVIEW captured <count>` and stops the client; shots are in `build/lesson-review/screenshots`.
+
+## Round two P11 review clients
+
+**Visual fixes.** `./gradlew.bat runVisualFixesReviewClient` (`gametest/VisualFixesClientReview`, game directory
+`build/visual-fixes-client-review`); drop `{"op":"create","name":"VisualFixes","seed":"1"}` into `operator/inbox` once
+the journal logs a new startup line. Twenty frames in `screenshots/`: wet, tacky and dry stains on a floor and a wall;
+Hematic Cleats beside plain hematic iron boots (front and side) and worn; planted Staffs in client-drawn rites with five
+rings, none, and five while melting; a sutured Scriptorium whose owner is below the third Degree (the bare pip, then the
+hover); Lignum Mortis refused in adventure mode (barred bone reticle, "Refused") and claimed in survival; Pyretic Forge
+on ore in first and third person; the Tendon Line thrown, slack from the side, slack in first person, and hauled. The
+log ends with `VISUAL_FIXES_REVIEW captured 20`.
+
+**Onlookers (two clients).** `powershell -NoProfile -ExecutionPolicy Bypass -File tools/review/review-onlooker.ps1
+[-Only <scene prefix>]`. It kills any leftover `onlooker-host`/`onlooker-observer` java, makes one Gradle call that
+exits (`compileGameTestJava`, `prepareOnlooker*Run` and `writeOnlooker*Classpath`, `--no-daemon`), then starts the
+host as bare java (`java @<run>RunVmArgs.txt @<run>RunClasspath.txt net.neoforged.devlaunch.Main
+@<run>RunProgramArgs.txt` from `build/moddev`, in `build/onlooker-host`), drops the op file after its startup line,
+waits for `ONLOOKER_SERVER_READY port=25581` and starts the observer the same way in `build/onlooker-observer`. No
+Gradle is alive while the two clients run. The host is the caster; the server moves the spectator observer beside and
+then in front of it for each scene and tells it when to grab (`ONLOOKER_SHOT <name>`, `ONLOOKER_DONE`). Scenes:
+`reach-bare`, `reach-staff` (five rings and Sanguine Reach onto a stone 10 blocks off), `lignum-log`,
+`brazier-absorb`, the 2026-11-12 held forms at Taut Line 2 (`lash-blood` and `lash-gloam-faint`, flicked and
+swept through `LashCamera` as a mouse would; `flare-beam`, `jolt-creature`, `eclipse-dome`, `javelin-flight`,
+`needle-volley`), `cling-wall` (crawling, with cleats), `cling-ceiling`, `tendon-throw`, `tendon-haul`, `dark-field`.
+The observer's frames are in `build/onlooker-observer/screenshots`; the host logs `ONLOOKER_REVIEW host finished`,
+the observer `ONLOOKER_REVIEW captured 32` for a full run. The `write<Run>Classpath` tasks exist for table rows marked `bare: true`
+in `gradle/review-clients.gradle`: the run task adds its classpath and `-Dfml.modFolders` only when it executes, so the
+argument files alone do not launch a client.
+
+## Station particle review clients (2026-11-14)
+
+Two rows in `gradle/review-clients.gradle` show the station particles of the vanilla particle sweep (chunk 09 T5). After
+`"kind":"startup"` appears in the game directory's `operator/journal.jsonl`, drop one `{"op":"create","name":...}`
+op into its `operator/inbox/`; each scene builds itself, takes its shots and stops the client.
+
+- `./gradlew.bat runFungalStationReviewClient` (`FungalStationClientReview`, `build/fungal-station-client-review`): a
+  stocked Morphling Incubator, two Mycelial Crucibles and two Mycelial Lanterns. Shots are `fungal-station-<n>.png`; the
+  log ends with `FUNGAL_STATION_REVIEW captured 11`.
+- `./gradlew.bat runHarbingerStationReviewClient` (`HarbingerStationClientReview`, `build/harbinger-station-review`): a
+  lit Ghastly Alembic, a Hematic Suture Node, a lit Engram put out by a stand-in's bare hand, and a Hematic Armature
+  whose wind-up and upgrade bursts are called on a stand-in wearer (reflection into the block entity, so the scene
+  shows the real effect code, not a real upgrade). Shots are `harbinger-station-<n>-<action>.png`; the log ends with
+  `HARBINGER_STATION_REVIEW captured 5`.
+
+The Ferric constructs' particles (Iron Pillar, Spike and Wall) are reviewed with the existing launcher
+`tools/review/ferric-ductilis-review.init.gradle` (`FerricDuctilisReview`).
+
+The Unstained sweep (chunk 09 T4) has its own row, driven the same way:
+
+- `./gradlew.bat runUnstainedParticleReviewClient` (`UnstainedParticleClientReview`, `build/unstained-particle-review`):
+  the Altar of Cleansing and Unstained Podium readings (their own particle methods, called by reflection), the Pale
+  Silver Bells rung by a stand-in, a lit Pallid Retort, a Stillwater Condenser, a Verdigris Lattice and a powered Virid
+  Salis trail, then one rite completion per visual family through `UnstainedRiteParticles` (Lethean Baptism on a
+  stand-in, Silver Dawn, Glass Lungs, Moon-Washed Copper by day and by night). No rite's gameplay runs. Shots are
+  `unstained-particle-<n>-<action>.png`; the log ends with `UNSTAINED_PARTICLE_REVIEW captured 10`.
+
+The last batches of the sweep (chunk 09 T6) add two rows, driven the same way:
+
+- `./gradlew.bat runSummonParticleReviewClient` (`SummonParticleClientReview`, `build/summon-particle-review`): three
+  Phantasmal Echoes (ambient shimmer, smoke burst, quiet dissolve) and two Blood Thralls (carrying a full load, death
+  splatter), fired through the entities' own public calls and entity event; then an Iron Spike and Pillar raised by
+  no player, so their eruption, seep and flakes show (Vesper's and the Weave's spikes), a Directed Blood Orb, a Hemolytic
+  Vial burst (its private method) and a dropped Morphling Polyp. Shots are `summon-particle-<n>-<action>.png`; the log
+  ends with `SUMMON_PARTICLE_REVIEW captured 9`.
+- `./gradlew.bat runEcologyParticleReviewClient` (`EcologyParticleClientReview`, `build/ecology-particle-review`): a
+  Choir Keeper eating an Eye of Ender, a Luminal Cicada's flash, a Peacock Spider's fan, a Mortarbound in a stone wall
+  emerging when a stand-in strikes it, a Will's banishment burst and a Drudge's death burst. The cicada flash and the
+  Will burst are their private methods, called by reflection. The camera is a flying creative player, because the
+  spider fans only for a non-spectator. Then a Blood Lantern Jelly and a Prism Cuttle in glass water tanks (the cuttle's
+  flash, a private method) and a Chalybeate Snail harvested with a knapper (a private method). Shots are
+  `ecology-particle-<n>-<action>.png`; the log logs `eye eaten: true` and ends with `ECOLOGY_PARTICLE_REVIEW captured 8`.
+- `./gradlew.bat runSweepParticleReviewClient` (`SweepParticleClientReview`, `build/sweep-particle-review`): sweep
+  batches B and E, one station each, fired at a stand-in player who is not drawn: the Chamber of Will theme change, the
+  Edacious Bloodburst, the Masquerade of the Forgotten, the Distorted Presence, the Crimson Retribution on a husk,
+  Neural Overload on a husk, a Hematic salvage scrap and the Morphic Nectar mutation burst. Private handler methods are
+  called by reflection. Shots are `sweep-particle-<n>-<action>.png`; the log ends with `SWEEP_PARTICLE_REVIEW captured 7`.
+- `./gradlew.bat runTexelReviewClient` (`TexelClientReview`, `build/texel-review`): texel batches T1 and T3 on display
+  entities, each row in front of a white wall: the kitbashed held weapons, the regenerated instruments and set-piece
+  items, the Living Staff with its bare head, five Morphling heads and all seven fittings (set on the client's fitting
+  slot one at a time), and the rescaled blocks and growth stages, plus a real Vial Centrifuge for its flywheel. Drop
+  `{"op":"create","name":"TexelReview"}` into `operator/inbox/` after startup (a new name each run). One wide shot per
+  row and one close-up per model; shots are `texel-<nn>-<name>.png` and the log ends with `TEXEL_REVIEW captured 63`.
+  Measure by number with `python tools/model_export/texel_density.py` (flagged models, worst first; `--all` or model
+  paths for more).
+
+The placeholder art pass (B36, 2026-11-16) adds three rows, driven the same way with one `create` op (`"seed":12345`):
+
+- `./gradlew.bat runHemojellyReviewClient` and `runMyelinBorerReviewClient` (`AnimalModelClientReview`,
+  `build/hemojelly-review`, `build/myelin-borer-review`): the mob standing, moving and at night from four sides. A
+  water animal gets a flooded arena and is shot three times from below the surface and once from above it; a small
+  land animal is framed closer; the Borer stands on a Nerve Fiber floor (`hemomancy.animalModelReview.floor`). Shots
+  are `<id>-<scene>-<view>.png`; the client stops itself.
+- `./gradlew.bat runEffectIconReviewClient` (`EffectIconClientReview`, `build/effect-icon-review`): the effects that
+  once shared one icon, in six sets, each in the HUD row and the survival inventory's effect list. Shots are
+  `effects-<n>-hud.png` and `effects-<n>-inventory.png`; the log ends with `EFFECT_ICON_REVIEW captured 12`. The icons
+  come from `python tools/model_export/effect_icons.py` (`--preview` writes an 8x sheet to `build/`).
+
+Every review run turns off The One Probe's look-at tooltip before launch (`needsProbe = 2` in the run's
+`config/theoneprobe-common.toml`), so it never sits over a capture.

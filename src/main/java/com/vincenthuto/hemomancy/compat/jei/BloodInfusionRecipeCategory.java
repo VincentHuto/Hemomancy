@@ -58,10 +58,15 @@ public final class BloodInfusionRecipeCategory implements IRecipeCategory<BloodI
 				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(recipe.input()))
 				.addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
 						"hemomancy.jei.blood_infusion.block.tip").withStyle(ChatFormatting.GRAY)));
+		// A Sculpting's recipe shows the memory that must be selected while Projection is held on the block.
+		ItemStack cast = recipe.sculpting().map(JeiSculptingIcons::memoryFor)
+				.orElseGet(() -> new ItemStack(ItemInit.blood_projection.get()));
 		builder.addSlot(RecipeIngredientRole.CATALYST, CAST_X, SLOT_Y)
-				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ItemInit.blood_projection.get()))
-				.addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
-						"hemomancy.jei.blood_infusion.cast.tip").withStyle(ChatFormatting.GRAY)));
+				.addIngredient(VanillaTypes.ITEM_STACK, cast)
+				.addRichTooltipCallback((view, tip) -> tip.add((recipe.sculpting().isPresent()
+						? Component.translatable("hemomancy.jei.blood_infusion.sculpting.tip",
+								JeiSculptingIcons.nameOf(recipe.sculpting().get()))
+						: Component.translatable("hemomancy.jei.blood_infusion.cast.tip")).withStyle(ChatFormatting.GRAY)));
 		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, SLOT_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, recipe.resultStack());
 	}
@@ -71,7 +76,8 @@ public final class BloodInfusionRecipeCategory implements IRecipeCategory<BloodI
 				JeiPanel.Stat.of(JeiPanel.Icon.BLOOD, Component.translatable("hemomancy.jei.blood_infusion.cost",
 						BloodGourdItem.formatBloodAmount(recipe.bloodCost())), JeiPanel.BLOOD_RED,
 						Component.translatable("hemomancy.jei.blood_infusion.cost.tip")),
-				JeiPanel.Stat.of(JeiPanel.Icon.NONE, Component.translatable("hemomancy.jei.blood_infusion.in_world"),
+				JeiPanel.Stat.of(JeiPanel.Icon.NONE, Component.translatable(recipe.inPlace()
+								? "hemomancy.jei.blood_infusion.in_place" : "hemomancy.jei.blood_infusion.in_world"),
 						JeiPanel.BLOOD.muted(), Component.translatable("hemomancy.jei.blood_infusion.block.tip")));
 	}
 

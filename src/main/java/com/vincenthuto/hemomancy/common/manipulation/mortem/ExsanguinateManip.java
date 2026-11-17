@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -30,8 +31,8 @@ import java.util.Optional;
  *
  * <p>Targets the nearest enemy within 10 blocks that is below 30% of their
  * maximum health. On a valid target, deals lethal damage equal to 150% of the
- * target's remaining health and restores 250 blood to the caster as the life
- * force is converted. If no qualifying target exists, the cast fails.
+ * target's remaining health and, on a kill, returns 60% of the blood the cast
+ * cost as the life force is converted. If no qualifying target exists, the cast fails.
  *
  * <p>This is a finisher — it rewards patient, calculated combat over
  * mindless spamming.
@@ -43,8 +44,10 @@ public class ExsanguinateManip extends BloodManipulation {
 	private static final float HP_THRESHOLD_FRACTION = 0.30f;
 	/** Damage multiplier applied to the target's current health. */
 	private static final float DRAIN_DAMAGE_MULTIPLIER = 1.5f;
-	/** Blood restored to the caster per execution. */
-	private static final double BLOOD_RESTORE = 250.0;
+	/** Share of the blood paid for the cast that an execution returns (LP-7). */
+	public static final double REFUND_FRACTION = 0.6D;
+	public static final String REFUND_SOURCE = "exsanguinate_refund";
+	public static final String REFUND_LABEL = "blood_source.hemomancy.exsanguinate_refund";
 	/** Bosses cannot be executed outright: the drain is capped at this much (before Crimson Mastery). */
 	public static final float BOSS_DAMAGE_CAP = 12.0F;
 
@@ -95,19 +98,16 @@ public class ExsanguinateManip extends BloodManipulation {
 		float mastery = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * mastery;
 		// SchoolCombatEvents applies the same cap again after temper affinity.
-		if (ManipulationReactiveEvents.isBoss(target)) drainDamage = Math.min(BOSS_DAMAGE_CAP * mastery, drainDamage);
+		if (HemoEntityPredicates.isBoss(target)) drainDamage = Math.min(BOSS_DAMAGE_CAP * mastery, drainDamage);
 		if (!ManipulationParticles.hurt(this, target, world.damageSources().magic(),
 				(drainDamage)) || target.isAlive()) return;
 		HemomancyTendrilEffects.exsanguinate(player, target);
         ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.MORTEM_BURST, target.position(), target.position(), .7, 24);
 
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
-		if (volume != null && volume.isActive()) {
-			double toRestore = Math.min(BLOOD_RESTORE, volume.getMaxBloodVolume() - volume.getBloodVolume());
-			volume.addBloodVolume(toRestore);
-			if (player instanceof ServerPlayer serverPlayer) {
-				BloodVolumeEvents.syncVolume(serverPlayer, volume);
-			}
+		double refund = BloodManipulation.paidForCurrentCast() * REFUND_FRACTION;
+		if (refund > 0.0D && player instanceof ServerPlayer serverPlayer) {
+			BloodFlowLedger.applyDirectIncome(serverPlayer, HemoCapabilityAccess.getBloodVolume(serverPlayer),
+					REFUND_SOURCE, REFUND_LABEL, BloodFlowContribution.Category.CAST, refund, 1);
 		}
 
 		world.playSound(null, center, SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.7f, 1.8f);

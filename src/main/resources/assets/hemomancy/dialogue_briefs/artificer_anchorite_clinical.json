@@ -19,6 +19,102 @@
   "about": "the Vein-Mason saying the first wound answered another, and inviting the player to take the next pattern when ready to choose for themselves",
   "tone": "spare, approving"
  },
+ "hemomancy.anchorite.craft.carried.join.line1": {
+  "about": "the Vein-Mason explaining the living run must touch both openings by faces or edges, be at most sixty-four cells, and both veins must be the player's",
+  "tone": "exact"
+ },
+ "hemomancy.anchorite.craft.carried.join.line2": {
+  "about": "the Vein-Mason explaining the player feeds the near opening as for any crossing and the run carries them to the far one",
+  "tone": "procedural"
+ },
+ "hemomancy.anchorite.craft.carried.limits.line1": {
+  "about": "the Vein-Mason explaining a Vein Node is not a destination and a Terrestrial Speculum's temporary opening is never carried",
+  "tone": "austere"
+ },
+ "hemomancy.anchorite.craft.carried.limits.line2": {
+  "about": "the Vein-Mason explaining a crossing between two worlds is never carried, since the run lies in one world",
+  "tone": "austere"
+ },
+ "hemomancy.anchorite.craft.carried.line1": {
+  "about": "the Vein-Mason confirming one living run joining two of the player's Earthen Veins can carry them, and that gouge alone carries no one",
+  "tone": "austere"
+ },
+ "hemomancy.anchorite.craft.carried.line2": {
+  "about": "the Vein-Mason giving the order: grow the run first, then stent both openings with Iron Bars",
+  "tone": "procedural"
+ },
+ "hemomancy.anchorite.craft.carried.price.line1": {
+  "about": "the Vein-Mason giving the flat price of one hundred and twenty-five millilitres, against 500 to 3,000 by distance without a living run",
+  "tone": "exact"
+ },
+ "hemomancy.anchorite.craft.carried.price.line2": {
+  "about": "the Vein-Mason explaining the price is paid while feeding the opening and the crossing begins once it is fully fed",
+  "tone": "procedural"
+ },
+ "hemomancy.anchorite.craft.ground_marks.basin.line1": {
+  "about": "the Vein-Mason explaining a Venous Basin holds a real bowl of blood that runs down gutters under its spout to feed a machine or farmland while fresh",
+  "tone": "procedural"
+ },
+ "hemomancy.anchorite.craft.ground_marks.basin.line2": {
+  "about": "the Vein-Mason explaining the bowl sets after about five minutes, its clot comes out as Sanguine Formations by Absorption, and two basins on one run share the fuller stream",
+  "tone": "exact"
+ },
+ "hemomancy.anchorite.craft.ground_marks.cut.line1": {
+  "about": "the Vein-Mason explaining Vascular Dowsing with swept held Projection cuts each face it passes, and Blood Absorption fills a cut back in",
+  "tone": "procedural, exact"
+ },
+ "hemomancy.anchorite.craft.ground_marks.cut.line2": {
+  "about": "the Vein-Mason explaining water stops at a gouge and lies over it without washing it, and projecting into it pulses up to sixty-four joined cells",
+  "tone": "exact"
+ },
+ "hemomancy.anchorite.craft.ground_marks.line1": {
+  "about": "the Vein-Mason saying the ground carries blood in channels like a body: a stain dries on stone, a gouge carries a pulse, tissue grown along a gouge becomes a living vein",
+  "tone": "austere, exact"
+ },
+ "hemomancy.anchorite.craft.ground_marks.line2": {
+  "about": "the Vein-Mason promising to give each step once, in the order they are made",
+  "tone": "austere"
+ },
+ "hemomancy.anchorite.craft.ground_marks.vein.line1": {
+  "about": "the Vein-Mason explaining a Vein Node at the end of a gouge, fed by projected blood, grows tissue along the gouge a few cells a pulse, and that a vein untended for a day withers back to gouge",
+  "tone": "procedural, austere"
+ },
+ "hemomancy.anchorite.craft.ground_marks.vein.line2": {
+  "about": "the Vein-Mason giving the limits and cost: sixteen cells from the third Degree and more after, moving blood from the fuller tank to the emptier within thirty-two blocks for a millilitre a second",
+  "tone": "exact"
+ },
+ "hemomancy.anchorite.craft.walls.ice.line1": {
+  "about": "the Vein-Mason explaining held swept Projection raises an ice wall three high along the stream's path, joined even at speed",
+  "tone": "procedural"
+ },
+ "hemomancy.anchorite.craft.walls.ice.line2": {
+  "about": "the Vein-Mason explaining the ice never closes over anyone in its path, and holding the stream on the wall keeps that stretch standing without adding more",
+  "tone": "exact"
+ },
+ "hemomancy.anchorite.craft.walls.iron.line1": {
+  "about": "the Vein-Mason explaining a held sweep raises iron one block at a time, each block stopping hostile shots and passing the player's own",
+  "tone": "procedural"
+ },
+ "hemomancy.anchorite.craft.walls.iron.line2": {
+  "about": "the Vein-Mason giving the limit of twelve iron blocks and telling the player to let some fall before drawing more",
+  "tone": "blunt"
+ },
+ "hemomancy.anchorite.craft.walls.line1": {
+  "about": "the Vein-Mason naming the two wall memories, Glacial Rampart in ice and Ferric Rampart in iron, which still cast on R",
+  "tone": "plain"
+ },
+ "hemomancy.anchorite.craft.walls.line2": {
+  "about": "the Vein-Mason saying a wall burns Temper and blood like any working, and promising the steps and what a scar does to the burn",
+  "tone": "austere"
+ },
+ "hemomancy.anchorite.craft.walls.scars.line1": {
+  "about": "the Vein-Mason explaining ice burns Congeatio and iron Ferric, and an active scar of that temper cuts the burn by a quarter per tier",
+  "tone": "exact"
+ },
+ "hemomancy.anchorite.craft.walls.scars.line2": {
+  "about": "the Vein-Mason explaining a dry temper still raises the wall at more blood and a shorter stand, then asking where the player feels it in the body when dry",
+  "tone": "examining, austere"
+ },
  "hemomancy.anchorite.d5.activation": {
   "about": "the Vein-Mason explaining how to run a Thelemic dose: distill and drink it, equip and select its memory, press the manipulation-use key to enable it (spending blood and reserve), and crouch with the key to arm an overexertion response costing twice the blood and two-and-a-half times the strain",
   "tone": "clipped, instructive"
@@ -199,6 +295,14 @@
   "about": "the Vein-Mason explaining that routing through a first pattern eases strain by five percent, matching scars share one route, and only the strongest route applies",
   "tone": "flat, exacting"
  },
+ "hemomancy.anchorite.inquiry.venous_basin.line1": {
+  "about": "the Vein-Mason identifying a Venous Basin as a bowl of real blood whose gutters carry it to what they end at",
+  "tone": "practical"
+ },
+ "hemomancy.anchorite.inquiry.venous_basin.line2": {
+  "about": "the Vein-Mason advising to pour only what will be used, since the bowl sets in about five minutes and its clot comes out under Absorption",
+  "tone": "practical"
+ },
  "hemomancy.anchorite.item_hint": {
   "about": "the Vein-Mason inviting the player to set an item before them so they can say what it asks of the vessel",
   "tone": "austere, quiet"
@@ -359,6 +463,134 @@
   "about": "the Artificer demanding to know where the armor is, and insisting it must be worn on the player, since armor in a pack does not count for a worn vow",
   "tone": "gruff, pointed"
  },
+ "hemomancy.artificer.craft.climb.cleats.line1": {
+  "about": "the Artificer saying how the Armature fits Hematic Cleats: cleats in a bowl, boots on, into the frame, the blood of a hematic iron graft, and the boots stay",
+  "tone": "practical"
+ },
+ "hemomancy.artificer.craft.climb.cleats.line2": {
+  "about": "the Artificer naming which boots take cleats, that they survive repair, that they do nothing without the roots, and that the wheel turns them off",
+  "tone": "blunt"
+ },
+ "hemomancy.artificer.craft.climb.line.line1": {
+  "about": "the Artificer saying Tendon Line roots on a face up to three times reach off under held Projection, and is moved by throwing it again",
+  "tone": "procedural"
+ },
+ "hemomancy.artificer.craft.climb.line.line2": {
+  "about": "the Artificer explaining held Absorption hauls the player to the root without falling, and when the line snaps",
+  "tone": "procedural"
+ },
+ "hemomancy.artificer.craft.climb.line1": {
+  "about": "the Artificer explaining Venous Cling is an Animus memory with no cast that works through Projection held on a touched wall or ceiling",
+  "tone": "plain"
+ },
+ "hemomancy.artificer.craft.climb.line2": {
+  "about": "the Artificer sending the player to the Mnemonist for the memory itself, and offering how to move on a wall and what to wear",
+  "tone": "plain"
+ },
+ "hemomancy.artificer.craft.climb.root.line1": {
+  "about": "the Artificer explaining veins root hands and feet into the face so the player stops falling, and how walking toward, away or sideways climbs, descends or traverses",
+  "tone": "procedural"
+ },
+ "hemomancy.artificer.craft.climb.root.line2": {
+  "about": "the Artificer giving the cling's cost (6 mL to root, 4 mL a second on walls, 6 under ceilings) and when it lets go",
+  "tone": "exact"
+ },
+ "hemomancy.artificer.craft.hot_runs.feeder.line1": {
+  "about": "the Artificer explaining a stocked Catalyst Feeder beside a lit run dissolves another catalyst each time it would go dark, keeping a hallway lit",
+  "tone": "practical"
+ },
+ "hemomancy.artificer.craft.hot_runs.feeder.line2": {
+  "about": "the Artificer saying the feeder neither lights a dark run nor feeds while its owner is away, dead or short, and warning that a stream or a bucket on a gouge erases it",
+  "tone": "clipped"
+ },
+ "hemomancy.artificer.craft.hot_runs.heat.line1": {
+  "about": "the Artificer explaining coal or a fervent enzyme makes a run hot: it smelts what lies on it, lights campfires and candles and burns furnaces beside it with something to cook",
+  "tone": "practical"
+ },
+ "hemomancy.artificer.craft.hot_runs.heat.line2": {
+  "about": "the Artificer explaining a hot run lights and burns only for whoever lit it while they are alive in the same world, and otherwise only smelts",
+  "tone": "matter-of-fact"
+ },
+ "hemomancy.artificer.craft.hot_runs.line1": {
+  "about": "the Artificer giving the first step of a hot run in hand order: select Vascular Dowsing, hold Projection, drag it across the stone, every face crossed is gouged",
+  "tone": "brisk, hands-on"
+ },
+ "hemomancy.artificer.craft.hot_runs.line2": {
+  "about": "the Artificer explaining projecting into the run pulses up to sixty-four connected cells, and an off-hand catalyst during the pulse sets the run's use",
+  "tone": "brisk, procedural"
+ },
+ "hemomancy.artificer.craft.hot_runs.uses.line1": {
+  "about": "the Artificer listing run uses: glowstone or incandescent enzyme for light, iron or ferric enzyme to carry items, bone meal or vivacious enzyme to feed growth",
+  "tone": "clipped, practical"
+ },
+ "hemomancy.artificer.craft.hot_runs.uses.line2": {
+  "about": "the Artificer listing more uses: packed ice or frigid enzyme freezes water, ink or umbral enzyme hides the run, a compass makes the nearest end flare",
+  "tone": "clipped"
+ },
+ "hemomancy.artificer.craft.staff.dig.line1": {
+  "about": "the Artificer explaining two Ferric memories make Projection mine, and Lode Draw follows a lode a block a pulse, breaking it loose on release",
+  "tone": "practical"
+ },
+ "hemomancy.artificer.craft.staff.dig.line2": {
+  "about": "the Artificer explaining Hematic Hewing cuts a 1x2 tunnel a second or 3x3 when sneaking after starting the hold, without Fortune or Silk Touch",
+  "tone": "procedural"
+ },
+ "hemomancy.artificer.craft.staff.forms.line1": {
+  "about": "the Artificer explaining the pickaxe form comes with the bond via Conjure Pickaxe, taking iron ore at once, diamonds from the second ring, obsidian from the fourth",
+  "tone": "procedural"
+ },
+ "hemomancy.artificer.craft.staff.forms.line2": {
+  "about": "the Artificer explaining the form has no durability but costs blood by hardness (3 mL stone, 6 ore), digs like a bare hand when dry, and a real pickaxe is better for long work",
+  "tone": "practical, blunt"
+ },
+ "hemomancy.artificer.craft.staff.line1": {
+  "about": "the Artificer saying blood spent through the Staff or drawn from a creature stays in it, blood poured into a tank, basin or station does not count, and enough of it lays a visible growth ring",
+  "tone": "plain, approving"
+ },
+ "hemomancy.artificer.craft.staff.line2": {
+  "about": "the Artificer giving the ring thresholds (5,000 mL, 25,000, 100,000, 300,000, 750,000) and noting skills and grafts are chosen while rings come only from use",
+  "tone": "matter-of-fact"
+ },
+ "hemomancy.artificer.craft.staff.rings.line1": {
+  "about": "the Artificer listing the first three rings: half a block of reach, iron-tool digging including diamond ore, then another block of reach and faster blood",
+  "tone": "clipped, exact"
+ },
+ "hemomancy.artificer.craft.staff.rings.line2": {
+  "about": "the Artificer listing the last two rings: diamond-tool digging including obsidian, then another block of reach and form swaps 25 mL cheaper down to 25",
+  "tone": "clipped, exact"
+ },
+ "hemomancy.artificer.craft.strand_line.crack.line1": {
+  "about": "the Artificer saying Whipcrack makes every accent hit harder and last longer: a lash crack, a held memory click",
+  "tone": "clipped"
+ },
+ "hemomancy.artificer.craft.strand_line.crack.line2": {
+  "about": "the Artificer explaining Deep Brand makes brands set faster and hold longer",
+  "tone": "clipped"
+ },
+ "hemomancy.artificer.craft.strand_line.line1": {
+  "about": "the Artificer listing the six strand skills on the Staff's tree by Degree: Long Strand second, Taut Line and Free Hand third, Whipcrack and Deep Brand fifth, Second Strand sixth",
+  "tone": "matter-of-fact"
+ },
+ "hemomancy.artificer.craft.strand_line.line2": {
+  "about": "the Artificer sending the player to the Mnemonist for what strands are and which memories hold them, and offering to explain the skills",
+  "tone": "plain"
+ },
+ "hemomancy.artificer.craft.strand_line.reach.line1": {
+  "about": "the Artificer saying Long Strand lengthens a lash and every held memory, pick reach with it, and Taut Line makes a lash tip follow the hand quicker",
+  "tone": "clipped"
+ },
+ "hemomancy.artificer.craft.strand_line.reach.line2": {
+  "about": "the Artificer explaining Free Hand restores pace while a strand is out, up to walking speed",
+  "tone": "clipped"
+ },
+ "hemomancy.artificer.craft.strand_line.twin.line1": {
+  "about": "the Artificer calling Second Strand late work: with the off hand empty or in a cell hand a held lash pours a twin that trails at half damage and never cracks",
+  "tone": "practical"
+ },
+ "hemomancy.artificer.craft.strand_line.twin.line2": {
+  "about": "the Artificer warning the twin costs half again the blood and is decided when the strand opens, so clear the off hand first",
+  "tone": "practical, firm"
+ },
  "hemomancy.artificer.d7_lineage.edacious": {
   "about": "a short label naming the Edacious lineage",
   "tone": "plain label"
@@ -438,6 +670,14 @@
  "hemomancy.artificer.item_inquiry.aculeate_vitriol.line2": {
   "about": "the Artificer asking whether the player wants armor that remembers who hurt it and hits back, and telling them to put the vitriol in the Armature",
   "tone": "gruff, dryly teasing"
+ },
+ "hemomancy.artificer.item_inquiry.catalyst_feeder.line1": {
+  "about": "the Artificer identifying the Catalyst Feeder and telling the player to set it beside a lit gouge run and stock it",
+  "tone": "practical"
+ },
+ "hemomancy.artificer.item_inquiry.catalyst_feeder.line2": {
+  "about": "the Artificer explaining it adds a catalyst whenever the run would go dark, and does nothing empty or beside a dark run",
+  "tone": "practical"
  },
  "hemomancy.artificer.item_inquiry.chromatic_sublimate.line1": {
   "about": "the Artificer identifying Chromatic Sublimate as Prismatic work: flash, misdirection, spectacle and angles that leave a strike unsure where it lands",
@@ -592,7 +832,7 @@
   "tone": "gruff, instructive"
  },
  "hemomancy.artificer.living_staff.use": {
-  "about": "the Artificer explaining Living Staff use: the bond is earned once formed, select Conjure Staff to recall it to an empty hand, select Blood Absorption or Blood Projection and hold the Staff to channel it, use it on a Cardinal Focus to start a matching rite, and an early staff will not raise Degree or let inactive blood answer a rite",
+  "about": "the Artificer explaining Living Staff use: the bond is earned once formed, select Conjure Staff to recall it to an empty hand, hold the Staff to channel whichever verb the verb key has set (Projection or Absorption), use it on a Cardinal Focus to start a matching rite, and an early staff will not raise Degree or let inactive blood answer a rite",
   "tone": "gruff, instructive"
  },
  "hemomancy.artificer.monolithic_armature.line1": {
@@ -783,6 +1023,10 @@
   "about": "a short title for the Borrowed Physiology injection lesson",
   "tone": "plain label"
  },
+ "hemomancy.clinical.inquiry.alchemist_later": {
+  "about": "the Alchemist saying the item belongs to a later lesson and sending the player to their own first-Degree sampling and observation practice",
+  "tone": "curt, procedural"
+ },
  "hemomancy.clinical.inquiry.alembic": {
   "about": "the Alchemist explaining that at Degree 2 the Ghastly Alembic opens reagent distillation and broader temper work, contrasting microscopy that describes a specimen with distillation and centrifugation that extract useful material",
   "tone": "dry, informative"
@@ -790,6 +1034,10 @@
  "hemomancy.clinical.inquiry.artificer_cabinet": {
   "about": "the Artificer saying Bloodwood holds the cells and Hematic Iron reinforces the frame, that provenance and exact specimen matching are the Alchemist's lessons, and that after the player uses the Cabinet and is referred they can discuss converting it for the field",
   "tone": "gruff, deflecting"
+ },
+ "hemomancy.clinical.inquiry.artificer_later": {
+  "about": "the Artificer saying the item is not for the player yet and sending them to the Alchemist's first-Degree sampling and observation practice first",
+  "tone": "brisk, sends on"
  },
  "hemomancy.clinical.inquiry.artificer_microscope": {
   "about": "the Artificer admitting they can reproduce the microscope housing but cannot say why one bear's blood freezes in the glass while another's boils, and telling the player to ask the Alchemist",
@@ -827,9 +1075,9 @@
   "about": "the Alchemist explaining an identified vial records tempers and properties, that after the Borrowed Physiology lesson holding Use for 0.8 seconds injects it, the tooltip shows temporary responses and drawbacks, the empty vial is kept, and Transfusion Saturation prevents immediate re-injection",
   "tone": "dry, informative"
  },
- "hemomancy.clinical.inquiry.later": {
-  "about": "the Alchemist saying the item belongs to a later lesson and telling the player to begin with the Degree-1 sampling and observation practice",
-  "tone": "curt, redirecting"
+ "hemomancy.clinical.inquiry.mnemonist_later": {
+  "about": "the Mnemonist stating the item belongs to a later lesson and naming the Alchemist's first-Degree sampling and observation practice as the start",
+  "tone": "plain, stating"
  },
  "hemomancy.clinical.inquiry.sampling": {
   "about": "the Alchemist explaining the Living Syringe draws creature blood into empty vials in its loaded eight-vial rack, is needed for thick-skinned creatures and NPCs that loose vials cannot draw from, and that the player should bring one filled vial before building a large collection",
@@ -1063,6 +1311,58 @@
   "about": "telling the Vein-Mason the player has committed their first scar loadout and asking for the reward",
   "tone": "steady, plain"
  },
+ "hemomancy.dialogue.anchorite.option.craft.back": {
+  "about": "going back to the Vein-Mason's lesson",
+  "tone": "plain"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.carried": {
+  "about": "asking the Vein-Mason whether a living vein can carry the player",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.carried.join": {
+  "about": "asking the Vein-Mason how the living run must be joined",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.carried.limits": {
+  "about": "asking the Vein-Mason where a living vein will not carry the player",
+  "tone": "cautious"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.carried.price": {
+  "about": "asking the Vein-Mason what a carried crossing costs",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.ground_marks": {
+  "about": "asking the Vein-Mason whether the ground carries blood the way a body does",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.ground_marks.basin": {
+  "about": "asking the Vein-Mason what a Venous Basin is for",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.ground_marks.cut": {
+  "about": "asking the Vein-Mason how a gouge is cut",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.ground_marks.vein": {
+  "about": "asking the Vein-Mason how to grow a living vein",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.walls": {
+  "about": "asking the Vein-Mason whether blood can raise a wall",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.walls.ice": {
+  "about": "asking the Vein-Mason how to raise the ice wall",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.walls.iron": {
+  "about": "asking the Vein-Mason about the iron wall",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.anchorite.option.craft.walls.scars": {
+  "about": "asking the Vein-Mason whether scars change wall work",
+  "tone": "curious"
+ },
  "hemomancy.dialogue.anchorite.option.diagnose": {
   "about": "asking the Vein-Mason to read the player's damaged vessel",
   "tone": "wary, plain"
@@ -1150,6 +1450,74 @@
  "hemomancy.dialogue.artificer.option.claim_worn_vow_reward": {
   "about": "telling the Artificer the player has made Hematic Iron armor and claiming the reward",
   "tone": "steady, plain"
+ },
+ "hemomancy.dialogue.artificer.option.craft.back": {
+  "about": "going back a step in the Artificer's lesson",
+  "tone": "plain"
+ },
+ "hemomancy.dialogue.artificer.option.craft.climb": {
+  "about": "asking the Artificer whether blood can hold the player to a wall",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.climb.cleats": {
+  "about": "asking the Artificer what Hematic Cleats are for",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.climb.line": {
+  "about": "asking the Artificer about the Tendon Line",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.climb.root": {
+  "about": "asking the Artificer how to climb with Venous Cling",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.artificer.option.craft.hot_runs": {
+  "about": "asking the Artificer how to light a gouge run",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.artificer.option.craft.hot_runs.feeder": {
+  "about": "asking the Artificer how to keep a run lit",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.artificer.option.craft.hot_runs.heat": {
+  "about": "asking the Artificer what a hot run does",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.hot_runs.uses": {
+  "about": "asking the Artificer what a lit gouge run can do",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.staff": {
+  "about": "asking the Artificer how the Living Staff grows",
+  "tone": "interested"
+ },
+ "hemomancy.dialogue.artificer.option.craft.staff.dig": {
+  "about": "asking the Artificer whether the Staff can mine",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.staff.forms": {
+  "about": "asking the Artificer about the Staff's pickaxe form",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.artificer.option.craft.staff.rings": {
+  "about": "asking the Artificer what each growth ring gives",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.strand_line": {
+  "about": "asking the Artificer what the Staff's strand skill branch trains",
+  "tone": "interested"
+ },
+ "hemomancy.dialogue.artificer.option.craft.strand_line.crack": {
+  "about": "asking the Artificer about the later strand skills",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.strand_line.reach": {
+  "about": "asking the Artificer what the early strand skills do",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.artificer.option.craft.strand_line.twin": {
+  "about": "asking the Artificer what Second Strand is",
+  "tone": "curious"
  },
  "hemomancy.dialogue.artificer.option.crimson_vestment.briefing": {
   "about": "asking to begin the Crimson Vestment assignment",

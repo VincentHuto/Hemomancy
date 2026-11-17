@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerTuning;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -17,6 +19,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -49,6 +52,7 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	private int downedTicks;
 	private boolean dollsSummonedForThreat;
 	private UUID finaleOwner;
+	/** Players told this act or finale is someone else's; cleared when it ends. */
 	private boolean finaleLethal;
 	private static final byte WINDUP_EVENT = 70;
 	private static final byte WINDUP_END_EVENT = 71;
@@ -56,6 +60,10 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	public final AnimationState windupState = new AnimationState();
 	/** Ticks into the current defense move, counted from its start; -1 when none is running. */
 	private int moveTick = -1;
+	/** The game time a called Cue lands this performer's move, on the Ringmaster's beat; -1 for none. */
+	private long cueCommit = -1L;
+	/** The game time of this performer's last landed move, for the Cue's one-beat check. */
+	private long lastStrikeTime = -1L;
 
 	protected CircusPerformerEntity(EntityType<? extends CircusPerformerEntity> type, Level level) {
 		super(type, level);
@@ -151,7 +159,20 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 			clearThreat();
 			return;
 		}
-		if (!CircusPerformerRules.warningComplete(++warningTicks)) return;
+		// A called Cue keeps the Ringmaster's beat, ahead of this performer's own warning and cadence.
+		if (cueCommit >= 0L && moveTick < 0) {
+			setTarget(threat);
+			long start = cueCommit - defenseMove().windup();
+			long now = level().getGameTime();
+			if (now >= start) {
+				cueCommit = -1L;
+				beginDefenseMove(threat);
+				// Started a tick late (the call came after this performer's tick): count from the called start.
+				moveTick = (int) (now - start);
+			}
+			return;
+		}
+		if (moveTick < 0 && !CircusPerformerRules.warningComplete(++warningTicks)) return;
 		setTarget(threat);
 		if (moveTick >= 0) {
 			tickMove(threat);
@@ -168,6 +189,8 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	protected final void beginDefenseMove(LivingEntity target) {
 		moveTick = 0;
 		level().broadcastEntityEvent(this, WINDUP_EVENT);
+		level().playSound(null, blockPosition(), SoundInit.ENTITY_CIRCUS_PERFORMER_WINDUP.get(), SoundSource.HOSTILE,
+				0.8F, 0.9F + random.nextFloat() * 0.2F);
 		if (level() instanceof ServerLevel server) telegraphDefense(server, target, 0, defenseMove());
 	}
 
@@ -180,11 +203,33 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 		moveTick++;
 		if (move.stageAt(moveTick) == BossMoveTimeline.Stage.WINDUP && level() instanceof ServerLevel server)
 			telegraphDefense(server, target, moveTick, move);
-		if (moveTick == move.commitTick()) strikeDefense(target);
+		if (moveTick == move.commitTick()) {
+			lastStrikeTime = level().getGameTime();
+			strikeDefense(target);
+		}
 		if (move.stageAt(moveTick + 1) == BossMoveTimeline.Stage.COMPLETE) moveTick = -1;
 	}
 
+	/**
+	 * The Ringmaster's Cue: start this performer's move so it lands {@code commitIn} ticks from now, on the beat he
+	 * called. A performer that is downed, has no threat or is already striking keeps its own beat.
+	 */
+	public boolean answerCue(int commitIn) {
+		if (isDowned() || moveTick >= 0 || threatId == null) return false;
+		cueCommit = level().getGameTime() + Math.max(commitIn, defenseMove().windup());
+		return true;
+	}
+
+	public boolean awaitingCue() {
+		return cueCommit >= 0L;
+	}
+
+	public long lastStrikeTime() {
+		return lastStrikeTime;
+	}
+
 	private void cancelDefenseMove() {
+		cueCommit = -1L;
 		if (moveTick < 0) return;
 		moveTick = -1;
 		level().broadcastEntityEvent(this, WINDUP_END_EVENT);
@@ -236,8 +281,10 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 		boolean administrative = source.is(DamageTypes.GENERIC_KILL)
 				|| source.getEntity() instanceof Player player && player.isCreative();
 		if (administrative) return super.hurt(source, amount);
-		if (finaleOwner != null && (!(source.getEntity() instanceof Player player)
-				|| !finaleOwner.equals(player.getUUID()))) return false;
+		if (finaleOwner != null && !finaleOwner.equals(CircusPavilionStateRules.actingFor(source))) {
+			CircusPavilionStateRules.refuseBystander(this, CircusPavilionStateRules.actingFor(source), finaleOwner);
+			return false;
+		}
 		if (finaleLethal) return super.hurt(source, amount);
 		if (isDowned()) return false;
 		if (source.getEntity() instanceof LivingEntity attacker) {
@@ -390,6 +437,15 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 		finaleLethal = tag.getBoolean("CircusFinaleLethal");
 		setVariant(tag.getInt("CircusVariant"));
 		setActState(tag.getBoolean("CircusDowned") ? ActState.DOWNED : ActState.REST);
+	}
+
+	/**
+	 * D-34: whether this performer's strike may land on {@code victim}. Never on the troupe; through the shared
+	 * targeting rule; and during an act or finale only on its owner and the bodies they hold.
+	 */
+	public boolean canStrike(LivingEntity victim) {
+		if (victim == this || isTroupeMember(victim) || !ManipulationCombatHelper.canHarmFor(this, victim)) return false;
+		return finaleOwner == null || finaleOwner.equals(CircusPavilionStateRules.actingFor(victim));
 	}
 
 	protected boolean isTroupeMember(LivingEntity entity) {

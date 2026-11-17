@@ -21,7 +21,11 @@ import net.minecraft.world.phys.Vec3;
 public final class CircusAcrobatEntity extends CircusPerformerEntity {
 	private static final EntityDataAccessor<Integer> FLIP_TICKS = SynchedEntityData.defineId(
 			CircusAcrobatEntity.class, EntityDataSerializers.INT);
+	/** FX-26: tells clients the next position update is the vault, to snap to rather than slide. */
+	private static final byte VAULT_EVENT = 72;
 	private int attackCooldown;
+	/** Client side: the next position update is a vault and lands at once. */
+	private boolean snapNextMove;
 	/** Where a wound-up vault will land, locked when the wind-up starts; null for a plain lunge. */
 	private Vec3 vaultTarget;
 
@@ -32,7 +36,7 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 26.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.30D).add(Attributes.ARMOR, 1.0D)
-				.add(Attributes.FOLLOW_RANGE, 24.0D);
+				.add(Attributes.ATTACK_DAMAGE, 4.0D).add(Attributes.FOLLOW_RANGE, 24.0D);
 	}
 
 	@Override
@@ -95,6 +99,8 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 		} else {
 			getNavigation().moveTo(target, 1.15D);
 			if (distanceToSqr(target) <= 4.0D) {
+				// The lunge stops where it stands, short of the target's box, instead of walking on into it.
+				getNavigation().stop();
 				vaultTarget = null;
 				beginDefenseMove(target);
 			}
@@ -105,12 +111,11 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 	protected void telegraphDefense(ServerLevel server, LivingEntity target, int tick, BossMoveTimeline move) {
 		float charge = tick / (float) move.windup();
 		CircusEffects.gather(server, position().add(0.0D, 0.9D, 0.0D), CircusEffects.BONE, charge);
-		if (tick % 3 != 0) return;
 		if (vaultTarget != null) {
-			BossTelegraphs.ring(server, vaultTarget, 1.0D, CircusEffects.CRIMSON, 16);
-			BossTelegraphs.ring(server, vaultTarget, 2.5D * charge + 0.3D, CircusEffects.BONE, 20);
+			CircusEffects.ringFootprint(server, vaultTarget, 1.0D, charge);
 		} else {
-			BossTelegraphs.line(server, position(), target.position(), CircusEffects.CRIMSON);
+			CircusEffects.lineFootprint(server, position(), target.position(), CircusEffects.BONE);
+			CircusEffects.ringFootprint(server, target.position(), 0.9D, charge);
 		}
 	}
 
@@ -118,18 +123,45 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 	protected void strikeDefense(LivingEntity target) {
 		boolean vaulted = vaultTarget != null && vaultTo(vaultTarget);
 		vaultTarget = null;
-		if (distanceToSqr(target) > (vaulted ? 6.25D : 4.0D)) return;
-		if (target.hurt(damageSources().mobAttack(this), 4.0F) && level() instanceof ServerLevel server)
+		if (distanceToSqr(target) > (vaulted ? 6.25D : 4.0D) || !canStrike(target)) return;
+		if (target.hurt(damageSources().mobAttack(this), (float) getAttributeValue(Attributes.ATTACK_DAMAGE)) && level() instanceof ServerLevel server)
 			CircusEffects.impact(server, target.position().add(0.0D, 1.0D, 0.0D), 0.8D);
 	}
 
 	private boolean vaultTo(Vec3 destination) {
 		if (!canLandAt(destination)) return false;
 		if (level() instanceof ServerLevel server) CircusEffects.vault(server, position());
+		level().broadcastEntityEvent(this, VAULT_EVENT);
+		getNavigation().stop();
 		teleportTo(destination.x, destination.y, destination.z);
-		if (level() instanceof ServerLevel server) CircusEffects.vault(server, position());
+		if (level() instanceof ServerLevel server) {
+			CircusEffects.vault(server, position());
+			BossTelegraphs.glow(server, position().add(0.0D, 1.0D, 0.0D), CircusEffects.BONE, 14, 0.45D);
+		}
 		level().playSound(null, blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.45F, 1.5F);
 		return true;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id == VAULT_EVENT) {
+			snapNextMove = true;
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
+
+	/** The vault lands in one frame under its covering burst, instead of the client smoothing it into a slide. */
+	@Override
+	public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps) {
+		if (!snapNextMove) {
+			super.lerpTo(x, y, z, yRot, xRot, steps);
+			return;
+		}
+		snapNextMove = false;
+		setPos(x, y, z);
+		setRot(yRot, xRot);
+		setOldPosAndRot();
 	}
 
 	private boolean canLandAt(Vec3 destination) {

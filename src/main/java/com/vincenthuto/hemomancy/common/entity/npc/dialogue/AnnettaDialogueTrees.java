@@ -44,7 +44,6 @@ public final class AnnettaDialogueTrees {
                         new DialogueOption("hemomancy.dialogue.annetta.option.lower_vial", null, null)
                 )))
                 .addNode(new DialogueNode("truth", List.of(
-                        "hemomancy.annetta.draught.truth.line1",
                         "hemomancy.annetta.draught.truth.line2",
                         "hemomancy.annetta.draught.truth.line3"
                 ), List.of(

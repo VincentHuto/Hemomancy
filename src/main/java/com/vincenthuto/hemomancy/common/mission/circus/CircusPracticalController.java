@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.Circu
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -44,6 +45,7 @@ public final class CircusPracticalController {
             player.displayClientMessage(Component.translatable("message.hemomancy.circus.school.degree_required", lesson.degree()), false);
             return false;
         }
+        if (player.level().getDifficulty() == Difficulty.PEACEFUL) { systemMessage(player, "peaceful"); return false; }
         if (!CircusApprenticeshipProgress.knows(player, summon) || (guest && (!CircusApprenticeshipProgress.practicalComplete(player, summon)
                 || !CircusSchoolQuests.guestEligible(player)))) { message(player, "unlock_first"); return false; }
         var stack = player.getMainHandItem().getItem() instanceof MarionetteCrossbarItem ? player.getMainHandItem() : player.getOffhandItem();
@@ -79,7 +81,8 @@ public final class CircusPracticalController {
         if (session == null) return;
         if (!player.isAlive() || player.isSpectator() || player.level().getGameTime() > session.expires
                 || !session.ring.closerToCenterThan(player.position(), 20)
-                || !(player.serverLevel().getEntity(session.teacher) instanceof CircusPerformerEntity teacher) || !teacher.canTeachNow()) {
+                || !(player.serverLevel().getEntity(session.teacher) instanceof CircusPerformerEntity teacher) || !teacher.canTeachNow()
+                || player.level().getDifficulty() == Difficulty.PEACEFUL || livingTargets(player, session) < targetsNeeded(session.summon)) {
             cancel(player); message(player, "retry"); return;
         }
         for (Mob body : MarionetteCrossbarItem.activeSummonsForOwner(player)) {
@@ -99,6 +102,14 @@ public final class CircusPracticalController {
                 if (diverted >= 2) { finish(player); return; }
             }
         }
+    }
+    /** The rehearsal threats an exercise cannot pass without: the Mummer diverts two and the Bellows burns two. */
+    public static int targetsNeeded(String summon) {
+        return summon.equals(PuppeteerSummonDefinitions.SCARLET_MUMMER) || summon.equals(PuppeteerSummonDefinitions.CINDER_BELLOWS) ? 2 : 1;
+    }
+    private static long livingTargets(ServerPlayer player, Session session) {
+        return session.targets.stream().map(player.serverLevel()::getEntity)
+                .filter(entity -> entity instanceof LivingEntity living && living.isAlive()).count();
     }
     @SubscribeEvent public static void cleanup(EntityTickEvent.Pre event) {
         Entity target = event.getEntity();
@@ -158,7 +169,7 @@ public final class CircusPracticalController {
         Session session = SESSIONS.get(player.getUUID());
         if (session == null || !player.isAlive() || player.isSpectator() || !session.ring.closerToCenterThan(player.position(), 20)) return;
         if (session.guest) CircusSchoolQuests.guestReward(player);
-        else CircusApprenticeshipProgress.completePractical(player, session.summon);
+        else CircusSchoolGifts.passPractical(player, session.summon);
         cancel(player); message(player, "passed");
     }
     /** Called by {@code TransientServerStateEvents} when the player logs out. */

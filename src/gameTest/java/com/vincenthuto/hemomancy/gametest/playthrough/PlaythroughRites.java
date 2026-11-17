@@ -338,64 +338,6 @@ public final class PlaythroughRites {
 		};
 	}
 
-	/**
-	 * Wraps {@code base} for an ORDEAL deadlock: when every anchor that still asks for blood is also flickering or
-	 * broken, each second's deficit pressure breaks them again faster than bare Projection (5 mL a tick, 50 mL a repair)
-	 * can mend them, and a repair always comes before a fill. Then the aim is the next unpaid node of a support sigil that
-	 * has not woken (an optional one too, such as a grand floor's Hematic Lattice), whose stability on waking buys the
-	 * window to refill. Otherwise {@code base}. Logged the first time it steps in.
-	 */
-	public static BiFunction<ActiveCardinalRite, CardinalRiteRecipe, Vec3> stabilizeWhenDeadlocked(PlaythroughPlayer p,
-			BiFunction<ActiveCardinalRite, CardinalRiteRecipe, Vec3> base) {
-		return stabilizeWhenDeadlocked(p, base, null);
-	}
-
-	/** Ticks a deadlock may last, with no sleeping support sigil left, before {@code rescues} steps in. */
-	public static final int DEADLOCK_RESCUE_TICKS = 400;
-
-	/**
-	 * As {@link #stabilizeWhenDeadlocked(PlaythroughPlayer, BiFunction)}; when {@code rescues} is not null and the
-	 * deadlock outlasts {@link #DEADLOCK_RESCUE_TICKS} with no sleeping support sigil left, the dry anchors are filled
-	 * (ARRANGE, logged DEGRADED: decision CHAIN-1, a solo caster cannot climb out) and {@code rescues[0]} counts it, so a
-	 * long run can go on to what comes after the rite. The rite still completes through its own code.
-	 */
-	public static BiFunction<ActiveCardinalRite, CardinalRiteRecipe, Vec3> stabilizeWhenDeadlocked(PlaythroughPlayer p,
-			BiFunction<ActiveCardinalRite, CardinalRiteRecipe, Vec3> base, int[] rescues) {
-		boolean[] logged = new boolean[1];
-		long[] stuckSince = {-1L};
-		return (rite, recipe) -> {
-			if (recipe != null && recipe.getCeremony() != null && rite.getPhase() == CardinalRitePhase.ORDEAL
-					&& anchorsDeadlocked(rite, recipe)) {
-				Vec3 node = sleepingSupportNode(p, rite, recipe);
-				if (node != null) {
-					if (!logged[0]) {
-						logged[0] = true;
-						PlaythroughLog.note(p.helper(), "ORDEAL deadlock (every hungry anchor is also damaged, instability "
-								+ rite.getInstability() + "): tracing a sleeping support sigil for its stability");
-					}
-					return node;
-				}
-				long now = p.helper().getTick();
-				if (stuckSince[0] < 0) stuckSince[0] = now;
-				if (rescues != null && now - stuckSince[0] >= DEADLOCK_RESCUE_TICKS) {
-					List<String> filled = new ArrayList<>();
-					for (int index = 0; index < recipe.getCeremony().anchors().size(); index++) {
-						int need = rite.bloodNeededForAnchor(index);
-						if (need > 0 && rite.fillAnchor(index, need)) filled.add(index + ":" + need);
-					}
-					rescues[0]++;
-					stuckSince[0] = -1L;
-					PlaythroughNotRun.degraded(p.helper(), "ARRANGE filled the dry anchors " + filled + " after a "
-							+ DEADLOCK_RESCUE_TICKS + "-tick ORDEAL deadlock with no support sigil left (decision CHAIN-1); rescue "
-							+ rescues[0]);
-				}
-			} else {
-				stuckSince[0] = -1L;
-			}
-			return base == null ? null : base.apply(rite, recipe);
-		};
-	}
-
 	/** The waves that drain anchors (the source of the CHAIN-1 deadlock): left out of a pinned deck. */
 	public static final Set<String> DRAINING_WAVES = Set.of("bloodlicker_siphon", "covenant_pressure");
 
@@ -426,41 +368,6 @@ public final class PlaythroughRites {
 			}
 			if (prior != null) prior.accept(rite, ticks);
 		});
-	}
-
-	/** Some anchor still asks for blood, and every such anchor also needs an instability repair first. */
-	public static boolean anchorsDeadlocked(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		boolean hungry = false;
-		for (int index = 0; index < recipe.getCeremony().anchors().size(); index++) {
-			if (rite.bloodNeededForAnchor(index) <= 0) continue;
-			hungry = true;
-			if (rite.instabilityRepairBloodNeeded(index) <= 0) return false;
-		}
-		return hungry;
-	}
-
-	/** The next unpaid node of the first support sigil (required or not) that has not woken, or null. */
-	private static Vec3 sleepingSupportNode(PlaythroughPlayer p, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		ServerLevel level = p.player().serverLevel();
-		Set<BlockPos> occupied = new HashSet<>();
-		for (var anchor : recipe.getCeremony().anchors()) occupied.add(new BlockPos(anchor.x(), 0, anchor.z()));
-		for (var socket : recipe.getCeremony().supportSockets()) {
-			ResourceLocation id = Hemomancy.rloc(socket.suggestedSigil());
-			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(id);
-			if (sigil == null || sigil.nodes().isEmpty()) continue;
-			BlockPos placement = CardinalRiteSigilPlacementRules.resolveSupportPlacement(
-					new BlockPos(socket.x(), 0, socket.z()), sigil.nodes(), occupied);
-			occupied.addAll(CardinalRiteSigilPlacementRules.footprint(placement, sigil.nodes()));
-			if (rite.isSigilAwakened(id.toString())) continue;
-			int paid = rite.getSigilProgress().getOrDefault(id.toString(), 0);
-			if (paid >= sigil.nodes().size()) continue;
-			IchorianSigilDefinition.Node node = sigil.nodes().get(paid);
-			BlockPos surface = CardinalRiteSigilRules.surfaceAirPosition(level, rite.getCenterPos().offset(0, socket.y(), 0),
-					placement.getX() + (int) Math.round(node.x()), placement.getZ() + (int) Math.round(node.z()));
-			return CardinalRiteTargetGeometry.sigilAimPoint(rite.getCenterPos(), surface, placement.getX(), placement.getZ(),
-					node.x(), node.z());
-		}
-		return null;
 	}
 
 	/**

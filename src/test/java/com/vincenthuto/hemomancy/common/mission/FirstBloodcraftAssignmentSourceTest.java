@@ -3,8 +3,10 @@ package com.vincenthuto.hemomancy.common.mission;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class FirstBloodcraftAssignmentSourceTest {
 	private static final Path HELPER = Path.of(
@@ -77,10 +79,8 @@ public final class FirstBloodcraftAssignmentSourceTest {
 				"case HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD");
 		assertContains("handler re-checks eligibility", handler,
 				"if (!FirstBloodcraftAssignment.canClaim(player))");
-		assertContains("handler obtains rewards solely from the helper", handler,
-				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
-		assertContains("handler gives or drops every reward stack", handler,
-				"giveOrDropAtEntity(player, entityId, stack);");
+		assertContains("handler owes the rewards solely from the helper (PT-3)", handler,
+				"OwedRewards.owe(player, FirstBloodcraftAssignment.rewardStacks());");
 		assertContains("failed world drops fall back to the player", handler,
 				"if (entity.level().addFreshEntity(drop)) return;");
 		assertContains("Hermit farewell requires the personally claimed heart", handler,
@@ -90,25 +90,12 @@ public final class FirstBloodcraftAssignmentSourceTest {
 		assertContains("handler explains persistence failure", handler,
 				"hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed");
 
-		assertOrdered("eligibility is checked before inventory mutation", handler,
+		assertOrdered("eligibility is checked before the reward is owed", handler,
 				"if (!FirstBloodcraftAssignment.canClaim(player))",
-				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
-		assertOrdered("claim is persisted before any reward stack is granted", handler,
-				"FirstBloodcraftAssignment.markClaimed(player)",
-				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
+				"OwedRewards.owe(player, FirstBloodcraftAssignment.rewardStacks());");
+		assertOrdered("the exact stacks are owed before the one-time claim is recorded (PT-3)", handler,
+				"OwedRewards.owe(player, FirstBloodcraftAssignment.rewardStacks());",
+				"FirstBloodcraftAssignment.markClaimed(player)");
 	}
 
 	private static void assertOrdered(String label, String text, String first, String second) {

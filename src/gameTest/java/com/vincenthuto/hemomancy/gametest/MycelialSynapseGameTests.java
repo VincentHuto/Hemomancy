@@ -224,9 +224,9 @@ public final class MycelialSynapseGameTests {
 		}
 	}
 
-	/** Taking a middle synapse out forgets only that one: the one beyond keeps working, as a stake chain does. */
+	/** DS-2: taking a middle synapse out prunes the one beyond it, which no longer chains back to the heart. */
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void aCutOffSynapseKeepsWorking(GameTestHelper helper) {
+	public static void aCutOffSynapseIsPruned(GameTestHelper helper) {
 		ServerLevel level = helper.getLevel();
 		ServerPlayer player = apotheos(level, "synapse-chain");
 		HeartNodeSavedData data = HeartNodeSavedData.get(level);
@@ -246,9 +246,9 @@ public final class MycelialSynapseGameTests {
 
 			helper.setBlock(new BlockPos(8, 4, 8), Blocks.AIR);
 			helper.assertTrue(!data.entry(owner).synapses().contains(middle), "The middle record goes");
-			helper.assertTrue(data.entry(owner).synapses().contains(outer), "The outer synapse keeps working");
-			helper.assertTrue(data.entry(owner).footprint().connectedSynapses().equals(java.util.List.of(near)),
-					"Only the near synapse still chains back to the heart");
+			helper.assertTrue(!data.entry(owner).synapses().contains(outer), "The cut-off outer synapse is pruned");
+			helper.assertTrue(data.entry(owner).synapses().equals(java.util.List.of(near)),
+					"Only the near synapse is left, and it still chains back to the heart");
 			helper.succeed();
 		} finally {
 			data.remove(owner, heart);
@@ -264,7 +264,7 @@ public final class MycelialSynapseGameTests {
 		PendingBloodCraftManager.schedule(new PendingBloodCraftManager.PendingCraft(level, match,
 				pattern.getWidth(), pattern.getHeight(), pattern.getDepth(), iron,
 				new net.minecraft.world.item.ItemStack(BlockInit.mycelial_synapse.get()), 30, player, formation));
-		for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick();
+		for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick(level);
 	}
 
 	private static BloodStructureRecipe recipe(GameTestHelper helper) {

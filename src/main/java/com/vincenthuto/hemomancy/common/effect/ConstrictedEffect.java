@@ -10,7 +10,7 @@ public class ConstrictedEffect extends MobEffect {
 	public ConstrictedEffect(MobEffectCategory category, int color) {
 		super(category, color);
 		this.addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("constricted_movement_speed"),
-				ConstrictorCordRules.MOVEMENT_SPEED_MULTIPLIER - 1.0D,
+				ConstrictedRules.MOVEMENT_SPEED_MULTIPLIER - 1.0D,
 				AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 	}
 }

@@ -11,7 +11,6 @@ import java.util.OptionalInt;
 import com.vincenthuto.hemomancy.common.worldgen.structure.voyager.ActiveHarbingerVoyagerVesselPlacementRules;
 import com.vincenthuto.hemomancy.common.worldgen.structure.voyager.HarbingerVoyagerWreckPlacementRules;
 import com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeFootprintScan;
-import com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeTerrainColumns;
 
 public final class StructurePlacementChecks {
 	private static final int MAX_LAND_STRUCTURE_HEIGHT = 150;
@@ -23,6 +22,10 @@ public final class StructurePlacementChecks {
 	private static final int TEMPLE_RADIUS = 15;
 	private static final int TEMPLE_SAMPLE_STEP = 5;
 	private static final int MAX_TEMPLE_SURFACE_VARIATION = 6;
+	/** D-43: how far a troupe site's sampled ground may rise across its footprint. */
+	public static final int TROUPE_MAX_SLOPE = 6;
+	/** D-43: the troupe gate's coarse grid, in blocks. */
+	public static final int TROUPE_GRID = 8;
 
 	private StructurePlacementChecks() {
 	}
@@ -174,30 +177,62 @@ public final class StructurePlacementChecks {
 		return high - low <= MAX_TEMPLE_SURFACE_VARIATION;
 	}
 
-    // Validate the selected rotation and template, rather than a guessed radius around the chunk.
+    /**
+     * Chunk 15 T10 (D-43): a troupe site brings its own ground (a foundation skirt under the yard and beard_box
+     * terrain under the box), so the gate samples the laid-out footprint's corners, edge midpoints and a coarse grid
+     * ({@link TroupeFootprintScan}): each sampled column must be dry ground under the height limit, and all of them
+     * within {@link #TROUPE_MAX_SLOPE} blocks of each other.
+     */
     public static boolean isSuitableTroupeFootprint(Structure.GenerationContext context,
             net.minecraft.world.level.levelgen.structure.BoundingBox box) {
-        int[] range = {Integer.MAX_VALUE, Integer.MIN_VALUE};
-        var shared = new TroupeTerrainColumns(context);
-        return TroupeFootprintScan.matches(box.minX(), box.maxX(), box.minZ(), box.maxZ(),
-                (x, z) -> suitableTroupeColumn(context, box, range,
-                        context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(), context.randomState())),
-                (x, z) -> suitableTroupeColumn(context, box, range, shared.get(x, z)));
+        return troupeRefusal(context, box).isEmpty();
     }
 
-    private static boolean suitableTroupeColumn(Structure.GenerationContext context,
-            net.minecraft.world.level.levelgen.structure.BoundingBox box, int[] range,
-            net.minecraft.world.level.NoiseColumn column) {
-            var dryGround = troupeGround(column, context.heightAccessor().getMinBuildHeight(),
-                    context.heightAccessor().getMaxBuildHeight());
-            if (dryGround.isEmpty()) return false;
-            int ground = dryGround.getAsInt();
-            range[0] = Math.min(range[0], ground);
-            range[1] = Math.max(range[1], ground);
-            if (range[1] - range[0] > 3 || Math.abs(ground - box.minY()) > 3) return false;
-            for (int y = Math.max(ground, box.minY()) + 1; y <= box.maxY(); y++)
-                if (!column.getBlock(y).isAir()) return false;
+    /** Why the troupe gate refuses this footprint ({@code wet_or_high}, {@code steep}), or empty when it passes. */
+    public static java.util.Optional<String> troupeRefusal(Structure.GenerationContext context,
+            net.minecraft.world.level.levelgen.structure.BoundingBox box) {
+        int[] range = {Integer.MAX_VALUE, Integer.MIN_VALUE};
+        String[] reason = {null};
+        int minY = context.heightAccessor().getMinBuildHeight(), maxY = context.heightAccessor().getMaxBuildHeight();
+        TroupeFootprintScan.matches(box.minX(), box.maxX(), box.minZ(), box.maxZ(), TROUPE_GRID, (x, z) -> {
+            var ground = troupeGround(context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(),
+                    context.randomState()), minY, maxY);
+            if (ground.isEmpty()) {
+                reason[0] = "wet_or_high";
+                return false;
+            }
+            range[0] = Math.min(range[0], ground.getAsInt());
+            range[1] = Math.max(range[1], ground.getAsInt());
+            if (range[1] - range[0] > TROUPE_MAX_SLOPE) {
+                reason[0] = "steep";
+                return false;
+            }
             return true;
+        });
+        return java.util.Optional.ofNullable(reason[0]);
+    }
+
+    /**
+     * Chunk 15 T10 (D-43): whether a village could start within {@code chunks} chunks of {@code chunk}: a potential start
+     * chunk of the village set's own spread whose biome takes one of its villages.
+     */
+    public static boolean nearVillage(Structure.GenerationContext context, ChunkPos chunk, int chunks) {
+        var set = context.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE_SET)
+                .get(net.minecraft.world.level.levelgen.structure.BuiltinStructureSets.VILLAGES);
+        if (set == null || !(set.placement() instanceof
+                net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement spread)) return false;
+        int spacing = spread.spacing();
+        for (int rx = Math.floorDiv(chunk.x - chunks, spacing); rx <= Math.floorDiv(chunk.x + chunks, spacing); rx++) {
+            for (int rz = Math.floorDiv(chunk.z - chunks, spacing); rz <= Math.floorDiv(chunk.z + chunks, spacing); rz++) {
+                ChunkPos village = spread.getPotentialStructureChunk(context.seed(), rx * spacing, rz * spacing);
+                if (Math.abs(village.x - chunk.x) > chunks || Math.abs(village.z - chunk.z) > chunks) continue;
+                int x = village.getMiddleBlockX(), z = village.getMiddleBlockZ();
+                Holder<Biome> biome = context.biomeSource().getNoiseBiome(QuartPos.fromBlock(x),
+                        QuartPos.fromBlock(getSurfaceHeight(context, x, z)), QuartPos.fromBlock(z), context.randomState().sampler());
+                if (set.structures().stream().anyMatch(entry -> entry.structure().value().biomes().contains(biome))) return true;
+            }
+        }
+        return false;
     }
 
     public static OptionalInt troupeGround(net.minecraft.world.level.NoiseColumn column, int minY, int maxY) {

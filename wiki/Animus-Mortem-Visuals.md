@@ -14,7 +14,7 @@ Mortem appears as dried blood, fissures, sinking sludge and wisps. Hemorrhage te
 
 Funeral Bell condenses a hollow spectral bell above the caster, hung from a rope of tendons and swaying harder as the charge builds. It tolls once: the bell swings on its pivot against its clapper, a ring of sound bursts from the mouth, and three echoes roll out over a pool of rot to the bell's reach while souls rise from it.
 
-Later Mortem effects introduce mycelium and sparse spores. Bloom of Rot gives this contamination its fullest expression, briefly staining the ground and affected bodies. This hints at the existing life/decay dichotomy without adding a new persistent infection mechanic.
+Later Mortem effects introduce mycelium and sparse spores. Bloom of Rot gives this contamination its fullest expression: Putriciel's mould sheet and shelf growths over the floor and brackets climbing the colonised, until the purifier's fire chars it to ash. This hints at the existing life/decay dichotomy without adding a new persistent infection mechanic.
 
 Particle settings reduce secondary accents. The main spell shapes remain visible with Minimal particles. Costs, damage, progression and weapon/Avatar silhouettes retain their existing behavior.
 

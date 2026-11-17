@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item;
 
+import org.junit.jupiter.api.Test;
+
 public final class MorphicNectarMutationRulesTest {
 	private MorphicNectarMutationRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertTrue("explicit nectar marker shows mutation",
 				MorphicNectarMutationRules.shouldShowMutation(true, false));
 		assertTrue("primal morphling implies nectar mutation",

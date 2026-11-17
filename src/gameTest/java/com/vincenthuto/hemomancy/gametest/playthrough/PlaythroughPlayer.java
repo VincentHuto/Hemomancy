@@ -11,6 +11,11 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDial
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeRequestLimiter;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbSelection;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UseManipKeyPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
@@ -24,6 +29,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketKickBloodlinePlayer;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLedgerAction;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLumpDonate;
 import com.vincenthuto.hemomancy.common.network.dialogue.ClosePendingWhisperPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacket;
@@ -119,6 +125,8 @@ public final class PlaythroughPlayer {
 	private Outcome last;
 	private long nextClaimRequest;
 	private Outcome.Probe holding;
+	/** The verb {@link #select} last chose, so {@link #castSelected} presses the verb key; null after a manipulation. */
+	private Verb selectedVerb;
 
 	private PlaythroughPlayer(GameTestHelper helper, GameProfile profile, BlockPos home) {
 		this.helper = helper;
@@ -316,7 +324,7 @@ public final class PlaythroughPlayer {
 	}
 
 	/**
-	 * Opens a hub card the way the screen does: for an unread lore card it sends the read record
+	 * Opens a hub card the way the screen does: only for an unread lore card it sends the read record
 	 * ({@code DialogueTopicOpenedPacket}), which is what clears the card's unread sigil.
 	 */
 	public Outcome openTopic(Entity npc, String topicId) {
@@ -324,11 +332,14 @@ public final class PlaythroughPlayer {
 		helper.assertTrue(view != null, "talk to " + describe(npc) + " before opening " + topicId);
 		Optional<DialogueTopic> topic = view.topicById(topicId);
 		helper.assertTrue(topic.isPresent(), describe(npc) + " shows card " + topicId + "; it showed " + view.describe());
-		ResourceLocation dialogueId = view.tree().presentation().dialogueId();
-		ResourceLocation readId = ResourceLocation.fromNamespaceAndPath(dialogueId.getNamespace(),
-				dialogueId.getPath() + "/" + topic.get().readPath());
 		Outcome.Probe probe = Outcome.begin(this, npc, "open topic " + topicId);
-		DialogueTopicOpenedPacket.handle(new DialogueTopicOpenedPacket(readId, npc.getId()), PayloadContexts.of(player()));
+		// The screen sends the read record only for an unread lore card (DialogueScreen.openTopic).
+		if (topic.get().lore() && topic.get().unread()) {
+			ResourceLocation dialogueId = view.tree().presentation().dialogueId();
+			ResourceLocation readId = ResourceLocation.fromNamespaceAndPath(dialogueId.getNamespace(),
+					dialogueId.getPath() + "/" + topic.get().readPath());
+			DialogueTopicOpenedPacket.handle(new DialogueTopicOpenedPacket(readId, npc.getId()), PayloadContexts.of(player()));
+		}
 		return probe.finish();
 	}
 
@@ -584,11 +595,52 @@ public final class PlaythroughPlayer {
 		return outcome;
 	}
 
-	/** Casts the selected manipulation through the cast key's payload (this is how a cell hand is conjured). */
+	/**
+	 * Casts the selected manipulation through the cast key's payload. After {@link #select} chose a verb (Projection
+	 * and Absorption are verbs now, not castable selections), the cast is the verb key instead, as a player conjures
+	 * and dispels a cell hand: into an empty hand it conjures the active verb's hand, and a held cell hand is let go
+	 * with a sneaking press. Anything else in hand switches the verb, as the key does.
+	 */
 	public Outcome castSelected() {
+		if (selectedVerb != null) {
+			Outcome.Probe probe = Outcome.begin(this, null, "verb key (" + selectedVerb + ")");
+			boolean dispel = CellHandFormHelper.isCellHandForm(player().getMainHandItem());
+			boolean wasSneaking = player().isShiftKeyDown();
+			if (dispel) player().setShiftKeyDown(true);
+			VerbSelection.press(player());
+			if (dispel) player().setShiftKeyDown(wasSneaking);
+			return probe.finish();
+		}
 		Outcome.Probe probe = Outcome.begin(this, null, "cast selected");
 		UseManipKeyPacket.handle(new UseManipKeyPacket(), PayloadContexts.of(player()));
 		return probe.finish();
+	}
+
+	/**
+	 * One press of the verb key, through the service its payload calls ({@code BloodVerbKeyPacket} adds only the living
+	 * player guard and a four-tick pace, which would refuse two presses in one test tick).
+	 */
+	public Outcome pressVerbKey() {
+		Outcome.Probe probe = Outcome.begin(this, null, "verb key");
+		VerbSelection.press(player());
+		return probe.finish();
+	}
+
+	/**
+	 * Makes {@code verb} active as a player does: with a cell hand or anything else in hand the verb key switches it
+	 * (a cell hand turns to match); with an empty hand the key would conjure instead, so the switch is made through the
+	 * same service the key uses ({@code VerbSelection.set}).
+	 */
+	public Outcome verb(Verb verb) {
+		Outcome.Probe probe = Outcome.begin(this, null, "verb " + verb);
+		selectedVerb = verb;
+		if (VerbChannel.activeVerb(player()) != verb) {
+			if (player().getMainHandItem().isEmpty()) VerbSelection.set(player(), verb);
+			else VerbSelection.press(player());
+		}
+		Outcome outcome = probe.finish();
+		helper.assertTrue(VerbChannel.activeVerb(player()) == verb, verb + " is the active verb; " + outcome.describe());
+		return outcome;
 	}
 
 	/**
@@ -596,6 +648,10 @@ public final class PlaythroughPlayer {
 	 * the manipulation is selected. Fails when it never comes round (it is not equipped).
 	 */
 	public Outcome select(String manipulation) {
+		if (ManipulationEquipHelper.isVerb(manipulation)) {
+			return verb(ManipulationEquipHelper.BLOOD_ABSORPTION.equals(manipulation) ? Verb.ABSORB : Verb.PROJECT);
+		}
+		selectedVerb = null;
 		Outcome.Probe probe = Outcome.begin(this, null, "select " + manipulation);
 		var known = HemoCapabilityAccess.getKnownManipulations(player());
 		int presses = known.getEquippedManipNames().size() + 1;
@@ -978,6 +1034,26 @@ public final class PlaythroughPlayer {
 		if (count(ItemInit.unsigned_ancestral_ledger.get()) > 0) wield(ItemInit.unsigned_ancestral_ledger.get());
 		Outcome.Probe probe = Outcome.begin(this, null, "ledger action " + action);
 		PacketLedgerAction.handle(new PacketLedgerAction(action), PayloadContexts.of(player()));
+		return probe.finish();
+	}
+
+	/**
+	 * The leader's Admit or Refuse on the ledger screen's petition row ({@code PacketAnswerBloodlinePetition}). The
+	 * screen opens only from the ledger, so a carried one is taken in hand first.
+	 */
+	public Outcome answerPetition(UUID applicant, boolean admit) {
+		if (count(ItemInit.unsigned_ancestral_ledger.get()) > 0) wield(ItemInit.unsigned_ancestral_ledger.get());
+		Outcome.Probe probe = Outcome.begin(this, null, (admit ? "admit " : "refuse ") + applicant);
+		com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketAnswerBloodlinePetition.handle(
+				new com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketAnswerBloodlinePetition(applicant, admit),
+				PayloadContexts.of(player()));
+		return probe.finish();
+	}
+
+	/** The pool screen's lump offering ({@code PacketLumpDonate}) of {@code amount} mL. */
+	public Outcome lumpDonate(double amount) {
+		Outcome.Probe probe = Outcome.begin(this, null, "lump donation " + amount);
+		PacketLumpDonate.handle(new PacketLumpDonate(amount), PayloadContexts.of(player()));
 		return probe.finish();
 	}
 

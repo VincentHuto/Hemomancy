@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import org.junit.jupiter.api.Test;
+
 public final class CirculationIncomeRulesTest {
 	private CirculationIncomeRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		singleSourceUnderBandwidthPassesThroughUnchanged();
 		stackedSourcesShareOneWindow();
 		staleWindowResetsAndGrantsAgain();

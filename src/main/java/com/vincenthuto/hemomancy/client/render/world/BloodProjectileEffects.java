@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import net.minecraft.client.Minecraft;
@@ -152,6 +153,11 @@ public final class BloodProjectileEffects {
                 ForgedNeedleGeometry.flightFlow(p,batch.vertices(LuxUmbraBatch.Material.DUCTILIS),trim(path,needle.isLanceNeedle()?3:2),
                         heading(trail,alive && !trail.splashed?needle.getDeltaMovement():Vec3.ZERO),camera,right,up,time,
                         AnimationTime.age(needle, partial),seed,alive?alpha*needle.swordOpacity():0,trailAlpha,needle.isLanceNeedle(),trail.splashed);
+                continue;
+            }
+            if(entity instanceof CircusKnifeProjectileEntity knife && knife.isTroupeKnife()) {
+                BloodNeedleGeometry.knife(p,v,trim(path,4),heading(trail,alive && !trail.splashed?knife.getDeltaMovement():Vec3.ZERO),camera,right,up,time,
+                        seed,alive?alpha:0,trailAlpha,trail.splashed);
                 continue;
             }
             if(entity instanceof BloodNeedleEntity needle && !needle.isCoronationSword()) {

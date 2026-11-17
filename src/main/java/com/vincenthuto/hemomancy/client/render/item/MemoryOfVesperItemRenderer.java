@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
@@ -29,7 +30,7 @@ public class MemoryOfVesperItemRenderer extends BlockEntityWithoutLevelRenderer 
 		poseStack.translate(0.5f, 0.5f, 0.5f);
 		applyDisplayScale(displayContext, poseStack);
 
-		float timeSeconds = (System.currentTimeMillis() % (long) TIME_CYCLE_MS) / 1000.0f;
+		float timeSeconds = (float) (AnimationTime.itemMillis() % TIME_CYCLE_MS) / 1000.0f;
 		float shardSeed = Math.floorMod(System.identityHashCode(stack), 1543) / 1543.0f + 0.41f;
 		float guiClamp = displayContext == ItemDisplayContext.GUI ? 1.0f : 0.0f;
 		VertexConsumer vc = buffer.getBuffer(HemoRenderTypes.monolithFragment(timeSeconds, shardSeed,

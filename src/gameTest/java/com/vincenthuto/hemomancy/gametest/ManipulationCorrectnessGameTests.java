@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
-import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -60,9 +59,9 @@ public final class ManipulationCorrectnessGameTests {
             try {
                 ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
                 h.assertTrue(!victim.isAlive(), "Valid execution failed");
-                near(h, 2275, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Execution refund (250) plus the separately attributed 25 mL kill reward");
+                near(h, 2025, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "An unpaid execution returns no blood; only the separately attributed 25 mL kill reward");
                 ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                near(h, 2275, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Dead victim refunded twice");
+                near(h, 2025, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Dead victim refunded twice");
             } finally { victim.discard(); }
             h.succeed();
         } finally { p.discard(); }
@@ -132,34 +131,6 @@ public final class ManipulationCorrectnessGameTests {
             near(h, 9, damage.getAmount(), "Depleted Ward incorrectly re-granted initial six points");
             h.succeed();
         } finally { ManipulationChannelManager.stop(p, false); p.discard(); }
-    }
-
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
-    public static void endlessHourDefersAndSettlesOnce(GameTestHelper h) {
-        ServerPlayer p = player(h);
-        try {
-            ManipulationInit.endless_hour.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-            p.removeEffect(MobEffects.ABSORPTION);
-            p.removeEffect(MobEffects.DAMAGE_RESISTANCE);
-            p.setAbsorptionAmount(0);
-            p.setHealth(5);
-            var damage = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 10));
-            NeoForge.EVENT_BUS.post(damage);
-            near(h, 4, damage.getNewDamage(), "Endless Hour did not preserve one HP");
-            near(h, 6, p.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Wrong deferred damage");
-            p.setHealth(1);
-            damage = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 3));
-            NeoForge.EVENT_BUS.post(damage);
-            near(h, 0, damage.getNewDamage(), "Second hit crossed survival floor");
-            p.setHealth(20);
-            p.setAbsorptionAmount(20);
-            p.getPersistentData().putLong("hemomancy:endless_hour_expiry", h.getLevel().getGameTime());
-            EndlessHourManip.tickEndlessHour(p);
-            near(h, 11, p.getHealth(), "Debt was lost or mitigated again");
-            EndlessHourManip.tickEndlessHour(p);
-            near(h, 11, p.getHealth(), "Debt collected twice");
-            h.succeed();
-        } finally { p.discard(); }
     }
 
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness", timeoutTicks = 200)
@@ -232,10 +203,10 @@ public final class ManipulationCorrectnessGameTests {
         p.getFoodData().setFoodLevel(10);
         p.setHealth(10);
         ManipulationReactiveEvents.createHematicBeacon(h.getLevel(), p.position(), 3, 160, p.getUUID());
-        near(h, 10.4, p.getHealth(), "Beacon pulse did not heal its 0.4 HP share");
+        near(h, 10.8, p.getHealth(), "Beacon pulse did not heal its 0.8 HP share");
         h.runAfterDelay(160, () -> {
             try {
-                near(h, 13.2, p.getHealth(), "Eight-second Beacon total");
+                near(h, 16.4, p.getHealth(), "Eight-second Beacon total");
                 h.succeed();
             } finally { p.discard(); }
         });
@@ -244,7 +215,8 @@ public final class ManipulationCorrectnessGameTests {
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
     public static void funeralBellScalesBankedNecrosisAndPayment(GameTestHelper h) {
         for (int count = 0; count <= 4; count++) {
-            for (int ticks : new int[]{20, 40, 80}) {
+            // CB-6: a release needs half the charge, so the partial tolls are a half and three quarters.
+            for (int ticks : new int[]{40, 60, 80}) {
                 ServerPlayer p = player(h);
                 var target = EntityType.COW.create(h.getLevel());
                 target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100);
@@ -318,41 +290,10 @@ public final class ManipulationCorrectnessGameTests {
     }
 
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
-    public static void endlessHourCannotEraseDebtByRecastOrLogout(GameTestHelper h) {
-        ServerPlayer p = player(h);
-        try {
-            var hour = ManipulationInit.endless_hour.get();
-            hour.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-            // The hour grants no absorption of its own; supply a real source so the amount is not clamped away.
-            p.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.ABSORPTION, 200, 0));
-            p.setHealth(5);
-            p.setAbsorptionAmount(2);
-            var damage = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 10));
-            NeoForge.EVENT_BUS.post(damage);
-            near(h, 6, damage.getNewDamage(), "Absorption was deferred instead of consumed normally");
-            near(h, 4, p.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Absorption changed owed health");
-            double bloodBeforeRecast = HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
-            h.assertTrue(!hour.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Recast accepted");
-            near(h, bloodBeforeRecast, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Blocked recast charged blood");
-            hour.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-            near(h, 4, p.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Direct action erased debt");
-            NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent(p, net.minecraft.world.level.Level.OVERWORLD, net.minecraft.world.level.Level.NETHER));
-            near(h, 4, p.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Dimension event lost debt");
-            p.setHealth(20);
-            NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent(p));
-            near(h, 16, p.getHealth(), "Logout did not settle debt before save");
-            h.assertTrue(!p.getPersistentData().contains("hemomancy:endless_hour_expiry"), "Logout retained hour");
-            EndlessHourManip.tickEndlessHour(p);
-            near(h, 16, p.getHealth(), "Logout repayment repeated");
-            h.succeed();
-        } finally { p.discard(); }
-    }
-
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
     public static void osseousBloomRetainsOrdinaryHealthScaling(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
-            for (int health : new int[]{20, 100, 1000}) {
+            for (int health : new int[]{20, 100, 200, 1000}) {
                 var target = EntityType.COW.create(h.getLevel());
                 target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(health);
                 target.setHealth(health);
@@ -361,7 +302,9 @@ public final class ManipulationCorrectnessGameTests {
                 try {
                     var bloom = ManipulationInit.osseous_bloom.get();
                     bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                    near(h, TemperAffinityRules.adjustManipulationDamage(p, target, bloom, health * .25F), health - target.getHealth(), "Ordinary HP scaling at " + health);
+                    float scaled = TemperAffinityRules.adjustManipulationDamage(p, target, bloom, health * .25F);
+                    // CB-8: a body over 100 max health takes at most 20 a bloom; 100 and under scale freely.
+                    near(h, health > 100 ? Math.min(20, scaled) : scaled, health - target.getHealth(), "Ordinary HP scaling at " + health);
                 } finally { target.discard(); }
             }
             h.succeed();
@@ -396,33 +339,6 @@ public final class ManipulationCorrectnessGameTests {
         h.succeed();
     }
 
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
-    public static void endlessHourRunsThroughActualDamageAndDeath(GameTestHelper h) {
-        ServerPlayer p = player(h);
-        try {
-            for (int i = 0; i < 60; i++) p.tick(); // Let the normal spawn protection expire.
-            HemoCapabilityAccess.getBloodVolume(p).setActive(false);
-            ManipulationInit.endless_hour.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-            p.removeEffect(MobEffects.ABSORPTION);
-            p.removeEffect(MobEffects.DAMAGE_RESISTANCE);
-            p.setAbsorptionAmount(0);
-            p.setHealth(5);
-            p.hurt(p.damageSources().generic(), 10);
-            near(h, 1, p.getHealth(), "Real lethal hit crossed floor");
-            near(h, 6, p.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Real hit debt");
-            p.invulnerableTime = 0;
-            p.hurt(p.damageSources().generic(), 3);
-            near(h, 1, p.getHealth(), "Second real hit crossed floor");
-            near(h, 9, p.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Real hits did not accumulate");
-            p.getPersistentData().putLong("hemomancy:endless_hour_expiry", h.getLevel().getGameTime());
-            NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
-            h.assertTrue(!p.isAlive(), "Unpayable debt did not kill");
-            h.assertTrue(!p.getPersistentData().contains("hemomancy:endless_hour_deferred"), "Death retained debt");
-            EndlessHourManip.tickEndlessHour(p);
-            h.succeed();
-        } finally { p.discard(); }
-    }
-
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness", timeoutTicks = 40)
     public static void channelUpkeepPaysOncePerSecond(GameTestHelper h) {
         ServerPlayer p = player(h);
@@ -444,24 +360,6 @@ public final class ManipulationCorrectnessGameTests {
                 h.succeed();
             } finally { ManipulationChannelManager.stop(p, false); p.discard(); }
         });
-    }
-
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
-    public static void endlessHourTransfersOnEndReturnButNotDeath(GameTestHelper h) {
-        for (boolean death : List.of(false, true)) {
-            ServerPlayer original = player(h);
-            ServerPlayer replacement = player(h);
-            try {
-                ManipulationInit.endless_hour.get().getAction(original, h.getLevel(), ItemStack.EMPTY, original.blockPosition());
-                EndlessHourManip.accumulateDeferredDamage(original, 7);
-                long expiry = original.getPersistentData().getLong("hemomancy:endless_hour_expiry");
-                NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.player.PlayerEvent.Clone(replacement, original, death));
-                near(h, death ? 0 : 7, replacement.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Clone debt transfer, death=" + death);
-                near(h, death ? 0 : expiry, replacement.getPersistentData().getLong("hemomancy:endless_hour_expiry"), "Clone deadline transfer");
-                h.assertTrue(!original.getPersistentData().contains("hemomancy:endless_hour_deferred"), "Old player retained collectible debt");
-            } finally { original.discard(); replacement.discard(); }
-        }
-        h.succeed();
     }
 
     private static void near(GameTestHelper h, double expected, double actual, String message) {
@@ -491,6 +389,6 @@ public final class ManipulationCorrectnessGameTests {
         blood.setBloodVolume(2000);
         for (var temper:EnumBloodTemper.values())
             HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper,100);
-        return p;
+        return TemperFixtures.carry(p);
     }
 }

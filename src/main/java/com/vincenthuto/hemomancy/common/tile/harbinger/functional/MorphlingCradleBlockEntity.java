@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class MorphlingCradleBlockEntity extends HemoBlockEntity {
-	private static final BloodAccounting.Source OWNER_DRAW = BloodAccounting.Source.of("morphling_cradle_draw", Category.STATION, false, false);
+	private static final BloodAccounting.Source OWNER_DRAW = BloodAccounting.Source.of("morphling_cradle_draw", Category.STATION, false);
 
 	public enum State {
 		ACTIVE, DORMANT

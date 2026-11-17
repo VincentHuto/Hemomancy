@@ -105,7 +105,7 @@ public class VesperTheEveningStarEntity extends Monster {
     public VesperTheEveningStarEntity(EntityType<? extends VesperTheEveningStarEntity> type, Level level) {
         super(type, level);
         this.setPersistenceRequired();
-        this.xpReward = 180;
+        this.xpReward = 0;
     }
 
 	@Override

@@ -68,7 +68,7 @@ public abstract class MorphlingStrainModel extends Model {
 			MorphlingPartSpec spec = specs.get(i);
 			part.resetPose();
 			part.skipDraw = false;
-			part.visible = ctx.maturity() >= spec.stage();
+			part.visible = spec.showsAt(ctx.maturity());
 			if (!part.visible) continue;
 			float scale = spec.grows() ? MorphlingStrainMotion.growth(spec.stage(), ctx.maturity()) : 1.0F;
 			float yScale = 1.0F, zScale = 1.0F;
@@ -153,6 +153,7 @@ public abstract class MorphlingStrainModel extends Model {
 				}
 			} else {
 				renderGlow(poseStack, glowing, glowAlpha(ctx, 0));
+				if (glow == Glow.SAIL_FLUSH) renderGlow(poseStack, glowing, wakeFlush(ctx));
 			}
 		}
 		for (ModelPart part : parts) part.skipDraw = false;
@@ -185,6 +186,15 @@ public abstract class MorphlingStrainModel extends Model {
 					+ (ctx.has(MorphlingActiveState.FOLD_SHUT | MorphlingActiveState.CRYPTOBIOSIS) ? 0.3F : 0.0F);
 			case FLAME -> MorphlingStrainMotion.flame(t, group, ctx.has(MorphlingActiveState.KINDLED));
 		};
+	}
+
+	/**
+	 * The Shared Wake's flush (FX-19a): a second emissive pass over the sail while the wearer swims in a school or holds
+	 * the Wake open, swelling slowly so the sail reads brighter than a lone swimmer's.
+	 */
+	private static float wakeFlush(MorphlingAnimContext ctx) {
+		float wake = ctx.settled(MorphlingActiveState.SHARED_WAKE);
+		return wake <= 0.0F ? 0.0F : wake * (0.55F + 0.3F * Mth.sin(ctx.time() * 0.12F));
 	}
 
 	@Override

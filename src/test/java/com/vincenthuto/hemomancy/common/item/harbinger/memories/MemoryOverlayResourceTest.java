@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
+import org.junit.jupiter.api.Test;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,7 +18,8 @@ public final class MemoryOverlayResourceTest {
 	private static final Path JAVA = Path.of("src/main/java/com/vincenthuto/hemomancy");
 	private static final Path ASSETS = Path.of("src/main/resources/assets/hemomancy");
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		Path blank = ASSETS.resolve("textures/item/memories/memory_blank.png");
 		String blankHash = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(blank)));
 		check(blankHash.equals("4c7aeca95b8fbc0e276689603bef021596b4871f5fff7a69fd6bc663e064069f"), "authored blank changed");

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.OfflineCredits;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -20,6 +21,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 
 /**
  * Server-side manager for delayed blood structure crafting.
@@ -102,12 +107,16 @@ public class PendingBloodCraftManager {
 				}
 			}
 			ServerPlayer crafter = level.getServer().getPlayerList().getPlayer(crafterId);
-			if (crafter != null) {
-				com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordStructure(crafter, result);
-				MachineAccessEvents.awardMachineCrafted(crafter, result);
-				LivingStaffBondHelper.unlockFromBloodStructureCraft(crafter, result);
-			}
+			if (crafter != null) credit(crafter, result);
+			else OfflineCredits.owe(level.getServer(), crafterId, OfflineCredits.Kind.STRUCTURE_CRAFT, result);
 		}
+	}
+
+	/** What a closed craft records for its crafter; an offline crafter receives it at their next login. */
+	public static void credit(ServerPlayer crafter, ItemStack result) {
+		com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordStructure(crafter, result);
+		MachineAccessEvents.awardMachineCrafted(crafter, result);
+		LivingStaffBondHelper.unlockFromBloodStructureCraft(crafter, result);
 	}
 
 	/** Formations whose craft ring is still closing: paid for, not yet placed. */
@@ -119,16 +128,41 @@ public class PendingBloodCraftManager {
 		return formations;
 	}
 
+	/**
+	 * Whether {@code crafter} may unmake every block of the matched pattern, the way their own hands would break it.
+	 * Checked before any blood is taken, so a craft never consumes a pattern on ground the crafter may not change;
+	 * the consumption itself then runs for the crafter when the ring closes.
+	 */
+	public static boolean mayConsume(ServerPlayer crafter, BlockPattern.BlockPatternMatch match, int width, int height,
+			int depth) {
+		for (int i = 0; i < width; ++i) {
+			for (int j = 0; j < height; ++j) {
+				for (int k = 0; k < depth; ++k) {
+					BlockInWorld block = match.getBlock(i, j, k);
+					if (block.getState().isAir()) continue;
+					if (!ManipulationCombatHelper.mayAlter(crafter, block.getPos())
+							|| !PlayerBlockEdits.mayBreak(crafter, block.getPos())) {
+						crafter.displayClientMessage(Component.translatable("message.hemomancy.player_block_edits.refused")
+								.withStyle(ChatFormatting.DARK_RED), true);
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 	/** Schedule a craft to execute after delayTicks. */
 	public static void schedule(PendingCraft craft) {
 		pendingCrafts.add(craft);
 	}
 
-	/** Called every server tick to advance pending crafts. */
-	public static void tick() {
+	/** Advances the crafts in {@code level} by one tick; called from that level's own tick. */
+	public static void tick(ServerLevel level) {
 		Iterator<PendingCraft> it = pendingCrafts.iterator();
 		while (it.hasNext()) {
-			if (it.next().tick()) {
+			PendingCraft craft = it.next();
+			if (craft.level == level && craft.tick()) {
 				it.remove();
 			}
 		}

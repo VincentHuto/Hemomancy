@@ -290,7 +290,7 @@ final class MycophantMoves {
 	static void splitTick(MycophantEntity boss, int t) {
 		if (!(boss.level() instanceof ServerLevel level)) return;
 		Vec3 head = boss.bodyPoint(0.0D, 5.4D, 2.4D);
-		if (t == 1) level.playSound(null, boss.blockPosition(), SoundInit.ENTITY_MYCOPHANT_TELEPORT.get(), SoundSource.HOSTILE, 1.6F, 0.55F);
+		if (t == 1) level.playSound(null, boss.blockPosition(), SoundInit.ENTITY_MYCOPHANT_SPLIT.get(), SoundSource.HOSTILE, 1.6F, 0.55F);
 		int snap = MycophantSplitRules.snapTick();
 		if (t <= snap && t % 2 == 0) BossTelegraphs.glow(level, head, BONE, 3, 0.25D);
 		if (t == snap) {

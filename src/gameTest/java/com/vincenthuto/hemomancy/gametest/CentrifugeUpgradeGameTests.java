@@ -84,7 +84,7 @@ public final class CentrifugeUpgradeGameTests {
             helper.assertTrue(!machine.getItem(10).isEmpty(), "missing primary results");
             helper.assertTrue(!machine.getItem(2).has(DataComponents.CUSTOM_DATA)
                     && !machine.getItem(6).has(DataComponents.CUSTOM_DATA), "filled samples were not returned empty");
-            helper.assertTrue(machine.getBloodVolume() == 250, "changed operation blood income");
+            helper.assertTrue(machine.getBloodVolume() == 0, "a spin made blood (core-loop Track 3: machines do not)");
             if (stage == 2) helper.assertTrue(machine.getItem(18).getCount() == 2, "D6 powder was not guaranteed");
             helper.getLevel().removeBlock(machine.getBlockPos(), false);
         }
@@ -126,8 +126,8 @@ public final class CentrifugeUpgradeGameTests {
                 "retry did not settle all output exactly once");
         var count = machine.getItem(10).getCount();
         VialCentrifugeBlockEntity.serverTick(helper.getLevel(), machine.getBlockPos(), machine.getBlockState(), machine);
-        helper.assertTrue(machine.getItem(10).getCount() == count && machine.getBloodVolume() == 250,
-                "retry duplicated output/blood");
+        helper.assertTrue(machine.getItem(10).getCount() == count && machine.getBloodVolume() == 0,
+                "retry duplicated output or made blood");
         helper.succeed();
     }
 
@@ -227,8 +227,8 @@ public final class CentrifugeUpgradeGameTests {
                 && batch.equals(machine.saveWithoutMetadata(registries).getCompound("PendingBatch")),
                 "running reload reset time or rerolled results");
         finish(helper, machine);
-        helper.assertTrue(!machine.getItem(10).isEmpty() && machine.getBloodVolume() == 250,
-                "saved running batch did not settle once");
+        helper.assertTrue(!machine.getItem(10).isEmpty() && machine.getBloodVolume() == 0,
+                "saved running batch did not settle once, or made blood");
         helper.succeed();
     }
 

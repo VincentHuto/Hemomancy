@@ -36,8 +36,8 @@ public record HeartNodeFootprint(UUID owner, @Nullable BlockPos heart, List<Bloc
 	}
 
 	/**
-	 * The synapses that still chain back to the heart, lobe to lobe, by the rule they were raised under. A synapse cut
-	 * off by a removal keeps working, as a Hematic Stake does; this is what draws the chain, not what prunes it.
+	 * The synapses that still chain back to the heart, lobe to lobe, by the rule they were raised under. A removal
+	 * prunes every synapse this leaves out ({@code HeartNodeSavedData.removeSynapse}, DS-2).
 	 */
 	public List<BlockPos> connectedSynapses() {
 		if (heart == null) return List.of();

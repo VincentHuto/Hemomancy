@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.dialogue.DialogueHubLayout;
-import com.vincenthuto.hemomancy.client.screen.dialogue.DialogueLayout;
 import com.vincenthuto.hemomancy.client.screen.dialogue.DialogueScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
@@ -132,7 +130,7 @@ public final class MonolithHubClientReview {
 		s.add(client(mc -> {
 			DialogueScreen screen = screen(mc);
 			if (screen == null) return;
-			var tab = DialogueHubLayout.calculate(DialogueLayout.calculate(screen.width, screen.height)).important();
+			var tab = screen.hubLayout().important();
 			report(screen.mouseClicked(tab.x() + tab.width() / 2.0D, tab.y() + tab.height() / 2.0D, 0),
 					"a click on the Important tab lands");
 		}));

@@ -15,6 +15,27 @@ public final class HemoDamageTypes {
     public static final ResourceKey<DamageType> DECAY_RELEASE = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("decay_release"));
     /** Kinbud's Stung: its own type so deaths read right; not Poison (Brined Court balance rule 6). */
     public static final ResourceKey<DamageType> STUNG = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("stung"));
+    /** A vial or syringe drawing a sample (core-loop Track 5): sampling costs the creature health. Skips the hurt cooldown. */
+    public static final ResourceKey<DamageType> BLOOD_DRAW = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("blood_draw"));
+
+    /**
+     * Absorption drawing blood from a creature (core-loop Track 12, CL-24): it names the one drawing, so the creature
+     * turns on them and a kill is theirs, but a kill by draw pays no kill bounty ({@link #paysKillBounty}).
+     */
+    public static final ResourceKey<DamageType> BLOOD_ABSORPTION = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("blood_absorption"));
+
+    public static DamageSource bloodAbsorption(Level level, Entity drawer) {
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(BLOOD_ABSORPTION), drawer, drawer);
+    }
+
+    /**
+     * Whether a kill by {@code source} pays the killer's bounty (kill blood and the Temperament kill shift). A kill by
+     * draw does not: the draw already paid its blood and Temper, so the creature would be counted twice.
+     */
+    public static boolean paysKillBounty(DamageSource source) {
+        return source == null || !source.is(BLOOD_ABSORPTION);
+    }
 
     public static DamageSource attributed(DamageSource source, SchoolHitContext context, @Nullable Entity owner) {
         return SchoolDamage.attributed(source, context, owner);
@@ -45,9 +66,6 @@ public final class HemoDamageTypes {
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("mycophant_refusal"));
 	public static final ResourceKey<DamageType> PALE_INTERCESSION =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("pale_intercession"));
-	/** Endless Hour repayment: already-mitigated debt, so it bypasses armor, effects and enchantments but not totems. */
-	public static final ResourceKey<DamageType> ENDLESS_HOUR_DEBT =
-			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("endless_hour_debt"));
 
 	/** A Gardens gill snapping shut on a stranger. */
 	public static final ResourceKey<DamageType> GILL_BITE =
@@ -108,11 +126,6 @@ public final class HemoDamageTypes {
         return attributed(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                 .getHolderOrThrow(LIVING_FLAIL_FREEZE), projectile, owner), hit, owner);
     }
-
-	public static DamageSource endlessHourDebt(Level level) {
-		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-				.getHolderOrThrow(ENDLESS_HOUR_DEBT));
-	}
 
 	public static DamageSource mycophantClaim(Level level, Entity boss) {
 		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)

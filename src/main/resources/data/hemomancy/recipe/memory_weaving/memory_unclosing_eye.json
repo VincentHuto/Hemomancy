@@ -11,14 +11,15 @@
     "enzymes":  {
                     "animus":  0,
                     "flammeus":  0,
-                    "ductilis":  1,
-                    "lux":  1,
+                    "ductilis":  2,
+                    "lux":  2,
                     "mortem":  0,
                     "congeatio":  0,
                     "ferric":  0,
                     "tenebris":  0
                 },
-    "blood":  100,
+    "blood":  300,
+    "required_degree":  8,
     "result":  "hemomancy:memory_unclosing_eye",
     "count":  1
 }

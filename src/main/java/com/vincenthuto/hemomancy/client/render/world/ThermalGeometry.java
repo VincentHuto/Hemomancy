@@ -23,7 +23,7 @@ final class ThermalGeometry {
     static boolean handles(Form form) {
         return switch(form) {
             case FURNACE,IGNITION,BOMBARDIER_SWEEP,GLASS,GLASS_CHARGE,UPDRAFT,FORGE,CAUTERIZE,
-                    FLAME_CONJURE,FROST_CONJURE,ICE,ICE_CHARGE,BONE,STILLNESS,HOUR,HOUR_BREAK,
+                    FLAME_CONJURE,FROST_CONJURE,ICE,ICE_CHARGE,BONE,STILLNESS,
                     CRYOGENIC_PULSE,CRUOR_FORM,CRUOR_BREAK,FROZEN_VEINS,RIMEBOUND,CRUOR_SURFACE,FROST_ADVANCE -> true;
             default -> false;
         };
@@ -31,7 +31,7 @@ final class ThermalGeometry {
 
     static boolean cold(Form form) {
         return switch(form) {
-            case ICE,ICE_CHARGE,BONE,STILLNESS,HOUR,HOUR_BREAK,CRYOGENIC_PULSE,CRUOR_FORM,CRUOR_BREAK,
+            case ICE,ICE_CHARGE,BONE,STILLNESS,CRYOGENIC_PULSE,CRUOR_FORM,CRUOR_BREAK,
                     FROZEN_VEINS,RIMEBOUND,FROST_CONJURE,CRUOR_SURFACE,FROST_ADVANCE -> true;
             default -> false;
         };
@@ -40,9 +40,15 @@ final class ThermalGeometry {
     static void draw(ManipulationVisualPacket packet,PoseStack p,LuxUmbraBatch batch,VertexConsumer core,
             Vec3 from,Vec3 camera,Vec3 right,Vec3 up,double time,float age,float formation,float opacity,
             ThermalSurface surface,ThermalFragments fragments,float partial,boolean particles) {
+        draw(packet,p,batch,core,from,camera,right,up,time,age,formation,opacity,surface,fragments,partial,particles,0);
+    }
+
+    static void draw(ManipulationVisualPacket packet,PoseStack p,LuxUmbraBatch batch,VertexConsumer core,
+            Vec3 from,Vec3 camera,Vec3 right,Vec3 up,double time,float age,float formation,float opacity,
+            ThermalSurface surface,ThermalFragments fragments,float partial,boolean particles,long salt) {
         if(opacity<=.002)return;
         Form form=packet.form();
-        int seed=packet.entityId()>=0?packet.entityId():packet.from().hashCode();
+        int seed=CueSeed.of(packet,salt);
         double r=Math.min(8,Math.max(.2,packet.radius()));
         var flame=batch.vertices(FLAME);var frost=batch.vertices(CRUOR);
         switch(form) {
@@ -128,7 +134,9 @@ final class ThermalGeometry {
                 }
             }
             case FORGE -> {
-                p.pushPose();p.translate(0,.95,0);
+                // A radius under one block draws a smaller forge (Pyretic Forge's bed of coals under the items it works).
+                float forge=(float)Math.min(1,r);
+                p.pushPose();p.translate(0,.95*forge,0);p.scale(forge,forge,forge);
                 p.pushPose();p.mulPose(Axis.YP.rotation((float)(time*.013)));
                 chunk(p,batch.vertices(MOLTEN),.42,seed,opacity,2);
                 p.popPose();
@@ -220,35 +228,6 @@ final class ThermalGeometry {
                 }
             }
             case CRUOR_SURFACE -> blockFaces(p,frost,packet.count(),seed,opacity);
-            case HOUR,HOUR_BREAK -> {
-                boolean broken=form==Form.HOUR_BREAK;
-                // HOUR.radius is debt, never a physical radius.
-                double burden=Math.min(1,packet.radius()/30.0);
-                // A clock of frozen blood stands around the body, facing whoever watches it.
-                Vec3 face=new Vec3(0,1.15,0);
-                for(int i=0;i<12;i++) {
-                    double a=i*Math.PI/6;
-                    Vec3 at=face.add(right.scale(Math.cos(a)*.72)).add(up.scale(Math.sin(a)*.72));
-                    if(broken)at=at.add(fragments.offset(i,partial));
-                    clot(p,core,frost,at,(i%3==0?.08:.05)+burden*.05,seed+i,a+(broken?age*.045:0),opacity);
-                    if(particles && i%3==0)powder(p,frost,at,right,up,.14+burden*.1,seed+i,opacity*.35f);
-                }
-                if(!broken) {
-                    List<Vec3> rim=new ArrayList<>(25);
-                    for(int i=0;i<=24;i++) {
-                        double a=i*Math.PI/12;
-                        rim.add(face.add(right.scale(Math.cos(a)*.72)).add(up.scale(Math.sin(a)*.72)));
-                    }
-                    LuxUmbraGeometry.ribbonPath(p,frost,rim,camera,.025,FROST_STRAND,seed+20,WHITE,opacity*.6f);
-                    // The hour hand points at the debt held; the minute hand keeps turning.
-                    double hour=Math.PI/2-burden*Math.PI*2,minute=Math.PI/2-time*.02;
-                    Vec3 hourTip=face.add(right.scale(Math.cos(hour)*.4)).add(up.scale(Math.sin(hour)*.4));
-                    Vec3 minuteTip=face.add(right.scale(Math.cos(minute)*.6)).add(up.scale(Math.sin(minute)*.6));
-                    LuxUmbraGeometry.ribbonPath(p,frost,List.of(face,hourTip),camera,.05,.012,FROST_STRAND,seed+21,WHITE,opacity);
-                    LuxUmbraGeometry.ribbonPath(p,frost,List.of(face,minuteTip),camera,.035,.008,FROST_STRAND,seed+22,WHITE,opacity);
-                    clot(p,core,frost,face,.07,seed+23,time*.01,opacity);
-                }
-            }
             default -> {}
         }
     }

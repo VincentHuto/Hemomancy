@@ -46,7 +46,7 @@ When the rite finishes, collapses, is cancelled, or loses its caster beyond the 
 
 Destroyed or excluded workplaces displace the resident and suspend services and rite assistance. Residents search loaded fane areas for replacements. Chunk unloading does not count as death or create another NPC.
 
-Death releases the workplace and drops a **Bound Mnemonic Remnant**. To restore the same person, rebuild the effigy and use Quintessence in the Focus, **1 remnant**, and **2 your own blood**. Leave socket 3 empty. Restoration needs a free workplace but no donor blood or Ambergris. UUID, appearance, history, and spent helper reserve persist.
+Death releases the workplace and drops a **Bound Mnemonic Remnant**. To restore the same person, rebuild the effigy and use Quintessence in the Focus, **1 remnant**, and **2 your own blood**. Leave the third brazier empty. Restoration needs a free workplace but no donor blood or Ambergris. UUID, appearance, history, and spent helper reserve persist.
 
 Failed restoration preserves the identity and returns a consumed remnant. If a remnant is lost, stand within eight blocks of the leader's registered fane bloodwell and use **Recover remnant**. Recovery is free and invalidates all earlier copies. Living or currently reserved identities cannot be recovered or restored.
 

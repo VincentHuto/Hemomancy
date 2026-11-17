@@ -96,6 +96,7 @@
     "hemomancy:semi_sentient_construct",
     "hemomancy:somatic_loom",
     "hemomancy:specimen_jar",
+    "hemomancy:specimen_vat",
     "hemomancy:sporite_crystal",
     "hemomancy:stillwater_condenser",
     "hemomancy:suspended_blood_crystal",
@@ -103,6 +104,7 @@
     "hemomancy:suspended_vivianite",
     "hemomancy:unstained_podium",
     "hemomancy:venous_basin",
+    "hemomancy:planting_basin",
     "hemomancy:venous_stone",
     "hemomancy:venous_stone_slab",
     "hemomancy:venous_stone_stairs",
@@ -124,6 +126,7 @@
     "hemomancy:rimed_deepslate_brick_wall",
     "hemomancy:rime_lantern",
     "hemomancy:hanging_icicle",
-    "hemomancy:frozen_drip"
+    "hemomancy:frozen_drip",
+    "hemomancy:catalyst_feeder"
   ]
 }

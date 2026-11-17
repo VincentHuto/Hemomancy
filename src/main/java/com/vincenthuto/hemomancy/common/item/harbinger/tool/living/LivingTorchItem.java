@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class LivingTorchItem extends LivingToolItem {
-	private static final BloodAccounting.Source BREATH = BloodAccounting.Source.of("living_torch_breath", Category.TOOL, true, false);
+	private static final BloodAccounting.Source BREATH = BloodAccounting.Source.of("living_torch_breath", Category.TOOL, false);
 	public LivingTorchItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.1f, EnumBloodTemper.FLAMMEUS, tier, builderIn);
 	}

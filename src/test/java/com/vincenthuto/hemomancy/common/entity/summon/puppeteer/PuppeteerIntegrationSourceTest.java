@@ -2,8 +2,9 @@ package com.vincenthuto.hemomancy.common.entity.summon.puppeteer;
 
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class PuppeteerIntegrationSourceTest {
 	@Test
@@ -257,10 +258,6 @@ class PuppeteerIntegrationSourceTest {
 		assertContains(reference, "Mnemonic Ambergris");
 		assertContains(reference, "1 item = 8 thread charge");
 		assertContains(attachments, "AttachmentType.serializable(KnownSummons::new).copyOnDeath().build()");
-	}
-
-	private static String read(String path) throws Exception {
-		return Files.readString(Path.of(path));
 	}
 
 	private static void assertContains(String text, String expected) {

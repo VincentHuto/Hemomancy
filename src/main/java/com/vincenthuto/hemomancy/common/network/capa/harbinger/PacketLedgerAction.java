@@ -65,6 +65,8 @@ public class PacketLedgerAction implements CustomPacketPayload {
 	public static final int ACTION_RECALL_TO_LODGE = 1;
 	public static final int ACTION_SET_RECALL_POINT = 2;
 	public static final int ACTION_DISBAND_BLOODLINE = 3;
+	/** A member leaves the line (PT-36); the leader is refused (NQ-11-6). */
+	public static final int ACTION_LEAVE_BLOODLINE = 4;
 
 	private final int action;
 
@@ -93,6 +95,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 				case ACTION_RECALL_TO_LODGE -> handleLodgeRecall(player, volume);
 				case ACTION_SET_RECALL_POINT -> handleSetRecallPoint(player, volume);
 				case ACTION_DISBAND_BLOODLINE -> handleDisbandBloodline(player, volume);
+				case ACTION_LEAVE_BLOODLINE -> BloodlineMembership.leave(player);
 			}
 		});
 	}
@@ -321,18 +324,13 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		int playerCount = globalLine.getPlayerUUIDS().size();
-		int npcCount = globalLine.getNpcMemberCount();
-		BloodlineDisbandHelper.removeOwnedFanes(player.server, globalLine);
-		savedData.disbandBloodline(globalLine.getBloodlineUUID());
-
-		BloodlineDisbandHelper.resetOnlineMembers(player.server, globalLine, member ->
-				member.getUUID().equals(player.getUUID()) ? null
+		var dissolved = BloodlineMembership.dissolve(player.server, globalLine, BloodlineMembership.Dissolution.DISBAND, player,
+				member -> member.getUUID().equals(player.getUUID()) ? null
 						: Component.translatable("hemomancy.ledger.disband.member_notice", player.getName().getString())
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 
 		player.displayClientMessage(
-				Component.translatable("hemomancy.ledger.disband.success", playerCount, npcCount)
+				Component.translatable("hemomancy.ledger.disband.success", dissolved.players(), dissolved.npcs())
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 	}

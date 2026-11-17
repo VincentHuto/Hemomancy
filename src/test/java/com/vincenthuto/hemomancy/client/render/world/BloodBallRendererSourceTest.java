@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class BloodBallRendererSourceTest {
 	private static final Path RENDERER = Path.of(
@@ -15,7 +19,8 @@ public final class BloodBallRendererSourceTest {
 	private BloodBallRendererSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String renderer = Files.readString(RENDERER).replace("\r\n", "\n");
 		String clientConfig = Files.readString(CLIENT_CONFIG).replace("\r\n", "\n");
 		String clientData = Files.readString(CLIENT_DATA).replace("\r\n", "\n");
@@ -36,17 +41,5 @@ public final class BloodBallRendererSourceTest {
 				"if (!holdsBlob && !(holdsConduit && bloodOrbConduitRendererEnabled())) return false;");
 		assertContains("blood orb data gates only the conduit renderer path", clientData,
 				"bloodOrbConduitRendererEnabled()");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
-		}
 	}
 }

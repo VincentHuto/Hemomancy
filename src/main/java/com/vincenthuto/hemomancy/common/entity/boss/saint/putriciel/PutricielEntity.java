@@ -104,7 +104,7 @@ import java.util.UUID;
 public class PutricielEntity extends SaintTrialEntity {
 	/** The one blood Putriciel takes: projected into the open palm (resolution D-5). */
 	public static final BloodAccounting.Source OFFERING_SOURCE = BloodAccounting.Source.of("putriciel_offering",
-			Category.RITE, false, false);
+			Category.RITE, false);
 
 	private static final EntityDataAccessor<Integer> DATA_ABSOLUTIONS = define(EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_STAGE = define(EntityDataSerializers.INT);
@@ -1450,7 +1450,8 @@ public class PutricielEntity extends SaintTrialEntity {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return stage().fire() ? SoundEvents.FIRE_AMBIENT : SoundInit.ENTITY_ERYTHROMYCELIUM_ERUPTUS_AMBIENT.get();
+		// the body fire is paced by the stage tick (BODY_FIRE_SOUND_EVERY); an ambient fire here would overlap it
+		return stage().fire() ? null : SoundInit.ENTITY_ERYTHROMYCELIUM_ERUPTUS_AMBIENT.get();
 	}
 
 	@Override

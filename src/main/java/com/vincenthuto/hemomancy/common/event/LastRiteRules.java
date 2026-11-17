@@ -15,6 +15,8 @@ package com.vincenthuto.hemomancy.common.event;
 public final class LastRiteRules {
 
 	public static final int DEFAULT_SHARED_COOLDOWN_TICKS = 12_000;
+	/** The one source that yields: it arms only while nothing else is armed, and any other source arms over it. */
+	public static final String CURVED_HORN_ID = "hemomancy:curved_horn";
 
 	private LastRiteRules() {
 	}
@@ -36,6 +38,11 @@ public final class LastRiteRules {
 			return false;
 		}
 		return sharedCooldownUntil <= now;
+	}
+
+	/** Whether another source may arm now: nothing is armed, or only the yielding Curved Horn is. */
+	public static boolean isOpenToArm(String armedSourceId) {
+		return armedSourceId == null || armedSourceId.isEmpty() || CURVED_HORN_ID.equals(armedSourceId);
 	}
 
 	public static long nextSharedCooldownUntil(long now, int cooldownTicks) {

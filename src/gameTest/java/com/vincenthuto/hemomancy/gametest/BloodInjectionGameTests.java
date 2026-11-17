@@ -98,6 +98,11 @@ public final class BloodInjectionGameTests {
                             && recruit.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 1
                             && recruit.getInventory().countItem(ItemInit.bloody_flask.get()) == 4,
                     "A completed retry must bind only the intended bloodline and award exactly one starter set");
+            for (ItemStack stack : recruit.getInventory().items) {
+                if (stack.is(ItemInit.bloody_flask.get())) h.assertTrue(
+                        stack.get(com.vincenthuto.hemomancy.common.init.DataComponentInit.BOTTLED_AT.get()) != null,
+                        "The Vicar's four flasks must carry a bottled stamp when given (FX-2)");
+            }
             h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Completed retry must not repeat rewards");
             h.succeed();
         });
@@ -187,6 +192,13 @@ public final class BloodInjectionGameTests {
         h.getLevel().setBlockAndUpdate(wall, previous);
         com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem.projectFromEntity(
                 h.getLevel(), founder, 1, 1);
+        // PT-9: a standing recruit is only asked; kneeling (sneaking) accepts.
+        h.assertTrue(EarlyInitiation.begin(recruit, founder), "a standing recruit is not received");
+        EarlyInitiation.cancel(recruit);
+        recruit.setShiftKeyDown(true);
+        com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem.projectFromEntity(
+                h.getLevel(), founder, 1, 1);
+        recruit.setShiftKeyDown(false);
         h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Projection did not begin ceremony");
         h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Duplicate ceremony accepted");
         h.runAfterDelay(199, () -> {
@@ -688,6 +700,8 @@ public final class BloodInjectionGameTests {
             BloodInjectionData.receive(replacement.json());
             h.assertTrue(BloodSampleData.identified(sample) && BloodInjectionData.snapshot(true).resolve(profile).benefits().getFirst().duration()==400,"Reload failed to refresh identified answer");
             BloodInjectionData.clearClient();
+        } finally {
+            org.apache.commons.io.file.PathUtils.deleteDirectory(root);
         }
         h.succeed();
     }

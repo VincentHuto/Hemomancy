@@ -123,6 +123,9 @@ public class Hemomancy {
         event.addListener(new ScriptoriumAffinities());
         event.addListener(new BloodInjectionData());
         event.addListener(new BloodProfileData());
+        event.addListener(new com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.TemperCatalysts());
+        event.addListener(new com.vincenthuto.hemomancy.common.world.ground.GougeCatalysts());
+        event.addListener(new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFoods());
         event.addListener(new ClairaudiographCatalogue());
         event.addListener(new ItemInquiryLoader());
         event.addListener(new NpcTradeLoader(event.getRegistryAccess()));

@@ -1,5 +1,6 @@
 {
   "type": "hutoslib:page",
+  "decal": false,
   "ordinality": 10,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Druse Crystallization",

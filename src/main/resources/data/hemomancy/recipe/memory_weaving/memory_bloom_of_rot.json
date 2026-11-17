@@ -10,15 +10,16 @@
                   ],
     "enzymes":  {
                     "animus":  0,
-                    "flammeus":  1,
+                    "flammeus":  2,
                     "ductilis":  0,
                     "lux":  0,
-                    "mortem":  1,
+                    "mortem":  2,
                     "congeatio":  0,
                     "ferric":  0,
                     "tenebris":  0
                 },
-    "blood":  100,
+    "blood":  300,
+    "required_degree":  8,
     "result":  "hemomancy:memory_bloom_of_rot",
     "count":  1
 }

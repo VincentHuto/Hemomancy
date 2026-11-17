@@ -1,16 +1,18 @@
 package com.vincenthuto.hemomancy.common.unstained;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class UnstainedProgressionRepairSourceTest {
 	private UnstainedProgressionRepairSourceTest() {}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		observanceStateRoundTripsAndUnlocksByStage();
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		assertContains(itemInit, "lethean_chalice = SPECIALITEMS.register(\"lethean_chalice\"");
@@ -117,10 +119,6 @@ public final class UnstainedProgressionRepairSourceTest {
 		if (restored.getAcceptedObservances() != 0b00111 || restored.getClaimedObservances() != 0b00011) {
 			throw new AssertionError("observance masks did not survive NBT round trip");
 		}
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(Path.of(path));
 	}
 
 	private static void assertContains(String source, String expected) {

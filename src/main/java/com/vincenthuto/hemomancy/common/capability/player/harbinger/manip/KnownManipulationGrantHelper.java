@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -27,6 +28,8 @@ public final class KnownManipulationGrantHelper {
 		ALREADY_KNOWN,
 		NO_ACTIVE_BLOOD,
 		RANK_TOO_LOW,
+		/** A Saint's gift, and this player has not ended that Saint's trial (D-1, NQ-08-2). */
+		TRIAL_NOT_ENDED,
 		MASTERY_TOO_LOW,
 		RETIRED,
 		INVALID
@@ -58,10 +61,12 @@ public final class KnownManipulationGrantHelper {
 		if (volume == null || !volume.isActive()) {
 			return new MemoryGrantResult(MemoryGrantStatus.NO_ACTIVE_BLOOD, manipulation, 0);
 		}
-		int requiredDegree = ManipulationRankGates.minDegreeForRank(manipulation.getRank());
-		if (!ManipulationRankGates.playerMeetsRank(HemoCapabilityAccess.getPlayerDegreeNumber(player),
-				manipulation.getRank())) {
+		int requiredDegree = ManipulationRankGates.minDegreeFor(manipulation);
+		if (!ManipulationRankGates.playerMeets(HemoCapabilityAccess.getPlayerDegreeNumber(player), manipulation)) {
 			return new MemoryGrantResult(MemoryGrantStatus.RANK_TOO_LOW, manipulation, requiredDegree);
+		}
+		if (!com.vincenthuto.hemomancy.common.manipulation.saint.CanonGifts.trialAllows(player, manipulation)) {
+			return new MemoryGrantResult(MemoryGrantStatus.TRIAL_NOT_ENDED, manipulation, requiredDegree);
 		}
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) {
@@ -124,6 +129,7 @@ public final class KnownManipulationGrantHelper {
 		boolean equipped = known.equipManip(manipulation.getName(), ManipSlotHelper.getMaxSlots(player));
 		MnemonicReliquaryProgression.onCapacityChanged(player, known);
 		KnownManipulationEvents.syncPlayerEvent(player);
+		LiberKnowledgeHelper.unlockForMemory(player, manipulation);
 		return new MemoryGrantResult(equipped ? MemoryGrantStatus.GRANTED_EQUIPPED : MemoryGrantStatus.GRANTED,
 				manipulation, requiredDegree);
 	}

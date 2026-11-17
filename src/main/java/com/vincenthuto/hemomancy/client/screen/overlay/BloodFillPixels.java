@@ -5,8 +5,15 @@ import net.minecraft.util.Mth;
 
 final class BloodFillPixels {
     static final int HEIGHT = 92;
+    /** How often the liquid fills are redrawn and re-uploaded; their slow pulse needs no more. */
+    static final int FILL_FPS = 30;
 
     private BloodFillPixels() {
+    }
+
+    /** The fill frame for this animation time; a texture is only redrawn when it changes. */
+    static int frame(float seconds) {
+        return (int) (seconds * FILL_FPS);
     }
 
     static int[] render(boolean[] mask, int width, int height, double ratio,

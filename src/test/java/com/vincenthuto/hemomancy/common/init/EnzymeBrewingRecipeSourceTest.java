@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class EnzymeBrewingRecipeSourceTest {
 	private static final Path EFFECT_INIT = Path.of("src/main/java/com/vincenthuto/hemomancy/common/init/EffectInit.java");
@@ -10,7 +13,8 @@ public final class EnzymeBrewingRecipeSourceTest {
 	private EnzymeBrewingRecipeSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String source = Files.readString(EFFECT_INIT).replace("\r\n", "\n");
 		assertContains("uses NeoForge brewing registration event", source, "RegisterBrewingRecipesEvent");
 		assertContains("registers through the NeoForge brewing event", source, "registerEnzymeBrewingRecipes(RegisterBrewingRecipesEvent event)");
@@ -27,11 +31,5 @@ public final class EnzymeBrewingRecipeSourceTest {
 	private static void assertEnzymeMix(String source, String enzymeId, String potionTarget) {
 		assertContains(enzymeId + " is used as brewing ingredient", source, "ItemInit." + enzymeId + ".get()");
 		assertContains(enzymeId + " maps to " + potionTarget, source, potionTarget);
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.ClientLiberScreenHooks;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.data.BloodFlowDiagnosticsClientData;
+import com.vincenthuto.hemomancy.client.data.BloodlinePetitionClientData;
 import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
 import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
@@ -33,6 +34,7 @@ import com.vincenthuto.hemomancy.common.network.ManipulationInterruptedPacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodFlowDiagnostics;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePetitions;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberVisit;
@@ -43,6 +45,9 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMaxBloo
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMycophantFightScene;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncQliphothBlooms;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVerbPresence;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.VerbRefusalPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashAimSyncPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipCooldownPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.PacketSyncManipulationCostDiagnostics;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.PacketSyncManipulationSlotDiagnostics;
@@ -79,6 +84,7 @@ public final class ClientboundStateHandlers {
 		ClientPayloadHandlers.register(PacketSyncActiveRites.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncBloodFlowDiagnostics.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncBloodlinePool.TYPE, ClientboundStateHandlers::handle);
+		ClientPayloadHandlers.register(PacketSyncBloodlinePetitions.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncChamberOfWill.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncChamberVisit.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncCircusPerception.TYPE, ClientboundStateHandlers::handle);
@@ -99,6 +105,23 @@ public final class ClientboundStateHandlers {
 		ClientPayloadHandlers.register(RiteSpaceSyncPacket.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(RiteZoneSyncPacket.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(StillArtCooldownPacket.TYPE, ClientboundStateHandlers::handle);
+		ClientPayloadHandlers.register(PacketSyncVerbPresence.TYPE, ClientboundStateHandlers::handle);
+		ClientPayloadHandlers.register(VerbRefusalPacket.TYPE, ClientboundStateHandlers::handle);
+		ClientPayloadHandlers.register(LashAimSyncPacket.TYPE, ClientboundStateHandlers::handle);
+	}
+
+	static void handle(PacketSyncVerbPresence packet, IPayloadContext ctx) {
+		ctx.enqueueWork(() -> com.vincenthuto.hemomancy.client.data.OnlookerVerbState.set(packet));
+	}
+
+	static void handle(LashAimSyncPacket packet, IPayloadContext ctx) {
+		ctx.enqueueWork(() -> com.vincenthuto.hemomancy.client.data.StrandClientState.acceptAim(
+				packet.entityId(), packet.yaw(), packet.pitch()));
+	}
+
+	static void handle(VerbRefusalPacket packet, IPayloadContext ctx) {
+		ctx.enqueueWork(() -> com.vincenthuto.hemomancy.client.data.VerbRefusalClientState.refuse(
+				ctx.player().level().getGameTime(), packet.ticks()));
 	}
 
 	static void handle(final ManipCooldownPacket message, final IPayloadContext ctx) {
@@ -123,6 +146,10 @@ public final class ClientboundStateHandlers {
 		ctx.enqueueWork(() -> BloodFlowDiagnosticsClientData.set(msg.snapshot()));
 	}
 
+	static void handle(PacketSyncBloodlinePetitions msg, IPayloadContext ctx) {
+		ctx.enqueueWork(() -> BloodlinePetitionClientData.set(msg.petitions()));
+	}
+
 	static void handle(final PacketSyncBloodlinePool msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			BloodlinePoolClientData.set(msg.poolVolume(), msg.poolMax(), msg.memberCount());
@@ -139,7 +166,7 @@ public final class ClientboundStateHandlers {
 	}
 
 	static void handle(PacketSyncCircusPerception packet, IPayloadContext context) {
-		context.enqueueWork(() -> CircusPerceptionOverlay.setState(packet.acclimation(), packet.active()));
+		context.enqueueWork(() -> CircusPerceptionOverlay.setState(packet.acclimation(), packet.active(), packet.ruined()));
 	}
 
 	static void handle(PacketSyncCircusSchool packet, IPayloadContext context) {

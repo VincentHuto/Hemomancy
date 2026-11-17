@@ -56,8 +56,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ArmorSetBonusHandler {
-	private static final BloodAccounting.Source SILENT_REFUSAL = BloodAccounting.Source.of("silent_archon_refusal", Category.ARMOR, false, false);
-	private static final BloodAccounting.Source COVENANT_MANTLE = BloodAccounting.Source.of("covenant_mantle", Category.ARMOR, false, true);
+	private static final BloodAccounting.Source SILENT_REFUSAL = BloodAccounting.Source.of("silent_archon_refusal", Category.ARMOR, false);
+	private static final BloodAccounting.Source COVENANT_MANTLE = BloodAccounting.Source.of("covenant_mantle", Category.ARMOR, true);
 
 	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = Hemomancy.rloc("chitinite_toughness");
 	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = Hemomancy.rloc("marrow_crown_damage");
@@ -123,7 +123,7 @@ public class ArmorSetBonusHandler {
 			}
 		}
 
-		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && !LastRiteHelper.hasArmedSource(player)) {
+		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && LastRiteHelper.isOpenToArm(player)) {
 			armLegacyLastRiteSource(player);
 		}
 
@@ -185,14 +185,10 @@ public class ArmorSetBonusHandler {
 
 	//  Barbed: Thorns + Blood Loss 
 
-	@SubscribeEvent
+	/** Defender stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
 	public static void onPlayerHurt(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide()) return;
-
-		if (trySilentArchonDeathRefusal(player, event)) {
-			return;
-		}
 
 		if (player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.venous_strider_sabatons.get())
 				&& (event.getSource().is(DamageTypeTags.IS_PROJECTILE)
@@ -281,7 +277,7 @@ public class ArmorSetBonusHandler {
 		if (morphCap.hasMorphling()) {
 			LastRiteHelper.armForMorphling(player, morphCap.getEquippedMorphling());
 		}
-		if (!LastRiteHelper.hasArmedSource(player)
+		if (LastRiteHelper.isOpenToArm(player)
 				&& com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler.hasFullSilentArchonSet(player)) {
 			LastRiteHelper.arm(player, LastRiteHelper.SILENT_REFUSAL_ID);
 		}
@@ -293,7 +289,8 @@ public class ArmorSetBonusHandler {
 		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, confusionTicks, 0, false, true, true));
 	}
 
-	private static boolean trySilentArchonDeathRefusal(Player player, LivingDamageEvent.Pre event) {
+	/** A Last Rite of the death-save stage in {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
+	public static boolean trySilentArchonDeathRefusal(Player player, LivingDamageEvent.Pre event) {
 		if (event.getNewDamage() < player.getHealth()) {
 			return false;
 		}

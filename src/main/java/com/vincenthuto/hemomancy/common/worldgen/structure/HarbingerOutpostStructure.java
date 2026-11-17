@@ -156,10 +156,10 @@ public class HarbingerOutpostStructure extends HemoJigsawStructure {
 		if (level.getBlockEntity(fillerPos) instanceof FillerBlockEntity filler) filler.setMainBlockPos(mainPos);
 	}
 
-	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos pos,
+	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos marker,
 			String outpostKey) {
-		if (!level.getBlockState(pos).isAir() || !level.getBlockState(pos.above()).isAir()
-				|| !level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) return;
+		BlockPos pos = ResidentSpawnSpot.find(level, marker);
+		if (pos == null) return;
 		if (!level.getLevel().getEntitiesOfClass(Entity.class, new AABB(pos).inflate(7),
 				entity -> entity.getType() == type).isEmpty()) return;
 		T entity = type.create(level.getLevel());

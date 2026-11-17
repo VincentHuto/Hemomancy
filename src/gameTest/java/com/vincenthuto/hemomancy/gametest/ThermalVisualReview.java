@@ -26,7 +26,7 @@ import java.util.List;
 public final class ThermalVisualReview {
     private static final Form[] FORMS = {Form.FURNACE, Form.GLASS_CHARGE, Form.GLASS, Form.UPDRAFT,
             Form.FORGE, Form.CAUTERIZE, Form.PHOENIX, Form.PHOENIX_READY, Form.ICE, Form.ICE_CHARGE,
-            Form.BONE, Form.STILLNESS, Form.HOUR};
+            Form.BONE, Form.STILLNESS};
     private static int ticks=Integer.getInteger("hemomancy.thermalReviewStartMode",0)*FORMS.length*100;
     private static int frame=Integer.getInteger("hemomancy.thermalReviewStartMode",0)*FORMS.length*44;
     private static volatile int source = -1;
@@ -92,7 +92,7 @@ public final class ThermalVisualReview {
             Vec3 at=new Vec3(x,100,5),end=at.add(0,1.5,6);
             boolean burst=form==Form.GLASS || form==Form.PHOENIX || form==Form.ICE;
             if(burst && phase!=10)return;
-            float radius=form.name().endsWith("_CHARGE")?.85f:form==Form.HOUR?8:3;
+            float radius=form.name().endsWith("_CHARGE")?.85f:3;
             PacketDistributor.sendToPlayer(player,new ManipulationVisualPacket(form,burst?-1:source,at,end,radius,phase==70?0:burst?58:28,form==Form.UPDRAFT?4:1));
             if(mode==2 && phase==10)PacketDistributor.sendToPlayer(player,new ManipulationVisualPacket(Form.LUX_MIST,-1,at.add(1,1,0),at,1,55,1));
         });

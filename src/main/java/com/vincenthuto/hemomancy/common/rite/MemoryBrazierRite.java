@@ -76,6 +76,8 @@ public final class MemoryBrazierRite implements BrazierRite<BloodMemoryItem> {
 			case ALREADY_KNOWN -> Component.translatable("message.hemomancy.memory_brazier_rite.already_known");
 			case NO_ACTIVE_BLOOD -> Component.translatable("message.hemomancy.memory_brazier_rite.no_active_blood");
 			case RANK_TOO_LOW -> Component.translatable("message.hemomancy.memory_brazier_rite.rank_too_low", result.requiredDegree());
+			case TRIAL_NOT_ENDED -> Component.translatable("message.hemomancy.memory_brazier_rite.trial_not_ended",
+					com.vincenthuto.hemomancy.common.manipulation.saint.CanonGifts.saintOf(result.manipulation()).getDisplayName());
 			case MASTERY_TOO_LOW -> Component.translatable("message.hemomancy.memory_brazier_rite.mastery_too_low",
 					result.familyId().replace('_', ' '), result.requiredMastery());
 			case RETIRED -> Component.translatable("message.hemomancy.memory_brazier_rite.retired");

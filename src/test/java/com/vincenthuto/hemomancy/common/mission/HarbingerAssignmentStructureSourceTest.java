@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class HarbingerAssignmentStructureSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,7 +14,8 @@ public final class HarbingerAssignmentStructureSourceTest {
 	private HarbingerAssignmentStructureSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assignmentLedgerSeparatesMainAndSideAssignments();
 		d1CentrifugeMainAssignmentExists();
 	}
@@ -78,15 +82,5 @@ public final class HarbingerAssignmentStructureSourceTest {
 		assertContains("first separation advancement exists", read(RESOURCE_ROOT.resolve(
 				"data/hemomancy/advancement/hemomancy/first_separation_started.json")),
 				"advancements.hemomancy.first_separation_started.title");
-	}
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path);
-	}
-
-	private static void assertContains(String label, String text, String needle) {
-		if (!text.contains(needle)) {
-			throw new AssertionError(label + " missing: " + needle);
-		}
 	}
 }

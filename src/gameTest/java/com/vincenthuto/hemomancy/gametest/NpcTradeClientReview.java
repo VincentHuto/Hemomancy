@@ -111,10 +111,28 @@ public final class NpcTradeClientReview {
 	private static List<Step> script() {
 		List<Step> s = new ArrayList<>();
 		hub(s, "alchemist", true, false);
+		// FX-15: at GUI scale 3 hub summaries and long card lines clipped at two lines; now each card grows to fit.
+		s.add(client(mc -> {
+			mc.setScreen(null);
+			mc.options.guiScale().set(3);
+			mc.resizeDisplay();
+		}));
+		s.add(server(player -> interact(player, "alchemist")));
+		s.add(client(mc -> capture(mc, "alchemist-hub-scale3")));
+		s.add(client(mc -> open(mc, DialogueCategory.TRADE)));
+		s.add(client(mc -> capture(mc, "alchemist-trade-scale3")));
+		s.add(client(mc -> {
+			mc.setScreen(null);
+			mc.options.guiScale().set(2);
+			mc.resizeDisplay();
+		}));
 		// Track 6: at Trusted the Alchemist's rapport lore opens (glyph and unread dot) and the rapport card unlocks.
 		s.add(client(mc -> mc.setScreen(null)));
-		s.add(server(player -> HemoCapabilityAccess.npcTrades(player).addRapport("alchemist",
-				NpcTradeRules.tierFloor(NpcTradeRules.TRUSTED))));
+		// The save keeps rapport between runs, so set it to the Trusted floor rather than adding to what is there.
+		s.add(server(player -> {
+			var ledger = HemoCapabilityAccess.npcTrades(player);
+			ledger.addRapport("alchemist", NpcTradeRules.tierFloor(NpcTradeRules.TRUSTED) - ledger.rapport("alchemist"));
+		}));
 		s.add(server(player -> interact(player, "alchemist")));
 		s.add(client(mc -> open(mc, DialogueCategory.CONVERSATION)));
 		s.add(client(mc -> capture(mc, "alchemist-conversation-trusted")));

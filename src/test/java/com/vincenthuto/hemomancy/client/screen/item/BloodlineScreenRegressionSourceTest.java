@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class BloodlineScreenRegressionSourceTest {
 	private static final Path LEDGER_SCREEN = Path.of(
@@ -17,7 +21,8 @@ public final class BloodlineScreenRegressionSourceTest {
 	private BloodlineScreenRegressionSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String ledgerScreen = Files.readString(LEDGER_SCREEN).replace("\r\n", "\n");
 		String poolScreen = Files.readString(POOL_SCREEN).replace("\r\n", "\n");
 		String harbingerRites = (Files.readString(HARBINGER_RITES) + Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"))).replace("\r\n", "\n");
@@ -76,18 +81,6 @@ public final class BloodlineScreenRegressionSourceTest {
 				"Checkbox.builder");
 		assertNotContains("bloodline pool screen avoids normal edit box construction", poolScreen,
 				"new EditBox(");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": unexpected " + unexpected);
-		}
 	}
 
 	private static void assertOrder(String label, String text, String first, String second) {

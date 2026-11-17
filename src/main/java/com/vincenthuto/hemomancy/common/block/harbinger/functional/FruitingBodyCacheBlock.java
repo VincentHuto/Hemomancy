@@ -24,6 +24,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 
 import javax.annotation.Nullable;
 
@@ -60,8 +62,11 @@ public class FruitingBodyCacheBlock extends Block implements EntityBlock {
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return InteractionResult.CONSUME;
 		}
+		// Through the item handler, never Inventory.add: in Creative that reports success while discarding the stack.
+		var inventory = new PlayerMainInvWrapper(player.getInventory());
 		for (ItemStack stack : cache.takeAll()) {
-			if (!player.getInventory().add(stack) && !stack.isEmpty()) player.drop(stack, false);
+			ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, stack, false);
+			if (!remainder.isEmpty()) player.drop(remainder, false);
 		}
 		level.playSound(null, pos, SoundEvents.FUNGUS_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
 		if (level instanceof ServerLevel server) HeartNodeService.announce(server, pos, HeartNodeMoment.CACHE_OPENED, 0);

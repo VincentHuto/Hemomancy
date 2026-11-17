@@ -1,22 +1,25 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.support.SourceAssertions;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 public final class MaterialsAtlasMetadataSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private MaterialsAtlasMetadataSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String data = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsData.java");
 		String spec = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasSpec.java");
 		String atlasEntry = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasEntry.java");
@@ -178,22 +181,6 @@ public final class MaterialsAtlasMetadataSourceTest {
 		}
 	}
 
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
-		}
-	}
-
 	private static int countOccurrences(String text, String needle) {
 		int count = 0;
 		int index = 0;
@@ -209,5 +196,4 @@ public final class MaterialsAtlasMetadataSourceTest {
 			throw new AssertionError(label + " (expected " + expected + ", got " + actual + ")");
 		}
 	}
-
 }

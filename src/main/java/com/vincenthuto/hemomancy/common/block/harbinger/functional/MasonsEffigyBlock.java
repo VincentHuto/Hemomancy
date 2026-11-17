@@ -191,6 +191,11 @@ public class MasonsEffigyBlock extends Block implements EntityBlock, SimpleWater
 	}
 
 	@Override
+	public boolean holdsProjectedBlood() {
+		return false;
+	}
+
+	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new MasonsEffigyBlockEntity(pos, state);
 	}

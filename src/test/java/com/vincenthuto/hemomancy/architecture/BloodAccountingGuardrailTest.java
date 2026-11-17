@@ -17,9 +17,10 @@ import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Step 7 (roadmap Phase 5): a player pays blood only through {@code BloodAccounting}. Every other {@code drain(},
- * {@code subtractBloodVolume(} and {@code addBloodSpend(} is listed here, per file and count, with the volume it
- * touches; a new or stale entry fails. The player volume is synced only by {@code BloodVolumeEvents.syncVolume}.
+ * Step 7 (roadmap Phase 5): a player pays blood only through {@code BloodAccounting}. Every other {@code drain(} and
+ * {@code subtractBloodVolume(} is listed here, per file and count, with the volume it touches; a new or stale entry
+ * fails. The player volume is synced only by {@code BloodVolumeEvents.syncVolume}. The retired spend count
+ * ({@code addBloodSpend(}, the {@code countsAsSpend} flag) stays gone (NQ-08-20).
  */
 class BloodAccountingGuardrailTest {
 	private static final String COMMON = "src/main/java/com/vincenthuto/hemomancy/common/";
@@ -30,7 +31,8 @@ class BloodAccountingGuardrailTest {
 	/** A call on a lower-case receiver or a call result; {@code SomeRules.drain(...)} is not a volume. */
 	private static final Pattern DRAIN = Pattern.compile("(?:\\b[a-z]\\w*|\\))\\.drain\\(");
 	private static final Pattern SUBTRACT = Pattern.compile("\\.subtractBloodVolume\\(");
-	private static final Pattern SPEND = Pattern.compile("\\.addBloodSpend\\(");
+	private static final Pattern SPEND = Pattern.compile("addBloodSpend\\(");
+	private static final Pattern SPEND_FLAG = Pattern.compile("countsAsSpend");
 	private static final Pattern SET_MINUS = Pattern.compile("setBloodVolume\\(\\s*\\w+\\.getBloodVolume\\(\\)\\s*-");
 	private static final Pattern VOLUME_PACKET = Pattern.compile("new BloodVolumeServerPacket\\(");
 
@@ -52,6 +54,7 @@ class BloodAccountingGuardrailTest {
 			entry(COMMON + "tile/harbinger/crafting/EnzymaticScriptoriumBlockEntity.java", new Allowed(2, "The Scriptorium's tank: an inscription and a denaturing")),
 			entry(COMMON + "tile/BloodContainerTransfer.java", new Allowed(1, "A reservoir's tank")),
 			entry(COMMON + "tile/IBloodReservoir.java", new Allowed(1, "drainBlood: the reservoir's tank")),
+			entry(COMMON + "tile/BlockBloodVolume.java", new Allowed(1, "A block's tank, stamped as drawn for living veins (CL-14)")),
 			entry(COMMON + "tile/harbinger/crafting/GhastlyAlembicBlockEntity.java", new Allowed(6, "The Alembic's tank")),
 			entry(COMMON + "tile/harbinger/crafting/HematicArmatureBlockEntity.java", new Allowed(1, "The Armature's tank")),
 			entry(COMMON + "tile/harbinger/crafting/ResonantForgeBlockEntity.java", new Allowed(1, "The Forge's tank")),
@@ -59,20 +62,27 @@ class BloodAccountingGuardrailTest {
 					new Allowed(1, "The Condenser's pool")),
 			entry(COMMON + "tile/harbinger/functional/SemiSentientConstructBlockEntity.java",
 					new Allowed(1, "The construct's tank")),
-			entry(COMMON + "tile/unstained/crafting/PallidRetortBlockEntity.java", new Allowed(3, "White humor tanks")));
+			entry(COMMON + "tile/unstained/crafting/PallidRetortBlockEntity.java", new Allowed(3, "White humor tanks")),
+			entry(COMMON + "tile/harbinger/decoration/VenousBasinBlockEntity.java",
+					new Allowed(1, "A worked basin's own tank, emptied down its gutters")),
+			entry(COMMON + "tile/harbinger/crafting/MycelialLanternBlockEntity.java",
+					new Allowed(1, "The Lantern's tank paying a cloche growth stage")),
+			entry(COMMON + "tile/harbinger/plant/PlantingBasinBlockEntity.java",
+					new Allowed(1, "A planting basin's own tank paying a crop's extra growth")),
+			entry(COMMON + "world/farm/ScabDrip.java",
+					new Allowed(1, "The tank a scab spike drips from")),
+			entry(COMMON + "tile/harbinger/menagerie/KeptSpecimen.java",
+					new Allowed(2, "A jar or vat's living buffer feeding its kept creature's Vigor, and paying a brood's share")));
 
 	private static final Map<String, Allowed> SUBTRACTS = Map.ofEntries(
 			entry(COMMON + "block/harbinger/BlockBloodInteractions.java", new Allowed(1, "Absorption drains the reservoir")),
+			entry(COMMON + "tile/BlockBloodVolume.java", new Allowed(1, "A block's tank, stamped as drawn for living veins (CL-14)")),
 			entry(COMMON + "tile/BloodContainerTransfer.java", new Allowed(1, "A gourd")),
 			entry(COMMON + "tile/harbinger/crafting/HematicArmatureBlockEntity.java", new Allowed(1, "A gourd")),
 			entry(COMMON + "tile/harbinger/crafting/MorphlingIncubatorBlockEntity.java", new Allowed(1, "The Incubator's tank")),
 			entry(COMMON + "tile/harbinger/crafting/MycelialCrucibleBlockEntity.java", new Allowed(2, "The Crucible's tank")),
 			entry(COMMON + "tile/harbinger/crafting/MycelialLanternBlockEntity.java", new Allowed(1, "The Lantern's tank")),
 			entry(COMMON + "tile/harbinger/functional/SanguineVigilBlockEntity.java", new Allowed(1, "The Vigil's store")));
-
-	private static final Map<String, Allowed> SPENDS = Map.of(
-			COMMON + "capability/player/harbinger/bloodvolume/BloodPaymentRules.java",
-			new Allowed(1, "countsAsSpend"));
 
 	private static final Map<String, Allowed> VOLUME_PACKETS = Map.of(
 			COMMON + "capability/player/harbinger/bloodvolume/BloodVolumeEvents.java",
@@ -94,8 +104,9 @@ class BloodAccountingGuardrailTest {
 	}
 
 	@Test
-	void bloodSpendIsCountedOnlyByBloodAccounting() throws IOException {
-		assertEquals(counts(SPENDS), found(SPEND), "pass countsAsSpend in the payment's Source instead");
+	void theRetiredSpendCountStaysGone() throws IOException {
+		assertEquals(Map.of(), found(SPEND), "the blood spend count is retired (NQ-08-20); nothing reads it");
+		assertEquals(Map.of(), found(SPEND_FLAG), "a payment's Source carries no countsAsSpend flag (NQ-08-20)");
 	}
 
 	@Test

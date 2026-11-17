@@ -47,6 +47,7 @@ public class ChewWoodGoal extends MoveToBlockGoal {
 	private double bestDistance;
 	private static final int CHEW_DURATION = 60;    // ~3 seconds at 20 tps
 	private static final int LEAF_CHEW_DURATION = 10;
+	private static final int CHEW_SOUND_INTERVAL = 20;
 	private static final int GIVE_UP_TICKS = 100;   // ~5 seconds without getting closer
 	private static final int GIVE_UP_MEMORY = 1200; // skip an abandoned log for a minute
 	private static final int MAX_TREE_LOGS = 256;
@@ -248,11 +249,10 @@ public class ChewWoodGoal extends MoveToBlockGoal {
 
 		this.chewTimer++;
 
-		// Chewing sounds every few ticks
-		if (this.chewTimer % 8 == 0) {
-			level.playSound(null, target,
-					SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE,
-					0.5f, 1.5f + level.random.nextFloat() * 0.5f);
+		// UN-17: a quiet gnaw once a second, not the zombie's door bang
+		if (this.chewTimer % CHEW_SOUND_INTERVAL == 0) {
+			level.playSound(null, target, SoundEvents.WOOD_HIT, SoundSource.HOSTILE,
+					0.3f, 1.3f + level.random.nextFloat() * 0.3f);
 		}
 
 		// Breaking particles every few ticks (server-side)

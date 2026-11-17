@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import org.junit.jupiter.api.Test;
+
 public final class SkillTreeLayerRulesTest {
 	private SkillTreeLayerRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertEquals("degree zero belongs to surface", SkillTreeLayer.SURFACE, SkillTreeLayerRules.layerForDegree(0));
 		assertEquals("degree four belongs to surface", SkillTreeLayer.SURFACE, SkillTreeLayerRules.layerForDegree(4));
 		assertEquals("degree five belongs to deep", SkillTreeLayer.DEEP, SkillTreeLayerRules.layerForDegree(5));

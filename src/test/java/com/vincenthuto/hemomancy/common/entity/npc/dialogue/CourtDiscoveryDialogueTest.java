@@ -14,7 +14,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CourtDiscoveryDialogueTest {
 	private static CourtDiscoveryDialogue.View view(int degree, CourtProgress.Route knownBy, boolean letterLost,
 			boolean carryingChart, int maturity) {
-		return new CourtDiscoveryDialogue.View(degree, knownBy != null, knownBy, letterLost, carryingChart, maturity);
+		return new CourtDiscoveryDialogue.View(degree, knownBy != null, knownBy, letterLost, carryingChart, maturity, true);
+	}
+
+	@Test
+	void withPelagicWorldgenOffNobodyPointsSeaward() {
+		CourtDiscoveryDialogue.View off = new CourtDiscoveryDialogue.View(5, false, null, true, false, 4, false);
+		DialogueTree vicar = HarbingerVicarDialogueTrees.votary(42);
+		assertSame(vicar, CourtDiscoveryDialogue.withVicar(vicar, off, true));
+		DialogueTree voyager = HarbingerVoyagerDialogueTrees.forDegree(5, 42);
+		assertSame(voyager, CourtDiscoveryDialogue.withVoyager(voyager, off));
+		DialogueTree alchemist = HarbingerAlchemistDialogueTrees.purifying(42);
+		assertSame(alchemist, CourtDiscoveryDialogue.withAlchemist(alchemist, off));
+		CourtDiscoveryDialogue.View knownOff = new CourtDiscoveryDialogue.View(5, true, CourtProgress.Route.FOUND, false, false, 4, false);
+		assertSame(voyager, CourtDiscoveryDialogue.withVoyager(voyager, knownOff), "no chart either");
 	}
 
 	@Test
@@ -79,6 +92,14 @@ class CourtDiscoveryDialogueTest {
 				CourtDiscoveryDialogue.VOYAGER_LETTER, view(2, CourtProgress.Route.ALCHEMIST, false, false, -1));
 		assertFalse(hasEvent(known.getNode(id), CourtDiscoveryDialogue.VOYAGER_LETTER));
 		assertTrue(known.getNode(id).lines().contains("hemomancy.voyager.court.known.alchemist"));
+		assertTrue(hasEvent(known.getNode(id), CourtDiscoveryDialogue.VOYAGER_CHART), "known with no chart: the Voyager offers one");
+		DialogueTree carrying = CourtDiscoveryDialogue.withLetterInquiry(inquiry, "voyager",
+				CourtDiscoveryDialogue.VOYAGER_LETTER, view(2, CourtProgress.Route.ALCHEMIST, false, true, -1));
+		assertFalse(hasEvent(carrying.getNode(id), CourtDiscoveryDialogue.VOYAGER_CHART), "known with a chart: no second one");
+		assertFalse(hasEvent(unknown.getNode(id), CourtDiscoveryDialogue.VOYAGER_CHART), "unknown: the letter is read first");
+		DialogueTree alchemist = CourtDiscoveryDialogue.withLetterInquiry(inquiry, "alchemist",
+				CourtDiscoveryDialogue.ALCHEMIST_LETTER, view(2, CourtProgress.Route.ALCHEMIST, false, false, -1));
+		assertFalse(hasEvent(alchemist.getNode(id), CourtDiscoveryDialogue.VOYAGER_CHART), "only a Voyager draws charts");
 	}
 
 	private static boolean hasEvent(DialogueNode node, String eventId) {

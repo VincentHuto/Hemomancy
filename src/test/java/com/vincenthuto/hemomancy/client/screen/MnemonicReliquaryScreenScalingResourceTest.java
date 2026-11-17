@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class MnemonicReliquaryScreenScalingResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -10,7 +14,8 @@ public final class MnemonicReliquaryScreenScalingResourceTest {
 	private MnemonicReliquaryScreenScalingResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String screen = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java"));
 
@@ -30,28 +35,9 @@ public final class MnemonicReliquaryScreenScalingResourceTest {
 				"int x = guiLeft + scaled(6);");
 		assertContains("mnemonic reliquary counter should render from its left edge", screen,
 				"graphics.drawString(font, text, x, y, 0xFFDD2222);");
-		assertDoesNotContain("mnemonic reliquary screen should not center against the fixed width", screen,
+		assertNotContains("mnemonic reliquary screen should not center against the fixed width", screen,
 				"guiLeft = (this.width - GUI_WIDTH) / 2;");
-		assertDoesNotContain("mnemonic reliquary screen should not center against the fixed height", screen,
+		assertNotContains("mnemonic reliquary screen should not center against the fixed height", screen,
 				"guiTop = (this.height - GUI_HEIGHT) / 2;");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 }

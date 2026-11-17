@@ -1,9 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class LivingWeaponMemoryRecipeResourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -11,7 +14,8 @@ public final class LivingWeaponMemoryRecipeResourceTest {
 	private LivingWeaponMemoryRecipeResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		livingWeaponMemoryRecipesAreRemovedFromSurvivalAcquisition();
 	}
 
@@ -22,12 +26,6 @@ public final class LivingWeaponMemoryRecipeResourceTest {
 			if (Files.exists(recipePath)) {
 				throw new AssertionError("Living weapon memory recipe should be replaced by graft recipe: " + recipePath);
 			}
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
 		}
 	}
 }

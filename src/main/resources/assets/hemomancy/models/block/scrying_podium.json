@@ -1,371 +1,819 @@
 {
-  "credit" : "Made with Blockbench",
-  "render_type" : "cutout",
-  "parent" : "block/block",
-  "textures" : {
-    "1" : "hemomancy:block/quartz_pillar",
-    "2" : "hemomancy:block/quartz_bricks",
-    "3" : "hemomancy:block/hematic_iron_block",
-    "5" : "hemomancy:block/vat_port",
-    "6" : "hemomancy:block/chiseled_hematic_iron_block",
-    "10" : "hemomancy:block/podium_top",
-    "particle" : "hemomancy:block/quartz_pillar"
-  },
-  "elements" : [ {
-    "name" : "Bottom",
-    "from" : [ 3, 0, 3 ],
-    "to" : [ 13, 2, 13 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 8, 8, 8 ]
+    "credit": "Made with Blockbench",
+    "render_type": "cutout",
+    "parent": "block/block",
+    "textures": {
+        "1": "hemomancy:block/quartz_pillar",
+        "2": "hemomancy:block/quartz_bricks",
+        "3": "hemomancy:block/hematic_iron_block",
+        "5": "hemomancy:block/vat_port",
+        "6": "hemomancy:block/chiseled_hematic_iron_block",
+        "10": "hemomancy:block/podium_top",
+        "particle": "hemomancy:block/quartz_pillar"
     },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      }
-    }
-  }, {
-    "name" : "Cap",
-    "from" : [ 3, 12, 3 ],
-    "to" : [ 13, 14, 13 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 7, 7, 8 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#10"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      }
-    }
-  }, {
-    "name" : "Cap",
-    "from" : [ 6, 13, 6 ],
-    "to" : [ 10, 15, 10 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 7, 7, 8 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      }
-    }
-  }, {
-    "name" : "Cap",
-    "from" : [ 6, 13, 6 ],
-    "to" : [ 10, 15, 10 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 7, 7, 8 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#3"
-      }
-    }
-  }, {
-    "name" : "Cap",
-    "from" : [ 5, 15, 5 ],
-    "to" : [ 11, 16, 11 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 7, 7, 8 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#6"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#6"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#6"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#6"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#5"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#6"
-      }
-    }
-  }, {
-    "name" : "WoodBase",
-    "from" : [ 3, 9, 3 ],
-    "to" : [ 13, 12, 13 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 8, 17, 8 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      }
-    }
-  }, {
-    "name" : "WoodBase",
-    "from" : [ 2, 11, 2 ],
-    "to" : [ 14, 13, 14 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 8, 18, 7 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      }
-    }
-  }, {
-    "name" : "WoodBase",
-    "from" : [ 4, 1, 4 ],
-    "to" : [ 12, 3, 12 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 8, 8, 8 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      }
-    }
-  }, {
-    "name" : "WoodBase",
-    "from" : [ 4, 8, 4 ],
-    "to" : [ 12, 10, 12 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 8, 16, 8 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#2"
-      }
-    }
-  }, {
-    "name" : "WoodPillar1",
-    "from" : [ 5, 2, 5 ],
-    "to" : [ 11, 9, 11 ],
-    "rotation" : {
-      "angle" : 0,
-      "axis" : "y",
-      "origin" : [ 8, 7, 8 ]
-    },
-    "faces" : {
-      "north" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#1"
-      },
-      "east" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#1"
-      },
-      "south" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#1"
-      },
-      "west" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#1"
-      },
-      "up" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#1"
-      },
-      "down" : {
-        "uv" : [ 0, 0, 16, 16 ],
-        "texture" : "#1"
-      }
-    }
-  } ],
-  "groups" : [ {
-    "name" : "VoxelShapes",
-    "origin" : [ 8, 8, 8 ],
-    "color" : 0,
-    "children" : [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
-  } ]
+    "elements": [
+        {
+            "name": "Bottom",
+            "from": [
+                3,
+                0,
+                3
+            ],
+            "to": [
+                13,
+                2,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    8,
+                    8,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        3,
+                        14,
+                        13,
+                        16
+                    ],
+                    "texture": "#2"
+                },
+                "east": {
+                    "uv": [
+                        3,
+                        14,
+                        13,
+                        16
+                    ],
+                    "texture": "#2"
+                },
+                "south": {
+                    "uv": [
+                        3,
+                        14,
+                        13,
+                        16
+                    ],
+                    "texture": "#2"
+                },
+                "west": {
+                    "uv": [
+                        3,
+                        14,
+                        13,
+                        16
+                    ],
+                    "texture": "#2"
+                },
+                "up": {
+                    "uv": [
+                        3,
+                        3,
+                        13,
+                        13
+                    ],
+                    "texture": "#2"
+                },
+                "down": {
+                    "uv": [
+                        3,
+                        3,
+                        13,
+                        13
+                    ],
+                    "texture": "#2"
+                }
+            }
+        },
+        {
+            "name": "Cap",
+            "from": [
+                3,
+                12,
+                3
+            ],
+            "to": [
+                13,
+                14,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    7,
+                    7,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        3,
+                        2,
+                        13,
+                        4
+                    ],
+                    "texture": "#3"
+                },
+                "east": {
+                    "uv": [
+                        3,
+                        2,
+                        13,
+                        4
+                    ],
+                    "texture": "#3"
+                },
+                "south": {
+                    "uv": [
+                        3,
+                        2,
+                        13,
+                        4
+                    ],
+                    "texture": "#3"
+                },
+                "west": {
+                    "uv": [
+                        3,
+                        2,
+                        13,
+                        4
+                    ],
+                    "texture": "#3"
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#10"
+                },
+                "down": {
+                    "uv": [
+                        3,
+                        3,
+                        13,
+                        13
+                    ],
+                    "texture": "#3"
+                }
+            }
+        },
+        {
+            "name": "Cap",
+            "from": [
+                6,
+                13,
+                6
+            ],
+            "to": [
+                10,
+                15,
+                10
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    7,
+                    7,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        6,
+                        1,
+                        10,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "east": {
+                    "uv": [
+                        6,
+                        1,
+                        10,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "south": {
+                    "uv": [
+                        6,
+                        1,
+                        10,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "west": {
+                    "uv": [
+                        6,
+                        1,
+                        10,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "up": {
+                    "uv": [
+                        6,
+                        6,
+                        10,
+                        10
+                    ],
+                    "texture": "#3"
+                },
+                "down": {
+                    "uv": [
+                        6,
+                        6,
+                        10,
+                        10
+                    ],
+                    "texture": "#3"
+                }
+            }
+        },
+        {
+            "name": "Cap",
+            "from": [
+                6,
+                13,
+                6
+            ],
+            "to": [
+                10,
+                15,
+                10
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    7,
+                    7,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        6,
+                        1,
+                        10,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "east": {
+                    "uv": [
+                        6,
+                        1,
+                        10,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "south": {
+                    "uv": [
+                        6,
+                        1,
+                        10,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "west": {
+                    "uv": [
+                        6,
+                        1,
+                        10,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "up": {
+                    "uv": [
+                        6,
+                        6,
+                        10,
+                        10
+                    ],
+                    "texture": "#3"
+                },
+                "down": {
+                    "uv": [
+                        6,
+                        6,
+                        10,
+                        10
+                    ],
+                    "texture": "#3"
+                }
+            }
+        },
+        {
+            "name": "Cap",
+            "from": [
+                5,
+                15,
+                5
+            ],
+            "to": [
+                11,
+                16,
+                11
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    7,
+                    7,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        5,
+                        0,
+                        11,
+                        1
+                    ],
+                    "texture": "#6"
+                },
+                "east": {
+                    "uv": [
+                        5,
+                        0,
+                        11,
+                        1
+                    ],
+                    "texture": "#6"
+                },
+                "south": {
+                    "uv": [
+                        5,
+                        0,
+                        11,
+                        1
+                    ],
+                    "texture": "#6"
+                },
+                "west": {
+                    "uv": [
+                        5,
+                        0,
+                        11,
+                        1
+                    ],
+                    "texture": "#6"
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5"
+                },
+                "down": {
+                    "uv": [
+                        5,
+                        5,
+                        11,
+                        11
+                    ],
+                    "texture": "#6"
+                }
+            }
+        },
+        {
+            "name": "WoodBase",
+            "from": [
+                3,
+                9,
+                3
+            ],
+            "to": [
+                13,
+                12,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    8,
+                    17,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        3,
+                        4,
+                        13,
+                        7
+                    ],
+                    "texture": "#2"
+                },
+                "east": {
+                    "uv": [
+                        3,
+                        4,
+                        13,
+                        7
+                    ],
+                    "texture": "#2"
+                },
+                "south": {
+                    "uv": [
+                        3,
+                        4,
+                        13,
+                        7
+                    ],
+                    "texture": "#2"
+                },
+                "west": {
+                    "uv": [
+                        3,
+                        4,
+                        13,
+                        7
+                    ],
+                    "texture": "#2"
+                },
+                "up": {
+                    "uv": [
+                        3,
+                        3,
+                        13,
+                        13
+                    ],
+                    "texture": "#2"
+                },
+                "down": {
+                    "uv": [
+                        3,
+                        3,
+                        13,
+                        13
+                    ],
+                    "texture": "#2"
+                }
+            }
+        },
+        {
+            "name": "WoodBase",
+            "from": [
+                2,
+                11,
+                2
+            ],
+            "to": [
+                14,
+                13,
+                14
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    8,
+                    18,
+                    7
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        2,
+                        3,
+                        14,
+                        5
+                    ],
+                    "texture": "#2"
+                },
+                "east": {
+                    "uv": [
+                        2,
+                        3,
+                        14,
+                        5
+                    ],
+                    "texture": "#2"
+                },
+                "south": {
+                    "uv": [
+                        2,
+                        3,
+                        14,
+                        5
+                    ],
+                    "texture": "#2"
+                },
+                "west": {
+                    "uv": [
+                        2,
+                        3,
+                        14,
+                        5
+                    ],
+                    "texture": "#2"
+                },
+                "up": {
+                    "uv": [
+                        2,
+                        2,
+                        14,
+                        14
+                    ],
+                    "texture": "#2"
+                },
+                "down": {
+                    "uv": [
+                        2,
+                        2,
+                        14,
+                        14
+                    ],
+                    "texture": "#2"
+                }
+            }
+        },
+        {
+            "name": "WoodBase",
+            "from": [
+                4,
+                1,
+                4
+            ],
+            "to": [
+                12,
+                3,
+                12
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    8,
+                    8,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        4,
+                        13,
+                        12,
+                        15
+                    ],
+                    "texture": "#2"
+                },
+                "east": {
+                    "uv": [
+                        4,
+                        13,
+                        12,
+                        15
+                    ],
+                    "texture": "#2"
+                },
+                "south": {
+                    "uv": [
+                        4,
+                        13,
+                        12,
+                        15
+                    ],
+                    "texture": "#2"
+                },
+                "west": {
+                    "uv": [
+                        4,
+                        13,
+                        12,
+                        15
+                    ],
+                    "texture": "#2"
+                },
+                "up": {
+                    "uv": [
+                        4,
+                        4,
+                        12,
+                        12
+                    ],
+                    "texture": "#2"
+                },
+                "down": {
+                    "uv": [
+                        4,
+                        4,
+                        12,
+                        12
+                    ],
+                    "texture": "#2"
+                }
+            }
+        },
+        {
+            "name": "WoodBase",
+            "from": [
+                4,
+                8,
+                4
+            ],
+            "to": [
+                12,
+                10,
+                12
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    8,
+                    16,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        4,
+                        6,
+                        12,
+                        8
+                    ],
+                    "texture": "#2"
+                },
+                "east": {
+                    "uv": [
+                        4,
+                        6,
+                        12,
+                        8
+                    ],
+                    "texture": "#2"
+                },
+                "south": {
+                    "uv": [
+                        4,
+                        6,
+                        12,
+                        8
+                    ],
+                    "texture": "#2"
+                },
+                "west": {
+                    "uv": [
+                        4,
+                        6,
+                        12,
+                        8
+                    ],
+                    "texture": "#2"
+                },
+                "up": {
+                    "uv": [
+                        4,
+                        4,
+                        12,
+                        12
+                    ],
+                    "texture": "#2"
+                },
+                "down": {
+                    "uv": [
+                        4,
+                        4,
+                        12,
+                        12
+                    ],
+                    "texture": "#2"
+                }
+            }
+        },
+        {
+            "name": "WoodPillar1",
+            "from": [
+                5,
+                2,
+                5
+            ],
+            "to": [
+                11,
+                9,
+                11
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    8,
+                    7,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        5,
+                        7,
+                        11,
+                        14
+                    ],
+                    "texture": "#1"
+                },
+                "east": {
+                    "uv": [
+                        5,
+                        7,
+                        11,
+                        14
+                    ],
+                    "texture": "#1"
+                },
+                "south": {
+                    "uv": [
+                        5,
+                        7,
+                        11,
+                        14
+                    ],
+                    "texture": "#1"
+                },
+                "west": {
+                    "uv": [
+                        5,
+                        7,
+                        11,
+                        14
+                    ],
+                    "texture": "#1"
+                },
+                "up": {
+                    "uv": [
+                        5,
+                        5,
+                        11,
+                        11
+                    ],
+                    "texture": "#1"
+                },
+                "down": {
+                    "uv": [
+                        5,
+                        5,
+                        11,
+                        11
+                    ],
+                    "texture": "#1"
+                }
+            }
+        }
+    ],
+    "groups": [
+        {
+            "name": "VoxelShapes",
+            "origin": [
+                8,
+                8,
+                8
+            ],
+            "color": 0,
+            "children": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+            ]
+        }
+    ]
 }

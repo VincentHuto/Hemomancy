@@ -12,7 +12,7 @@ lacquered heart, a bone skull at its feet. In front stands the offering bowl, an
 cresset on a tall iron stand burns at each corner of the plinth once the tomb has been consecrated.
 
 Emits the tomb, the lid, the bowl's blood, the cresset coals and the corpus's full-bright memory veins as block
-models, the closed-tomb item model (half scale), the blockstate, the painted atlas, an editable Blockbench project
+models, the closed-tomb item model (three-quarter scale), the blockstate, the painted atlas, an editable Blockbench project
 and SarcophagusGeometry.java (filler cells, collision cells, render anchors and the list of Saint palettes). Python 3
 + Pillow + NumPy.
 
@@ -751,7 +751,13 @@ SPECIAL = dict(tomb=tomb, brick=brick, frieze=frieze, plaque=plaque, sigil=sigil
 
 # --- outputs --------------------------------------------------------------------------------
 
-# The item is the whole tomb at half scale, so its display scales are doubled.
+# The item is the whole tomb at three-quarter scale: the largest that keeps its 63-pixel length inside vanilla's
+# -16..32 element bounds. The offset keeps its centre where the half-scale item had it. The display scales below are
+# set for half scale and shrink by HALF_SCALE / ITEM_SCALE, so the item draws at the same size with more of its
+# texels showing.
+ITEM_SCALE = .75
+ITEM_OFFSET = (0, -3.875, -5.9)
+HALF_SCALE = .5
 DISPLAY = {
     'gui': {'rotation': [30, 225, 0], 'translation': [0, -1, 0], 'scale': [0.44, 0.44, 0.44]},
     'ground': {'translation': [0, 2, 0], 'scale': [0.22, 0.22, 0.22]},
@@ -762,6 +768,8 @@ DISPLAY = {
     'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, 2, 0], 'scale': [0.18, 0.18, 0.18]},
     'firstperson_lefthand': {'rotation': [0, 225, 0], 'translation': [0, 2, 0], 'scale': [0.18, 0.18, 0.18]},
 }
+for _view in DISPLAY.values():
+    _view['scale'] = [round(v * HALF_SCALE / ITEM_SCALE, 4) for v in _view['scale']]
 
 
 def blockstate():
@@ -1074,11 +1082,13 @@ def main():
         outputs[f'block/{name}'] = block(drop_culling(foot))
         outputs[f'block/{name}_head'] = block(drop_culling(head, keep=()))
     whole = models['body'] + models['lid']
-    item = model_json(scaled(whole, .5, (8, 0, 8), (0, 0, -4)), ATLAS, atlas.height, particle, DISPLAY)
+    item = model_json(scaled(whole, ITEM_SCALE, (8, 0, 8), ITEM_OFFSET), ATLAS, atlas.height, particle, DISPLAY)
+    for el in item['elements']:
+        assert all(-16 <= v <= 32 for v in el['from'] + el['to']), (el['name'], el['from'], el['to'])
     item['gui_light'] = 'front'
     outputs['item/saint_sarcophagus'] = item
     project = dict(item, elements=item['elements'] + scaled(models['blood'] + models['coals'] + models['veins'],
-                                                            .5, (8, 0, 8), (0, 0, -4)))
+                                                            ITEM_SCALE, (8, 0, 8), ITEM_OFFSET))
     # Each painted Saint's tomb is its own item model on the same elements; the stack's hemomancy:saint property
     # (1 + the Saint's place in painted(), as SaintSarcophagusBlockItem.palette reads SAINT_PALETTES) picks it.
     item['overrides'] = [{'predicate': {'hemomancy:saint': i + 1}, 'model': f'hemomancy:item/{ATLAS}_{name}'}

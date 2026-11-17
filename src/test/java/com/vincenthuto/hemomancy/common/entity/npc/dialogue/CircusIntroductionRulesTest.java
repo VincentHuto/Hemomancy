@@ -1,15 +1,24 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-public final class CircusIntroductionRulesTest {
-	public static void main(String[] args) {
-		assert CircusIntroductionRules.introductionFor(3, false)
-				== CircusIntroductionRules.Introduction.HIDDEN;
-		assert CircusIntroductionRules.introductionFor(4, false)
-				== CircusIntroductionRules.Introduction.UNDISCOVERED;
-		assert CircusIntroductionRules.introductionFor(4, true)
-				== CircusIntroductionRules.Introduction.DISCOVERED;
-		assert CircusIntroductionRules.canRequestWaybill(4, false);
-		assert !CircusIntroductionRules.canRequestWaybill(3, false);
-		assert !CircusIntroductionRules.canRequestWaybill(4, true);
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+final class CircusIntroductionRulesTest {
+	@Test
+	void theCircusIsHiddenBelowTheThirdDegreeAndTeasedAtIt() {
+		assertEquals(CircusIntroductionRules.Introduction.HIDDEN, CircusIntroductionRules.introductionFor(2, false));
+		assertEquals(CircusIntroductionRules.Introduction.TEASER, CircusIntroductionRules.introductionFor(3, false));
+		assertEquals(CircusIntroductionRules.Introduction.UNDISCOVERED, CircusIntroductionRules.introductionFor(4, false));
+		assertEquals(CircusIntroductionRules.Introduction.DISCOVERED, CircusIntroductionRules.introductionFor(4, true));
+	}
+
+	@Test
+	void theWaybillStillStartsAtTheFourthDegree() {
+		assertTrue(CircusIntroductionRules.canRequestWaybill(4, false));
+		assertFalse(CircusIntroductionRules.canRequestWaybill(3, false));
+		assertFalse(CircusIntroductionRules.canRequestWaybill(4, true));
 	}
 }

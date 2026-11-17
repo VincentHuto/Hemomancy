@@ -93,9 +93,36 @@ class ArchonEndingDialogueTest {
         DialogueTree tree = tree();
         for (String npc : List.of("vicar", "alchemist", "artificer", "mnemonist")) {
             DialogueTree result = DialogueHubFactory.withArchonAcknowledgment(tree, npc, 7,
-                    EnumArchonPath.SILENT_PENDING, true);
+                    EnumArchonPath.SILENT_PENDING, true, false);
             assertEquals(List.of("greeting", "hemomancy.dialogue.ending." + npc + ".silent_absorb"),
                     result.getStartNode().lines());
+        }
+    }
+
+    /** PT-78: after Communion, with the Spine not yet used, the Alchemist names it; the others stay undecided. */
+    @Test
+    void theAlchemistNamesAnUnusedSpine() throws Exception {
+        DialogueTree tree = tree();
+        assertEquals(List.of("greeting", "hemomancy.dialogue.ending.alchemist.communed"),
+                DialogueHubFactory.withArchonAcknowledgment(tree, "alchemist", 7, EnumArchonPath.NONE, false, true)
+                        .getStartNode().lines());
+        for (String npc : List.of("vicar", "artificer", "mnemonist")) {
+            assertEquals(List.of("greeting", "hemomancy.dialogue.ending." + npc + ".undecided"),
+                    DialogueHubFactory.withArchonAcknowledgment(tree, npc, 7, EnumArchonPath.NONE, false, true)
+                            .getStartNode().lines());
+        }
+        String line = language().get("hemomancy.dialogue.ending.alchemist.communed").getAsString().toLowerCase();
+        for (String detail : List.of("fungal spine", "ninth husk", "hand", "blood", "body stays behind")) {
+            assertTrue(line.contains(detail), "The Spine line omits " + detail);
+        }
+    }
+
+    /** PT-79: a Silence who has not yet met Vesper hears the Vicar name the Severance, as hearsay. */
+    @Test
+    void theVicarNamesTheSeveranceToAPendingSilence() throws Exception {
+        String line = language().get("hemomancy.dialogue.ending.vicar.silent_pending").getAsString().toLowerCase();
+        for (String detail : List.of("severance", "living sickle", "bloom", "vesper", "read")) {
+            assertTrue(line.contains(detail), "The Vicar's Severance line omits " + detail);
         }
     }
 

@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class HematicMemoryToolEvents {
-    private static final BloodAccounting.Source VEIN_SPIDER = BloodAccounting.Source.of("vein_spider", Category.TOOL, false, false);
+    private static final BloodAccounting.Source VEIN_SPIDER = BloodAccounting.Source.of("vein_spider", Category.TOOL, false);
     public static final String TAG_EFFIGY = "HemomancyHuskEffigy";
     public static final String TAG_OWNER = "HemomancyEffigyOwner";
     public static final String TAG_EXPIRES = "HemomancyEffigyExpires";
@@ -56,7 +56,7 @@ public final class HematicMemoryToolEvents {
                 new PacketSyncLastDeathMemory(LastDeathMemorySnapshot.from(HemoCapabilityAccess.getLastDeathMemory(player))));
     }
 
-    @SubscribeEvent
+    /** Defender stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
     public static void onLivingDamage(LivingDamageEvent.Pre event) {
         if (!(event.getSource().getEntity() instanceof Mob mob) || !mob.getPersistentData().getBoolean(TAG_EFFIGY)
                 || !(event.getEntity() instanceof Player player)) {

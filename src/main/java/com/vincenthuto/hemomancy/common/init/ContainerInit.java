@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.menu.tile.crafting.*;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.PhlebotomistsCabinetMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.functional.SpecimenVesselMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
@@ -84,5 +85,9 @@ public class ContainerInit {
 
 	public static final DeferredHolder<MenuType<?>, MenuType<MycelialLanternMenu>> mycelial_lantern = CONTAINERS
 			.register("mycelial_lantern", () -> IMenuTypeExtension.create(MycelialLanternMenu::new));
+
+	/** A Specimen Jar's or Vat's screen (core-loop round two, P6). */
+	public static final DeferredHolder<MenuType<?>, MenuType<SpecimenVesselMenu>> specimen_vessel = CONTAINERS
+			.register("specimen_vessel", () -> IMenuTypeExtension.create(SpecimenVesselMenu::new));
 
 }

@@ -138,11 +138,12 @@ public final class CardinalFloorConsecrationRenderer {
 		float focusX = (float) (origin.getX() + 0.5D - camera.x);
 		float focusZ = (float) (origin.getZ() + 0.5D - camera.z);
 		FloorMesh mesh = FloorMesh.of(level, floor, origin, forwards);
+		int facing = forwards == null ? 0 : forwards.get2DDataValue();
 		Matrix4f matrix = pose.last().pose();
 		// One render type carries the membrane, the trench and the pad, so they draw in submission order in one batch.
 		RenderType membrane = CardinalFloorRenderTypes.withRite(HemoRenderTypes.cardinalFloorMembrane(now, seed, style,
-				half, spread, front, beat, floorLight, palette.base(), palette.vein(), palette.glow(), focusX, focusZ),
-				rite);
+				half, spread, front, beat, floorLight, palette.base(), palette.vein(), palette.glow(), focusX, focusZ,
+				facing), rite);
 		VertexConsumer consumer = buffers.getBuffer(membrane);
 		mesh.emitMembrane(consumer, matrix, 255);
 		if (rite.groundRingStrength() > 0.01F) {
@@ -161,7 +162,7 @@ public final class CardinalFloorConsecrationRenderer {
 		if (seats || grip > 0.001F) {
 			VertexConsumer mound = buffers.getBuffer(CardinalFloorRenderTypes.withRite(HemoRenderTypes.cardinalFloorMound(
 					now, seed, style, half, spread, front, beat, floorLight, palette.base(), palette.vein(),
-					palette.glow(), focusX, focusZ), rite));
+					palette.glow(), focusX, focusZ, facing), rite));
 			if (seats) mesh.emitSeats(mound, matrix, beat, spread, 255, time);
 			FloorMesh.emitThroat(mound, matrix, grip, beat, now, seed, 255);
 		}

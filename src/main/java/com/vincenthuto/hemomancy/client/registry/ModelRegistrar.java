@@ -109,6 +109,9 @@ public final class ModelRegistrar {
     public static void onModifyBakingResult(ModelEvent.ModifyBakingResult evt) {
         evt.getModels().computeIfPresent(ModelResourceLocation.inventory(ItemInit.living_syringe.getId()),
                 (id, model) -> LivingSyringeRenderer.withRenderOwner(model));
+        // The Living Staff wears a bone band for each growth ring it has laid down (core-loop Track 8).
+        evt.getModels().computeIfPresent(ModelResourceLocation.inventory(ItemInit.living_staff.getId()),
+                (id, model) -> new com.vincenthuto.hemomancy.client.render.item.harbinger.LivingStaffRingModel(model));
         // The Saint Sarcophagus is a cell longer than a block model reaches: bake its head section in with each facing
         BakedModel sarcophagusHead = evt.getModels().get(SaintSarcophagusRenderer.part("head"));
         if (sarcophagusHead != null)

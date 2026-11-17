@@ -44,7 +44,7 @@ Benefits last 200 ticks at amplifier zero except the 40-tick reveal pulse. Selec
 
 Earth/stone membership is controlled by the `hemomancy:blood_injection_mineable` block tag; ores, wood, and machinery are excluded by default. Resistance, healing, mining, armor, and knockback values live together in `BloodInjectionRules`. Durations, amplifiers, and reveal radius live in the response JSON. Poison removal reuses `VenomousResilienceEffect` under a separate registration. Undead healing reduction uses `LivingHealEvent`; Hemolysis blood drain and purity behavior remain untouched. The reveal reuses `SchoolStates` illumination and its targeting rules, without invoking a manipulation cast. No custom effect adds morphling healing, speed, flight, or teleportation.
 
-These values are implementation defaults, not established combat balance. Pig remains Animus and polar bear remains Congeatio; the shipped temper memberships were not changed.
+These values are implementation defaults, not established combat balance. Pig remains Animus and polar bear remains Congeatio; the goat is Congeatio since 2026-11-14.
 
 ## Datapacks and synchronization
 

@@ -42,7 +42,7 @@ final class PlayerFingerprints {
 	private static final Pattern ANY_UUID = Pattern.compile(
 			"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
 	private static final Pattern BEARING = Pattern.compile(
-			"\\d+ blocks(?: (?:northeast|northwest|southeast|southwest|north|south|east|west))?");
+			"\\d+ blocks(?: (?:northeast|northwest|southeast|southwest|north|south|east|west|nearby))?");
 
 	private PlayerFingerprints() {
 	}

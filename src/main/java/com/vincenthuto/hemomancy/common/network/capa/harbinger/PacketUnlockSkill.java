@@ -26,7 +26,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * The server validates prerequisites against that player's SkillProgress.
  */
 public class PacketUnlockSkill implements CustomPacketPayload {
-	private static final BloodAccounting.Source UNLOCK = BloodAccounting.Source.of("skill_unlock", Category.SKILL, false, false);
+	private static final BloodAccounting.Source UNLOCK = BloodAccounting.Source.of("skill_unlock", Category.SKILL, false);
 
 	public static final Type<PacketUnlockSkill> TYPE = new Type<>(Hemomancy.rloc("packet_unlock_skill"));
 	public static final StreamCodec<FriendlyByteBuf, PacketUnlockSkill> STREAM_CODEC = StreamCodec.of(PacketUnlockSkill::encode, PacketUnlockSkill::decode);

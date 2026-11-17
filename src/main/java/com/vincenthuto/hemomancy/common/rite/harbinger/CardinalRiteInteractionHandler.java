@@ -47,7 +47,7 @@ import java.util.function.IntUnaryOperator;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CardinalRiteInteractionHandler {
-	private static final BloodAccounting.Source NODE_COST = BloodAccounting.Source.of("cardinal_rite", Category.RITE, false, false);
+	private static final BloodAccounting.Source NODE_COST = BloodAccounting.Source.of("cardinal_rite", Category.RITE, false);
 	private static final int FALSE_STROKE_OUTER_BLACK = CardinalRiteLightningPalette.OUTER_BLACK;
 	private static final int FALSE_STROKE_INNER_PURPLE = CardinalRiteLightningPalette.INNER_PURPLE;
 
@@ -59,7 +59,8 @@ public final class CardinalRiteInteractionHandler {
 			return CardinalRiteProjectionResult.unhandled();
 		}
 		HitResult trace = SanguineProjectionTargeting.pick(serverLevel, player,
-				SanguineProjectionTargeting.PROJECTION_REACH, true);
+				com.vincenthuto.hemomancy.common.manipulation.verb.VerbReach.of(player,
+						com.vincenthuto.hemomancy.common.manipulation.verb.Verb.PROJECT), true);
 		BlockPos physicalTarget = trace instanceof BlockHitResult blockHit ? blockHit.getBlockPos() : null;
 
 		CardinalRiteSavedData data = CardinalRiteSavedData.get(serverLevel);
@@ -128,8 +129,11 @@ public final class CardinalRiteInteractionHandler {
 				if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) return CardinalRiteProjectionResult.handled(0.0D);
 				continue;
 			}
-			int repairNeeded = rite.instabilityRepairBloodNeeded(anchor);
-			if (repairNeeded > 0) {
+			// A dry anchor takes the blood as fill first; a damaged one is repaired once it is full.
+			int needed = rite.bloodNeededForAnchor(anchor);
+			if (needed <= 0) {
+				int repairNeeded = rite.instabilityRepairBloodNeeded(anchor);
+				if (repairNeeded <= 0) return CardinalRiteProjectionResult.handled(0.0D);
 				int requested = Math.min(repairNeeded, Math.max(1, (int) Math.floor(projectionRate)));
 				int committed = spendBlood(player, rite, requested);
 				if (committed <= 0) return CardinalRiteProjectionResult.handled(0.0D);
@@ -139,8 +143,6 @@ public final class CardinalRiteInteractionHandler {
 						SoundSource.PLAYERS, 0.6F, 0.9F + anchor * 0.012F);
 				return CardinalRiteProjectionResult.handled(committed);
 			}
-			int needed = rite.bloodNeededForAnchor(anchor);
-			if (needed <= 0) return CardinalRiteProjectionResult.handled(0.0D);
 
 			int requested = Math.min(needed, Math.max(1, (int) Math.floor(projectionRate)));
 			int committed = spendBlood(player, rite, requested);

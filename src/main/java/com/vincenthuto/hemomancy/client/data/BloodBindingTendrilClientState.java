@@ -35,6 +35,12 @@ public final class BloodBindingTendrilClientState {
 			activeLevel = level;
 		}
 		long now = level.getGameTime();
+		Entry running = ENTRIES.get(key(casterId, targetId));
+		// A held binding (the Blood Binding Sculpting) resends the same seed every pulse: keep the grown tendril.
+		if (running != null && running.seed == seed && running.retractionStart < 0L) {
+			running.activeUntil = Math.max(running.activeUntil, now + Math.max(1, durationTicks));
+			return;
+		}
 		ENTRIES.put(key(casterId, targetId),
 				new Entry(casterId, targetId, seed, now, now + Math.max(1, durationTicks)));
 	}
@@ -96,7 +102,7 @@ public final class BloodBindingTendrilClientState {
 		private final int targetId;
 		private final long seed;
 		private final long startTick;
-		private final long activeUntil;
+		private long activeUntil;
 		private Vec3 lastTargetFeet;
 		private double lastTargetHeight = 1.8D;
 		private long retractionStart = -1L;

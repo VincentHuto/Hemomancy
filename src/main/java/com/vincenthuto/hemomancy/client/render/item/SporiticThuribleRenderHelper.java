@@ -12,7 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
@@ -30,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class SporiticThuribleRenderHelper {
 	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/sporitic_thurible.png");
 	private static final Map<Key, PhysicsState> STATES = new ConcurrentHashMap<>();
+	private static final ParticleColor COAL = new ParticleColor(214, 112, 28);
 
     private SporiticThuribleRenderHelper() {
 	}
@@ -115,7 +117,7 @@ public final class SporiticThuribleRenderHelper {
 		Vec3 cameraPosition = minecraft.gameRenderer.getMainCamera().getPosition();
 		double wobbleX = Mth.sin(age * 0.73f) * 0.006;
 		double wobbleZ = Mth.cos(age * 0.61f) * 0.006;
-		minecraft.level.addParticle(ParticleTypes.FLAME,
+		minecraft.level.addParticle(HemoParticleData.emberSpark(COAL, 0.031F, 1.0F, 12),
 				cameraPosition.x + renderPosition.x() + wobbleX,
 				cameraPosition.y + renderPosition.y(),
 				cameraPosition.z + renderPosition.z() + wobbleZ,

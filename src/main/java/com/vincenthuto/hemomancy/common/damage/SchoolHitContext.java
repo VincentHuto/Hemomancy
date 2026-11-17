@@ -7,10 +7,13 @@ import net.minecraft.world.entity.Entity;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-/** A launch-time identity, independent of the weapon subsequently held by the owner. */
+/**
+ * A launch-time identity, independent of the weapon subsequently held by the owner. {@code strength} is what the cast
+ * paid in Temper allowed: 1, or less for a cast that ran dry (core loop Track 4); its direct damage is scaled by it.
+ */
 public record SchoolHitContext(ResourceLocation ability, EnumBloodTemper primary,
         @Nullable EnumBloodTemper secondary, @Nullable UUID owner, @Nullable UUID direct,
-        UUID rootAttack, Kind kind, Role role, float charge, int duration, int levels) {
+        UUID rootAttack, Kind kind, Role role, float charge, int duration, int levels, float strength) {
     public enum Kind { DIRECT, PERIODIC, REACTION }
     public enum Role { APPLY_STATE, EXPLOIT_STATE, DAMAGE_ONLY }
 
@@ -20,6 +23,13 @@ public record SchoolHitContext(ResourceLocation ability, EnumBloodTemper primary
         charge = Math.clamp(charge, 0, 1);
         duration = Math.max(0, duration);
         levels = Math.clamp(levels, 1, 3);
+        strength = Float.isFinite(strength) ? Math.clamp(strength, 0, 1) : 1;
+    }
+
+    public SchoolHitContext(ResourceLocation ability, EnumBloodTemper primary, @Nullable EnumBloodTemper secondary,
+            @Nullable UUID owner, @Nullable UUID direct, UUID rootAttack, Kind kind, Role role, float charge,
+            int duration, int levels) {
+        this(ability, primary, secondary, owner, direct, rootAttack, kind, role, charge, duration, levels, 1);
     }
 
     public static SchoolHitContext direct(ResourceLocation ability, EnumBloodTemper primary,
@@ -35,30 +45,34 @@ public record SchoolHitContext(ResourceLocation ability, EnumBloodTemper primary
 
     public SchoolHitContext newAttack() {
         return new SchoolHitContext(ability, primary, secondary, owner, direct, UUID.randomUUID(),
-                Kind.DIRECT, role, charge, duration, levels);
+                Kind.DIRECT, role, charge, duration, levels, strength);
     }
 
     public SchoolHitContext withRole(Role value) {
         return new SchoolHitContext(ability, primary, secondary, owner, direct, rootAttack, kind,
-                value, charge, duration, levels);
+                value, charge, duration, levels, strength);
     }
 
     public SchoolHitContext withDirect(@Nullable Entity entity) {
         return new SchoolHitContext(ability, primary, secondary, owner,
-                entity == null ? direct : entity.getUUID(), rootAttack, kind, role, charge, duration, levels);
+                entity == null ? direct : entity.getUUID(), rootAttack, kind, role, charge, duration, levels, strength);
     }
 
     public SchoolHitContext withCharge(float value) {
-        return new SchoolHitContext(ability, primary, secondary, owner, direct, rootAttack, kind, role, value, duration, levels);
+        return new SchoolHitContext(ability, primary, secondary, owner, direct, rootAttack, kind, role, value, duration, levels, strength);
+    }
+
+    public SchoolHitContext withStrength(float value) {
+        return new SchoolHitContext(ability, primary, secondary, owner, direct, rootAttack, kind, role, charge, duration, levels, value);
     }
 
     public SchoolHitContext withApplication(int ticks, int amount) {
-        return new SchoolHitContext(ability, primary, secondary, owner, direct, rootAttack, kind, role, charge, ticks, amount);
+        return new SchoolHitContext(ability, primary, secondary, owner, direct, rootAttack, kind, role, charge, ticks, amount, strength);
     }
 
     public SchoolHitContext child(Kind value) {
         return new SchoolHitContext(ability, primary, secondary, owner, direct, rootAttack, value,
-                Role.DAMAGE_ONLY, charge, duration, levels);
+                Role.DAMAGE_ONLY, charge, duration, levels, strength);
     }
 
     public CompoundTag save() {
@@ -74,6 +88,7 @@ public record SchoolHitContext(ResourceLocation ability, EnumBloodTemper primary
         tag.putFloat("charge", charge);
         tag.putInt("duration", duration);
         tag.putInt("levels", levels);
+        if (strength < 1) tag.putFloat("strength", strength);
         return tag;
     }
 
@@ -86,7 +101,8 @@ public record SchoolHitContext(ResourceLocation ability, EnumBloodTemper primary
                     tag.hasUUID("owner") ? tag.getUUID("owner") : null,
                     tag.hasUUID("direct") ? tag.getUUID("direct") : null,
                     tag.getUUID("root"), Kind.valueOf(tag.getString("kind")), Role.valueOf(tag.getString("role")),
-                    tag.getFloat("charge"), tag.getInt("duration"), tag.getInt("levels"));
+                    tag.getFloat("charge"), tag.getInt("duration"), tag.getInt("levels"),
+                    tag.contains("strength") ? tag.getFloat("strength") : 1);
         } catch (IllegalArgumentException exception) {
             return null;
         }

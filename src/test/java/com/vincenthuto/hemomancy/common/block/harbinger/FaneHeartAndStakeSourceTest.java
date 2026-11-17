@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+
 class FaneHeartAndStakeSourceTest {
 	private static final Path BLOODWELL = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/ConsecratedBloodwellBlock.java");
@@ -209,18 +212,6 @@ class FaneHeartAndStakeSourceTest {
 		assertContains("adds hematic stake translation", lang, "\"block.hemomancy.hematic_stake\"");
 		assertContains("adds bloodwell bloodline-gate translation", lang,
 				"\"block.hemomancy.consecrated_bloodwell.not_bloodline\"");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": unexpected " + unexpected);
-		}
 	}
 
 	private static void assertBefore(String label, String text, String first, String second) {

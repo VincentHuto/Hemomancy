@@ -1,4 +1,13 @@
 {
   "replace": false,
-  "values": ["hemomancy:vesper_impale", "hemomancy:vesper_rend", "hemomancy:searing", "hemomancy:decay_release", "hemomancy:endless_hour_debt", "hemomancy:mycophant_refusal", "hemomancy:stung"]
+  "values": [
+    "hemomancy:blood_absorption",
+    "hemomancy:decay_release",
+    "hemomancy:hallowed_burn",
+    "hemomancy:mycophant_refusal",
+    "hemomancy:searing",
+    "hemomancy:stung",
+    "hemomancy:vesper_impale",
+    "hemomancy:vesper_rend"
+  ]
 }

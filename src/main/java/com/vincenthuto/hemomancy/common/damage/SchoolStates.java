@@ -42,7 +42,7 @@ public final class SchoolStates {
             if (caster.isAlliedTo(target) || target.isAlliedTo(caster)) return false;
         }
         if (state == SchoolState.PRESSURE && HemoEntityPredicates.NOBLOOD.test(target)) return false;
-        return state != SchoolState.DISRUPTED || !ManipulationReactiveEvents.isBoss(target);
+        return state != SchoolState.DISRUPTED || !HemoEntityPredicates.isBoss(target);
     }
 
     public static boolean apply(LivingEntity caster, LivingEntity target, SchoolState state, int duration) {

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress;
 import com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules;
 import com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController;
 import com.vincenthuto.hemomancy.common.mission.circus.CircusSchoolQuests;
 import com.vincenthuto.hemomancy.common.mission.circus.CircusSchoolRules;
@@ -32,24 +33,37 @@ public final class CircusSchoolDialogue {
             options.add(new DialogueOption(root + "guest", null, "circus_school_guest").withQuest());
         });
         if (role.equals("circus_threadkeeper")) {
+            options.add(new DialogueOption(root + "ask_empty_ring", "lesson", null).withQuest());
             options.add(new DialogueOption(root + "inspect", null, "circus_school_inspect").withQuest());
             options.add(new DialogueOption(root + "report", null, "circus_school_report").withQuest());
             options.add(new DialogueOption(root + "claim", null, "circus_school_claim").withQuest());
         }
         options.add(new DialogueOption("hemomancy.dialogue.circus_performer.leave", null, null));
         var builder = DialogueTree.builder(teacher.getType().getDescriptionId(),
-                Hemomancy.rloc("textures/entity/npc/harbinger/circus/" + (teacher instanceof com.vincenthuto.hemomancy.common.entity.npc.circus.CircusFacultyEntity ? role : role.replace("circus_", "")) + "_0.png"), teacher.getId());
+                Hemomancy.rloc("textures/entity/npc/harbinger/circus/" + (teacher instanceof com.vincenthuto.hemomancy.common.entity.npc.circus.CircusFacultyEntity ? role : role.replace("circus_", "")) + "_0.png"), teacher.getId())
+                .theme(DialogueTheme.CIRCUS);
         var greeting = new ArrayList<String>();
         if (firstVisit) greeting.add("hemomancy.dialogue.circus_performer.welcome");
         greeting.add(root + role + ".welcome");
-        greeting.add(root + "status." + CircusSchoolQuests.nextStep(player, role));
+        greeting.add(statusKey(role, CircusSchoolQuests.nextStep(player, role)));
         builder.addNode(new DialogueNode("greeting", greeting, options));
         for (String topic : List.of("history", "colleagues", "preparation", "aftermath", "testimony", "lesson")) {
-            String key = topic.equals("preparation") ? root + "preparation" : root + role + "." + topic;
-            builder.addNode(new DialogueNode(topic, topic.equals("aftermath") ? List.of(key, root + "aftermath." + CircusPlayerProgress.route(player).serializedName()) : List.of(key),
+            String key = root + role + "." + topic;
+            builder.addNode(new DialogueNode(topic, topic.equals("aftermath")
+                    ? List.of(key, aftermathKey(role, CircusPlayerProgress.route(player))) : List.of(key),
                     List.of(new DialogueOption(root + "back", "greeting", null))));
         }
         return builder.build();
+    }
+
+    /** The professor's own line for the pupil's next step (CD-7). */
+    static String statusKey(String role, String step) {
+        return "hemomancy.circus.school." + role + ".status." + step;
+    }
+
+    /** The speaker's own line on what the chosen ending means for the school; the Ringmaster has one too (CD-7). */
+    public static String aftermathKey(String role, CircusRouteRules.Route route) {
+        return "hemomancy.circus.school." + role + ".aftermath." + route.serializedName();
     }
 
     /**

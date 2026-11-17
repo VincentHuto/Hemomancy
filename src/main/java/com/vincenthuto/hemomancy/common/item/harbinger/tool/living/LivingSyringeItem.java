@@ -34,7 +34,19 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.SpecimenVatBlock;
+import com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.SpecimenVessel;
+import com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.SpecimenVessels;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class LivingSyringeItem extends LivingItem {
 	public static final String TAG_STATE = "state";
@@ -154,6 +166,12 @@ public class LivingSyringeItem extends LivingItem {
     @Override public InteractionResult useOn(net.minecraft.world.item.context.UseOnContext context) {
         var player = context.getPlayer();
         var level = context.getLevel();
+        // A kept creature in a jar or vat: the syringe draws it for a little Vigor, whatever its hide (P6).
+        SpecimenVessel vessel = player == null || player.isShiftKeyDown() ? null : vesselAt(level, context.getClickedPos());
+        if (vessel != null && vessel.kept().living()) {
+            if (!(level instanceof ServerLevel server) || !(player instanceof ServerPlayer drawer)) return InteractionResult.SUCCESS;
+            return sampleVessel(server, drawer, context.getItemInHand(), vessel);
+        }
         if (player == null || player.isShiftKeyDown() || !level.getBlockState(context.getClickedPos()).is(net.minecraft.world.level.block.Blocks.SCULK_CATALYST)) return super.useOn(context);
         if (level.isClientSide) return InteractionResult.SUCCESS;
         var syringe = context.getItemInHand();
@@ -179,49 +197,56 @@ public class LivingSyringeItem extends LivingItem {
         return fillVialFromTarget(player, donor, syringe, bloodline, profession);
     }
 
+    /** The vessel a click on {@code pos} reaches: a jar, or a vat by either half. */
+    @Nullable
+    private static SpecimenVessel vesselAt(Level level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof SpecimenVessel vessel) return vessel.vessel();
+        BlockState state = level.getBlockState(pos);
+        return state.getBlock() instanceof SpecimenVatBlock ? SpecimenVatBlock.vat(level, pos, state) : null;
+    }
+
+    /**
+     * Draws a kept creature into the loaded rack or vial. The rack or vial is found first, so a syringe with nothing to
+     * fill costs the creature nothing; the vessel then charges its Vigor under its keeper's rights.
+     */
+    private InteractionResult sampleVessel(ServerLevel level, ServerPlayer player, ItemStack syringe, SpecimenVessel vessel) {
+        Slot slot = prepare(player, syringe);
+        if (slot == null) return InteractionResult.FAIL;
+        SpecimenVessels.Drawn drawn = SpecimenVessels.syringeSample(level, ((BlockEntity) vessel).getBlockPos(), vessel, player);
+        if (drawn == null) return InteractionResult.FAIL;
+        ItemStack sampled = store(player, syringe, slot, drawn.type(), drawn.donor(), vial -> {
+            vial.remove(com.vincenthuto.hemomancy.common.init.DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
+            return vial;
+        });
+        finishDraw(player, syringe, slot, sampled);
+        return InteractionResult.CONSUME;
+    }
+
 	private InteractionResult fillVialFromTarget(Player player, LivingEntity target, ItemStack syringe,
             java.util.UUID donorBloodline, String donorProfession) {
 		var targetId = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
         // Original professionals are protected; their consent-based donation is still permitted.
 		BloodSamplingResult samplingResult = BloodSamplingRules.evaluate(false, true, target.isAlive(),
 				target.isInvulnerable() && donorBloodline == null, targetId != null,
-                BloodProfileData.profile(target.getType(), false).requiresLivingSyringe(), true);
+                BloodProfileData.profile(target.getType(), false).requiresLivingSyringe(), true,
+                donorBloodline == null && com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingCost.recentlyDrawn(target));
 		if (samplingResult != BloodSamplingResult.SUCCESS) {
 			player.displayClientMessage(Component.translatable(samplingResult.translationKey(), target.getDisplayName()), true);
 			return InteractionResult.FAIL;
 		}
-		if (hasLoadedVial(syringe) && !VialRackItem.isEmptyVial(getLoadedVial(syringe))) ejectLoaded(player, syringe);
-		if (!hasLoadedRack(syringe) && !hasLoadedVial(syringe) && !loadFromInventory(player, syringe)) {
-			player.displayClientMessage(Component.translatable("item.hemomancy.living_syringe.no_rack"), true);
-			return InteractionResult.FAIL;
-		}
-		boolean single = !hasLoadedRack(syringe);
-		ItemStack rack = getLoadedRack(syringe);
-		int emptySlot = single ? 0 : VialRackItem.findFirstEmptyVialSlot(rack);
-		if (emptySlot < 0) {
-			ejectRack(player, syringe);
-			player.displayClientMessage(Component.translatable("item.hemomancy.living_syringe.rack_full"), true);
-			return InteractionResult.FAIL;
-		}
-		NonNullList<ItemStack> vials = single ? NonNullList.create() : VialRackItem.getVials(rack);
-		ItemStack sampledVial = (single ? getLoadedVial(syringe) : vials.get(emptySlot)).copyWithCount(1);
-		CompoundTag vialTag = sampledVial.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE, targetId.toString());
-		vialTag.putBoolean(BloodVialItem.TAG_STATE, true);
-		sampledVial.set(DataComponents.CUSTOM_DATA, CustomData.of(vialTag));
-        if (donorBloodline != null) com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(sampledVial, target, donorBloodline, donorProfession);
-        else if (target instanceof Player donor) com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(sampledVial, donor, null, "");
-        sampledVial.remove(com.vincenthuto.hemomancy.common.init.DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
-        if (target.getType() == net.minecraft.world.entity.EntityType.WARDEN)
-            sampledVial = com.vincenthuto.hemomancy.common.item.component.AhaematicSample.create("entity", "minecraft:warden");
-		if (single) {
-			setLoadedVial(syringe, ItemStack.EMPTY);
-		} else {
-			vials.set(emptySlot, sampledVial);
-			VialRackItem.setVials(rack, vials);
-			setLoadedRack(syringe, rack);
-		}
-        com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.collected(player, sampledVial);
+		Slot slot = prepare(player, syringe);
+		if (slot == null) return InteractionResult.FAIL;
+		boolean single = slot.single();
+		ItemStack sampledVial = store(player, syringe, slot, targetId, target.getStringUUID(), vial -> {
+            if (donorBloodline != null) com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(vial, target, donorBloodline, donorProfession);
+            else if (target instanceof Player donor) com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(vial, donor, null, "");
+            vial.remove(com.vincenthuto.hemomancy.common.init.DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
+            return target.getType() == net.minecraft.world.entity.EntityType.WARDEN
+                    ? com.vincenthuto.hemomancy.common.item.component.AhaematicSample.create("entity", "minecraft:warden") : vial;
+        });
+        com.vincenthuto.hemomancy.common.mission.alchemist.BloodResearch.recordMet(player, target.getType());
+        // A consenting donor gives freely; any other creature pays for its sample (core-loop Track 5).
+        if (donorBloodline == null) com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingCost.charge(player, target, true);
 		player.playSound(SoundEvents.BOTTLE_FILL, 2.0F, 0.8F);
 		player.displayClientMessage(Component.translatable(BloodSamplingResult.SUCCESS.translationKey(),
 				target.getDisplayName()), true);
@@ -230,12 +255,67 @@ public class LivingSyringeItem extends LivingItem {
 				(hand == InteractionHand.MAIN_HAND) == (player.getMainArm() == HumanoidArm.RIGHT),
 				EntityParticleUtils.getColorFromPredicate(EntityParticleUtils.getEntityPredicate(target)).getColor(),
 				single ? MODEL_LOAD_FILLED_VIAL : modelLoad(syringe, player.registryAccess())));
-		if (single) {
+		finishDraw(player, syringe, slot, sampledVial);
+		return InteractionResult.SUCCESS;
+	}
+
+	/** Where a draw goes: the loaded vial, or the first empty slot of the loaded rack. */
+	private record Slot(boolean single, ItemStack rack, NonNullList<ItemStack> vials, int index) {
+	}
+
+	/**
+	 * Readies the syringe for a draw: a filled loose vial is handed back, a rack (or else an empty vial) is loaded from
+	 * the inventory, and a full rack is ejected. Null, with the reason said, when there is nothing to fill.
+	 */
+	@Nullable
+	private Slot prepare(Player player, ItemStack syringe) {
+		if (hasLoadedVial(syringe) && !VialRackItem.isEmptyVial(getLoadedVial(syringe))) ejectLoaded(player, syringe);
+		if (!hasLoadedRack(syringe) && !hasLoadedVial(syringe) && !loadFromInventory(player, syringe)) {
+			player.displayClientMessage(Component.translatable("item.hemomancy.living_syringe.no_rack"), true);
+			return null;
+		}
+		boolean single = !hasLoadedRack(syringe);
+		ItemStack rack = getLoadedRack(syringe);
+		int emptySlot = single ? 0 : VialRackItem.findFirstEmptyVialSlot(rack);
+		if (emptySlot < 0) {
+			ejectRack(player, syringe);
+			player.displayClientMessage(Component.translatable("item.hemomancy.living_syringe.rack_full"), true);
+			return null;
+		}
+		return new Slot(single, rack, single ? NonNullList.create() : VialRackItem.getVials(rack), emptySlot);
+	}
+
+	/**
+	 * Writes a sample of {@code typeId} from {@code donor} into {@code slot}, after {@code finish} has marked or replaced
+	 * it, and records the collection. Returns the stored vial.
+	 */
+	private ItemStack store(Player player, ItemStack syringe, Slot slot, ResourceLocation typeId, String donor,
+			UnaryOperator<ItemStack> finish) {
+		ItemStack sampledVial = (slot.single() ? getLoadedVial(syringe) : slot.vials().get(slot.index())).copyWithCount(1);
+		CompoundTag vialTag = sampledVial.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE, typeId.toString());
+		vialTag.putBoolean(BloodVialItem.TAG_STATE, true);
+		vialTag.putString(BloodSampleData.TAG_DONOR, donor);
+		sampledVial.set(DataComponents.CUSTOM_DATA, CustomData.of(vialTag));
+		sampledVial = finish.apply(sampledVial);
+		if (slot.single()) {
+			setLoadedVial(syringe, ItemStack.EMPTY);
+		} else {
+			slot.vials().set(slot.index(), sampledVial);
+			VialRackItem.setVials(slot.rack(), slot.vials());
+			setLoadedRack(syringe, slot.rack());
+		}
+		com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.collected(player, sampledVial);
+		return sampledVial;
+	}
+
+	/** A loose vial goes back to the player; a rack with no empty vial left is ejected. */
+	private void finishDraw(Player player, ItemStack syringe, Slot slot, ItemStack sampledVial) {
+		if (slot.single()) {
 			giveBack(player, sampledVial);
-		} else if (VialRackItem.countEmptyVials(rack) <= 0) {
+		} else if (VialRackItem.countEmptyVials(slot.rack()) <= 0) {
 			ejectRack(player, syringe);
 		}
-		return InteractionResult.SUCCESS;
 	}
 
 	/** A rack takes priority; a loose empty vial is only used when no rack has room. */

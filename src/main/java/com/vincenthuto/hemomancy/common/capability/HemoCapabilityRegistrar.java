@@ -151,6 +151,10 @@ public final class HemoCapabilityRegistrar {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BlockEntityInit.sanguine_condenser.get(),
                 (be, facing) -> be.extraction());
 
+        // A catalyst feeder takes gouge catalysts from a hopper (core-loop Track 6).
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BlockEntityInit.catalyst_feeder.get(),
+                (be, facing) -> be.stock());
+
         // ── IItemHandler for WorldlyContainer block entities ──
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
                 BlockEntityInit.ghastly_alembic.get(),

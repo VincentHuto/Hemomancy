@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import net.minecraft.core.BlockPos;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -74,7 +75,11 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
 		if (firePos == null) return;
 
 		var flameState = BlockInit.crimson_flames.get().defaultBlockState();
-		world.setBlock(firePos, flameState, 3);
+		// The caster's own placement: a claim's place event can still refuse it.
+		if (!PlayerBlockEdits.place(player, firePos, flameState)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.crimson_flame_conjuration_manip.cannot_place_flames_there"), true);
+			return;
+		}
 		world.playSound(null, firePos, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.8f, 0.9f);
 
         if (world instanceof ServerLevel level) {

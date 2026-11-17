@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 import com.vincenthuto.hemomancy.common.encounter.VisitationService;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionService;
@@ -166,7 +167,7 @@ public final class CardinalRiteCompletionEffects {
 		effect("cardinal_rite/sanguine_dominion",
 				ctx -> completeSanguineDominion(ctx.level(), ctx.caster(), ctx.center()));
 		register("cardinal_rite/eternal_covenant",
-				(ctx, stage) -> ctx.caster().getPersistentData().getBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG)
+				(ctx, stage) -> HemoCapabilityAccess.getInitiatoryDegree(ctx.caster()).isEternalCovenantSealed()
 						? Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_is_already_sealed_its")
 						: null,
 				ctx -> {
@@ -222,7 +223,7 @@ public final class CardinalRiteCompletionEffects {
 							.getBloodlineForPlayer(ctx.caster().getUUID());
 					return line != null && line.isValid()
 							? HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.you_already_belong_to_a_bloodline",
-									line.getName())
+									line.displayName())
 							: null;
 				},
 				ctx -> true);
@@ -234,7 +235,10 @@ public final class CardinalRiteCompletionEffects {
 					Component.translatable("hemomancy.rite.initiate_rite.blob_granted")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		});
-		effect("cardinal_rite/chamber_of_will", ctx -> ChamberVisitService.beginRiteVisit(ctx.caster()));
+		register("cardinal_rite/chamber_of_will", (ctx, stage) -> ChamberVisitService.riteRefusal(ctx.caster()), ctx -> {
+			ChamberVisitService.beginRiteVisit(ctx.caster());
+			return true;
+		});
 		register("cardinal_rite/visitation_rite",
 				(ctx, stage) -> VisitationService.refusal(ctx.caster()),
 				ctx -> VisitationService.visit(ctx.caster()));
@@ -529,8 +533,8 @@ public final class CardinalRiteCompletionEffects {
 					Block block = state.getBlock();
 
 					BlockState replacement = getHungeringEarthReplacement(block);
-					if (replacement != null) {
-						sLevel.setBlock(pos, replacement, 2);
+					// The caster's rite remakes the ground, so each block is held to the caster's own break and place rights.
+					if (replacement != null && PlayerBlockEdits.replace(caster, pos, replacement, Block.UPDATE_CLIENTS)) {
 						converted++;
 
 						// Spawn occasional particles for visual feedback
@@ -677,15 +681,16 @@ public final class CardinalRiteCompletionEffects {
 	 * performed once per player.
 	 */
 	private static void completeEternalCovenant(ServerPlayer caster) {
-		CompoundTag persistentData = caster.getPersistentData();
-		if (persistentData.getBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG)) {
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
+		if (degree.isEternalCovenantSealed()) {
 			caster.displayClientMessage(
 					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_is_already_sealed_its").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
 
-		persistentData.putBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG, true);
+		degree.setEternalCovenantSealed(true);
+		InitiatoryDegreeEvents.syncDegree(caster, degree);
 		MaxBloodLedger.apply(caster, HemoCapabilityAccess.getBloodVolume(caster));
 
 		caster.displayClientMessage(
@@ -727,15 +732,11 @@ public final class CardinalRiteCompletionEffects {
 	 * in the pool is returned proportionally to the remaining members.
 	 */
 	private static void completeHematicUnbinding(ServerLevel sLevel, ServerPlayer caster) {
-		final String pendingLineKey = "hemomancy:pending_unbinding_bloodline";
-		final String pendingUntilKey = "hemomancy:pending_unbinding_until";
 		ServerLevel overworld = sLevel.getServer().overworld();
 		BloodlineSavedData bloodlineData = BloodlineSavedData.get(overworld);
 		Bloodline bloodline = bloodlineData.getBloodlineForPlayer(caster.getUUID());
 
 		if (bloodline == null || !bloodline.isValid()) {
-			caster.getPersistentData().remove(pendingLineKey);
-			caster.getPersistentData().remove(pendingUntilKey);
 			caster.displayClientMessage(
 					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.you_have_no_bloodline_to_unbind").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
@@ -750,55 +751,12 @@ public final class CardinalRiteCompletionEffects {
 			return;
 		}
 
-		CompoundTag playerData = caster.getPersistentData();
-		UUID warnedLine = playerData.hasUUID(pendingLineKey)
-				? playerData.getUUID(pendingLineKey) : null;
-		long warningUntil = playerData.getLong(pendingUntilKey);
-		if (HematicUnbindingRules.decision(bloodline.getBloodlineUUID(), warnedLine,
-				warningUntil, sLevel.getGameTime()) == HematicUnbindingRules.Decision.WARN) {
-			playerData.putUUID(pendingLineKey, bloodline.getBloodlineUUID());
-			playerData.putLong(pendingUntilKey,
-					sLevel.getGameTime() + HematicUnbindingRules.CONFIRMATION_TICKS);
-			caster.displayClientMessage(
-					HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_loosens_but_holds_performing",
-							bloodline.getName()).withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
-					false);
-			return;
-		}
-		playerData.remove(pendingLineKey);
-		playerData.remove(pendingUntilKey);
 
-		String bloodlineName = bloodline.getName();
-		float poolBlood = bloodline.getBloodVolume();
-		int memberCount = bloodline.getPlayerUUIDS().size();
-		float bloodPerMember = memberCount > 0 ? poolBlood / memberCount : 0;
-
-		// Return blood to all online members and clear their bloodline reference
-		for (UUID memberUUID : new ArrayList<>(bloodline.getPlayerUUIDS())) {
-			ServerPlayer member = sLevel.getServer().getPlayerList().getPlayer(memberUUID);
-			if (member != null) {
-				// Return their share of the pool blood
-				if (bloodPerMember > 0) {
-					var volume = HemoCapabilityAccess.getBloodVolume(member);
-					volume.fill(bloodPerMember);
-					volume.setBloodLine(Bloodline.NOBLOODLINE);
-					BloodVolumeEvents.syncVolume(member, volume);
-				} else {
-					var volume = HemoCapabilityAccess.getBloodVolume(member);
-					volume.setBloodLine(Bloodline.NOBLOODLINE);
-					BloodVolumeEvents.syncVolume(member, volume);
-				}
-
-				member.displayClientMessage(
-						HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_bloodline_has_been_dissolved_you",
-								bloodlineName).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						false);
-			}
-		}
-
-		// Remove the bloodline and any fanes owned by its members from world data.
-		BloodlineDisbandHelper.removeOwnedFanes(sLevel.getServer(), bloodline);
-		bloodlineData.disbandBloodline(bloodline.getBloodlineUUID());
+		Component bloodlineName = bloodline.displayName();
+		// Online members are paid now; a member who is away is paid at their next login (PT-44).
+		BloodlineMembership.dissolve(sLevel.getServer(), bloodline, BloodlineMembership.Dissolution.UNBINDING, caster,
+				member -> HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_bloodline_has_been_dissolved_you",
+						bloodlineName).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
 		caster.displayClientMessage(
 				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_is_dissolved_what_was_bound",
@@ -987,10 +945,9 @@ public final class CardinalRiteCompletionEffects {
 	 * and writes the signed state onto the ledger item so it can be redistributed.
 	 */
 	private static void presignBloodlineLedger(ServerLevel sLevel, ServerPlayer caster, ItemStack ledgerStack) {
-		String bloodLineName = caster.getName().getString() + "'s Blood Line";
 		UUID bloodLineUUID = new UUID(caster.getUUID().getMostSignificantBits(), sLevel.getGameTime());
 		ArrayList<UUID> uuids = new ArrayList<>();
-		Bloodline playerLine = new Bloodline(bloodLineName, caster.getUUID(), bloodLineUUID, uuids);
+		Bloodline playerLine = new Bloodline(caster.getName().getString(), caster.getUUID(), bloodLineUUID, uuids);
 
 		// Register bloodline in world-level saved data
 		ServerLevel overworld = sLevel.getServer().overworld();
@@ -1005,15 +962,11 @@ public final class CardinalRiteCompletionEffects {
 		degree.setHasFoundedBloodline(true);
 		InitiatoryDegreeEvents.syncDegree(caster, degree);
 
-		// Write signed state and bloodline data onto the ledger
-		CompoundTag compound = ledgerStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-		compound.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
-		compound.put(UnsignedLedgerItem.TAG_BLOODLINE, playerLine.serialize());
-		ledgerStack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
+		UnsignedLedgerItem.sign(ledgerStack, playerLine, overworld.getGameTime());
 
 		caster.displayClientMessage(
 				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.you_have_founded",
-						playerLine.getName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+						playerLine.displayName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 	}
 
@@ -1032,15 +985,11 @@ public final class CardinalRiteCompletionEffects {
 			return false;
 		}
 
-		// Write the existing bloodline data onto the new ledger as a signed copy
-		CompoundTag compound = ledgerStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-		compound.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
-		compound.put(UnsignedLedgerItem.TAG_BLOODLINE, existingLine.serialize());
-		ledgerStack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
+		UnsignedLedgerItem.sign(ledgerStack, existingLine, overworld.getGameTime());
 
 		caster.displayClientMessage(
 				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_remembers_your_ledger_for",
-						existingLine.getName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+						existingLine.displayName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 		return true;
 	}

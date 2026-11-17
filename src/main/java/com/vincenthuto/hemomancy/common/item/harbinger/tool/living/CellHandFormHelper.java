@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -13,26 +13,29 @@ public final class CellHandFormHelper {
 	private CellHandFormHelper() {
 	}
 
-	public static boolean applySelection(Player player, BloodManipulation selectedManip) {
-		String selectedName = selectedManip == null ? "" : selectedManip.getName();
-		if (!isCellHandManip(selectedName)) {
-			return true;
-		}
+	/**
+	 * Turns a cell hand held in the main hand into {@code verb}'s hand. Anything else in the hand is left alone.
+	 *
+	 * @return whether the hand changed
+	 */
+	public static boolean applyVerb(Player player, Verb verb) {
 		ItemStack held = player.getMainHandItem();
 		if (!isCellHandForm(held)) {
-			return true;
+			return false;
 		}
-		Item targetItem = itemFor(selectedName);
+		Item targetItem = itemFor(verb);
 		if (held.is(targetItem)) {
-			return true;
+			return false;
 		}
-		player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(targetItem));
+		if (player.isUsingItem() && player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
+			player.stopUsingItem();
+		}
+		ItemStack turned = new ItemStack(targetItem);
+		// The hand keeps what its conjure paid, so a dispel after a turn still returns its share.
+		Double paid = held.get(DataComponentInit.CONJURE_PAID.get());
+		if (paid != null) turned.set(DataComponentInit.CONJURE_PAID.get(), paid);
+		player.setItemInHand(InteractionHand.MAIN_HAND, turned);
 		return true;
-	}
-
-	public static boolean isCellHandManip(String manipName) {
-		return ManipulationEquipHelper.BLOOD_ABSORPTION.equals(manipName)
-				|| ManipulationEquipHelper.BLOOD_PROJECTION.equals(manipName);
 	}
 
 	public static boolean isCellHandForm(ItemStack stack) {
@@ -41,9 +44,7 @@ public final class CellHandFormHelper {
 				|| stack.getItem() instanceof BloodProjectionItem);
 	}
 
-	private static Item itemFor(String manipName) {
-		return ManipulationEquipHelper.BLOOD_PROJECTION.equals(manipName)
-				? ItemInit.blood_projection.get()
-				: ItemInit.blood_absorption.get();
+	public static Item itemFor(Verb verb) {
+		return verb == Verb.PROJECT ? ItemInit.blood_projection.get() : ItemInit.blood_absorption.get();
 	}
 }

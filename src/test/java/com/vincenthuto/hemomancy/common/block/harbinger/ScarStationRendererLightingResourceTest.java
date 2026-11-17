@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class ScarStationRendererLightingResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -10,7 +14,8 @@ public final class ScarStationRendererLightingResourceTest {
 	private ScarStationRendererLightingResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String renderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/ScarStationRenderer.java"));
 
@@ -20,28 +25,9 @@ public final class ScarStationRendererLightingResourceTest {
 				"DISPLAY_ITEM_MAX_LIGHT");
 		assertContains("scar station should render tabletop stacks with world item lighting context", renderer,
 				"renderStatic(stack, ItemDisplayContext.GROUND, itemLight");
-		assertDoesNotContain("scar station should not render tabletop stacks with fixed display lighting context",
+		assertNotContains("scar station should not render tabletop stacks with fixed display lighting context",
 				renderer, "renderStatic(stack, ItemDisplayContext.FIXED");
-		assertDoesNotContain("scar station should not render displayed stacks with raw block-entity light",
+		assertNotContains("scar station should not render displayed stacks with raw block-entity light",
 				renderer, "renderStatic(stack, ItemDisplayContext.GROUND, combinedLightIn");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 }

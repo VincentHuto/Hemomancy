@@ -52,8 +52,8 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public class LivingCrossbowItem extends CrossbowItem implements IDispellable, ITemperAlignedWeapon {
-	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
-	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_crossbow", Category.TOOL, false, false);
+	/** Reserve-protected (F-15): a dormant volume pays nothing, and a short one loses the weapon without paying. */
+	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_crossbow", Category.TOOL, true);
 	private static final EnumBloodTemper WEAPON_TEMPER = EnumBloodTemper.DUCTILIS;
 
 	private static void addChargedProjectile(ItemStack crossbow, ItemStack projectile, HolderLookup.Provider registryAccess) {
@@ -132,10 +132,11 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 						IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 								;
 						float damageMod = 50f;
-						if (playerVolume.getBloodVolume() > damageMod) {
+						if (!playerVolume.isActive()) {
+							// A dormant volume owes the bolt nothing.
+						} else if (BloodAccounting.canPayInFull(playerIn, damageMod, BLOOD_PRICE)) {
 							BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 						} else {
-							BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 							restoredStaffForm = LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(crossbow, shooter, handIn);
 							if (!restoredStaffForm) {
 								crossbow.hurtAndBreak(2050, shooter,

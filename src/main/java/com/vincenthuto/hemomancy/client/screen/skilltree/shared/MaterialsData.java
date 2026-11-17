@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrain;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleRules;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -268,6 +269,11 @@ public final class MaterialsData {
         list.add(new MaterialEntry("ravenous_heartwood", "block.hemomancy.ravenous_heartwood",
                 "material.hemomancy.ravenous_heartwood.desc",
                 "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.ravenous_heartwood.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("salt_stained_timber", "block.hemomancy.salt_stained_timber",
+                "material.hemomancy.salt_stained_timber.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.salt_stained_timber.get()),
                 true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("blood_wood_log", "block.hemomancy.blood_wood_log",
@@ -916,6 +922,21 @@ public final class MaterialsData {
                 "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.gourd_seeds.get()),
                 true, UnlockPredicate.minDegree(2)));
 
+        list.add(new MaterialEntry("glowroot", "item.hemomancy.glowroot",
+                "material.hemomancy.glowroot.desc",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.glowroot.get()),
+                true, UnlockPredicate.minDegree(2)));
+
+        list.add(new MaterialEntry("emberpod", "item.hemomancy.emberpod",
+                "material.hemomancy.emberpod.desc",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.emberpod.get()),
+                true, UnlockPredicate.minDegree(2)));
+
+        list.add(new MaterialEntry("tainted_harvest", "item.hemomancy.tainted_harvest",
+                "material.hemomancy.tainted_harvest.desc",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.tainted_harvest.get()),
+                true, UnlockPredicate.minDegree(2)));
+
         list.add(new MaterialEntry("gourd_slice", "item.hemomancy.gourd_slice",
                 "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
                 "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.gourd_slice.get()),
@@ -1009,7 +1030,8 @@ public final class MaterialsData {
         list.add(new MaterialEntry("sporitic_thurible", "item.hemomancy.sporitic_thurible",
                 "material.hemomancy.shared.a_living_harbinger_implement_grown_for",
                 "material.hemomancy.category.living_implements", () -> new ItemStack(ItemInit.sporitic_thurible.get()),
-                true, UnlockPredicate.minDegree(3)));
+                true, UnlockPredicate.minDegree(8).and(player -> SporiticThuribleRules.mayBurn(
+                        HemoCapabilityAccess.getPlayerDegreeNumber(player), HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath()))));
 
         list.add(new MaterialEntry("barbed_boots", "item.hemomancy.barbed_boots",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
@@ -1089,7 +1111,7 @@ public final class MaterialsData {
         list.add(new MaterialEntry("silent_archon_chestplate", "material.hemomancy.silent_archon_chestplate",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
                 "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.silent_archon_chestplate.get()),
-                true, UnlockPredicate.minDegree(7)));
+                true, UnlockPredicate.minDegree(8)));
 
         list.add(new MaterialEntry("silent_archon_helm", "material.hemomancy.silent_archon_helm",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
@@ -1144,7 +1166,7 @@ public final class MaterialsData {
         list.add(new MaterialEntry("edacious_blood_lust_chest", "material.hemomancy.edacious_blood_lust_chest",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
                 "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_chest.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7)));
 
         list.add(new MaterialEntry("edacious_blood_lust_helm", "material.hemomancy.edacious_blood_lust_helm",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
@@ -1174,7 +1196,7 @@ public final class MaterialsData {
         list.add(new MaterialEntry("phantasmal_blood_lust_chest", "material.hemomancy.phantasmal_blood_lust_chest",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
                 "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_chest.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7)));
 
         list.add(new MaterialEntry("phantasmal_blood_lust_helm", "material.hemomancy.phantasmal_blood_lust_helm",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
@@ -1194,7 +1216,7 @@ public final class MaterialsData {
         list.add(new MaterialEntry("sheolic_blood_lust_chest", "material.hemomancy.sheolic_blood_lust_chest",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
                 "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_chest.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7)));
 
         list.add(new MaterialEntry("sheolic_blood_lust_helm", "material.hemomancy.sheolic_blood_lust_helm",
                 "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
@@ -1286,11 +1308,6 @@ public final class MaterialsData {
                 "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.sporite_crystal.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("constrictor_cord", "item.hemomancy.constrictor_cord",
-                "material.hemomancy.shared.an_organic_component_used_in_advanced",
-                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.constrictor_cord.get()),
-                true, UnlockPredicate.minDegree(3)));
-
         list.add(new MaterialEntry("dried_leech", "item.hemomancy.dried_leech",
                 "material.hemomancy.shared.an_organic_component_used_in_advanced",
                 "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.dried_leech.get()),
@@ -1311,30 +1328,30 @@ public final class MaterialsData {
                 "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.swollen_leech.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("tendon_line", "item.hemomancy.tendon_line",
+        list.add(new MaterialEntry("sinew_cord", "item.hemomancy.sinew_cord",
                 "material.hemomancy.shared.an_organic_component_used_in_advanced",
-                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.tendon_line.get()),
+                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.sinew_cord.get()),
                 true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("hallowed_residuum_hemorath", "material.hemomancy.hallowed_residuum_hemorath",
                 "material.hemomancy.shared.a_hallowed_saint_reagent_extracted_for",
                 "material.hemomancy.category.hallowed_reagents", () -> new ItemStack(ItemInit.hallowed_residuum_hemorath.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(8)));
 
         list.add(new MaterialEntry("hallowed_residuum_putriciel", "material.hemomancy.hallowed_residuum_putriciel",
                 "material.hemomancy.shared.a_hallowed_saint_reagent_extracted_for",
                 "material.hemomancy.category.hallowed_reagents", () -> new ItemStack(ItemInit.hallowed_residuum_putriciel.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(8)));
 
         list.add(new MaterialEntry("hallowed_residuum_seraphae", "material.hemomancy.hallowed_residuum_seraphae",
                 "material.hemomancy.shared.a_hallowed_saint_reagent_extracted_for",
                 "material.hemomancy.category.hallowed_reagents", () -> new ItemStack(ItemInit.hallowed_residuum_seraphae.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(8)));
 
         list.add(new MaterialEntry("hallowed_residuum_velorum", "material.hemomancy.hallowed_residuum_velorum",
                 "material.hemomancy.shared.a_hallowed_saint_reagent_extracted_for",
                 "material.hemomancy.category.hallowed_reagents", () -> new ItemStack(ItemInit.hallowed_residuum_velorum.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(8)));
 
         list.add(new MaterialEntry("memory_of_vesper", "item.hemomancy.memory_of_vesper",
                 "material.hemomancy.memory_of_vesper.desc",
@@ -1344,17 +1361,17 @@ public final class MaterialsData {
         list.add(new MaterialEntry("monolith_fragment", "item.hemomancy.monolith_fragment",
                 "material.hemomancy.shared.a_late_stage_qliphoth_reagent_used",
                 "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.monolith_fragment.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7)));
 
         list.add(new MaterialEntry("monolith_imbued_cloth", "item.hemomancy.monolith_imbued_cloth",
                 "material.hemomancy.shared.a_late_stage_qliphoth_reagent_used",
                 "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.monolith_imbued_cloth.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7)));
 
         list.add(new MaterialEntry("monolithic_cornerstone", "item.hemomancy.monolithic_cornerstone",
                 "material.hemomancy.shared.a_late_stage_qliphoth_reagent_used",
                 "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.monolithic_cornerstone.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7)));
 
         list.add(new MaterialEntry("qliphoth_pome", "item.hemomancy.qliphoth_pome",
                 "material.hemomancy.qliphoth_pome.desc",

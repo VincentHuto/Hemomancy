@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
@@ -23,7 +22,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.SyncSilentSlippingStateS2CPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -51,7 +50,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class SilentArchonArmorAbilityHandler {
-	private static final BloodAccounting.Source SILENT_SLIPPING = BloodAccounting.Source.of("silent_slipping", Category.ARMOR, false, false);
+	private static final BloodAccounting.Source SILENT_SLIPPING = BloodAccounting.Source.of("silent_slipping", Category.ARMOR, false);
 	private static final String SILENT_SLIPPING_UNTIL_KEY = "hemomancy:silent_slipping_until";
 	private static final String SILENT_SLIPPING_MARKER_KEY = "hemomancy:silent_slipping_active";
 	private static final String CLIENT_SILENT_SLIPPING_UNTIL_KEY = "hemomancy:client_silent_slipping_until";
@@ -129,8 +128,8 @@ public final class SilentArchonArmorAbilityHandler {
 
 		AABB bounds = player.getBoundingBox().inflate(SILENT_SEVERANCE_RADIUS);
 		for (LivingEntity target : player.level().getEntitiesOfClass(LivingEntity.class, bounds,
-				entity -> ManipulationCombatHelper.canHarm(player, entity, Reach.UNGATED_SURVIVAL))) {
-			target.hurt(player.damageSources().magic(), SILENT_SEVERANCE_DAMAGE);
+				entity -> ManipulationCombatHelper.canHarm(player, entity))) {
+			target.hurt(player.damageSources().indirectMagic(player, player), SILENT_SEVERANCE_DAMAGE);
 			MobEffectInstance dislocationEffect = new MobEffectInstance(EffectInit.monolithic_dislocation,
 					SILENT_SEVERANCE_EFFECT_TICKS, 0, false, true, true);
 			if (target.addEffect(dislocationEffect)) {
@@ -203,7 +202,7 @@ public final class SilentArchonArmorAbilityHandler {
 		}
 	}
 
-	@SubscribeEvent
+	/** Defender stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
 	public static void onLivingDamage(LivingDamageEvent.Pre event) {
 		if (suppressMonolithicDislocationOffense(event)) {
 			return;
@@ -280,9 +279,9 @@ public final class SilentArchonArmorAbilityHandler {
 		player.fallDistance = 0.0F;
 		player.resetFallDistance();
 		if (player.tickCount % 5 == 0) {
-			player.serverLevel().sendParticles(ParticleTypes.SMOKE,
+			player.serverLevel().sendParticles(HemoParticleData.daemonDiffuseGlow(0.25F),
 					player.getX(), player.getY() + 1.0D, player.getZ(),
-					12, 0.35D, 0.55D, 0.35D, 0.02D);
+					6, 0.35D, 0.55D, 0.35D, 0.02D);
 		}
 		return true;
 	}

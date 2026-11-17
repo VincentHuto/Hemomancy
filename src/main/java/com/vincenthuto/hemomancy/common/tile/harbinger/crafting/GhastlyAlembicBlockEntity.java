@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.google.common.collect.Lists;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.tile.CoagulationRules;
 import com.vincenthuto.hemomancy.common.brewing.AlembicTier;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
@@ -98,7 +100,7 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 	public static final int DATA_ADVANCED_TOTAL_TIME = 6;
 	public static final int NUM_DATA_VALUES = 7;
 
-	public enum Status { NO_HEAT, NO_INPUT, MISSING_INGREDIENTS, OUTPUT_BLOCKED, TANK_FULL, DISTILLING }
+	public enum Status { NO_HEAT, NO_INPUT, MISSING_INGREDIENTS, OUTPUT_BLOCKED, DISTILLING }
 
 	public static final int BURN_TIME_STANDARD = 200;
 
@@ -339,9 +341,8 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 
 		if (advanced == null && te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
 			RecipeHolder<DistillationRecipe> recipe = findMatchingRecipe(level, te);
-			boolean canStoreByproduct = vol.getBloodVolume() < vol.getMaxBloodVolume() - 99;
-			if (recipe != null && (recipe.value().getBloodCost() > 0
-					? vol.getBloodVolume() >= recipe.value().getBloodCost() : canStoreByproduct)) {
+			// A free distillation no longer leaves blood behind (core-loop Track 3: machines do not make blood).
+			if (recipe != null && vol.getBloodVolume() >= recipe.value().getBloodCost()) {
 				int maxStack = te.getMaxStackSize();
 
 				if (te.canBurn(level.registryAccess(), recipe, te.items, maxStack)) {
@@ -353,9 +354,6 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 						if (te.burn(level.registryAccess(), recipe, te.items, maxStack)) {
 							te.recordCompleted("distill");
 							te.setRecipeUsed(recipe);
-							if (recipe.value().getBloodCost() == 0) {
-								vol.fill(100);
-							}
 							te.sendUpdates();
 						}
 						dirty = true;
@@ -501,9 +499,6 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 		if (recipe == null) return Status.MISSING_INGREDIENTS;
 		if (getBloodVolume() < recipe.value().getBloodCost()) return Status.MISSING_INGREDIENTS;
 		if (!canBurn(level.registryAccess(), recipe, items, getMaxStackSize())) return Status.OUTPUT_BLOCKED;
-		if (recipe.value().getBloodCost() == 0 && getBloodVolume() >= getMaxBloodVolume() - 99) {
-			return Status.TANK_FULL;
-		}
 		return Status.DISTILLING;
 	}
 
@@ -524,9 +519,14 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 		if (recipe.getBloodCost() > 0 && (volume == null || !volume.drain(recipe.getBloodCost()))) return false;
 		ItemStack input = inv.get(SLOT_INPUT);
 		ItemStack recipeResult = recipe.getResultItem(registryAccess).copy();
+		// A clotting Flask or Jug distils only its fresh share; its clot is not revived here (FX-2).
+		if (input.getItem() instanceof BloodyFlaskItem flask && flask.clots() && level != null) {
+			recipeResult.setCount(CoagulationRules.freshCount(recipeResult.getCount(),
+					BloodyFlaskItem.freshShare(input, level.getGameTime())));
+		}
 		ItemStack resultStack = inv.get(SLOT_RESULT);
 		if (resultStack.isEmpty()) {
-			inv.set(SLOT_RESULT, recipeResult);
+			if (!recipeResult.isEmpty()) inv.set(SLOT_RESULT, recipeResult);
 		} else {
 			resultStack.grow(recipeResult.getCount());
 		}
@@ -580,7 +580,10 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 		ItemStack resultStack = te.items.get(SLOT_FLASK_OUTPUT);
 		if (resultStack.isEmpty()) {
 			flaskStack.shrink(1);
-			te.items.set(SLOT_FLASK_OUTPUT, new ItemStack(outputItem));
+			ItemStack bottled = new ItemStack(outputItem);
+			// Bottled blood is in an inert vessel now; it clots from this tick (core-loop Track 3).
+			BloodyFlaskItem.stampBottled(bottled, te.level.getGameTime());
+			te.items.set(SLOT_FLASK_OUTPUT, bottled);
 			vol.drain(requiredBlood);
 			te.sendUpdates();
 		} else if (resultStack.getItem() == outputItem

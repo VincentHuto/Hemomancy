@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 
 import java.util.List;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 public class TerrestrialSpeculumItem extends HematicMemoryToolItem {
 	private static final String ORIGIN_DIMENSION = Hemomancy.MOD_ID + ":speculum_origin_dimension";
@@ -70,7 +71,7 @@ public class TerrestrialSpeculumItem extends HematicMemoryToolItem {
 		BlockState state = BlockInit.earthen_vein.get().defaultBlockState()
 				.setValue(EarthenVeinBlock.FACING, facing)
 				.setValue(EarthenVeinBlock.WATERLOGGED, level.getFluidState(origin).is(Fluids.WATER));
-		if (!level.setBlock(origin, state, 3)
+		if (!PlayerBlockEdits.place(player, origin, state, 3)
 				|| !(level.getBlockEntity(origin) instanceof EarthenVeinBlockEntity vein)) {
 			return false;
 		}

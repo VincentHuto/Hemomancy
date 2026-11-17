@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.armor;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.SilentArchonArmorModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
@@ -62,6 +63,6 @@ public final class SilentArchonArmorRenderHelper {
 	}
 
 	public static float timeSeconds() {
-		return (System.currentTimeMillis() % (long) TIME_CYCLE_MS) / 1000.0f;
+		return (float) (AnimationTime.itemMillis() % TIME_CYCLE_MS) / 1000.0f;
 	}
 }

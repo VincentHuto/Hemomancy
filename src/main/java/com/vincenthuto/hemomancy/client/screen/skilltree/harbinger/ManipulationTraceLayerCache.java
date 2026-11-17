@@ -169,7 +169,7 @@ final class TemperTraceLayerCache {
 
 	private static boolean isRankLocked(BloodManipulation manip, int playerDegree) {
 		if (manip == null) return false;
-		return !ManipulationRankGates.playerMeetsRank(playerDegree, manip.getRank());
+		return !ManipulationRankGates.playerMeets(playerDegree, manip);
 	}
 
 	private static int temperColor(EnumBloodTemper temper) {

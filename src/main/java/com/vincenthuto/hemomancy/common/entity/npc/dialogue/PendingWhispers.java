@@ -133,7 +133,7 @@ public final class PendingWhispers {
         }
         ListTag list = inbox(player);
         if (list.isEmpty()) return false;
-        CompoundTag entry = list.getCompound(0);
+        CompoundTag entry = list.getCompound(firstToOpen(list));
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(entry.getByteArray("tree")));
         DialogueTree tree;
         try { tree = DialogueTree.fromNetwork(buffer); }
@@ -143,6 +143,14 @@ public final class PendingWhispers {
         MonolithDialogueContext.clear(player);
         PacketHandler.sendToPlayer(player, new OpenPendingWhisperPacket(id, tree));
         return true;
+    }
+
+    /** The oldest decision whisper, else the oldest whisper (PT-89). */
+    static int firstToOpen(ListTag list) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.getCompound(i).getBoolean("decision")) return i;
+        }
+        return 0;
     }
 
     private static boolean recentCombat(int tick, int lastCombatTick) {

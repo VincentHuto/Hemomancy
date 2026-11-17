@@ -22,7 +22,8 @@ public final class RecipeMapCanvas {
 	private static final RecipeMapRecentHistory RITE_RECENTS = new RecipeMapRecentHistory(5);
 	private static final RecipeMapRecentHistory CRAFTING_RECENTS = new RecipeMapRecentHistory(5);
 
-	private final String hubLabel;
+	private final Component hubLabel;
+	private final RecipeMapRecentHistory recents;
 	private final Function<String, RecipeMapPurposeGroup> groups;
 	private final PanZoomState surfacePanZoom = new PanZoomState();
 	private final PanZoomState deepPanZoom = new PanZoomState();
@@ -44,15 +45,23 @@ public final class RecipeMapCanvas {
 	private RecipeMapEntry hoveredTooltipEntry;
 
 	public RecipeMapCanvas(RecipeMapEntry.Kind primaryKind) {
-		this(primaryKind == RecipeMapEntry.Kind.CRAFTING ? "Craft" : "Rites", null);
+		this(Component.translatable(primaryKind == RecipeMapEntry.Kind.CRAFTING
+						? "screen.hemomancy.recipe_map_canvas.craft" : "screen.hemomancy.recipe_map_canvas.rites"),
+				primaryKind == RecipeMapEntry.Kind.CRAFTING ? CRAFTING_RECENTS : RITE_RECENTS, null);
 	}
 
 	/**
 	 * @param groups the purpose group of each family, or null for a map without groups. With groups, families run
 	 *               round the map group by group, take their group's colour, and the filter cycles groups.
 	 */
-	public RecipeMapCanvas(String hubLabel, Function<String, RecipeMapPurposeGroup> groups) {
+	public RecipeMapCanvas(Component hubLabel, Function<String, RecipeMapPurposeGroup> groups) {
+		this(hubLabel, RITE_RECENTS, groups);
+	}
+
+	private RecipeMapCanvas(Component hubLabel, RecipeMapRecentHistory recents,
+			Function<String, RecipeMapPurposeGroup> groups) {
 		this.hubLabel = hubLabel;
+		this.recents = recents;
 		this.groups = groups;
 	}
 
@@ -206,11 +215,16 @@ public final class RecipeMapCanvas {
 				hubSize, hubSize, fadeColor(withAlpha(accent, 0xCC), alpha));
 		HarbingerChromeRenderer.drawFrame(gfx, centerX - hubSize / 2, centerY - hubSize / 2,
 				hubSize, hubSize, fadeColor(accent, alpha), HarbingerChromeRenderer.State.ACTIVE);
-		gfx.drawCenteredString(ctx.font(), Component.translatable("Craft".equals(hubLabel)
-						? "screen.hemomancy.recipe_map_canvas.craft" : "screen.hemomancy.recipe_map_canvas.rites"),
-				centerX, centerY - 8, fadeColor(withAlpha(accent, 0xEE), alpha));
+		// The label wraps inside the hub, with the layer's degree range on the line under it.
+		List<net.minecraft.util.FormattedCharSequence> label = ctx.font().split(hubLabel, hubSize - 4);
+		int lineHeight = ctx.font().lineHeight;
+		int top = centerY - ((label.size() + 1) * lineHeight) / 2 + 1;
+		for (int line = 0; line < label.size(); line++) {
+			gfx.drawCenteredString(ctx.font(), label.get(line), centerX, top + line * lineHeight,
+					fadeColor(withAlpha(accent, 0xEE), alpha));
+		}
 		gfx.drawCenteredString(ctx.font(), layer == SkillTreeLayer.SURFACE ? "0-4" : "5-8",
-				centerX, centerY + 3, fadeColor(0xFF999999, alpha));
+				centerX, top + label.size() * lineHeight + 2, fadeColor(0xFF999999, alpha));
 	}
 
 	private void drawFamilyLabels(GuiGraphics gfx, ProgressScreenContext ctx, int accent,
@@ -617,7 +631,7 @@ public final class RecipeMapCanvas {
 	}
 
 	private RecipeMapRecentHistory history() {
-		return "Craft".equals(hubLabel) ? CRAFTING_RECENTS : RITE_RECENTS;
+		return recents;
 	}
 
 	private static void drawKindGlyph(GuiGraphics gfx, ProgressScreenContext ctx, RecipeMapEntry entry,

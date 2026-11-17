@@ -1,5 +1,11 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheRules;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.block.harbinger.decoration.BloodGutterBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SaintSarcophagusBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -260,6 +266,10 @@ public final class HemorathFightGameTests {
 		h.assertTrue(saint.isRemoved() && saint.hasTrialEnded(), "the ending ran endTrial and the body is gone");
 		boolean rewarded = player.getInventory().items.stream().anyMatch(s -> s.is(ItemInit.hallowed_residuum_hemorath.get()));
 		h.assertTrue(rewarded, "the last feeder carries his residuum");
+		var record = HemoCapabilityAccess.getInitiatoryDegree(player);
+		h.assertTrue(record.hasEndedSaintTrial(com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType.HEMORATH)
+				&& !record.hasEndedSaintTrial(com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType.VELORUM),
+				"the ending writes the trial record for Hemorath only (D-1, NQ-08-2)");
 		player.discard();
 		sweep(h);
 		h.succeed();
@@ -484,5 +494,34 @@ public final class HemorathFightGameTests {
 		saint.discard();
 		player.discard();
 		h.succeed();
+	}
+
+	// ── his own gift (D-1, NQ-08-11) ─────────────────────────────────
+
+	/** Crimson Tithe on Hemorath: the chain latches, but each pulse feeds 40 into his meter and nothing into the vessel. */
+	@GameTest(template = TEMPLATE, timeoutTicks = 60)
+	public static void hisOwnTitheFeedsHisMeterAndNeverTheVessel(GameTestHelper h) {
+		HemorathEntity saint = saint(h);
+		ServerPlayer player = player(h, saint, 4.0D, 5000.0D);
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, saint.position().add(0, 1.5D, 0));
+		CrimsonTitheManip tithe = (CrimsonTitheManip) ManipulationInit.crimson_tithe.get();
+		CanonGiftGameTests.ready(player, tithe);
+		try {
+			ticks(saint, 1);
+			ManipulationChannelManager.start(player);
+			CanonGiftState.TitheHold hold = CanonGiftState.tithe(player.getUUID());
+			h.assertTrue(hold != null && hold.chains.containsKey(saint.getUUID()), "the chain latched onto him");
+			float before = saint.meter().value();
+			for (int i = 0; i < CrimsonTitheRules.PULSE_TICKS; i++) ManipulationChannelManager.onPlayerTick(new PlayerTickEvent.Post(player));
+			h.assertTrue(saint.meter().value() - before >= CrimsonTitheRules.HEMORATH_FEED - 0.01F,
+					"one pulse fed 40 into his meter: " + (saint.meter().value() - before));
+			h.assertTrue(hold.vessel == 0.0D, "and nothing into the vessel");
+			h.succeed();
+		} finally {
+			ManipulationChannelManager.stop(player, false);
+			CanonGiftState.end(player.getUUID());
+			saint.discard();
+			player.discard();
+		}
 	}
 }

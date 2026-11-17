@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.support.EnglishText;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class HarbingerBestiaryTabSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -12,7 +15,8 @@ public final class HarbingerBestiaryTabSourceTest {
 	private HarbingerBestiaryTabSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String screen = Files.readString(ROOT.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/HarbingerProgressScreen.java"));
 		String packetHandler = Files.readString(ROOT.resolve(
@@ -34,11 +38,5 @@ public final class HarbingerBestiaryTabSourceTest {
 				"PacketRequestSpecimenBestiary.TYPE");
 		assertContains("bestiary sync packet is registered", packetHandler,
 				"PacketSyncSpecimenBestiary.TYPE");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

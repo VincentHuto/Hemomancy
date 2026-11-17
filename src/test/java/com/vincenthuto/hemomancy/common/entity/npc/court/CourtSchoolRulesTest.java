@@ -79,4 +79,21 @@ final class CourtSchoolRulesTest {
 		assertTrue(Math.signum(CourtSchoolRules.stationAt(0, 0, 0.0F, 1)[0]) != Math.signum(CourtSchoolRules.stationAt(0, 0, 0.0F, 2)[0]),
 				"the first two flank the leader on both sides");
 	}
+
+	@Test
+	void aBlockedStationFallsBackToTheLeadersWakeAtTheSameDistanceBack() {
+		for (float yaw : new float[] {0.0F, 90.0F, 225.0F}) {
+			for (int slot = 1; slot < CourtSchoolRules.MAX_SIZE; slot++) {
+				double[] station = CourtSchoolRules.stationAt(10, 20, yaw, slot);
+				double[] trail = CourtSchoolRules.trailAt(10, 20, yaw, slot);
+				double back = CourtSchoolRules.station(slot)[2];
+				assertEquals(back, Math.hypot(trail[0] - 10, trail[1] - 20), 1e-9, "slot " + slot + " trails at its distance back");
+				// The wake point is the station with its sideways offset taken out.
+				double lateral = CourtSchoolRules.station(slot)[0];
+				assertEquals(Math.abs(lateral), Math.hypot(station[0] - trail[0], station[2] - trail[1]), 1e-9);
+			}
+		}
+		double[] south = CourtSchoolRules.trailAt(0, 0, 0.0F, 1);
+		assertTrue(Math.abs(south[0]) < 1e-9 && south[1] < 0.0D, "facing south, the wake is straight north");
+	}
 }

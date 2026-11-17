@@ -40,9 +40,10 @@ class CourtIntroductionRulesTest {
 
 	@Test
 	void theLetterDropsOncePerUnknowingPlayer() {
-		assertTrue(CourtIntroductionRules.letterDrops(false, false));
-		assertFalse(CourtIntroductionRules.letterDrops(false, true), "never a second time");
-		assertFalse(CourtIntroductionRules.letterDrops(true, false), "never for a player who knows");
+		assertTrue(CourtIntroductionRules.letterDrops(false, false, true));
+		assertFalse(CourtIntroductionRules.letterDrops(false, true, true), "never a second time");
+		assertFalse(CourtIntroductionRules.letterDrops(true, false, true), "never for a player who knows");
+		assertFalse(CourtIntroductionRules.letterDrops(false, false, false), "never where no Court site generates");
 	}
 
 	@Test

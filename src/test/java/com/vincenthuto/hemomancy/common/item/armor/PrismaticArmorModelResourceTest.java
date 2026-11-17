@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class PrismaticArmorModelResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -63,19 +65,6 @@ class PrismaticArmorModelResourceTest {
 				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/prismatic_layer_1.png"), 128, 128);
 		assertTextureSize("Prismatic layer 2 should use the puppeteer atlas size",
 				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/prismatic_layer_2.png"), 128, 128);
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 
 	private static void assertTextureSize(String label, Path path, int expectedWidth, int expectedHeight) throws IOException {

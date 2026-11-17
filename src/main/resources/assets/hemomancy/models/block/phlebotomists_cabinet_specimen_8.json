@@ -1,286 +1,286 @@
 {
-  "textures": {
-    "vial_glass": "minecraft:block/glass",
-    "vial_blood": "hemomancy:block/blood_fill_tiled",
-    "vial_cap": "hemomancy:block/hematic_iron_block"
-  },
-  "render_type": "minecraft:cutout",
-  "elements": [
-    {
-      "name": "blood",
-      "from": [
-        3.45,
-        2.6000000000000005,
-        4.45
-      ],
-      "to": [
-        4.55,
-        4.3500000000000005,
-        5.55
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_blood"
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_blood"
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_blood"
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_blood"
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_blood"
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_blood"
-        }
-      }
+    "textures": {
+        "vial_glass": "minecraft:block/glass",
+        "vial_blood": "hemomancy:block/blood_fill_tiled",
+        "vial_cap": "hemomancy:block/hematic_iron_block"
     },
-    {
-      "name": "glass vial",
-      "from": [
-        3.25,
-        2.4000000000000004,
-        4.25
-      ],
-      "to": [
-        4.75,
-        4.6000000000000005,
-        5.75
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
+    "render_type": "minecraft:cutout",
+    "elements": [
+        {
+            "name": "blood",
+            "from": [
+                3.45,
+                2.6000000000000005,
+                4.45
+            ],
+            "to": [
+                4.55,
+                4.3500000000000005,
+                5.55
+            ],
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        0.0687,
+                        0.1094
+                    ],
+                    "texture": "#vial_blood"
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        0.0687,
+                        0.1094
+                    ],
+                    "texture": "#vial_blood"
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        0,
+                        0.0687,
+                        0.1094
+                    ],
+                    "texture": "#vial_blood"
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        0.0687,
+                        0.1094
+                    ],
+                    "texture": "#vial_blood"
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        0.0687,
+                        0.0687
+                    ],
+                    "texture": "#vial_blood"
+                },
+                "down": {
+                    "uv": [
+                        0,
+                        0,
+                        0.0687,
+                        0.0687
+                    ],
+                    "texture": "#vial_blood"
+                }
+            }
         },
-        "south": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
+        {
+            "name": "glass vial",
+            "from": [
+                3.25,
+                2.4000000000000004,
+                4.25
+            ],
+            "to": [
+                4.75,
+                4.6000000000000005,
+                5.75
+            ],
+            "faces": {
+                "north": {
+                    "uv": [
+                        11.25,
+                        11.4,
+                        12.75,
+                        13.6
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "south": {
+                    "uv": [
+                        3.25,
+                        11.4,
+                        4.75,
+                        13.6
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "east": {
+                    "uv": [
+                        10.25,
+                        11.4,
+                        11.75,
+                        13.6
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "west": {
+                    "uv": [
+                        4.25,
+                        11.4,
+                        5.75,
+                        13.6
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "up": {
+                    "uv": [
+                        3.25,
+                        4.25,
+                        4.75,
+                        5.75
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "down": {
+                    "uv": [
+                        3.25,
+                        10.25,
+                        4.75,
+                        11.75
+                    ],
+                    "texture": "#vial_glass"
+                }
+            }
         },
-        "east": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
+        {
+            "name": "glass neck",
+            "from": [
+                3.55,
+                4.6000000000000005,
+                4.55
+            ],
+            "to": [
+                4.45,
+                5.050000000000001,
+                5.45
+            ],
+            "faces": {
+                "north": {
+                    "uv": [
+                        11.55,
+                        10.95,
+                        12.45,
+                        11.4
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "south": {
+                    "uv": [
+                        3.55,
+                        10.95,
+                        4.45,
+                        11.4
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "east": {
+                    "uv": [
+                        10.55,
+                        10.95,
+                        11.45,
+                        11.4
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "west": {
+                    "uv": [
+                        4.55,
+                        10.95,
+                        5.45,
+                        11.4
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "up": {
+                    "uv": [
+                        3.55,
+                        4.55,
+                        4.45,
+                        5.45
+                    ],
+                    "texture": "#vial_glass"
+                },
+                "down": {
+                    "uv": [
+                        3.55,
+                        10.55,
+                        4.45,
+                        11.45
+                    ],
+                    "texture": "#vial_glass"
+                }
+            }
         },
-        "west": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
+        {
+            "name": "iron stopper",
+            "from": [
+                3.45,
+                5.0,
+                4.45
+            ],
+            "to": [
+                4.55,
+                5.3500000000000005,
+                5.55
+            ],
+            "faces": {
+                "north": {
+                    "uv": [
+                        11.45,
+                        10.65,
+                        12.55,
+                        11
+                    ],
+                    "texture": "#vial_cap"
+                },
+                "south": {
+                    "uv": [
+                        3.45,
+                        10.65,
+                        4.55,
+                        11
+                    ],
+                    "texture": "#vial_cap"
+                },
+                "east": {
+                    "uv": [
+                        10.45,
+                        10.65,
+                        11.55,
+                        11
+                    ],
+                    "texture": "#vial_cap"
+                },
+                "west": {
+                    "uv": [
+                        4.45,
+                        10.65,
+                        5.55,
+                        11
+                    ],
+                    "texture": "#vial_cap"
+                },
+                "up": {
+                    "uv": [
+                        3.45,
+                        4.45,
+                        4.55,
+                        5.55
+                    ],
+                    "texture": "#vial_cap"
+                },
+                "down": {
+                    "uv": [
+                        3.45,
+                        10.45,
+                        4.55,
+                        11.55
+                    ],
+                    "texture": "#vial_cap"
+                }
+            }
         }
-      }
-    },
-    {
-      "name": "glass neck",
-      "from": [
-        3.55,
-        4.6000000000000005,
-        4.55
-      ],
-      "to": [
-        4.45,
-        5.050000000000001,
-        5.45
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_glass"
-        }
-      }
-    },
-    {
-      "name": "iron stopper",
-      "from": [
-        3.45,
-        5.0,
-        4.45
-      ],
-      "to": [
-        4.55,
-        5.3500000000000005,
-        5.55
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_cap"
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_cap"
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_cap"
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_cap"
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_cap"
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#vial_cap"
-        }
-      }
-    }
-  ]
+    ]
 }

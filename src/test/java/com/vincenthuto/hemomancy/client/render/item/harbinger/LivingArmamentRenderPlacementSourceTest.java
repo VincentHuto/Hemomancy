@@ -1,11 +1,16 @@
 package com.vincenthuto.hemomancy.client.render.item.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+
 public final class LivingArmamentRenderPlacementSourceTest {
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		Path root = Path.of("").toAbsolutePath();
 		String torchModel = Files.readString(root.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/client/model/item/LivingTorchModel.java"));
@@ -57,17 +62,5 @@ public final class LivingArmamentRenderPlacementSourceTest {
 				"THIRD_PERSON_MODEL_PITCH_DEGREES = 0.0F");
 		assertContains("flail third-person layer does not turn the whole pole to face the head", flailLayer,
 				"THIRD_PERSON_MODEL_YAW_DEGREES = 0.0F");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " missing: " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + " still contains: " + forbidden);
-		}
 	}
 }

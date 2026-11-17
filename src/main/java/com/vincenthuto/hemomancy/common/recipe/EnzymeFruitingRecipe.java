@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class EnzymeFruitingRecipe implements Recipe<RecipeInput> {
 
     public static final int DEFAULT_DURATION = 2400;
-    public static final float DEFAULT_BLOOD_PER_TICK = 0.25F;
+    public static final float DEFAULT_BLOOD_PER_TICK = 0.0625F;
 
     private final ResourceLocation id;
     private final Ingredient culture;

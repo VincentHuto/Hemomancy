@@ -39,6 +39,26 @@ public final class LivingStaffBondHelper {
 				KnownManipulationEvents.syncPlayerEvent(player);
 			}
 		}
+		// The pickaxe form comes with the bond, so a new Harbinger mines iron with the Staff on the first day (Track 8).
+		changed |= ensureConjurePickaxeKnown(player);
+		return changed;
+	}
+
+	/**
+	 * Teaches a bonded player the Staff's pickaxe form if they do not know it, equipping it when a slot is free. A
+	 * player who already knows it is left alone, so unequipping it sticks across logins.
+	 */
+	public static boolean ensureConjurePickaxeKnown(ServerPlayer player) {
+		if (player == null || !ManipulationInit.conjure_pickaxe.isBound()) return false;
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
+		if (progress == null || !progress.hasLivingStaffBond()) return false;
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
+		if (known == null || known.doesListContainName(known.getKnownManips(), ManipulationInit.conjure_pickaxe.get())) {
+			return false;
+		}
+		boolean changed = KnownManipulationGrantHelper.learnAndEquipIfPossible(known,
+				ManipulationInit.conjure_pickaxe.get(), ManipSlotHelper.getMaxSlots(player));
+		if (changed) KnownManipulationEvents.syncPlayerEvent(player);
 		return changed;
 	}
 

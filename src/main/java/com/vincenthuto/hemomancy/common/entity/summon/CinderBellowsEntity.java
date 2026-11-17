@@ -46,7 +46,7 @@ public final class CinderBellowsEntity extends GroundPuppetEntity implements Syn
             entityData.set(BREATH_CYCLE, 0);
             if (target == null) BoundSummonBehavior.ownerFor(this, this).ifPresent(owner -> {
                 if (BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner, this))
-                    getNavigation().moveTo(owner, 1);
+                    BoundSummonBehavior.followOwnerOnFoot(this, owner, 1);
             });
             return;
         }

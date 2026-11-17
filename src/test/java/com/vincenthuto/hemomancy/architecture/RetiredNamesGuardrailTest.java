@@ -17,7 +17,13 @@ import org.junit.jupiter.api.Test;
 class RetiredNamesGuardrailTest {
 	private static final Pattern RETIRED = Pattern.compile("spawn_egg_eruptor|puppeteering_thread|iron_wall|covenant_waybill"
 			+ "|calcified_blood_spine|spawn_mark|warp_chair|fungal_elytra|humanity_sprite|frayed_thread|circus_carousel"
-			+ "|hollow_vessel|legacy_rite_completion|MuscleMemory|muscleMemory|musclememory|muscle_memory|MUSCLE_MEMORY|vermillion_bloodwood|voracious_bloodwood|VermillionCore|VermillionTree");
+			+ "|hollow_vessel|legacy_rite_completion|MuscleMemory|muscleMemory|musclememory|muscle_memory|MUSCLE_MEMORY|vermillion_bloodwood|voracious_bloodwood|VermillionCore|VermillionTree"
+			// Core loop (2026-11-09 to 11-10): retired items, payloads and rules that the verbs, gouges and living
+			// blood replaced. The Tendon Line lives on as a manipulation, so only its item names are listed.
+			+ "|constrictor_cord|ConstrictorCord|TendonLineItem|item\\.hemomancy\\.tendon_line|GroundBloodDraw"
+			+ "|LivingStaffGroundDraw|LivingPistol|living_pistol|LivingStaffUtilitySelection|MemoryThreadRules"
+			+ "|MemoryThreadCurve|MemoryThreadLine|memory_thread\\.(clear|start|stop|tooltip)|key\\.hemomancy\\.drawtest"
+			+ "|BLOOD_GAIN_PER_SPIN|addOperationBlood|alembic\\.status\\.tank_full");
 
 	private static void scan(Path root, List<String> found) throws IOException {
 		try (Stream<Path> files = Files.walk(root)) {

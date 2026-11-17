@@ -257,7 +257,7 @@ public final class ManipulationBalancePassGameTests {
             ManipulationChannelManager.start(p);
             h.assertTrue(ManipulationChannelManager.isChanneling(p.getUUID()), "Drift did not start");
             var hit = new LivingDamageEvent.Pre(cow, new DamageContainer(p.damageSources().playerAttack(p), 4));
-            ManipulationReactiveEvents.onFinalDamage(hit);
+            ManipulationReactiveEvents.applyPenumbralAmbush(hit);
             near(h, 4 * ManipulationReactiveEvents.PENUMBRAL_AMBUSH_MULTIPLIER, hit.getNewDamage(), "Ambush multiplier");
             h.assertTrue(SchoolStates.has(cow, SchoolState.OBSCURED), "Ambush did not leave the victim Obscured");
             h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()), "Attacking did not end the drift");
@@ -418,6 +418,6 @@ public final class ManipulationBalancePassGameTests {
         blood.setBloodVolume(2000);
         for (var temper : EnumBloodTemper.values())
             HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
-        return p;
+        return TemperFixtures.carry(p);
     }
 }

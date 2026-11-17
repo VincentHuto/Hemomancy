@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class HarbingerArtificerAssignmentSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,7 +15,8 @@ public final class HarbingerArtificerAssignmentSourceTest {
 	private HarbingerArtificerAssignmentSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		artificerMilestonesExist();
 		artificerMilestonesAreGrantedByRites();
 		assignmentLedgerCarriesArtificerProgress();
@@ -167,9 +172,9 @@ public final class HarbingerArtificerAssignmentSourceTest {
 				"handleArtificerFittingClaim");
 		assertContains("Artificer fitting claims check for inventory/equipment copies", eventHandler,
 				"playerHasFitting");
-		assertDoesNotContain("Artificer code no longer exposes Hematic Iron seal events", dialogue,
+		assertNotContains("Artificer code no longer exposes Hematic Iron seal events", dialogue,
 				"EVENT_CLAIM_HEMATIC_IRON_SEAL");
-		assertDoesNotContain("Artificer handler no longer handles seal claims", eventHandler,
+		assertNotContains("Artificer handler no longer handles seal claims", eventHandler,
 				"handleArtificerSealClaim");
 	}
 
@@ -210,24 +215,5 @@ public final class HarbingerArtificerAssignmentSourceTest {
 				"**The Assumed Limb** (D5)");
 		assertContains("lore docs preserve Artificer rite tone", lore,
 				"staff fittings mark witnessed obligations rather than new powers");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String needle) {
-		if (!text.contains(needle)) {
-			throw new AssertionError(label + " missing: " + needle);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String needle) {
-		if (text.contains(needle)) {
-			throw new AssertionError(label + " still contains: " + needle);
-		}
 	}
 }

@@ -27,7 +27,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ToggleableSkillEvents {
-	private static final BloodAccounting.Source SANGUINE_SPINNING = BloodAccounting.Source.of("sanguine_spinning", Category.TOOL, true, true);
+	private static final BloodAccounting.Source SANGUINE_SPINNING = BloodAccounting.Source.of("sanguine_spinning", Category.TOOL, true);
 	private ToggleableSkillEvents() {}
 
 	@SubscribeEvent

@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.command;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class QliphothPomeCommandSourceTest {
 	private static final Path COMMAND = Path.of(
@@ -20,7 +23,8 @@ public final class QliphothPomeCommandSourceTest {
 	private QliphothPomeCommandSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String command = Files.readString(COMMAND).replace("\r\n", "\n");
 		String compactCommand = command.replaceAll("\\s+", " ");
 		String degree = Files.readString(DEGREE).replace("\r\n", "\n");
@@ -62,11 +66,5 @@ public final class QliphothPomeCommandSourceTest {
 				"hasActiveQliphothBloom(player)");
 		assertContains("reference documents qliphoth pome set debug command", reference,
 				"/hemo qliphoth pome set <0-9> [player]");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

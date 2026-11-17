@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.worldgen.biome;
 
+import org.junit.jupiter.api.Test;
+
 final class FungalGardensOverworldRegionTest {
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		keepsFungalGardensLandReplacementSeparateFromReefRegion();
 	}
 

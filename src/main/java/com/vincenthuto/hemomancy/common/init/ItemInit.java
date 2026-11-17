@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.plant.FungalStrains;
 import com.vincenthuto.hemomancy.common.item.harbinger.MorphicTonicItem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.harbinger.AhaematicColloidItem;
@@ -136,6 +137,19 @@ public class ItemInit {
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build())));
     public static final DeferredHolder<Item, Item> cooked_pelagic_herring = BASEITEMS.register("cooked_pelagic_herring",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6F).build())));
+    /** Meat off an animal dosed with a Harbinger's blood (core-loop Track 5): blood to a Harbinger, sickness to anyone else. */
+    public static final DeferredHolder<Item, Item> tainted_meat = BASEITEMS.register("tainted_meat",
+            () -> new com.vincenthuto.hemomancy.common.item.harbinger.TaintedMeatItem(new Item.Properties()
+                    .food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build()), "item.hemomancy.tainted_meat.tooltip"));
+    /** A vanilla crop's harvest off over-fed ground (core-loop round two, P7): blood to a Harbinger, sickness to anyone else. */
+    public static final DeferredHolder<Item, Item> tainted_harvest = BASEITEMS.register("tainted_harvest",
+            () -> new com.vincenthuto.hemomancy.common.item.harbinger.TaintedMeatItem(new Item.Properties()
+                    .food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build()), "item.hemomancy.tainted_harvest.tooltip"));
+    /** Catalyst crops (core-loop round two, P7): each harvest is its own seed and a weak catalyst of its school. */
+    public static final DeferredHolder<Item, Item> glowroot = BASEITEMS.register("glowroot",
+            () -> new ItemNameBlockItem(BlockInit.glowroot.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> emberpod = BASEITEMS.register("emberpod",
+            () -> new ItemNameBlockItem(BlockInit.emberpod.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> raw_venison = BASEITEMS.register("raw_venison",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
     public static final DeferredHolder<Item, Item> cooked_venison = BASEITEMS.register("cooked_venison",
@@ -256,8 +270,6 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> serpent_scale = BASEITEMS.register("serpent_scale",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> constrictor_cord = BASEITEMS.register("constrictor_cord",
-            () -> new ConstrictorCordItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> scale_grip = BASEITEMS.register("scale_grip",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> swollen_leech = BASEITEMS.register("swollen_leech",
@@ -297,10 +309,11 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> sanguine_hound_bridle = BASEITEMS.register("sanguine_hound_bridle",
             () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
-    public static final DeferredHolder<Item, Item> tendon_line = BASEITEMS.register("tendon_line",
-            () -> new TendonLineItem(new Item.Properties()));
+    /** A length of sinew cord: the craft offering that replaced the Tendon Line item. */
+    public static final DeferredHolder<Item, Item> sinew_cord = BASEITEMS.register("sinew_cord",
+            () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> memory_thread = BASEITEMS.register("memory_thread",
-            () -> new MemoryThreadItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> faded_memory = BASEITEMS.register("faded_memory",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> vein_spider = BASEITEMS.register("vein_spider",
@@ -404,6 +417,10 @@ public class ItemInit {
             () -> new HematicMemoryItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> memory_blood_shot = registerBloodMemoryItem("memory_blood_shot", ManipulationInit.blood_shot);
     public static final DeferredHolder<Item, Item> memory_blood_binding = registerBloodMemoryItem("memory_blood_binding", ManipulationInit.blood_binding);
+    public static final DeferredHolder<Item, Item> memory_tendon_line = registerBloodMemoryItem("memory_tendon_line", ManipulationInit.tendon_line);
+    public static final DeferredHolder<Item, Item> memory_blood_lash = registerBloodMemoryItem("memory_blood_lash", ManipulationInit.blood_lash);
+    public static final DeferredHolder<Item, Item> memory_living_land = registerBloodMemoryItem("memory_living_land", ManipulationInit.living_land);
+    public static final DeferredHolder<Item, Item> memory_venous_cling = registerBloodMemoryItem("memory_venous_cling", ManipulationInit.venous_cling);
     public static final DeferredHolder<Item, Item> memory_blood_aneurysm = registerBloodMemoryItem("memory_blood_aneurysm", ManipulationInit.blood_aneurysm);
     public static final DeferredHolder<Item, Item> memory_blood_rush = registerBloodMemoryItem("memory_blood_rush", ManipulationInit.blood_rush);
     public static final DeferredHolder<Item, Item> memory_deadly_gaze = registerBloodMemoryItem("memory_deadly_gaze", ManipulationInit.deadly_gaze);
@@ -471,6 +488,8 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> memory_iron_retort = registerBloodMemoryItem("memory_iron_retort", ManipulationInit.iron_retort);
     public static final DeferredHolder<Item, Item> memory_ironhearted = registerBloodMemoryItem("memory_ironhearted", ManipulationInit.ironhearted);
     public static final DeferredHolder<Item, Item> memory_sanguine_magnetism = registerBloodMemoryItem("memory_sanguine_magnetism", ManipulationInit.sanguine_magnetism);
+    public static final DeferredHolder<Item, Item> memory_lode_draw = registerBloodMemoryItem("memory_lode_draw", ManipulationInit.lode_draw);
+    public static final DeferredHolder<Item, Item> memory_hematic_hewing = registerBloodMemoryItem("memory_hematic_hewing", ManipulationInit.hematic_hewing);
     public static final DeferredHolder<Item, Item> memory_ferric_rampart = registerBloodMemoryItem("memory_ferric_rampart", ManipulationInit.ferric_rampart);
     public static final DeferredHolder<Item, Item> memory_ferric_spikes = registerBloodMemoryItem("memory_ferric_spikes", ManipulationInit.ferric_spikes);
     public static final DeferredHolder<Item, Item> memory_pyretic_forge = registerBloodMemoryItem("memory_pyretic_forge", ManipulationInit.pyretic_forge);
@@ -595,6 +614,8 @@ public class ItemInit {
             () -> new LivingTorchItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredHolder<Item, Item> living_flail = SPECIALITEMS.register("living_flail",
             () -> new LivingFlailItem(25f, 2, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> living_pickaxe = SPECIALITEMS.register("living_pickaxe",
+            () -> new LivingPickaxeItem(25f, -1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_sickle = SPECIALITEMS.register("living_sickle",
             () -> new LivingSickleItem(25f, 2, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> blood_bolt = BASEITEMS.register("blood_bolt",
@@ -643,14 +664,14 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> blood_rock = BASEITEMS
             .register("blood_rock", () -> new BloodyFlaskItem(new Item.Properties(), 250));
     public static final DeferredHolder<Item, Item> bloody_flask = BASEITEMS.register("bloody_flask",
-            () -> new BloodyFlaskItem(new Item.Properties(), 2500));
+            () -> new BloodyFlaskItem(new Item.Properties(), 2500, true));
     /** Corpse wax, the middle wax tier: scraped from bog bodies, distilled from honeycomb with a Ruinous Enzyme. */
     public static final DeferredHolder<Item, Item> adipocere = BASEITEMS.register("adipocere",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> morphic_tonic = BASEITEMS.register("morphic_tonic",
             () -> new MorphicTonicItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> bloody_jug = BASEITEMS.register("bloody_jug",
-            () -> new BloodyFlaskItem(new Item.Properties(), 5000));
+            () -> new BloodyFlaskItem(new Item.Properties(), 5000, true));
     public static final DeferredHolder<Item, Item> hematic_microscope = BASEITEMS.register("hematic_microscope",
             () -> new HematicMicroscopeItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
@@ -696,6 +717,9 @@ public class ItemInit {
             () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> hematic_iron_boots = BASEITEMS.register("hematic_iron_boots",
             () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.BOOTS));
+    /** CN-10: the spurs the Armature sets into worn boots, so they grip a wall while the wearer clings. */
+    public static final DeferredHolder<Item, Item> hematic_cleats = BASEITEMS.register("hematic_cleats",
+            com.vincenthuto.hemomancy.common.item.harbinger.armor.HematicCleatsItem::new);
 
     public static final DeferredHolder<Item, Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
             () -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, new Item.Properties()
@@ -853,23 +877,23 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> immature_fungal_scar = BASEITEMS.register("immature_fungal_scar",
             () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1)));
 
-    // Spores
+    // Spores: each plants its fungal strain on its substrate (core-loop round two, P7), and is still a culture and a catalyst.
     public static final DeferredHolder<Item, Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+            () -> new ItemNameBlockItem(BlockInit.strain(FungalStrains.VIVACIOUS).get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
     public static final DeferredHolder<Item, Item> fervent_spores = BASEITEMS.register("fervent_spores",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+            () -> new ItemNameBlockItem(BlockInit.strain(FungalStrains.FERVENT).get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
     public static final DeferredHolder<Item, Item> neurotic_spores = BASEITEMS.register("neurotic_spores",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+            () -> new ItemNameBlockItem(BlockInit.strain(FungalStrains.NEUROTIC).get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
     public static final DeferredHolder<Item, Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+            () -> new ItemNameBlockItem(BlockInit.strain(FungalStrains.INCANDESCENT).get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
     public static final DeferredHolder<Item, Item> ruinous_spores = BASEITEMS.register("ruinous_spores",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+            () -> new ItemNameBlockItem(BlockInit.strain(FungalStrains.RUINOUS).get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
     public static final DeferredHolder<Item, Item> frigid_spores = BASEITEMS.register("frigid_spores",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+            () -> new ItemNameBlockItem(BlockInit.strain(FungalStrains.FRIGID).get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
     public static final DeferredHolder<Item, Item> ferric_spores = BASEITEMS.register("ferric_spores",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+            () -> new ItemNameBlockItem(BlockInit.strain(FungalStrains.FERRIC).get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
     public static final DeferredHolder<Item, Item> umbral_spores = BASEITEMS.register("umbral_spores",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+            () -> new ItemNameBlockItem(BlockInit.strain(FungalStrains.UMBRAL).get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
 
     // ── Regular Scars (8 tempers × 3 tiers = 24 scars) ──
     // Each scar has focused upsides and real downsides; magnitude escalates with tier.
@@ -907,6 +931,9 @@ public class ItemInit {
             () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
             () -> new VasculariumCharmItem(new Item.Properties(), EnumBloodTemper.ANIMUS, 0));
+    // Creative-only for now; the Mnemonist is expected to give it.
+    public static final DeferredHolder<Item, Item> titration_bandolier = BASEITEMS.register("titration_bandolier",
+            () -> new TitrationBandolierItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> mycophant_tendril = BASEITEMS.register("mycophant_tendril",
             () -> new MycophantTendrilItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     // Qliphoth Reagent

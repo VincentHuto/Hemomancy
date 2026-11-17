@@ -3,14 +3,12 @@ package com.vincenthuto.hemomancy.common.rite.sigil;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 final class CardinalRiteSigilFeedbackSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	@Test
 	void correctAndFalseStrokeFeedbackAreConnectedToRuntimeState() throws IOException {
@@ -31,9 +29,5 @@ final class CardinalRiteSigilFeedbackSourceTest {
 				"false-stroke lightning must retain its purple core");
 		assertFalse(interactions.contains("DaemonDiffuseGlowParticleFactory.createData(0.055F)"),
 				"false-stroke feedback must not return to the diffuse particle stream");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
 	}
 }

@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import org.junit.jupiter.api.Test;
+
 public final class WildMorphlingRulesTest {
 	private WildMorphlingRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		wildBoundMorphlingsAreCappedBeforeIncubation();
 		primalizedMorphlingsIgnoreWildBoundCap();
 		unboundMorphlingsUseNaturalMaturity();

@@ -80,7 +80,7 @@ public final class HematicStakeBloodStructureGameTests {
 				helper.assertTrue(catalyst.isEmpty(), "The Sanguine Formation must be consumed");
 				helper.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() == bloodBefore - 100.0D,
 						"The stake formation must consume 100 blood");
-				for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick();
+				for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick(helper.getLevel());
 
 				helper.assertBlockPresent(BlockInit.hematic_stake.get(), bar);
 				helper.assertBlockNotPresent(BlockInit.blood_crystal.get(), crystal);
@@ -177,7 +177,7 @@ public final class HematicStakeBloodStructureGameTests {
 			helper.assertTrue(BloodStructureFeedManager.feedStructure(player, helper.getLevel(),
 					helper.absolutePos(bar), catalyst, 100.0D), "The valid formation must begin crafting");
 			helper.setBlock(bar.west(), Blocks.AIR);
-			for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick();
+			for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick(helper.getLevel());
 
 			helper.assertBlockNotPresent(BlockInit.hematic_stake.get(), bar);
 			BlockPos absoluteBar = helper.absolutePos(bar);

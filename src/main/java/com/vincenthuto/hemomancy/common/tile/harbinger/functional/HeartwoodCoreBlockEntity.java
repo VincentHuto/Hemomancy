@@ -41,7 +41,7 @@ import java.util.Set;
  * placed nearby is inert and a tree whose core is cut out is only timber.
  */
 public class HeartwoodCoreBlockEntity extends HemoBlockEntity {
-	private static final BloodAccounting.Source FEEDING = BloodAccounting.Source.of("heartwood_core_feeding", Category.WORLD, true, false);
+	private static final BloodAccounting.Source FEEDING = BloodAccounting.Source.of("heartwood_core_feeding", Category.WORLD, false);
 	private static final ParticleColor BLOOD = new ParticleColor(190, 18, 34);
 	private static final int REFRESH_BELOW_TICKS = 20;
 	private double fed;

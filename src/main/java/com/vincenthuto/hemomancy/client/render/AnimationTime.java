@@ -1,14 +1,18 @@
 package com.vincenthuto.hemomancy.client.render;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 /**
  * Animation time for client code: game time or an entity's age plus the frame's partial tick. Each method is the exact
- * expression it replaced, so a float partial tick gives float arithmetic and a double one double. Code that animates on
- * wall-clock time, or counts frames, does so on purpose until decision A-4 settles which animations may freeze under
- * {@code /tick freeze}; render events and HUD layers pass their own partial tick.
+ * expression it replaced, so a float partial tick gives float arithmetic and a double one double. Every animation in the
+ * world, on an item or on armour freezes under {@code /tick freeze} (A-4), inventory slots included; only screen chrome,
+ * the dimension veil, pose cache stamps and the rite bar's ease read the wall clock. Render events and HUD layers pass
+ * their own partial tick.
  */
 public final class AnimationTime {
 	private AnimationTime() {
@@ -49,5 +53,15 @@ public final class AnimationTime {
 
 	public static double age(Entity entity, double partialTick) {
 		return entity.tickCount + partialTick;
+	}
+
+	/** Game ticks at a partial tick, or the wall clock in ticks when nothing is loaded (an item drawn on the title screen). */
+	public static double ticksOrWallClock(@Nullable Level level, float partialTick) {
+		return level != null ? level.getGameTime() + (double) partialTick : Util.getMillis() / 50.0;
+	}
+
+	/** Item and armour animation time in milliseconds: game time at this frame, in a slot as in a hand. */
+	public static double itemMillis() {
+		return ticksOrWallClock(Minecraft.getInstance().level, partialTick()) * 50.0;
 	}
 }

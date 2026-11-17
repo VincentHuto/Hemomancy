@@ -32,6 +32,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -50,16 +51,19 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 
 public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProvider, ProjectedBloodSink {
-	private static final BloodAccounting.Source MOTIF_CHARGE = BloodAccounting.Source.of("masons_effigy_motif", Category.SCAR, true, false);
+	private static final BloodAccounting.Source MOTIF_CHARGE = BloodAccounting.Source.of("masons_effigy_motif", Category.SCAR, false);
 	private static final String TAG_STATE = "EffigyState";
 	private static final String TAG_SELECTED_SCARS = "SelectedScars";
 	private static final String TAG_PENDING_MOTIF = "PendingMotif";
 	private static final String TAG_PENDING_BLOOD = "PendingBlood";
+	private static final String TAG_PREPARER = "Preparer";
 	public static final double BLOOD_PER_SCAR = 500.0D;
 	private EffigyState effigyState = EffigyState.UNMARKED;
 	private final List<ResourceLocation> selectedScarIds = new ArrayList<>();
 	private ItemStack pendingMotif = ItemStack.EMPTY;
 	private double pendingBlood;
+	/** NQ-10-10: who set the motif paper. The finished pattern and its first-pattern credit are theirs. */
+	@javax.annotation.Nullable private java.util.UUID preparer;
 
 	public enum EffigyState {
 		UNMARKED,
@@ -110,6 +114,7 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 		ItemStack recovered = pendingMotif;
 		pendingMotif = ItemStack.EMPTY;
 		pendingBlood = 0.0D;
+		preparer = null;
 		setChanged();
 		Block.popResource(level, worldPosition, recovered);
 	}
@@ -124,6 +129,7 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 		}
 		pendingMotif = stack.copyWithCount(1);
 		pendingBlood = 0.0D;
+		preparer = player.getUUID();
 		if (!player.getAbilities().instabuild) {
 			stack.shrink(1);
 		}
@@ -205,20 +211,33 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 		ItemStack pattern = ItemScarPattern.createPreparedPattern(selectedScarIds);
 		pendingMotif = ItemStack.EMPTY;
 		pendingBlood = 0.0D;
+		ServerPlayer owner;
+		if (player instanceof ServerPlayer finisher && (preparer == null || preparer.equals(finisher.getUUID()))) {
+			owner = finisher;
+		} else {
+			owner = preparer == null || !(level instanceof ServerLevel server) ? null
+					: server.getServer().getPlayerList().getPlayer(preparer);
+		}
+		preparer = null;
 		if (level instanceof ServerLevel serverLevel && !pattern.isEmpty()) {
-			ItemEntity patternEntity = new ItemEntity(serverLevel, worldPosition.getX() + 0.5D,
-					worldPosition.getY() + 1.25D, worldPosition.getZ() + 0.5D, pattern);
-			double angle = serverLevel.random.nextDouble() * Math.PI * 2.0D;
-			patternEntity.setDeltaMovement(Math.cos(angle) * 0.16D, 0.36D, Math.sin(angle) * 0.16D);
-			patternEntity.setDefaultPickUpDelay();
-			level.addFreshEntity(patternEntity);
+			if (owner != null) {
+				OwedRewards.give(owner, List.of(pattern));
+			} else {
+				// The preparer has left: the pattern falls at the Effigy, as before NQ-10-10.
+				ItemEntity patternEntity = new ItemEntity(serverLevel, worldPosition.getX() + 0.5D,
+						worldPosition.getY() + 1.25D, worldPosition.getZ() + 0.5D, pattern);
+				double angle = serverLevel.random.nextDouble() * Math.PI * 2.0D;
+				patternEntity.setDeltaMovement(Math.cos(angle) * 0.16D, 0.36D, Math.sin(angle) * 0.16D);
+				patternEntity.setDefaultPickUpDelay();
+				level.addFreshEntity(patternEntity);
+			}
 			HLParticleUtils.spawnPoof(serverLevel, worldPosition.above(),
 					HemoParticleData.bloodCell(ParticleColor.BLOOD));
 			PacketHandler.sendSanguineOmenEffect(Vec3.atCenterOf(worldPosition).add(0.0D, 0.25D, 0.0D), 18.0D,
 					serverLevel, 24, 0.35F);
 			level.playSound(null, worldPosition, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.8F, 0.65F);
-			if (player instanceof ServerPlayer serverPlayer) {
-				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+			if (owner != null) {
+				HarbingerAdvancementGranter.grantIfNotDone(owner,
 						HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_PATTERN);
 			}
 		}
@@ -294,6 +313,7 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 			tag.put(TAG_PENDING_MOTIF, pendingMotif.save(registries));
 		}
 		tag.putDouble(TAG_PENDING_BLOOD, pendingBlood);
+		if (preparer != null) tag.putUUID(TAG_PREPARER, preparer);
 	}
 
 	@Override
@@ -318,6 +338,7 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 				? ItemStack.parseOptional(registries, tag.getCompound(TAG_PENDING_MOTIF))
 				: ItemStack.EMPTY;
 		pendingBlood = tag.getDouble(TAG_PENDING_BLOOD);
+		preparer = tag.hasUUID(TAG_PREPARER) ? tag.getUUID(TAG_PREPARER) : null;
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public final class ArmorSetAbilityRegistry {
-	private static final BloodAccounting.Source ABILITY_COST = BloodAccounting.Source.of("armor_ability", Category.ARMOR, false, false);
+	private static final BloodAccounting.Source ABILITY_COST = BloodAccounting.Source.of("armor_ability", Category.ARMOR, false);
 	public static final ResourceLocation EDACIOUS_BLOODBURST = Hemomancy.rloc("edacious_bloodburst");
 	public static final ResourceLocation SHEOLIC_BASTION_STANCE = Hemomancy.rloc("sheolic_bastion_stance");
 	public static final ResourceLocation MASQUERADE_OF_THE_FORGOTTEN = Hemomancy.rloc("masquerade_of_the_forgotten");

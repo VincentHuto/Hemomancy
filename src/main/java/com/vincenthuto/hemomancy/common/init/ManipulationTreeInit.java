@@ -42,6 +42,10 @@ public class ManipulationTreeInit {
 		register("blood_shot",510,293, "blood_binding");
 		register("blood_rush",590,243);
 		register("blood_binding",560,353);
+		register("tendon_line",620,353, "blood_binding");
+		register("blood_lash",680,353, "tendon_line");
+		register("venous_cling",620,413, "tendon_line");
+		register("living_land",680,413, "venous_cling", "vital_effusion");
 		register("vital_effusion",620,293, "blood_rush");
 		register("conjure_blade",565,293, "vital_effusion", "blood_binding")
 				.setSoftParents("conjure_staff");
@@ -57,6 +61,11 @@ public class ManipulationTreeInit {
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS roots
 		register("conjure_staff",1040,130, "blood_projection", "blood_absorption");
+		// The Staff's mining (core-loop Track 8): the pickaxe comes with the bond; the crawl and the hewing are woven.
+		register("conjure_pickaxe",1040,60, "conjure_staff");
+		register("lode_draw",960,250, "vascular_dowsing")
+				.setSoftParents("conjure_pickaxe");
+		register("hematic_hewing",990,315, "lode_draw");
 		register("sanguine_mending",910,130);
 		register("vascular_dowsing",920,200, "sanguine_mending");
 		register("blood_needle",850,250);
@@ -138,8 +147,8 @@ public class ManipulationTreeInit {
 		register("iron_choir",850,70, "iron_retort", "ironhearted");
 		register("living_circuit",1110,95, "conductive_mark");
 		register("axonal_transduction",1170,95, "living_circuit");
-		register("white_verdict",1351,280, "unclosing_eye", "prismatic_reproof", "hematic_beacon");
-		register("absolute_stillness",1470,220, "glacial_grasp", "endless_hour");
+		register("white_verdict",1351,280, "prismatic_reproof", "hematic_beacon");
+		register("absolute_stillness",1470,220, "glacial_grasp");
 		register("furnace_veins",1830,50, "vitric_combustion");
 		register("phoenix_debt",1800,-10, "furnace_veins");
 		register("penumbral_drift",1900,10, "black_veil_covenant");
@@ -147,10 +156,10 @@ public class ManipulationTreeInit {
 		register("umbral_rend",2070,60, "blood_eclipse", "gloam_laceration");
 		register("radiant_wake",1225,280, "hematic_beacon");
 		register("lodestone_collapse",790,60, "iron_choir", "sanguine_magnetism");
-		register("carrion_communion",2270,88, "blackhearted", "bloom_of_rot");
+		register("carrion_communion",2270,88, "blackhearted");
 		register("funeral_bell",2270,143, "carrion_communion");
 		register("insatiable_hunger",2330,-53, "hemorrhage");
-		register("fruiting_contagion",2390,17, "insatiable_hunger", "bloom_of_rot");
+		register("fruiting_contagion",2390,17, "insatiable_hunger");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS
 		register("hemorrhage",2270,-22, "lignum_mortis");

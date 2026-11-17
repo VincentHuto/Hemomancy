@@ -21,7 +21,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.phys.*;
 
 public class RecallBarbEntity extends AbstractArrow {
-    private static final BloodAccounting.Source SEVER = BloodAccounting.Source.of("recall_barb", Category.EFFECT, false, false);
+    private static final BloodAccounting.Source SEVER = BloodAccounting.Source.of("recall_barb", Category.EFFECT, false);
     private static final EntityDataAccessor<Integer> VICTIM=SynchedEntityData.defineId(RecallBarbEntity.class,EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ARCHER=SynchedEntityData.defineId(RecallBarbEntity.class,EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> AGE=SynchedEntityData.defineId(RecallBarbEntity.class,EntityDataSerializers.INT);

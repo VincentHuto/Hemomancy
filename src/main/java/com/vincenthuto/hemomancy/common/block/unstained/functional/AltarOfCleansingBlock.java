@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.unstained.functional;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
@@ -11,7 +13,6 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.tile.unstained.functional.AltarOfCleansingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -338,28 +339,28 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 	private void spawnBlessingParticles(Level worldIn, BlockPos pos) {
 		if (worldIn instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.END_ROD,
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE),
 					pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-					40, 0.5, 1.0, 0.5, 0.05);
-			serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER,
-					pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-					20, 0.5, 0.5, 0.5, 0.1);
+					40, 0.5, 1.0, 0.5, 0.025);
+			serverLevel.sendParticles(HemoParticleData.letheanDrip(),
+					pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
+					20, 0.5, 0.5, 0.5, 0.0);
 		}
 	}
 
 	private void spawnPurityParticles(Level worldIn, BlockPos pos) {
 		if (worldIn instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.VERDIGRIS),
 					pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-					15, 0.5, 0.5, 0.5, 0.1);
+					15, 0.5, 0.5, 0.5, 0.05);
 		}
 	}
 
 	private void spawnClarityParticles(Level worldIn, BlockPos pos) {
 		if (worldIn instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.END_ROD,
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE),
 					pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-					20, 0.5, 0.5, 0.5, 0.1);
+					20, 0.5, 0.5, 0.5, 0.05);
 		}
 	}
 	@Override

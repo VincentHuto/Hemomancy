@@ -44,12 +44,14 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteOrdealEngine;
+import com.vincenthuto.hemomancy.common.rite.harbinger.HematicUnbindingRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeTier;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.util.RegistryLookup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -154,12 +156,23 @@ public final class PlaythroughIlluminatusGameTests {
 	private static final String DISBAND_NOT_LEADER = "hemomancy.ledger.disband.not_leader";
 	private static final String LEDGER_BURNED = "hemomancy.ledger.disband.ledger_burned";
 	private static final String KICKED = "hemomancy.bloodline.kick.you_were_removed";
+	private static final String PETITION_SENT = "message.hemomancy.unsigned_ledger_item.petition_sent";
+	private static final String NEEDS_DEGREE = "message.hemomancy.unsigned_ledger_item.needs_degree";
+	private static final String NEEDS_BLOOD = "message.hemomancy.unsigned_ledger_item.needs_active_blood";
+	private static final String PETITION_ARRIVED = "hemomancy.bloodline.petition.arrived";
+	private static final String PETITIONS_WAIT = "hemomancy.bloodline.petition.waiting_count";
+	private static final String PETITION_REFUSED = "hemomancy.bloodline.petition.refused";
+	private static final String CRUMBLED = "hemomancy.ledger.crumbled";
+	private static final String SETTLE_EXPELLED = "hemomancy.bloodline.settle.expelled";
+	private static final String SETTLE_DISSOLVED = "hemomancy.bloodline.settle.dissolved";
+	private static final String SHARE_PAID = "hemomancy.bloodline.share_paid";
+	private static final String LEFT_LINE = "hemomancy.bloodline.leave.success";
+	private static final String LEADER_CANNOT_LEAVE = "hemomancy.bloodline.leave.leader";
 	private static final String RECALL_MINTED = "message.hemomancy.cardinal_rite_completion_effects.the_covenant_remembers_your_ledger_for";
 	private static final String UNBINDING_WARNS = "message.hemomancy.cardinal_rite_completion_effects.the_covenant_loosens_but_holds_performing";
 	private static final String RANK_SEALED = "message.hemomancy.cardinal_rite_activation.the_rank_rite_remains_sealed_complete";
 	private static final String COVENANT_CHAPTER = "milestone.hemomancy.chapter.covenant_written_in_place";
 	private static final String ALREADY_ATTAINED = "message.hemomancy.cardinal_rite_activation.you_have_already_attained";
-	private static final String NO_RITE_MATCHES = "message.hemomancy.cardinal_rite_activation.the_floor_answers_but_no_structure";
 	private static final String STAKE_INVALID = "block.hemomancy.hematic_stake.invalid";
 	private static final String STAKE_NOT_OWNER = "block.hemomancy.hematic_stake.not_owner";
 	private static final String KIT_GRANTED = "hemomancy.dialogue.event.artificer_consecration_kit_granted";
@@ -252,9 +265,10 @@ public final class PlaythroughIlluminatusGameTests {
 	}
 
 	/**
-	 * B right-clicks with A's signed ledger: B is told they joined, the pool grows by 5000, A (online) is told who
-	 * joined, and B's Vicar now offers the pledge option.
+	 * B right-clicks with A's signed ledger: the name waits for A, who is told; A admits B on the ledger screen; B is
+	 * told they joined, the pool grows by 5000, A is told who joined, and B's Vicar now offers the pledge option.
 	 */
+	// RULING PT-35 (2026-11-13): a ledger join waits for the leader's confirm. Admit with both online.
 	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void ledgerJoinBySecondPlayer(GameTestHelper helper) {
 		PlaythroughPlayer a = d5(helper, 6, 6);
@@ -265,8 +279,13 @@ public final class PlaythroughIlluminatusGameTests {
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 8, 10));
 		b.give(ledgerStack(a).copy()); // ARRANGE: A hands B a copy of the signed ledger
 		int heard = a.mark();
-		Outcome join = useLedger(b);
-		join.said(JOINED);
+		Outcome petition = useLedger(b);
+		petition.said(PETITION_SENT).didNotSay(JOINED);
+		helper.assertTrue(linesHolding(b) == 0, "B is not joined before A answers; " + petition);
+		helper.assertTrue(a.chatSince(heard).stream().anyMatch(chat -> chat.has(PETITION_ARRIVED)), "A is told of the petition");
+		int bHeard = b.mark();
+		Outcome join = a.answerPetition(b.uuid(), true);
+		helper.assertTrue(b.chatSince(bHeard).stream().anyMatch(chat -> chat.has(JOINED)), "B is told they joined: " + b.chatSince(bHeard));
 		Bloodline after = PlaythroughStates.lineOf(b);
 		helper.assertTrue(after != null && after.getBloodlineUUID().equals(line.getBloodlineUUID()), "B is in A's line; " + join);
 		helper.assertTrue(after.getMaxBloodVolume() == 2 * Bloodline.BLOOD_VOLUME_PER_MEMBER,
@@ -301,11 +320,11 @@ public final class PlaythroughIlluminatusGameTests {
 		helper.succeed();
 	}
 
-	/** A Degree 0 player and an inactive-blood Degree 5 player each use a signed ledger. */
-	// DECISION D5-1: a signed-ledger join has no degree, active-blood or leader-consent gate. Options: keep / D1+ active
-	// blood / leader confirms / D5 only. The probe expects some gate: neither player is joined without one.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void ledgerJoinHasNoGate(GameTestHelper helper) {
+	/** A Degree 0 player and an inactive-blood Degree 5 player each use a signed ledger: each is refused with its line. */
+	// RULING PT-35 (2026-11-13): a ledger join needs the first Degree, active blood and the leader's confirm. Was the
+	// DECISION D5-1 probe ledgerJoinHasNoGate.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void ledgerJoinNeedsTheGates(GameTestHelper helper) {
 		PlaythroughPlayer leader = d5(helper, 4, 6);
 		PlaythroughStates.foundedLineD5(leader); // ARRANGE
 		PlaythroughPlayer fresh = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 8, 6));
@@ -314,16 +333,85 @@ public final class PlaythroughIlluminatusGameTests {
 		var volume = HemoCapabilityAccess.getBloodVolume(inactive.player());
 		volume.setActive(false); // ARRANGE: blood gone dormant
 		BloodVolumeEvents.syncVolume(inactive.player(), volume);
-		List<String> joined = new ArrayList<>();
 		for (PlaythroughPlayer joiner : List.of(fresh, inactive)) {
 			joiner.give(ledgerStack(leader).copy()); // ARRANGE: the founder hands over a signed ledger
 			Outcome used = useLedger(joiner);
 			String who = joiner == fresh ? "D0" : "inactive D5";
-			PlaythroughLog.note(helper, "D5-1 " + who + " uses the ledger: " + used.describe());
-			if (linesHolding(joiner) > 0) joined.add(who);
+			PlaythroughLog.note(helper, "PT-35 " + who + " uses the ledger: " + used.describe());
+			used.said(joiner == fresh ? NEEDS_DEGREE : NEEDS_BLOOD).didNotSay(PETITION_SENT);
+			helper.assertTrue(linesHolding(joiner) == 0, who + " is not joined");
 		}
-		PlaythroughLog.note(helper, "D5-1 joined with no gate or consent: " + joined);
-		helper.assertTrue(joined.isEmpty(), "D5-1 expected a gate on joining by ledger; joined: " + joined);
+		Bloodline line = PlaythroughStates.lineOf(leader);
+		helper.assertTrue(BloodlineSavedData.get(helper.getLevel().getServer().overworld())
+				.petitions(line.getBloodlineUUID()).isEmpty(), "no petition waits for a refused player");
+		helper.succeed();
+	}
+
+	/**
+	 * A petition made while the leader is away waits for them and is counted at their login; the leader admits the
+	 * applicant after the applicant has left, and the applicant is told and joined at their own next login.
+	 */
+	// RULING PT-35 (2026-11-13): leader offline at the petition, applicant offline at the admit.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void petitionWaitsForTheLeaderAndTheApplicant(GameTestHelper helper) {
+		PlaythroughPlayer leader = d5(helper, 4, 8);
+		Bloodline line = PlaythroughStates.foundedLineD5(leader); // ARRANGE: the leader is not in the player list
+		PlaythroughPlayer applicant = d5(helper, 8, 8);
+		applicant.joinLevel();
+		applicant.give(ledgerStack(leader).copy()); // ARRANGE
+		useLedger(applicant).said(PETITION_SENT);
+		int heard = leader.mark();
+		leader.relog();
+		helper.assertTrue(leader.chatSince(heard).stream().anyMatch(chat -> chat.has(PETITIONS_WAIT)),
+				"the leader is told at login how many petitions wait: " + leader.chatSince(heard));
+		applicant.offline();
+		leader.answerPetition(applicant.uuid(), true);
+		helper.assertTrue(BloodlineSavedData.get(helper.getLevel().getServer().overworld()).getBloodline(line.getBloodlineUUID())
+				.hasMember(applicant.uuid()), "the admit writes the absent applicant into the line");
+		int applicantHeard = applicant.mark();
+		applicant.relog();
+		helper.assertTrue(applicant.chatSince(applicantHeard).stream().anyMatch(chat -> chat.has(JOINED)),
+				"the applicant is told at login: " + applicant.chatSince(applicantHeard));
+		helper.assertTrue(PlaythroughStates.lineOf(applicant) != null, "the applicant holds the line after login");
+		helper.succeed();
+	}
+
+	/** The leader refuses a petition: the applicant is told and joins nothing; the petition is gone. */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void refusedPetitionJoinsNothing(GameTestHelper helper) {
+		PlaythroughPlayer leader = d5(helper, 4, 10);
+		Bloodline line = PlaythroughStates.foundedLineD5(leader); // ARRANGE
+		PlaythroughPlayer applicant = d5(helper, 8, 10);
+		leader.joinLevel();
+		applicant.joinLevel();
+		applicant.give(ledgerStack(leader).copy()); // ARRANGE
+		useLedger(applicant).said(PETITION_SENT);
+		int heard = applicant.mark();
+		leader.answerPetition(applicant.uuid(), false);
+		helper.assertTrue(applicant.chatSince(heard).stream().anyMatch(chat -> chat.has(PETITION_REFUSED)),
+				"the applicant is told: " + applicant.chatSince(heard));
+		helper.assertTrue(linesHolding(applicant) == 0, "a refused applicant joins nothing");
+		helper.assertTrue(BloodlineSavedData.get(helper.getLevel().getServer().overworld())
+				.petitions(line.getBloodlineUUID()).isEmpty(), "the answered petition is gone");
+		helper.succeed();
+	}
+
+	/** A member who is not the leader sends an answer as if from the ledger screen: nothing happens. */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void forgedPetitionAnswerFromAMember(GameTestHelper helper) {
+		PlaythroughPlayer leader = d5(helper, 4, 14);
+		Bloodline line = PlaythroughStates.foundedLineD5(leader); // ARRANGE
+		PlaythroughPlayer member = member(helper, leader, 6, 14, 5);
+		member.give(PlaythroughStates.signedLedger(PlaythroughStates.lineOf(leader))); // ARRANGE: the member's ledger
+		PlaythroughPlayer applicant = d5(helper, 8, 14);
+		applicant.joinLevel();
+		applicant.give(ledgerStack(leader).copy()); // ARRANGE
+		useLedger(applicant).said(PETITION_SENT);
+		Outcome forged = member.answerPetition(applicant.uuid(), true);
+		PlaythroughLog.note(helper, "PT-35 a member's forged admit: " + forged.describe());
+		helper.assertTrue(linesHolding(applicant) == 0, "a member cannot admit; " + forged);
+		helper.assertTrue(BloodlineSavedData.get(helper.getLevel().getServer().overworld())
+				.petitions(line.getBloodlineUUID()).containsKey(applicant.uuid()), "the petition still waits for the leader");
 		helper.succeed();
 	}
 
@@ -494,34 +582,45 @@ public final class PlaythroughIlluminatusGameTests {
 				}).run();
 	}
 
-	/** A member with the pool already full holds Projection on the Bloodwell; a member with no blood tries too. */
-	// DECISION D5-8: a full-pool or zero deposit earns no covenant proof and says nothing. Options: count the attempt /
-	// a line saying the pool is full / keep. The probe expects the player to get the proof or to be told why not.
-	@GameTest(template = EMPTY, timeoutTicks = 300, batch = BATCH, required = false)
-	public static void fullPoolDepositSaysNothing(GameTestHelper helper) {
+	/**
+	 * A full pool takes nothing: a member holding Projection on the Bloodwell gives no blood and earns no proof, and
+	 * the pool screen's lump offering costs nothing and says nothing (the screen greys it). With a little room left,
+	 * an offering takes only that room.
+	 */
+	// RULING PT-42 (2026-11-13): no "pool is full" line; the deposit control is greyed when the pool is full. Was the
+	// DECISION D5-8 probe fullPoolDepositSaysNothing. FIX found in review: a lump donation took the whole request
+	// from the player even when the pool had no room, and the blood was lost.
+	@GameTest(template = EMPTY, timeoutTicks = 300, batch = BATCH)
+	public static void fullPoolTakesNothing(GameTestHelper helper) {
 		String covenant = adv(HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE);
 		PlaythroughPlayer leader = d5(helper, 4, 12);
 		BlockPos heart = PlaythroughStates.covenantD5(leader, PlaythroughStates.defaultHeart(leader)); // ARRANGE
 		PlaythroughPlayer full = member(helper, leader, 8, 9, 5);
-		PlaythroughPlayer empty = member(helper, leader, 8, 15, 5);
 		Bloodline line = PlaythroughStates.lineOf(leader);
-		BloodlineSavedData.get(helper.getLevel().getServer().overworld()).contributeBlood(line.getBloodlineUUID(),
-				line.getMaxBloodVolume()); // ARRANGE: the pool is already full
-		PlaythroughStates.blood(empty, 0.0D); // ARRANGE: a member with nothing to give
-		List<String> silent = new ArrayList<>();
+		BloodlineSavedData data = BloodlineSavedData.get(helper.getLevel().getServer().overworld());
+		data.contributeBlood(line.getBloodlineUUID(), line.getMaxBloodVolume()); // ARRANGE: the pool is already full
 		PlaythroughClock.start(helper)
 				.step(full.hold(ItemInit.blood_projection.get(), 30, heart))
 				.then(() -> {
 					Outcome attempt = full.last();
-					PlaythroughLog.note(helper, "D5-8 full pool deposit: " + attempt.describe());
-					if (!full.has(covenant) && attempt.chat().isEmpty()) silent.add("full pool");
-				})
-				.step(empty.hold(ItemInit.blood_projection.get(), 30, heart))
-				.then(() -> {
-					Outcome attempt = empty.last();
-					PlaythroughLog.note(helper, "D5-8 zero deposit: " + attempt.describe());
-					if (!empty.has(covenant) && attempt.chat().isEmpty()) silent.add("zero blood");
-					helper.assertTrue(silent.isEmpty(), "D5-8 expected the proof or a line; silent for " + silent);
+					PlaythroughLog.note(helper, "PT-42 full pool Bloodwell deposit: " + attempt.describe());
+					helper.assertFalse(full.has(covenant), "a full pool earns no covenant proof; " + attempt);
+					helper.assertTrue(attempt.bloodSpent() <= 0.0D, "a full pool takes no blood; " + attempt);
+					Bloodline pool = data.getBloodline(line.getBloodlineUUID());
+					double before = full.blood();
+					Outcome donation = full.lumpDonate(200.0D);
+					PlaythroughLog.note(helper, "PT-42 full pool lump donation: " + donation.describe());
+					helper.assertTrue(Math.abs(full.blood() - before) < 0.001D,
+							"a lump donation into a full pool costs nothing (" + before + " mL before, " + full.blood() + " after)");
+					helper.assertTrue(donation.chat().isEmpty(), "a full pool says nothing; the control is greyed; " + donation);
+					helper.assertTrue(pool.getBloodVolume() == pool.getMaxBloodVolume(), "the pool stays full");
+					pool.setBloodVolume(pool.getMaxBloodVolume() - 50.0F); // ARRANGE: room for 50 mL
+					double beforeRoom = full.blood();
+					Outcome partial = full.lumpDonate(200.0D);
+					PlaythroughLog.note(helper, "PT-42 lump donation with 50 mL of room: " + partial.describe());
+					helper.assertTrue(Math.abs(beforeRoom - full.blood() - 50.0D) < 0.001D,
+							"a donation takes only the pool's room (" + (beforeRoom - full.blood()) + " mL taken)");
+					helper.assertTrue(pool.getBloodVolume() == pool.getMaxBloodVolume(), "the room is filled");
 				}).run();
 	}
 
@@ -677,7 +776,8 @@ public final class PlaythroughIlluminatusGameTests {
 		PlaythroughPlayer leader = d5(helper, 4, 12);
 		BlockPos heart = PlaythroughStates.covenantD5(leader, PlaythroughStates.defaultHeart(leader)); // ARRANGE
 		BlockPos home = leader.home();
-		BlockPos far = PlaythroughSites.farOrigin(helper, 96).above().south(12);
+		// In the open ground between test plots: the 64-block gap means 96 east is the next plot's corner (P2).
+		BlockPos far = PlaythroughSites.farOrigin(helper, 80).above().south(12);
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 28, 12));
 
 		leader.ledgerAction(PacketLedgerAction.ACTION_SUMMON_NPCS).said(SUMMON_NO_NPCS);
@@ -736,13 +836,22 @@ public final class PlaythroughIlluminatusGameTests {
 		helper.assertTrue(online.chat().stream().anyMatch(chat -> chat.has(KICKED)), "the online member is told");
 		helper.assertFalse(HemoCapabilityAccess.getBloodVolume(online.player()).getBloodLine().isValid(),
 				"the online member's line is cleared at once");
+		offline.give(PlaythroughStates.signedLedger(line)); // ARRANGE: the absent member carries a ledger of the line
+		offline.offline(); // ARRANGE: logged out before the kick
 		Outcome kickOffline = leader.kick(offline.uuid());
 		PlaythroughLog.note(helper, "kick offline: " + kickOffline.describe());
 		Bloodline saved = data.getBloodline(line.getBloodlineUUID());
 		helper.assertFalse(saved.hasMember(offline.uuid()), "the offline member is out of the saved line");
+		int heard = offline.mark();
 		offline.relog();
 		helper.assertFalse(HemoCapabilityAccess.getBloodVolume(offline.player()).getBloodLine().isValid(),
 				"the next login reconciles the kicked member");
+		// RULING PT-37 and T1 (2026-11-13): the member kicked while away is told at login, and their old ledger crumbles.
+		helper.assertTrue(offline.chatSince(heard).stream().anyMatch(chat -> chat.has(SETTLE_EXPELLED)),
+				"the offline kicked member is told at login: " + offline.chatSince(heard));
+		helper.assertTrue(offline.count(ItemInit.unsigned_ancestral_ledger.get()) == 0
+				&& offline.chatSince(heard).stream().anyMatch(chat -> chat.has(CRUMBLED)),
+				"the ledger written before the kick crumbles at login");
 		leader.relog();
 		helper.assertTrue(PlaythroughStates.lineOf(leader) != null, "the leader keeps the line across a relog");
 		PlaythroughLog.note(helper, "LF-14 pool after two kicks: " + saved.getBloodVolume() + " / " + saved.getMaxBloodVolume());
@@ -751,35 +860,49 @@ public final class PlaythroughIlluminatusGameTests {
 		helper.succeed();
 	}
 
-	/** A kicked player right-clicks with the ledger they joined with. */
-	// DECISION D5-3: a kicked member holding their old ledger gets no action and no line. Options: refuse with a line /
-	// allow rejoin / burn the kicked member's ledger copy. The probe expects a line, a rejoin or a burnt ledger.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	/**
+	 * A kicked player's ledgers of the line crumble: the one carried at the kick, and an old one moved in from a chest
+	 * later. A third player's copy stays, and a ledger written after the kick is a fresh invitation.
+	 */
+	// RULING PT-37 with NQ-11-1 B and NQ-11-2 (2026-11-14): only ledgers written before the kick crumble, and leave
+	// nothing behind. Was the DECISION D5-3 probe.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void kickedMemberStaleLedger(GameTestHelper helper) {
 		PlaythroughPlayer leader = d5(helper, 4, 12);
-		PlaythroughStates.foundedLineD5(leader); // ARRANGE
-		PlaythroughPlayer kicked = d5(helper, 8, 12);
+		Bloodline line = PlaythroughStates.foundedLineD5(leader); // ARRANGE
+		PlaythroughPlayer kicked = member(helper, leader, 8, 12, 5);
 		kicked.joinLevel();
-		kicked.give(ledgerStack(leader).copy()); // ARRANGE: the founder hands over a signed ledger
-		useLedger(kicked).said(JOINED);
+		kicked.give(PlaythroughStates.signedLedger(line)); // ARRANGE: the ledger they joined with
+		PlaythroughPlayer third = d5(helper, 10, 12);
+		third.give(PlaythroughStates.signedLedger(line)); // ARRANGE: a copy handed to someone else
+		int heard = kicked.mark();
 		leader.kick(kicked.uuid());
+		helper.assertTrue(kicked.count(ItemInit.unsigned_ancestral_ledger.get()) == 0, "the carried ledger crumbles at the kick");
+		helper.assertTrue(kicked.chatSince(heard).stream().anyMatch(chat -> chat.has(CRUMBLED)), "the crumble is said");
+		helper.assertTrue(kicked.player().level().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+				kicked.player().getBoundingBox().inflate(4.0D)).isEmpty(), "nothing is left behind");
+		kicked.give(PlaythroughStates.signedLedger(line)); // ARRANGE: an old copy taken out of a chest
 		Outcome stale = useLedger(kicked);
-		boolean rejoined = linesHolding(kicked) > 0;
-		boolean burnt = kicked.count(ItemInit.unsigned_ancestral_ledger.get()) == 0;
-		PlaythroughLog.note(helper, "D5-3 stale ledger: " + stale.describe() + " rejoined=" + rejoined + " burnt=" + burnt);
-		helper.assertTrue(!stale.chat().isEmpty() || rejoined || burnt,
-				"D5-3 expected the kicked player to be told, rejoined or lose the ledger; " + stale);
+		PlaythroughLog.note(helper, "PT-37 stale ledger: " + stale.describe());
+		stale.said(CRUMBLED).didNotSay(PETITION_SENT);
+		helper.assertTrue(kicked.count(ItemInit.unsigned_ancestral_ledger.get()) == 0 && linesHolding(kicked) == 0,
+				"the old ledger crumbles and joins nothing");
+		helper.assertTrue(third.count(ItemInit.unsigned_ancestral_ledger.get()) == 1, "a third player's copy is untouched");
+		long now = helper.getLevel().getServer().overworld().getGameTime();
+		kicked.give(PlaythroughStates.signedLedger(line, now + 1)); // ARRANGE: written after the kick (Bloodline Recall)
+		useLedger(kicked).said(PETITION_SENT).didNotSay(CRUMBLED);
+		helper.assertTrue(kicked.count(ItemInit.unsigned_ancestral_ledger.get()) == 1, "a newer ledger is a fresh invitation");
 		helper.succeed();
 	}
 
 	/**
 	 * A member performs Bloodline Recall and gets a signed ledger, then pledges a Vicar; the same member cannot release
-	 * a recruit, set the recall point or disband, and has no way to leave.
+	 * a recruit, set the recall point or disband, but can leave. Leaving takes the line and its ledgers; the leader
+	 * cannot leave.
 	 */
-	// DECISION D5-2: members may recruit and mint signed ledgers by Bloodline Recall but cannot expel, set the recall
-	// point or disband, and have no voluntary leave. Options: add a leave action / leader-only recruit and Recall /
-	// keep. The probe expects that a member with the first two powers also has a way to leave.
-	@GameTest(template = EMPTY, timeoutTicks = 8000, batch = RITES, required = false)
+	// RULING PT-36 with NQ-11-3 and NQ-11-6 (2026-11-14): members get a Leave action; it follows the kick's ledger rule;
+	// the leader cannot leave. Was the DECISION D5-2 probe.
+	@GameTest(template = EMPTY, timeoutTicks = 8000, batch = RITES)
 	public static void bloodlineRecallAndMemberPowers(GameTestHelper helper) {
 		PlaythroughPlayer leader = d5(helper, 4, 4);
 		PlaythroughStates.foundedLineD5(leader); // ARRANGE
@@ -809,40 +932,63 @@ public final class PlaythroughIlluminatusGameTests {
 					PlaythroughLog.note(helper, "D5-2 member set point: " + point.saidKeys() + " disband: " + disband.saidKeys());
 					helper.assertTrue(release.saidKeys().contains(RECRUIT_NOT_LEADER) && point.saidKeys().contains(POINT_NOT_LEADER)
 							&& disband.saidKeys().contains(DISBAND_NOT_LEADER), "a member's leader-only actions are refused");
-					boolean leaveExists = false; // PacketLedgerAction offers summon, recall, set point and disband only
-					helper.assertTrue(!(powers[0] || powers[1]) || leaveExists,
-							"D5-2 expected a member who can recruit and mint ledgers to have a way to leave");
+					leader.ledgerAction(PacketLedgerAction.ACTION_LEAVE_BLOODLINE).said(LEADER_CANNOT_LEAVE);
+					Outcome left = member.ledgerAction(PacketLedgerAction.ACTION_LEAVE_BLOODLINE);
+					PlaythroughLog.note(helper, "PT-36 member leaves: " + left.describe());
+					left.said(LEFT_LINE).said(CRUMBLED);
+					helper.assertTrue(linesHolding(member) == 0 && PlaythroughStates.lineOf(leader) != null,
+							"the member is out of the line, which stands");
+					helper.assertTrue(member.count(ItemInit.unsigned_ancestral_ledger.get()) == 0,
+							"the Recall ledger crumbles on leaving");
 				}).run();
 	}
 
-	/** Hematic Unbinding played once: the Nether Star burns and the line holds; the ledger's Disband costs nothing. */
-	// DECISION D5-4: Hematic Unbinding consumes its Nether Star and only warns; the ledger Disband is free. Options: warn
-	// at activation like Fane relocation / drop the rite / make Disband cost / keep. The probe expects a warning-only
-	// completion to keep its star.
-	@GameTest(template = EMPTY, timeoutTicks = 11000, batch = RITES, required = false)
-	public static void hematicUnbindingCostsTwoStars(GameTestHelper helper) {
+	/**
+	 * Hematic Unbinding warned at activation: the leader's first planting only warns, starts nothing and takes no
+	 * Nether Star; a second planting inside the window runs the rite, which burns one star and dissolves the line.
+	 */
+	// RULING PT-38 (2026-11-13): the first Unbinding warns at activation, before the Nether Star is taken. Was the
+	// DECISION D5-4 probe hematicUnbindingCostsTwoStars, which asserted a warning-only completion kept its star.
+	@GameTest(template = EMPTY, timeoutTicks = 11000, batch = RITES)
+	public static void hematicUnbindingWarnsAtActivation(GameTestHelper helper) {
 		PlaythroughPlayer leader = d5(helper, 20, 4);
 		Bloodline line = PlaythroughStates.foundedLineD5(leader); // ARRANGE
 		PlaythroughSites.RiteFloor floor = PlaythroughSites.riteFloor(leader, helper.absolutePos(RITE_ORIGIN), "hematic_unbinding");
+		int[] starsBefore = new int[1];
 		PlaythroughClock clock = PlaythroughClock.start(helper);
 		PlaythroughRites.prepare(clock, leader, floor);
-		clock.then(() -> leader.wield(ItemInit.living_staff.get()))
-				.step(() -> PlaythroughClock.rite(leader, floor.focus(), RitePlan.standard().fightThreats()))
+		clock.then(() -> {
+			starsBefore[0] = netherStars(leader, floor);
+			Outcome warned = plantAt(leader, floor);
+			PlaythroughLog.note(helper, "PT-38 first Unbinding planting: " + warned.describe());
+			helper.assertFalse(riteRunning(leader), "the first activation only warns; " + warned);
+			warned.said(UNBINDING_WARNS);
+			helper.assertTrue(netherStars(leader, floor) == starsBefore[0],
+					"the warning takes no Nether Star (" + starsBefore[0] + " before, " + netherStars(leader, floor) + " after)");
+			helper.assertTrue(PlaythroughStates.lineOf(leader) != null, "the line holds after the warning");
+			leader.wield(ItemInit.living_staff.get());
+		}).step(() -> PlaythroughClock.rite(leader, floor.focus(), RitePlan.standard().fightThreats()))
 				.then(() -> {
-					Outcome first = leader.last();
-					PlaythroughLog.note(helper, "D5-4 first Unbinding: " + first.describe());
-					first.said(UNBINDING_WARNS);
-					BlockPos socket = PlaythroughRites.usedSockets(floor).get(0);
-					boolean starKept = leader.count(Items.NETHER_STAR) > 0 || PlaythroughRites.brazier(leader, socket).hasOffering();
-					helper.assertTrue(PlaythroughStates.lineOf(leader) != null, "the line holds after the first Unbinding");
-					leader.joinLevel();
-					Outcome disband = leader.ledgerAction(PacketLedgerAction.ACTION_DISBAND_BLOODLINE);
-					PlaythroughLog.note(helper, "D5-4 star kept=" + starKept + "; ledger Disband: " + disband.describe());
-					disband.said(DISBAND_SUCCESS);
+					Outcome rite = leader.last();
+					PlaythroughLog.note(helper, "PT-38 second Unbinding: " + rite.describe());
+					helper.assertFalse(rite.saidKeys().contains(UNBINDING_WARNS), "the confirmed rite does not warn again");
 					helper.assertTrue(BloodlineSavedData.get(helper.getLevel().getServer().overworld())
-							.getBloodline(line.getBloodlineUUID()) == null, "the free Disband dissolves the line");
-					helper.assertTrue(starKept, "D5-4 expected the warning-only Unbinding to keep its Nether Star");
+							.getBloodline(line.getBloodlineUUID()) == null, "the second activation's rite dissolves the line");
+					helper.assertTrue(netherStars(leader, floor) == starsBefore[0] - 1,
+							"one Nether Star in all (" + starsBefore[0] + " before, " + netherStars(leader, floor) + " after)");
 				}).run();
+	}
+
+	/** Nether Stars the player carries plus those still sitting on the floor's offering braziers. */
+	private static int netherStars(PlaythroughPlayer p, PlaythroughSites.RiteFloor floor) {
+		int stars = p.count(Items.NETHER_STAR);
+		for (BlockPos socket : PlaythroughRites.usedSockets(floor)) {
+			if (p.player().serverLevel().getBlockEntity(socket) instanceof IronBrazierBlockEntity brazier
+					&& brazier.getOfferingForMatching().is(Items.NETHER_STAR)) {
+				stars += brazier.getOfferingForMatching().getCount();
+			}
+		}
+		return stars;
 	}
 
 	// =================================================================================================================
@@ -1036,20 +1182,20 @@ public final class PlaythroughIlluminatusGameTests {
 	}
 
 	/**
-	 * The second, dissolving Hematic Unbinding inside its window (the first, warning completion ARRANGE: it is played
-	 * by {@link #hematicUnbindingCostsTwoStars}). One member is online and one is offline; both have room for their
+	 * The second, dissolving Hematic Unbinding inside its window (the first, warning activation ARRANGE: it is played
+	 * by {@link #hematicUnbindingWarnsAtActivation}). One member is online and one is offline; both have room for their
 	 * share of the pool. The player expects every member to get their share, the offline one when they return.
 	 */
-	// DECISION D5-11: completeHematicUnbinding returns poolBlood / memberCount only to members online at that moment
-	// (and only as far as their own vessel has room), so an offline member's share is lost; their ledger is burnt only
-	// on its next use or tick, and the pending window is a root persistent key a death clears. Options: bank the
-	// offline share and pay it at login / refuse the dissolution while a member is offline / keep (lost).
-	@GameTest(template = EMPTY, timeoutTicks = 11000, batch = RITES, required = false)
+	// RULING PT-44 with NQ-11-10 (2026-11-14): an away member's share is banked and paid at login, capped by room in
+	// the vessel. A member who logs in dead is paid once they stand again. Was the DECISION D5-11 probe.
+	@GameTest(template = EMPTY, timeoutTicks = 11000, batch = RITES)
 	public static void hematicUnbindingOfflineShare(GameTestHelper helper) {
 		PlaythroughPlayer leader = d5(helper, 20, 4);
 		Bloodline line = PlaythroughStates.foundedLineD5(leader); // ARRANGE
 		PlaythroughPlayer present = member(helper, leader, 4, 18, 5);
 		PlaythroughPlayer away = member(helper, leader, 8, 18, 5);
+		PlaythroughPlayer fallen = member(helper, leader, 12, 18, 5);
+		present.joinLevel();
 		PlaythroughSites.RiteFloor floor = PlaythroughSites.riteFloor(leader, helper.absolutePos(RITE_ORIGIN), "hematic_unbinding");
 		double[] before = new double[2];
 		PlaythroughClock clock = PlaythroughClock.start(helper);
@@ -1060,24 +1206,36 @@ public final class PlaythroughIlluminatusGameTests {
 			PlaythroughStates.blood(away, 1000.0D);
 			before[0] = present.blood();
 			before[1] = away.blood();
-			// ARRANGE: the first, warning completion inside its window.
-			leader.player().getPersistentData().putUUID("hemomancy:pending_unbinding_bloodline", line.getBloodlineUUID());
-			leader.player().getPersistentData().putLong("hemomancy:pending_unbinding_until", helper.getLevel().getGameTime() + 24000L);
+			// ARRANGE: the first, warning activation inside its window.
+			HematicUnbindingRules.activate(leader.uuid(), line.getBloodlineUUID(), helper.getLevel().getGameTime());
 			away.offline();
+			fallen.offline();
 			leader.wield(ItemInit.living_staff.get());
 		}).step(() -> PlaythroughClock.rite(leader, floor.focus(), RitePlan.standard().fightThreats()))
 				.then(() -> {
 					PlaythroughLog.note(helper, "D5-11 second Unbinding: " + leader.last().describe());
 					helper.assertTrue(BloodlineSavedData.get(helper.getLevel().getServer().overworld())
 							.getBloodline(line.getBloodlineUUID()) == null, "the second Unbinding dissolves the line");
+					int heard = away.mark();
 					away.relog();
+					fallen.player().setHealth(0.0F); // ARRANGE: logged out dead
+					int fallenHeard = fallen.mark();
+					fallen.relog();
+					boolean paidDead = fallen.chatSince(fallenHeard).stream().anyMatch(chat -> chat.has(SHARE_PAID));
+					fallen.respawn();
+					boolean paidRisen = fallen.chatSince(fallenHeard).stream().anyMatch(chat -> chat.has(SHARE_PAID));
+					helper.assertTrue(!paidDead && paidRisen, "a member who logs in dead is paid once they stand: dead "
+							+ paidDead + ", risen " + paidRisen);
+					helper.assertTrue(away.chatSince(heard).stream().anyMatch(chat -> chat.has(SETTLE_DISSOLVED))
+							&& away.chatSince(heard).stream().anyMatch(chat -> chat.has(SHARE_PAID)),
+							"the away member is told of the end and the share: " + away.chatSince(heard));
 					double presentShare = present.blood() - before[0];
 					double awayShare = away.blood() - before[1];
-					PlaythroughLog.note(helper, "D5-11 shares: online member +" + presentShare + ", offline member +" + awayShare
+					PlaythroughLog.note(helper, "PT-44 shares: online member +" + presentShare + ", offline member +" + awayShare
 							+ " after relog; the offline member still holds a line "
 							+ HemoCapabilityAccess.getBloodVolume(away.player()).getBloodLine().isValid() + ", told " + away.chat());
 					helper.assertTrue(presentShare > 0.0D, "the online member gets a share");
-					helper.assertTrue(awayShare > 0.0D, "DECISION D5-11: the offline member gets their share of the pool too ("
+					helper.assertTrue(awayShare > 0.0D, "PT-44: the offline member gets their share of the pool too ("
 							+ awayShare + " mL); the online member got " + presentShare + " mL");
 				}).run();
 	}
@@ -1164,13 +1322,9 @@ public final class PlaythroughIlluminatusGameTests {
 			helper.assertTrue(DegreeProgression.advance(p.player(), 6), "ARRANGE: the rank is attained elsewhere");
 			Outcome attained = plantAt(p, floor);
 			helper.assertFalse(riteRunning(p), "at D6 the rank rite does not start again");
-			// D-32 family (pending): layered floors drop rites the player can no longer attempt before the
-			// already-attained line can run, so the D6 replant hears the floor line instead.
-			boolean saidAttained = attained.saidKeys().contains(ALREADY_ATTAINED);
-			PlaythroughLog.note(helper, "D6 replant said " + attained.saidKeys()
-					+ (saidAttained ? "" : " (D-32 family: the floor line, not the already-attained line)"));
-			helper.assertTrue(saidAttained || attained.saidKeys().contains(NO_RITE_MATCHES),
-					"the D6 replant says why it starts nothing; " + attained);
+			PlaythroughLog.note(helper, "D6 replant said " + attained.saidKeys());
+			helper.assertTrue(attained.saidKeys().contains(ALREADY_ATTAINED),
+					"the D6 replant says the rank is already attained (PT-32); " + attained);
 		}).run();
 	}
 
@@ -1294,6 +1448,7 @@ public final class PlaythroughIlluminatusGameTests {
 			helper.assertTrue(packedPractice.hasPending(UpgradeStation.CONDENSER, 2) && packed.count(item(druse)) == 0,
 					"a full pack holds the Druse Heart pending");
 			packed.player().getInventory().items.set(0, ItemStack.EMPTY); // ARRANGE: the player makes room
+			packed.tickOnce(); // the 20-tick PendingDelivery driver (F-19)
 		}).until(45, () -> packed.count(item(StationUpgradeCatalog.get(UpgradeStation.CONDENSER, 2))) == 1,
 						"the Druse Heart delivered on the 20-tick pass")
 				.then(() -> helper.assertFalse(HemoCapabilityAccess.stationUpgrades(packed.player())
@@ -1314,7 +1469,7 @@ public final class PlaythroughIlluminatusGameTests {
 	 * The Quill claimed with a full pack, then the player dies before the 20-tick pass: after the respawn it is
 	 * delivered exactly once. A Creative player with a full pack is logged for D-16 (not asserted).
 	 */
-	// FIX: LF-4 StationUpgradeProgress.deliver skips dead players and keeps the kit pending while the player is dead.
+	// FIX: LF-4, then F-19: the kit is a PendingDelivery claim, owed while the player is dead.
 	@GameTest(template = EMPTY, timeoutTicks = 400, batch = BATCH)
 	public static void stationKitHeldWhileDead(GameTestHelper helper) {
 		PlaythroughPlayer p = d5(helper, 8, 8);
@@ -1458,7 +1613,9 @@ public final class PlaythroughIlluminatusGameTests {
 		AntecedentKnowledge.record(p.player(), AntecedentResearch.Evidence.SAMPLE_ANALYZED); // ARRANGE: Ahaematic proof
 		DialogueView ready = p.approach(alchemist).talkTo(alchemist);
 		helper.assertTrue(ready.offers(DeepDarkCommissionDialogue.REPORT), "the proof opens the Deep Dark report: " + ready);
-		p.choose(alchemist, DeepDarkCommissionDialogue.REPORT).said(DEEP_DARK_RECORDED).gaveNothing();
+		// NQ-10-8: each commission pays 2 Vivacious Enzyme (and 10 Alchemist rapport).
+		p.choose(alchemist, DeepDarkCommissionDialogue.REPORT).said(DEEP_DARK_RECORDED)
+				.gave(ItemInit.vivacious_enzyme.get(), 2);
 
 		p.give(new ItemStack(BlockInit.escharian_scyphus.get().asItem(), 5)); // ARRANGE: five Escharian Scyphus
 		p.give(basinSample()); // ARRANGE: a Basin creature's blood
@@ -1473,10 +1630,9 @@ public final class PlaythroughIlluminatusGameTests {
 		helper.succeed();
 	}
 
-	/** The Basin sample carried in the offhand while the five Scyphus are in the pack. */
-	// DECISION D5-7: the Basin commission reads the sample only in the main hand at talk time; neither commission
-	// rewards. Options: any-hand check / a reward / keep. The probe expects a carried sample to open the report.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	/** The Basin sample carried in the offhand while the five Scyphus are in the pack: the report opens and pays. */
+	// RULING PT-41 (2026-11-13, NQ-10-8): either hand; each commission pays 10 Alchemist rapport and 2 Vivacious Enzyme.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void alchemistBasinSampleInMainHand(GameTestHelper helper) {
 		PlaythroughPlayer p = d5(helper, 12, 12);
 		HarbingerAlchemistEntity alchemist = PlaythroughNpcs.alchemist(helper, PlaythroughSites.stand(helper, 12, 8));
@@ -1485,9 +1641,17 @@ public final class PlaythroughIlluminatusGameTests {
 		PlaythroughRites.emptyHand(p);
 		DialogueView view = p.approach(alchemist).talkTo(alchemist);
 		boolean offered = view.offers(PhlegethonticCommissionDialogue.REPORT);
-		PlaythroughLog.note(helper, "D5-7 offhand sample: report offered=" + offered + " lines=" + view.node("phlegethontic_commission")
+		PlaythroughLog.note(helper, "PT-41 offhand sample: report offered=" + offered + " lines=" + view.node("phlegethontic_commission")
 				.map(DialogueNode::lines).orElse(List.of()));
-		helper.assertTrue(offered, "D5-7 expected a carried Basin sample to open the report");
+		helper.assertTrue(offered, "PT-41: a Basin sample in the offhand opens the report");
+		int enzymes = p.count(ItemInit.vivacious_enzyme.get());
+		int rapport = HemoCapabilityAccess.npcTrades(p.player()).rapport("alchemist");
+		Outcome reported = p.choose(alchemist, PhlegethonticCommissionDialogue.REPORT);
+		helper.assertTrue(reported.rewardDelivered(), "the report is recorded; " + reported);
+		helper.assertTrue(p.count(ItemInit.vivacious_enzyme.get()) == enzymes + 2,
+				"the commission pays two Vivacious Enzyme; " + reported);
+		helper.assertTrue(HemoCapabilityAccess.npcTrades(p.player()).rapport("alchemist") == rapport + 10,
+				"the commission pays ten Alchemist rapport");
 		helper.succeed();
 	}
 

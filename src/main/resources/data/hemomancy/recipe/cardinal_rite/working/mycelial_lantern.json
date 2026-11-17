@@ -56,7 +56,7 @@
         "block": "hemomancy:chiseled_hematic_iron_block"
       }
     },
-    "feed": 2500
+    "feed": 750
   },
   "result": {
     "id": "hemomancy:mycelial_lantern"

@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.command;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class FanePreviewCommandSourceTest {
 	private static final Path COMMAND = Path.of(
@@ -13,7 +16,8 @@ public final class FanePreviewCommandSourceTest {
 	private FanePreviewCommandSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String command = Files.readString(COMMAND).replace("\r\n", "\n");
 		String events = Files.readString(EVENTS).replace("\r\n", "\n");
 
@@ -34,11 +38,5 @@ public final class FanePreviewCommandSourceTest {
 		assertContains("events use preview relation during sync", events,
 				"previewRelation(viewer).orElseGet");
 		assertContains("preview is not persisted", events, "Map<UUID, FaneBoundaryRelation>");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

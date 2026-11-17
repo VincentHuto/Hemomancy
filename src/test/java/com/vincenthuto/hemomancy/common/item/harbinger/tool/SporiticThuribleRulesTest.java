@@ -1,12 +1,15 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
+import org.junit.jupiter.api.Test;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 public final class SporiticThuribleRulesTest {
 	private SporiticThuribleRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		bootstrapMinecraftIfAvailable();
 		sporeIdsMapToTempers();
 		matchingTemperReceivesResonanceDiscounts();
@@ -17,6 +20,7 @@ public final class SporiticThuribleRulesTest {
 		burnTimeUsesEndTickWithoutPerTickStateMutation();
 		sporeParticleColorsUseByteRgbValues();
 		burningSporeItemIdUsesCatalystItemId();
+		onlyAnApotheosMayBurnIt();
 	}
 
 	private static void bootstrapMinecraftIfAvailable() {
@@ -60,6 +64,13 @@ public final class SporiticThuribleRulesTest {
 				SporiticThuribleResonanceRules.costMultiplier(EnumBloodTemper.MORTEM, EnumBloodTemper.LUX));
 		assertDouble("nonmatching cooldown multiplier", 1.0,
 				SporiticThuribleResonanceRules.cooldownMultiplier(EnumBloodTemper.MORTEM, EnumBloodTemper.LUX));
+	}
+
+	private static void onlyAnApotheosMayBurnIt() {
+		assertTrue("NQ-10-3: an Apotheos burns it", SporiticThuribleRules.mayBurn(8, EnumArchonPath.APOTHEOS));
+		assertTrue("NQ-10-3: a Silentium does not", !SporiticThuribleRules.mayBurn(8, EnumArchonPath.SILENTIUM));
+		assertTrue("NQ-10-3: an Archon on the way to Apotheos does not", !SporiticThuribleRules.mayBurn(7, EnumArchonPath.APOTHEOS_PENDING));
+		assertTrue("NQ-10-3: a D4 Adept no longer does", !SporiticThuribleRules.mayBurn(4, EnumArchonPath.NONE));
 	}
 
 	private static void swingIntensityScalesDrainAndRadius() {

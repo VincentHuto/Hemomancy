@@ -4,20 +4,28 @@ import com.vincenthuto.hemomancy.client.screen.overlay.GuiCanvas;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrame;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrameContext;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFramePainter;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperCombatRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.util.Mth;
 
+import java.util.Arrays;
+
 /**
  * Vesper, the Crowned Refusal: rails of the mount's umber-maroon scutes, a thorned crown rising either side of his
- * name, and ice glinting on the plate edges. Each wound the fight opens (72%, 42%, 12%) cracks the scute over its
+ * name, and ice glinting on the plate edges. Each wound the fight opens (70%, 40%, 10%) cracks the scute over its
  * notch, ember showing through.
  */
 public final class VesperCrownedRefusalFrame implements BossBarFrame {
-	private static final float[] WOUNDS = { 0.12F, 0.42F, 0.72F };
+	private static final float[] WOUNDS = ascending(VesperCombatRules.anchorThresholds());
 	private static final int SCUTE = 0xFF5A2A22, SCUTE_DARK = 0xFF2A100C, SCUTE_LIP = 0xFF8A4A3A;
 	private static final int ICE = 0x5CCAF5, EMBER = 0xFF3E12, BLACK = 0xFF030004;
 	private static final float PLATE = 13.0F;
+
+	private static float[] ascending(float[] thresholds) {
+		Arrays.sort(thresholds);
+		return thresholds;
+	}
 
 	/** 1, plus one for each wound opened. */
 	public static int phaseOf(float progress) {

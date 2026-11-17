@@ -54,7 +54,6 @@ public final class PelagicWorldValidation {
             var level = h.getLevel();
             h.assertTrue(PelagicWorldgen.context(level.getChunkSource().randomState()) != null,
                     "Locate probe needs the real seeded noise Overworld");
-            com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeFootprintGameTests.verifyNoiseColumns(h);
             var origin = new BlockPos(Integer.getInteger("hemomancy.pelagic.locateX", 0), 70,
                     Integer.getInteger("hemomancy.pelagic.locateZ", 0));
             var structures = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);

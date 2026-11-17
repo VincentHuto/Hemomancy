@@ -15,14 +15,14 @@ The seven Pelagic biomes support eight ecological communities. Exposed coastal s
 
 ## Collection
 
-All seven new creatures support Specimen Jar capture, placement, pickup, release and repeated capture. Stored creature NBT preserves names, health and behavior timers. Captured creatures retain persistence; releasing an older filled jar also protects its occupant from natural distance despawning. Ordinary natural populations use native mob caps and despawning. The Living Bestiary records and accepts all seven through its existing specimen surrender reward. Vampire Squids drop 1–2 shared Barbed Splinters on player kills, with the existing Looting bonus; the other six new animals retain their empty kill tables. No extra processing chain is added.
+All seven new creatures support Specimen Jar capture, placement, pickup, release and repeated capture. Stored creature NBT preserves names, health and behavior timers. Captured creatures retain persistence; releasing an older filled jar also protects its occupant from natural distance despawning. Ordinary natural populations use native mob caps and despawning. The Living Bestiary records and accepts all seven through its existing specimen surrender reward. Vampire Squids drop 1–2 shared Barbed Splinters on player kills, with the existing Looting bonus; Pyrosomes drop 0 to 1 Chromatophores and Hagfish 0 to 2 slime balls on player kills (2026-11-14, NQ-06-13); Chitons drop Chitinous Husk, herring Raw Pelagic Herring, Siphonophores a Ganglion Cluster and comb jellies Chromatophores. No extra processing chain is added.
 
 | Creature | Blood temper | Sampling |
 |---|---|---|
 | Chiton | Ferric | Living Syringe required |
 | Pyrosome | Animus | Ordinary |
 | Pelagic Herring | Ductilis | Ordinary |
-| Siphonophore | Congeatio | Ordinary |
+| Siphonophore | Ductilis | Ordinary |
 | Bloody-Belly Comb Jelly | Tenebris | Ordinary |
 | Hagfish | Mortem | Ordinary |
 | Vampire Squid | Tenebris, aquatic property | Ordinary |

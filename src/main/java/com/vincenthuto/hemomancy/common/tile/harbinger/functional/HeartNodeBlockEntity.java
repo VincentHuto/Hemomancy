@@ -5,7 +5,9 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
+import com.vincenthuto.hemomancy.common.world.HeartNodeMoment;
 import com.vincenthuto.hemomancy.common.world.HeartNodeRules;
+import com.vincenthuto.hemomancy.common.world.HeartNodeService;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -61,6 +63,12 @@ public class HeartNodeBlockEntity extends HemoBlockEntity {
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, HeartNodeBlockEntity node) {
+		if (node.owner == null) {
+			// A node no player planted (a command, a structure) withers at its first tick: no sanctum answers to it.
+			HeartNodeService.announce((ServerLevel) level, pos, HeartNodeMoment.WITHERED, node.stage);
+			level.removeBlock(pos, false);
+			return;
+		}
 		if (level.getGameTime() % STAGE_CHECK_TICKS == 0) node.refreshStage((ServerLevel) level);
 	}
 

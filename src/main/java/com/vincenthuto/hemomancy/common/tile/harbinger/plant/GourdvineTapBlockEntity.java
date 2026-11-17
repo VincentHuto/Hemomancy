@@ -28,7 +28,8 @@ public class GourdvineTapBlockEntity extends HemoBlockEntity implements IBloodRe
 
     public static final int SLOT_GOURD = 0;
     public static final int INVENTORY_SIZE = 1;
-    public static final double MAX_BLOOD = 10_000.0;
+    /** Living, so it never clots; its rate is the lever, not its size (core-loop Track 3). */
+    public static final double MAX_BLOOD = 2_000.0;
 
     private static final String TAG_BLOOD_LEVEL = "bloodLevel";
 
@@ -148,6 +149,12 @@ public class GourdvineTapBlockEntity extends HemoBlockEntity implements IBloodRe
     }
 
     // ── IBloodReservoir ────────────────────────────────────────────────────────────
+
+    /** The vine is alive: the one renewable source, and its blood never clots. */
+    @Override
+    public boolean isLivingVessel() {
+        return true;
+    }
 
     // ── Container ─────────────────────────────────────────────────────────────
 

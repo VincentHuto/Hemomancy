@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class MnemonicPotionSourceTest {
 	private static final Path EFFECT_INIT = Path.of("src/main/java/com/vincenthuto/hemomancy/common/init/EffectInit.java");
@@ -16,7 +19,8 @@ public final class MnemonicPotionSourceTest {
 	private MnemonicPotionSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String effectInit = Files.readString(EFFECT_INIT).replace("\r\n", "\n");
 		String bloodManipulation = Files.readString(BLOOD_MANIPULATION).replace("\r\n", "\n");
 		String manipulationCostLedger = Files.readString(MANIPULATION_COST_LEDGER).replace("\r\n", "\n");
@@ -43,12 +47,6 @@ public final class MnemonicPotionSourceTest {
 		assertTextureExists("Mnemonic Whispers icon", "mnemonic_whispers.png");
 		assertTextureExists("Mnemonic Screams icon", "mnemonic_screams.png");
 		assertTextureExists("Blood Drunkenness icon", "blood_drunkenness.png");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 
 	private static void assertTextureExists(String label, String fileName) {

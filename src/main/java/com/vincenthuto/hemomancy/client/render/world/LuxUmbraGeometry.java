@@ -14,6 +14,11 @@ import java.util.List;
 /** Unshaded surfaces carrying a shader shape and stable seed in otherwise unused UV tiles. */
 final class LuxUmbraGeometry {
     static final int RIBBON = 0, WISP = 1, POOL = 2, EYE = 3, FOCUS = 4, BEAM = 5, RIPPLE = 6, SLASH = 7, WHITE_BEAM = 8, LUX_SHELL = 9;
+    /**
+     * Shapes of their own for the Animus and Umbra shaders (VX-4). On Animus, 4 and 7 stay the glossy droplet Riposte
+     * draws with; a focus or a cut that should glow asks for these. Mortem's shader reads 8 and 10 for its own looks.
+     */
+    static final int ANIMUS_FOCUS = 12, ANIMUS_SLASH = 13, UMBRA_WISP = 14, UMBRA_FOCUS = 15;
     static final int WHITE = 0xFFFAEF;
     /** Hematic light: Lux is still blood, so a crimson undertone and a warm gold core run through the white. */
     static final int CRIMSON = 0xF0566A, GOLD = 0xFFE3A8;
@@ -26,26 +31,31 @@ final class LuxUmbraGeometry {
 
     static boolean handles(Form form) {
         return switch (form) {
-            case VERDICT, WHITE_VERDICT, VERDICT_CHARGE, BEACON, SUTURE, FLARE, EYE, WELL, WELL_CHARGE,
-                    VEIL, LUX_MENDING, UMBRA_SLASH, LUX_MIST, UMBRA_MIST -> true;
+            case VERDICT, WHITE_VERDICT, VERDICT_CHARGE, BEACON, SUTURE, FLARE, WELL, WELL_CHARGE,
+                    VEIL, LUX_MENDING, UMBRA_SLASH, LUX_MIST, UMBRA_MIST, UMBRAL_FIELD -> true;
             default -> false;
         };
     }
 
     static boolean umbra(Form form) {
         return switch (form) {
-            case WELL, WELL_CHARGE, VEIL, UMBRA_SLASH, UMBRA_MIST -> true;
+            case WELL, WELL_CHARGE, VEIL, UMBRA_SLASH, UMBRA_MIST, UMBRAL_FIELD -> true;
             default -> false;
         };
     }
 
     static void draw(ManipulationVisualPacket packet, PoseStack p, VertexConsumer v, Vec3 camera,
             Vec3 right, Vec3 up, double time, float age, float formation, float opacity) {
+        draw(packet, p, v, camera, right, up, time, age, formation, opacity, 0);
+    }
+
+    static void draw(ManipulationVisualPacket packet, PoseStack p, VertexConsumer v, Vec3 camera,
+            Vec3 right, Vec3 up, double time, float age, float formation, float opacity, long salt) {
         if (opacity <= 0) return;
         Form form = packet.form();
         double r = packet.radius();
         Vec3 end = packet.to().subtract(packet.from());
-        int seed = Math.floorMod(packet.entityId() >= 0 ? packet.entityId() : packet.from().hashCode(), 113);
+        int seed = Math.floorMod(CueSeed.of(packet, salt), 113);
         switch (form) {
             case VERDICT, WHITE_VERDICT, VERDICT_CHARGE -> {
                 if (end.lengthSqr() < 1e-8) return;
@@ -88,14 +98,6 @@ final class LuxUmbraGeometry {
                 ground(p, v, Vec3.ZERO.add(0, .08, 0), r * (.25 + pulse * .7), RIPPLE, seed,
                         WHITE, opacity * (1 - pulse) * .42f);
             }
-            case EYE -> {
-                Vec3 center = new Vec3(0, 2.5 + Math.sin(time * .03) * .035, 0);
-                card(p, v, center, right, up, .83, .58, EYE, seed, WHITE, opacity);
-                card(p, v, center.add(camera.subtract(center).normalize().scale(.012)), right, up,
-                        .15, .30, FOCUS, seed + 1, 0xFF5268, opacity);
-                if (formation < 1) stream(p, v, new Vec3(0, 1.25, 0), center, camera, .09, .06,
-                        time * .03, RIBBON, seed, WHITE, opacity * (1 - formation));
-            }
             case FLARE -> {
                 double expansion = 1 - Math.pow(1 - Mth.clamp(age / 9.0, 0, 1), 3);
                 double spread = r * (.12 + expansion * .88);
@@ -136,7 +138,7 @@ final class LuxUmbraGeometry {
                     double drift = (time * .011 + i * .137) % 1;
                     Vec3 at = new Vec3(Math.cos(a) * spread * (.8 - drift * .4),
                             .14 + Math.sin(drift * Math.PI) * .19, Math.sin(a) * spread * (.8 - drift * .4));
-                    card(p, v, at, right, up, Math.min(.7, r * .27), .32, WISP, seed + i,
+                    card(p, v, at, right, up, Math.min(.7, r * .27), .32, UMBRA_WISP, seed + i,
                             0xFFFFFF, opacity * .62f);
                 }
                 // A violet-cored rim in broken arcs, and ink drawn in across the ground toward the centre.
@@ -161,13 +163,13 @@ final class LuxUmbraGeometry {
             }
             case WELL_CHARGE -> {
                 Vec3 focus = end.lengthSqr() > 1e-8 ? end.normalize().scale(1.15) : new Vec3(0, 0, 1.15);
-                card(p, v, focus, right, up, .24 + r * .2, .22 + r * .16, WISP, seed, 0xFFFFFF, opacity);
+                card(p, v, focus, right, up, .24 + r * .2, .22 + r * .16, UMBRA_FOCUS, seed, 0xFFFFFF, opacity);
             }
             case VEIL -> {
                 for (int i = 0; i < 6; i++) {
                     double a = i * 2.39996 + time * .012;
                     Vec3 at = new Vec3(Math.cos(a) * .42, .3 + (i % 3) * .48, Math.sin(a) * .42);
-                    card(p, v, at, right, up, .40, .63, WISP, seed + i, 0xFFFFFF, opacity * .5f);
+                    card(p, v, at, right, up, .40, .63, UMBRA_WISP, seed + i, 0xFFFFFF, opacity * .5f);
                 }
                 // Ink winds round the body like a shroud, a violet glint catching along one fold at a time.
                 for (int band = 0; band < 2; band++) {
@@ -209,7 +211,7 @@ final class LuxUmbraGeometry {
                         // Ink, not a fourth slash: the three cuts stay the only violet-cored strokes.
                         ribbon(p, v, finish.subtract(cross), finish.add(cross), camera, .07, RIBBON, seed + 50 + strand,
                                 0xFFFFFF, flash, 0, 1);
-                        card(p, v, finish, right, up, .18 + landed * .06, .18 + landed * .06, WISP, seed + 60 + strand,
+                        card(p, v, finish, right, up, .18 + landed * .06, .18 + landed * .06, UMBRA_WISP, seed + 60 + strand,
                                 0xFFFFFF, flash * .6f);
                     }
                 }
@@ -221,7 +223,47 @@ final class LuxUmbraGeometry {
                     double distance = age * .008;
                     Vec3 at = new Vec3(Math.cos(angle) * distance, age * .009, Math.sin(angle) * distance);
                     card(p, v, at, right, up, r * (.6 + age * .02), r * (.8 + age * .025),
-                            dark ? WISP : FOCUS, seed + i, dark ? 0xFFFFFF : WHITE, opacity * .65f);
+                            dark ? UMBRA_WISP : FOCUS, seed + i, dark ? 0xFFFFFF : WHITE, opacity * .65f);
+                }
+            }
+            case UMBRAL_FIELD -> {
+                // Blood Eclipse's field of dark (round two P8), seen from outside: an overlay, never a wall. A thin dark
+                // wash on the floor of the light's cell, a few slow wisps drifting in and a broken violet-cored rim at
+                // the edge; partly clear, so the room still reads through it. Inside, the fog does the work.
+                double spread = r * (.6 + formation * .4);
+                double floor = -.45;
+                ground(p, v, new Vec3(0, floor, 0), spread, POOL, seed, 0xFFFFFF, opacity * .72f);
+                // A low haze of dark air over the wash, thin enough that the room reads through it.
+                for (int i = 0; i < 4; i++) {
+                    double a = i * Math.PI / 2 + time * .003;
+                    Vec3 at = new Vec3(Math.cos(a) * spread * .45, floor + .7, Math.sin(a) * spread * .45);
+                    card(p, v, at, right, up, spread * .42, .65, WISP, seed + 40 + i, 0xFFFFFF, opacity * .32f);
+                }
+                for (int i = 0; i < 6; i++) {
+                    double a = i * 2.39996 + time * .006;
+                    double drift = (time * .006 + i * .167) % 1;
+                    double out = spread * (.9 - drift * .7);
+                    Vec3 at = new Vec3(Math.cos(a) * out, floor + .35 + Math.sin(drift * Math.PI) * .5, Math.sin(a) * out);
+                    card(p, v, at, right, up, .6, .42, WISP, seed + i, 0xFFFFFF,
+                            opacity * .5f * (float) Math.sin(drift * Math.PI));
+                }
+                for (int arc = 0; arc < 6; arc++) {
+                    List<Vec3> rim = new ArrayList<>(9);
+                    double start = arc * Math.PI / 3 + time * .004;
+                    for (int i = 0; i <= 8; i++) {
+                        double a = start + i * Math.PI / 3 * .62 / 8;
+                        rim.add(new Vec3(Math.cos(a) * spread, floor + .04, Math.sin(a) * spread));
+                    }
+                    ribbonPath(p, v, rim, camera, .05, SLASH, seed + 20 + arc, 0xFFFFFF, opacity * .65f);
+                }
+                for (int i = 0; i < 4; i++) {
+                    double a = i * Math.PI / 2 + time * .005;
+                    double inward = (time * .01 + i * .25) % 1;
+                    Vec3 outer = new Vec3(Math.cos(a) * spread, floor + .05, Math.sin(a) * spread);
+                    Vec3 inner = new Vec3(Math.cos(a + .5) * spread * .25, floor + .05, Math.sin(a + .5) * spread * .25);
+                    Vec3 tip = outer.lerp(inner, inward);
+                    ribbonPath(p, v, List.of(outer, outer.lerp(tip, .5).add(0, .02, 0), tip), camera, .04, .01,
+                            RIBBON, seed + 30 + i, 0xFFFFFF, opacity * .4f * (float) Math.sin(inward * Math.PI));
                 }
             }
             default -> throw new IllegalArgumentException("Not a flow form: " + form);

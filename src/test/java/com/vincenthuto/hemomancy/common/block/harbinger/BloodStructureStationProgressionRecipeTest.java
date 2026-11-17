@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class BloodStructureStationProgressionRecipeTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -12,7 +15,8 @@ public final class BloodStructureStationProgressionRecipeTest {
 	private BloodStructureStationProgressionRecipeTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertStationRecipe("Vial Centrifuge", "vial_centrifuge", 1, "hemomancy:vial_centrifuge");
 		assertStationRecipe("Ghastly Alembic", "ghastly_alembic", 2, "hemomancy:ghastly_alembic");
 		assertWorkingCraft("Somatic Loom", "somatic_loom", 3, "hemomancy:somatic_loom");
@@ -45,11 +49,5 @@ public final class BloodStructureStationProgressionRecipeTest {
 			throw new AssertionError("Missing recipe file: " + path);
 		}
 		return Files.readString(resolved);
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
 	}
 }

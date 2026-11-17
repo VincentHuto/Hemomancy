@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
+import org.junit.jupiter.api.Test;
+
 public final class TerrestrialSpeculumRulesTest {
 	private TerrestrialSpeculumRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		manifestationRequiresProgressionBloodDestinationAndSpace();
 	}
 

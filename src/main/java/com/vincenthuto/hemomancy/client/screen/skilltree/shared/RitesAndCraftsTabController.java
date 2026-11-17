@@ -39,7 +39,8 @@ import java.util.Map;
 public class RitesAndCraftsTabController implements IProgressTab {
 	private final RitesTabState riteState = new RitesTabState();
 	private final CraftingTabState craftState = new CraftingTabState();
-	private final RecipeMapCanvas mapCanvas = new RecipeMapCanvas("Rites", HarbingerRecipeMapDefinitions::group);
+	private final RecipeMapCanvas mapCanvas = new RecipeMapCanvas(
+			Component.translatable("screen.hemomancy.recipe_map_canvas.rites_and_crafts"), HarbingerRecipeMapDefinitions::group);
 	private final Map<ResourceLocation, CardinalRiteRecipe> mapRites = new HashMap<>();
 	private final Map<ResourceLocation, CraftingMapRecipe> mapCrafts = new HashMap<>();
 

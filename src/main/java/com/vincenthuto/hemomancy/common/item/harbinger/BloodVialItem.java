@@ -35,7 +35,7 @@ import net.minecraft.world.item.component.CustomData;
 import java.util.List;
 
 public class BloodVialItem extends Item {
-	private static final BloodAccounting.Source SELF_SAMPLE = BloodAccounting.Source.of("succession_self_sample", Category.TOOL, false, false);
+	private static final BloodAccounting.Source SELF_SAMPLE = BloodAccounting.Source.of("succession_self_sample", Category.TOOL, false);
     @Override public Component getName(ItemStack stack) {
         return com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack) ? Component.translatable("item.hemomancy.concentrated_blood") : super.getName(stack);
     }
@@ -86,7 +86,9 @@ public class BloodVialItem extends Item {
             tooltip.add(Component.translatable("item.hemomancy.bloody_vial.unreadable").withStyle(ChatFormatting.GRAY));
             return;
         }
-        if (!BloodSampleData.identified(stack)) {
+        // Knowledge is the reader's, not the vial's (core-loop Track 5): an unexamined kind reads as an unread humour.
+        if (!com.vincenthuto.hemomancy.common.mission.alchemist.BloodResearch.knows(
+                com.vincenthuto.hemomancy.common.util.ClientBridge.get().localPlayer(), type)) {
             tooltip.add(Component.translatable("item.hemomancy.bloody_vial.unknown").withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("item.hemomancy.bloody_vial.examine").withStyle(ChatFormatting.DARK_GRAY));
         } else {
@@ -234,7 +236,8 @@ public class BloodVialItem extends Item {
 		BloodSamplingResult result = BloodSamplingRules.evaluate(alreadyFilled, entity instanceof LivingEntity,
 				entity instanceof LivingEntity living && living.isAlive(),
 				entity instanceof LivingEntity living && living.isInvulnerable(), entityTypeId != null,
-				entity != null && BloodProfileData.profile(entity.getType(), player.level().isClientSide).requiresLivingSyringe(), false);
+				entity != null && BloodProfileData.profile(entity.getType(), player.level().isClientSide).requiresLivingSyringe(), false,
+				entity instanceof LivingEntity drawn && BloodSamplingCost.recentlyDrawn(drawn));
 		if (entity instanceof LivingEntity living && !alreadyFilled) {
 				// Special case: Hemolymphopoda produces Cleansing Hemolymph instead of a standard sample
 				if (living instanceof HemolymphopodaEntity && result == BloodSamplingResult.SUCCESS) {
@@ -252,6 +255,7 @@ public class BloodVialItem extends Item {
 				ItemStack sample = stack.getCount() == 1 ? stack : stack.copyWithCount(1);
 				tag.putString(TAG_ENTITY_TYPE, entityTypeId.toString());
 				tag.putBoolean(TAG_STATE, true);
+				tag.putString(BloodSampleData.TAG_DONOR, entity.getStringUUID());
 				sample.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
                 if (entity instanceof Player donor) com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(sample, donor, null, "");
                 sample.remove(DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
@@ -261,12 +265,15 @@ public class BloodVialItem extends Item {
                     if (!player.getInventory().add(stack)) player.drop(stack, false);
                 }
                 com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.collected(player, sample);
+                com.vincenthuto.hemomancy.common.mission.alchemist.BloodResearch.recordMet(player, entity.getType());
 				if (player instanceof ServerPlayer serverPlayer) {
 					com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment
 							.recordCollection(serverPlayer, (LivingEntity) entity);
 					com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment
 							.markSampleAcquired(serverPlayer);
 				}
+				// The creature pays for its sample: health and a cooldown (core-loop Track 5).
+				BloodSamplingCost.charge(player, (LivingEntity) entity, false);
 				player.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
 			}
 			Component targetName = entity == null ? Component.translatable("message.hemomancy.blood_sampling.unknown")

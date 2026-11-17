@@ -1,16 +1,19 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class SkillPointBranchSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private SkillPointBranchSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String init = read("src/main/java/com/vincenthuto/hemomancy/common/init/SkillPointInit.java");
 		String skillPoint = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/skill/SkillPoint.java");
 		String skillsTab = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/SkillsTabController.java");
@@ -187,22 +190,6 @@ public final class SkillPointBranchSourceTest {
 		assertContains("skill helper exposes mycelial capstone", skillPointHelper, "getPrimalMorphogenesisLevel");
 		assertContains("scar crafting checks deep inscription for tier three scars", scarCraftPacket,
 				"SkillPointHelper.isUnlocked(player, SkillPointInit.skill_deep_inscription)");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
-		}
 	}
 
 	private static void assertBefore(String label, String text, String first, String second) {

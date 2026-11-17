@@ -62,6 +62,18 @@ public final class HemoRenderTypes {
 					.setCullState(RenderType.NO_CULL).setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	/**
+	 * The ground network's lit runs and Lux traces (core-loop Track 6): thin translucent strips laid on block faces,
+	 * depth-tested and nudged toward the camera so they sit on the face without fighting it, never written to depth.
+	 */
+	public static final RenderType GROUND_RUN_GLOW = RenderType.create("ground_run_glow",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 4096, false, true,
+			RenderType.CompositeState.builder().setShaderState(RenderType.RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST).setWriteMaskState(RenderType.COLOR_WRITE)
+					.setCullState(RenderType.NO_CULL).setLightmapState(RenderType.NO_LIGHTMAP)
+					.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING).createCompositeState(false));
+
 	public static final RenderType QLIPHOTH_CORE = RenderType.create("qliphoth_core",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder()
@@ -69,6 +81,18 @@ public final class HemoRenderTypes {
 					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 					.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
 					.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+					.setCullState(RenderType.NO_CULL)
+					.setLightmapState(RenderType.NO_LIGHTMAP)
+					.createCompositeState(false));
+
+	/** The Circus phantom show's dimmed house: a dark veil over the world, drawn before the show's lights. */
+	public static final RenderType CIRCUS_HOUSE_DARK = RenderType.create("circus_house_dark",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RenderType.POSITION_COLOR_SHADER)
+					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(RenderType.NO_DEPTH_TEST)
+					.setWriteMaskState(RenderType.COLOR_WRITE)
 					.setCullState(RenderType.NO_CULL)
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
@@ -1629,27 +1653,29 @@ public final class HemoRenderTypes {
 	/**
 	 * @param focusX the Focus centre's x relative to the camera; with {@code focusZ}, it lets the shader rebuild
 	 *               ground positions from camera-relative ones for the brazier trench
+	 * @param facing the floor's facing as {@code Direction.get2DDataValue()}, so a pattern motif turns with it
 	 */
 	public static RenderType cardinalFloorMembrane(float gameTime, float seed, int style, int floorHalf,
 			float spread, float front, float beat, float floorLight, int baseColor, int veinColor, int glowColor,
-			float focusX, float focusZ) {
+			float focusX, float focusZ, int facing) {
 		return cardinalFloor("cardinal_floor_membrane", RenderType.COLOR_WRITE, gameTime, seed, style, floorHalf,
-				spread, front, beat, floorLight, baseColor, veinColor, glowColor, focusX, focusZ);
+				spread, front, beat, floorLight, baseColor, veinColor, glowColor, focusX, focusZ, facing);
 	}
 
 	/** The raised mound around the Focus: the same membrane, but writing depth so what sinks into it is hidden. */
 	public static RenderType cardinalFloorMound(float gameTime, float seed, int style, int floorHalf,
 			float spread, float front, float beat, float floorLight, int baseColor, int veinColor, int glowColor,
-			float focusX, float focusZ) {
+			float focusX, float focusZ, int facing) {
 		return cardinalFloor("cardinal_floor_mound", RenderType.COLOR_DEPTH_WRITE, gameTime, seed, style, floorHalf,
-				spread, front, beat, floorLight, baseColor, veinColor, glowColor, focusX, focusZ);
+				spread, front, beat, floorLight, baseColor, veinColor, glowColor, focusX, focusZ, facing);
 	}
 
 	private record CardinalFloorKey(String name, RenderStateShard.WriteMaskStateShard writeMask, float seed) {
 	}
 
 	private record CardinalFloorUniforms(float gameTime, int style, int floorHalf, float spread, float front,
-			float beat, float floorLight, int baseColor, int veinColor, int glowColor, float focusX, float focusZ) {
+			float beat, float floorLight, int baseColor, int veinColor, int glowColor, float focusX, float focusZ,
+			int facing) {
 	}
 
 	private static final SeededRenderTypes<CardinalFloorKey, CardinalFloorUniforms, RenderType> CARDINAL_FLOOR_TYPES =
@@ -1657,10 +1683,10 @@ public final class HemoRenderTypes {
 
 	private static RenderType cardinalFloor(String name, RenderStateShard.WriteMaskStateShard writeMask,
 			float gameTime, float seed, int style, int floorHalf, float spread, float front, float beat,
-			float floorLight, int baseColor, int veinColor, int glowColor, float focusX, float focusZ) {
+			float floorLight, int baseColor, int veinColor, int glowColor, float focusX, float focusZ, int facing) {
 		return CARDINAL_FLOOR_TYPES.get(new CardinalFloorKey(name, writeMask, seed), new CardinalFloorUniforms(
 				gameTime, style, floorHalf, spread, front, beat, floorLight, baseColor, veinColor, glowColor, focusX,
-				focusZ));
+				focusZ, facing));
 	}
 
 	private static RenderType createCardinalFloor(CardinalFloorKey key, Supplier<CardinalFloorUniforms> values) {
@@ -1693,6 +1719,7 @@ public final class HemoRenderTypes {
 					setUniform(shader, "Beat", beat);
 					setUniform(shader, "FloorLight", floorLight);
 					setUniform(shader, "FocusOffset", focusX, focusZ);
+					setUniform(shader, "FloorFacing", (float) u.facing());
 					setRgbUniform(shader, "BaseColor", baseColor);
 					setRgbUniform(shader, "VeinColor", veinColor);
 					setRgbUniform(shader, "GlowColor", glowColor);

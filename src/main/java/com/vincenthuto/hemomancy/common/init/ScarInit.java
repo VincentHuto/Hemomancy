@@ -25,7 +25,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class ScarInit {
-	private static final BloodAccounting.Source WEAPON_RITE = BloodAccounting.Source.of("scar_weapon_bleed", Category.SCAR, false, false);
+	private static final BloodAccounting.Source WEAPON_RITE = BloodAccounting.Source.of("scar_weapon_bleed", Category.SCAR, false);
 	public static final ResourceKey<Registry<ScarDefinition>> SCAR_KEY =
 			ResourceKey.createRegistryKey(Hemomancy.rloc("scars"));
 	public static final DeferredRegister<ScarDefinition> SCARS =

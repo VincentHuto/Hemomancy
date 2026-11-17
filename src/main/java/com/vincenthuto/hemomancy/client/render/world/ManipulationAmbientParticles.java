@@ -33,6 +33,10 @@ public final class ManipulationAmbientParticles {
     }
 
     static void formation(ManipulationVisualPacket packet,ClientLevel level) {
+        if(packet.form()==ManipulationVisuals.Form.FORGE) {
+            forgeEmbers(packet);
+            return;
+        }
         if(!packet.form().name().endsWith("_CHARGE"))return;
         var entity=level.getEntity(packet.entityId());
         Vec3 at=entity==null?packet.from():entity.getEyePosition();
@@ -45,7 +49,7 @@ public final class ManipulationAmbientParticles {
         // Stillness stays quiet after formation; charge refreshes never re-emit a burst.
         switch(packet.form()) {
             case CROWN, CHOIR, WARD, WELL, BEACON, VEIL, FURNACE, PHOENIX_READY, RETORT -> {}
-            case WOUND,HUNGER,GRAVE,ROT_INFECTION,BLACK_HEART,BLOOM,COMMUNION,CLOUD -> {}
+            case WOUND,HUNGER,GRAVE,ROT_INFECTION,BLACK_HEART,COMMUNION,CLOUD -> {}
             default -> {return;}
         }
         long now=level.getGameTime();
@@ -71,11 +75,27 @@ public final class ManipulationAmbientParticles {
             at=at.add(Math.cos(angle)*radius,1.1,Math.sin(angle)*radius);
         }
         if(ready(level,at)) {
-            boolean fungal=switch(packet.form()){case BLOOM,ROT_INFECTION,COMMUNION,BLACK_HEART->true;default->false;};
+            boolean fungal=switch(packet.form()){case ROT_INFECTION,COMMUNION,BLACK_HEART->true;default->false;};
             if(fungal) {
                 int setting=switch(Minecraft.getInstance().options.particles().get()){case ALL->0;case DECREASED->1;case MINIMAL->2;};
                 BloodEffectParticles.emit(at,motion,true,BUDGET.take(now,3,setting),true,true);
             } else emit(at,motion,school(packet),null,2,.1,false,true);
+        }
+    }
+
+    /** Ember licks thrown up round the rim of a forge's molten heart as it lands; the heart's own scale sets the ring. */
+    private static void forgeEmbers(ManipulationVisualPacket packet) {
+        double forge=Math.min(1,Math.max(.2,packet.radius()));
+        Vec3 heart=packet.from().add(0,.95*forge,0);
+        if(!ready(Minecraft.getInstance().level,heart))return;
+        int setting=switch(Minecraft.getInstance().options.particles().get()){case ALL->0;case DECREASED->1;case MINIMAL->2;};
+        int count=BUDGET.take(world.getGameTime(),8,setting);
+        int seed=packet.from().hashCode();
+        for(int i=0;i<count;i++) {
+            double a=i*2.39996+seed;
+            Vec3 rim=heart.add(Math.cos(a)*.3*forge,.05,Math.sin(a)*.3*forge);
+            Vec3 velocity=new Vec3(Math.cos(a)*.012,.03+.012*(i%3),Math.sin(a)*.012);
+            ThermalParticles.lick(rim,velocity,seed+i,12+i%5,.07+.08*forge);
         }
     }
 

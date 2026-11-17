@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class WillBloodUtilitySourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -10,7 +14,8 @@ public final class WillBloodUtilitySourceTest {
 	private WillBloodUtilitySourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String will = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java");
 		String helper = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillBloodUtilityInteractions.java");
 		String absorption = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
@@ -32,7 +37,8 @@ public final class WillBloodUtilitySourceTest {
 		assertContains("Will absorption rage targets the absorber", will, "setTarget(player)");
 		assertContains("Will absorption clamps lethal absorbing damage", will,
 				"if (getPhase() == WillPhase.ABSORBING)");
-		assertContains("Will absorption grants temper", will, "addTemperAlignment(getSchool(), 3.0F)");
+		assertContains("Will absorption grants temper", will, "shiftTemperament(player, 3.0F)");
+		assertContains("Will temper shifts reach the client", will, "syncTemperament(player, temperament)");
 		assertContains("Will absorption completes immediately at the end of the channel", will,
 				"completeAbsorption(player)");
 		assertContains("Will absorption completion drops rewards immediately", will,
@@ -64,7 +70,7 @@ public final class WillBloodUtilitySourceTest {
 				"getPhase() == WillPhase.ABSORBING");
 		assertContains("Will absorption completion pulse uses the Will glow particle", will,
 				"HemoParticleData.willAbsorptionGlowPulse(ParticleColor.BLACK)");
-		assertContains("Will projection subtracts temper", will, "addTemperAlignment(getSchool(), -3.0F)");
+		assertContains("Will projection subtracts temper", will, "shiftTemperament(player, -3.0F)");
 		assertContains("Will projection banishes without dissolve loot", will, "projectBanishWithBlood");
 		assertContains("Will projection creates a burst cloud", will, "spawnProjectedBanishmentBurst");
 		assertContains("Will utility helper finds faltering absorption targets", helper, "tryAbsorbFalteringWill");
@@ -93,18 +99,6 @@ public final class WillBloodUtilitySourceTest {
 			throw new AssertionError("missing " + path);
 		}
 		return Files.readString(resolved).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + " (unexpected '" + forbidden + "')");
-		}
 	}
 
 	private static String methodBody(String text, String signatureStart) {

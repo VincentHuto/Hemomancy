@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity;
 
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.GlowSquid;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.animal.*;
 import net.minecraft.world.entity.animal.allay.Allay;
@@ -53,6 +55,11 @@ public class HemoEntityPredicates {
 			|| e instanceof MagmaCube || e instanceof Strider || e instanceof Ghast || e instanceof Hoglin
 			|| e instanceof ZombifiedPiglin;
 	public static Predicate<Entity> PLANTBLOOD = e -> e instanceof Creeper || e instanceof Slime;
+
+	/** The one boss definition: the {@code hemomancy:bosses} entity type tag. */
+	public static boolean isBoss(LivingEntity target) {
+		return target.getType().is(EntityInit.BOSSES);
+	}
 
 	public static void init() {
 		PREDICATES.add(COLDBLOODED);

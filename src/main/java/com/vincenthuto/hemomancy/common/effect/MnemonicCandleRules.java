@@ -6,7 +6,8 @@ public final class MnemonicCandleRules {
 	public static final double AURA_RADIUS = 6.0D;
 
 	private static final double COOLDOWN_MULTIPLIER = 0.90D;
-	private static final double BLOOD_REGEN_PER_TICK = 1.5D;
+	/** 5 mL/s (CB-2). */
+	private static final double BLOOD_REGEN_PER_TICK = 0.25D;
 
 	private MnemonicCandleRules() {
 	}

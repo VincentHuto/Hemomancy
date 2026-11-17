@@ -18,8 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Step 10 (roadmap Phase 9, A-4): client animation time comes from {@code AnimationTime}: the frame's partial tick,
  * game time plus a partial tick, or an entity's age plus a partial tick. Render events and HUD layers pass their own
- * partial tick. Wall-clock animation is listed until decision A-4 settles which animations may freeze, and the three
- * common-side visual helpers, which cannot name a client class, are listed too.
+ * partial tick. Under A-4 every world, item and armour animation freezes under {@code /tick freeze}; the wall-clock
+ * users left are listed with their reason, and the three common-side visual helpers, which cannot name a client class,
+ * are listed too.
  */
 class AnimationTimeGuardrailTest {
 	private static final String HELPER = "client/render/AnimationTime.java";
@@ -36,36 +37,27 @@ class AnimationTimeGuardrailTest {
 			"common/entity/utility/HumanitySpriteEntity.java",
 			"common/tile/harbinger/functional/CovenantThroneBlockEntity.java");
 
-	/** Client code on wall-clock time, pending decision A-4. */
+	/**
+	 * Client code on wall-clock time for good (A-4, 2026-11-14). Every world, item and armour animation reads
+	 * {@code AnimationTime} and freezes under {@code /tick freeze}; these do not animate the world.
+	 */
 	private static final Set<String> WALL_CLOCK_USERS = Set.of(
 			// The veil over a dimension change has no level clock: the old level is gone and the new one not yet synced.
 			"client/data/ChamberVeil.java",
 			"client/screen/ChamberTransitionScreen.java",
 			"client/screen/overlay/LidlessPassageView.java",
-			"client/render/armor/SilentArchonArmorRenderHelper.java",
-			"client/render/item/MemoryOfVesperItemRenderer.java",
-			"client/render/item/MonolithFragmentItemRenderer.java",
-			"client/render/item/MonolithImbuedClothItemRenderer.java",
-			"client/render/item/MonolithicCornerstoneItemRenderer.java",
-			"client/render/item/MorphicNectarItemDecorator.java",
-			"client/render/item/QliphothPomeItemRenderer.java",
-			"client/render/item/QliphothSeedItemRenderer.java",
-			"client/render/item/ScarPatternItemRenderer.java",
+			// Cache stamps: they time how stale a recorded pose is, not an animation.
 			"client/render/item/harbinger/FirstPersonPalm.java",
 			"client/render/item/harbinger/HeldWeaponPose.java",
-			"client/render/item/tile/harbinger/functional/CovenantThroneItemRenderer.java",
-			"client/render/item/tile/harbinger/functional/HematicStakeItemRenderer.java",
-			"client/render/item/tile/harbinger/functional/SanguineMonolithItemRenderer.java",
-			"client/render/item/tile/harbinger/functional/SpecimenJarItemRenderer.java",
-			"client/render/tile/harbinger/functional/MorphlingCradleRenderer.java",
+			// HUD smoothing: eases the rite progress bar by frame time.
+			"client/screen/overlay/CardinalRiteOverlay.java",
+			// Screen chrome.
 			"client/screen/item/BloodStructureHintScreen.java",
 			"client/screen/item/MnemonicFolioScreen.java",
 			"client/screen/item/RiteHintScreen.java",
 			"client/screen/item/ScryingDiagnosticsScreen.java",
 			"client/screen/item/VascularViewScreen.java",
 			"client/screen/item/living/MorphlingJarScreen.java",
-			"client/screen/overlay/CardinalRiteOverlay.java",
-			"client/screen/overlay/UnstainedGaugeOverlay.java",
 			"client/screen/skilltree/shared/CraftingTabView.java",
 			"client/screen/skilltree/shared/MaterialsTabView.java",
 			"client/screen/skilltree/shared/RitesTabView.java",
@@ -86,7 +78,7 @@ class AnimationTimeGuardrailTest {
 	@Test
 	void wallClockAnimationIsListed() throws IOException {
 		assertEquals(new TreeSet<>(WALL_CLOCK_USERS), matching(WALL_CLOCK, "client/", "mixin/"),
-				"animate on AnimationTime, or list the wall-clock user here until decision A-4 is settled");
+				"animate on AnimationTime (A-4); only screen chrome, the dimension veil, cache stamps and the bar ease may list here");
 	}
 
 	private static Set<String> matching(Pattern pattern, String... roots) throws IOException {

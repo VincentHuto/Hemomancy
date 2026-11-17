@@ -64,7 +64,7 @@ public class SanguineMonolithBlockEntity extends HemoBlockEntity
 	/** How long it stands open behind someone walking out of it. */
 	private static final int GATE_EXIT_TICKS = 60;
 	private static final int GATE_FEED_GRACE = 4;
-	private static final BloodAccounting.Source GATE = BloodAccounting.Source.of("monolith_gate", BloodFlowContribution.Category.WORLD, true, false);
+	private static final BloodAccounting.Source GATE = BloodAccounting.Source.of("monolith_gate", BloodFlowContribution.Category.WORLD, false);
 	private static final ParticleColor SPORE_MOTE = new ParticleColor(214, 112, 28);
 
 	/** Ticks since the monolith was placed; used for ambient glow animation. */
@@ -83,6 +83,9 @@ public class SanguineMonolithBlockEntity extends HemoBlockEntity
 	/** The Archon who broke the stone: the only one the gap between the halves admits. */
 	@Nullable
 	private UUID owner;
+	/** The player who placed the stone: the only one who may break it. Null for a stone placed by no player. */
+	@Nullable
+	private UUID builder;
 	/** Whether the halves have fallen (the block state carries it too, for collision and loot). */
 	private boolean broken;
 	/** Whether the Seed has been taken out of the void; while false the portal stays open. */
@@ -144,6 +147,21 @@ public class SanguineMonolithBlockEntity extends HemoBlockEntity
 		if (level == null || placedGameTime < 0) return 1.0f;
 		float ticks = (level.getGameTime() - placedGameTime) + partialTick;
 		return Math.min(1.0f, ticks / RISE_DURATION_TICKS);
+	}
+
+	public void setBuilder(UUID builder) {
+		this.builder = builder;
+		BlockEntitySync.markAndSync(this);
+	}
+
+	@Nullable
+	public UUID builder() {
+		return builder;
+	}
+
+	/** Only its builder may break a stone; one placed by no player breaks for any Archon (PT-73). */
+	public boolean mayShatter(Player player) {
+		return builder == null || builder.equals(player.getUUID());
 	}
 
 	// ── The break ─────────────────────────────────────────────────────────────
@@ -443,7 +461,7 @@ public class SanguineMonolithBlockEntity extends HemoBlockEntity
 	/** The cracks have run their course: the stone blasts apart, the same tick the halves are thrown open. */
 	private void blast() {
 		if (level == null || broken) return;
-		int fragments = MonolithFragmentDropRules.rollFragmentCount(level.random);
+		int fragments = MonolithFragmentDropRules.FRAGMENTS;
 		Direction facing = getBlockState().getValue(SanguineMonolithBlock.FACING);
 		Block.popResource(level, worldPosition.relative(facing.getClockWise()), new ItemStack(ItemInit.monolith_fragment.get(), fragments / 2));
 		Block.popResource(level, worldPosition.relative(facing.getCounterClockWise()), new ItemStack(ItemInit.monolith_fragment.get(), fragments - fragments / 2));
@@ -521,6 +539,7 @@ public class SanguineMonolithBlockEntity extends HemoBlockEntity
 	}
 
 	private void writeBreak(CompoundTag tag) {
+		if (builder != null) tag.putUUID("Builder", builder);
 		tag.putInt("BreakTicks", breakTicks);
 		if (owner != null) tag.putUUID("Owner", owner);
 		tag.putBoolean("Broken", broken);
@@ -538,6 +557,7 @@ public class SanguineMonolithBlockEntity extends HemoBlockEntity
 	}
 
 	private void readBreak(CompoundTag tag) {
+		builder = tag.hasUUID("Builder") ? tag.getUUID("Builder") : null;
 		breakTicks = tag.contains("BreakTicks") ? tag.getInt("BreakTicks") : -1;
 		owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
 		broken = tag.getBoolean("Broken");

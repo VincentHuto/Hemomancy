@@ -5,11 +5,11 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -44,21 +44,20 @@ public final class CardinalRiteStaffEscrow {
 	}
 
 	/**
-	 * Once the staff is planted, the hand that held it becomes a Blood Projection hand with projection
-	 * selected, so the caster can feed anchors and segments without opening the manipulation menu.
-	 * An occupied hand is left alone; only the selection changes.
+	 * Once the staff is planted, the hand that held it becomes a Blood Projection hand and Projection becomes the
+	 * active verb, so the caster can feed anchors and segments without reaching for the verb key. An occupied hand is
+	 * left alone; only the verb changes. The selected manipulation is never touched.
 	 */
 	public static void armProjectionHand(ServerPlayer player) {
 		if (!HemoCapabilityAccess.getBloodVolume(player).isActive()
 				|| UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player))) return;
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
-		if (known == null
-				|| !known.isMemoryEquipped(MemorySlotRef.manipulation(ManipulationEquipHelper.BLOOD_PROJECTION))) return;
+		if (known == null) return;
 		BloodManipulation projection = known.getManipList().stream()
 				.filter(m -> m != null && ManipulationEquipHelper.BLOOD_PROJECTION.equals(m.getName()))
 				.findFirst().orElse(null);
 		if (projection == null) return;
-		known.setSelectedManip(projection);
+		known.setActiveVerb(Verb.PROJECT);
 		ItemStack held = player.getMainHandItem();
 		if (held.isEmpty() || CellHandFormHelper.isCellHandForm(held)) {
 			if (!held.is(ItemInit.blood_projection.get()))

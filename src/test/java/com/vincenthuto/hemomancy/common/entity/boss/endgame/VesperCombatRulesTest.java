@@ -12,19 +12,34 @@ import static org.junit.jupiter.api.Assertions.*;
 final class VesperCombatRulesTest {
 	@Test
 	void phaseOneHealthLocksExposeThreeThroneAnchorsInOrder() {
-		assertEquals(0, VesperCombatRules.lockedAnchorIndex(374.4F, 520.0F, 0));
-		assertEquals(-1, VesperCombatRules.lockedAnchorIndex(374.4F, 520.0F, 1));
-		assertEquals(1, VesperCombatRules.lockedAnchorIndex(218.4F, 520.0F, 1));
-		assertEquals(2, VesperCombatRules.lockedAnchorIndex(62.4F, 520.0F, 3));
+		assertEquals(0, VesperCombatRules.lockedAnchorIndex(364.0F, 520.0F, 0));
+		assertEquals(-1, VesperCombatRules.lockedAnchorIndex(364.0F, 520.0F, 1));
+		assertEquals(1, VesperCombatRules.lockedAnchorIndex(208.0F, 520.0F, 1));
+		assertEquals(2, VesperCombatRules.lockedAnchorIndex(52.0F, 520.0F, 3));
 		assertEquals(-1, VesperCombatRules.lockedAnchorIndex(1.0F, 520.0F, 7));
 	}
 
 	@Test
 	void phaseOneDamageCannotCrossTheNextUnbrokenAnchorThreshold() {
-		assertEquals(374.4F, VesperCombatRules.healthFloor(520.0F, 0), 0.001F);
-		assertEquals(218.4F, VesperCombatRules.healthFloor(520.0F, 1), 0.001F);
-		assertEquals(62.4F, VesperCombatRules.healthFloor(520.0F, 3), 0.001F);
+		assertEquals(364.0F, VesperCombatRules.healthFloor(520.0F, 0), 0.001F);
+		assertEquals(208.0F, VesperCombatRules.healthFloor(520.0F, 1), 0.001F);
+		assertEquals(52.0F, VesperCombatRules.healthFloor(520.0F, 3), 0.001F);
 		assertEquals(0.0F, VesperCombatRules.healthFloor(520.0F, 7), 0.001F);
+	}
+
+	@Test
+	void theGroundedBurrowOpensTwoPercentUnderTheFirstWound() {
+		assertTrue(VesperCombatRules.mayGroundBurrow(353.0F, 520.0F, false));
+		assertFalse(VesperCombatRules.mayGroundBurrow(354.0F, 520.0F, false));
+		assertFalse(VesperCombatRules.mayGroundBurrow(364.0F, 520.0F, false));
+		assertTrue(VesperCombatRules.mayGroundBurrow(520.0F, 520.0F, true));
+	}
+
+	@Test
+	void theIdlePauseShortensAtTheSecondWound() {
+		assertEquals(36, VesperCombatRules.groundedIdleTicks(209.0F, 520.0F));
+		assertEquals(24, VesperCombatRules.groundedIdleTicks(208.0F, 520.0F));
+		assertEquals(24, VesperCombatRules.groundedIdleTicks(10.0F, 520.0F));
 	}
 
 	@Test

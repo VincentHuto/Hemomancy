@@ -20,12 +20,12 @@ class EquipmentLessonDialogueTest {
     }
 
     @Test
-    void staffLessonNamesUtilitySelectionAndTheEarnedBond() throws Exception {
+    void staffLessonNamesTheVerbKeyAndTheEarnedBond() throws Exception {
         var language = JsonParser.parseString(Files.readString(Path.of(
                 "src/main/resources/assets/hemomancy/lang/en_us.json"))).getAsJsonObject();
         String lesson = language.get("hemomancy.artificer.living_staff.use").getAsString();
-        assertTrue(lesson.contains("Select Blood Absorption or Blood Projection"),
-                "Staff lesson must explain which selected memory enables its utility channel");
+        assertTrue(lesson.contains("verb key") && lesson.contains("Projection") && lesson.contains("Absorption"),
+                "Staff lesson must explain that the verb key, not a selected memory, sets what the Staff channels");
         assertTrue(lesson.contains("Conjure Staff"), "Staff lesson must explain how to recall the earned bond");
     }
 

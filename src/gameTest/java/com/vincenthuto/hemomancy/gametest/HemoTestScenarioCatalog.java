@@ -34,7 +34,7 @@ public final class HemoTestScenarioCatalog {
 	private static final String CLAIM_SNAPSHOT_KEY = "hemomancy.dev_test.snapshot.worn_vow_claim";
 	private static final String ARMOR_SNAPSHOT_PREFIX = "hemomancy.dev_test.snapshot.armor.";
 
-	private static final List<HemoTestScenario> SCENARIOS = List.of(
+	private static final List<HemoTestScenario> HARBINGER = List.of(
 			new HemoTestScenario(
 					"blood_structure_locked",
 					"Covenant Throne is rejected one degree below its explicit progression gate.",
@@ -83,6 +83,11 @@ public final class HemoTestScenarioCatalog {
 					player -> { },
 					HemoTestScenarioCatalog::verifyCardinalRiteMedia,
 					player -> { }));
+	/**
+	 * The Harbinger scenarios above. The core loop's fixtures are {@code /hemo} branches of their own
+	 * ({@code temperpool}, {@code tank}, {@code vat}, {@code gouge}; {@code common/command/CoreLoopFixtures}).
+	 */
+	private static final List<HemoTestScenario> SCENARIOS = HARBINGER;
 
 	private HemoTestScenarioCatalog() {
 	}

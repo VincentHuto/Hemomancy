@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 public final class ManipulationTreeCoverageSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final Pattern MANIP_REGISTER =
 			Pattern.compile("MANIPS\\.register\\(\"([^\"]+)\"");
 	private static final Pattern TREE_REGISTER =
@@ -63,7 +63,8 @@ public final class ManipulationTreeCoverageSourceTest {
 	private ManipulationTreeCoverageSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String manipInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
 		String treeInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java");
 		String familyRegistry = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/family/ManipulationFamilyRegistry.java");
@@ -92,10 +93,6 @@ public final class ManipulationTreeCoverageSourceTest {
 		Map<String, TreeNode> nodes = treeNodesByName(treeInit);
 		assertLivingWeaponFormsBranchFromStaff(nodes);
 		assertLivingWeaponFormsHaveDistinctTempers(manipInit);
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
 	}
 
 	private static Set<String> extract(Pattern pattern, String text) {

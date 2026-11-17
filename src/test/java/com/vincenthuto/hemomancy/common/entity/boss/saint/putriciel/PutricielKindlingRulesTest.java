@@ -38,8 +38,8 @@ final class PutricielKindlingRulesTest {
 			float perTick = PutricielKindlingRules.creep(PutricielPhase.ROT_I, n);
 			assertEquals(1200.0F, PutricielKindlingRules.max(n) / perTick, 1.0F);
 		}
-		assertEquals(1.0F / 20.0F, PutricielKindlingRules.creep(PutricielPhase.ROT_II, 1), 1.0E-6F);
-		assertEquals(1.0F / 15.0F, PutricielKindlingRules.creep(PutricielPhase.ROT_III, 1), 1.0E-6F);
+		assertEquals(1.0F / 10.0F, PutricielKindlingRules.creep(PutricielPhase.ROT_II, 1), 1.0E-6F);
+		assertEquals(1.0F / 8.0F, PutricielKindlingRules.creep(PutricielPhase.ROT_III, 1), 1.0E-6F);
 		assertEquals(0.0F, PutricielKindlingRules.creep(PutricielPhase.INTERVAL, 1));
 	}
 
@@ -50,7 +50,7 @@ final class PutricielKindlingRulesTest {
 		assertEquals(-1.0F / 3.0F, PutricielKindlingRules.drift(PutricielStage.BURNING, PutricielPhase.INTERVAL, 1, false, false), 1.0E-6F);
 		assertEquals(0.0F, PutricielKindlingRules.drift(PutricielStage.BURNING, PutricielPhase.INTERVAL, 1, true, false));
 		float communion = PutricielKindlingRules.drift(PutricielStage.ROT, PutricielPhase.ROT_II, 1, false, true);
-		assertEquals(1.0F / 20.0F - 0.5F, communion, 1.0E-6F);
+		assertEquals(1.0F / 10.0F - 0.5F, communion, 1.0E-6F);
 		// the burn-down takes 300 ticks from full for any group
 		for (int n = 1; n <= 4; n++) assertEquals(300.0F, PutricielKindlingRules.max(n) / PutricielKindlingRules.burn(n), 0.5F);
 	}

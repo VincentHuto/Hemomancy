@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission.alchemist;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeProgression;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
@@ -18,6 +19,8 @@ import net.minecraft.world.item.component.CustomData;
 public final class ConcentratedBlood {
     public static final String CONTENT = "hemomancy:concentrated_blood";
     private static final String PENDING = "hemomancy:concentrated_blood_pending";
+    /** PT-11: ticks in bed before the blood settles, vanilla's slept-long-enough mark; no night skip needed. */
+    public static final int SETTLE_TICKS = 100;
     private ConcentratedBlood() {}
     public static ItemStack create() {
         ItemStack stack = new ItemStack(ItemInit.bloody_vial.get());
@@ -60,6 +63,11 @@ public final class ConcentratedBlood {
         return true;
     }
     public static boolean completeSleep(ServerPlayer player, boolean completed) {
+        if (completed && pending(player) && !EarlyInitiation.attached(player)) {
+            // PT-26 (NQ-10-2): the blood cannot settle while the charm is off, and the player is told so.
+            player.displayClientMessage(Component.translatable("hemomancy.initiation.blood_unsettled_charm"), false);
+            return false;
+        }
         if (!completed || !pending(player) || !EarlyInitiation.attached(player)
                 || !ProgressionGates.isDegree(player, 2) || !ClinicalBloodKnowledge.eligible(player)
                 || !FirstSeparationAssignment.isClaimed(player)
@@ -82,8 +90,13 @@ public final class ConcentratedBlood {
             player.displayClientMessage(Component.translatable("hemomancy.initiation.blood_already_carried"), false);
             return false;
         }
-        EarlyInitiation.give(player, create());
+        giveReplacement(player);
         player.displayClientMessage(Component.translatable("hemomancy.initiation.blood_rest"), false);
         return true;
+    }
+    /** S-5b: counts the vial only if it really landed (a Creative discard is not a landing) and drops it otherwise. */
+    public static void giveReplacement(ServerPlayer player) {
+        ItemStack vial = create();
+        if (PendingDelivery.insert(player, vial) < vial.getCount()) player.drop(vial, false);
     }
 }

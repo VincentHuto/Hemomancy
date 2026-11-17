@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class ChamberThemeEffectsSourceTest {
 	private static final Path PACKAGE = Path.of(
@@ -19,7 +23,8 @@ public final class ChamberThemeEffectsSourceTest {
 	private ChamberThemeEffectsSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String renderer = Files.readString(RENDERER).replace("\r\n", "\n");
 		String renderContext = Files.readString(RENDER_CONTEXT).replace("\r\n", "\n");
 		String helpers = Files.readString(HELPERS).replace("\r\n", "\n");
@@ -147,18 +152,6 @@ public final class ChamberThemeEffectsSourceTest {
 		Path file = PACKAGE.resolve(fileName);
 		if (Files.exists(file)) {
 			throw new AssertionError(label + ": still exists " + file);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
 		}
 	}
 }

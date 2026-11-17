@@ -23,13 +23,13 @@ public final class SeraphaeAnchorBindingRules {
 
 	/** Re-binding a slipped binding anchor (or a torn reserve). */
 	public static final BloodAccounting.Source SOURCE = BloodAccounting.Source.of("seraphae_anchor_binding",
-			Category.HAZARD, true, false);
+			Category.HAZARD, false);
 	/** Waking a dormant reserve anchor in the aisles. */
 	public static final BloodAccounting.Source RESERVE_SOURCE = BloodAccounting.Source.of("seraphae_reserve_wake",
-			Category.HAZARD, true, false);
+			Category.HAZARD, false);
 	/** Feeding a held anchor while she condenses. */
 	public static final BloodAccounting.Source CONDENSING_SOURCE = BloodAccounting.Source.of("seraphae_condensing_feed",
-			Category.HAZARD, true, false);
+			Category.HAZARD, false);
 
 	private SeraphaeAnchorBindingRules() {
 	}

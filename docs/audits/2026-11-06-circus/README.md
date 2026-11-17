@@ -150,17 +150,25 @@ films each scene a tick per frame. Videos are in `build/circus-review/videos/`. 
 cue was entity event 63, which the vanilla client casts to Sniffer, so every real-client finale disconnected about 23 ticks
 in (in HEAD before this round); it is now 101, and a Succession take ran start to finish. Seen and not yet fixed:
 
-- Floor telegraphs (Acrobat ring, Fire Eater cone, Stilt Walker ring, Knife Thrower line) are faint on venous stone; the
-  Strongman's wind-up is subtle; knives are too small to read at 6 blocks and the fan looks like a single throw.
-- The Acrobat's vault reads as a slide (client smoothing); the lunge shows a mid-air split pose and ends inside the target.
+- Fixed 2026-11-14 (FX-25): floor telegraphs (Acrobat ring, Fire Eater cone, Stilt Walker ring, Knife Thrower line) are
+  faint on venous stone; the Strongman's wind-up is subtle; knives are too small to read at 6 blocks and the fan looks
+  like a single throw.
+- Fixed 2026-11-14 (FX-26): the Acrobat's vault reads as a slide (client smoothing); the lunge ends inside the target.
+  Not changed: the mid-air split pose.
 - The Stilt Walker slam keeps vanilla block debris; the carousel's spore particles read as large pink crystals.
-- Knives that hit the player stay stuck in the model as vanilla arrows.
-- Succession's yield bursts on the floor while the Ringmaster snaps back to his perch, with no exit; "Hold Left Shift to
-  skip" lingers about 1.5 s after the opening (scene 90 ticks, intro 60).
-- Liberation's sever messages stack over the frame; the collapse is modest and the horses simply vanish.
-- Perception: the vignette is invisible against the red interior, so the stages differ only by vanilla particles (spore,
-  reverse portal, end rod); at 1000 the end-rod sparkles follow the owner through both finales.
-- The carousel poles and frame are gold or brass coloured (no-copper rule); vanilla flame sprites flicker at its base
-  during idle acts (source not found). Two lanterns at template (28,5,32) and (36,5,32) hang in front of the carousel in
-  most interior shots; the lanterns read amber rather than crimson. The template holds 20 Hematic Lanterns (18 added).
-- Puppets bunch on the owner and the Hulk blocks the view.
+- Fixed 2026-11-14 (FX-26): troupe knives that hit the player stay stuck in the model as vanilla arrows. Other blood
+  needles still stick.
+- Succession's yield bursts on the floor while the Ringmaster snaps back to his perch, with no exit (chunk 15 T14);
+  fixed 2026-11-14 (FX-28): "Hold Left Shift to skip" lingers about 1.5 s after the opening (scene 90 ticks, intro 60).
+- Fixed 2026-11-14 (FX-28): Liberation's sever messages stack over the frame (now on the action bar). Not changed: the
+  collapse is modest and the horses simply vanish.
+- Fixed 2026-11-14 (FX-28): the perception vignette is invisible against the red interior (now a near-black edge with a
+  bone line). Not changed (chunk 15 T12): the stages' vanilla particles (spore, reverse portal, end rod) and the end-rod
+  sparkles following the owner at 1000.
+- Fixed 2026-11-14 (FX-27): the carousel poles and frame are gold or brass coloured (now hematic iron, trim bone);
+  vanilla flame sprites flicker at its base during idle acts (the likely source, the Bellows stage breath in
+  `CircusDemonstrations`, now uses the troupe's ember spark; check it in the client); the two lanterns at template
+  (28,5,32) and (36,5,32) hang in front of the carousel (moved to (24,5,32) and (40,5,32)). Not changed (NQ-15-12): the
+  lanterns read amber rather than crimson. The template holds 20 Hematic Lanterns (18 added).
+- Fixed 2026-11-14 (FX-28): puppets bunch on the owner and the Hulk blocks the view (bodies on foot now take fanned slots
+  behind the owner, the Hulk a row back).

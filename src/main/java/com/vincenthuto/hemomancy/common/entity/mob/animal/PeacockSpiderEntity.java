@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import net.minecraft.world.level.LevelReader;
-import org.joml.Vector3f;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -22,10 +22,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 
 public final class PeacockSpiderEntity extends Spider {
-	private static final DustParticleOptions CYAN =
-			new DustParticleOptions(new Vector3f(0.06F, 0.72F, 0.82F), 0.8F);
-	private static final DustParticleOptions MAGENTA =
-			new DustParticleOptions(new Vector3f(0.88F, 0.12F, 0.55F), 0.8F);
+	private static final ParticleColor CYAN = new ParticleColor(15, 184, 209);
+	private static final ParticleColor MAGENTA = new ParticleColor(224, 31, 140);
 
 	public PeacockSpiderEntity(EntityType<? extends PeacockSpiderEntity> type, Level level) {
 		super(type, level);
@@ -65,7 +63,7 @@ public final class PeacockSpiderEntity extends Spider {
 				|| level().getNearestPlayer(this, 6.0D) == null) return;
 		for (int i = 0; i < 9; i++) {
 			double angle = Math.PI * i / 8.0D;
-			server.sendParticles((i & 1) == 0 ? CYAN : MAGENTA,
+			server.sendParticles(HemoParticleData.glow((i & 1) == 0 ? CYAN : MAGENTA),
 					getX() + Math.cos(angle) * 0.65D, getY() + 0.25D + Math.sin(angle) * 0.65D,
 					getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
 		}

@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.summon.PacketCrossbarRadialAction;
+import com.vincenthuto.hemomancy.common.network.summon.PacketPuppetAct;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetAct;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerCommandMode;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
@@ -77,16 +79,36 @@ public final class CrossbarRadialScreen extends Screen {
 			item.setVisible(true);
 			modes.add(item);
 		}
+		createActItem().ifPresent(modes::add);
 		menu.addAllInner(modes);
 
 		if (minecraft != null && minecraft.player != null
 				&& SkillPointHelper.getSkeinTranspositionLevel(minecraft.player) > 0) {
 			List<TextRadialMenuItem> shapes = new ArrayList<>();
 			for (PuppeteerSummonDefinition definition : PuppeteerSummonDefinitions.all()) {
-				shapes.add(createShapeItem(definition));
+				if (PuppeteerSummonRules.inTranspositionRing(definition.name())) shapes.add(createShapeItem(definition));
 			}
 			menu.addAll(shapes);
 		}
+	}
+
+	/** D-37: the selected body's act, or the Pattern's Ring, fired through one serverbound payload. */
+	private java.util.Optional<TextRadialMenuItem> createActItem() {
+		return PuppetAct.forSummon(MarionetteCrossbarItem.getSelectedSummonName(crossbar)).map(act -> {
+			TextRadialMenuItem item = new TextRadialMenuItem(menu, Component.translatable(act.nameKey())) {
+				@Override public boolean onClick() {
+					PacketHandler.sendToServer(new PacketPuppetAct(crossbarId));
+					menu.close();
+					return true;
+				}
+			};
+			item.setCentralText(Component.translatable("screen.hemomancy.crossbar_radial.act.desc",
+					Component.translatable(act.nameKey() + ".desc"), act.threadCost(), act.cooldownTicks() / 20));
+			if (MarionetteCrossbarItem.getThread(crossbar) < act.threadCost()) item.setBackgroundColor(DISABLED_COLOR);
+			item.setTextLayout(0.8f, 48);
+			item.setVisible(true);
+			return item;
+		});
 	}
 
 	private TextRadialMenuItem createShapeItem(PuppeteerSummonDefinition definition) {

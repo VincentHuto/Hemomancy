@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.summon.puppeteer;
 
+import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 public final class PuppeteerSummonRulesTest {
 	private PuppeteerSummonRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertTrue("follow command mode round trip",
 				PuppeteerCommandMode.FOLLOW == PuppeteerCommandMode.fromSerializedName("follow"));
 		assertTrue("unknown command mode defaults to follow",

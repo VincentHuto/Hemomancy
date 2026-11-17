@@ -125,6 +125,7 @@ EXTRA_STATES = {
     'minecraft:ladder': {'facing': FACING4, 'waterlogged': BOOL},
     'minecraft:furnace': {'facing': FACING4, 'lit': BOOL},
     'minecraft:smoker': {'facing': FACING4, 'lit': BOOL},
+    'minecraft:campfire': {'facing': FACING4, 'lit': BOOL, 'signal_fire': BOOL, 'waterlogged': BOOL},
     'minecraft:anvil': {'facing': FACING4},
     'minecraft:grindstone': {'face': ('floor', 'wall', 'ceiling'), 'facing': FACING4},
     'minecraft:brewing_stand': {'has_bottle_0': BOOL, 'has_bottle_1': BOOL, 'has_bottle_2': BOOL},

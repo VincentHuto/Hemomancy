@@ -18,19 +18,26 @@ final class AnimusMortemGeometry {
         return switch(form) {
             case CLOUD,GROWTH,COMMAND,RUPTURE,
                     MORTAR_CHARGE,DRAIN,WOUND,HUNGER,
-                    GRAVE,BLACK_HEART,BLOOM,DEBT,ANIMUS_IMPACT,ANIMUS_CONJURE,MORTEM_CONJURE,
-                    MORTEM_BURST,GRAVE_REFUND,HUNGER_COLLAPSE,BLACKHEART_RUPTURE,TITHE_RETURN,TITHE_COLLECT,
-                    ROT_INFECTION,COMMUNION,SOVEREIGN_LASH -> true;
+                    GRAVE,BLACK_HEART,ANIMUS_IMPACT,ANIMUS_CONJURE,MORTEM_CONJURE,
+                    MORTEM_BURST,GRAVE_REFUND,HUNGER_COLLAPSE,BLACKHEART_RUPTURE,
+                    ROT_INFECTION,COMMUNION,SOVEREIGN_LASH,CHUM_BLOOM,SCAB_DRIP -> true;
             default -> false;
         };
     }
     static boolean mortem(Form form){return ManipulationMaterials.forForm(form)==ManipulationMaterials.MORTEM;}
+    /** A glowing core: Animus has its own focus shape (VX-4); Mortem keeps the shape it had. */
+    private static int glow(Form form){return mortem(form)?FOCUS:ANIMUS_FOCUS;}
 
     static void draw(ManipulationVisualPacket packet,PoseStack p,VertexConsumer v,Vec3 camera,Vec3 right,Vec3 up,
             double time,float age,float formation,float alpha) {
+        draw(packet,p,v,camera,right,up,time,age,formation,alpha,0);
+    }
+
+    static void draw(ManipulationVisualPacket packet,PoseStack p,VertexConsumer v,Vec3 camera,Vec3 right,Vec3 up,
+            double time,float age,float formation,float alpha,long salt) {
         if(alpha<=0)return;
         Form form=packet.form();double r=packet.radius();int count=packet.count();
-        int seed=Math.floorMod(packet.entityId()>=0?packet.entityId():packet.from().hashCode(),113);
+        int seed=Math.floorMod(CueSeed.of(packet,salt),113);
         Vec3 end=packet.to().subtract(packet.from());
         switch(form) {
             case MORTAR_CHARGE -> {
@@ -38,7 +45,7 @@ final class AnimusMortemGeometry {
                 Vec3 focus=ChargeVisualGeometry.focus(form,aim);
                 // A heavy payload gathers: sheath, glossy core, clots drawn into orbit and drips it cannot yet hold.
                 double size=.13+r*.23;
-                card(p,v,focus,right,up,size*1.5,size*1.6,FOCUS,seed,TINT,alpha*.3f);
+                card(p,v,focus,right,up,size*1.5,size*1.6,ANIMUS_FOCUS,seed,TINT,alpha*.3f);
                 card(p,v,focus,right,up,size,size*1.1,FOCUS,seed+1,TINT,alpha);
                 card(p,v,focus.add(right.scale(-size*.3)).add(up.scale(size*.35)),right,up,size*.3,size*.3,FOCUS,seed+2,CORE,alpha*.8f);
                 for(int i=0;i<4;i++) {
@@ -64,7 +71,7 @@ final class AnimusMortemGeometry {
                     card(p,v,at,right,up,r*.65,.35+r*.14,WISP,seed+i,i%2==0?CLOT:TINT,alpha*.6f);
                 }
                 float beat=(float)Math.pow(Math.max(0,Math.sin(time*.22+seed)),6);
-                card(p,v,new Vec3(0,.1,0),right,up,r*.25+.1*beat,r*.25+.1*beat,FOCUS,seed+9,CORE,alpha*(.25f+.35f*beat));
+                card(p,v,new Vec3(0,.1,0),right,up,r*.25+.1*beat,r*.25+.1*beat,ANIMUS_FOCUS,seed+9,CORE,alpha*(.25f+.35f*beat));
                 // Rain: drops fall from the underbelly, each trailing a short streak.
                 for(int i=0;i<10;i++) {
                     double a=i*2.39996+seed,d=r*.7*((i*.37)%1),cycle=(time*.07+i*.19)%1;
@@ -178,11 +185,6 @@ final class AnimusMortemGeometry {
                     ribbonPath(p,v,wrap,camera,.012,.02+saturation*.02,RIBBON,seed+10+vein,CLOT,alpha);
                 }
             }
-            case DEBT -> {
-                Vec3 clot=new Vec3(0,2.25,0);
-                card(p,v,clot,right,up,.18,.25,FOCUS,seed,TINT,alpha);
-                spiral(p,v,clot,camera,.38,.12,-time*.015,2,seed,alpha*.7f);
-            }
             case COMMUNION -> {
                 // A shared pool of blood under the feet the victims' streams feed.
                 ground(p,v,new Vec3(0,.04,0),.45+.05*Math.sin(time*.03),POOL,seed+9,TINT,alpha*.6f);
@@ -192,19 +194,32 @@ final class AnimusMortemGeometry {
                     stream(p,v,foot,foot.add(0,.65,0),camera,.07,.05,time*.018+i,RIBBON,seed+i,TINT,alpha*.6f);
                 }
             }
-            case BLOOM -> {
-                double spread=Math.max(.1,r*Math.min(1,(age+1)/12.0));
-
-                for(int i=0;i<7;i++) {
-                    double a=i*2.39996+seed;
-                    Vec3 at=new Vec3(Math.cos(a)*spread*.65,.25+Math.sin(age*.07+i)*.12,Math.sin(a)*spread*.65);
-                    card(p,v,at,right,up,.40,.50,WISP,seed+i,TINT,alpha*.55f);
+            case SCAB_DRIP -> {
+                // A bead swells at the spike's tip, falls with a short tail to where it lands and spreads there.
+                double fallTicks=Math.max(4,packet.ticks()*.45),fall=Math.min(1,age/fallTicks);
+                card(p,v,new Vec3(0,-.04,0),right,up,.035,.05,FOCUS,seed+3,CLOT,alpha*(float)(1-fall*.6));
+                if(fall<1) {
+                    Vec3 drop=end.scale(fall*fall);
+                    ribbonPath(p,v,List.of(drop.add(0,.16+.3*fall,0),drop),camera,.008,.04,RIBBON,seed,TINT,alpha*.85f);
+                    card(p,v,drop,right,up,.06,.085,FOCUS,seed+1,TINT,alpha);
+                } else {
+                    double spread=Math.min(1,(age-fallTicks)/6.0);
+                    ground(p,v,end.add(0,.03,0),.14+.26*spread,POOL,seed+2,TINT,alpha*.7f);
+                }
+            }
+            case CHUM_BLOOM -> {
+                // Under the pool the renderer lays on the water, a few dark threads of blood sink and drift.
+                double spread=Math.max(.5,Math.min(8,r))*Math.min(1,(age+1)/20.0);
+                for(int i=0;i<5;i++) {
+                    double a=i*2.39996+seed+time*.003;
+                    Vec3 at=new Vec3(Math.cos(a)*spread*.55,-.3-.25*((age*.02+i*.2)%1),Math.sin(a)*spread*.55);
+                    card(p,v,at,right,up,.28,.34,WISP,seed+i,CLOT,alpha*.3f);
                 }
             }
             case RUPTURE,ANIMUS_IMPACT,MORTEM_BURST,BLACKHEART_RUPTURE -> {
                 double spread=Math.max(.05,Math.min(r,4)*Math.min(1,(age+1)/8.0));
                 // A hot core flashes, then tapered streaks and clotted beads burst outward.
-                if(age<4)card(p,v,new Vec3(0,.2,0),right,up,.12+.1*(1-age/4),.12+.1*(1-age/4),FOCUS,seed+30,CORE,alpha*(1-age/4f));
+                if(age<4)card(p,v,new Vec3(0,.2,0),right,up,.12+.1*(1-age/4),.12+.1*(1-age/4),glow(form),seed+30,CORE,alpha*(1-age/4f));
                 for(int i=0;i<8;i++) {
                     double a=i*2.39996+seed;
                     Vec3 at=new Vec3(Math.cos(a)*spread,.18+Math.sin(i*2.1)*.2+age*.012,Math.sin(a)*spread);
@@ -223,8 +238,8 @@ final class AnimusMortemGeometry {
                 }
                 ribbonPath(p,v,whip,camera,.06,.015,RIBBON,seed,TINT,alpha);
                 ribbonPath(p,v,whip,camera,.018,.005,RIBBON,seed+1,CLOT,alpha);
-                if(lash>=1)card(p,v,end,right,up,.18*slack+.06,.18*slack+.06,FOCUS,seed+2,CORE,alpha*(float)slack);
-                if(age<6)card(p,v,new Vec3(0,.85,0),right,up,.3*(1-age/6),.3*(1-age/6),FOCUS,seed+3,CORE,alpha*(1-age/6f));
+                if(lash>=1)card(p,v,end,right,up,.18*slack+.06,.18*slack+.06,ANIMUS_FOCUS,seed+2,CORE,alpha*(float)slack);
+                if(age<6)card(p,v,new Vec3(0,.85,0),right,up,.3*(1-age/6),.3*(1-age/6),ANIMUS_FOCUS,seed+3,CORE,alpha*(1-age/6f));
             }
             case ANIMUS_CONJURE,MORTEM_CONJURE -> {
                 Vec3 aim=end.lengthSqr()>.001?end.normalize():new Vec3(0,1,0);
@@ -237,9 +252,9 @@ final class AnimusMortemGeometry {
                     stream(p,v,from,focus,camera,.05,.12,time*.06+i,RIBBON,seed+i,TINT,alpha*(float)(1-draw*.6));
                 }
                 ribbonPath(p,v,List.of(focus,focus.add(aim.scale(.9*draw))),camera,.05,.006,RIBBON,seed+5,CLOT,alpha*(float)draw);
-                card(p,v,focus,right,up,.1,.1,FOCUS,seed+6,CORE,alpha*.8f);
+                card(p,v,focus,right,up,.1,.1,glow(form),seed+6,CORE,alpha*.8f);
             }
-            case HUNGER_COLLAPSE,TITHE_RETURN,TITHE_COLLECT -> {
+            case HUNGER_COLLAPSE -> {
                 double shrink=Math.max(.02,1-age/20.0);Vec3 center=new Vec3(0,1,0);
                 for(int i=0;i<4;i++) {
                     double a=i*Math.PI/2+time*.015;

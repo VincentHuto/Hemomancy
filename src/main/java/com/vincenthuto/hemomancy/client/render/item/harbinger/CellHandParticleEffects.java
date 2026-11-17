@@ -16,6 +16,10 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
+import com.vincenthuto.hemomancy.common.manipulation.verb.SculptingDispatcher;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbReach;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -64,7 +68,17 @@ public final class CellHandParticleEffects {
 
 		Level world = living.level();
 		Random rand = new Random();
-		if (isAbsorptionMode(living, activeStack)) {
+		Optional<Vec3> sculpted = sculptedPoint(living, activeStack);
+		if (sculpted.isPresent() && claimDrawsOwnStream(living, activeStack)) {
+			// The Tendon Line draws its own cord; the hand only gathers its cells.
+		} else if (sculpted.isPresent()) {
+			if (isAbsorptionMode(living, activeStack)) {
+				spawnAbsorbedBloodParticle(mc, living.getId(), true, origin, sculpted.get(), ParticleColor.BLOOD, rand,
+						Optional.empty());
+			} else if (PROJECTION_EMISSION_GATE.tryAcquire(living.getId(), world.getGameTime())) {
+				spawnProjectionParticle(mc, origin, sculpted.get(), rand);
+			}
+		} else if (isAbsorptionMode(living, activeStack)) {
 			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(living)
 					.or(() -> BlockBloodInteractions.findLookedAtBloodBlockSource(world, living));
 			if (blockSource.isPresent()) {
@@ -90,7 +104,7 @@ public final class CellHandParticleEffects {
 		} else if (isProjectionMode(living, activeStack)) {
 			if (PROJECTION_EMISSION_GATE.tryAcquire(living.getId(), world.getGameTime())) {
 				HitResult trace = SanguineProjectionTargeting.pick(world, living,
-						SanguineProjectionTargeting.PROJECTION_REACH, true);
+						VerbReach.of(living, Verb.PROJECT), true);
 				if (trace.getType() == HitResult.Type.BLOCK) {
 					spawnProjectionParticle(mc, origin, trace, rand);
 				}
@@ -133,7 +147,17 @@ public final class CellHandParticleEffects {
 		Random rand = new Random();
 		Vec3 anchor = worldToFirstPersonAnchor(origin);
 
-		if (isAbsorptionMode(player, stack)) {
+		Optional<Vec3> sculpted = sculptedPoint(player, stack);
+		if (sculpted.isPresent() && claimDrawsOwnStream(player, stack)) {
+			// The Tendon Line draws its own cord; the hand only gathers its cells.
+		} else if (sculpted.isPresent()) {
+			if (isAbsorptionMode(player, stack)) {
+				spawnAbsorbedBloodParticle(mc, player.getId(), true, origin, sculpted.get(), ParticleColor.BLOOD, rand,
+						Optional.of(anchor));
+			} else if (PROJECTION_EMISSION_GATE.tryAcquire(player.getId(), world.getGameTime())) {
+				spawnProjectionParticle(mc, origin, sculpted.get(), rand);
+			}
+		} else if (isAbsorptionMode(player, stack)) {
 			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(player)
 					.or(() -> BlockBloodInteractions.findLookedAtBloodBlockSource(world, player));
 			if (blockSource.isPresent()) {
@@ -159,7 +183,7 @@ public final class CellHandParticleEffects {
 		} else if (isProjectionMode(player, stack)) {
 			if (PROJECTION_EMISSION_GATE.tryAcquire(player.getId(), world.getGameTime())) {
 				HitResult trace = SanguineProjectionTargeting.pick(world, player,
-						SanguineProjectionTargeting.PROJECTION_REACH, true);
+						VerbReach.of(player, Verb.PROJECT), true);
 				if (trace.getType() == HitResult.Type.BLOCK) {
 					spawnProjectionParticle(mc, origin, trace, rand);
 				}
@@ -205,7 +229,14 @@ public final class CellHandParticleEffects {
 		if (!living.isUsingItem()) return null;
 		ItemStack stack = living.getUseItem();
 		if (!(stack.getItem() instanceof ICellHand) && !(stack.getItem() instanceof LivingStaffItem)) return null;
+		// A strand out of the hand is drawn by the strand renderer; the hand pours no ordinary stream meanwhile.
+		if (com.vincenthuto.hemomancy.client.data.StrandClientState.has(living)) return new UseTargets(false, List.of(), true);
 		Level world = living.level();
+		Optional<SculptingDispatcher.Claim> claim = sculptedClaim(living, stack);
+		if (claim.isPresent()) {
+			if (claim.get().selected().sculpting().drawsOwnStream()) return new UseTargets(false, List.of(), true);
+			return new UseTargets(isAbsorptionMode(living, stack), List.of(claim.get().target().point()));
+		}
 		if (isAbsorptionMode(living, stack)) {
 			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(living)
 					.or(() -> BlockBloodInteractions.findLookedAtBloodBlockSource(world, living));
@@ -221,7 +252,7 @@ public final class CellHandParticleEffects {
 			return new UseTargets(true, bodies);
 		}
 		if (isProjectionMode(living, stack)) {
-			HitResult trace = SanguineProjectionTargeting.pick(world, living, SanguineProjectionTargeting.PROJECTION_REACH, true);
+			HitResult trace = SanguineProjectionTargeting.pick(world, living, VerbReach.of(living, Verb.PROJECT), true);
 			if (trace.getType() != HitResult.Type.BLOCK) return new UseTargets(false, List.of());
 			if (trace instanceof net.minecraft.world.phys.BlockHitResult block
 					&& RingDoorRenderer.hyphaeInPlaceOfBlood(living, block)) return new UseTargets(false, List.of(), true);
@@ -384,6 +415,34 @@ public final class CellHandParticleEffects {
 		}
 	}
 
+	/**
+	 * Where a caster's selected Sculpting is working, when it claims what they aim at: the same pick and claim the server
+	 * runs, so the stream lands where the Sculpting acts. Another player's reach, active verb and selection come from
+	 * their server's presence sync ({@code VerbPresence}), so an onlooker's stream lands on the same point.
+	 */
+	private static Optional<Vec3> sculptedPoint(LivingEntity living, ItemStack stack) {
+		return sculptedClaim(living, stack).map(claim -> claim.target().point());
+	}
+
+	private static Optional<SculptingDispatcher.Claim> sculptedClaim(LivingEntity living, ItemStack stack) {
+		if (!(living instanceof Player player)) return Optional.empty();
+		return VerbChannel.verbOf(player, stack).flatMap(verb -> SculptingDispatcher.currentClaim(player, verb));
+	}
+
+	/** Whether the Sculpting that claims {@code living}'s aim draws its own cord, so the hand pours no stream. */
+	private static boolean claimDrawsOwnStream(LivingEntity living, ItemStack stack) {
+		return sculptedClaim(living, stack).map(claim -> claim.selected().sculpting().drawsOwnStream()).orElse(false);
+	}
+
+	private static void spawnProjectionParticle(Minecraft mc, Vec3 origin, Vec3 target, Random rand) {
+		Particle created = mc.particleEngine.createParticle(
+				HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD),
+				origin.x, origin.y, origin.z, 0.0D, 0.0D, 0.0D);
+		if (created instanceof AbsorbedBloodCellParticle particle) {
+			particle.setProjectionPath(origin, target, projectionDeviation(origin, target, rand));
+		}
+	}
+
 	private static void spawnProjectionParticle(Minecraft mc, Vec3 origin, HitResult trace, Random rand) {
 		// An Apotheos forcing a ring door gives it hyphae, not blood; the door draws them.
 		if (trace instanceof net.minecraft.world.phys.BlockHitResult block && mc.player != null
@@ -411,6 +470,8 @@ public final class CellHandParticleEffects {
 	}
 
 	private static boolean isProjectionMode(LivingEntity living, ItemStack stack) {
+		// A strand is drawn whole by the strand renderer: no cell particles pour from the hand while one is out.
+		if (com.vincenthuto.hemomancy.client.data.StrandClientState.has(living)) return false;
 		return stack.getItem() instanceof ICellHand && !(stack.getItem() instanceof BloodAbsorptionItem)
 				|| isStaffChannel(living, stack, false);
 	}
@@ -421,8 +482,8 @@ public final class CellHandParticleEffects {
 	}
 
 	/**
-	 * The local player's own selection decides; anyone else's selected utility is not synced to this client, so their
-	 * staff is read from the cell-hand cue the server sends while they channel it.
+	 * The local player's own active verb decides; anyone else's verb is not synced to this client, so their staff is
+	 * read from the cell-hand cue the server sends while they channel it.
 	 */
 	private static boolean isStaffChannel(LivingEntity living, ItemStack stack, boolean absorption) {
 		if (absorption ? LivingStaffItem.isLivingStaffAbsorptionUse(living, stack)
@@ -433,7 +494,7 @@ public final class CellHandParticleEffects {
 
 	private static List<LivingEntity> getAbsorptionParticleTargets(LivingEntity living, ItemStack stack) {
 		if (stack.getItem() instanceof BloodAbsorptionItem) {
-			return BloodAbsorptionItem.findBareAbsorptionTarget(living, LivingStaffFocusRules.bareAbsorptionRange())
+			return BloodAbsorptionItem.findBareAbsorptionTarget(living, VerbReach.of(living, Verb.ABSORB))
 					.stream()
 					.toList();
 		}
@@ -443,7 +504,7 @@ public final class CellHandParticleEffects {
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 		return player.level().getEntitiesOfClass(LivingEntity.class,
-						player.getBoundingBox().inflate(LivingStaffFocusRules.absorptionRange(focus)),
+						player.getBoundingBox().inflate(VerbReach.of(player, Verb.ABSORB)),
 						target -> BloodAbsorptionItem.isValidAbsorptionTarget(player, target))
 				.stream()
 				.sorted(Comparator.comparingDouble(player::distanceToSqr))
@@ -453,12 +514,9 @@ public final class CellHandParticleEffects {
 
 	private static Optional<WillEntity> getFalteringWillAbsorptionParticleTarget(LivingEntity living, ItemStack stack) {
 		double range;
-		if (stack.getItem() instanceof BloodAbsorptionItem) {
-			range = LivingStaffFocusRules.bareAbsorptionRange();
-		} else if (living instanceof Player player && isStaffChannel(player, stack, true)) {
-			ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
-			LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
-			range = LivingStaffFocusRules.absorptionRange(focus);
+		if (stack.getItem() instanceof BloodAbsorptionItem
+				|| living instanceof Player player && isStaffChannel(player, stack, true)) {
+			range = VerbReach.of(living, Verb.ABSORB);
 		} else {
 			return Optional.empty();
 		}

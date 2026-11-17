@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class VialCentrifugeModelSourceTest {
     private static final Path MODELS = Path.of("src/main/resources/assets/hemomancy/models/block");
@@ -18,10 +19,6 @@ class VialCentrifugeModelSourceTest {
     private static final Path RULES = Path.of(
             "src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/VialCentrifugeRotorRules.java");
     private static final Path GENERATOR = Path.of("tools/model_export/vial_centrifuge.py");
-
-    private static String read(Path path) throws IOException {
-        return Files.readString(path).replace("\r\n", "\n");
-    }
 
     private static List<String> partModels() throws IOException {
         var matcher = Pattern.compile("PART_MODELS = \\{(.*?)};", Pattern.DOTALL).matcher(read(RENDERER));

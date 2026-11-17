@@ -1,14 +1,18 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public class AlchemistEnzymeMasteryAssignmentSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		enzymeMasteryAssignmentExists();
 	}
 
@@ -66,15 +70,5 @@ public class AlchemistEnzymeMasteryAssignmentSourceTest {
 				"advancements.hemomancy.enzyme_mastery_complete.title");
 		assertContains("reference docs describe enzyme mastery", docs,
 				"The Eightfold Centrifuge");
-	}
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path);
-	}
-
-	private static void assertContains(String label, String text, String needle) {
-		if (!text.contains(needle)) {
-			throw new AssertionError(label + " missing: " + needle);
-		}
 	}
 }

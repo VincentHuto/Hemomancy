@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.*;
 
 public final class BoundSummonBehavior {
-	private static final BloodAccounting.Source HIGH_STRUNG = BloodAccounting.Source.of("high_strung_threads", Category.SKILL, false, false);
+	private static final BloodAccounting.Source HIGH_STRUNG = BloodAccounting.Source.of("high_strung_threads", Category.SKILL, false);
 	private static final String TAG_OWNER = "HemomancyOwner";
 	private static final String TAG_CROSSBAR = "HemomancyCrossbar";
 	private static final String TAG_SUMMON = "HemomancySummon";
@@ -587,6 +587,40 @@ public final class BoundSummonBehavior {
 			return false;
 		}
 		return target instanceof Enemy;
+	}
+
+	static final double SLOT_DISTANCE = 2.5D;
+	static final double REAR_SLOT_DISTANCE = 4.5D;
+	static final double SLOT_SPACING = 1.6D;
+
+	/**
+	 * FX-28: a following body on foot walks to its own slot behind the owner instead of onto the owner. Bodies fan out
+	 * in a row behind the owner's back and the Hulk takes a row of its own further back, so they stop bunching. The
+	 * slot and its 24-block search are worked out on the 10-tick beat only, standing still or not.
+	 */
+	public static void followOwnerOnFoot(Mob mob, Player owner, double speed) {
+		if (mob.tickCount % 10 != 0) return;
+		Vec3 slot = followSlot(mob, owner);
+		if (mob.distanceToSqr(slot) > 2.25D) mob.getNavigation().moveTo(slot.x, slot.y, slot.z, speed);
+	}
+
+	static Vec3 followSlot(Mob mob, Player owner) {
+		boolean rear = mob instanceof GoreboundHulkEntity;
+		List<Mob> row = new ArrayList<>(owner.level().getEntitiesOfClass(Mob.class, owner.getBoundingBox().inflate(24.0D),
+				other -> other.isAlive() && other instanceof BoundPuppeteerSummon bound
+						&& owner.getUUID().equals(bound.hemomancy$getOwnerUUID())
+						&& !(other instanceof VeinwingVultureEntity) && !(other instanceof MarrowSpitterEntity)
+						&& other instanceof GoreboundHulkEntity == rear));
+		row.sort(Comparator.comparingInt(Mob::getId));
+		return owner.position().add(slotOffset(Math.max(0, row.indexOf(mob)), Math.max(1, row.size()), rear, owner.getYRot()));
+	}
+
+	/** The offset of slot {@code index} of {@code count} behind an owner facing {@code ownerYaw} degrees. */
+	static Vec3 slotOffset(int index, int count, boolean rear, float ownerYaw) {
+		double yaw = Math.toRadians(ownerYaw);
+		Vec3 back = new Vec3(Math.sin(yaw), 0.0D, -Math.cos(yaw));
+		Vec3 side = new Vec3(-back.z, 0.0D, back.x);
+		return back.scale(rear ? REAR_SLOT_DISTANCE : SLOT_DISTANCE).add(side.scale((index - (count - 1) / 2.0D) * SLOT_SPACING));
 	}
 
 	public static void followFlyingOwner(Mob mob, Player owner, double speed, double teleportDistance) {

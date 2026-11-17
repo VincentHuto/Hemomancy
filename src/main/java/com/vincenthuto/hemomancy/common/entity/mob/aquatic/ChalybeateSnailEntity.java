@@ -7,7 +7,8 @@ import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -46,6 +47,8 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 	private static final TagKey<Block> CLIMBABLE_VENT_BLOCKS = BlockTags.create(
 			Hemomancy.rloc("chalybeate_snail_climbable"));
 	private static final int HARVEST_COOLDOWN_TICKS = 6000;
+	private static final ParticleColor IRON_SPARK = new ParticleColor(120, 118, 124);
+	private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
 
 	private int retractTicks;
 	private int harvestCooldownTicks;
@@ -161,12 +164,12 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 		this.level().playSound(null, this.blockPosition(), SoundEvents.AXE_SCRAPE, SoundSource.NEUTRAL,
 				0.85F, 0.55F + this.random.nextFloat() * 0.2F);
 		if (this.level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.SCRAPE,
+			serverLevel.sendParticles(HemoParticleData.emberSpark(IRON_SPARK, 0.031F, 1.0F, 16),
 					this.getX(), this.getY() + 0.25D, this.getZ(),
-					10, 0.35D, 0.15D, 0.35D, 0.02D);
-			serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
+					10, 0.35D, 0.15D, 0.35D, 0.01D);
+			serverLevel.sendParticles(HemoParticleData.bloodCell(BLOOD),
 					this.getX(), this.getY() + 0.2D, this.getZ(),
-					5, 0.25D, 0.1D, 0.25D, 0.01D);
+					5, 0.25D, 0.1D, 0.25D, 0.005D);
 		}
 	}
 

@@ -34,6 +34,7 @@ public final class ManipulationIconResolver {
 			case "conjure_staff" -> "memory_living_staff_overlay";
 			case "conjure_torch" -> "memory_living_torch_overlay";
 			case "conjure_sickle" -> "memory_living_sickle_overlay";
+			case "conjure_pickaxe" -> "memory_living_pickaxe_overlay";
 			default -> "memory_" + manipulationId + "_overlay";
 		};
 		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");

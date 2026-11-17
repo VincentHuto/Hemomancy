@@ -52,7 +52,9 @@ public final class BloodStructureFeedWarpRenderer {
 		Set<BlockPos> positions = new HashSet<>(feedPositions);
 		BloodStructureFeedBounds bounds = BloodStructureFeedBounds.from(feedPositions);
 		float progress = feed.getProgress();
-		int tint = feed.getChannelId() == 0L ? 0xFFFFFF : rotColor(feed.getEngulfmentProgress(partialTick));
+		// A channelled feed rots green as it engulfs (Lignum Mortis); a drawn lode stays blood.
+		int tint = feed.getChannelId() == 0L || feed.getStyle() == BloodFeedStyle.DRAWN
+				? 0xFFFFFF : rotColor(feed.getEngulfmentProgress(partialTick));
 		int color = alpha << 24 | tint;
 		float wiggleAmp = 0.018f + progress * 0.042f;
 		RenderType renderType;

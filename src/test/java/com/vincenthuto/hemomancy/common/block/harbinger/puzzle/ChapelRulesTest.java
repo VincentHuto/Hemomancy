@@ -7,6 +7,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import com.vincenthuto.hemomancy.support.EnglishText;
+import com.vincenthuto.hemomancy.support.ResourceReader;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -125,5 +127,25 @@ class ChapelRulesTest {
 		assertEquals(ChapelRules.litanySeed(123L, 1), ChapelRules.litanySeed(123L, 1));
 		assertFalse(ChapelRules.litanySeed(123L, 1) == ChapelRules.litanySeed(456L, 1));
 		assertEquals(1200, ChapelRules.LITANY_ANSWER_TICKS);
+	}
+
+	/** SM-3: Hemorath's and Seraphae's Beholdings tell their memory, a line a flash and a closing line. */
+	@Test
+	void theNarratedBeholdingsHaveALineForEachFlashAndAClose() {
+		for (String saint : List.of("HEMORATH", "SERAPHAE", "VELORUM")) {
+			assertTrue(ChapelRules.narratesBeholding(saint), saint);
+			for (int flash = 0; flash < ChapelRules.BEHOLDING_STEPS; flash++) {
+				assertFalse(EnglishText.of(ChapelRules.beholdingLine(saint, flash)).isBlank(), saint + " flash " + flash);
+			}
+			assertFalse(EnglishText.of(ChapelRules.beholdingLine(saint, -1)).isBlank(), saint + " closing line");
+		}
+		assertEquals("message.hemomancy.chapel.beholding.hemorath.1", ChapelRules.beholdingLine("HEMORATH", 0));
+		assertFalse(ChapelRules.narratesBeholding("PUTRICIEL"), "Putriciel's Chapels hold no Beholding");
+	}
+
+	/** FX-18: the hallowed burn ignores armour. */
+	@Test
+	void theHallowedBurnBypassesArmour() {
+		assertTrue(ResourceReader.text("data/minecraft/tags/damage_type/bypasses_armor.json").contains("\"hemomancy:hallowed_burn\""));
 	}
 }

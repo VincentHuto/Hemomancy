@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 /**
  * Bottled white humor drained from the Pallid Retort.
@@ -128,7 +129,9 @@ public class PaleHumorFlaskItem extends Item {
         }
 
         if (!level.isClientSide) {
-            level.setBlock(placePos, BlockInit.WHITE_HUMOR_BLOCK.get().defaultBlockState(), 3);
+            if (!PlayerBlockEdits.place(player, placePos, BlockInit.WHITE_HUMOR_BLOCK.get().defaultBlockState(), 3)) {
+                return InteractionResult.FAIL;
+            }
             if (level instanceof ServerLevel serverLevel) {
                 WhiteHumorPoolSavedData.get(serverLevel).resetSource(placePos);
             }

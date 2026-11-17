@@ -48,20 +48,19 @@ final class BloodlineSubcommand {
 			BloodVolumeEvents.syncVolume(player, volume);
 			BloodlineDisbandHelper.burnBloodlineLedgers(player, localLine);
 			source.sendFailure(HemoText.translatable("commands.hemomancy.bloodline.was_already_missing_from_world_data",
-					localLine.getName(),
+					localLine.displayName(),
 					player.getName().getString()));
 			return 0;
 		}
 
-		int playerCount = globalLine.getPlayerUUIDS().size();
-		int npcCount = globalLine.getNpcMemberCount();
-		BloodlineDisbandHelper.removeOwnedFanes(source.getServer(), globalLine);
-		savedData.disbandBloodline(globalLine.getBloodlineUUID());
-		int onlineReset = BloodlineDisbandHelper.resetOnlineMembers(source.getServer(), globalLine,
+		var dissolved = BloodlineMembership.dissolve(source.getServer(), globalLine, BloodlineMembership.Dissolution.COMMAND, player,
 				member -> Component.translatable("commands.hemomancy.bloodline.your_bloodline_has_been_disbanded").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		int playerCount = dissolved.players();
+		int npcCount = dissolved.npcs();
+		int onlineReset = dissolved.onlineReset();
 
 		source.sendSuccess(() -> Component.translatable("commands.hemomancy.bloodline.disbanded_for",
-				Component.literal(globalLine.getName()).withStyle(ChatFormatting.DARK_RED),
+				globalLine.displayName().copy().withStyle(ChatFormatting.DARK_RED),
 				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
 				HemoText.translatable("commands.hemomancy.bloodline.player_npc_online_reset",
 		playerCount,

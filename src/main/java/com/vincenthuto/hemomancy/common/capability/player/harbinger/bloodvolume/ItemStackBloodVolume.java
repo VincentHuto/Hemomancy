@@ -13,7 +13,6 @@ public class ItemStackBloodVolume implements IBloodVolume {
 
 	private final ItemStack stack;
 	private final double defaultMaxVolume;
-	private double bloodDebt;
 	private boolean trickleEnabled;
 	private double trickleRate = 0.5;
 	private boolean autoDrawEnabled;
@@ -152,33 +151,6 @@ public class ItemStackBloodVolume implements IBloodVolume {
 	@Override
 	public boolean wouldOverstrain(double points) {
 		return getBloodVolume() - points < 0;
-	}
-
-	@Override
-	public void addDamage(double amount) {
-		this.bloodDebt += amount;
-	}
-
-	@Override
-	public void addBloodSpend(double amount) {
-		this.bloodDebt += amount;
-	}
-
-	@Override
-	public double consumeDebt() {
-		double debt = this.bloodDebt;
-		this.bloodDebt = 0;
-		return debt;
-	}
-
-	@Override
-	public double getBloodDebt() {
-		return this.bloodDebt;
-	}
-
-	@Override
-	public void resetBloodDebt() {
-		this.bloodDebt = 0;
 	}
 
 	@Override

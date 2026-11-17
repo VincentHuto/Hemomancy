@@ -32,8 +32,8 @@ public class VascularSystemEvents {	/**
 	 *   <li>Explosion  random section</li>
 	 *   <li>Melee/generic  random section weighted toward body/arms</li>
 	 * </ul>
+	 * Consumer stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}: the strain follows what lands.
 	 */
-	@SubscribeEvent
 	public static void onPlayerDamaged(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
@@ -45,7 +45,7 @@ public class VascularSystemEvents {	/**
 		var vascular = HemoCapabilityAccess.getVascularSystem(player);
 		boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification();
 		float strain = HematicFortificationRules.adjustedStrain(
-				(float) (event.getNewDamage() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue()),
+				(float) (com.vincenthuto.hemomancy.common.damage.DamageStages.landing(player, event) * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue()),
 				fortified);
 		EnumVeinSections section = determineSectionFromDamage(event, player);
 

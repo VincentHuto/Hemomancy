@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.loot;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class BloodEconomyLootDataTest {
 	private static final Path DATA_ROOT = Path.of("src/main/resources/data");
@@ -10,7 +13,8 @@ public final class BloodEconomyLootDataTest {
 	private BloodEconomyLootDataTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String globalModifiers = read(DATA_ROOT.resolve("neoforge/loot_modifiers/global_loot_modifiers.json"));
 		assertContains("global modifiers include venous stone blood rocks", globalModifiers,
 				"hemomancy:blood_rocks_from_venous_stone");
@@ -34,15 +38,5 @@ public final class BloodEconomyLootDataTest {
 		String jugCandidates = read(DATA_ROOT.resolve("hemomancy/tags/entity_type/bloody_jug_drop_candidates.json"));
 		assertContains("thirsters can drop bloody jugs", jugCandidates, "hemomancy:thirster");
 		assertContains("blood drunk puppeteers can drop bloody jugs", jugCandidates, "hemomancy:blood_drunk_puppeteer");
-	}
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

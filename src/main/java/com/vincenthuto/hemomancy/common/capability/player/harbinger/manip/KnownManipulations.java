@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
@@ -23,6 +24,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	List<VeinLocation> veinList = new ArrayList<>();
 	VeinLocation selectedVein = VeinLocation.BLANK;
 	String activeAvatarForm = "";
+	Verb activeVerb = Verb.PROJECT;
 	List<String> equippedManipNames = new ArrayList<>();
 	List<String> activePassiveNames = new ArrayList<>();
 	List<ManipulationLoadout> loadouts = new ArrayList<>();
@@ -108,25 +110,27 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	}
 
+	/** Never null and never throws: an unreadable or missing selection falls back to the first known form, else BLANK. */
 	@Override
 	public BloodManipulation getSelectedManip() {
 		if (selectedManip == null) {
-			selectedManip = getManipList().get(0);
+			selectedManip = knownManips.keySet().stream().filter(java.util.Objects::nonNull).findFirst()
+					.orElse(BloodManipulation.BLANK);
 			markSyncDirty();
 		}
 		return selectedManip;
-
 	}
 
 	@Override
 	public ManipLevel getSelectedManipLevel() {
-		return knownManips.get(selectedManip);
+		return knownManips.get(getSelectedManip());
 	}
 
 	@Override
 	public VeinLocation getSelectedVein() {
 		if (selectedVein == null) {
-			selectedVein = getVeinList().get(0);
+			selectedVein = getVeinList().stream().filter(java.util.Objects::nonNull).findFirst()
+					.orElse(VeinLocation.BLANK);
 			markSyncDirty();
 		}
 		return selectedVein;
@@ -176,6 +180,18 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		String form = manipulationId != null ? manipulationId : "";
 		if (!form.equals(activeAvatarForm)) markSyncDirty();
 		this.activeAvatarForm = form;
+	}
+
+	@Override
+	public Verb getActiveVerb() {
+		return activeVerb;
+	}
+
+	@Override
+	public void setActiveVerb(Verb verb) {
+		Verb next = verb != null ? verb : Verb.PROJECT;
+		if (next != activeVerb) markSyncDirty();
+		this.activeVerb = next;
 	}
 
 	@Override
@@ -239,6 +255,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		this.selectedManip = old.getSelectedManip();
 		this.veinList = old.getVeinList();
 		this.activeAvatarForm = old.getActiveAvatarForm();
+		this.activeVerb = old.getActiveVerb();
 		this.equippedManipNames = new ArrayList<>(old.getEquippedManipNames());
 		this.activePassiveNames = new ArrayList<>(old.getEquippedManipNames().stream()
 				.filter(old::isPassiveActive).toList());
@@ -443,6 +460,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 		CompoundTag avatarState = new CompoundTag();
 		avatarState.putString("avatarForm", getActiveAvatarForm());
+		avatarState.putString("activeVerb", activeVerb.name());
 		avatarState.put("lastVeinMineStart", NbtUtils.writeBlockPos(getLastVeinMineStart()));
 		list.add(avatarState);
 
@@ -489,18 +507,19 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 			if (parsedNbt != null && !parsedNbt.isEmpty()) {
 				if (parsedNbt.contains("Selected")) {
 					BloodManipulation selectedManip = BloodManipulation.deserialize(parsedNbt.getCompound("Selected"));
-					setSelectedManip(selectedManip);
+					setSelectedManip(selectedManip != null ? selectedManip : BloodManipulation.BLANK);
 				}
 				if (parsedNbt.contains("SelectedVein")) {
 					VeinLocation selectedVein = VeinLocation.deserializeToLoc(parsedNbt.getCompound("SelectedVein"));
-					setSelectedVein(selectedVein);
+					setSelectedVein(selectedVein != null ? selectedVein : VeinLocation.BLANK);
 				}
 				if (parsedNbt.contains("Manip" + (i - 1))) {
 					CompoundTag manipNbt = parsedNbt.getCompound("Manip" + (i - 1));
 					CompoundTag levelNbt = parsedNbt.getCompound("Level" + (i - 1));
 					BloodManipulation bloodManip = BloodManipulation.deserialize(manipNbt);
 					ManipLevel level = ManipLevel.deserialize(levelNbt);
-					map.put(bloodManip, level);
+					// An entry this build cannot read (an older save's keys) is dropped, never kept as a null key.
+					if (bloodManip != null && level != null) map.put(bloodManip, level);
 				}
 				if (parsedNbt.contains("veinCount")) {
 					veinCount = parsedNbt.getInt("veinCount");
@@ -508,11 +527,14 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 				for (int j = 0; j < veinCount; j++) {
 					if (parsedNbt.contains("Vein" + j)) {
 						VeinLocation vein = VeinLocation.deserializeToLoc(parsedNbt.getCompound("Vein" + j));
-						veinList.add(vein);
+						if (vein != null) veinList.add(vein);
 					}
 				}
 				if (parsedNbt.contains("avatarForm", Tag.TAG_STRING)) {
 					savedAvatarForm = parsedNbt.getString("avatarForm");
+				}
+				if (parsedNbt.contains("activeVerb", Tag.TAG_STRING)) {
+					setActiveVerb(Verb.byName(parsedNbt.getString("activeVerb")));
 				}
 				if (parsedNbt.contains("lastVeinMineStart")) {
 					setLastVeinMineStart(NbtUtils.readBlockPos(parsedNbt, "lastVeinMineStart").orElse(BlockPos.ZERO));

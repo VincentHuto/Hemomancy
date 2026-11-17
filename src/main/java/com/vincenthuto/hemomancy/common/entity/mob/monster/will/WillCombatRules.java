@@ -20,8 +20,8 @@ public final class WillCombatRules {
 			EnumBloodTemper.FLAMMEUS,
 			ids("crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion"),
 			EnumBloodTemper.DUCTILIS, ids("deadly_gaze", "hemolymphal_pulse", "activation_potential"),
-			EnumBloodTemper.LUX, ids("hematic_flare", "prismatic_reproof", "hematic_beacon", "unclosing_eye"),
-			EnumBloodTemper.MORTEM, ids("hemorrhage", "exsanguinate", "bloom_of_rot"),
+			EnumBloodTemper.LUX, ids("hematic_flare", "prismatic_reproof", "hematic_beacon"),
+			EnumBloodTemper.MORTEM, ids("hemorrhage", "exsanguinate", "grave_debt"),
 			EnumBloodTemper.CONGEATIO, ids("cryogenic_pulse", "glacial_grasp", "glacial_rampart"),
 			EnumBloodTemper.FERRIC, ids("blood_needle", "prismatic_reproof", "iron_retort", "pyretic_forge"),
 			EnumBloodTemper.TENEBRIS, ids("void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"));
@@ -46,8 +46,8 @@ public final class WillCombatRules {
 
 	public static Stats sentStats(int playerDegree, double playerMaxHealth) {
 		int degree = Math.max(6, playerDegree);
-		double health = Math.max(28.0D, playerMaxHealth * 1.2D + (degree - 6) * 8.0D);
-		double damage = 6.0D + Math.max(0, degree - 6) * 1.25D;
+		double health = Math.max(60.0D, playerMaxHealth * 3.0D + (degree - 6) * 30.0D);
+		double damage = 8.0D + Math.max(0, degree - 6) * 2.0D;
 		double speed = 0.29D + Math.min(0.04D, Math.max(0, degree - 6) * 0.01D);
 		return new Stats(health, damage, speed);
 	}

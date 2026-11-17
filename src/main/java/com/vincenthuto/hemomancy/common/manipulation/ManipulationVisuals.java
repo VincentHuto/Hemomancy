@@ -12,25 +12,45 @@ public final class ManipulationVisuals {
 
     public enum Form {
         VERDICT, GLASS, THREAD, CROWN, SWORD_IMPACT, WELL, STILLNESS, BEACON,
-        PHOENIX, BELL, DRAIN, SUTURE, WARD, CHOIR, FURNACE, MARK, EYE, WOUND,
-        FORGE, MENDING, GROWTH, UPDRAFT, TELEPORT, BONE, ICE, FLARE, DEBT, VEIL,
-        VERDICT_CHARGE, GLASS_CHARGE, CROWN_CHARGE, BELL_CHARGE, THREAD_CHARGE, ORE, HOUR,
-        BLOOM, CLOUD, MAGNET, RETORT, HUNGER, GRAVE, COMMAND, CIRCUIT, CAUTERIZE, RUSH, IRON_HEART, BLACK_HEART, PHOENIX_READY, RUPTURE,
+        PHOENIX, BELL, DRAIN, SUTURE, WARD, CHOIR, FURNACE, MARK, WOUND,
+        FORGE, MENDING, GROWTH, UPDRAFT, TELEPORT, BONE, ICE, FLARE, VEIL,
+        VERDICT_CHARGE, GLASS_CHARGE, CROWN_CHARGE, BELL_CHARGE, THREAD_CHARGE, ORE,
+        CLOUD, MAGNET, RETORT, HUNGER, GRAVE, COMMAND, CIRCUIT, CAUTERIZE, RUSH, IRON_HEART, BLACK_HEART, PHOENIX_READY, RUPTURE,
         NEEDLE_CHARGE, FAN_CHARGE, LANCE_CHARGE, MORTAR_CHARGE, GAZE_CHARGE,
         ANEURYSM_CHARGE, ICE_CHARGE, WELL_CHARGE, LIGHTNING_CHARGE, IRON_CHARGE,
         LUX_MENDING, UMBRA_SLASH, LUX_MIST, UMBRA_MIST, UMBRA_ARRIVAL, WHITE_VERDICT,
         IGNITION, CRYOGENIC_PULSE, CRUOR_FORM, CRUOR_BREAK, FROZEN_VEINS, RIMEBOUND,
-        FLAME_CONJURE, FROST_CONJURE, HOUR_BREAK, CRUOR_SURFACE, FROST_ADVANCE,
+        FLAME_CONJURE, FROST_CONJURE, CRUOR_SURFACE, FROST_ADVANCE,
         FERRIC_IMPACT, FERRIC_CONJURE, NERVE_PULSE, NERVE_HIT, PARALYSIS,
         ANIMUS_IMPACT, ANIMUS_CONJURE, MORTEM_CONJURE, MORTEM_BURST, GRAVE_REFUND, HUNGER_COLLAPSE,
-        BLACKHEART_RUPTURE, TITHE_RETURN, TITHE_COLLECT, ROT_INFECTION, COMMUNION, MARIONETTE_TETHER, MARIONETTE_ORDER,
+        BLACKHEART_RUPTURE, ROT_INFECTION, COMMUNION, MARIONETTE_TETHER, MARIONETTE_ORDER,
         BOMBARDIER_SWEEP, MNEMONIC_REPLAY, RIPOSTE, RIPOSTE_STRIKE, BLOOD_SPLASH, GAZE_GRIP, GAZE_SLAM,
         ANEURYSM_RUPTURE, SOVEREIGN_LASH,
         // Encoded by ordinal: append new forms here.
         PUPPET_DESCEND, PUPPET_UNSPOOL, UMBRAL_REND, LODESTONE_COLLAPSE,
         SEARING_LASH, CRUOR_JAVELIN, RADIANT_WAKE, CONTAGION, NERVE_COMMAND, LODESTONE_FIELD,
         VESPER_RECALL, CAST_IMPACT, WEAPON_CONJURE, CELL_HAND, AVATAR_MANIFEST,
-        SERAPHAE_RELIQUARY, HEMORATH_RELIQUARY, PUTRICIEL_OFFERING, VELORUM_RIME
+        SERAPHAE_RELIQUARY, HEMORATH_RELIQUARY, PUTRICIEL_OFFERING, VELORUM_RIME,
+        // Core-loop Track 7: chum blooming across a water surface; a drop falling from a fed scab spike.
+        CHUM_BLOOM, SCAB_DRIP,
+        // Core-loop Track 12: a strand held out of the hand (keyed to the caster, refreshed each pulse) and its accents.
+        STRAND, STRAND_ACCENT,
+        // Core-loop round two P8: Blood Eclipse's field of dark, keyed to its centre and resent while it hangs.
+        UMBRAL_FIELD,
+        // D-1 Saint gifts. Crimson Tithe: a chain keyed to the chained body (count carries the caster's id), the vessel
+        // in the caster's chest (radius the fill, count 1 + iron, + 8 while Brimming) and the Vessel Empties' lanes.
+        TITHE_CHAIN, TITHE_VESSEL, TITHE_RELEASE,
+        // Unclosing Eye: the aperture opening over the charge, the swept beam (to its end), the aperture's Lapse and
+        // slit (count 1 or 2) and the growth on a struck body (radius the growth, count the stage, 9 for a Burst).
+        EYE_CHARGE, EYE_BEAM, EYE_APERTURE, EYE_GROWTH,
+        // Bloom of Rot: the field keyed to its caster (to the sown centre, radius the Kindling 0 to 1), the Ignition's
+        // ring, char and ash at the centre (radius the field's reach, count 2 at full Kindling) and the colonisation on a
+        // body (radius the colonisation 0 to 1, count 1 + its stage).
+        BLOOM_FIELD, BLOOM_IGNITION, BLOOM_COLONY,
+        // Endless Hour: the planted field keyed to its caster (to the planted point; count 1 holding, 2 closing, 3 broken
+        // by the Bow), a body set in its own cruor (radius the body's height; count 1 a preservation, 2 the caster's own
+        // set) and the stillness climbing a body (radius the stillness 0 to 1).
+        HOUR_FIELD, HOUR_PRESERVE, HOUR_STILL
     }
 
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks) {
@@ -95,6 +115,7 @@ public final class ManipulationVisuals {
             case "eclipse_well" -> Form.WELL_CHARGE;
             case "activation_potential", "synaptic_storm" -> Form.LIGHTNING_CHARGE;
             case "ironhearted", "lodestone_collapse" -> Form.IRON_CHARGE;
+            case "unclosing_eye" -> Form.EYE_CHARGE;
             default -> null;
         };
     }

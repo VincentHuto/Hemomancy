@@ -109,7 +109,7 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 
 	/**
 	 * The tomb as a Saint's trial leaves it: {@code saint} back inside, dormant, lid closed, unconsecrated, no
-	 * offerings, nothing drawn and no cooldown.
+	 * offerings and no cooldown. A peaceful sample once given stays given: a tomb yields one in its life (NQ-08-19).
 	 */
 	public void restoreDormant(EnumSaintType saint) {
 		this.saintType = saint;
@@ -119,7 +119,6 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 		this.isOpen = false;
 		this.isConsecrated = false;
 		this.offeringBloodVolume = 0;
-		this.sampleYielded = false;
 		BlockEntitySync.markAndSync(this);
 	}
 

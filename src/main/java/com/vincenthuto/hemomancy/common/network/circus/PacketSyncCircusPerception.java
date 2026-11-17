@@ -5,7 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record PacketSyncCircusPerception(int acclimation, boolean active) implements CustomPacketPayload {
+public record PacketSyncCircusPerception(int acclimation, boolean active, boolean ruined) implements CustomPacketPayload {
 	public static final Type<PacketSyncCircusPerception> TYPE = new Type<>(Hemomancy.rloc("sync_circus_perception"));
 	public static final StreamCodec<FriendlyByteBuf, PacketSyncCircusPerception> STREAM_CODEC =
 			StreamCodec.of(PacketSyncCircusPerception::encode, PacketSyncCircusPerception::decode);
@@ -13,10 +13,11 @@ public record PacketSyncCircusPerception(int acclimation, boolean active) implem
 	private static void encode(FriendlyByteBuf buffer, PacketSyncCircusPerception packet) {
 		buffer.writeVarInt(packet.acclimation);
 		buffer.writeBoolean(packet.active);
+		buffer.writeBoolean(packet.ruined);
 	}
 
 	private static PacketSyncCircusPerception decode(FriendlyByteBuf buffer) {
-		return new PacketSyncCircusPerception(buffer.readVarInt(), buffer.readBoolean());
+		return new PacketSyncCircusPerception(buffer.readVarInt(), buffer.readBoolean(), buffer.readBoolean());
 	}
 
 	@Override

@@ -12,11 +12,11 @@ class IceFishResourcesTest {
         return JsonParser.parseString(Files.readString(ROOT.resolve(path))).getAsJsonObject();
     }
 
-    @Test void coldFishSharesHemolymphAndHasTemperFreeAquaticBlood() throws Exception {
+    @Test void coldFishSharesHemolymphAndHasCongeatioAquaticBlood() throws Exception {
         assertEquals(json("data/hemomancy/loot_table/entities/hemolymphopoda.json"),
                 json("data/hemomancy/loot_table/entities/ice_fish.json"));
         var profile = json("data/hemomancy/blood_profiles/ice_fish.json");
-        assertTrue(profile.getAsJsonArray("tempers").isEmpty());
+        assertEquals(List.of("congeatio"), profile.getAsJsonArray("tempers").asList().stream().map(v -> v.getAsString()).toList());
         assertEquals("hemomancy:blood_properties/aquatic", profile.getAsJsonArray("properties").get(0).getAsString());
         assertFalse(profile.get("requires_living_syringe").getAsBoolean());
         for (String path : List.of("data/hemomancy/tags/entity_type/specimen_jar_capturable.json",

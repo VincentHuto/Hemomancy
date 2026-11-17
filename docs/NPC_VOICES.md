@@ -10,6 +10,13 @@ habits were built from the lore, the October `en_us.json` and the committed text
 stays the authority for what a character knows and believes (`docs/LORE_REFERENCE.md`). This page only decides how
 they say it.
 
+Status on 2026-11-14: the owner's answers of 2026-11-13 settled all but one of the numbered decisions at the end of
+this page. UN-20 (decision 4) was answered on 2026-11-14: the choice stays with the player. Two are ruled and wait for a build or a later pass
+(10 and 11).
+The line work still owed, speaker by speaker, is listed in
+[owner_answers/16-npc-dialogue-canon-and-liber.md](owner_answers/16-npc-dialogue-canon-and-liber.md) and tracked in
+[OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
+
 To rewrite from intent rather than from the old wording, turn on the client option `debug.dialogueBriefMode`: every line then shows what it is about and its tone instead of its text (see [NPC_DIALOGUE_AND_TRADE.md](NPC_DIALOGUE_AND_TRADE.md), Brief mode).
 
 ## Why this exists
@@ -30,6 +37,10 @@ is the model.
   is. A rewrite never adds a mechanic, a fact or a piece of lore that isn't in the line or the lore reference.
 - **Canonical terms stay.** Hematic Order, Sanguine Brotherhood, Crimson Lodge, Lethean, Noetic and Thelemic Memory,
   the temper and enzyme names (which intentionally don't mirror each other).
+- **Core-loop words (2026-11-10).** Projection and Absorption are the two verbs, set by the verb key, never selected.
+  A memory that changes a verb is a Sculpting; Temper is the spendable pool and Temperament the profile; blood in a
+  machine is fresh, then clotted, and clot comes out as Sanguine Formations. The Fungal Spine's trip to the Gardens is a
+  crossing in anything a player reads ("projection" stays the lore's word for what the Gardens are).
 - **Dialogue formatting.** "the fifth Degree" or "Degree 5" in speech, never "D5". Millilitres as `mL` with a space.
   Straight quotes, no em or en dashes, no added `...`. Keep `§` colour codes, `%s` placeholders and bracketed stage
   directions working.
@@ -163,7 +174,9 @@ keeps the Lore §5.2 quote: "Heart was never mine to keep, only to give... Walk 
 go now where blood returns to silence." The said text of `hermit_accept_guidance`, `hermit_heart_offered` and
 `hermit_archon_wisdom` is in `src/gameTest/resources/dialogue/route-fingerprints.txt`. Each player needs their own
 blessing (`TempleOathRules.canClaimHeart`). Initiation belongs to the Vicar. Trade keys: `hemomancy.trade.hermit.*`;
-rapport: `hemomancy.dialogue.rapport.hermit.<slug>`.
+rapport: `hemomancy.dialogue.rapport.hermit.<slug>`. Core-loop lessons (round two P10): `hemomancy.hermit.craft.*`, two lessons (`verbs`, `answer`) offered only to blood that is awake, at the fourth Degree or below; they teach from his own body and must agree with the Liber pages The Two Verbs and The World Answers.
+
+**At Silentium (UN-19, built 2026-11-15).** One line of his own, `hermit.silentium.line2`, in place of the Archon greeting's second line; the rest is the Archon tree. He names the title, says Hermits were given nothing under it, and hears how far the blood has come without a word for it. He never guesses what a Silentium is.
 
 **Diagnostics.** See the contrast map. These numbers are measured afterwards to check voices stay apart and are not a
 target to write to.
@@ -207,13 +220,16 @@ destination. When the record is silent he says so and stops.
 `vicar.blood_crafting.projection`, `vicar.neophyte.projection_hint`, `vicar.neophyte.degree_hint` and
 `vicar.neophyte.first_bloodcraft_reward.unready` must contain "cauldron"; `projection_hint` must contain "Venous Stone".
 The Rooted Vein lines together must contain "light", "Blood Projection", "four anchors", "daemon", "Blood Absorption" and
-"above the Focus clear". `vicar.votary.degree_hint` must name the Alchemist, Concentrated Blood and sleep.
+"above the Focus clear". `vicar.votary.degree_hint` must name the Alchemist, Concentrated Blood and sleep. `vicar.initiate.degree_hint` must name the Loom and the Blood Shot weave, and `vicar.adept.degree_hint` the Vein-Mason and the Mason's Effigy (PT-7, 2026-11-13: the hints name the real gate).
 `vicar.hermit_road.intro.line2`, `.report.line2` and `.report.prompt` must not promise a ledger
 (`PlaythroughNeophyteGameTests.LEDGER_PROMISE`). `vicar.illuminatus.monolith_rumor.line2` keeps "half a story" (open
 decision 2). The said text of `vicar_hermit_road_unproven`, `vicar_first_bloodcraft_reward_unready`,
 `vicar_masons_respite_map`, `vicar_masons_respite_unready` and `vicar.voyager_introduction.bearing_searching` is in
 `src/gameTest/resources/dialogue/route-fingerprints.txt`. Trade keys: `hemomancy.trade.vicar.*`; rapport:
-`hemomancy.dialogue.rapport.vicar.<slug>`.
+`hemomancy.dialogue.rapport.vicar.<slug>`. Core-loop lessons (round two P10): `hemomancy.vicar.craft.*`, four lessons (`verbs`, `day`, `answers`, `keeping`), each with at least one question that wants an answer; they must agree with `vicar.neophyte.absorption_hint.fresh` and `vicar.votary.rooted_vein.recovery` (a hundred and twenty-five, however far) without repeating them.
+Bloodlines (B22, 2026-11-15): `vicar.leave_bloodline.line1` and `.line2` state what leaving costs before he strikes the name (ledgers crumble, the Throne bond ends, the pool stays, coming back needs the Progenitor) and end on one question. `vicar.covenant.bind_throne` says "your line's Fane"; `vicar.covenant.line_has_no_fane` sends a member to the Progenitor; `vicar.covenant.found_fane` ends with the full-pool clause (NQ-11-13).
+
+**At Silentium (PT-83, built 2026-11-15).** His own tree (`vicar.silentium.*`). He enters the name under a title the record leaves empty, repeats what the oldest accounts say as hearsay (a Silentium no longer hears the voice the Order listens for, and the Order never reached one again), says the record stops there, and asks the player the question he cannot answer. No promise of anything new.
 
 **Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
@@ -251,19 +267,21 @@ gets one clause and a name. A refusal states what is missing.
 - Cut (October `apotheos.reflection`, facing an Apotheos): "You are the summit. I thought I was building machines. I was
   building toward you." A grand statement from someone whose whole way of thinking is measurement.
 
-**Fixed text.** "Umbral turns Night Vision into Invisibility" (`enzyme_uses.brewing`) and "600 blood over 2,400 ticks"
-(`enzyme_uses.culture`). `adept.crimson_vessel`, `illuminatus.ashen_vessel` and `sanctified.curved_horn` contain
+**Fixed text.** "Umbral turns Night Vision into Invisibility" (`enzyme_uses.brewing`) and "150 blood over 2,400 ticks"
+(`enzyme_uses.culture`, CB-13 since 2026-11-15). `adept.crimson_vessel`, `illuminatus.ashen_vessel` and `sanctified.curved_horn` contain
 "Bastion". `gourd_use.fill` and `.withdraw` together keep "blood-output slot", "Scarlet Vanity", "Use the gourd in your
 hand", "Toggle Gourd Open/Closed", "active" and "cork". The Pallid Vessel briefing keeps "Dried Gourd", "four anchors",
 "1,000 mL" and "blood-output slot" and never says "Somatic Loom". `initiate.loom_raising` keeps "Sanguine Formation".
 `item_inquiry.sanguine_formation.line1` keeps "cauldron". `item_inquiry.scar_blank.line2` keeps "Blood Absorption", never
 "sneak-use" or "wear the scar". `phlegethontic_commission.task` keeps "sneak-use", "rack", "Centrifuge", "remove",
-"without spinning" and "main hand". `centrifuge.fractionating.ready` keeps "eight anchors". No Morphling inquiry names a
+"without spinning" and "either hand" (PT-41, 2026-11-15). `centrifuge.fractionating.ready` keeps "eight anchors". No Morphling inquiry names a
 Court house or "Court". "Final synthesis" is the lore's phrase. The said text of `alchemist_bestiary_unready`,
 `alchemist_bestiary_missing_specimen`, `alchemist_red_taxonomy_unready`, `alchemist_red_taxonomy_missing_sample`,
 `deep_dark_commission.bearing_missing`, `phlegethontic_commission.bearing` and `pallid_vessel.recorded.briefed` is in
 `src/gameTest/resources/dialogue/route-fingerprints.txt`. Trade keys: `hemomancy.trade.alchemist.*`; rapport:
-`hemomancy.dialogue.rapport.alchemist.<slug>`.
+`hemomancy.dialogue.rapport.alchemist.<slug>`. Core-loop lessons (round two P10): `hemomancy.alchemist.craft.*`, five lessons (`living_blood`, `fed`, `temper`, `humours`, `beds`); the `temper.catalysts` branch must agree with `enzyme_uses.temper` (ten, five, three; the smallest that covers the shortfall is spent, the off hand wins a tie) without repeating it. `CoreLoopLessonNumbersTest` ties the numbers in `craft.temper.line2`, `.fill.line2` and `.dry.line2` to `TemperRules`.
+
+**At Silentium (PT-83, built 2026-11-15).** Their own tree (`alchemist.silentium.*`). Their reading of a Silentium comes back as an Archon's: whatever changed is not in the glass. They name Vesper's memory as a memory in the blood and send what it means to the Mnemonist. The stories are stories to them.
 
 **Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
@@ -299,15 +317,18 @@ Physiology goes to the Alchemist and scars to the Vein-Mason. No questions: they
   where the player needs to know what to bring.
 
 **Fixed text.** "Mneme keeps. Nous knows. Thelēma acts." verbatim (`mnemonic_doctrine.line1`).
-`chamber.guided.unavailable` contains "item transfer" and not "empty hands". `woven_vessel.recipe.*` keeps "four Sanguine
-Formations", "four Blood Stained Stones", "Chicken blood can yield Neurotic Enzyme" and "some spins yield Vivacious
+`chamber.guided.unavailable` contains "item transfer" and not "empty hands". `chamber.guided.unavailable` says "crossing", not "projection", for the Spine's trip (core-loop Track 11: Projection is
+the verb). `woven_vessel.recipe.*` keeps "a Sanguine
+Formation and redstone", "four Blood Stained Stones", "Chicken blood can yield Neurotic Enzyme" and "some spins yield Vivacious
 instead". `item_inquiry.scar_pattern.loadout` contains "Blood Absorption" and not "sneak-use". No item inquiry says "wear
 the scar". `dialogue.ending.mnemonist.undecided` must not contain spine, vesper, refusal, apotheosis, return, choice or
 "either road". The said text of `mnemonist_starter_granted`, `mnemonist_starter_unavailable`,
 `mnemonist_woven_vessel_unready`, `mnemonist_woven_vessel_complete`, `mnemonist_circus_waybill`,
 `vagrant_mind_inquiry.bearing_missing` and `chamber.guided.unavailable` is in
 `src/gameTest/resources/dialogue/route-fingerprints.txt`. Trade keys: `hemomancy.trade.mnemonist.*`; rapport:
-`hemomancy.dialogue.rapport.mnemonist.<slug>`.
+`hemomancy.dialogue.rapport.mnemonist.<slug>`. Core-loop lessons (round two P10): `hemomancy.mnemonist.craft.*`, three lessons (`sculptings`, `strands`, `land`); `CoreLoopLessonsTest` pins that no lesson line asks a question; they must agree with `slots.sculpting` without repeating it.
+
+**At Silentium (PT-83, built 2026-11-15).** The woven tree with a new greeting and one lore card (`mnemonist.silentium.*`). They write down what they saw proof of (the refusal, Vesper's fall, the memory drawn in), hear every indexed memory still there, and leave out what they cannot hear. Still no questions (`SilentiumGreetingTreesTest`).
 
 **Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
@@ -342,12 +363,15 @@ front of him. Approval is handing over the fitting. He doesn't explain why metal
 - Cut (October `armature.line2`, teaching the frame): "Hold still. Let the metal learn you." A closing flourish on what
   should be a clear instruction.
 
-**Fixed text.** `living_staff.use` contains "Select Blood Absorption or Blood Projection" and "Conjure Staff".
+**Fixed text.** `living_staff.use` contains "verb key", "Projection", "Absorption" and "Conjure Staff" (core-loop
+Track 1: the verb key, not a selection, sets what the Staff channels; `EquipmentLessonDialogueTest`).
 `identity.line1`, `armature.line1` and `grafts.line1` must exist. `dialogue.ending.artificer.undecided` must not contain
 spine, vesper, refusal, apotheosis, return, choice or "either road". The said text of `artificer_consecration_kit_unready`
 and the five `*_fitting_unready` lines is in `src/gameTest/resources/dialogue/route-fingerprints.txt`. The Archon
 playthrough reads `assignment.weight_of_frame.cornerstone` for "cornerstone". Trade keys: `hemomancy.trade.artificer.*`;
-rapport: `hemomancy.dialogue.rapport.artificer.<slug>`.
+rapport: `hemomancy.dialogue.rapport.artificer.<slug>`. Core-loop lessons (round two P10): `hemomancy.artificer.craft.*`, four lessons (`hot_runs`, `staff`, `strand_line`, `climb`); `strand_line` teaches the lash only (NQ-16-1), and `CoreLoopLessonNumbersTest` ties the ring thresholds, the twin's price and the 6 mL root to their constants; they must agree with `living_staff.use`, `grafts.rings` and `item_inquiry.hematic_cleats` without repeating them, and they send memory questions to the Mnemonist by name.
+
+**At Silentium (PT-83, built 2026-11-15).** The workshop tree with a Silentium greeting (`artificer.silentium.*`) and the one place the Silent Archon vestments are offered (`artificer.silent_vestments.*`, CD-10): a Blood Lust piece of any lineage at a Monolithic Armature, one Monolith Imbued Cloth and 2,000 mL a piece, written down as the lineage if it is the first late upgrade. He knows Silentium from stories and says so.
 
 **Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
@@ -391,7 +415,7 @@ Station" and "empty, lit Iron Brazier". No inquiry says "wear the scar". The Bra
 use, Blood Projection ignition, held Blood Absorption; sneaking retrieves. Their set lines are "There. The wound has
 become architecture." and "The current changed because you changed its banks." The said text of `vein_mason_unready`,
 `vein_mason_first_lesson` and `vein_mason_continuation_reward` is in `src/gameTest/resources/dialogue/route-fingerprints.txt`.
-Trade keys: `hemomancy.trade.cicatrix_anchorite.*`; rapport: `hemomancy.dialogue.rapport.cicatrix_anchorite.<slug>`.
+Trade keys: `hemomancy.trade.cicatrix_anchorite.*`; rapport: `hemomancy.dialogue.rapport.cicatrix_anchorite.<slug>`. Core-loop lessons (round two P10): `hemomancy.anchorite.craft.*`, three lessons (`ground_marks`, `carried`, `walls`) from the fourth Degree; `CoreLoopLessonsTest` pins that no lesson line has a contraction; `walls.scars` must agree with `inquiry.pattern.temper` (a quarter less per tier) and `carried.price` with the Vicar's flat hundred and twenty-five.
 
 **Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
@@ -424,7 +448,7 @@ Directions to places as tutorial text ("Seek the Sainted Mausoleums...") where a
 **Example.**
 - The item prompt (`monolith.item_hint`): "Bring it close. The stone weighs what you carry, and says little."
 
-**Trade keys.** `hemomancy.trade.monolith.<card>.title` / `.line` for `measure`, `weight`, `deep`; `hemomancy.trade.monolith.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.monolith.<slug>` (`.teaser`, `.lineN`) for `the_reading`, `where_it_goes`. Rapport lines show at every Degree, so they use no self pronoun. Counsel is `hemomancy.monolith.counsel.<step>`; lore answers are `hemomancy.monolith.lore.<slug>.lineN`.
+**Trade keys.** `hemomancy.trade.monolith.<card>.title` / `.line` for `measure`, `weight`, `deep`; `hemomancy.trade.monolith.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.monolith.<slug>` (`.teaser`, `.lineN`) for `the_reading`, `where_it_goes`. Rapport lines show at every Degree, so they use no self pronoun. Counsel is `hemomancy.monolith.counsel.<step>`; lore answers are `hemomancy.monolith.lore.<slug>.lineN`. `counsel.bind_throne` says "your line's Fane" and `counsel.line_has_no_fane` (B22) is three short sentences with no contractions.
 
 ---
 
@@ -527,7 +551,9 @@ sells. He never apologizes, and tells the player to go and count the horses.
 **Fixed text.** The keys `ringmaster.silent`, `ringmaster.line.succession`, `ringmaster.line.liberation`,
 `ringmaster.warning.succession` and `finale.complete.*` are named in `PlaythroughCrimsonTroupeGameTests`. Canon: "learn
 every act, hold every eye, then take the hat" (Lore §6.3b) in `line.succession`. Trade keys:
-`hemomancy.trade.circus_ringmaster.*`; rapport: `hemomancy.dialogue.rapport.circus_ringmaster.<slug>`.
+`hemomancy.trade.circus_ringmaster.*`; rapport: `hemomancy.dialogue.rapport.circus_ringmaster.<slug>`. The yield line
+`hemomancy.circus.ringmaster.yield` (2026-11-15, B31) is the "short and final" handing over: "Enough. The hat's off, and
+it's yours. Go on, call the next act."
 
 **Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
@@ -570,6 +596,8 @@ gives the Degree, the ordeal and the practical exactly.
   kid." What that professor cares about, in one event.
 - Cut (October `circus_strongman.colleagues`): "A conductor who can't value both breaks every string they own." A moral
   on a line that should be about two people arguing.
+
+Since CD-7 (built 2026-11-15) each professor also has their own `status.<step>`, `aftermath.<route>` and `preparation` lines; the facts in them are shared (the Crossbar, the ordeal, the practical's two threats, twenty blocks, five minutes, one guest act a day) and the voice is the professor's. `CircusSchoolDialogueKeysTest` checks no two professors share a line.
 
 **Fixed text.** `dialogue.circus_performer.welcome` is named in `PlaythroughCrimsonTroupeGameTests`. Trade keys:
 `hemomancy.trade.circus_<role>.*`; rapport: `hemomancy.dialogue.rapport.circus_<role>.<slug>`.
@@ -696,6 +724,8 @@ Zealot judges, the Acolyte comforts.
 - In voice: "Initiate of the Incarnadine Fane. So which is it, healing or another power? Say it plainly. We've learned
   to be afraid of curiosity dressed up as repentance."
 
+**Observance.** `dialogue.zealot.observance.available`, `.active` and `.ready` (CD-7, 2026-11-15) ask whether the player means to finish.
+
 **Trade keys.** `hemomancy.trade.zealot.<card>.title` / `.line` for `amethyst`, `clean_copper`; `hemomancy.trade.zealot.*`: `thanks`, `refuse_harbinger`, `stained`; rapport lore `hemomancy.dialogue.rapport.zealot.<slug>` (`.teaser`, `.lineN`) for `the_one_lost`, `why_church`.
 
 ### Acolyte
@@ -723,6 +753,8 @@ can't always tell". Talks about the people around them, "us", more than about do
   strengthen the halo your purity made room for."
 - In voice: "Silver chalices help. So does hemolytic plating, and the verdigris rites, if you can stand them. All of it
   strengthens the halo your purity made room for."
+
+**Observance.** `dialogue.acolyte.observance.available`, `.active` and `.ready` (CD-7, 2026-11-15) are the warm, hedged set.
 
 **Trade keys.** `hemomancy.trade.acolyte.<card>.title` / `.line` for `bread`, `wool`; `hemomancy.trade.acolyte.*`: `thanks`, `refuse_harbinger`, `stained`; rapport lore `hemomancy.dialogue.rapport.acolyte.<slug>` (`.teaser`, `.lineN`) for `the_lady`, `the_people`.
 
@@ -752,6 +784,8 @@ contain." into a longer line).
   "Handle it with care. It breaks up blood matrices harder than the dew does, so dose it measured when you treat
   exposure. A Guardian who carries brew is ready for sustained operations."
 - In voice (pass 3, 2026-10-31): "Careful with it. Dew takes your chosen manipulation. Brew takes every one you know. Don't spill it."
+
+**Observance.** `dialogue.guardian.observance.available`, `.active` and `.ready` (CD-7, 2026-11-15): fragments, no questions.
 
 **Trade keys.** `hemomancy.trade.guardian.<card>.title` / `.line` for `arrows`, `iron`, `worn_armour`; `hemomancy.trade.guardian.*`: `thanks`, `thanks_fine`, `appraise.poor`, `refuse_harbinger`, `stained`; rapport lore `hemomancy.dialogue.rapport.guardian.<slug>` (`.teaser`, `.lineN`) for `the_hammer`, `the_line`.
 
@@ -832,6 +866,17 @@ threat, never a fight. Lore stays the authority: no mermaids, no God or devil fr
 are Hydra's heads, anchoring is reversible and petrification is not.
 
 Leave room in each hub for trading later; no line promises it. Lines are keyed `hemomancy.court.<role>.<node>`.
+A role's `hemomancy.trade.court_<role>.custom.opens` line is narration, not the speaker's voice (CD-2, 2026-11-13):
+third person, no "I" or "you". All eight already read that way.
+The warning before a switch between houses, `hemomancy.dialogue.court.confirm.switch` (PT-47, 2026-11-13), is the hub's
+narration shared by every lead that takes members, not a speaker's line, like the plain confirm it replaces.
+The line pass of 2026-11-15 (PT-49, PT-50, PT-51, PT-54) set four shared rules. Wherever a directions line names a
+house it names that house's site too (the Lighthouse Garden, the Tide Refuge, the Wake nursery, the Line Camp, the
+Screened Cleft, the Still Bell's bell, the Whale Fall, the Vent Sanctum). The lesson is about wearing a strain where
+its own house lives, so it bonds faster; no line says the strain is fed there. A late greeting (`degree.late`, from the
+sixth Degree) and a Primal line (`strain.primal`) stay in the speaker's voice. Speaking of the Primal step, the Court
+says a lifetime in home water brings it and knows the land road, Morphic Nectar after the eighth Degree, only by
+report (NQ-14-6); no speaker teaches the Nectar or keeps it.
 Every role has a sheet now: the Giving Light, Holding Stone and Shared Wake shallowest, then the Woven Current, the
 Veiled Fold, the Still Bell and Last Marrow, and the Kindling at the vents. Each was placed on the contrast map before
 its lines were written.
@@ -855,6 +900,8 @@ fed, so the player is fed first and asked questions after.
 **Avoid.** Saintliness. Their care is sincere but it pulls: let one line show that leaving the Garden hurts them.
 
 **Example.** "You look like you came up from deep water. Sit. Eat first, then you can tell us who sent you."
+
+**Nodes added 2026-11-15.** `degree.late` and `strain.primal`. `directions.line1` carries the nursery pointer.
 
 **Trade keys.** `hemomancy.trade.court_gardener.<card>.title` / `.line` / `.opens` for `custom`; `hemomancy.trade.court_gardener.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.court_gardener.<slug>` (`.teaser`, `.lineN`) for `first_bed`, `when_you_go`.
 
@@ -887,14 +934,17 @@ first lesson many times and still means it.
 **Rhythm.** The longest of the Garden's voices: a full sentence, then the reason. Moderate contractions. Asks whether
 the player understood.
 
-**Their words.** lamp, partnership, feed, home water, your strain, the Garden, guest.
+**Their words.** lamp, partnership, wear, home, bonds, your strain, the Garden, guest.
 
-**Habits to keep.** The lesson in one plain step: feed a strain inside its own house's water and it grows faster.
+**Habits to keep.** The lesson in one plain step: wear a strain where its own house lives and it bonds to you faster.
 
 **Avoid.** Numbers in speech. Grandeur. Talking down to a visitor below the fifth Degree.
 
-**Example.** "A strain fed in its own house's water grows faster. That's the whole of the first lesson. Do you see why
-we call it partnership?"
+**Example.** "Wear a strain where its own house lives, and it bonds to you faster. That's the whole of the first
+lesson. Do you see why we call it partnership?"
+
+**Nodes added 2026-11-15.** `degree.late` (the sixth Degree and past), `strain.primal`, and the Primal topic
+`primal.line1/2` behind `hemomancy.dialogue.court.option.primal` (an Apex or Primal strain).
 
 ### Tidewarden (the Holding Stone)
 
@@ -939,6 +989,8 @@ Menace toward the shunned (the door closes; nothing more).
 **Example.** "I chose to hold this entrance, and I could still let go and walk away from it. I do not, because
 people sleep behind me."
 
+**Nodes added 2026-11-15.** `strain.primal`.
+
 ### Edge-swimmer (the Shared Wake)
 
 **Who.** A member who swims the edge of the roaming school in open water: guards it, finds food, turns back for the
@@ -960,6 +1012,8 @@ gradient.
 
 **Example.** "Keep pace. We watch the edge. Nobody's left behind."
 
+**Nodes changed 2026-11-15.** `directions.line2` carries the nursery pointer.
+
 ### Nursery tender (the Shared Wake)
 
 **Who.** A member who stays at the nursery ground, the Shared Wake's one fixed place, raising the young in their nest
@@ -980,6 +1034,8 @@ pace with each other. The custom is sharing the catch: a fish brought for the yo
 **Avoid.** Saintliness. The Gardener's endearments ("friend", "love"). Calling the young children or the player one.
 
 **Example.** "You found the nursery without the school to lead you. That's open water you crossed."
+
+**Nodes added 2026-11-15.** `strain.primal`.
 
 **Trade keys.** `hemomancy.trade.court_nursery_tender.<card>.title` / `.line` / `.opens` for `custom`; `hemomancy.trade.court_nursery_tender.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.court_nursery_tender.<slug>` (`.teaser`, `.lineN`) for `own_cup`, `the_cups`.
 
@@ -1027,6 +1083,8 @@ and the elder has done both many times.
 
 **Example.** "While I am joined I am many, and the camp sees with all of us. When I let go I am one again, as I am now."
 
+**Nodes added 2026-11-15.** `strain.primal`.
+
 ### Host (the Veiled Fold)
 
 **Who.** A mobile member who receives visitors at the Screened Cleft's door and gives them one room. Wears Ink Cap at
@@ -1067,6 +1125,8 @@ Apex, the veil to the shoulders. Takes members into the Veiled Fold.
 
 **Example.** "You see me. Few do. Why?"
 
+**Nodes added 2026-11-15.** `strain.primal`.
+
 ### Bellwarden (the Still Bell)
 
 **Who.** The one keeper awake in the Bell, who keeps its warmth, its stores and its lower door, and wakes a sleeper
@@ -1087,6 +1147,8 @@ the upkeep: wool for the bell's walls, against the cold.
 **Avoid.** The Tidewarden's promises and contractions. Coldness as cruelty. Lecturing about waste beyond one line.
 
 **Example.** "Lie on the ledge. One blanket. Sleep until you are mended, and no longer."
+
+**Nodes added 2026-11-15.** `strain.primal`.
 
 **Trade keys.** `hemomancy.trade.court_bellwarden.<card>.title` / `.line` / `.opens` for `custom`; `hemomancy.trade.court_bellwarden.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.court_bellwarden.<slug>` (`.teaser`, `.lineN`) for `the_sleepers`, `the_stores`.
 
@@ -1152,6 +1214,8 @@ dead or petrified.
 **Example.** "I chose to root in this bone when my strength began to fail, so that what was left of it would feed the
 young."
 
+**Nodes added 2026-11-15.** `strain.primal`.
+
 ### Offering-bearer (the Kindling)
 
 **Who.** A member who carries food down to the vents and feeds the heads. Wears Kinbud at Mature, the mane just
@@ -1209,6 +1273,13 @@ asked of the player.
 
 **Example.** "You stand at the threshold, petitioner. No one crosses it who is not ready, and no one is asked to. What
 do you bring?"
+
+**Nodes added 2026-11-14.** `challenge.refused_degree` (PT-52: no challenge before the fifth Degree). `challenge.line2`
+is the confirm step's warning now and names leaving as well as falling (PT-48); `challenge.refused_wait` fits a
+challenger who fell or left (PT-46).
+
+**Nodes added 2026-11-15.** `degree.late`, `strain.primal`, and the Primal topic `primal.line1/2`. `challenge.line1` is
+the reply once the Champion is already called, so it no longer reads as the request.
 
 ### Marimo's chorus (the undercroft, speaking for Marimo)
 
@@ -1309,7 +1380,9 @@ captions, cue timings and audio change together (Lore, "Runtime text and editori
 ## Open decisions
 
 These came up while measuring the voices. They're about canon, data or code, not voice. The first voice-sheet pass
-(2026-10-24) settled the ones marked **Applied** by following the lore reference; the rest are still open.
+(2026-10-24) settled the ones marked **Applied** by following the lore reference. The owner's answers of 2026-10-31
+and 2026-11-13 settled the rest. Open questions live in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md). No id that
+belongs to this page is open; UN-20 (decision 4) was answered on 2026-11-14.
 
 1. **Pronouns. Applied:** lore wins. The Vicar, the Artificer and the Hermit are he; the Alchemist, the Mnemonist and
    the Vein-Mason are they. Before this, the Vicar's and Artificer's stage directions said "they", the Hermit was
@@ -1323,26 +1396,38 @@ These came up while measuring the voices. They're about canon, data or code, not
 4. **Our Lady's late arc. Decided (2026-10-31):** her whispers grow more common and clearer as Clarity rises, because
    that is her voice coming clear; `OurLadyWhisperEvents` already shortens the interval per stage, and that stays. The
    earlier "late stages are quieter" reading is withdrawn. The lines that placed her beneath or beyond everything
-   (`enlightened.v0.line2`, `enlightened.v2.truth1`) no longer put her above the Entity. The §8.6 push toward
-   eradication is still a content decision.
+   (`enlightened.v0.line2`, `enlightened.v2.truth1`) no longer put her above the Entity. Whether her late lines push
+   toward eradication (§8.6) was answered on 2026-11-14 (UN-20): they do not. The choice stays with the player, and
+   `lady.vigilant.v0.follow1` stands as written.
 5. **The Zealot at the sixth Degree and higher. Applied (2026-10-31):** the Zealot, the Podium and Lethean Baptism
    refuse the cure only to an unsevered bloodline founder (`zealot.bloodline_founded`); a Degree 6+ non-founder gets
    the plea with `zealot.plea.degree6.line2`. The dead `zealot.too_early`, `zealot.uninitiated` and
    `zealot.plea.line2` were deleted.
 6. **The Scout's "Order". Applied:** an Unstained speaker says "the Church".
 7. **The Vein-Mason's "us". Applied:** the Vein-Mason no longer speaks as a member of the outposts.
-8. **Annetta speaks the player's line.** `annetta.draught.truth.line1` ("There's something inside you, Annetta.") sits
-   in her node.
+8. **Annetta speaks the player's line. Applied (CD-5, 2026-11-13):** the line went to the player. Her `truth` node
+   opens on her stage direction and her answer; the option that opens it, `dialogue.annetta.option.what_is_it`, now
+   reads "There's something inside you, Annetta. This will draw it out." `annetta.draught.truth.line1` is gone.
 9. **The Monolith's fourth Degree. Decided (2026-10-31):** the Monolith is fifth Degree by design. It stands in for the
    Vicar's counsel once the player is Vicar-level at the fifth Degree, so `MIN_DEGREE = 5` stays. The unreachable Adept
    tree and its keys are gone; the official description and its "Every degree. Every name." closer moved into
    `what_are_you.illuminatus`. The orphaned unsuffixed `monolith.guidance.illuminatus` / `.sanctified` / `.archon` keys
    are deleted too.
-10. **Successors reuse the teacher's tree** past the greeting, which works against "not a copy".
-11. **Shared keys flatten voices.** The Circus status and aftermath lines, the Unstained Observance lines and the
-    newcomer and item-hint templates are one key for many speakers. Distinct voices there need per-speaker keys.
+10. **Successors reuse the teacher's tree** past the greeting, which works against "not a copy". **Parked (CD-6,
+    2026-11-13):** successors get their own trees in a later pass. Until then they also tell their profession's
+    core-loop lessons in the teacher's voice (CQ-55).
+11. **Shared keys flatten voices. Applied (CD-7, 2026-11-13, built 2026-11-15 in B32):** shared keys are split
+    speaker by speaker. The newcomer lines (`dialogue.newcomer.<npcId>`) and the item hints (`<speaker>.item_hint`)
+    already were. The Observance prompts are `dialogue.<acolyte|zealot|guardian>.observance.<available|active|ready>`.
+    The Circus school's lines are `circus.school.<role>.status.<step>`, `.aftermath.<route>` and `.preparation`, one set
+    per professor, written in each professor's voice; only steps a role can reach have a key. The Ringmaster has his own
+    `circus.school.ringmaster.aftermath.<route>`. `clinical.inquiry.later`
+    is `clinical.inquiry.alchemist_later`, `.artificer_later` and `.mnemonist_later`.
 12. **The Hermit's scar lines. Applied:** they point to the Vein-Mason's Brazier lesson instead of "wear the scar"
     and the Scarring Station.
-13. **Dead text.** The performer barks (`dialogue.circus_<role>.line1-3`) are only used by an uncalled method.
-14. **Alchemist slips.** `votary.temper_lore` lists enzyme names as if they were tempers, and the
-    `item_inquiry.clairaudiograph` lines 2 to 4 are identical.
+13. **Dead text. Applied (CD-8, 2026-11-13):** the twelve performer barks (`dialogue.circus_<role>.line1-3`) and their
+    briefs were deleted; copies are in `removed_assets/src/main/resources/assets/hemomancy/lang/en_us.circus-performer-barks.json`.
+14. **Alchemist slips. Applied (CD-9, 2026-11-13):** `vicar.votary.temper_lore` names the eight tempers and gives the
+    enzyme names as the Alchemist's words, and each of the three Clairaudiograph inquiries has its own
+    `clinical.inquiry.*` line. Since B32 (2026-11-15) `temper_lore` states the eight tempers instead of asking a
+    question it answers itself.

@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
+import org.junit.jupiter.api.Test;
+
 public final class ChalybeateSnailRetractionRulesTest {
 	private ChalybeateSnailRetractionRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertEquals("nearby threat starts a meaningful hold",
 				ChalybeateSnailRetractionRules.THREAT_HOLD_TICKS,
 				ChalybeateSnailRetractionRules.refreshForThreat(0, true));

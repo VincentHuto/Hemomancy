@@ -11,6 +11,9 @@ import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProp
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.tile.BlockBloodVolume;
+import com.vincenthuto.hemomancy.common.tile.BloodDrawRights;
+import com.vincenthuto.hemomancy.common.tile.HeldFormations;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.network.chat.Component;
@@ -49,7 +52,8 @@ import java.util.UUID;
 public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBloodReservoir, UpgradeableStation {
     private static final int MAX_CONTRIBUTORS = 16;
 
-    private int formations;
+    /** Formations set and waiting; the shared clot-to-Formation component (core-loop Track 3). */
+    private final HeldFormations formations = new HeldFormations();
     private int progress;
     @Nullable private UUID owner;
     private int ownerCrystallization;
@@ -59,7 +63,10 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
     private boolean riteLocked;
     private UUID machineIdentity = UUID.randomUUID();
     @Nullable private UUID lastUpgradeRite;
-    private final IItemHandler extraction = new Extraction();
+    private final IItemHandler extraction = formations.extraction(() -> riteLocked, () -> {
+        BlockEntitySync.markAndSync(this);
+        revertIfSpent();
+    });
 
     public SanguineCondenserBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityInit.sanguine_condenser.get(), pos, state);
@@ -85,7 +92,22 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
 
     public void claimOwner(ServerPlayer player) {
         owner = player.getUUID();
+        com.vincenthuto.hemomancy.common.tile.ReservoirBlood.settled(this).setOwner(owner);
         ownerCrystallization = SkillPointHelper.getSanguineCrystallizationLevel(player);
+        BlockEntitySync.markAndSync(this);
+    }
+
+    /**
+     * A drip seated this Condenser from {@code owner}'s tank: it is theirs, with their crystallization when they are
+     * online and none otherwise. Only {@link SanguineCondenserBlock#convertCauldronByDrip} calls it, on a fresh seat, so
+     * a drip never changes an existing Condenser's owner.
+     */
+    public void claimOwner(UUID owner) {
+        this.owner = owner;
+        com.vincenthuto.hemomancy.common.tile.ReservoirBlood.settled(this).setOwner(owner);
+        ServerPlayer online = level instanceof net.minecraft.server.level.ServerLevel server
+                ? server.getServer().getPlayerList().getPlayer(owner) : null;
+        ownerCrystallization = online == null ? 0 : SkillPointHelper.getSanguineCrystallizationLevel(online);
         BlockEntitySync.markAndSync(this);
     }
 
@@ -95,7 +117,7 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
     }
 
     public int heldFormations() {
-        return formations;
+        return formations.count();
     }
 
     public boolean isContributor(UUID id) {
@@ -111,11 +133,30 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
         return extraction;
     }
 
-    /** Takes projected blood from {@code player}; the caller drains the player by the returned amount. */
-    public double receiveProjectedBlood(ServerPlayer player, double amount) {
+    /** How much of {@code amount} the pool would take now: none while a rite holds it, never past full. */
+    public double acceptable(double amount) {
         if (riteLocked || amount <= 0.0D) return 0.0D;
         IBloodVolume volume = getBloodCapability();
-        double accepted = Math.min(amount, Math.max(0.0D, volume.getMaxBloodVolume() - volume.getBloodVolume()));
+        return Math.min(amount, Math.max(0.0D, volume.getMaxBloodVolume() - volume.getBloodVolume()));
+    }
+
+    /**
+     * One scab drip's drop: it lands and sets as clot for Formations, and counts as the Condenser having been filled,
+     * so a drip-made Condenser goes back to a cauldron once spent like any other. Returns what the pool took.
+     */
+    public double receiveDrip(double amount) {
+        double room = acceptable(amount);
+        if (room <= 0.0D) return 0.0D;
+        com.vincenthuto.hemomancy.common.tile.ReservoirBlood.settled(this).addClot(room);
+        everFilled = true;
+        BlockEntitySync.markAndSync(this);
+        return room;
+    }
+
+    /** Takes projected blood from {@code player}, who has already paid it; returns what the pool took. */
+    public double receiveProjectedBlood(ServerPlayer player, double amount) {
+        double accepted = acceptable(amount);
+        IBloodVolume volume = getBloodCapability();
         if (accepted <= 0.0D || !volume.fill(accepted)) return 0.0D;
         everFilled = true;
         if (contributors.size() < MAX_CONTRIBUTORS || contributors.contains(player.getUUID()))
@@ -128,20 +169,13 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
 
     /** Moves held formations into {@code player}'s inventory; counts only what actually fit. */
     public int collect(ServerPlayer player) {
-        if (riteLocked || formations <= 0) return 0;
-        Inventory inventory = player.getInventory();
-        ItemStack template = new ItemStack(ItemInit.sanguine_formation.get());
-        int offered = Math.min(formations, roomFor(inventory, template));
-        if (offered <= 0) {
-            // The formation stays where it is; the player is told why the click took nothing.
-            player.displayClientMessage(Component.translatable("message.hemomancy.sanguine_condenser.no_room"), true);
+        if (riteLocked || formations.count() <= 0) return 0;
+        if (!BloodDrawRights.mayDraw(player, this)) {
+            player.displayClientMessage(Component.translatable("message.hemomancy.living_blood.not_yours"), true);
             return 0;
         }
-        ItemStack stack = template.copyWithCount(offered);
-        inventory.add(stack);
-        int moved = offered - stack.getCount();
+        int moved = formations.collect(player);
         if (moved <= 0) return 0;
-        formations -= moved;
         var practice = HemoCapabilityAccess.stationUpgrades(player);
         practice.recordUse(UpgradeStation.CONDENSER, StationUpgradeCatalog.CONDENSE);
         if (stage() >= 1) practice.recordUse(UpgradeStation.CONDENSER, StationUpgradeCatalog.CONDENSE_LATTICED);
@@ -163,32 +197,33 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
      * held blood (freshly seated, or Creative-placed) waits to be filled instead.
      */
     public boolean revertIfSpent() {
-        if (level == null || level.isClientSide || riteLocked || !everFilled || stage() != 0 || formations > 0
-                || progress > 0 || getBloodVolume() > 1.0E-6D) return false;
+        if (level == null || level.isClientSide || riteLocked || !everFilled || stage() != 0 || formations.count() > 0
+                || progress > 0 || condensable() > 1.0E-6D) return false;
         return level.setBlock(worldPosition, Blocks.CAULDRON.defaultBlockState(), Block.UPDATE_ALL);
     }
 
-    private static int roomFor(Inventory inventory, ItemStack template) {
-        int room = 0;
-        for (ItemStack slot : inventory.items) {
-            if (slot.isEmpty()) room += template.getMaxStackSize();
-            else if (ItemStack.isSameItemSameComponents(slot, template))
-                room += Math.max(0, slot.getMaxStackSize() - slot.getCount());
-        }
-        return room;
+    public void dropFormations() {
+        if (level == null) return;
+        formations.drop(level, worldPosition);
     }
 
-    public void dropFormations() {
-        if (level == null || formations <= 0) return;
-        Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-                new ItemStack(ItemInit.sanguine_formation.get(), formations));
-        formations = 0;
+    /** The Condenser sets clot as well as fresh blood: it is the deliberate station, at the best yield. */
+    private double condensable() {
+        IBloodVolume volume = getBloodCapability();
+        return volume.getBloodVolume() + (volume instanceof BlockBloodVolume block ? block.clotted() : 0.0D);
     }
 
     private boolean condensing() {
         int stage = stage();
-        return !riteLocked && formations < SanguineCondenserRules.heldCapacity(stage)
-                && getBloodVolume() >= SanguineCondenserRules.formationCost(stage);
+        return !riteLocked && formations.count() < SanguineCondenserRules.heldCapacity(stage)
+                && condensable() >= SanguineCondenserRules.formationCost(stage);
+    }
+
+    /** Takes one formation's blood, clot first: what has already set is what condenses. */
+    private void takeFormationBlood(double cost) {
+        IBloodVolume volume = getBloodCapability();
+        double fromClot = volume instanceof BlockBloodVolume block ? block.scrapeClot(cost) : 0.0D;
+        if (cost - fromClot > 0.0D) volume.drain(cost - fromClot);
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, SanguineCondenserBlockEntity condenser) {
@@ -209,15 +244,15 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
             return;
         }
         condenser.progress = 0;
-        condenser.getBloodCapability().drain(SanguineCondenserRules.formationCost(stage));
+        condenser.takeFormationBlood(SanguineCondenserRules.formationCost(stage));
         if (level.random.nextDouble() < SanguineCondenserRules.collapseChance(stage, condenser.ownerCrystallization)) {
             level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8F, 0.55F);
             SanguineCondenserEffects.collapse((ServerLevel) level, condenser);
         } else {
-            condenser.formations++;
-            if (condenser.formations < SanguineCondenserRules.heldCapacity(stage)
+            condenser.formations.add(1);
+            if (condenser.formations.count() < SanguineCondenserRules.heldCapacity(stage)
                     && level.random.nextDouble() < SanguineCondenserRules.bonusChance(stage))
-                condenser.formations++;
+                condenser.formations.add(1);
             level.playSound(null, pos, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.BLOCKS, 0.7F, 0.8F);
             SanguineCondenserEffects.condensed((ServerLevel) level, condenser);
         }
@@ -255,7 +290,7 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putInt("Formations", formations);
+        tag.putInt("Formations", formations.count());
         tag.putInt("Progress", progress);
         if (owner != null) tag.putUUID("Owner", owner);
         tag.putInt("OwnerCrystallization", ownerCrystallization);
@@ -271,7 +306,7 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        formations = Math.max(0, tag.getInt("Formations"));
+        formations.set(tag.getInt("Formations"));
         progress = Math.max(0, tag.getInt("Progress"));
         owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
         ownerCrystallization = tag.getInt("OwnerCrystallization");
@@ -296,32 +331,5 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
     public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet,
             HolderLookup.Provider registries) {
         if (packet.getTag() != null) loadAdditional(packet.getTag(), registries);
-    }
-
-    /** Hoppers and pipes may draw finished formations; nothing can be put in. */
-    private final class Extraction implements IItemHandler {
-        @Override public int getSlots() { return 1; }
-
-        @Override
-        public ItemStack getStackInSlot(int slot) {
-            return formations <= 0 ? ItemStack.EMPTY : new ItemStack(ItemInit.sanguine_formation.get(), formations);
-        }
-
-        @Override public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) { return stack; }
-
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            int taken = riteLocked ? 0 : Math.min(amount, Math.min(formations, 64));
-            if (taken <= 0) return ItemStack.EMPTY;
-            if (!simulate) {
-                formations -= taken;
-                BlockEntitySync.markAndSync(SanguineCondenserBlockEntity.this);
-                revertIfSpent();
-            }
-            return new ItemStack(ItemInit.sanguine_formation.get(), taken);
-        }
-
-        @Override public int getSlotLimit(int slot) { return 64; }
-        @Override public boolean isItemValid(int slot, ItemStack stack) { return false; }
     }
 }

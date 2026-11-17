@@ -44,6 +44,8 @@ class SmallUtilityGuardrailTest {
 			"The white-humor contract; its default delegates to BlockEntitySync",
 			"src/main/java/com/vincenthuto/hemomancy/common/tile/shared/FillerBlockEntity.java#sendUpdates",
 			"Forwards to the multiblock's main reservoir",
+			"src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/menagerie/SpecimenVatBlockEntity.java#sendUpdates",
+			"Forwards to the vat running a joined vessel, whose tank it reads",
 			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/equipment/HarbingerEquipmentContainer.java#sync",
 			"Resyncs the equipment attachment, not a block entity");
 	private static final Pattern SYNC_HELPER = Pattern.compile(

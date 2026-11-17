@@ -153,7 +153,7 @@ public final class ProgressionAuditGameTests {
             helper.assertTrue(result.is(ItemInit.foul_paste.get()) && result.getCount() == 2 * (batch + 1),
                     "Five-second reagent control batch " + batch + " failed: " + result);
         }
-        helper.assertTrue(alembic.getBloodVolume() == 300, "Three reagent batches must yield 300 stored blood");
+        helper.assertTrue(alembic.getBloodVolume() == 0, "Reagent batches must make no blood (core-loop Track 3)");
         helper.succeed();
     }
 

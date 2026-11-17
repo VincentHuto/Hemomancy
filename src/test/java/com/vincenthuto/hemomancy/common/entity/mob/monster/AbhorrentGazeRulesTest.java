@@ -10,10 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AbhorrentGazeRulesTest {
 	@Test
 	void theGazeFindsOnlyAPossessingWillInSight() {
-		assertTrue(AbhorrentGazeRules.gazes(true, 9 * 9, true));
-		assertFalse(AbhorrentGazeRules.gazes(false, 4, true), "an ordinary player is not drained");
-		assertFalse(AbhorrentGazeRules.gazes(true, 11 * 11, true), "beyond ten blocks");
-		assertFalse(AbhorrentGazeRules.gazes(true, 4, false), "out of sight");
+		assertTrue(AbhorrentGazeRules.gazes(true, false, 9 * 9, true));
+		assertFalse(AbhorrentGazeRules.gazes(false, false, 4, true), "an ordinary player is not drained");
+		assertFalse(AbhorrentGazeRules.gazes(true, false, 11 * 11, true), "beyond ten blocks");
+		assertFalse(AbhorrentGazeRules.gazes(true, false, 4, false), "out of sight");
+		assertFalse(AbhorrentGazeRules.gazes(true, true, 4, true), "a creative or spectator possessor is not drained");
 	}
 
 	@Test

@@ -16,6 +16,23 @@ public final class CardinalRiteFootprintResolver {
 	private CardinalRiteFootprintResolver() {
 	}
 
+	/**
+	 * Whether {@code pos} lies inside the ritual bounds of any rite running in {@code level}. The rite claims plain
+	 * Projection there, whoever casts it: blood that misses an anchor or the daemon must not infuse or stain its ground.
+	 */
+	public static boolean onRiteGround(net.minecraft.server.level.ServerLevel level, BlockPos pos) {
+		for (ActiveCardinalRite rite : com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level)
+				.getActiveRites().values()) {
+			if (rite.isEnded()) continue;
+			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+			double reach = Math.max(CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize()), radius(rite, recipe));
+			BlockPos centre = rite.getCenterPos();
+			if (Math.abs(pos.getX() - centre.getX()) <= reach && Math.abs(pos.getZ() - centre.getZ()) <= reach
+					&& Math.abs(pos.getY() - centre.getY()) <= reach) return true;
+		}
+		return false;
+	}
+
 	/** The footprint of a running rite: its recipe's reach over the floor it matched, or its size's ritual radius. */
 	public static float radius(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
 		CardinalRiteFloorDefinition floor = null;

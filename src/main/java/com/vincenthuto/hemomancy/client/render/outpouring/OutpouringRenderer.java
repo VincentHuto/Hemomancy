@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ import java.util.List;
 public final class OutpouringRenderer {
     private static final double NEAR_SELF = .8;
     private static final int WHITE = 0xFFF4EE, CRIMSON = 0xF0566A;
+    /** Surface marks are written camera-relative with no pose. */
+    private static final Matrix4f CAMERA_RELATIVE = new Matrix4f();
 
     private OutpouringRenderer() {}
 
@@ -303,13 +306,10 @@ public final class OutpouringRenderer {
             default -> { ironMark(view, m, q, alpha); return; }
         }
         var v = OutpouringBrushes.flow(material);
-        // The material encoding written by hand: these marks carry no pose and round their alpha.
         int phase = MaterialQuads.seedTile(m.seed()) * 2;
-        int a = Math.round(Math.clamp(alpha, 0, 1) * 255);
         for (int i = 0; i < 4; i++) {
-            v.addVertex((float) (q[i * 5] - view.camera.x), (float) (q[i * 5 + 1] - view.camera.y), (float) (q[i * 5 + 2] - view.camera.z))
-                    .setColor(color >> 16 & 255, color >> 8 & 255, color & 255, a)
-                    .setUv((float) (shape * 2 + q[i * 5 + 3]), (float) (phase + q[i * 5 + 4]));
+            MaterialQuads.vertex(v, CAMERA_RELATIVE, q[i * 5] - view.camera.x, q[i * 5 + 1] - view.camera.y,
+                    q[i * 5 + 2] - view.camera.z, color, alpha, (float) (shape * 2 + q[i * 5 + 3]), (float) (phase + q[i * 5 + 4]));
         }
     }
 

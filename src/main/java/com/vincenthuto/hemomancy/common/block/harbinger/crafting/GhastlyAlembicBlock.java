@@ -16,7 +16,6 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -57,6 +56,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	private static final ParticleColor DISTILLATE = new ParticleColor(70, 6, 14);
 
 
 	public GhastlyAlembicBlock(BlockBehaviour.Properties props) {
@@ -168,12 +168,12 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 						0.6F, 0.8F + random.nextFloat() * 0.4F, false);
 			}
 
-			// Blood drip particles rising from the top like steam
+			// Distillate dripping from the spout: dark drops that fall a few pixels and fade
 			for (int i = 0; i < 2; i++) {
 				double ox = (random.nextDouble() - 0.5) * 0.4;
 				double oz = (random.nextDouble() - 0.5) * 0.4;
-				level.addParticle(ParticleTypes.DRIPPING_LAVA, x + ox, y + 0.1, z + oz,
-						0.0, 0.02, 0.0);
+				level.addParticle(HemoParticleData.bloodCell(DISTILLATE), x + ox, y + 0.1, z + oz,
+						0.0, -0.01, 0.0);
 			}
 
 			// Red ember particles

@@ -154,26 +154,6 @@ public class ManipulationBalanceGameTests {
     }
 
     @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance")
-    public static void titheProvidesLiquidityAndSettlesOnlyOnce(GameTestHelper h) {
-        var p=player(h);var m=ManipulationInit.crimson_tithe.get();ready(p,m);
-        var blood=HemoCapabilityAccess.getBloodVolume(p);blood.setBloodVolume(500);
-        try {
-            double cost=com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger.collect(p,m,1).effectiveCost();
-            h.assertTrue(m.tryPerformAction(p,h.getLevel(),ItemStack.EMPTY,p.blockPosition(),0),"Tithe rejected");
-            near(h,500-cost,blood.getBloodVolume(),"Tithe setup payment");
-            var reserve=com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve.get(p);
-            near(h,500,reserve,"Tithe issued amount");
-            h.assertTrue(reserve-cost>=400,"Tithe net liquidity too low");
-            com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve.drainToCover(p,100);
-            p.getPersistentData().putLong("hemomancy:crimson_tithe_expiry",h.getLevel().getGameTime());
-            com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip.tickDebt(p);
-            near(h,300-cost,blood.getBloodVolume(),"Tithe repayment");
-            double after=blood.getBloodVolume();com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip.tickDebt(p);
-            near(h,after,blood.getBloodVolume(),"Tithe settled twice");h.succeed();
-        } finally {p.discard();}
-    }
-
-    @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance")
     public static void lignumCompletesWithoutFurtherUpkeep(GameTestHelper h) {
         var p=player(h);var m=ManipulationInit.lignum_mortis.get();ready(p,m);
         p.setPos(p.position().add(.5,0,.5));
@@ -199,13 +179,17 @@ public class ManipulationBalanceGameTests {
             ManipulationReactiveEvents.armCoronation(p,1,1);
             p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
             for (int tick = 0; tick < 61; tick++) p.tick();
-            p.hurt(h.getLevel().damageSources().mobAttack(pet), 2);
+            float before=p.getHealth();
+            boolean petHit=p.hurt(h.getLevel().damageSources().mobAttack(pet), 2);
             p.invulnerableTime = 0;
-            p.hurt(h.getLevel().damageSources().mobAttack(enemy), 2);
+            boolean firstHit=p.hurt(h.getLevel().damageSources().mobAttack(enemy), 2);
             p.invulnerableTime = 0;
-            p.hurt(h.getLevel().damageSources().mobAttack(enemy), 2);
+            boolean secondHit=p.hurt(h.getLevel().damageSources().mobAttack(enemy), 2);
             var needles=h.getLevel().getEntitiesOfClass(com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity.class,p.getBoundingBox().inflate(4),n->n.getOwner()==p);
-            h.assertTrue(needles.size()==1,"Crown consumed friendly hit or duplicated spent counterattack");
+            h.assertTrue(needles.size()==1,"Crown consumed friendly hit or duplicated spent counterattack: "+needles.size()
+                    +" needles, hits landed pet="+petHit+" enemy="+firstHit+","+secondHit+", health "+before+" -> "+p.getHealth()
+                    +", canHarm pet="+com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarm(p,pet)+" enemy="+com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarm(p,enemy)
+                    +", difficulty "+h.getLevel().getDifficulty());
             near(h,3,needles.getFirst().getBaseDamage(),"Full crown payload");
             h.assertTrue(needles.getFirst().getPierceLevel()==1,"Full crown lacks piercing");
             needles.forEach(net.minecraft.world.entity.Entity::discard);h.succeed();
@@ -328,6 +312,6 @@ public class ManipulationBalanceGameTests {
         var connection=new Connection(PacketFlow.SERVERBOUND);new EmbeddedChannel(connection);
         new ServerGamePacketListenerImpl(h.getLevel().getServer(),connection,p,cookie){@Override public void send(net.minecraft.network.protocol.Packet<?> packet){}};
         p.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(2,8,2)));
-        HemoCapabilityAccess.getBloodVolume(p).setActive(true);HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(5000);return p;
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(5000);return TemperFixtures.carry(p);
     }
 }

@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
       "model": "hemomancy:block/circus_loft_record"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/circus_loft_record",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/circus_loft_record",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/circus_loft_record",
+      "y": 270
     }
   }
 }

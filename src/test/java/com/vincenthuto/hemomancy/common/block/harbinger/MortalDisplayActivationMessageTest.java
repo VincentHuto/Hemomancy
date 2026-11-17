@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class MortalDisplayActivationMessageTest {
 	private static final Path JAVA_ROOT = Path.of("src/main/java");
@@ -11,7 +14,8 @@ public final class MortalDisplayActivationMessageTest {
 	private MortalDisplayActivationMessageTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		mortalDisplayDoesNotSendObsoleteActivationMessage();
 		livingAdornmentMessageRemainsServerSide();
 	}
@@ -19,8 +23,8 @@ public final class MortalDisplayActivationMessageTest {
 	private static void mortalDisplayDoesNotSendObsoleteActivationMessage() throws IOException {
 		String source = read("com/vincenthuto/hemomancy/common/block/harbinger/functional/MortalDisplayBlock.java");
 		String language = Files.readString(LANG_FILE).replace("\r\n", "\n");
-		assertDoesNotContain("mortal display block", source, "hemomancy.mortal_display.activated");
-		assertDoesNotContain("language resources", language, "\"hemomancy.mortal_display.activated\"");
+		assertNotContains("mortal display block", source, "hemomancy.mortal_display.activated");
+		assertNotContains("language resources", language, "\"hemomancy.mortal_display.activated\"");
 	}
 
 	private static void livingAdornmentMessageRemainsServerSide() throws IOException {
@@ -37,11 +41,5 @@ public final class MortalDisplayActivationMessageTest {
 
 	private static String read(String relativePath) throws IOException {
 		return Files.readString(JAVA_ROOT.resolve(relativePath)).replace("\r\n", "\n");
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": still contains " + forbidden);
-		}
 	}
 }

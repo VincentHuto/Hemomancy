@@ -232,6 +232,26 @@ public final class NpcTradeService {
 		return new Result(fine ? Outcome.DONE_FINE : Outcome.DONE, fine ? DONE_FINE : DONE, grade, after);
 	}
 
+	/** Rapport a speaker pays for work done outside the Trade box, such as an Alchemist commission (PT-41). */
+	public static int creditRapport(ServerPlayer player, String speaker, int rapport) {
+		return HemoCapabilityAccess.npcTrades(player).addRapport(speaker, rapport);
+	}
+
+	/**
+	 * A house's custom given in dialogue pays the rapport the speaker's custom card pays, so the two ways of giving it
+	 * count the same. Returns the speaker's rapport after it.
+	 */
+	public static int creditCustom(ServerPlayer player, String speaker, String act) {
+		return creditCustom(HemoCapabilityAccess.npcTrades(player), speaker, NpcTradeRegistry.offers(speaker), act);
+	}
+
+	static int creditCustom(NpcTradeLedger ledger, String speaker, List<NpcTradeOffer> offers, String act) {
+		int rapport = offers.stream()
+				.filter(offer -> offer.want() instanceof NpcTradeWant.Custom custom && custom.act().equals(act))
+				.mapToInt(NpcTradeOffer::rapport).findFirst().orElse(0);
+		return rapport > 0 ? ledger.addRapport(speaker, rapport) : ledger.rapport(speaker);
+	}
+
 	/** Whether a chosen slot that would pay this card holds a stack the speaker refuses as stained. */
 	static boolean offersStained(NpcTradeOffer offer, Party party, int[] slots) {
 		for (int slot : slots) {

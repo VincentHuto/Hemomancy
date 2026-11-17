@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class FungalScarLayerToggleSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -10,7 +13,8 @@ public final class FungalScarLayerToggleSourceTest {
 	private FungalScarLayerToggleSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String screen = read("com/vincenthuto/hemomancy/client/screen/tile/functional/SporeImplantScreen.java");
 		String renderLayer = read("com/vincenthuto/hemomancy/client/render/layer/player/RenderScarsLayer.java");
 		String togglePacket = read("com/vincenthuto/hemomancy/common/network/capa/harbinger/ToggleEquipmentLayerVisibilityPacket.java");
@@ -56,11 +60,5 @@ public final class FungalScarLayerToggleSourceTest {
 			throw new AssertionError("missing " + fullPath);
 		}
 		return Files.readString(fullPath).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

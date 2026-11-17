@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.armor.ability.EdaciousBloodburstArmorAbi
 import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,8 +17,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
  * Step 9 (G-7): what each flight source grants and takes away. Pinned before {@code FlightArbiter} became the one
- * writer, including the pending conflict where the Elytra effect grounds an Edacious wearer until Edacious grants
- * flight again.
+ * writer. Since G-7b a revoke keeps flight while another source still grants it.
  */
 @GameTestHolder("combat_targeting_validation")
 @PrefixGameTestTemplate(false)
@@ -90,9 +90,9 @@ public final class FlightSourceGameTests {
 		});
 	}
 
-	/** Pending G-7: a landing under the Elytra effect drops Edacious flight until Edacious's next tick restores it. */
-	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "elytra_landing_drops_edacious_flight_until_its_next_tick", timeoutTicks = 60)
-	public static void elytraLandingDropsEdaciousFlightUntilItsNextTick(GameTestHelper h) {
+	/** G-7b: a landing under the Elytra effect keeps Edacious flight, because Edacious still grants it. */
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "elytra_landing_keeps_edacious_flight", timeoutTicks = 60)
+	public static void elytraLandingKeepsEdaciousFlight(GameTestHelper h) {
 		h.runAfterDelay(2, () -> {
 			CapturedPlayer captured = survivor(h);
 			ServerPlayer player = captured.player;
@@ -100,14 +100,89 @@ public final class FlightSourceGameTests {
 				wearEdacious(player, true);
 				EdaciousBloodburstArmorAbilityHandler.updateEdaciousFlight(player);
 				elytraTick(player, true);
-				expect(h, player, "landed under both", false, false, 0.025F);
+				expect(h, player, "landed under both", true, false, 0.025F);
+				wearEdacious(player, false);
 				EdaciousBloodburstArmorAbilityHandler.updateEdaciousFlight(player);
-				expect(h, player, "Edacious tick", true, false, 0.025F);
+				expect(h, player, "Edacious removed", false, false, 0.05F);
 				h.succeed();
 			} finally {
 				captured.close();
 			}
 		});
+	}
+
+	/**
+	 * G-7b: milking the Elytra effect in the air ends its grant, so a later Edacious revoke takes flight away instead
+	 * of leaving a stale Elytra grant holding {@code mayfly}.
+	 */
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "elytra_effect_removed_in_the_air_ends_its_grant", timeoutTicks = 60)
+	public static void elytraEffectRemovedInTheAirEndsItsGrant(GameTestHelper h) {
+		h.runAfterDelay(2, () -> {
+			CapturedPlayer captured = survivor(h);
+			ServerPlayer player = captured.player;
+			try {
+				elytraTick(player, false);
+				expect(h, player, "airborne", true, false, 0.05F);
+				player.removeEffect(EffectInit.noctifly_agaric);
+				h.assertFalse(FlightArbiter.grants(player, FlightArbiter.Source.ELYTRA_EFFECT), "the milked Elytra effect still holds a grant");
+				expect(h, player, "milked in the air", false, false, 0.05F);
+
+				elytraTick(player, false);
+				wearEdacious(player, true);
+				EdaciousBloodburstArmorAbilityHandler.updateEdaciousFlight(player);
+				player.removeEffect(EffectInit.noctifly_agaric);
+				expect(h, player, "milked under Edacious", true, false, 0.025F);
+				wearEdacious(player, false);
+				EdaciousBloodburstArmorAbilityHandler.updateEdaciousFlight(player);
+				expect(h, player, "Edacious removed after the milk", false, false, 0.05F);
+				h.succeed();
+			} finally {
+				captured.close();
+			}
+		});
+	}
+
+	/**
+	 * G-7b, every pair of sources: revoking one while the other still grants keeps flight at the other's speed, and
+	 * revoking the second takes flight away.
+	 */
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "flight_revoke_asks_every_other_source", timeoutTicks = 60)
+	public static void flightRevokeAsksEveryOtherSource(GameTestHelper h) {
+		h.runAfterDelay(2, () -> {
+			CapturedPlayer captured = survivor(h);
+			ServerPlayer player = captured.player;
+			try {
+				FlightArbiter.Source[] sources = FlightArbiter.Source.values();
+				for (FlightArbiter.Source first : sources) {
+					for (FlightArbiter.Source second : sources) {
+						if (first == second) continue;
+						player.getAbilities().setFlyingSpeed(0.07F);
+						FlightArbiter.grant(player, first);
+						FlightArbiter.grant(player, second);
+						FlightArbiter.revoke(player, second);
+						float kept = first == FlightArbiter.Source.ELYTRA_EFFECT ? speedOf(second) : speedOf(first);
+						h.assertTrue(player.getAbilities().mayfly && player.getAbilities().getFlyingSpeed() == kept,
+								second + " revoked under " + first + ": mayfly " + player.getAbilities().mayfly
+										+ ", speed " + player.getAbilities().getFlyingSpeed());
+						FlightArbiter.revoke(player, first);
+						h.assertTrue(!player.getAbilities().mayfly && !player.getAbilities().flying,
+								first + " revoked last: mayfly " + player.getAbilities().mayfly);
+					}
+				}
+				h.succeed();
+			} finally {
+				captured.close();
+			}
+		});
+	}
+
+	private static float speedOf(FlightArbiter.Source source) {
+		return switch (source) {
+			case EDACIOUS_SET -> 0.025F;
+			case SILENT_SLIPPING -> 0.035F;
+			case POSSESSION -> 0.04F;
+			case ELYTRA_EFFECT -> 0.07F;
+		};
 	}
 
 	/** A survival player outside the level, so no parallel test sees it. */

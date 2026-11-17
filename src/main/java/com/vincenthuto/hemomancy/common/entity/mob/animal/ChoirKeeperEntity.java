@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -50,6 +52,7 @@ public final class ChoirKeeperEntity extends PathfinderMob {
     private static final int CHASING = 1;
     private static final int RETURNING = 2;
     private static final int PLANTING = 3;
+    private static final ParticleColor BONE = new ParticleColor(232, 218, 192);
 
     @Nullable private BlockPos perch;
     @Nullable private BlockPos plantTarget;
@@ -262,8 +265,8 @@ public final class ChoirKeeperEntity extends PathfinderMob {
                 if (this.level() instanceof ServerLevel server) {
                     server.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY() + 0.5D, this.getZ(),
                             14, 0.3D, 0.3D, 0.3D, 0.08D);
-                    server.sendParticles(ParticleTypes.END_ROD, this.getX(), this.getY() + 0.5D, this.getZ(),
-                            5, 0.2D, 0.2D, 0.2D, 0.03D);
+                    server.sendParticles(HemoParticleData.emberSpark(BONE, 0.031F, 1.0F, 20),
+                            this.getX(), this.getY() + 0.5D, this.getZ(), 5, 0.2D, 0.2D, 0.2D, 0.015D);
                 }
                 startReturn();
             }

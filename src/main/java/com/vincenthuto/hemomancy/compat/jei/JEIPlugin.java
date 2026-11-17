@@ -23,8 +23,12 @@ import javax.annotation.Nonnull;
 public class JEIPlugin implements IModPlugin {
     @Override public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime runtime) {
         ClinicalRecipeVisibility.runtime(runtime);
+        GougeCatalystRecipeCategory.runtime(runtime);
     }
-    @Override public void onRuntimeUnavailable() { ClinicalRecipeVisibility.runtime(null); }
+    @Override public void onRuntimeUnavailable() {
+        ClinicalRecipeVisibility.runtime(null);
+        GougeCatalystRecipeCategory.runtime(null);
+    }
 
 
 	private static final ResourceLocation ID = Hemomancy.rloc("main");
@@ -82,6 +86,7 @@ public class JEIPlugin implements IModPlugin {
 			registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper(), purpose));
 		}
 		registry.addRecipeCategories(new BloodInfusionRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new BrazierTransmutationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ScarStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IncubatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MycelialCrucibleRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -89,6 +94,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new MorphicNectarRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new WhiteHumorPurificationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new LivingWeaponGraftRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new GougeCatalystRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 
 	}
 
@@ -107,6 +113,8 @@ public class JEIPlugin implements IModPlugin {
 			registry.addRecipeCatalyst(new ItemStack(ItemInit.living_staff.get()), riteTypeFor(purpose));
 		}
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.blood_projection.get()), blood_infusion_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.iron_brazier.get()), BrazierTransmutationRecipeCategory.JEI_TYPE);
+		registry.addRecipeCatalyst(new ItemStack(ItemInit.blood_absorption.get()), BrazierTransmutationRecipeCategory.JEI_TYPE);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.scar_station.get()), scar_station_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.morphling_incubator.get()), incubator_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.mycelial_crucible.get()), mycelial_crucible_recipe_type);
@@ -115,6 +123,8 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.iron_brazier.get()), living_weapon_graft_type);
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.living_staff.get()), living_weapon_graft_type);
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.living_weapon_graft.get()), living_weapon_graft_type);
+		registry.addRecipeCatalyst(new ItemStack(ItemInit.blood_projection.get()), GougeCatalystRecipeCategory.JEI_TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.catalyst_feeder.get()), GougeCatalystRecipeCategory.JEI_TYPE);
 	}
 
 	/** The JEI rite category that lists every Harbinger rite of a purpose. */
@@ -130,6 +140,7 @@ public class JEIPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
 		registry.addRecipes(living_weapon_graft_type, LivingWeaponGraftJeiRecipe.all());
+		registry.addRecipes(GougeCatalystRecipeCategory.JEI_TYPE, GougeCatalystRecipeCategory.registered());
 		registry.addItemStackInfo(java.util.List.of(new ItemStack(net.minecraft.world.item.Items.CAULDRON),
 				new ItemStack(BlockInit.sanguine_condenser.get()),
 				new ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.sanguine_formation.get())),
@@ -147,6 +158,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(AdvancedBrewingRecipeCategory.TYPE, AdvancedBrewingDisplay.all(world));
 		registry.addRecipes(memory_weaving_type, MemoryWeavingRecipe.getAllRecipes(world));
 		registry.addRecipes(armature_upgrade_type, ArmatureUpgradeRecipe.getAllRecipes(world));
+		registry.addRecipes(armature_upgrade_type, HematicArmatureRecipeCategory.cleatsFittings());
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world).stream()
 				.map(CraftingMapRecipe::of).toList());
 		for (CardinalRitePurpose purpose : CardinalRitePurpose.values()) {
@@ -159,6 +171,8 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(SuccessionRecipeCategory.TYPE, CardinalRiteRecipe.getAllRecipes(world).stream()
 				.filter(recipe -> com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.isRecipe(recipe.getId())).toList());
 		registry.addRecipes(blood_infusion_recipe_type, BloodInfusionRecipe.getAllRecipes(world));
+		registry.addRecipes(BrazierTransmutationRecipeCategory.JEI_TYPE, BrazierTransmutationRecipe.getAllRecipes(world)
+				.stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList());
 		registry.addRecipes(scar_station_recipe_type, ScarRecipe.getAllRecipes(world));
 		registry.addRecipes(incubator_recipe_type, IncubatorRecipe.getAllRecipes(world));
 		registry.addRecipes(mycelial_crucible_recipe_type, FungalScarCultivationRecipe.getAllRecipes(world));

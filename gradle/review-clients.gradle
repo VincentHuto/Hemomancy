@@ -6,6 +6,9 @@
 //   props   system properties; a value may come from a -P property through gradleOr
 //   args    extra program arguments, after --username
 //   size    [width, height], or null for the default window
+//   bare    true also registers write<Run>Classpath, which writes the run's classpath as a java argument file
+//           (build/moddev/<run>RunClasspath.txt) so a launcher can start the client with bare java and no Gradle
+//           alive: java @<run>RunVmArgs.txt @<run>RunClasspath.txt net.neoforged.devlaunch.Main @<run>RunProgramArgs.txt
 // The base runs (client, server, alphaJourneyClient, data) stay in build.gradle; GameTest servers come from
 // gradle/game-tests.gradle. Launchers that drive several of these runs at once live in tools/review/.
 
@@ -30,6 +33,31 @@ def reviewClients = [
     bookKitPeerClient: [dir: 'build/book-kit-peer/book-kit-client', user: 'BookKitPeer', size: [1000, 800],
                         props: ['hemomancy.bookKitReview': 'true']],
     scriptoriumReviewClient: [dir: 'build/scriptorium-client', user: 'ScriptoriumReview', driver: false, size: review],
+    // A stocked Morphling Incubator, Mycelial Crucibles and Lanterns from fixed poses (FungalStationClientReview)
+    fungalStationReviewClient: [dir: 'build/fungal-station-client-review', user: 'FungalStation', size: review,
+                                props: ['hemomancy.fungalStationReview': 'true']],
+    // Texel batches T1 and T3 on display entities: held weapons, instruments, staff heads and fittings, blocks
+    // (TexelClientReview); drop {"op":"create","name":"TexelReview"} after startup
+    texelReviewClient: [dir: 'build/texel-review', user: 'TexelReview', size: review,
+                        props: ['hemomancy.texelReview': 'true']],
+    // The Alembic drip, Suture Node seep, Engram bite and Armature wind-up and upgrade bursts (HarbingerStationClientReview)
+    harbingerStationReviewClient: [dir: 'build/harbinger-station-review', user: 'StationReview', size: review,
+                                   props: ['hemomancy.harbingerStationReview': 'true']],
+    // The Unstained stations, a Virid Salis trail and one rite completion per visual family (UnstainedParticleClientReview)
+    unstainedParticleReviewClient: [dir: 'build/unstained-particle-review', user: 'StillReview', size: review,
+                                    props: ['hemomancy.unstainedParticleReview': 'true']],
+    // The Phantasmal Echo's shimmer, burst and dissolve, the Blood Thrall's drip and splatter, unowned iron constructs,
+    // the Directed Blood Orb, a Hemolytic Vial burst and a dropped Morphling Polyp (SummonParticleClientReview)
+    summonParticleReviewClient: [dir: 'build/summon-particle-review', user: 'SummonReview', size: review,
+                                 props: ['hemomancy.summonParticleReview': 'true']],
+    // Choir Keeper, Luminal Cicada, Peacock Spider, Mortarbound, Will, Drudge, Lantern Jelly, Chalybeate Snail and
+    // Prism Cuttle moments (EcologyParticleClientReview)
+    ecologyParticleReviewClient: [dir: 'build/ecology-particle-review', user: 'EcologyReview', size: review,
+                                  props: ['hemomancy.ecologyParticleReview': 'true']],
+    // Sweep batches B and E: the Chamber of Will theme change, armour abilities, Neural Overload, salvage scrap and the
+    // Morphic Nectar mutation (SweepParticleClientReview)
+    sweepParticleReviewClient: [dir: 'build/sweep-particle-review', user: 'SweepReview', size: review,
+                                props: ['hemomancy.sweepParticleReview': 'true']],
     phlegethonticReviewClient: [dir: 'build/phlegethontic-client', user: 'IchorReview', driver: false,
                                 props: ['hemomancy.phlegethontic.clientReview': 'true'],
                                 args: ['--quickPlaySingleplayer', 'Phlegethontic Final Review']],
@@ -83,6 +111,11 @@ def reviewClients = [
                            props: ['hemomancy.animalModelReview': 'fungling']],
     venousStriderReviewClient: [dir: 'build/venous-strider-review', user: 'AnimalReview', size: review,
                                 props: ['hemomancy.animalModelReview': 'venous_strider']],
+    hemojellyReviewClient: [dir: 'build/hemojelly-review', user: 'AnimalReview', size: review,
+                            props: ['hemomancy.animalModelReview': 'hemojelly']],
+    myelinBorerReviewClient: [dir: 'build/myelin-borer-review', user: 'AnimalReview', size: review,
+                              props: ['hemomancy.animalModelReview': 'myelin_borer',
+                                      'hemomancy.animalModelReview.floor': 'hemomancy:nerve_fiber']],
     // One Eruptus through every state on a single timeline (EruptusClientReview)
     eruptusReviewClient: [dir: 'build/eruptus-review', user: 'EruptusReview', size: review,
                           props: ['hemomancy.eruptusReview': 'true']],
@@ -91,12 +124,82 @@ def reviewClients = [
                             props: ['hemomancy.bookModelReview': 'true']],
     ringDoorReviewClient: [dir: 'build/ring-door-review', user: 'RingDoorReview', size: review,
                            props: ['hemomancy.ringDoorReview': 'true']],
+    verbReviewClient: [dir: 'build/verb-client-review', user: 'VerbReview', size: review,
+                       props: ['hemomancy.verbReview': 'true']],
+    sculptingsReviewClient: [dir: 'build/sculptings-client-review', user: 'SculptingsReview', size: review,
+                           props: ['hemomancy.sculptingsReview': 'true']],
+    // Core-loop round two P4: the second wave of Sculptings (mending, kindling, furnaces, ice, walls, carrion).
+    secondSculptingsReviewClient: [dir: 'build/second-sculptings-client-review', user: 'Sculpting2Review', size: review,
+                                 props: ['hemomancy.secondSculptingsReview': 'true']],
+    // Core-loop round two P11: the seven visual fixes (stains, cleats, planted Staff rings, stalled screen, refusal mark,
+    // Pyretic Forge, the Tendon Line cord).
+    visualFixesReviewClient: [dir: 'build/visual-fixes-client-review', user: 'VisualFixes', size: review,
+                              props: ['hemomancy.visualFixesReview': 'true']],
+    // Living blood (core-loop Track 3): fresh, turning and clotted tanks, the gauge reading, a clotting flask.
+    livingBloodReviewClient: [dir: 'build/living-blood-client-review', user: 'LivingBlood', size: review,
+                              props: ['hemomancy.livingBloodReview': 'true']],
+    // Temper (core-loop Track 4): the phials under the blood bar, dry and catalyst casts, the Scrying Temper tab.
+    temperReviewClient: [dir: 'build/temper-client-review', user: 'TemperReview', size: review,
+                         props: ['hemomancy.temperReview': 'true']],
+    // The ground network (core-loop Track 6): stains, gouges dormant and lit, run functions, Lux traces, a vein, a
+    // pouring basin, the feeder, Blood Eclipse snuffing and the item draw; round two P8 adds furnaces on a hot run, the
+    // field of dark from outside and inside, Earthen Veins joined by a living vein, and a gouge holding water.
+    groundNetworkReviewClient: [dir: 'build/ground-network-client-review', user: 'GroundReview', size: review,
+                                props: ['hemomancy.groundNetworkReview': 'true']],
+    // Farming and water (core-loop Track 7): a drip ceiling over a field, planting basins dry and fed, the cloche
+    // growing wheat, Vital Effusion's Sculpting on a gourd, and chum blooming in a pond.
+    farmingReviewClient: [dir: 'build/farming-client-review', user: 'FarmReview', size: review,
+                          props: ['hemomancy.farmingReview': 'true']],
+    // Menagerie and research (core-loop Track 5): vats of a blaze, a cow and a husk beside a jar, a leashed pig,
+    // held Absorption on the blaze's vat, a vat's readout unread then read, and a cow sample's tooltip unread then read.
+    menagerieReviewClient: [dir: 'build/menagerie-client-review', user: 'MenagerieReview', size: review,
+                            props: ['hemomancy.menagerieReview': 'true']],
+    // The vessel's screen and the brood (core-loop round two P6): a blaze vat's screen unread, read and studied, a
+    // husk and a preserved jar, a gestating pair and a refused button, the brood's thread and a birth, the Living
+    // Bestiary's met and studied creatures, and a Living Syringe drawing a vat.
+    vesselReviewClient: [dir: 'build/vessel-client-review', user: 'VesselReview', size: review,
+                         props: ['hemomancy.vesselReview': 'true']],
+    // The three lashes and the eight rebuilt held forms (StrandClientReview), each in first and third person: the
+    // Searing, Blood and Gloam lashes (sweep, orb, throw, fade, tap, crack, twin), Hematic Flare's beam, Blood Eclipse's
+    // dome, Glacial Grasp's ice hand, Cruor Javelin's throw and recall, the needle volley, Synaptic Jolt's conductors,
+    // Crimson Flame's painted fire and the Ferric blade run.
+    // -PstrandOnly=a,b runs only the shots whose names start with one of those words.
+    strandReviewClient: [dir: 'build/strand-client-review', user: 'StrandReview', size: review,
+                         props: ['hemomancy.strandReview': 'true', 'hemomancy.strandReview.only': gradleOr('strandOnly', '')]],
+    // The lash by hand: a player-driven arena with the three lashes, still and wandering husks, a readout of the whip,
+    // and every feel number re-read from lash-tuning.json in the game directory while the game runs. Not a capture
+    // run: open or create any world and it stages itself.
+    lashTuningClient: [dir: 'build/lash-tuning-client', user: 'LashTuning', size: review, driver: false,
+                       props: ['hemomancy.lashTuning': 'true']],
+    // The Living Staff and mining (core-loop Track 8): staffs in frames from no rings to five, the held Staff young and
+    // old, the pickaxe form digging and from the side, the morph into it, Lode Draw held and released, and Hematic
+    // Hewing's tunnel and its sneaking face round a chest.
+    staffMiningReviewClient: [dir: 'build/staff-mining-client-review', user: 'StaffMining', size: review,
+                              props: ['hemomancy.staffMiningReview': 'true']],
+    livingLandReviewClient: [dir: 'build/living-land-client-review', user: 'LivingLand', size: review,
+                             props: ['hemomancy.livingLandReview': 'true']],
+    // The daily loop and the world's answer (core-loop Track 10): the barometer and the clock quiet, seething and under a
+    // Blood Moon, stained sod among grass, a vampire bat drawn to wet stains, a steak's meal line, and Well Rested.
+    dailyLoopReviewClient: [dir: 'build/daily-loop-client-review', user: 'DailyLoopReview', size: review,
+                            props: ['hemomancy.dailyLoopReview': 'true']],
+    // The core loop's teaching surface (core-loop Track 11): a core-loop first's toast, every Liber page the core loop
+    // wrote, and the Hemomancy advancement tab on the core-loop firsts.
+    coreLoopTeachingReviewClient: [dir: 'build/core-loop-teaching-review', user: 'CoreLoopTeach', size: review,
+                                   props: ['hemomancy.coreLoopTeachingReview': 'true']],
+    // Round two P9 (CQ-1): the older Liber pages opened by their real triggers, both books, a round-two first's toast and
+    // the Hemomancy tab over all 27 core-loop firsts. Logs every page still hidden with its sources.
+    liberPagesReviewClient: [dir: 'build/liber-pages-review', user: 'LiberPages', size: review,
+                             props: ['hemomancy.liberPagesReview': 'true']],
     condenserReviewClient: [dir: 'build/condenser-client-review', user: 'CondenserReview', size: review,
                             props: ['hemomancy.condenserReview': 'true']],
     sickleStrokeReviewClient: [dir: 'build/sickle-stroke-review', user: 'SickleReview', size: review,
                                props: ['hemomancy.sickleStrokeReview': 'true']],
     infusionReviewClient: [dir: 'build/infusion-client-review', user: 'InfusionReview', size: review,
                            props: ['hemomancy.infusionReview': 'true']],
+    // D-1 Saint gifts: Crimson Tithe (chains, vessel, Brimming, the Vessel Empties) and the Unclosing Eye (aperture,
+    // swept beam, growth and Burst, the Lapse).
+    canonGiftReviewClient: [dir: 'build/canon-gift-review', user: 'CanonGiftReview', size: review,
+                            props: ['hemomancy.canonGiftReview': 'true']],
     bossPresentationReviewClient: [dir: 'build/boss-presentation-review', user: 'BossReview', size: review,
                                     args: seraphaeFightReview ? ['--quickPlaySingleplayer', gradleOr('seraphaeReviewWorld', 'BossPresentationReview')] :
                                             velorumFightReview ? ['--quickPlaySingleplayer', gradleOr('velorumReviewWorld', 'BossPresentationReview')] :
@@ -128,7 +231,11 @@ def reviewClients = [
                                             'hemomancy.velorumFightReview.particles': gradleOr('velorumReviewParticles', 'all'),
                                            'hemomancy.bossPresentationReview.only': gradleOr('bossPresentationReviewOnly', '')]],
     jeiReviewClient: [dir: 'build/jei-client-review', user: 'JeiReview', size: review,
-                      props: ['hemomancy.jeiReview': 'true']],
+                      props: ['hemomancy.jeiReview': 'true',
+                              // -PjeiReviewOnly=blood_infusion,brazier_transmutation keeps the named categories;
+                              // -PjeiReviewPages=n also captures the next n pages of each
+                              'hemomancy.jeiReview.only': gradleOr('jeiReviewOnly', ''),
+                              'hemomancy.jeiReview.pages': gradleOr('jeiReviewPages', '0')]],
     loomReviewClient: [dir: 'build/loom-client-review', user: 'LoomReview', size: review,
                        props: ['hemomancy.loomReview': 'true']],
     possessionReviewClient: [dir: 'build/possession-client-review', user: 'PossessionReview', size: review,
@@ -139,6 +246,8 @@ def reviewClients = [
                               props: ['hemomancy.monolithHubReview': 'true']],
     npcTradeReviewClient: [dir: 'build/npc-trade-review', user: 'NpcTradeReview', size: review,
                            props: ['hemomancy.npcTradeReview': 'true']],
+    lessonReviewClient: [dir: 'build/lesson-review', user: 'LessonReview', size: review,
+                         props: ['hemomancy.lessonReview': 'true']],
     faneGroundReviewClient: [dir: 'build/fane-ground-review', user: 'FaneGroundReview', size: review,
                              props: ['hemomancy.faneGroundReview': 'true']],
     vanityMirrorReviewClient: [dir: 'build/vanity-mirror-review', user: 'VanityReview', size: review,
@@ -151,6 +260,10 @@ def reviewClients = [
     screenChromeReviewClient: [dir: 'build/screen-chrome-review', user: 'ChromeReview', size: review,
                                props: ['hemomancy.screenChromeReview': 'true',
                                        'hemomancy.screenChromeReviewLabel': gradleOr('chromeLabel', 'after')]],
+    // The effects that once shared one icon, each set beside the effect that kept it, in the inventory and the HUD
+    // (EffectIconClientReview)
+    effectIconReviewClient: [dir: 'build/effect-icon-review', user: 'EffectReview', size: review,
+                             props: ['hemomancy.effectIconReview': 'true']],
     morphlingStrainReviewClient: [dir: 'build/morphling-strain-review', user: 'StrainReview', size: review,
                                   props: ['hemomancy.morphlingStrainReview': 'true',
                                           'hemomancy.morphlingStrainReview.only': gradleOr('morphlingStrainReviewOnly', '')]],
@@ -160,6 +273,8 @@ def reviewClients = [
     hudLayerReviewClient: [dir: 'build/hud-layer-review', user: 'HudReview', size: review,
                            props: ['hemomancy.hudLayerReview': 'true',
                                    'hemomancy.hudLayerReviewLabel': gradleOr('hudLabel', 'after')]],
+    temperRackReviewClient: [dir: 'build/temper-rack-review', user: 'TemperReview', size: [1280, 960],
+                             props: ['hemomancy.temperRackReview': 'true']],
     // Drop a Spark jar into build/render-type-profile/mods for the CPU profile; JFR and frame times need nothing.
     renderTypeProfileClient: [dir: 'build/render-type-profile', user: 'ProfileReview', memory: ['4G', '6G'], size: review,
                               props: ['hemomancy.renderTypeProfile': 'true',
@@ -191,10 +306,22 @@ def reviewClients = [
     courtPresenceReviewClient: [dir: 'build/court-presence-review', user: 'PresenceReview', driver: false, size: review,
                                 props: ['hemomancy.courtPresenceReview': 'true',
                                         'hemomancy.courtPresenceReview.seed': gradleOr('courtPresenceSeed', '42')]],
+    // PT-67 on a world with the Chamber of Will: the rite's check, attunement and a real visit (ChamberRiteClientReview);
+    // drop {"op":"create","name":"ChamberRite","seed":42} after startup and read CHAMBER_RITE_REVIEW in logs/latest.log
+    chamberRiteReviewClient: [dir: 'build/chamber-rite-review', user: 'ChamberRite', size: review,
+                              props: ['hemomancy.chamberRiteReview': 'true']],
     successionReviewClient: [dir: 'build/succession-client', user: 'SuccessionReview',
                              props: ['hemomancy.successionReview': 'true']],
     successionObserverClient: [dir: 'build/succession-observer', user: 'SucObserver', memory: ['2G', '4G'],
                                args: ['--quickPlayMultiplayer', 'localhost:25568']],
+    // Core-loop round two P11: how another player sees a caster. The host publishes its world on port 25581 and the
+    // observer joins it; start both through tools/review/review-onlooker.ps1 (one Gradle call, then bare java).
+    onlookerReviewClient: [dir: 'build/onlooker-host', user: 'OnlookHost', size: review,
+                           bare: true, props: ['hemomancy.onlookerReview': 'true',
+                                   'hemomancy.onlookerReview.only': gradleOr('onlookerOnly', '')]],
+    onlookerObserverClient: [dir: 'build/onlooker-observer', user: 'OnlookWatch', memory: ['2G', '4G'], size: review,
+                             bare: true, props: ['hemomancy.onlookerObserver': 'true'],
+                             args: ['--quickPlayMultiplayer', '127.0.0.1:25581']],
 ]
 
 reviewClients.each { name, spec ->
@@ -209,4 +336,51 @@ reviewClients.each { name, spec ->
     run.programArguments.addAll '--username', spec.user
     spec.args?.each { run.programArguments.add it }
     if (spec.size) run.programArguments.addAll '--width', spec.size[0].toString(), '--height', spec.size[1].toString()
+    // A fresh game dir opens on the accessibility onboarding screen, which strands a driven client; every review run
+    // marks it seen in options.txt before launch, so no harness has to dismiss it. The One Probe's look-at tooltip is
+    // turned off too, so it never sits over a capture.
+    def gameDir = file(spec.dir)
+    tasks.matching { it.name == 'run' + name.capitalize() }.configureEach {
+        doFirst {
+            skipAccessibilityOnboarding(gameDir)
+            hideProbeTooltip(gameDir)
+        }
+    }
+}
+
+static void hideProbeTooltip(File gameDir) {
+    def config = new File(gameDir, 'config/theoneprobe-common.toml')
+    config.parentFile.mkdirs()
+    def lines = config.exists() ? config.readLines('UTF-8').findAll { !it.startsWith('needsProbe') } : []
+    lines << 'needsProbe = 2'
+    config.setText(lines.join('\n') + '\n', 'UTF-8')
+}
+
+static void skipAccessibilityOnboarding(File gameDir) {
+    gameDir.mkdirs()
+    def options = new File(gameDir, 'options.txt')
+    def lines = options.exists() ? options.readLines('UTF-8').findAll { !it.startsWith('onboardAccessibility:') } : []
+    lines << 'onboardAccessibility:false'
+    options.setText(lines.join('\n') + '\n', 'UTF-8')
+}
+
+// Bare-java launches (tools/review/review-onlooker.ps1): what the run task adds when it executes (its classpath and
+// the mod folders), as a java argument file. Paths are quoted with forward slashes so the java launcher reads them whole.
+reviewClients.findAll { name, spec -> spec.bare }.each { name, spec ->
+    def runTaskName = 'run' + name.capitalize()
+    tasks.register('write' + name.capitalize() + 'Classpath') {
+        group = 'review'
+        description = "Writes the classpath and mod folders of ${name} as a java argument file for bare-java launches."
+        def out = layout.buildDirectory.file("moddev/${name}RunClasspath.txt")
+        outputs.file(out)
+        outputs.upToDateWhen { false }
+        dependsOn { tasks.named(runTaskName).get().classpathProvider }
+        doLast {
+            def run = tasks.named(runTaskName).get()
+            def path = run.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator)
+            def lines = ['-classpath', '"' + path + '"']
+            run.allJvmArgs.findAll { it.startsWith('-Dfml.modFolders=') }.each { lines << ('"' + it.replace('\\', '/') + '"') }
+            out.get().asFile.text = lines.join('\n') + '\n'
+        }
+    }
 }

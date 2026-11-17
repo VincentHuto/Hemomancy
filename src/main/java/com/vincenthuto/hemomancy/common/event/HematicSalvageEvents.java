@@ -3,10 +3,11 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -29,6 +30,7 @@ import java.util.UUID;
 public final class HematicSalvageEvents {
 	private static final ResourceLocation WOUNDED_IRON_ADVANCEMENT = Hemomancy.rloc("hemomancy/wounded_iron");
 	private static final Map<UUID, Long> LAST_DROP_TICK = new HashMap<>();
+	private static final ParticleColor IRON_SPARK = new ParticleColor(120, 118, 124);
 
 	private HematicSalvageEvents() {
 	}
@@ -106,9 +108,9 @@ public final class HematicSalvageEvents {
 		player.level().addFreshEntity(drop);
 
 		if (player.level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
+			serverLevel.sendParticles(HemoParticleData.emberSpark(IRON_SPARK, 0.031F, 1.0F, 16),
 					player.getX(), player.getY() + 1.0, player.getZ(),
-					4, 0.25, 0.35, 0.25, 0.02);
+					4, 0.25, 0.35, 0.25, 0.01);
 			serverLevel.playSound(null, player.blockPosition(), SoundEvents.IRON_GOLEM_DAMAGE,
 					SoundSource.PLAYERS, 0.35f, 1.45f);
 		}

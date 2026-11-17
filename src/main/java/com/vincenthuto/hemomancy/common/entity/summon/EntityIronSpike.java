@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -55,21 +53,17 @@ public class EntityIronSpike extends FerricConstructEntity {
 		float f2 = (this.random.nextFloat() - 0.5F) * 2.0F;
 		float f3 = (this.random.nextFloat() - 0.5F) * 1.5F;
 		if (this.tickCount < 2) {
-			this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1,
-					this.getZ() + f2, 0.0D, 0.0D, 0.0D);
+			FerricConstructEffects.erupt(level(), random, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2);
 		}
 
 		if (this.tickCount > 2 && this.tickCount < lifeTicks) {
 			for (int i = 0; i < 2; i++) {
-				this.level().addParticle(DustParticleOptions.REDSTONE, this.getX() + f * 0.5, this.getY(),
-						this.getZ() + f2 * 0.5, 0.0D, 0.0D, 0.0D);
-				this.level().addParticle(ParticleTypes.ASH, this.getX() + f,
-						this.getY() + (0.0D + i) + f3, this.getZ() + f2, 0.0D, 0.0D, 0.0D);
+				FerricConstructEffects.seep(level(), this.getX() + f * 0.5, this.getY(), this.getZ() + f2 * 0.5);
+				FerricConstructEffects.flake(level(), this.getX() + f, this.getY() + i + f3, this.getZ() + f2);
 			}
 		}
 		if (this.tickCount == lifeTicks) {
-			this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1,
-					this.getZ() + f2, 0.0D, 0.0D, 0.0D);
+			FerricConstructEffects.expire(level(), random, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2);
 			this.setHealth(0);
 
 			playConstructExpirationSound();
@@ -93,8 +87,7 @@ public class EntityIronSpike extends FerricConstructEntity {
 		if (this.deathTicks <= 0.1) {
 			if (level().isClientSide) {
 				playConstructDissolutionSound();
-				this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + g,
-						this.getY() + 2.0D + g1, this.getZ() + g2, 0.0D, 0.0D, 0.0D);
+				FerricConstructEffects.dissolve(level(), random, this.getX() + g, this.getY() + 2.0D + g1, this.getZ() + g2);
 			}
 		}
 

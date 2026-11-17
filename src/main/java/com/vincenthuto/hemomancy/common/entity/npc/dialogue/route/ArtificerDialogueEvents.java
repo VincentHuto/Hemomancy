@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerE
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.D7Lineage;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeRules;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
@@ -28,6 +29,7 @@ public final class ArtificerDialogueEvents {
 
 	/** Handles the event when it is one of this NPC's; false lets the next route try. */
 	public static boolean handle(DialogueEvent event) {
+		if (CoreLoopLessonRoutes.teach(event, CoreLoopLessons.ARTIFICER, HarbingerArtificerEntity.class)) return true;
 		ServerPlayer player = event.getPlayer();
 		if (!event.getEventId().startsWith("artificer_")) return false;
 		// Every artificer_ choice must come from the Artificer, or from the Alchemist for its two correspondence claims.
@@ -62,9 +64,14 @@ public final class ArtificerDialogueEvents {
 					ArtificerAssignments.claimD7Material(player),
 					"hemomancy.dialogue.event.artificer_d7_reward_granted");
 		case HarbingerArtificerDialogueTrees.EVENT_CLAIM_WORN_VOW_REWARD -> {
-			handleArtificerMaterial(player, event.getEntityId(),
-					ArtificerAssignments.claimWornVowInspection(player),
-					"hemomancy.dialogue.event.artificer_worn_vow_reward_granted");
+			if (ArtificerAssignments.claimWornVowInspection(player).isEmpty()) {
+				player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.artificer_reward_unready")
+						.withStyle(ChatFormatting.GRAY), false);
+			} else {
+				player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.artificer_worn_vow_reward_granted")
+						.withStyle(ChatFormatting.DARK_RED), false);
+				OwedRewards.deliver(player);
+			}
 		}
 		case HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD -> {
 			handleArtificerMaterial(player, event.getEntityId(),
@@ -139,7 +146,10 @@ public final class ArtificerDialogueEvents {
 
 	private static boolean handleArtificerConsecrationKit(ServerPlayer player, int entityId) {
 		Entity teacher = player.level().getEntity(entityId);
-		if (!(teacher instanceof HarbingerArtificerEntity) || player.distanceToSqr(teacher) > 64) return false;
+		if (!(teacher instanceof HarbingerArtificerEntity) || player.distanceToSqr(teacher) > 64) {
+			DialogueRewards.refuse(player, DialogueRewards.TOO_FAR);
+			return false;
+		}
 		return claimArmatureTier(player, 1, "hemomancy.dialogue.event.artificer_consecration_kit");
 	}
 
@@ -163,7 +173,10 @@ public final class ArtificerDialogueEvents {
 			boolean requiresLivingStaff) {
 		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
 		if (!progress.activeBlood() || progress.purifying() || progress.clarity()
-				|| progress.degree() < minimumDegree || requiresLivingStaff && !progress.livingStaffBond()) return;
+				|| progress.degree() < minimumDegree || requiresLivingStaff && !progress.livingStaffBond()) {
+			DialogueRewards.refuse(player, DialogueRewards.NOT_NOW);
+			return;
+		}
 		ArtificerAssignments.brief(player, briefing);
 	}
 
@@ -190,7 +203,7 @@ public final class ArtificerDialogueEvents {
 					.withStyle(ChatFormatting.GRAY), false);
 			return;
 		}
-		DialogueRewards.giveOrDropAtEntity(player, entityId, reward);
+		OwedRewards.give(player, java.util.List.of(reward));
 		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
 		player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.artificer_weight_of_frame_inspected",
 				forkName(progress.forkFamily()), lineageName(progress.d7Lineage()),
@@ -214,7 +227,7 @@ public final class ArtificerDialogueEvents {
 					.withStyle(ChatFormatting.GRAY), false);
 			return;
 		}
-		DialogueRewards.giveOrDropAtEntity(player, entityId, reward);
+		OwedRewards.give(player, java.util.List.of(reward));
 		player.displayClientMessage(Component.translatable(messageKey).withStyle(ChatFormatting.DARK_RED), false);
 	}
 
@@ -249,7 +262,7 @@ public final class ArtificerDialogueEvents {
 		ItemStack fitting = earned.stackFor(player);
 		if (!fitting.isEmpty()) {
 			if (!playerHasFitting(player, fitting)) {
-				DialogueRewards.giveOrDropAtEntity(player, entityId, fitting.copy());
+				OwedRewards.give(player, java.util.List.of(fitting.copy()));
 				player.displayClientMessage(
 						Component.translatable(reissuedKey).withStyle(ChatFormatting.DARK_RED),
 						false);
@@ -268,7 +281,7 @@ public final class ArtificerDialogueEvents {
 					false);
 			return;
 		}
-		DialogueRewards.giveOrDropAtEntity(player, entityId, fitting.copy());
+		OwedRewards.give(player, java.util.List.of(fitting.copy()));
 		player.displayClientMessage(
 				Component.translatable(grantedKey).withStyle(ChatFormatting.DARK_RED),
 				false);
@@ -278,21 +291,7 @@ public final class ArtificerDialogueEvents {
 		if (fitting.isEmpty()) {
 			return false;
 		}
-		for (ItemStack stack : player.getInventory().items) {
-			if (stack.is(fitting.getItem())) {
-				return true;
-			}
-		}
-		for (ItemStack stack : player.getInventory().armor) {
-			if (stack.is(fitting.getItem())) {
-				return true;
-			}
-		}
-		for (ItemStack stack : player.getInventory().offhand) {
-			if (stack.is(fitting.getItem())) {
-				return true;
-			}
-		}
+		if (OwedRewards.carriesOrOwed(player, fitting.getItem())) return true;
 		var equipment = HemoCapabilityAccess.getEquipment(player);
 		for (int slot = 0; slot < equipment.getSlots(); slot++) {
 			if (equipment.getStackInSlot(slot).is(fitting.getItem())) {

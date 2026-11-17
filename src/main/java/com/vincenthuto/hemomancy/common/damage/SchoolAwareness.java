@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.damage;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.world.ground.DarkFields;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -20,10 +21,15 @@ public final class SchoolAwareness {
     private static final Map<Mob, Investigation> LOST = new WeakHashMap<>();
     private SchoolAwareness() {}
 
+    /**
+     * Whether {@code observer} can see {@code target}. A body standing in a field of dark (core-loop round two P8) is
+     * veiled as if it carried Veiled: unseen past four blocks unless Illuminated, and never by a boss's script.
+     */
     public static boolean canPerceive(LivingEntity observer, LivingEntity target) {
+        boolean veiled = SchoolStates.has(target, SchoolState.VEILED) || DarkFields.covers(target);
         return SchoolStateRules.canPerceive(SchoolStates.has(observer, SchoolState.OBSCURED),
-                SchoolStates.has(target, SchoolState.VEILED), SchoolStates.has(target, SchoolState.ILLUMINATED),
-                ManipulationReactiveEvents.isBoss(observer), observer.distanceToSqr(target));
+                veiled, SchoolStates.has(target, SchoolState.ILLUMINATED),
+                HemoEntityPredicates.isBoss(observer), observer.distanceToSqr(target));
     }
 
     @SubscribeEvent public static void target(LivingChangeTargetEvent event) {
@@ -33,7 +39,7 @@ public final class SchoolAwareness {
     }
 
     @SubscribeEvent public static void tick(EntityTickEvent.Pre event) {
-        if (!(event.getEntity() instanceof Mob mob) || mob.level().isClientSide || ManipulationReactiveEvents.isBoss(mob)) return;
+        if (!(event.getEntity() instanceof Mob mob) || mob.level().isClientSide || HemoEntityPredicates.isBoss(mob)) return;
         LivingEntity target = mob.getTarget();
         if (target == null && mob.getBrain().checkMemory(MemoryModuleType.ATTACK_TARGET,
                 net.minecraft.world.entity.ai.memory.MemoryStatus.REGISTERED))

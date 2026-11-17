@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SaintSarcophagusB
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberDiscoveryEvents;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossIntroWindow;
 import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
+import com.vincenthuto.hemomancy.common.event.ApotheosBodyEvents;
 import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import com.vincenthuto.hemomancy.common.entity.boss.BossGroundHazardEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.BossHold;
@@ -88,6 +89,8 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 	@Nullable
 	private BlockState tombState;
 	private boolean trialEnded;
+	/** The trial's experience, given in {@link #endTrial} to whoever takes the reward (CR-22). */
+	private final int trialXp;
 
 	// ── the kit's synced block ───────────────────────────────────────
 	private static final EntityDataAccessor<Integer> DATA_MOVE = define(EntityDataSerializers.INT);
@@ -159,7 +162,8 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 		super(type, level);
 		this.bossBar = bossBar;
 		this.setPersistenceRequired();
-		this.xpReward = xpReward;
+		this.trialXp = xpReward;
+		this.xpReward = 0;
 	}
 
 	/** Which Saint this body is: the one its sarcophagus holds again when the trial ends. */
@@ -845,6 +849,7 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 		tag.putBoolean(TAG_TRIAL_ENDED, trialEnded);
 		tag.putString("SaintAwakening", awakening);
 		tag.putString("SaintTombRecord", tombRecord);
+		if (tombSampled) tag.putBoolean("SaintTombSampled", true);
 		net.minecraft.nbt.ListTag skipped = new net.minecraft.nbt.ListTag();
 		skippedChapels.forEach(kind -> skipped.add(net.minecraft.nbt.StringTag.valueOf(kind)));
 		tag.put("SaintSkippedChapels", skipped);
@@ -903,6 +908,7 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 		// The enrage's modifiers and effects were saved with the entity; only the record is read back.
 		if (tag.contains("SaintAwakening")) awakening = tag.getString("SaintAwakening");
 		if (tag.contains("SaintTombRecord")) tombRecord = tag.getString("SaintTombRecord");
+		tombSampled = tag.getBoolean("SaintTombSampled");
 		skippedChapels.clear();
 		for (net.minecraft.nbt.Tag kind : tag.getList("SaintSkippedChapels", net.minecraft.nbt.Tag.TAG_STRING)) {
 			skippedChapels.add(kind.getAsString());
@@ -949,6 +955,8 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 	private String awakening = "NONE";
 	/** The tomb's own door record when the Saint rose (the awakening may be inferred from who woke it). */
 	private String tombRecord = "NONE";
+	/** The tomb had given its peaceful sample before the Saint rose: it never gives another (NQ-08-19). */
+	private boolean tombSampled;
 	private final java.util.List<String> skippedChapels = new java.util.ArrayList<>();
 
 	public String awakening() {
@@ -1001,6 +1009,10 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 		}
 	}
 
+	public void rememberTombSampled(boolean sampled) {
+		tombSampled = sampled;
+	}
+
 	public void bindTomb(BlockPos pos, BlockState sarcophagus) {
 		this.tombPos = pos.immutable();
 		this.tombState = sarcophagus;
@@ -1034,8 +1046,24 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 				: server.getNearestPlayer(this.getX(), this.getY(), this.getZ(), REWARD_RANGE,
 						entity -> entity.isAlive() && !entity.isSpectator());
 		rollTrialRewards(server, recipient, cause);
+		recordTrialEnded(recipient);
+		if (recipient != null) recipient.giveExperiencePoints(trialXp);
 		announceTrialEnd(recipient);
 		returnToTomb(server);
+	}
+
+	/**
+	 * Writes the trial record (D-1, NQ-08-2) for the reward's recipient and every challenger in the arena, proper or
+	 * forced ending alike (NQ-08-3). Its gift is woven and learned only with it.
+	 */
+	private void recordTrialEnded(@Nullable Player recipient) {
+		java.util.Set<Player> present = new java.util.LinkedHashSet<>();
+		if (recipient != null) present.add(recipient);
+		if (arena != null) present.addAll(arena.challengers());
+		for (Player player : present)
+			if (player instanceof ServerPlayer && !player.isSpectator())
+				com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player)
+						.recordSaintTrialEnded(saintType());
 	}
 
 	/** The Saint's own word on its ending, said before the tomb closes; {@code victor} carries the reward. */
@@ -1075,8 +1103,11 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 			params = params.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, recipient).withLuck(recipient.getLuck());
 		}
 		LootTable table = server.getServer().reloadableRegistries().getLootTable(this.getType().getDefaultLootTable());
+		boolean apotheosChallenger = recipient != null && ApotheosBodyEvents.isApotheos(recipient)
+				|| arena != null && arena.challengers().stream().anyMatch(ApotheosBodyEvents::isApotheos);
+		boolean fragmentOnly = SaintEnrageRules.fragmentOnly(awakening, tombRecord, apotheosChallenger);
 		for (ItemStack rolled : table.getRandomItems(params.create(LootContextParamSets.ENTITY))) {
-			ItemStack reward = SaintEnrageRules.fragmentOnly(awakening) ? fragmentOf(rolled) : rolled;
+			ItemStack reward = fragmentOnly ? fragmentOf(rolled) : rolled;
 			// a reward handed into the inventory is never picked up, so it unlocks its Liber pages here
 			if (recipient instanceof ServerPlayer player) LiberDiscoveryEvents.unlockForItem(player, reward);
 			if (recipient != null && rewardsGoToVictor()) {
@@ -1129,8 +1160,14 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint, B
 	private void returnToTomb(ServerLevel server) {
 		if (tombPos == null || tombState == null) return;
 		if (!SaintSarcophagusBlock.restoreDormant(server, tombPos, tombState, saintType())) {
-			Hemomancy.LOGGER.warn("Saint {} could not return to its tomb at {}: the space is occupied", saintType(), tombPos);
+			BlockPos blocking = SaintSarcophagusBlock.blockingCell(server, tombPos, tombState);
+			Hemomancy.LOGGER.warn("Saint {} could not return to its tomb at {}: the space is occupied ({} at {})", saintType(),
+					tombPos, blocking == null ? "nothing" : server.getBlockState(blocking), blocking);
 			return;
+		}
+		if (tombSampled && server.getBlockEntity(tombPos)
+				instanceof com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity tomb) {
+			tomb.setSampleYielded(true);
 		}
 		// The door stays as it was opened: a tomb behind a shattered door wakes enraged again.
 		if (server.getBlockEntity(tombPos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity tomb

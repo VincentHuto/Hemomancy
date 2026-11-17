@@ -48,7 +48,7 @@ import java.util.UUID;
  * the rite through {@link CardinalRiteTermination}.
  */
 public final class CardinalRiteCompletion {
-	private static final BloodAccounting.Source COUNTDOWN_COMPLETION = BloodAccounting.Source.of("countdown_rite_completion", Category.RITE, false, false);
+	private static final BloodAccounting.Source COUNTDOWN_COMPLETION = BloodAccounting.Source.of("countdown_rite_completion", Category.RITE, false);
 
 	/** A kind's own claim on the reward, checked against the matched structure before the medium is spent. */
 	@FunctionalInterface

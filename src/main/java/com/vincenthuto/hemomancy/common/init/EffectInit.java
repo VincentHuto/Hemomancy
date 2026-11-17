@@ -234,6 +234,10 @@ public class EffectInit {
                     .addAttributeModifier(Attributes.ATTACK_DAMAGE, Hemomancy.rloc("mind_broken_attack"), -2.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
+    /** A full night's sleep (core-loop Track 10): faster blood regeneration while it lasts. */
+    public static final DeferredHolder<MobEffect, MobEffect> well_rested = EFFECTS.register("well_rested",
+            () -> new WellRestedEffect(MobEffectCategory.BENEFICIAL, 0xB0303C));
+
     /** The Morphic Tonic's mending: health and blood regrow together. */
     public static final DeferredHolder<MobEffect, MobEffect> morphic_mending = EFFECTS.register("morphic_mending",
             () -> new com.vincenthuto.hemomancy.common.effect.MorphicMendingEffect(MobEffectCategory.BENEFICIAL, 0xC9708A));

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
@@ -200,7 +201,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 				boolean delivered;
 				if (degree.hasFungalSpineGranted()) {
-					delivered = player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()));
+					delivered = PendingDelivery.insert(player, new ItemStack(ItemInit.fungal_spine.get())) > 0;
 				} else {
 					QliphothBloomEvents.deliverPendingFungalSpine(serverPlayer);
 					delivered = player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0;

@@ -254,6 +254,6 @@ public final class ManipulationBalancePass2EconomyGameTests {
         blood.setBloodVolume(2000);
         for (var temper : EnumBloodTemper.values())
             HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
-        return p;
+        return TemperFixtures.carry(p);
     }
 }

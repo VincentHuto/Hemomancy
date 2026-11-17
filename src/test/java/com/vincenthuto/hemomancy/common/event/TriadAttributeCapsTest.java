@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import org.junit.jupiter.api.Test;
+
 public final class TriadAttributeCapsTest {
 	private TriadAttributeCapsTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		aLoneLayerPassesThroughUnchanged();
 		stackedLayersAreClampedToTheBudget();
 		degenerateInputsAreSafe();

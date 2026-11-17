@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import org.junit.jupiter.api.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -10,7 +11,8 @@ public final class SanguineOmenOverlayStateTest {
 	private SanguineOmenOverlayStateTest() {
 	}
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		Class<?> stateClass = Class.forName(STATE_CLASS);
 		Constructor<?> ctor = stateClass.getDeclaredConstructor();
 		ctor.setAccessible(true);

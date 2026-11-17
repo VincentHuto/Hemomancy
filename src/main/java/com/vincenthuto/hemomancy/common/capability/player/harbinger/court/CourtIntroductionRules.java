@@ -37,9 +37,12 @@ public final class CourtIntroductionRules {
 		return degree >= MINIMUM_DEGREE && highestStrainMaturity >= MATURE;
 	}
 
-	/** A Votary carries one letter per player, and only for a player who doesn't know the Court yet. */
-	public static boolean letterDrops(boolean known, boolean letterDropped) {
-		return !known && !letterDropped;
+	/**
+	 * A Votary carries one letter per player, and only for a player who doesn't know the Court yet, in a world where
+	 * the Court's sites generate (the letter sends its reader to a Voyager, so it is a pointer too).
+	 */
+	public static boolean letterDrops(boolean known, boolean letterDropped, boolean sitesGenerate) {
+		return sitesGenerate && !known && !letterDropped;
 	}
 
 	/** A dropped letter that never reached an NPC can still be explained, by word, until the Court is known. */

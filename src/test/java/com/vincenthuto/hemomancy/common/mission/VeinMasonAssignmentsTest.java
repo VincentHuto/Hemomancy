@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,18 @@ class VeinMasonAssignmentsTest {
         assertTrue(VeinMasonAssignments.canStartD5(5, true));
         assertFalse(VeinMasonAssignments.canStartD6(5, true));
         assertTrue(VeinMasonAssignments.canStartD6(6, true));
+    }
+
+    @Test
+    void aSectionLeftVaricoseCountsEvenWhenItWasVaricoseBefore() {
+        assertTrue(VeinMasonAssignments.strainCounts(EnumBloodFlow.VARICOSE));
+        assertFalse(VeinMasonAssignments.strainCounts(EnumBloodFlow.STABLE));
+    }
+
+    @Test
+    void anyVaricoseSectionCountsButADeadOneDoesNot() {
+        assertTrue(VeinMasonAssignments.strainCounts(List.of(EnumBloodFlow.STABLE, EnumBloodFlow.VARICOSE)));
+        assertFalse(VeinMasonAssignments.strainCounts(List.of(EnumBloodFlow.STABLE, EnumBloodFlow.DEAD)));
     }
 
     @Test

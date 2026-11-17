@@ -97,11 +97,16 @@ public class ManipulationAcquisitionGameTests {
                 var blood = HemoCapabilityAccess.getBloodVolume(p);
                 blood.setBloodVolume(249);
                 var manip = ManipulationInit.getByName("conjure_" + form);
+                // CB-25: a swap burns one Temper in the form's school; with it held the swap pays its plain price.
+                var temper = HemoCapabilityAccess.getBloodTemper(p);
+                temper.set(manip.getTend(), 1.0F, com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.TemperCharge.cap(p, manip.getTend()));
                 h.assertTrue(!LivingStaffWeaponFormHelper.applySelection(p, manip), form + " switched below cost");
                 h.assertTrue(ItemStack.isSameItemSameComponents(staff, p.getMainHandItem()), form + " changed failed input");
+                h.assertTrue(temper.get(manip.getTend()) == 1.0F, form + " burned Temper on a refused swap");
                 blood.setBloodVolume(250);
                 h.assertTrue(LivingStaffWeaponFormHelper.applySelection(p, manip), form + " exact-cost switch failed");
                 h.assertTrue(blood.getBloodVolume() == 0, form + " payment mismatch");
+                h.assertTrue(Math.abs(temper.get(manip.getTend())) < 1.0E-4F, form + " swap did not burn its one Temper");
                 LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(p.getMainHandItem(), p);
                 h.assertTrue(ItemStack.isSameItemSameComponents(staff, p.getMainHandItem()), form + " restoration lost staff data");
                 h.assertTrue(p.getOffhandItem().is(Items.DIAMOND), form + " overwrote offhand");

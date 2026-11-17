@@ -8,7 +8,7 @@ Use [dependency provisioning](../docs/DEPENDENCY_PROVISIONING.md) for the SHA-25
 
 All three Alembic stages are authored in `tools/model_export/ghastly_alembic.py`, which exports runtime JSON, Blockbench projects, the alembic glass texture and `AlembicGeometry.java` (rotated collision cells and renderer anchors); `--preview` renders them to `build/ghastly_alembic_preview.png`. Athanor lifts the assembly 7/16 block onto its heating mantle; placement and upgrade clearance reserve the occupied portion of a 3×3 footprint across three vertical layers. Linked fillers handle collision, selection, interaction, and break cleanup. See [the station-upgrade contract](../docs/STATION_UPGRADES.md#alembic-model-and-clearance) and `AlembicFootprintGameTests`.
 
-Seraphae's winged female saint model is authored in `tools/model_export/seraphae.py`, with runtime poses in `seraphae_anim.java`. Run `python tools/model_export/seraphae.py --preview` to regenerate `SeraphaeModel.java`, the embedded-texture `models/entity/bbmodel/bosses/SeraphaeModel.bbmodel`, both 256×512 entity atlases, `build/seraphae_preview.png`, and `build/seraphae_portrait.png`. The tattered feathered wings have separate shoulder and outer-wing joints, with spreading and folding containment poses. `SeraphaeModelTest` checks the wing hierarchy, quarter-unit geometry, baked/exported UV rectangles, texture parity, pose resets, and hanging-chain orientation. The Saints remain post-release WIP. Seraphae's staged fight motion and glow share `SeraphaeVisualRules`, with per-entity replay clocks in `SeraphaeAnimState`. `SeraphaeRenderer` records posed wrists and feather tips for `SeraphaeRadianceGeometry`, collected through the shared Lux batch. Fracture/dispersal/capture/hit/victory bursts use the appended `SERAPHAE_RELIQUARY` form (protocol 8); `SeraphaeEffects` supplies authored particle accents. Persistent geometry and the radiant shard fragment bodies remain visible on Minimal; fragment retirement suppresses the inherited vanilla death-poof event. The dedicated presentation guardrail forbids vanilla particles throughout the boss/fragment/anchor package; rules and mesh tests cover phase ordering, continuity, expiry, finite quads and surface budgets.
+Seraphae's winged female saint model is authored in `tools/model_export/seraphae.py`, with runtime poses in `seraphae_anim.java`. Run `python tools/model_export/seraphae.py --preview` to regenerate `SeraphaeModel.java`, the embedded-texture `models/entity/bbmodel/bosses/SeraphaeModel.bbmodel`, both 256×512 entity atlases, `build/seraphae_preview.png`, and `build/seraphae_portrait.png`. The tattered feathered wings have separate shoulder and outer-wing joints, with spreading and folding containment poses. `SeraphaeModelTest` checks the wing hierarchy, quarter-unit geometry, baked/exported UV rectangles, texture parity, pose resets, and hanging-chain orientation. The Saints are implemented, overhauls pending (C-1). Seraphae's staged fight motion and glow share `SeraphaeVisualRules`, with per-entity replay clocks in `SeraphaeAnimState`. `SeraphaeRenderer` records posed wrists and feather tips for `SeraphaeRadianceGeometry`, collected through the shared Lux batch. Fracture/dispersal/capture/hit/victory bursts use the appended `SERAPHAE_RELIQUARY` form (protocol 8); `SeraphaeEffects` supplies authored particle accents. Persistent geometry and the radiant shard fragment bodies remain visible on Minimal; fragment retirement suppresses the inherited vanilla death-poof event. The dedicated presentation guardrail forbids vanilla particles throughout the boss/fragment/anchor package; rules and mesh tests cover phase ordering, continuity, expiry, finite quads and surface budgets.
 
 Hemorath's skeletal model is authored in `tools/model_export/hemorath.py`, with combat poses in `hemorath_anim.java`. Run `python tools/model_export/hemorath.py --preview` to regenerate `HemorathModel.java`, the embedded-texture `models/entity/bbmodel/bosses/HemorathModel.bbmodel`, the 256×512 base and overload atlases, `build/hemorath_preview.png`, and `build/hemorath_portrait.png`. The open rib cage, hanging chain links, face cords, gripped staff, and pooled vestment strips use quarter-unit geometry. `HemorathModelTest` verifies the hierarchy, geometry grid, UV parity, embedded textures, selective overload mask, staff orientation and floor contact, and pose resets. The existing renderer scale and encounter behavior are retained. The attack poses now use `HemorathVisualRules` and a per-entity `HemorathAnimState`, with posed rib-core, claw and staff attachments recorded by the renderer. `HemorathReliquaryGeometry` draws physical Ferric links and sorted blood/Mortem layers through the shared dispatcher; transient hits, intake, phase change and exsanguination use `HEMORATH_RELIQUARY` (protocol 9). `HemorathPresentationGuardrailTest` forbids vanilla particles in the boss and both goals. Rules/mesh tests cover timing, recovery, actual overload pressure, finite quads and bounded geometry. Windup visual clocks convert the default alternate-tick goal updates into world ticks without changing hit timing; windup states hold until the real goal fires or stops. Run `./gradlew.bat runBossPresentationReviewClient -PhemorathFightReview=true` against the disposable `BossPresentationReview` world (or set `-PhemorathReviewWorld=NAME`). The opt-in `HemorathFightClientReview` exercises both real attack goals, both phases, melee and overload with Minimal particles, captures frames, verifies effects/damage, interrupts a selector-driven Empty Pulse with AI enabled to ensure overload remains terminal, checks exactly one residuum, and writes `operator/hemorath-fight-review.json` in the review profile.
 
@@ -38,7 +38,7 @@ Ocean travel also exposed expensive Circus Pavilion footprint checks on the gene
 
 ### Primary References
 
-**[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)**
+**[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/HEMOMANCY_REFERENCE.md)**
 - **Technical reference** (~390KB)
 - Every system, item, block, entity, manipulation documented
 - Implementation status for all features
@@ -48,28 +48,28 @@ Ocean travel also exposed expensive Circus Pavilion footprint checks on the gene
 - Capability system details
 - **This is the source of truth for implementation**
 
-**[LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/LORE_REFERENCE.md)**
+**[LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/LORE_REFERENCE.md)**
 - **Lore documentation** (~74KB)
 - World history, cosmology, factions
 - Character backgrounds and motivations
 - Narrative themes and tone guidelines
 - **This is the source of truth for worldbuilding**
 
-**[MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/archive/done/MNA_COMPATIBILITY_BRAINSTORM.md)**
+**[MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/archive/done/MNA_COMPATIBILITY_BRAINSTORM.md)**
 - Mana and Artifice integration design
 - Each feature includes "MnA Justification"
-- Dormant runtime status for the NeoForge 1.21.1 branch
+- Design record only: the integration was removed on 2026-11-03
 - Design philosophy for cross-mod features
 
-**[PUBLIC_ALPHA_READINESS.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/PUBLIC_ALPHA_READINESS.md)**
+**[Public-Alpha-Readiness.md](Public-Alpha-Readiness.md)**
 - Public alpha release bar
 - P0/P1/P2 readiness checklist
 - Known alpha limitations and recommended tester path
 
 ### Additional Documentation
 
-**[DIALOGUE_ITEM_QUERY_GUIDE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/archive/done/DIALOGUE_ITEM_QUERY_GUIDE.md)**
-- Guide for Item Inquiry dialogue system
+**[NPC_DIALOGUE_AND_TRADE.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/NPC_DIALOGUE_AND_TRADE.md)**
+- The live guide for item inquiries, the dialogue hub and trade (the old inquiry guide is archived)
 - How NPCs respond to shown items
 - Dialogue tree structure
 - JSON format and examples
@@ -96,7 +96,7 @@ Ocean travel also exposed expensive Circus Pavilion footprint checks on the gene
 **Entrypoint:** `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java`
 - Registers all DeferredRegisters
 - Sets up configs
-- Handles active wiring; MnA and Curios registration is dormant/excluded on the NeoForge 1.21.1 branch
+- Handles active wiring; the MnA and Curios integrations were removed on 2026-11-03
 - Wires capabilities and packets
 - Populates creative tabs
 
@@ -119,8 +119,6 @@ com.vincenthuto.hemomancy/
 │   ├── menu/            # Container menus
 │   └── worldgen/        # Features, biomes, structures
 ├── compat/
-│   ├── mna/             # Dormant Mana and Artifice integration target
-│   ├── curios/          # Dormant Curios integration target
 │   └── jei/             # JEI recipe categories
 ├── config/              # Config classes
 └── mixin/               # Mixins
@@ -235,20 +233,26 @@ public record MyPacket(int data) implements CustomPacketPayload {
 ### Recipe Types
 
 Custom recipe types in `common/recipe/`:
-- `ScarRecipeType`: Chisel Station scar carving
-- `DistillationRecipeType`: Distillery recipes
-- `RecallerRecipeType`: Visceral Recaller binding
-- `IncubatorRecipeType`: Morphling Incubator mutations
-- `BloodStructureRecipeType`: Multi-block structures
-- `CardinalRiteRecipeType`: Altar rituals
+- `scar_recipe`: Cerebral Scarring Station scar carving
+- `distillation_recipe`: Ghastly Alembic and Pallid Retort
+- `advanced_brewing`: Alembic refinement and compounding
+- `memory_weaving`: the Somatic Loom
+- `incubator`: Morphling Incubator strains
+- `blood_structure_recipe`: floorless Blood Structures
+- `cardinal_rite_recipe`: Cardinal Rites and Working crafts
+- `blood_infusion`, `brazier_transmutation`, `morphic_nectar`, `rendering`, `white_humor_purification`, `fungal_scar_cultivation`, `enzyme_fruiting`
+
+All are registered in `common/init/RecipeInit` (the reference lists them in section 25).
 
 All use NeoForge 1.21 recipe system with JSON datapacks.
 
 ### Worldgen (TerraBlender)
 
 **Biomes:**
-- Overworld: Sporecrown Thicket, Hyphal Spires, Drifting Mycelium
-- Nether: Fungal Gardens, Fungal Isles
+- Overworld: Fungal Gardens; the Pelagic ocean layers (Rockpool Shore, Erythrocoral Reef, Pelagic, Twilight, Midnight, Carrion, Hydrothermal)
+- Nether: Phlegethontic Basin
+- End: Cortical Drift
+- The Fungal Gardens dimension: Mycelial Meadows, Fungal Isles, Sporecrown Thicket, Hyphal Spires, Drifting Mycelium, Mycelial Depths, Hemorrhagic Plateau
 
 **Structures:**
 - Harbinger Outposts (overworld)
@@ -257,7 +261,6 @@ All use NeoForge 1.21 recipe system with JSON datapacks.
 
 **Features:**
 - Erythrocoral reefs (ocean depth)
-- Bloodwort plants
 - Infected caps and fungal blocks
 - Custom trees and vegetation
 
@@ -432,7 +435,6 @@ See HEMOMANCY_REFERENCE.md sections on:
 
 **Dependencies:**
 - HutosLib: Check its license
-- GeckoLib: MIT License
 - TerraBlender: LGPLv2.1
 - Minecraft/NeoForge: Mojang EULA / NeoForge license
 
@@ -457,7 +459,6 @@ Location: `tools/skill_tree_editor/`
 - [NeoForge Documentation](https://docs.neoforged.net/)
 - [Minecraft Wiki (Modding)](https://minecraft.fandom.com/wiki/Tutorials/Creating_mods)
 - [Parchment Mappings](https://parchmentmc.org/)
-- [GeckoLib Docs](https://github.com/bernie-g/geckolib/wiki)
 
 ---
 
@@ -529,7 +530,7 @@ Location: `tools/skill_tree_editor/`
 - **[[Home]]**: Return to wiki home
 - **[[Getting Started]]**: Install and play the mod
 - **[[Mod Compatibility]]**: Integration with other mods
-- **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)**: Full technical documentation
+- **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/HEMOMANCY_REFERENCE.md)**: Full technical documentation
 
 ---
 
@@ -550,3 +551,15 @@ The Vial Centrifuge uses the shared station contract at D4/D6 with appended outp
 `tools/model_export/vial_centrifuge.py` authors all three Centrifuge stage bodies and the sixteen part models `VialCentrifugeRenderer` animates: rotors, bucket, vial glass and contents, crank, flywheel, governors, flyball, needle, spleen and reservoir fluid. It also writes the `vial_centrifuge*.bbmodel` projects and all twelve stage/facing variants, and asserts that fully swung buckets clear the bowl rim and stay inside the block. Run it with `--preview` for `build/vial_centrifuge_preview.png`. Pivots are shared constants that `VialCentrifugeModelSourceTest` keeps in sync; motion lives in `VialCentrifugeRotorRules`. The legacy `CentrifugeArmsModel`/`CentrifugeStandModel` and `export/check/preview_centrifuge_upgrades.py` are retired, and item rendering reads the stage saved on the stack.
 
 The Centrifugal Governor Kit and Fractionating Rotor Kit have separate native 16x16 PNGs and item-model texture references. `tools/model_export/centrifuge_kit_sprites.json` owns the explicit pixel grids and shared palette. Run `python tools/model_export/export_centrifuge_kit_sprites.py` to regenerate and preview them, or add `--check` to validate exports without writing.
+
+### Core loop (2026-11)
+
+The core loop overhaul is described in `docs/CORE_LOOP.md`, with its build logs in `docs/archive/tracks/core_loop/`. `PacketHandler.PROTOCOL_VERSION`
+is 49 since round two P11 (the onlooker sync: `PacketSyncVerbPresence`, `VerbRefusalPacket`, and the Tendon anchor and
+planted Staff rings on existing payloads). Four dev-only `/hemo` branches set up its states for testing:
+`/hemo temperpool carried|dry|restore`, `/hemo tank clot|clear`, `/hemo vat fill|clear` and `/hemo gouge light|clear`
+(`common/command/CoreLoopFixtures`). Every test-grid GameTest server runs under an isolation harness
+(`gametest-isolation.mixins.json`: a 64-block grid, two forced margin chunks and a chunk-aligned origin;
+`-PgameTestOrigin=x,z` and `-PgameTestMarginChunks=N` override it); `docs/TESTING.md` "Deterministic GameTests" has the
+rules for a test that stays green. Each core-loop system has a review client row in `gradle/review-clients.gradle`;
+`docs/CORE_LOOP_PLAYTEST.md` lists them with what to try in play.

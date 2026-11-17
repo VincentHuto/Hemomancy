@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class MnemonicReliquaryModelSourceTest {
     private static final Path ASSETS = Path.of("src/main/resources/assets/hemomancy");
@@ -19,10 +20,6 @@ class MnemonicReliquaryModelSourceTest {
     private static final Path BLOCK = Path.of(
             "src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/MnemonicReliquaryBlock.java");
     private static final Path GENERATOR = Path.of("tools/model_export/mnemonic_reliquary.py");
-
-    private static String read(Path path) throws IOException {
-        return Files.readString(path).replace("\r\n", "\n");
-    }
 
     private static List<String> partModels() throws IOException {
         var matcher = Pattern.compile("PART_MODELS = \\{(.*?)};", Pattern.DOTALL).matcher(read(RENDERER));

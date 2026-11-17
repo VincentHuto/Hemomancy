@@ -61,6 +61,39 @@ class SanguineMonolithDialogueTreesTest {
 		assertTrue(confirm.presentation().isSpecialAction(), "the warning's own button glows too");
 	}
 
+	/** PT-73: only the stone's builder is offered the press; another Archon is told to raise their own. */
+	@Test
+	void aStoneRaisedByAnotherOffersNoPressFurther() {
+		DialogueTree stranger = SanguineMonolithDialogueTrees.archon(ClaimState.READY, false, false);
+		assertFalse(offers(stranger, SanguineMonolithDialogueTrees.EVENT_SHATTER), "no shatter for a non-builder");
+		assertFalse(stranger.getStartNode().options().stream().anyMatch(option -> option.presentation().isSpecialAction()),
+				"no Press further button for a non-builder");
+		assertEquals(null, stranger.getNode("press_again"), "no shatter warning for a non-builder");
+		assertEquals(List.of(COUNSEL + "not_your_stone"), stranger.getNode("counsel").lines());
+		assertTrue(offers(stranger, SanguineMonolithDialogueTrees.EVENT_CORNERSTONE), "the Cornerstone claim stays open");
+		assertTrue(offers(SanguineMonolithDialogueTrees.archon(ClaimState.READY, false, true), SanguineMonolithDialogueTrees.EVENT_SHATTER));
+	}
+
+	/** V-12-2: a stranger who already carried a Seed out hears the past-the-Seed counsel, not the one sending them for a Seed. */
+	@Test
+	void aStrangerPastTheSeedHearsThePastTheSeedCounsel() {
+		DialogueTree stranger = SanguineMonolithDialogueTrees.archon(ClaimState.READY, true, false);
+		assertEquals(List.of(COUNSEL + "past_the_seed"), stranger.getNode("counsel").lines());
+		assertFalse(offers(stranger, SanguineMonolithDialogueTrees.EVENT_SHATTER), "still no shatter for a non-builder");
+	}
+
+	/** D-23: the shatter warning says the free Cornerstone is lost while it is still the player's to take. */
+	@Test
+	void theShatterWarningNamesTheCornerstoneOnlyWhileItIsUnclaimed() {
+		String cornerstone = "hemomancy.monolith.archon.press_again.cornerstone";
+		for (ClaimState state : List.of(ClaimState.READY, ClaimState.USAGE_INCOMPLETE)) {
+			assertTrue(SanguineMonolithDialogueTrees.archon(state, false).getNode("press_again").lines().contains(cornerstone),
+					state + " warns that the Cornerstone is lost");
+		}
+		assertFalse(SanguineMonolithDialogueTrees.archon(ClaimState.CLAIMED, false).getNode("press_again").lines()
+				.contains(cornerstone), "a claimed Cornerstone needs no warning");
+	}
+
 	@Test
 	void theStoneOffersNoSpecialActionBelowTheSeventhDegree() {
 		for (DialogueTree tree : List.of(SanguineMonolithDialogueTrees.illuminatus(NEW), SanguineMonolithDialogueTrees.sanctified(NEW))) {
@@ -75,8 +108,14 @@ class SanguineMonolithDialogueTreesTest {
 				new CovenantProgress(true, false, false, false, false)).getNode("counsel").lines());
 		assertEquals(List.of(COUNSEL + "perform_bloodline_rite"), SanguineMonolithDialogueTrees.illuminatus(
 				new CovenantProgress(true, true, false, false, false)).getNode("counsel").lines());
-		assertEquals(List.of(COUNSEL + "chamber_return", COUNSEL + "bind_throne", COUNSEL + "complete_vigil"),
+		// PT-69: a lineless sixth Degree founds a line first; a Throne binds only in the line's Fane.
+		assertEquals(List.of(COUNSEL + "chamber_return", COUNSEL + "found_bloodline", COUNSEL + "complete_vigil"),
 				SanguineMonolithDialogueTrees.sanctified(NEW).getNode("counsel").lines());
+		assertEquals(List.of(COUNSEL + "chamber_return", COUNSEL + "bind_throne", COUNSEL + "complete_vigil"),
+				SanguineMonolithDialogueTrees.sanctified(new CovenantProgress(true, true, false, false, false))
+						.getNode("counsel").lines());
+		assertEquals(List.of(COUNSEL + "line_has_no_fane"), SanguineMonolithDialogueTrees.sanctified(
+				new CovenantProgress(true, true, true, false, true, false, false)).getNode("counsel").lines());
 		assertEquals(List.of(COUNSEL + "perform_hematic_order_rite"), SanguineMonolithDialogueTrees.sanctified(
 				new CovenantProgress(true, true, true, true, true)).getNode("counsel").lines());
 		assertEquals(List.of(COUNSEL + "press_further"),
@@ -135,7 +174,8 @@ class SanguineMonolithDialogueTreesTest {
 				SanguineMonolithDialogueTrees.illuminatus(new CovenantProgress(true, false, false, false, false)),
 				SanguineMonolithDialogueTrees.illuminatus(new CovenantProgress(true, true, false, false, false)),
 				SanguineMonolithDialogueTrees.archon(ClaimState.READY, false), SanguineMonolithDialogueTrees.archon(ClaimState.READY, true),
-				SanguineMonolithDialogueTrees.archon(ClaimState.CLAIMED, false))) {
+				SanguineMonolithDialogueTrees.archon(ClaimState.CLAIMED, false),
+				SanguineMonolithDialogueTrees.archon(ClaimState.READY, false, false))) {
 			for (DialogueNode node : tree.nodes().values()) {
 				for (String line : node.lines()) if (!lang.has(line)) missing.add(line);
 				for (DialogueOption option : node.options()) if (!lang.has(option.text())) missing.add(option.text());

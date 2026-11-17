@@ -1,16 +1,19 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class FungalScarBehaviorSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private FungalScarBehaviorSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		talaromycesNoLongerGrantsHasteButKeepsVeinMiningHook();
 		newScarHooksRouteThroughHelpersAndCirculation();
 		removedDeathTetherAndOrchardHooksAreGone();
@@ -19,8 +22,8 @@ public final class FungalScarBehaviorSourceTest {
 	private static void talaromycesNoLongerGrantsHasteButKeepsVeinMiningHook() throws IOException {
 		String talaromyces = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/fungal/TalaromycesMinusItem.java");
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarsEntityEventHandler.java");
-		assertDoesNotContain("Talaromyces no Haste", talaromyces, "MobEffects.DIG_SPEED");
-		assertDoesNotContain("Talaromyces no tick effect", talaromyces, "player.addEffect");
+		assertNotContains("Talaromyces no Haste", talaromyces, "MobEffects.DIG_SPEED");
+		assertNotContains("Talaromyces no tick effect", talaromyces, "player.addEffect");
 		assertContains("vein mining hook remains", events, "VeinMinerHelper.tryVeinMine");
 		assertContains("vein mining stays tied to Talaromyces", events, "ItemInit.talaromyces_minus");
 	}
@@ -45,25 +48,9 @@ public final class FungalScarBehaviorSourceTest {
 
 	private static void removedDeathTetherAndOrchardHooksAreGone() throws IOException {
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarsEntityEventHandler.java");
-		assertDoesNotContain("Thanomyces death save removed", events, "ThanomycesResurgensItem");
-		assertDoesNotContain("Sanguiflora orchard removed", events, "SanguifloraeCadensItem");
-		assertDoesNotContain("Anastocordyceps tether hook removed", events, "AnastocordycepsNexusItem");
-		assertDoesNotContain("No Last Rite coupling for Cryostroma", events, "LastRite");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": found " + unexpected);
-		}
+		assertNotContains("Thanomyces death save removed", events, "ThanomycesResurgensItem");
+		assertNotContains("Sanguiflora orchard removed", events, "SanguifloraeCadensItem");
+		assertNotContains("Anastocordyceps tether hook removed", events, "AnastocordycepsNexusItem");
+		assertNotContains("No Last Rite coupling for Cryostroma", events, "LastRite");
 	}
 }

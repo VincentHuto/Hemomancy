@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.resource;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,22 +14,25 @@ public final class PhaseThreeSerpentUtilityResourceTest {
 	private PhaseThreeSerpentUtilityResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
-		for (String id : new String[] { "constrictor_cord", "scale_grip" }) {
+	@Test
+	void allChecksPass() throws IOException {
+		// The Constrictor Cord folded into the Blood Binding Sculpting (core-loop Track 2): its constriction is the tail.
+		for (String id : new String[] { "scale_grip", "sinew_cord" }) {
 			require(ASSETS.resolve("models/item/" + id + ".json"));
 			require(ASSETS.resolve("textures/item/" + id + ".png"));
 			require(DATA.resolve("recipe/" + id + ".json"));
 		}
 		require(ASSETS.resolve("textures/mob_effect/constricted.png"));
-		assertConstrictorCordAppliesBloodBinding();
+		assertTheBindingSculptingConstricts();
 	}
 
-	private static void assertConstrictorCordAppliesBloodBinding() throws IOException {
-		String projectile = Files.readString(SRC.resolve("common/entity/projectile/ConstrictorCordEntity.java"));
-		assertContains(projectile, "EffectInit.blood_binding");
-		assertContains(projectile, "ConstrictorCordRules.BLOOD_BINDING_AMPLIFIER");
-		assertContains(projectile, "super.onHit(result)");
-		assertContains(projectile, "setDeltaMovement(0.0D, 0.0D, 0.0D)");
+	private static void assertTheBindingSculptingConstricts() throws IOException {
+		String sculpting = Files.readString(SRC.resolve("common/manipulation/animus/BloodBindingSculpting.java"));
+		assertContains(sculpting, "EffectInit.blood_binding");
+		assertContains(sculpting, "EffectInit.constricted");
+		if (Files.exists(SRC.resolve("common/entity/projectile/ConstrictorCordEntity.java"))) {
+			throw new AssertionError("the Constrictor Cord projectile came back; it is the Blood Binding Sculpting's tail now");
+		}
 	}
 
 	private static void require(Path path) {

@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class CustomBlockItemGuiPoseSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -14,7 +18,8 @@ public final class CustomBlockItemGuiPoseSourceTest {
 	private CustomBlockItemGuiPoseSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertDownRightGuiPose("earthen vein item renderer",
 				FUNCTIONAL_ITEM_RENDERER_PACKAGE, "EarthenVeinItemRenderer.java");
 		assertDownRightGuiPose("puppeteers spindle item renderer",
@@ -43,9 +48,9 @@ public final class CustomBlockItemGuiPoseSourceTest {
 				renderer, "GUI_MODEL_YAW_DEGREES");
 		assertContains(label + " should apply the GUI down-right roll",
 				renderer, "GUI_MODEL_ROLL_DEGREES");
-		assertDoesNotContain(label + " should not keep the old face-on inventory yaw",
+		assertNotContains(label + " should not keep the old face-on inventory yaw",
 				renderer, "Vector3.YP, 90");
-		assertDoesNotContain(label + " should not keep the old near-isometric GUI yaw",
+		assertNotContains(label + " should not keep the old near-isometric GUI yaw",
 				renderer, "Vector3.YN, 45");
 	}
 
@@ -63,28 +68,9 @@ public final class CustomBlockItemGuiPoseSourceTest {
 				renderer, "GUI_MODEL_YAW_DEGREES");
 		assertContains(label + " should apply the GUI down-right roll",
 				renderer, "GUI_MODEL_ROLL_DEGREES");
-		assertDoesNotContain(label + " should not keep the old face-on inventory yaw",
+		assertNotContains(label + " should not keep the old face-on inventory yaw",
 				renderer, "Vector3.YP, 90");
-		assertDoesNotContain(label + " should not keep the old near-isometric GUI yaw",
+		assertNotContains(label + " should not keep the old near-isometric GUI yaw",
 				renderer, "Vector3.YN, 45");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 }

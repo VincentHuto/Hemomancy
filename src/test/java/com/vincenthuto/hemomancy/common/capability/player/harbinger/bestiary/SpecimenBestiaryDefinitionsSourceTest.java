@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class SpecimenBestiaryDefinitionsSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -17,7 +20,8 @@ public final class SpecimenBestiaryDefinitionsSourceTest {
 	private SpecimenBestiaryDefinitionsSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String definitions = Files.readString(DEFINITIONS).replace("\r\n", "\n");
 		String lang = Files.readString(LANG).replace("\r\n", "\n");
 		String capturableSpecimens = Files.readString(CAPTURABLE_SPECIMENS).replace("\r\n", "\n");
@@ -76,11 +80,5 @@ public final class SpecimenBestiaryDefinitionsSourceTest {
 				"hemomancy:venous_strider",
 				"hemomancy:verdigris_moth"
 		};
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

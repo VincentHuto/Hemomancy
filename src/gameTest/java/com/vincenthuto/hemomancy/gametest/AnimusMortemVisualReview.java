@@ -145,9 +145,6 @@ public final class AnimusMortemVisualReview {
             }
             if(name.equals("blackhearted")){player.setHealth(20);player.invulnerableTime=0;player.hurt(player.damageSources().wither(),18);
                 LOG.info("ANIMUS_MORTEM_BLACKHEART saturation={}",HemoCapabilityAccess.getPowerGuardrails(player).getNecroticSaturation());}
-            if(name.equals("crimson_tithe") && phase==42){
-                if(mode!=1)com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve.drainToCover(player,250);
-                player.getPersistentData().putLong("hemomancy:crimson_tithe_expiry",player.level().getGameTime());com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip.tickDebt(player);}
         });
         if(phase==70)mc.getSingleplayerServer().execute(()->{var player=player(mc);if(player!=null){ManipulationChannelManager.stop(player);com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager.dismiss(player);if(player.level().getEntity(targetId) instanceof LivingEntity target)target.removeAllEffects();}});
         if(!Boolean.getBoolean("hemomancy.animusMortemBenchmark") && phase>=8 && phase<=96 && phase%4==0)

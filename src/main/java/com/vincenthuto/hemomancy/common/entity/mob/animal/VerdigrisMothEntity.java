@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -101,7 +102,7 @@ public class VerdigrisMothEntity extends PathfinderMob {
 
 	private void updateClientAnimation() {
 		if (this.random.nextInt(14) == 0) {
-			this.level().addParticle(ParticleTypes.END_ROD,
+			this.level().addParticle(HemoParticleData.emberSpark(HemoPalette.VERDIGRIS, 0.031F, 0.7F, 30),
 					this.getX() + (this.random.nextDouble() - 0.5D) * 0.4D,
 					this.getY() + 0.2D,
 					this.getZ() + (this.random.nextDouble() - 0.5D) * 0.4D,
@@ -134,9 +135,11 @@ public class VerdigrisMothEntity extends PathfinderMob {
 			if (!player.getAbilities().instabuild) {
 				held.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
 			}
+		} else {
+			// a brush that sheds nothing still scrapes; the shed plays its own
+			this.level().playSound(null, this.blockPosition(), SoundEvents.AXE_SCRAPE, SoundSource.NEUTRAL,
+					0.55F, 1.4F + this.random.nextFloat() * 0.2F);
 		}
-		this.level().playSound(null, this.blockPosition(), SoundEvents.AXE_SCRAPE, SoundSource.NEUTRAL,
-				0.55F, 1.4F + this.random.nextFloat() * 0.2F);
 		return InteractionResult.sidedSuccess(this.level().isClientSide());
 	}
 
@@ -145,12 +148,12 @@ public class VerdigrisMothEntity extends PathfinderMob {
 		this.level().playSound(null, this.blockPosition(), SoundEvents.AXE_SCRAPE, SoundSource.NEUTRAL,
 				soundVolume, pitch);
 		if (this.level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.SCRAPE,
+			serverLevel.sendParticles(HemoParticleData.emberSpark(HemoPalette.VERDIGRIS, 0.04F, 0.9F, 24),
 					this.getX(), this.getY() + 0.25D, this.getZ(),
-					8, 0.25D, 0.15D, 0.25D, 0.02D);
-			serverLevel.sendParticles(ParticleTypes.END_ROD,
+					8, 0.25D, 0.15D, 0.25D, 0.01D);
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE),
 					this.getX(), this.getY() + 0.25D, this.getZ(),
-					3, 0.18D, 0.08D, 0.18D, 0.004D);
+					3, 0.18D, 0.08D, 0.18D, 0.002D);
 		}
 	}
 

@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 public class EngramStampItem extends Item {
 
@@ -48,7 +49,9 @@ public class EngramStampItem extends Item {
 					.setValue(EngramBlock.CHARACTERINDEX, EngramBlock.randomCharacterIndex())
 					.setValue(EngramBlock.FACING, engramFacing)
 					.setValue(EngramBlock.LIT, false);
-			level.setBlockAndUpdate(targetPos, engramState);
+			if (!PlayerBlockEdits.place(ctx.getPlayer(), targetPos, engramState)) {
+				return InteractionResult.FAIL;
+			}
 			damageStamp(ctx);
 		}
 		return InteractionResult.SUCCESS;

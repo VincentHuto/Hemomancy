@@ -4,8 +4,6 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +18,8 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nonnull;
 
 public class DirectedBloodOrbEntity extends ThrowableProjectile {
+	private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
+	private static final ParticleColor CLOT = new ParticleColor(70, 6, 14);
 	public static EntityType<DirectedBloodOrbEntity> TYPE = EntityInit.directed_blood_orb.get();
 
 	public DirectedBloodOrbEntity(EntityType<DirectedBloodOrbEntity> type, Level world) {
@@ -106,9 +106,9 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 			level().addParticle(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
 					getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
 					getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
-			level().addParticle(ParticleTypes.ASH, this.getX() + (Math.random() - 0.5) * 0.4,
+			level().addParticle(HemoParticleData.emberSpark(CLOT, 0.031F, 0.8F, 14), this.getX() + (Math.random() - 0.5) * 0.4,
 					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
-			level().addParticle(DustParticleOptions.REDSTONE, this.getX() + (Math.random() - 0.5) * 0.4,
+			level().addParticle(HemoParticleData.bloodCell(BLOOD), this.getX() + (Math.random() - 0.5) * 0.4,
 					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
 
 		}

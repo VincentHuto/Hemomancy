@@ -163,6 +163,14 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		this.secondaryDamageTemper = secondaryDamageTemper;
 	}
 
+	/** FX-26: a blood needle is not an arrow, so it takes back the stuck arrow the base class leaves in what it hits. */
+	@Override
+	protected void onHitEntity(net.minecraft.world.phys.EntityHitResult result) {
+		int arrows = result.getEntity() instanceof LivingEntity struck ? struck.getArrowCount() : 0;
+		super.onHitEntity(result);
+		if (result.getEntity() instanceof LivingEntity struck) struck.setArrowCount(arrows);
+	}
+
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
@@ -177,7 +185,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		}
 		// A barbed iron lance pins what it strikes; bosses shrug it off.
 		if (isForged() && isLanceNeedle()
-				&& !com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(living))
+				&& !com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates.isBoss(living))
 			living.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
 					com.vincenthuto.hemomancy.common.manipulation.ferric.ForgedNeedleRules.LANCE_PIN_TICKS,
 					com.vincenthuto.hemomancy.common.manipulation.ferric.ForgedNeedleRules.LANCE_PIN_AMPLIFIER, false, true));

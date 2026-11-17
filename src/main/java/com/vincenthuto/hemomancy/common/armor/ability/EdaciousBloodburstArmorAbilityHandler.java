@@ -3,7 +3,9 @@ package com.vincenthuto.hemomancy.common.armor.ability;
 import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleBursts;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,6 +20,8 @@ public final class EdaciousBloodburstArmorAbilityHandler {
 	private static final String EDACIOUS_FLIGHT_KEY = "hemomancy:edacious_flight_enabled";
 	private static final int BLOODBURST_NEEDLE_COUNT = 36;
 	private static final double BLOODBURST_DAMAGE = 4.0D;
+	private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
+	private static final ParticleColor CRIMSON_BRIGHT = new ParticleColor(214, 30, 46);
 
 	private EdaciousBloodburstArmorAbilityHandler() {
 	}
@@ -36,9 +40,10 @@ public final class EdaciousBloodburstArmorAbilityHandler {
 			needle.shoot(direction.x, direction.y, direction.z, 1.65F, 3.0F);
 			player.level().addFreshEntity(needle);
 		}
-		player.serverLevel().sendParticles(ParticleTypes.CRIMSON_SPORE,
-				player.getX(), player.getY() + 1.0D, player.getZ(),
-				80, 1.0D, 0.55D, 1.0D, 0.05D);
+		player.serverLevel().sendParticles(HemoParticleData.hitGlow(CRIMSON_BRIGHT),
+				origin.x, origin.y, origin.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+		HemoParticleBursts.outward(player.serverLevel(), HemoParticleData.bloodCell(BLOOD),
+				player.getX(), player.getY() + 1.0D, player.getZ(), 40, 0.08D, 0.5D);
 		player.level().playSound(null, player.blockPosition(), SoundEvents.TRIDENT_RIPTIDE_3.value(),
 				SoundSource.PLAYERS, 0.9F, 0.6F);
 	}

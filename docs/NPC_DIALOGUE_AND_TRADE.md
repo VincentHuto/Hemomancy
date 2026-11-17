@@ -1,10 +1,10 @@
 # NPC Dialogue and Trade
 
-Status (2026-11-01): built and reviewed in a client and in GameTests on 2026-10-31, uncommitted; rapport lore content, trade balance and a few screen details still wait on the user. The Sanguine Monolith joined the hub on 2026-11-05 (uncommitted).
+Status (2026-11-14): built. The hub and the Trade box are committed (`ea7bd732d`, 2026-11-01); the 21 core-loop lessons and the later line passes are in the working tree, uncommitted. The owner's answers of 2026-11-13 are recorded under "Rulings that bind", and the overnight build of 2026-11-14 built the ones that waited on nothing. The Mnemonist's memory inquiries were built on 2026-11-16 (B33) and the missing Liber pages the same day (B34). Left to the owner: reading the new lines and one session on the Trade and Conversation boxes.
 
 ## What it is
 
-**The hub.** Right-clicking any NPC with a dialogue hub opens four boxes, in this order: **Quest Work**, **Inquiries**, **Conversation**, **Trade** (`DialogueCategory`, built by `DialogueHubFactory`). The old Lore box is gone: Conversation lists one card per root option in authored order, and a lore line is an explicit `withLore()` flag on its option (never a keyword guess). A lore card shows the lore glyph and an unread dot until opened, and keeps its old read id `hemomancy:<npc>/lore/<slug>`. Quest Work holds options flagged `withQuest()` and mission options. The hub covers the eight Harbinger NPCs, the Zealot, Guardian, Acolyte and Scout, all Brined Court roles, the Ringmaster, the eight Circus performers and the Sanguine Monolith, a block speaker, from the fifth Degree. Circus speakers skip the newcomer "ask the Vicar" line; every other D0 speaker shows it until the player has right-clicked a Hermit (a PlayerPersisted flag, so it survives death). (`docs/HEMOMANCY_REFERENCE.md` §5.4a)
+**The hub.** Right-clicking any NPC with a dialogue hub opens four boxes, in this order: **Quest Work**, **Inquiries**, **Conversation**, **Trade** (`DialogueCategory`, built by `DialogueHubFactory`). The old Lore box is gone: Conversation lists one card per root option in authored order, and a lore line is an explicit `withLore()` flag on its option (never a keyword guess). A lore card shows the lore glyph and an unread dot until opened, and keeps its old read id `hemomancy:<npc>/lore/<slug>`. Quest Work holds options flagged `withQuest()` and mission options. The hub covers the eight Harbinger NPCs, the Zealot, Guardian, Acolyte and Scout, all Brined Court roles, the Ringmaster, the eight Circus performers and the Sanguine Monolith, a block speaker, from the fifth Degree. Circus speakers skip the newcomer "ask the Vicar" line; every other D0 speaker shows it until the player has right-clicked a Vicar (a PlayerPersisted flag set in `HarbingerVicarEntity.mobInteract`, so it survives death). The Vicar's own "Where should I begin?" card sends the player to a Hermit's temple and stays only while their blood is asleep. (`docs/HEMOMANCY_REFERENCE.md` §5.4a)
 
 **Dialogue events.** A chosen option posts a `DialogueEvent`; `DialogueEventRouter` tries its ordered `ROUTES` table, one `<Npc>DialogueEvents` class per NPC (Annetta, Ringmaster, Mnemonist, Alchemist, Artificer, Vicar, Voyager, Court, Vein-Mason, Acolyte, Zealot, Guardian, Hermit, Recruitment, Monolith, Fungal whisper, Scout). Trades are never dialogue events.
 
@@ -16,7 +16,35 @@ Status (2026-11-01): built and reviewed in a client and in GameTests on 2026-10-
 
 **Card states and sigils.** Main steps are Quest Work with a notice sigil while actionable: the Vicar's formal introduction, the Alchemist's First Separation assignment, and the Alchemist's Concentrated Blood card (only while a vial can be issued: nothing pending and none carried). A Quest Work card shows Turn In only when its option sends a claim or reward event, or opens a node that does; a not-ready reward card stays Active, a claimed one and a learned clinical lesson's card are Complete (`DialogueHubFactory.questState`). A Hermit dissolving after his farewell takes no trades (`NpcTradeService.serves`).
 
-**Item inquiries.** "Ask about the held item" answers are data under `data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json`, loaded by `ItemInquiryLoader`. Entries are line lists or ordered branches gated by `min_degree`, `max_degree`, `min_purity`, `max_purity`. 27 speaker folders exist today (Harbinger NPCs, Zealot, Guardian, and the Court roles); 385 inquiry files are on disk (the §5.4 count of 317 in the reference is older).
+**Item inquiries.** "Ask about the held item" answers are data under `data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json`, loaded by `ItemInquiryLoader`. Entries are line lists or ordered branches gated by `min_degree`, `max_degree`, `min_purity`, `max_purity`. 27 speaker folders exist today (Harbinger NPCs, Zealot, Guardian, and the Court roles); 439 inquiry files are on disk (counted 2026-11-16). Every memory item has its own Mnemonist inquiry with its own two lines (CD-14, NQ-16-4); `MnemonistMemoryInquiryCoverageTest` holds that, so a new memory without one fails the build. Round two P10 added six: Salt-Stained Timber, glowroot, emberpod and Tainted Harvest (Alchemist), the Catalyst Feeder (Artificer) and the Venous Basin (Vein-Mason).
+
+**Core-loop lessons (round two P10).** Each system of the core loop has a real lesson, told by the outpost speaker who already teaches the work beside it. `CoreLoopLessons` is the table (speaker, lang key, id, Degree range, branches, Liber pages); `CoreLoopLessonDialogue.append` adds a speaker's lessons at the end of their `progressionDialogue`, so the overhead sigil sees them too. A lesson is a lore root option (a Conversation card with the lore glyph and an unread dot) that opens a lesson node of two lines and a question per branch; each branch node answers in one or two lines and offers a way back and a way out. Every branch option carries the lesson's event, so asking anything in a lesson teaches it; the card itself carries none, so the hub adds no confirm step. The event (`<npcKey>_craft_<id>`) goes through the speaker's own `<Npc>DialogueEvents.handle`, which hands it first to the package-private `route/CoreLoopLessonRoutes.teach`: its own speaker, alive, within 8 blocks, blood awake, not Unstained, Degree inside the lesson's range. It opens the lesson's Liber pages with source `DIALOGUE` (now registered on every core-loop page) and nothing else: no item, proof, advancement, blood or saved flag; the lore read record is what remembers a heard lesson. `DialogueEventSpeakers` lists each speaker's `_craft_` prefix, so the packet drops a lesson sent to another speaker or with no speaker. Successors reuse their profession's tree and so tell its lessons too; the Misbegotten are refused by the packet as before.
+
+| Speaker | Lesson (`id`) | Degrees | Branches | Liber pages |
+|---|---|---|---|---|
+| Hermit | `verbs` | 0 to 4 | out, in, spilled | The Two Verbs |
+| Hermit | `answer` | 1 to 4 | ground, night, drinkers | The World Answers |
+| Vicar | `verbs` | 1+ | key, order, draw | The Two Verbs, The Draw and the Mark |
+| Vicar | `day` | 1+ | food, rest, meats | The Body and the Day |
+| Vicar | `answers` | 2+ | count, moon, water | The World Answers, Chum |
+| Vicar | `keeping` | 3+ | lead, feed, brood | The Menagerie, The Brood |
+| Alchemist | `living_blood` | 1+ | keepers, clot, gauge | Living Blood, Sanguine Condenser |
+| Alchemist | `fed` | 1+ | drip, basin, effusion | Fed Ground |
+| Alchemist | `temper` | 2+ | fill, dry, catalysts | Temper, Temperament |
+| Alchemist | `humours` | 2+ | sample, study, dose | Unread Humours |
+| Alchemist | `beds` | 3+ | strains, timber, crops | Strain Beds |
+| Mnemonist | `sculptings` | 1+ | first, work, mend, draw | Lignum Mortis, Pyretic Forge, Brazier Transmutation, Mending, Fire and the Dead |
+| Mnemonist | `strands` | 2+ | forms, stain, brand | Strands, The Five Strands, More Strands, Blood Binding |
+| Mnemonist | `land` | 3+ | strike, dark, light | Living Land, Sculptings of the Ground |
+| Artificer | `hot_runs` | 1+ | uses, heat, feeder | The Ground Network, Sculptings of the Ground |
+| Artificer | `staff` | 2+ | rings, dig, forms | The Staff Grows, Mining by Projection |
+| Artificer | `strand_line` | 2+ | reach, crack, twin | More Strands, The Five Strands |
+| Artificer | `climb` | 2+ | root, cleats, line | Venous Cling, Tendon Line |
+| Vein-Mason | `ground_marks` | 4+ | cut, vein, basin | The Ground Network, Living Veins and Basins |
+| Vein-Mason | `carried` | 4+ | join, price, limits | Living Veins and Basins |
+| Vein-Mason | `walls` | 4+ | ice, iron, scars | Ice and Iron Walls, Temper |
+
+Every one of the 29 core-loop pages is taught by at least one lesson (`CoreLoopLessonsTest`). Ids: root option `hemomancy.dialogue.<npcKey>.option.craft.<id>`, branch options `...craft.<id>.<branch>`, back `...craft.back`; NPC lines `hemomancy.<npcKey>.craft.<id>[.<branch>].lineN`; nodes `craft_<id>[_<branch>]`; events `<npcKey>_craft_<id>` (npcKey `hermit`, `vicar`, `alchemist`, `mnemonist`, `artificer`, `anchorite`). Trap: any id containing a Quest Work word (`DialogueHubFactory.isQuest`: lesson, brief, task, report, claim, bestiary, reward, quest and the rest) silently refiles the card under Quest Work with a sigil state, so lesson ids say `craft`; `CoreLoopLessonsTest` pins it. Every lesson key has a dialogue brief beside the speaker's other briefs.
 
 **Trade.** Each speaker's **want cards** are data under `data/hemomancy/npc_trade/<speaker>/<offer>.json` (same speaker ids as `dialogue_inquiry/`), loaded by `NpcTradeLoader` into `NpcTradeRegistry`. 61 cards ship across 30 speakers. A card names a want, a give, an order, optional `requires` (path, degree, Unstained stage, rapport floor, advancement, active blood), `rapport` earned, `stock {uses, restock_days}`, `show_locked`, and for Court cards an `opens` key. No two cards from one speaker want the same thing, except at a blood-only speaker (`NpcTradeSides.bloodOnly`, today only the Monolith, whose cards are all blood prices), and no speaker gives what another of its cards wants.
 
@@ -28,7 +56,7 @@ Status (2026-11-01): built and reviewed in a client and in GameTests on 2026-10-
 | `custom` | one offering of the speaker's own house custom (`CourtHospitality.customAct`); no gives, no stock | Court only |
 | `act` | one banked `spectacle` | Circus only |
 
-**Sides.** `NpcTradeSides` is a Java table (speaker id to `HARBINGER`, `UNSTAINED`, `COURT`, `CIRCUS`); a speaker folder without a row fails the loader. An Unstained speaker refuses any player at Degree 1 or above: the box shows only the refusal line (`hemomancy.trade.<speaker>.refuse_harbinger`), and a forged request is refused in the transaction too. Unstained cards also refuse stacks tagged `#hemomancy:trade/stained`. Court cards are customs that pay in standing, once per custom, exactly as the dialogue offering does. Circus cards take curiosities (`#hemomancy:trade/curiosity`, graded by rarity), act-themed goods, and banked spectacle; each completed pavilion challenge banks one spectacle for a living, non-spectator player, up to 8 (`NpcTradeActs`).
+**Sides.** `NpcTradeSides` is a Java table (speaker id to `HARBINGER`, `UNSTAINED`, `COURT`, `CIRCUS`); a speaker folder without a row fails the loader. An Unstained speaker refuses any player at Degree 1 or above: the box shows only the refusal line (`hemomancy.trade.<speaker>.refuse_harbinger`), and a forged request is refused in the transaction too. Unstained cards also refuse stacks tagged `#hemomancy:trade/stained`. Court cards are customs that pay in standing, once per custom, exactly as the dialogue offering does; both pay the card's rapport every time (`NpcTradeService.creditCustom` for the offering). Circus cards take curiosities (`#hemomancy:trade/curiosity`, graded by rarity), act-themed goods, and banked spectacle; each completed pavilion challenge banks one spectacle for a living, non-spectator player, up to 8 (`NpcTradeActs`).
 
 **The Monolith, a block speaker.** Its payloads name the sentinel id `-1`. `NpcTradeSpeaker.near` resolves that to the stone the player's open conversation is on (`MonolithDialogueContext.speakingTo`: same dimension, in reach, same block entity, used within the last `CONVERSATION_TICKS` = 6000), and `SanguineMonolithBlockEntity` refuses while breaking or broken and below the fifth Degree. Opening any other speaker ends the conversation. Cards: `measure` (500 mL for 2 Sanguine Salves, 1 use a day), `weight` (750 mL for 1 Vascular Poultice, 2 uses per 3 days), `deep` (D6, shown locked, 1,000 mL for 2 Vascular Poultices, 1 use per 3 days). Below the fifth Degree the stone gives its one refusal and no boxes; a cracked or broken stone gives only its hint. Any held item, cell hands aside, opens the same hub instead of replacing the conversation, and Inquiries lists what the pack holds from the stone's 30 answers. Its counsel card reads `CovenantProgress`, the same steps as the Vicar's D5 and D6 guidance; at D7 it names pressing further and the Seed, and at D8 or with a Seed already taken (`hasGateway`) it says so, though the stone can still be pressed. A stone that has begun to break gives no Cornerstone to a conversation opened before the press.
 
@@ -51,27 +79,28 @@ Status (2026-11-01): built and reviewed in a client and in GameTests on 2026-10-
 | Piece | Path |
 |---|---|
 | Hub, categories, lore and quest flags, rapport lore table | `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/` (`DialogueHubFactory`, `DialogueCategory`, `DialogueOptionPresentation`, `DialogueTopic`, `DialogueRapportLore`) |
-| Event router and per-NPC routes | `.../common/entity/npc/dialogue/route/` (`DialogueEventRouter`, `<Npc>DialogueEvents`) |
+| Event router and per-NPC routes | `.../common/entity/npc/dialogue/route/` (`DialogueEventRouter`, `<Npc>DialogueEvents`, the shared lesson guard `CoreLoopLessonRoutes`) |
+| Core-loop lessons | `.../common/entity/npc/dialogue/` (`CoreLoopLessons`, `CoreLoopLessonDialogue`); lang `hemomancy.<npcKey>.craft.*`, `hemomancy.dialogue.<npcKey>.option.craft.*`; writing notes in the local `tools/i18n/voice_rewrite/pass5_lessons/` |
 | Item inquiry data | `src/main/resources/data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json` |
 | Trade records, loader, service, sides, appraisal, rotation, acts | `.../common/entity/npc/trade/` (`NpcTradeService`, `NpcTradeLoader`, `NpcTradeRegistry`, `NpcTradeSides`, `NpcTradeCards`, `NpcTradeActs`, `NpcTradeGiveRules`, `NpcTradeAppraisals`, `NpcTradeRotation`, `PlayerTradeParty`) |
 | Ledger attachment | `.../common/capability/player/shared/trade/NpcTradeLedger` (read through `HemoCapabilityAccess.npcTrades`) |
 | Payloads | `.../common/network/trade/` (`NpcTradeRequestPacket`, `NpcTradeResultPacket`, `NpcTradeSeenPacket`); client handler `client/network/ClientboundTradeHandlers` |
-| Trade box | `.../client/screen/dialogue/` (`DialogueTradeView`, `DialogueTradeLayout`, `DialogueTradePicks`, inside `DialogueScreen`) |
-| Trade data | `src/main/resources/data/hemomancy/npc_trade/<speaker>/<offer>.json` (29 speaker folders) |
+| Trade box and card sizes | `.../client/screen/dialogue/` (`DialogueTradeView`, `DialogueTradeLayout`, `DialogueTradePicks`, inside `DialogueScreen`); cards grow to their wrapped text in `DialogueTradeLayout.bodyHeight`, `DialogueHubLayout.calculate(shell, summaryLines)` and `DialogueTopicCardLayout.height` |
+| Trade data | `src/main/resources/data/hemomancy/npc_trade/<speaker>/<offer>.json` (30 speaker folders) |
 | Tags | `hemomancy:trade/never_sold`, `trade/stained`, `trade/curiosity` |
 | Lang keys | `hemomancy.trade.<speaker>.<offer>.title/.line/.opens`, `.thanks[_fine]`, `.appraise.poor`, `.refuse_harbinger`, `.stained`; `hemomancy.trade.ui.*`, `.locked.*`, `.refused.*`, `.tier.*`; `hemomancy.dialogue.rapport.<speaker>.<slug>` |
-| Goldens | `src/test/resources/dialogue/lore-options.txt`, `src/gameTest/resources/dialogue/route-fingerprints.txt`, `src/test/resources/network/payload-registry.txt` (protocol 30) |
-| Unit tests | `DialogueLoreFlagTest`, `DialogueHubFactoryTest`, `SanguineMonolithDialogueTreesTest`, `DialogueRapportLoreTest`, `NpcTradeLoaderTest`, `NpcTradeLangKeysTest`, `NpcTradeLedgerTest`, `NpcTradeServiceTest`, `NpcTradeRotationTest`, `NpcTradeCatalogueDataTest`, `DialogueTradeLayoutTest`, `DialogueTradePicksTest` |
+| Goldens | `src/test/resources/dialogue/lore-options.txt`, `src/gameTest/resources/dialogue/route-fingerprints.txt`, `src/test/resources/network/payload-registry.txt` (protocol 50) |
+| Unit tests | `CoreLoopLessonsTest`, `DialogueLoreFlagTest`, `DialogueHubFactoryTest`, `SanguineMonolithDialogueTreesTest`, `DialogueRapportLoreTest`, `NpcTradeLoaderTest`, `NpcTradeLangKeysTest`, `NpcTradeLedgerTest`, `NpcTradeServiceTest`, `NpcTradeRotationTest`, `NpcTradeCatalogueDataTest`, `DialogueTradeLayoutTest`, `DialogueTradePicksTest` |
 | Guardrails | `src/test/java/com/vincenthuto/hemomancy/architecture/DialogueRoutingGuardrailTest.java`, `.../architecture/NpcTradeGuardrailTest.java` |
-| GameTests | `src/gameTest/.../gametest/NpcTradeGameTests` (`npc_trade_validation`, `npcTradeGameTestServer`, 23 tests, in `alphaCheck`); `DialogueRouteCharacterisationGameTests` (`dialogue_route_validation`) |
-| Review client | `npcTradeReviewClient` row in `gradle/review-clients.gradle`, driver `src/gameTest/.../NpcTradeClientReview`, shots in `build/npc-trade-review/screenshots`; the stone: `monolithHubReviewClient`, driver `MonolithHubClientReview`, shots in `build/monolith-hub-review/screenshots` |
+| GameTests | `src/gameTest/.../gametest/NpcTradeGameTests` (`npc_trade_validation`, `npcTradeGameTestServer`, 23 tests, in `alphaCheck`); `DialogueRouteCharacterisationGameTests` (`dialogue_route_validation`); `CoreLoopLessonGameTests` (`core_loop_validation`, batch `core_loop_lessons`, 13 tests) |
+| Review client | `npcTradeReviewClient` row in `gradle/review-clients.gradle`, driver `src/gameTest/.../NpcTradeClientReview`, shots in `build/npc-trade-review/screenshots`; the stone: `monolithHubReviewClient`, driver `MonolithHubClientReview`, shots in `build/monolith-hub-review/screenshots`; the lessons: `lessonReviewClient`, driver `LessonClientReview`, shots in `build/lesson-review/screenshots` |
 | Brief mode | `client/screen/dialogue/DialogueBriefs`, `HemoClientConfig.DIALOGUE_BRIEF_MODE`, `src/main/resources/assets/hemomancy/dialogue_briefs/*.json` |
 | Voice sheets and tooling | `docs/NPC_VOICES.md`; `tools/i18n/voice_rewrite/` (`pass2/`, `pass3/` with `notes/*.md`) |
 | Reference and wiki | `docs/HEMOMANCY_REFERENCE.md` §5.4a; `wiki/Getting-Started.md` (dialogue), `wiki/Crimson-Troupe.md`, `wiki/Brined-Court.md`, `wiki/Unstained-Path.md` (trade) |
 
 ## Rulings that bind
 
-**Player data moved by the playthrough fixes (2026-11-01):** the Artificer's lesson, fork-research and D7 claim keys and his first fork and D7 lineage keys, and the Mnemonist's starter-memory claim, live under `PlayerPersisted` so a death clone keeps them. `PlayerDataMigrations` entries 10 `artificer_claim_keys` and 11 `mnemonist_starter_claim` (sunset 2027-05-01) move the old root keys once at login; a value already under `PlayerPersisted` wins (`npcClaimRootKeysMoveUnderPlayerPersisted`). The met-Hermit flag is set by the right-click, under `PlayerPersisted`; old root flags are not migrated (the mod is not live).
+**Player data moved by the playthrough fixes (2026-11-01):** the Artificer's lesson, fork-research and D7 claim keys and his first fork and D7 lineage keys, and the Mnemonist's starter-memory claim, live under `PlayerPersisted` so a death clone keeps them. `PlayerDataMigrations` entries 10 `artificer_claim_keys` and 11 `mnemonist_starter_claim` (sunset 2027-05-01) move the old root keys once at login; a value already under `PlayerPersisted` wins (`npcClaimRootKeysMoveUnderPlayerPersisted`). The met-Hermit flag is gone: the newcomer gate reads the met-Vicar flag, set by the Vicar's right-click under `PlayerPersisted`; old root flags are not migrated (the mod is not live).
 
 **Architecture** (`AGENTS.md`, `docs/architecture/ARCHITECTURE_STANDARDS.md`):
 - "A chosen dialogue option posts a `DialogueEvent`; `DialogueEventRouter` tries its ordered table of routes and one `<Npc>DialogueEvents` class per NPC (`common/entity/npc/dialogue/route/`). Add an NPC's events to its class or a new class in the table, never another `DialogueEvent` subscriber (`DialogueRoutingGuardrailTest`); `dialogue_route_validation` fingerprints every route."
@@ -101,59 +130,169 @@ Status (2026-11-01): built and reviewed in a client and in GameTests on 2026-10-
 - The Unstained Scout goes through the dialogue hub (one card, `scout/paper`, and two rapport lines).
 - The Scout gets no trade cards of her own (D-15, 2026-11-06): the Unstained refuse Harbingers anyway.
 
+**Owner rulings, D5 and D6 teaching (2026-11-13, built 2026-11-14, `docs/owner_answers/10-early-and-mid-progression.md`):**
+- PT-39 (2026-11-13): a Vicar line says where Sanguine Quintessence comes from: the Monolith rumour names the Rite of Exsanguination (`vicar.illuminatus.monolith_rumor.quintessence`).
+- PT-43 (2026-11-13): the Monolith blueprint is offered at D5 and above; every Vicar tree from D5 to D8 tells the rumour, and the handler takes `hasDegree(5)`.
+- PT-71 (2026-11-13): the D6 Anchorite counsel is a Quest Work card with a notice sigil until the counsel is taken.
+- PT-86 (2026-11-13): each D5 and D6 Main step is a Quest card with a sigil: the Vicar shows one Quest Work card per open `CovenantProgress` step.
+- D-23 (2026-11-13): the Monolith warns before the shatter that the free Cornerstone is lost, while it is unclaimed (`monolith.archon.press_again.cornerstone`).
+
+**Owner rulings, rewards and the Vein-Mason chapter (2026-11-13, built 2026-11-14, `docs/owner_answers/10-early-and-mid-progression.md`):**
+- PT-16 (2026-11-13): a Creative discard of the starter kit stays owed, as `PendingDelivery` does: the kit is owed through `OwedRewards.CLAIM` before its one-time flag.
+- PT-4 (2026-11-13): the Vicar reissues the Mason's Respite map when none is carried (or owed).
+- PT-14 (2026-11-13): the lesson the Vein-Mason issued is persisted; carve, replacement offer and replacement read the stored scar.
+- PT-22 (2026-11-13): a section already Varicose at D5 counts once as the Mason's strain.
+- PT-28 (2026-11-13): a refusal line wherever a reward can be refused.
+- PT-3 (2026-11-13): one-time NPC rewards become `PendingDelivery` claims. Built for the seven one-time NPC rewards (First Bloodcraft kit, Hermit Road report, Mnemonist starter memory, Worn Vow scrap, Woven Vessel kit, Mason's Respite map, Vein-Mason first lesson): each is owed through `OwedRewards.CLAIM`, exact stacks owed before the one-time flag, to a living player outside an observational Chamber visit, counted by real insertion, kept through death, never dropped. Since B21 (2026-11-15) the late rewards take the same claim: the Monolith scrap, the stained church map, the Circus waybill, the Relay Chart, the Artificer's fittings, materials and D7 fitting, the Vein-Mason continuation, D5 and D6 rewards and pattern replacements. Since B30 (2026-11-15) the Circus professors' practical gifts take it too (two Enthralling Filaments and one frame material, owed before the practical is recorded; NQ-15-10). A gift is not a Trade card. A reward that can be reissued checks what is carried or owed (`OwedRewards.carriesOrOwed`). The station half is NQ-10-10 below.
+
+**Owner rulings, the D0 to D6 journey (2026-11-13 and 2026-11-14, built 2026-11-15 in B21, `docs/owner_answers/10-early-and-mid-progression.md`):**
+- PT-2 (2026-11-13): net counting stays for the D1 absorption proof; `vicar.blood_crafting.absorption` now says only blood that finds room in the vessel counts.
+- PT-1b (2026-11-13): the player's own poured blood does not count toward the 500 mL proof. Each tank keeps a per-player tally of fresh blood poured in with Blood Projection (`BlockBloodVolume.recordPoured`); a draw takes from the drawer's own share first and that part is not counted. A share never outlasts the fresh blood left.
+- PT-15 (2026-11-13): the Hermit Road report can be made to the Vicar at any Degree (`HarbingerVicarDialogueTrees.withHermitRoadReport`).
+- PT-4 (2026-11-13): from the fifth Degree the Vicar offers the Mason's Respite map again when it was given and none is carried or owed (`withMasonsRespiteReissue`).
+- PT-7 (2026-11-13): the D4 hint says the scar is prepared at a Mason's Effigy and committed at an Iron Brazier.
+- PT-6 (2026-11-13): the Woven Vessel ledger card counts its two required steps.
+- PT-8 (2026-11-13): in survival the Mortal Display cannot be broken while its Hermit lives; a Display with no link relinks to the nearest Hermit of its temple that no Display names; an awakened player is told the heart cannot attach before anything else; the Hermit reads his own Display and offers no heart that is gone.
+- NQ-10-12 (accepted 2026-11-14): a Hermit whose heart this player did not take offers no farewell. At the first Degree's door he says his heart stays on the stone and sends the player to the Vicar.
+- PT-9 and NQ-10-9 (accepted 2026-11-14): the recruit is told which founder offers and kneels (sneaks) to accept; walking away declines. No screen or payload.
+- PT-11 (2026-11-14): Concentrated Blood settles after 100 ticks in bed, with no night skip needed. A Chamber dream keeps its night-skip rule.
+- PT-26 and NQ-10-2 (accepted 2026-11-14): waking with the blood pending and the charm off says the blood cannot settle without the charm.
+- PT-18 (2026-11-13): no second assigned Centrifuge spin while the first output is unrecovered, with a line.
+- NQ-10-6 (accepted 2026-11-14): the Alchemist offers to strike a pending assigned spin whose output is lost.
+- NQ-10-10 (accepted 2026-11-14): only its player can take an assigned Centrifuge output. The Effigy's finished pattern and first-pattern credit go to the player who set the motif paper; if that player is offline at the finish, the pattern falls at the Effigy as before.
+- PT-14 (2026-11-13): the lessons the Vein-Mason issued live in the `issued_scar_lessons` attachment, kept through death.
+- PT-22 (accepted 2026-11-14): any section already Varicose counts once as the Mason's strain, at the next Thelemic cast or when the Mason's fifth-Degree tree opens. A Dead section does not.
+- PT-29 and NQ-10-11 (accepted 2026-11-14): with `vascularDegradationOnManipEnabled` off, the first Thelemic Memory cast after the fourth-Degree reward counts as the strain, and the Mason's `anchorite.d5.cause_strain.undegraded` line says so.
+- PT-28 (2026-11-13): the remaining silent returns in the D0 to D6 route classes say a refusal line (`message.hemomancy.dialogue.refused.too_far`, `.not_now`).
+- PT-5 (accepted 2026-11-14): the Monolith Working craft opens at Degree 5. The Sanguine Athanor has an authored spot on the map's deep ring so nodes keep 38 px apart.
+- PT-27 and NQ-10-7 A (2026-11-14): the Vicar gives a Monolith scrap whenever none is carried or owed, never a second while one is held.
+- PT-41 and NQ-10-8 (2026-11-14): the Basin commission reads either hand. Each commission pays 10 Alchemist rapport (Stranger to Known) and 2 Vivacious Enzyme, through `OwedRewards`.
+- PT-86 (accepted 2026-11-14): `vicar.covenant.complete_vigil` names every helper the Vigil accepts: a member of the line or a Harbinger sworn to it.
+- PT-23 (2026-11-13): an outpost or Respite resident whose marker is obstructed stands on the nearest clear cell within 3 blocks (`ResidentSpawnSpot`), and a marker with none is logged.
+
+**Owner rulings, the trade box and the hub (2026-11-13, `docs/owner_answers/16-npc-dialogue-canon-and-liber.md`):**
+- RV-12 (2026-11-13): the trade box rules stay as built. Box order Quest Work, Inquiries, Conversation, Trade, with one Conversation card per option. Payment is all or nothing: refused when the goods will not fit, nothing dropped, nothing pending (a shortfall after insertion is dropped at the player's feet and logged). A player on neither path (D0, not Unstained) may trade with the Unstained, and stained goods are still refused at the card. The catalogue substitutions stand: the Alchemist's "Fresh blood" pays Bleeding Bulbs, "Ferric draw" wants filled Bloody Vials, the Mnemonist's `freshness` is `specimen`, the Scar Blank and the Ringmaster's topper are `never_sold`, the Voyager does not take back the Brine-Sealed Letter, only the eight Court roles that take a custom get a card, each performer gets one act-themed card, and no `rank` grader ships. Each speaker has a Known and a Trusted lore line and no Confidant line. Daily cards are limited to 2 uses a day. Trade balance is judged in play (PR-11).
+- RV-42 (2026-11-13): the Vicar's newcomer card leaves when the player's blood wakes, and his right-click sets the met-Vicar flag.
+
+**Owner rulings, lines and pages still to write (2026-11-13, `docs/owner_answers/16-npc-dialogue-canon-and-liber.md`):**
+- CN-5 (2026-11-13): one voice pass per teacher teaches the core loop. The first pass was already in on 2026-11-11 (the 21 lessons above). The correction pass is built (B32, 2026-11-15) except the Mnemonist's `strands.stain` branch, which waits on the stain run (CQ-25, CQ-45, held). The lines false since the 2026-11-12 cut now teach the lash only: the Artificer's `strand_line.reach.line1`, `.crack.line1`, `.twin.line1` and the Mnemonist's `strands.line2` (a click with nothing held taps; a click on a gathered or swinging lash cracks it). `artificer.craft.staff.line1` says blood poured into something that keeps it grows no ring (CQ-8), `mnemonist.craft.land.dark.line2` that the field hides only its caster (CQ-41), and `alchemist.craft.temper.catalysts.line1` and `enzyme_uses.temper` that the smallest catalyst that covers the shortfall is spent and the off hand wins a tie (CB-19). The ruling-driven lines follow what earlier packages built: `alchemist.craft.temper.line2` (casts burn 2 to 8 by rank, held forms 0.5 to 2 a second by price, LP-14), `.temper.fill.line1` (a full body still takes the Temper, CQ-9) and `vicar.craft.day.line2` (about two millilitres a second, CB-1). B07 and B09 had already rewritten the living blood, hot run, gouge, vein, Furnace Veins, meats and unread-blood lines.
+- CQ-50 to CQ-54 (answered 2026-11-14, "Keep all five"): six teachers (the Hermit and the Vein-Mason too), an unread lesson lights the speaker's sigil, the Hermit teaches only to the fourth Degree, the Vein-Mason from the fourth, and hearing a lesson pays nothing. As built.
+- NQ-16-1 (accepted 2026-11-14, built 2026-11-15): the false lesson lines are fixed as lash-only; the Artificer's three `strand_line` lines lose their jet, spray and plant clauses.
+- NQ-16-2 (accepted 2026-11-14): the phials sentence stays, since CQ-63 A gave the Titration Bandolier a giver. It reads "The phials on your bandolier show what you hold." (B12).
+- UN-9 (accepted 2026-11-14, built 2026-11-15): both teachers keep the gouge. The Artificer's `hot_runs.line1` and `hot_runs.feeder.line2` are reworded apart from the Vein-Mason's `ground_marks.cut.line1` and `.cut.line2`; `alchemist.craft.beds.timber.line1` gives the recipe instead of the voyager's log tooltip, and `artificer.craft.climb.line.line1` stops repeating Tendon Line's text.
+- UN-10 (accepted 2026-11-14, built 2026-11-15): every lesson card in the hub shows `hemomancy.dialogue.topic.craft.summary` ("How the work is done, one question at a time.") in place of the Conversation category's summary (`CoreLoopLessons.CARD_SUMMARY`, `DialogueHubFactory`).
+- UN-69, UN-22 (accepted 2026-11-14, built 2026-11-15): `CoreLoopLessonNumbersTest` ties each number a lesson says to its constant: the 125 mL crossing, 12 rampart blocks, the five ring thresholds, the twin's half again, the 6 mL root, the cast and held-form burns, the Temper caps, ten per Will tier and half lost on death. Numbers that live in data or config (catalyst worths, base regeneration) are not in it.
+- CD-7 (2026-11-13, built 2026-11-15): shared keys are split speaker by speaker. Newcomer lines and item hints were already per speaker. The Observance prompts are `hemomancy.dialogue.<acolyte|zealot|guardian>.observance.<available|active|ready>`, picked by `UnstainedObservanceDialogueDecorator.promptKey`. The Circus school's lines are `hemomancy.circus.school.<role>.status.<step>`, `.aftermath.<route>` and `.preparation`, built by `CircusSchoolDialogue.statusKey` and `.aftermathKey`. Only steps a role can reach have a key: five for each of the seven teaching professors, `status.preparation` for the Threadkeeper. The Ringmaster's school node has his own five `circus.school.ringmaster.aftermath.<route>` lines. The shared keys are gone (`removed_assets/lang/B32-removed-en_us.json`).
+- NQ-16-5 (accepted 2026-11-14, built 2026-11-15): `hemomancy.clinical.inquiry.later` is three keys, `clinical.inquiry.alchemist_later`, `.artificer_later` and `.mnemonist_later`, each in its speaker's voice; the 18 inquiry files point at their own.
+- CD-14 (2026-11-13): the Mnemonist gets an inquiry for every memory that has none (41 memories). Built 2026-11-16 (B33): 41 new files, each true to what the memory does today (no held fan for Blood Needle Fan, Tendon Line as a held line with no cast, Memory of Vesper without naming where it leads).
+- NQ-16-4 (accepted 2026-11-14, built 2026-11-16): the 24 memory inquiries that repeated the generic `memory_general` lines have their own. The two generic keys are gone (copies in `removed_assets/lang/B33-removed-en_us.json`). `MnemonistMemoryInquiryCoverageTest` fails a memory with no file, a line key that is not its own, or a line another memory already says.
+- CD-6 (2026-11-13): successors get their own trees later. Until then they reuse the teacher's tree and tell its lessons.
+- DS-9 (2026-11-13, built 2026-11-16, B34): the missing Liber pages are written. A new `armature` chapter holds the rack and the lessons of its two rites (`registerUpgradeLesson`). The Hematic Order holds a page for each of the 14 Working crafts with no page of their own and for the Dried Gourd, the Hematic Stake and the Mycelial Synapse (`LiberEntryDefinitions.CRAFT_PAGES`): each opens at its craft's Degree (the Dried Gourd at 1), on picking up what it makes, or when its craft completes. Cosmic Forces holds Vesper, the Mycophant and Naeglerophaeon. Each boss page, the Phlegethosoma's too, opens for the player when its fight begins (`LiberKnowledgeHelper.unlockForEncounter`, source `ENCOUNTER`). The Sporitic Thurible page describes the D8 Apotheos relic of NQ-10-3. `LiberCraftAndBossPagesDataTest` pins it.
+- NQ-16-3 A (2026-11-14, built 2026-11-16, B34): the Brined Court has a Liber chapter, `brined_court`, with one house page (The Eight Houses) and the Bloom Warden and Kindled Champion pages. The house page opens when the player comes to know the Court, by any route, and each boss page when its fight begins.
+- FX-21 (2026-11-13, built 2026-11-16, B37): one docs pass over the stale tables in the references, the topic docs and the wiki, every number read from the code first, with the cleanup audit's section G. The reference's section 38 is a short table, its thirteen dated notes, seven appendices and old MnA design tables are in `archive/done/HEMOMANCY_REFERENCE_DATED_NOTES.md`, and the Blood-Systems, Getting-Started, Unstained-Path, Harbinger-Path and School-Combat wiki pages describe what exists.
+- NQ-16-6 (accepted 2026-11-14, built 2026-11-14 in B01): the lesson ids follow the word Sculpting: `craft.sculptings`, node `craft_sculptings`, event `mnemonist_craft_sculptings`. The 17 Mnemonist and Alchemist lines and options that said "Shaping" now say "Sculpting" (CN-5, the Sculpting word).
+
+**Owner rulings, small dialogue fixes (2026-11-13, built 2026-11-14, `docs/owner_answers/16-npc-dialogue-canon-and-liber.md`, `11-bloodline-and-throne.md`):**
+- CD-5 (2026-11-13): Annetta's line goes to the player. The option `dialogue.annetta.option.what_is_it` says "There's something inside you, Annetta. This will draw it out."; her `truth` node opens on her stage direction and her answer.
+- FX-15 (2026-11-13): trade cards and hub and topic summaries show their whole text. A trade card, a hub card or a topic card grows to the lines its text wraps to; nothing is cut at two lines. Since B32 (2026-11-15) a topic card's title wraps too, and the card grows a line for each extra title line (`DialogueTopicCardLayout.height(base, titleLines, summaryLines)`).
+- CD-9 leftover (built 2026-11-15): `vicar.votary.temper_lore` no longer asks a question it answers itself; it states the eight tempers.
+- UN-66 (accepted 2026-11-14, built 2026-11-15): the Alchemist's option reads "Tell me about the Cerebral Scarring Station."; the Kindled elder's newcomer line no longer says "Land first"; the `recruit_offer` node shows only the speaker's consider line, and their accept line is spoken once the pledge is taken (`RecruitmentDialogueEvents.acceptLine`, after a successful recruit). The Vicar's and the Alchemist's accept lines were rewritten for after the pledge. The Court newcomer lines that opened on "new to the blood" (eleven of them) were rewritten in each speaker's voice.
+- CD-2 (2026-11-13): the Court `custom.opens` text is narration. All eight keys already read that way.
+- CD-9 (2026-11-13): `vicar.votary.temper_lore` names the eight tempers and gives the enzyme names as the Alchemist's words; each Clairaudiograph inquiry has its own line. Already fixed.
+- CD-11 (2026-11-13): the Hermit's `illuminatus.hint` names the real gate (raise a Fane, or give blood at your line's Bloodwell). Already reworded.
+
+**Owner rulings, the D7 to D8 lines (2026-11-13, built 2026-11-14, `docs/owner_answers/12-endgame-paths.md`):**
+- PT-78 (2026-11-13): after Communion, while the Spine is not yet used, the Alchemist's greeting names the Fungal Spine (`dialogue.ending.alchemist.communed`, a seventh ending state for the Alchemist alone in `DialogueHubFactory.withArchonAcknowledgment`). The other teachers keep their undecided line.
+- PT-79 (2026-11-13): the Vicar's `dialogue.ending.vicar.silent_pending` names the Severance, the Living Sickle and the Bloom, as what the Order's older accounts say.
+- PT-73 (2026-11-13): the Monolith offers Press further only to the player who placed it; another Archon's counsel says to raise their own (`monolith.counsel.not_your_stone`).
+- V-12-2 (2026-11-14): a stranger who already carried a Seed out hears `monolith.counsel.past_the_seed` at another builder's stone, not the line that sends them for a Seed (built 2026-11-15).
+- NQ-12-5 (2026-11-14): the bog body's tool rule is said by the Alchemist's bog body inquiry (`hemomancy.alchemist.item_inquiry.bog_body.line1`, `.line2`): an axe gives adipocere, a hand or scalpel vivianite (the scalpel two, for less pain), and the body is spent until it grows back (built 2026-11-15).
+- CD-10 (2026-11-13): Silent Archon vestments come after Silentium. `artificer.assignment.weight_of_frame.first_upgrade`, `.full_set`, `artificer.item_inquiry.monolith_imbued_cloth.line2` and `tooltip.silent_archon_set_bonus` now say so.
+- CD-12 (2026-11-13): the Monolith's Degree numbering follows the code (fifth to seventh Degree). Already true in the lore.
+
+**Owner rulings, the Brined Court (2026-11-13, built 2026-11-14, `docs/owner_answers/14-brined-court.md`):**
+- PT-56 (2026-11-13): the Court custom pays the same rapport by trade card and by dialogue. The dialogue offering pays the rapport of the speaker's `custom` card (2), every time it is given, through `NpcTradeService.creditCustom`; rapport is still written only by `NpcTradeService`.
+- PT-47 (2026-11-13): a switch between houses sits behind the narration `dialogue.court.confirm.switch` (the one move is spent); a first entry keeps the plain confirm.
+- PT-48 (2026-11-13): the Kindled Champion challenge sits behind the Head-tender's `court.head_tender.challenge.line2`, which now names falling and leaving; the reply after the call keeps `challenge.line1`.
+- CD-1 (2026-11-13): a Voyager's Brine-Sealed Letter inquiry offers `dialogue.voyager.option.letter_chart` once the Court is known and no chart is carried. The Vicar and Alchemist inquiries are unchanged; they draw no charts.
+- CD-4 (2026-11-13): `court.braced_elder.item_inquiry.morphling_holdfast.line1` drops "In time".
+- CD-13 (2026-11-13): the Wayfarer keeps naming "the Court" at Degree 5 and above.
+- PT-83 (2026-11-13, built 2026-11-15): a D8 Silentium gets a greeting tree of their own. The Vicar (`HarbingerVicarDialogueTrees.silentium`, lore card `vicar.option.what_does_the_record_say`) and the Alchemist (`HarbingerAlchemistDialogueTrees.silentium`, lore card `alchemist.option.what_does_the_reading_say`) have whole trees; the Mnemonist's woven tree takes a Silentium greeting and the lore card `mnemonist.option.ask_about_silentium_entry`; the Artificer's workshop takes a Silentium greeting and `artificer.option.silent_vestments`, the one place the Silent Archon vestments are offered (CD-10). Each entity picks the tree through `HarbingerPathPermissions.isSilentium`; `greetingDegree` keeps a Silentium at 8. No new dialogue event.
+- UN-19 A (2026-11-14, built 2026-11-15): the Hermit keeps the Archon tree for a Silentium with one line of his own, `hermit.silentium.line2` (`HarbingerHermitDialogueTrees.silentium`).
+
+**Owner rulings from other chunks that change what an NPC says, gives or does, not built yet (2026-11-13, `docs/owner_answers/10-early-and-mid-progression.md`, `11-bloodline-and-throne.md`, `12-endgame-paths.md`, `15-circus.md`):**
+- PT-30 (2026-11-13, price 2026-11-14): the Anchorite trades a replacement scar blank for 8 bone and 4 clay, stock 1, restock 7 days, and the Scar Blank leaves the `trade/never_sold` list. Not built yet: the Anchorite's Bone and Clay cards already want bone and clay, and the trade loader rejects a card that wants what another card of its speaker wants (B21 log).
+- PT-85 (2026-11-13): an outpost NPC summoned by the ledger is sent home after use. What ends the use is a question (NQ-10-5). Not built yet.
+- HN-9 (2026-11-13): the trade box gets a Circus theme and crest, with the Circus pass. Built 2026-11-15: `DialogueTheme.CIRCUS` (last in the enum) on the Ringmaster's and the school's trees, and one troupe crest `dialogue/crests/circus` for every Circus speaker (`DialogueThemeStyle.crest(theme, styleId)`).
+- PT-13 (2026-11-13): kept as built. Outpost stations keep needing a personal craft.
+- PT-19 (2026-11-13): kept as built. A reissue checks only the carried inventory, as a lost-item safety net.
+
+**Owner rulings, bloodlines (2026-11-13 and 2026-11-14, built 2026-11-15 in B22, `docs/owner_answers/11-bloodline-and-throne.md`):**
+- PT-35 (2026-11-13): a signed ledger used by a non-member checks the first Degree and active blood (`unsigned_ledger_item.needs_degree`, `.needs_active_blood`), then writes a petition. Nobody joins until the leader admits them. The leader is told at once, or the count at login.
+- NQ-11-7 (2026-11-14): the leader answers on a petition row of the ledger screen (step, Admit, Refuse). A petition waits until answered, at most 16 per line (`BloodlineSavedData.MAX_PETITIONS`). Admit re-checks an online applicant's gates; an applicant who is away is joined and told at login; a refused one is told now or at login. A petition goes when the applicant joins any line or the line ends.
+- NQ-11-8 (2026-11-14): the founder-officiated initiation needs no confirm step (as built).
+- NQ-11-2 (2026-11-14): a crumbling ledger leaves nothing: one line (`hemomancy.ledger.crumbled`), a dry sound and a few ash motes.
+- NQ-11-1 B (2026-11-14): only a ledger written before a player's removal crumbles for them. A ledger written after it (Bloodline Recall) is a fresh invitation, and joining by it still needs the leader's confirm.
+- NQ-11-5 (2026-11-14): a member with no ledger leaves through the Vicar ("I want to leave my bloodline.", then a confirm; event `vicar_leave_bloodline`).
+- PT-69 (2026-11-13): at D6, with the Throne not bound, the Vicar and the Monolith send a lineless player to `found_bloodline`, a leader with no Fane to `found_fane`, and a member whose line has no Fane to the new `line_has_no_fane`. `bind_throne` now says "your line's Fane".
+- NQ-11-13 (2026-11-14): the Vicar's `found_fane` guidance ends with a clause: a full pool takes nothing and earns no proof, so draw some out first.
+- UN-20 (2026-11-14): Our Lady's late whispers keep the choice with the player ("Fight them or flee them. That choice is yours."). No line pushes the Unstained toward wiping out the Harbingers. Closes `NPC_VOICES.md` decision 4.
+- PT-87 (2026-11-13): a line stores its founder's name and an empty custom name. Its default name shows through `hemomancy.bloodline.default_name` in the reader's language; "No Bloodline" is `hemomancy.bloodline.none`.
+
 **Pronouns (applied 2026-10-24):** Vicar, Artificer and Hermit are he; Alchemist, Mnemonist and Vein-Mason are they; an Unstained speaker says "the Church", never "the Order".
 
 ## Calls made without the user
 
-From the track files (`archive/tracks/npc_trade/`), each overturnable:
-- Box order Quest Work, Inquiries, Conversation, Trade; Conversation lists one card per option instead of a single "Speak Freely" card (00-README).
-- Payment is all or nothing: refused when the goods will not fit, nothing dropped, nothing pending (00-README). A shortfall after insertion is dropped at the player's feet and logged (03).
-- Players on neither path (D0, not Unstained) may trade with the Unstained; stained goods are still refused at the card (00-README Q-2 note).
+From the track files (`archive/tracks/npc_trade/`), each overturnable. The calls the owner kept on 2026-11-13 moved to "Rulings that bind" (RV-12).
 - Lore golden keeps the old classifier's keyword accidents (Anchorite options flagged lore because "anchorite" contains "rite"); pass 3 later un-lored the Anchorite options (`DialogueLoreFlagTest` floor 66 to 64) (01; memory of the pass-3 run).
 - POOR refuses the whole trade as soon as any chosen stack grades POOR (03).
-- Catalogue substitutions: Alchemist "Fresh blood" pays Bleeding Bulbs not Bloody Flasks (a 5,000 mL loop); "Ferric draw" wants filled Bloody Vials not enzymes; Mnemonist `freshness` became `specimen`; Vein-Mason's Scar Blank and the Ringmaster's topper are `never_sold`; the Voyager does not take back the Brine-Sealed Letter; only the eight Court roles that take a custom get a card; performers get one act-themed card each; no `rank` grader shipped (05).
-- No lore give for the Hermit (his bread card pays 2 rapport instead); two rapport lines per speaker (Known, Trusted), no Confidant line yet; spectacle is a new `act` want, not a Circus reading of `custom`; rotation cards pay a little more and are limited to 2 uses a day (06).
-- No Circus `DialogueTheme`: the Ringmaster's box uses the theme his tree already had; a finished trade plays vanilla `ITEM_PICKUP` because no dialogue sounds exist; the "Today" ribbon is drawn, not a sprite (04, 06).
-- Trade data counts: 56 cards, 29 speakers, 56 rapport lines over 28 speakers (05, 06, 07).
+- No lore give for the Hermit (his bread card pays 2 rapport instead); spectacle is a new `act` want, not a Circus reading of `custom`; rotation cards pay a little more (06).
+- No Circus `DialogueTheme` (overturned by HN-9 on 2026-11-13, built 2026-11-15): the Ringmaster's box uses the theme his tree already had; a finished trade plays vanilla `ITEM_PICKUP` because no dialogue sounds exist; the "Today" ribbon is drawn, not a sprite (04, 06).
+- Trade data counts at the 2026-10-31 build: 56 cards, 29 speakers, 56 rapport lines over 28 speakers (05, 06, 07). Today: 61 cards over 30 speakers (rechecked 2026-11-16).
+- Pass-3 writers' notes kept as written: the Marrow-tender's rooting plan is the tender's body, not the player's (`court_marrow_tender.md`, `court_rooted_elder.md`); the Mnemonist's 0.3% question rate comes from two player rapport buttons and was left alone (`mnemonist.md`).
 - The Monolith (2026-11-05): the three cards' prices and stock; rapport 2 on `deep`; three new lore questions per Degree and the two rapport lines, including "Nothing given here stays here"; the counsel wording; the crest and the three portraits (cold, skin, fever); a conversation that stays open for 6000 ticks after its last use instead of 1200 from opening; "What are you?" a new unread card at each Degree; the Press further button hidden below the seventh Degree, not shown dimmed; the look of the glow; the tab glows whatever it holds; a ready Turn In counts as important even without a sigil.
+
+- Core-loop lessons (round two P10, CQ-50 to CQ-54, kept by the owner on 2026-11-14): the assignment of 21 lessons to six speakers in the table above; lessons are lore cards, so an unread one lights the speaker's sigil like any other lore; the Hermit teaches only while the player is at the fourth Degree or below; the Vein-Mason from the fourth Degree; a lesson's event opens Liber pages and nothing else. Successors tell their profession's lessons (CQ-55, parked with CD-6). The lines were written one speaker at a time to the sheets without the owner's line-by-line review.
+- 2026-11-12, after the held forms were cut: the Mnemonist's `craft.strands.forms` lines were rewritten to "Only the lashes are strands now". The other lesson lines about jets, sprays, plants and the stain run were left as they were.
+- Overnight build, 2026-11-14 (`owner_answers/BUILD_LOG_2026-11-14.md`, "For the owner" of each package):
+  - FX-15 was read as "fit": a card grows to its text and no text shrinks. At GUI scale 3 the hub cards are taller, so the lower two sit partly below the fold and the hub scrolls. A topic card's title now wraps too (B32).
+  - The wording of the player's Annetta option (P12), the seven Vicar card titles `dialogue.vicar.option.covenant.<step>` (P10), the eleven narration lines for refused or reissued rewards under `dialogue.event.*` (P11) and the Mnemonist's two Circus teaser lines (P15).
+  - The Vicar's D4 hint says the scar is "committed through a Mason's Effigy", where the Effigy only prepares it (P10). Reworded in B21: the Iron Brazier commits.
+  - The Monolith rumour is offered in every Vicar tree from D5 to D8, so a D7 Archon and a D8 Apotheos are also asked "Have you heard of any path beyond the seven degrees?" (P10, PT-43).
+  - The refusal lines of PT-28 are narration keys (`hemomancy.dialogue.event.*`), not lines in a speaker's voice, and only the reward sites the plan named were audited, plus the circus waybill. Other silent returns in the D0 to D6 route classes are unaudited (P11).
+  - The Monolith's counsel for a stranger, `monolith.counsel.not_your_stone`, and "your own spent Bloom" in the Vicar's Severance line (P13).
+  - One shared narration, `dialogue.court.confirm.switch`, warns before a house switch, in place of eight lead voices (P14).
+- Planned defaults, 2026-11-14 triage. Each will be built as written unless the owner objects; none is a ruling:
+  - NQ-10-4 (PT-10): unique Harbinger NPCs lost to `/kill` or the void come back after one day with no player within 48 blocks, as Court members do. A Creative kill stays final.
+  - PT-85: two lines may still pledge the same outpost NPC.
+  - HN-9, crest count: one troupe crest shared by the nine Circus speakers, and a `CIRCUS` theme at the end of `DialogueTheme`.
 
 ## Open questions
 
-- Late playthrough decisions (2026-11-02), each a failing `required = false` probe with its evidence in [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md#open-questions) and the roll-up in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) §1.6 (PT- plus the number): D-35 [D5-1], D-39 [D5-5], D-43 [D5-10], D-56 [NPC-2], D-69 [D6-7], D-71 [NPC-4], D-83 [D8-4], D-85 [NPC-1], D-86 [NPC-3], D-87 [NPC-6].
-
-The playthrough suite's pending NPC decisions (reward drops, reissue rules, the temple's fragility, consent, unique NPC loss, hints that do not name the real gate, and more) are listed with their probe tests in [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md#open-questions) and rolled up in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) §1.6.
-
-Left for the user by the trade build (`archive/tracks/npc_trade/`, memory ledger):
-- Rapport lore content and the trade balance (what a card gives against what it wants) are unreviewed.
-- Long card lines clip at two lines in the Trade box.
-- Hub box summaries clip mid-sentence ("Assignments, progress, and").
-- No Circus theme or crest on the trade box (the default crest is a fallback).
-- The Alchemist's daily card sits below the first screen, so the "Today" ribbon is not in the review shots (07).
-
-From `docs/NPC_VOICES.md` "Open decisions" (still open): 8 Annetta speaks the player's line (`annetta.draught.truth.line1`); 10 successors reuse the teacher's tree past the greeting; 11 shared keys (Circus status, Unstained Observance, newcomer and item-hint templates) flatten voices; 13 the performer barks `dialogue.circus_<role>.line1-3` are dead text; 14 `votary.temper_lore` lists enzyme names as tempers and `item_inquiry.clairaudiograph` lines 2 to 4 are identical.
-
-From the pass-3 writers' notes (`tools/i18n/voice_rewrite/pass3/notes/`, "## Open"):
-- `artificer.md`: lore §Silent Archon puts the vestments after Silentium, but the D7 Weight of the Frame lineage offers Silent Archon at the seventh Degree; lines follow the code.
-- `court_gardener.md`, `court_arbor.md`, `court_lightkeeper.md`: is `custom.opens` narration or the Gardener's voice?
-- `court_braced_elder.md`: `item_inquiry.morphling_holdfast.line1` ("In time it will hold you to stone") can read as permanent rooting; cut "In time" if that reading is unwanted.
-- `court_marrow_tender.md`, `court_rooted_elder.md`: the Marrow-tender's own rooting plan is kept as the tender's body, not the player's.
-- `entity.md`: Archon whispers go to Degree 7+, so a D8 Apotheos or Silentium is still called "Archon" (Ancestral Communion the same); `spine_growth.degree8.canon` is never sent and would be wrong for a Silentium; `coreWitnessDialogue` Javadoc disagrees with the lore on where it fires.
-- `hermit.md`: `illuminatus.hint` "Find allies who share your blood" unchecked against whether the Bloodline Covenant needs a bloodline.
-- `mnemonist.md`: the 0.3% question rate comes from two player rapport buttons, left alone.
-- `monolith.md`: shattering destroys the stone and loses the free Cornerstone with no warning line (adding one would be a new fact); the Degree numbering of the Monolith steps differs between lore §6.5a and §10.
-- `voyager.md`: `spawn_egg_mnemonic_whale.line2` says to lead squid on a lead, unverified; should the `brine_sealed_letter` inquiry offer a chart option?
-- `votary_wayfarer.md`: the Wayfarer naming "the Court" at Degree 5+ assumes the crew speaks of it openly (not blocking).
+Open questions live in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md). The ids that belong to this doc: NQ-10-1 (the D1 blood font, answered, not built yet), NQ-10-5 (PT-85: under investigation, since an outpost NPC should not be carried off at all; see the PT-85 report in `owner_answers/BUILD_LOG_2.md`), PT-30 (the scar blank trade, answered, blocked by the one-card-per-want rule). CQ-63 is built: the Alchemist gives the Titration Bandolier with her Temper lesson.
 
 ## Proof owed and known gaps
 
-- Proved for the Monolith (2026-11-05): `runMonolithHubReviewClient` (D5 to D7 hub and boxes, a real trade, an item in hand; every check green), `runNpcTradeGameTestServer` 23 of 23, `runMonolithWalkGameTestServer` 14 of 14, `runDialogueRouteGameTestServer`.
-- Proved: `runNpcTradeReviewClient` ran end to end on 2026-10-31 (31 shots, every PASS line green); `npcTradeGameTestServer` 14 of 14; the loaded catalogue has `NpcTradeRegistry.errors() == 0` and exactly 56 cards.
-- Not proved in a client: the "Today" ribbon (GameTest only) and the Scout's hub, added after the review run.
+Owed by the owner:
+- Read the 2026-11-11 lesson lines: 169 lines and 91 option labels under `hemomancy.<npc>.craft.*`, six item inquiries, and the Vicar's three P8 keys (UN-21, RV-71). `lessonReviewClient`, brief mode, or the local `tools/i18n/voice_rewrite/pass5_lessons/<speaker>/proposed.json`.
+- Read the lines the overnight build added, changed or deleted: the "Read these" list in [owner_answers/BUILD_LOG_2026-11-14.md](owner_answers/BUILD_LOG_2026-11-14.md).
+- One session on the Trade and Conversation boxes (PR-11): a blood tithe at a Harbinger, the Unstained refusal at D1, a Court custom card, a Circus curiosity card, a lore card and a lesson card, the "Today" ribbon (the Alchemist's daily card sits below the first screen) and the Scout's hub. Rapport lore content and trade balance are judged there (RV-12).
+- Look at the two GUI scale 3 shots of FX-15, `build/npc-trade-review/screenshots/npc-trade-08-alchemist-hub-scale3.png` and `npc-trade-09-alchemist-trade-scale3.png`, and say if the text should shrink or the window grow instead of the hub scrolling.
+
+Proved:
+- 2026-11-14 (P12): `runNpcTradeReviewClient`, 33 shots; shot 08 shows a three-line hub summary in full at GUI scale 3, shot 09 a two-line trade card line.
+- For the Monolith (2026-11-05): `runMonolithHubReviewClient` (D5 to D7 hub and boxes, a real trade, an item in hand; every check green), `runNpcTradeGameTestServer` 23 of 23, `runMonolithWalkGameTestServer` 14 of 14, `runDialogueRouteGameTestServer`.
+- `runNpcTradeReviewClient` ran end to end on 2026-10-31 (31 shots, every PASS line green); `npcTradeGameTestServer` 14 of 14; the loaded catalogue had `NpcTradeRegistry.errors() == 0` and exactly 56 cards.
+
+Known gaps:
+- The Mnemonist's `craft.strands.stain` branch still teaches a plant on a wet stain, which no memory holds. It waits on the stain run (CQ-25, CQ-45, held).
+- D-31: no professor line for an Unstained pupil was written; whether a professor refuses an Unstained pupil is not ruled (B32).
+- The Circus theme and crest (HN-9, built 2026-11-15) have been seen once in `npcTradeReviewClient` (`build/build2/B27-shots/npc-trade-27-ringmaster-hub.png`); the owner has not judged them.
+- Archon whispers go to Degree 7+, so a D8 Apotheos or Silentium is still called "Archon" (Ancestral Communion the same) (`pass3/notes/entity.md`). The Voyager's `spawn_egg_mnemonic_whale.line2` says to lead squid on a lead, unverified (`voyager.md`).
+- Failing `required = false` probes on NPC behaviour are listed in [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md#proof-owed-and-known-gaps): the rulings listed above as not built.
 - `docs/NPC_VOICES.md` and the old `docs/npc_trade/` tracks matched `.gitignore` `/docs/*` and needed force-adding; the tracks now live under `docs/archive/tracks/npc_trade/`.
 - The Liber has no page on the dialogue boxes, so it did not change.
-- The reference's inquiry count (317) is older than the files on disk (385); refresh when §5.4 is next touched.
 - Give counts against stack sizes and potion components are checked only by the live loader (the GameTest covers it).
-- Shared-key voices (open decision 11) and the dead performer barks (13) are text debt, not code gaps.
 
 ## History
 
@@ -164,6 +303,12 @@ From the pass-3 writers' notes (`tools/i18n/voice_rewrite/pass3/notes/`, "## Ope
 - 2026-10-31: pass 3 voice and lore-accuracy rewrite (606 keys; Court, Circus, trade and rapport keys), route fingerprint golden regenerated; the dialogue review produced the lore rulings above (NPC_VOICES open decisions 2, 4, 5, 9 decided); the Unstained Scout routed through the hub.
 - 2026-11-01: this topic doc written; the track folder archived.
 - 2026-11-05: the Sanguine Monolith joined the hub with a blood-only Trade box, covenant counsel and new lore ([spec](superpowers/specs/2026-11-05-monolith-dialogue-hub-design.md)).
+- 2026-11-13: the owner answered the question sheet. The rulings of this area (CN-5, CD-2, CD-5, CD-6, CD-7, CD-9, CD-14, DS-9, FX-15, FX-21, RV-12, RV-42) and the dialogue rulings of other areas are recorded under "Rulings that bind".
+- 2026-11-14: the overnight build ([owner_answers/BUILD_LOG_2026-11-14.md](owner_answers/BUILD_LOG_2026-11-14.md)). P12 built CD-5 and FX-15 and recorded CD-2, CD-9 and CD-11. P10, P11, P13, P14 and P15 built the dialogue rulings of their own areas (the lines below, the reward refusals, the Court warnings, the Circus fixes).
+- 2026-11-14: owner rulings PT-6, PT-7, PT-33, PT-39, PT-43, PT-71, PT-86 and D-23 built: the D3 and D4 Vicar hints, the optional index, the jar lesson at D3+, the Monolith rumour from D5 with its Quintessence line, the counsel and covenant steps as Quest Work, and the Cornerstone warning.
+- 2026-11-15: B32 built the lesson correction pass (CN-5 less the stain branch), CD-7 (Observance and Circus school keys per speaker), NQ-16-5, UN-9, UN-10, UN-66, UN-69, the FX-15 leftovers (title wrap, unit cases, two review harness fixes) and the CD-9 leftover.
+- 2026-11-14: owner rulings PT-73, PT-78, PT-79, CD-3, CD-10 and CD-12 built: the Monolith's builder-only press, the Alchemist's Spine line, the Vicar's Severance line, and the Silent Archon and spine-growth text clean-up.
+- 2026-11-14: second docs pass. The rulings chunks 10, 11, 12 and 15 hold about NPC lines, rewards and trades were recorded here as ruled and not built, with their planned defaults and their questions in the pointer.
 - 2026-11-07: dialogue brief mode, a client debug option that shows each line's intent and tone in place of its text, with briefs for about 3,300 keys.
 - 2026-11-08: Hermit voice pass 4. His sheet in `docs/NPC_VOICES.md` was rewritten around the man rather than a cadence, and his 48 lines were rewritten against it (contrast pivots, closing aphorisms and title-plus-compliment greetings removed; hints point to the ledger). After an independent review the same day, his factual slips were fixed, his opening and rank greetings were revised and the sheet moved to the v2 format. Old text beside new is in `tools/i18n/voice_rewrite/pass4/hermit.md`; four route fingerprint rows changed with the text. The audit and the rest of the proposals are in `docs/audits/2026-11-08-dialogue-voice/`.
 - 2026-11-08: voice pass 4 applied to the Vicar and the Alchemist (268 lines, sheets in the v2 format, thirteen route fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/vicar/comparison.md` and `alchemist/comparison.md`.
@@ -172,3 +317,7 @@ From the pass-3 writers' notes (`tools/i18n/voice_rewrite/pass3/notes/`, "## Ope
 - 2026-11-08: voice pass 4 applied to the Voyager and the Votary Wayfarer (57 lines, sheets in the v2 format, no fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/voyager_wayfarer/comparison.md`.
 - 2026-11-08: voice pass 4 applied to the Circus (80 lines, Ringmaster and faculty sheets in the v2 format, no fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/circus/comparison.md`.
 - 2026-11-08: voice pass 4 applied to the Successors and Misbegotten (14 lines, sheets in the v2 format, no fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/successors_recruits/comparison.md`.
+- 2026-11-11: core-loop lesson trees (round two P10): 21 lessons across six outpost speakers, 260 keys with briefs, six new item inquiries, the `_craft_` speaker prefixes, DIALOGUE on every core-loop page; 63 route fingerprint rows and 21 lore-option golden lines added on purpose ([archive/tracks/core_loop/BUILD_LOG_ROUND2.md](archive/tracks/core_loop/BUILD_LOG_ROUND2.md) P10).
+- 2026-11-15: build package B24 built PT-83 and UN-19 A: Silentium greeting trees for the Vicar, Alchemist, Mnemonist and Artificer and one Silentium line for the Hermit.
+- 2026-11-16 (B33): Mnemonist inquiries for every memory, 65 in all (41 new files, 24 off the generic lines), 130 lines with briefs, and `MnemonistMemoryInquiryCoverageTest`.
+- 2026-11-16 (B34): the missing Liber pages (DS-9) and the Brined Court chapter (NQ-16-3 A): 26 pages, the `ENCOUNTER` discovery source, `LiberCraftAndBossPagesDataTest` and a Court GameTest.

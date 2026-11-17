@@ -14,7 +14,8 @@ import javax.annotation.Nullable;
 /**
  * The Ringmaster's finale opening: the camera starts on the sawdust and tilts up through the pavilion to find him
  * perched in the rafters, then pulls back to take in the whole big top as his name lands and the first knife
- * comes down. The view comes back as the rafters phase opens.
+ * comes down. The view comes back as the rafters phase opens. The scene runs the server's saved intro window, during
+ * which no knife, swarm or performer moves.
  */
 public final class CircusRingmasterScene implements BossScene {
 	private static final int OPEN = CircusRingmasterEntity.INTRO_TICKS - HANDBACK;
@@ -30,6 +31,11 @@ public final class CircusRingmasterScene implements BossScene {
 	@Override
 	public float letterbox(float t) {
 		return BossSceneTracks.keys(t, 0, 0, 8, 1, OPEN, 1, OPEN + 12, 0);
+	}
+
+	@Override
+	public boolean skippable(float t) {
+		return t < OPEN;
 	}
 
 	@Override

@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memory;
 
+import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 public final class HuskEffigyRulesTest {
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         UUID owner = UUID.fromString("00000000-0000-0000-0000-000000000001");
         UUID stranger = UUID.fromString("00000000-0000-0000-0000-000000000002");
 

@@ -47,8 +47,8 @@ public final class EntityCastCharacterisationGameTests {
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud", "crimson_flame_conjuration",
 			"sanguine_ignition", "scalding_updraft", "vitric_combustion", "deadly_gaze", "hemolymphal_pulse",
 			"activation_potential", "synaptic_jolt", "conductive_mark", "hematic_flare", "hematic_beacon",
-			"prismatic_reproof", "unclosing_eye", "hemorrhage", "exsanguinate", "insatiable_hunger", "grave_debt",
-			"bloom_of_rot", "cryogenic_pulse", "glacial_grasp", "glacial_rampart", "pyretic_forge",
+			"prismatic_reproof", "hemorrhage", "exsanguinate", "insatiable_hunger", "grave_debt",
+			"cryogenic_pulse", "glacial_grasp", "glacial_rampart", "pyretic_forge",
 			"iron_retort", "sanguine_magnetism", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse",
 			// No entity cast: it must report that it did nothing.
 			"blood_rush");
@@ -58,8 +58,8 @@ public final class EntityCastCharacterisationGameTests {
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
 			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
 			"deadly_gaze", "hemolymphal_pulse", "activation_potential", "synaptic_jolt", "conductive_mark",
-			"hematic_flare", "hematic_beacon", "prismatic_reproof", "unclosing_eye",
-			"hemorrhage", "exsanguinate", "insatiable_hunger", "grave_debt", "bloom_of_rot",
+			"hematic_flare", "hematic_beacon", "prismatic_reproof",
+			"hemorrhage", "exsanguinate", "insatiable_hunger", "grave_debt",
 			"cryogenic_pulse", "glacial_grasp", "glacial_rampart",
 			"pyretic_forge", "iron_retort", "sanguine_magnetism",
 			"void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse");
@@ -68,8 +68,8 @@ public final class EntityCastCharacterisationGameTests {
 	}
 
 	/**
-	 * Over the live registry: exactly the 34 casts are attached, a Will may choose exactly the 32 that are not
-	 * retired, and every manipulation Vesper treats as castable has one.
+	 * Over the live registry: exactly the listed casts are attached, a Will may choose exactly those, and every
+	 * manipulation Vesper treats as castable has one. The Saint gifts are player only (D-1, NQ-08-5).
 	 */
 	@GameTest(template = "wide", timeoutTicks = 40, batch = "entity_casts")
 	public static void entityCastsAreAttachedWhereWillsAndVesperNeedThem(GameTestHelper helper) {
@@ -79,7 +79,9 @@ public final class EntityCastCharacterisationGameTests {
 			if (manipulation.getEntityCast().isPresent()) attached.add(manipulation.getName());
 			if (EntityManipulationEffects.isSupported(manipulation)) supported.add(manipulation.getName());
 		}
-		helper.assertTrue(attached.equals(new TreeSet<>(CASTS.subList(0, 32))), "entity casts attached to " + attached);
+		helper.assertTrue(attached.equals(new TreeSet<>(CASTS.subList(0, CASTS.size() - 1))), "entity casts attached to " + attached);
+		for (String gift : List.of("crimson_tithe", "unclosing_eye", "bloom_of_rot", "endless_hour"))
+			helper.assertTrue(!attached.contains(gift) && !supported.contains(gift), gift + " is a Saint gift and has no entity cast");
 		helper.assertTrue(supported.equals(new TreeSet<>(WILL_CASTS)), "Wills may cast " + supported);
 		com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperManipulationCoverage.TABLE.forEach((id, entry) -> {
 			if (entry.coverage() == com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperManipulationCoverage.Coverage.CASTABLE) {

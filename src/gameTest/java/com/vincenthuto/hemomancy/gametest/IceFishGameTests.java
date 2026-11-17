@@ -38,8 +38,10 @@ public final class IceFishGameTests {
         helper.assertTrue(ItemInit.spawn_egg_ice_fish.get().getType(new ItemStack(ItemInit.spawn_egg_ice_fish.get())) == type,
                 "Ice Fish spawn egg points to the wrong entity");
         var profile = BloodProfileData.profile(type, false);
-        helper.assertTrue(profile.tempers().isEmpty() && !profile.requiresLivingSyringe()
-                && profile.properties().contains(Hemomancy.rloc("blood_properties/aquatic")), "Ice Fish blood must remain temper-free and aquatic");
+        helper.assertTrue(profile.tempers().equals(java.util.List.of(
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.CONGEATIO))
+                && !profile.requiresLivingSyringe()
+                && profile.properties().contains(Hemomancy.rloc("blood_properties/aquatic")), "Ice Fish blood must be Congeatio and aquatic (NQ-06-12)");
         var biomes = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
         for (var key : java.util.List.of(Biomes.COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, Biomes.FROZEN_OCEAN,
                 Biomes.DEEP_FROZEN_OCEAN, Biomes.FROZEN_RIVER, Biomes.ICE_SPIKES)) {

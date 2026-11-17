@@ -9,15 +9,16 @@ import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemImmatureFungalScar;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialCrucibleMenu;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -72,6 +73,8 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
     private static final float BLOOD_COST_PER_TICK_PHASE2 = 1.5f;
     /** Minimum aligned enzyme power per item (used as fallback). */
     private static final float DEFAULT_ENZYME_POWER = 100f;
+    private static final ParticleColor PALE_SPORE = new ParticleColor(214, 196, 150);
+    private static final ParticleColor CRIMSON_SPORE = new ParticleColor(150, 40, 58);
 
     // ── Slot layout ───────────────────────────────────────────────────────────
     // 0   = center (seed ingredient / immature scar)
@@ -190,11 +193,13 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
 
                 // Spore particle burst
                 if (te.craftingProgress % 10 == 0) {
-                    HLParticleUtils.spawnPoof((ServerLevel) level, pos, ParticleTypes.MYCELIUM);
+                    HLParticleUtils.spawnPoof((ServerLevel) level, pos, HemoParticleData.sporiticSpore(PALE_SPORE));
                 }
 
                 if (te.craftingProgress <= 0) {
-                    HLParticleUtils.spawnPoof((ServerLevel) level, pos, ParticleTypes.REVERSE_PORTAL);
+                    HLParticleUtils.spawnPoof((ServerLevel) level, pos, HemoParticleData.willAbsorptionGlowPulse(CRIMSON_SPORE));
+                    ((ServerLevel) level).sendParticles(HemoParticleData.sporiticSpore(CRIMSON_SPORE),
+                            pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 6, 0.25, 0.15, 0.25, 0.01);
                     te.finishCrafting();
                     changed = true;
                 }

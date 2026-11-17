@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import com.vincenthuto.hemomancy.common.encounter.VagrantMindEncounterData;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTopic;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerArtificerDialogueTrees;
@@ -118,14 +119,14 @@ public final class PlaythroughSanctifiedGameTests {
 	private static final BlockPos RITE_ORIGIN = new BlockPos(20, 3, 12);
 
 	private static final String ALREADY_ATTAINED = "message.hemomancy.cardinal_rite_activation.you_have_already_attained";
-	private static final String NO_STRUCTURE = "message.hemomancy.cardinal_rite_activation.the_floor_answers_but_no_structure";
-	private static final String NO_FLOOR = "message.hemomancy.cardinal_rite_activation.the_cardinal_focus_cannot_find_a";
 	private static final String RANK_SEALED = "message.hemomancy.cardinal_rite_activation.the_rank_rite_remains_sealed_complete";
 	private static final String LIVING_COVENANT_CHAPTER = "milestone.hemomancy.chapter.living_covenant";
 	private static final String VIGIL_CLOSES = "message.hemomancy.cardinal_rite_completion_effects.the_vigil_closes_around_every_survivor";
 	private static final String HELPERS_HOLD = "message.hemomancy.cardinal_rite_completion_effects.required_bloodline_helpers_must_still_hold";
 	private static final String COVENANT_ALREADY_SEALED = "message.hemomancy.cardinal_rite_completion_effects.the_covenant_is_already_sealed_its";
-	private static final String NOT_PROGENITOR = "block.hemomancy.covenant_throne.not_progenitor";
+	private static final String NOT_IN_LINE_FANE = "block.hemomancy.covenant_throne.not_in_line_fane";
+	private static final String TRANCE_PROGENITOR_ONLY = "block.hemomancy.covenant_throne.trance_progenitor_only";
+	private static final String THRONE_BOND_CLEARED = "hemomancy.bloodline.throne_bond_cleared";
 	private static final String RESPAWN_SET = "block.hemomancy.covenant_throne.respawn_set";
 	private static final String TRANCE_ENTERED = "block.hemomancy.covenant_throne.trance_entered";
 	private static final String TRANCE_COOLDOWN = "block.hemomancy.covenant_throne.trance_cooldown";
@@ -141,10 +142,6 @@ public final class PlaythroughSanctifiedGameTests {
 	private static final String BIOLOGY_RECORDED = "hemomancy.vagrant_mind_inquiry.biology_recorded";
 	private static final String BEARING = "hemomancy.vagrant_mind_inquiry.bearing";
 	private static final String BEARING_MISSING = "hemomancy.vagrant_mind_inquiry.bearing_missing";
-	/** Chamber lines that are not the LF-12 explanation: the visit's own timer and warnings, the degree gate. */
-	private static final List<String> CHAMBER_ROUTINE_KEYS = List.of("message.hemomancy.chamber_visit.timer",
-			"message.hemomancy.chamber_visit.warning", "message.hemomancy.chamber_visit.rite_degree",
-			"message.hemomancy.chamber_visit.no_ordeals");
 	/** The fungal whisper's check interval at Degree 6 ({@code FungalWhisperEvents.SANCTIFIED_INTERVAL}). */
 	private static final int SANCTIFIED_WHISPER_INTERVAL = 18000;
 
@@ -160,7 +157,7 @@ public final class PlaythroughSanctifiedGameTests {
 	 * sets the six hematic iron pillars, offers Sanguine Quintessence, puppeteering thread and an amethyst shard in
 	 * the braziers and lights them, plants the Staff, pays the anchors and the Bastion sigil, fights the Bloodlicker
 	 * wave and seals the daemon. Degree 6, {@code degree_6_sanctified}, the Staff back in the pack. Replanting on the
-	 * same refilled floor starts nothing and says why (the already-attained line, or the D-32 floor line).
+	 * same refilled floor starts nothing and says the rank is already attained.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 11000, batch = RITES)
 	public static void sanctifiedRiteByPlay(GameTestHelper helper) {
@@ -185,13 +182,11 @@ public final class PlaythroughSanctifiedGameTests {
 			p.moveTo(PlaythroughRites.riteStand(floor));
 			p.wield(ItemInit.living_staff.get());
 			Outcome again = p.useOn(floor.focus());
-			boolean attained = said(again, ALREADY_ATTAINED);
-			boolean noStructure = said(again, NO_STRUCTURE) || said(again, NO_FLOOR);
-			PlaythroughLog.note(helper, "sanctifiedRiteByPlay", "replant at D6 said " + again.saidKeys()
-					+ (attained ? "" : " (D-32 family: the floor line, not the already-attained line)"));
+			PlaythroughLog.note(helper, "sanctifiedRiteByPlay", "replant at D6 said " + again.saidKeys());
 			helper.assertTrue(CardinalRiteSavedData.get(p.player().serverLevel()).getRite(p.uuid()) == null,
 					"a second Bloodline Covenant does not start at degree 6; " + again);
-			helper.assertTrue(attained || noStructure, "the replant says why it starts nothing; " + again);
+			helper.assertTrue(said(again, ALREADY_ATTAINED),
+					"the replant says the rank is already attained (PT-32); " + again);
 			helper.assertTrue(p.player().getMainHandItem().is(ItemInit.living_staff.get()), "the Staff stays in hand");
 		}).run();
 	}
@@ -327,6 +322,28 @@ public final class PlaythroughSanctifiedGameTests {
 			PlaythroughSites.RiteFloor floor = PlaythroughSites.riteFloor(p, helper.absolutePos(RITE_ORIGIN), "chamber_of_will");
 			c.then(() -> PlaythroughStates.blood(p, 5000.0D)); // ARRANGE
 			PlaythroughRites.prepare(c, p, floor);
+			if (helper.getLevel().getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) == null) {
+				c.then(() -> {
+					// PT-67: with no Chamber to visit the rite is refused at the Focus and attunes nothing.
+					PlaythroughStates.blood(p, 5000.0D); // ARRANGE
+					p.moveTo(PlaythroughRites.riteStand(floor));
+					p.wield(ItemInit.living_staff.get());
+					Outcome planted = p.useOn(floor.focus());
+					PlaythroughLog.note(helper, "livingCovenantChain", "Chamber rite with no Chamber: " + planted.describe());
+					planted.said("message.hemomancy.chamber_visit.rite_unavailable");
+					helper.assertTrue(CardinalRiteSavedData.get(p.player().serverLevel()).getRite(p.uuid()) == null
+							&& !ChamberVisitService.isAttuned(p.player()), "the refused rite runs nothing and attunes nothing");
+					// ARRANGE (NOT RUN: Chamber of Will not loaded): the rite, its attunement, the visit and its paired
+					// exit, recorded as the rite and the return path record them.
+					PlaythroughLog.note(helper, "NOT RUN (ARRANGE stands in): the Chamber of Will rite, visit and return "
+							+ "(chamber_rite_attuned, chamber_returned); proof owed: " + PlaythroughNotRun.CHAMBER);
+					ChamberVisitService.attune(p.player());
+					HarbingerAdvancementGranter.grantIfNotDone(p.player(), HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED);
+					HarbingerChapterProgression.tryCompleteLivingCovenant(p.player());
+					clearFloor.run();
+				});
+				return;
+			}
 			c.then(() -> {
 						PlaythroughStates.blood(p, 5000.0D); // ARRANGE
 						mark[0] = p.mark();
@@ -341,14 +358,7 @@ public final class PlaythroughSanctifiedGameTests {
 								+ " said " + said);
 						helper.assertTrue(ChamberVisitService.isAttuned(p.player()), "the Chamber rite attunes the player; " + p.last());
 						helper.assertTrue(p.has(adv(HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED)), "chamber_rite_attuned is earned");
-						if (helper.getLevel().getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) == null) {
-							helper.assertTrue(said.contains("message.hemomancy.chamber_visit.rite_unavailable"),
-									"LF-12: the player is told no visit began; said " + said);
-						}
-						// ARRANGE (NOT RUN: Chamber of Will not loaded): the visit and its paired exit, recorded as the
-						// return path records it (the part, then the chapter check that path runs).
-						PlaythroughLog.note(helper, "NOT RUN (ARRANGE stands in): the Chamber of Will visit and return "
-								+ "(chamber_returned); proof owed: " + PlaythroughNotRun.CHAMBER);
+						// ARRANGE: the paired exit a client drives, recorded as the return path records it.
 						HarbingerAdvancementGranter.grantIfNotDone(p.player(), HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED);
 						HarbingerChapterProgression.tryCompleteLivingCovenant(p.player());
 						clearFloor.run();
@@ -548,14 +558,10 @@ public final class PlaythroughSanctifiedGameTests {
 	}
 
 	/**
-	 * A Sanguine Formation carried to a Working floor's Focus and right-clicked, as the Focus's own line ("the item
-	 * seats in the Cardinal Focus as a rite medium") leads a player to expect. The Formation is also an activation
-	 * tool, so the plain click tries the floor instead and only a sneak-click seats it.
+	 * PT-68: a Sanguine Formation carried to a Working floor's Focus and right-clicked seats as the rite medium, as the
+	 * Focus's own line ("the item seats in the Cardinal Focus as a rite medium") leads a player to expect.
 	 */
-	// DECISION D6-6: a Sanguine Formation medium seats in the Cardinal Focus only with sneak; a plain right-click tries
-	// to start a rite and says "no rite matches this structure", and nothing points to sneaking. Options: seat a
-	// Formation on a plain click when the floor wants it as a medium / say "sneak to seat it" on that refusal / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = RITES, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = RITES)
 	public static void formationSeatsOnPlainClick(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.sanctifiedD6(p); // ARRANGE
@@ -568,7 +574,28 @@ public final class PlaythroughSanctifiedGameTests {
 		boolean seated = helper.getLevel().getBlockEntity(floor.focus())
 				instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity focus && focus.hasMedium();
 		PlaythroughLog.note(helper, "formationSeatsOnPlainClick", "D6-6: plain click seated=" + seated + " said " + click.saidKeys());
-		helper.assertTrue(seated, "D6-6 expected: a plain right-click seats the Formation the floor wants; said " + click.saidKeys());
+		helper.assertTrue(seated, "a plain right-click seats the Formation the floor wants; said " + click.saidKeys());
+		helper.succeed();
+	}
+
+	/** PT-68 control: on a Threshold floor, which no rite takes a Formation on, a plain click tries the floor. */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = RITES)
+	public static void formationDoesNotSeatWhereNoRiteWantsIt(GameTestHelper helper) {
+		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
+		PlaythroughStates.sanctifiedD6(p); // ARRANGE
+		PlaythroughStates.blood(p, 5000.0D); // ARRANGE
+		PlaythroughSites.RiteFloor floor = PlaythroughSites.riteFloor(p, helper.absolutePos(RITE_ORIGIN), "sanctified_rite");
+		p.give(new ItemStack(ItemInit.sanguine_formation.get())); // ARRANGE: made elsewhere
+		p.moveTo(PlaythroughRites.riteStand(floor));
+		p.wield(ItemInit.sanguine_formation.get());
+		int before = p.count(ItemInit.sanguine_formation.get());
+		Outcome click = p.useOn(floor.focus());
+		boolean seated = helper.getLevel().getBlockEntity(floor.focus())
+				instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity focus && focus.hasMedium();
+		PlaythroughLog.note(helper, "formationDoesNotSeatWhereNoRiteWantsIt", "plain click seated=" + seated + " said "
+				+ click.saidKeys() + " formations " + before + " -> " + p.count(ItemInit.sanguine_formation.get()));
+		helper.assertFalse(seated, "a Threshold floor takes no Formation medium; said " + click.saidKeys());
+		helper.assertTrue(p.count(ItemInit.sanguine_formation.get()) == before, "and the player keeps it");
 		helper.succeed();
 	}
 
@@ -577,49 +604,31 @@ public final class PlaythroughSanctifiedGameTests {
 	// =================================================================================================================
 
 	/**
-	 * The Rite of the Chamber of Will at D6, played on its Grand Threshold floor (pillars, an echo shard, Bastion and
-	 * Reservoir sigils, the Bloodlicker wave). The GameTest server has no Chamber level, so the visit cannot start:
-	 * the rite still attunes (unchanged, D6-5), the player stays where they are, and now a line says why no visit
-	 * began.
+	 * The Rite of the Chamber of Will at D6, its Grand Threshold floor laid (pillars, an echo shard). The GameTest
+	 * server has no Chamber level, so no visit can start: the Staff is refused at the Focus with a line that says why,
+	 * no rite runs, and the player keeps the Staff and the brazier keeps its offering (PT-67, LF-12).
 	 */
-	// FIX: LF-12 the rite completed with no line and no visit; it now says why (a new message.hemomancy.chamber* key,
-	// for example message.hemomancy.chamber_visit.rite_unavailable). Attunement is unchanged (D6-5).
-	@GameTest(template = EMPTY, timeoutTicks = 10500, batch = RITES)
+	@GameTest(template = EMPTY, timeoutTicks = 3000, batch = RITES)
 	public static void chamberRiteSaysWhyNoVisit(GameTestHelper helper) {
-		playChamberRite(helper, (p, said) -> {
-			boolean chamberLoaded = helper.getLevel().getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) != null;
-			List<String> chamberKeys = new ArrayList<>();
-			for (Outcome.ChatLine line : said) {
-				for (String key : line.keys()) {
-					if (key.startsWith("message.hemomancy.chamber") && !CHAMBER_ROUTINE_KEYS.contains(key)) chamberKeys.add(key);
-				}
-			}
-			PlaythroughLog.note(helper, "chamberRiteSaysWhyNoVisit", "chamber loaded=" + chamberLoaded + " attuned="
-					+ ChamberVisitService.isAttuned(p.player()) + " level=" + p.player().level().dimension().location()
-					+ " chamber lines " + chamberKeys + " all said " + said);
-			if (chamberLoaded) {
-				PlaythroughLog.note(helper, "chamberRiteSaysWhyNoVisit", "the Chamber is loaded here; the visit premise does not hold");
-				return;
-			}
-			helper.assertTrue(ChamberVisitService.isAttuned(p.player()), "the completed rite attunes the player (unchanged)");
+		plantChamberRite(helper, (p, planted) -> {
+			planted.said("message.hemomancy.chamber_visit.rite_unavailable");
+			helper.assertTrue(CardinalRiteSavedData.get(p.player().serverLevel()).getRite(p.uuid()) == null,
+					"no rite runs; " + planted);
+			helper.assertTrue(p.count(ItemInit.living_staff.get()) == 1, "the player keeps the Staff; " + planted);
 			helper.assertTrue(p.player().level() == helper.getLevel(), "no visit moves the player");
-			helper.assertFalse(chamberKeys.isEmpty(), "LF-12: the player is told why no Chamber visit began; said " + said);
-			for (String key : chamberKeys) helper.assertTrue(LangKeys.exists(key), "the Chamber line " + key + " has English");
 		});
 	}
 
-	/** Should the Rite of the Chamber of Will attune when the visit cannot start? A player would expect not. */
-	// DECISION D6-5: the Chamber of Will rite attunes even when the visit cannot start. Options: refuse before
-	// completion (check the Chamber can take the player before the rite resolves) / attune and say so (LF-12 adds the
-	// line) / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 10500, batch = RITES, required = false)
+	/** PT-67: a Rite of the Chamber of Will that no visit can follow does not attune. */
+	@GameTest(template = EMPTY, timeoutTicks = 3000, batch = RITES)
 	public static void chamberRiteAttunesWithoutVisit(GameTestHelper helper) {
-		playChamberRite(helper, (p, said) -> {
+		plantChamberRite(helper, (p, planted) -> {
 			boolean attuned = ChamberVisitService.isAttuned(p.player());
-			PlaythroughLog.note(helper, "chamberRiteAttunesWithoutVisit", "D6-5: attuned=" + attuned + " chamber_rite_attuned="
-					+ p.has(adv(HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED)) + " level="
-					+ p.player().level().dimension().location() + " said " + said);
-			helper.assertFalse(attuned, "D6-5 expected: a rite whose visit cannot start does not attune");
+			PlaythroughLog.note(helper, "chamberRiteAttunesWithoutVisit", "PT-67: attuned=" + attuned + " chamber_rite_attuned="
+					+ p.has(adv(HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED)) + " said " + planted.saidKeys());
+			helper.assertFalse(attuned, "a rite whose visit cannot start does not attune");
+			helper.assertFalse(p.has(adv(HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED)),
+					"and earns no chamber_rite_attuned");
 		});
 	}
 
@@ -632,26 +641,33 @@ public final class PlaythroughSanctifiedGameTests {
 				PlaythroughNotRun.CHAMBER);
 	}
 
-	/** Plays the Chamber of Will rite for a fresh Sanctified player, then hands the player and what was said to {@code check}. */
-	private static void playChamberRite(GameTestHelper helper, BiConsumer<PlaythroughPlayer, List<Outcome.ChatLine>> check) {
+	/**
+	 * Lays the Chamber of Will floor for a fresh Sanctified player and plants the Staff on it, then hands the player and
+	 * what the planting said to {@code check}. Where a Chamber is loaded the refusal premise does not hold, so it only logs.
+	 */
+	private static void plantChamberRite(GameTestHelper helper, BiConsumer<PlaythroughPlayer, Outcome> check) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.sanctifiedD6(p); // ARRANGE
 		tools(p); // ARRANGE
 		PlaythroughStates.blood(p, 5000.0D); // ARRANGE
 		PlaythroughSites.RiteFloor floor = PlaythroughSites.riteFloor(p, helper.absolutePos(RITE_ORIGIN), "chamber_of_will");
-		int[] mark = new int[1];
 		PlaythroughClock clock = PlaythroughClock.start(helper);
 		PlaythroughRites.prepare(clock, p, floor);
 		clock.then(() -> {
-					mark[0] = p.mark();
-					p.wield(ItemInit.living_staff.get());
-				})
-				.step(() -> PlaythroughClock.rite(p, floor.focus(), fighting(p).maxTicks(8000)))
-				.then(() -> {
-					returnStaff(p);
-					check.accept(p, p.chatSince(mark[0]));
-				})
-				.run();
+			if (helper.getLevel().getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) != null) {
+				PlaythroughLog.note(helper, "plantChamberRite", "the Chamber is loaded here; the refusal premise does not hold");
+				return;
+			}
+			p.moveTo(PlaythroughRites.riteStand(floor));
+			p.wield(ItemInit.living_staff.get());
+			Outcome planted = p.useOn(floor.focus());
+			PlaythroughLog.note(helper, "plantChamberRite", "the Staff on the Chamber floor: " + planted.describe());
+			check.accept(p, planted);
+			helper.assertTrue(BlockPos.betweenClosedStream(floor.focus().offset(-8, -1, -8), floor.focus().offset(8, 6, 8))
+					.anyMatch(pos -> helper.getLevel().getBlockEntity(pos)
+							instanceof com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity brazier
+							&& brazier.hasOffering()), "the brazier keeps its echo shard");
+		}).run();
 	}
 
 	// =================================================================================================================
@@ -739,12 +755,14 @@ public final class PlaythroughSanctifiedGameTests {
 				.run();
 	}
 
-	/** A Degree 6 member of the line at the leader's Throne: what a player would expect is some way to bind it. */
-	// DECISION D6-1: only the progenitor can bind a Covenant Throne, so a member who reached D6 is told not_progenitor
-	// and can never complete the Living Covenant (D7 is shut for members). Options: members bind the leader's Throne /
-	// another member proof / keep and say so.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void memberCannotBindThrone(GameTestHelper helper) {
+	/**
+	 * A Degree 6 member of the line at the leader's Throne, which stands in their line's Fane: the member binds it and
+	 * takes its respawn point, but the Covenant Trance stays the Progenitor's.
+	 */
+	// RULING PT-64 with NQ-11-11 A (2026-11-14): members bind the leader's Throne for the bond and the respawn point
+	// only. Was the DECISION D6-1 probe memberCannotBindThrone.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void memberBindsTheLeadersThrone(GameTestHelper helper) {
 		PlaythroughPlayer leader = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.sanctifiedD6(leader); // ARRANGE
 		PlaythroughPlayer member = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 8));
@@ -753,26 +771,27 @@ public final class PlaythroughSanctifiedGameTests {
 		PlaythroughStates.covenantProof(member); // ARRANGE: the member's Bloodwell deposit (memberRouteToD6 plays it)
 		helper.assertTrue(DegreeProgression.advance(member.player(), 6), "ARRANGE: the member's Bloodline Covenant");
 		BlockPos throne = PlaythroughSites.covenantThrone(leader, PlaythroughSites.stand(helper, 12, 16)); // ARRANGE
-		// ARRANGE: the member crafted a Throne too, so the refusal under test is the progenitor rule.
+		// ARRANGE: the member crafted a Throne too (machine access), so the rule under test is the Fane rule.
 		MachineAccessEvents.awardMachineCrafted(member.player(), BlockInit.covenant_throne.get());
 		member.moveTo(throne.south(2));
 		PlaythroughRites.emptyHand(member);
 		Outcome sat = member.useOn(throne);
-		member.give(new ItemStack(ItemInit.harbinger_assignment_ledger.get())); // ARRANGE
-		LedgerView ledger = member.ledger();
-		PlaythroughLog.note(helper, "memberCannotBindThrone", "D6-1: member at the leader's Throne said " + sat.saidKeys()
-				+ " bound=" + member.has(adv(HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND)) + " ledger " + ledger
-				+ " not_progenitor=" + said(sat, NOT_PROGENITOR));
-		helper.assertTrue(member.has(adv(HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND)),
-				"D6-1 expected: a D6 member has a way to bind the Throne part of the Living Covenant; said " + sat.saidKeys());
+		PlaythroughLog.note(helper, "memberBindsTheLeadersThrone", "PT-64: member at the leader's Throne said " + sat.saidKeys());
+		sat.said(RESPAWN_SET).earned(adv(HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND));
+		Outcome trance = member.useOn(throne);
+		PlaythroughLog.note(helper, "memberBindsTheLeadersThrone", "NQ-11-11: the seated member asks for the Trance: "
+				+ trance.saidKeys());
+		trance.said(TRANCE_PROGENITOR_ONLY).didNotSay(TRANCE_ENTERED);
+		helper.assertTrue(trance.bloodSpent() < 1.0D, "a member's refused Trance costs nothing; " + trance);
+		member.player().stopRiding();
 		helper.succeed();
 	}
 
-	/** A progenitor of another line at this line's Throne: the Vicar says "your Fane", so a player would expect a refusal. */
-	// DECISION D6-2: any progenitor can bind on any Throne, another line's included, though the Vicar says "your
-	// Fane". Options: require the binder's own Fane / owner-stamp the Throne / reword.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void anyProgenitorBindsAnyThrone(GameTestHelper helper) {
+	/** A progenitor of another line at this line's Throne: refused, because it does not stand in their line's Fane. */
+	// RULING PT-65 (2026-11-14): a Throne binds only in the binder's line's Fane. Was the DECISION D6-2 probe
+	// anyProgenitorBindsAnyThrone.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void anotherLinesProgenitorCannotBindThisThrone(GameTestHelper helper) {
 		PlaythroughPlayer owner = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.sanctifiedD6(owner); // ARRANGE: line A, its Fane at home + 4 east
 		PlaythroughPlayer other = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 12));
@@ -784,13 +803,10 @@ public final class PlaythroughSanctifiedGameTests {
 		other.moveTo(throne.south(2));
 		PlaythroughRites.emptyHand(other);
 		Outcome sat = other.useOn(throne);
-		var fanes = com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData.get(helper.getLevel());
-		PlaythroughLog.note(helper, "anyProgenitorBindsAnyThrone", "D6-2: B at A's Throne said " + sat.saidKeys()
-				+ " bound=" + other.has(adv(HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND)) + " respawn="
-				+ other.player().getRespawnPosition() + " throne in A's Fane=" + fanes.isWithinFane(owner.uuid(), throne)
-				+ " in B's Fane=" + fanes.isWithinFane(other.uuid(), throne));
+		PlaythroughLog.note(helper, "anotherLinesProgenitorCannotBindThisThrone", "PT-65: B at A's Throne said " + sat.saidKeys());
+		sat.said(NOT_IN_LINE_FANE).didNotSay(RESPAWN_SET);
 		helper.assertFalse(other.has(adv(HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND)),
-				"D6-2 expected: another line's progenitor cannot bind a Throne inside this line's Fane; said " + sat.saidKeys());
+				"another line's progenitor cannot bind a Throne inside this line's Fane");
 		helper.succeed();
 	}
 
@@ -900,10 +916,9 @@ public final class PlaythroughSanctifiedGameTests {
 	}
 
 	/** A D6 player with the covenant written but no line any more (expelled) asks the Vicar what comes next. */
-	// DECISION D6-7: the D6 Vicar's covenant hint ignores the line: a lineless D6 who kept covenant_written_in_place
-	// (expelled, or their line dissolved) is told to bind a Throne "to your Fane", which they cannot do without a line
-	// of their own. Options: tell them to found a line first / a line about the lost line / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	// RULING PT-69 (2026-11-13): a lineless D6 is told to found a line first, not to bind a Throne. Was the DECISION
+	// D6-7 probe.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void linelessD6VicarGuidance(GameTestHelper helper) {
 		Entity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 20, 12));
 		PlaythroughPlayer leader = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
@@ -916,20 +931,19 @@ public final class PlaythroughSanctifiedGameTests {
 		view.assertLangKeys(helper, "the D6 Vicar to a lineless D6");
 		DialogueNode hint = view.tree().getNode("degree_hint");
 		List<String> lines = hint == null ? List.of() : hint.lines().stream().map(line -> Dialogue.lineKey(line).orElse(line)).toList();
-		PlaythroughLog.note(helper, "linelessD6VicarGuidance", "D6-7: the Vicar's hint to a lineless D6: " + lines);
-		helper.assertTrue(lines.contains(COVENANT_LINE_PREFIX + "found_bloodline") || !lines.contains(COVENANT_LINE_PREFIX + "bind_throne"),
-				"DECISION D6-7: a lineless D6 is not sent to bind a Throne to a Fane they no longer have; the hint says " + lines);
+		PlaythroughLog.note(helper, "linelessD6VicarGuidance", "PT-69: the Vicar's hint to a lineless D6: " + lines);
+		helper.assertTrue(lines.contains(COVENANT_LINE_PREFIX + "found_bloodline") && !lines.contains(COVENANT_LINE_PREFIX + "bind_throne"),
+				"PT-69: a lineless D6 is told to found a line, not to bind a Throne; the hint says " + lines);
 		helper.succeed();
 	}
 
 	/**
-	 * A D6 progenitor binds their Throne, then dissolves the line from the ledger (its Fane goes with it). What becomes
-	 * of the Throne bond is logged (the respawn point, the Living Covenant part).
+	 * A D6 progenitor binds their Throne, then dissolves the line from the ledger (its Fane goes with it): the Throne
+	 * bond and its respawn point go too, and the Disband says so.
 	 */
-	// DECISION D6-8: a disbanded progenitor keeps covenant_throne_bound and the Throne's respawn point though the line
-	// and its Fane are gone, and nothing says so. Options: clear the Throne part with the Fane / keep it and say so on
-	// disband / keep as is.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	// RULING PT-70 with NQ-11-12 (2026-11-14): the bond and the Throne's respawn point clear when the line ends. Was
+	// the DECISION D6-8 probe.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void disbandedProgenitorThrone(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.sanctifiedD6(p); // ARRANGE
@@ -942,26 +956,23 @@ public final class PlaythroughSanctifiedGameTests {
 		if (p.count(ItemInit.harbinger_assignment_ledger.get()) == 0) p.give(new ItemStack(ItemInit.harbinger_assignment_ledger.get())); // ARRANGE
 		Outcome disband = p.ledgerAction(PacketLedgerAction.ACTION_DISBAND_BLOODLINE);
 		boolean bound = p.has(adv(HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND));
-		PlaythroughLog.note(helper, "disbandedProgenitorThrone", "D6-8: disband " + disband.describe() + "; line "
+		PlaythroughLog.note(helper, "disbandedProgenitorThrone", "PT-70: disband " + disband.describe() + "; line "
 				+ PlaythroughStates.lineOf(p) + ", Throne still bound " + bound + ", respawn " + p.player().getRespawnPosition());
 		helper.assertTrue(PlaythroughStates.lineOf(p) == null, "the ledger's Disband dissolves the line");
-		helper.assertTrue(!bound || disband.saidKeys().stream().anyMatch(key -> key.contains("throne")),
-				"DECISION D6-8: a Throne bond kept past the line's end is at least named when the line is dissolved; said "
-						+ disband.saidKeys());
+		helper.assertFalse(bound, "the Throne bond goes with the line");
+		helper.assertTrue(p.player().getRespawnPosition() == null, "the Throne's respawn point goes with it: "
+				+ p.player().getRespawnPosition());
+		disband.said(THRONE_BOND_CLEARED);
 		helper.succeed();
 	}
 
 	/**
-	 * A D6 member of a line looks for any road to D7: binding the leader's Throne (D6-1), founding a line of their own
-	 * (refused while in a line, LF-2), or leaving the line (no ledger or dialogue action, D5-2). A player would expect
-	 * at least one.
+	 * A D6 member of a line looks for a road to D7: binding the leader's Throne, which stands in their line's Fane.
+	 * Founding a line of their own is still refused while they are in one (LF-2).
 	 */
-	// DECISION CHAIN-3 (settles D5-2 and D6-1 together): with LF-2 (one line per player) a member can no longer found a
-	// line, only a progenitor binds a Covenant Throne, and members have no way to leave (EarlyInitiation.release takes
-	// off the charm and deactivates blood; it does not call removeMember). So every member, a D1 initiate brought in by
-	// a founder included, stops at D6 for good unless their leader expels them. Options: add a leave action / let
-	// members bind their leader's Throne / keep LF-2 and accept that members stop at D6 (and say so).
-	@GameTest(template = EMPTY, timeoutTicks = 1500, batch = RITES, required = false)
+	// RULING PT-90 with PT-64 and PT-36 (2026-11-14): no member is stuck; they bind the leader's Throne, or leave and
+	// found their own. Was the DECISION CHAIN-3 probe.
+	@GameTest(template = EMPTY, timeoutTicks = 1500, batch = RITES)
 	public static void memberRouteToD7(GameTestHelper helper) {
 		PlaythroughPlayer leader = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.sanctifiedD6(leader); // ARRANGE
@@ -983,12 +994,11 @@ public final class PlaythroughSanctifiedGameTests {
 			member.wield(ItemInit.living_staff.get());
 			Outcome founding = member.useOn(floor.focus());
 			boolean founds = CardinalRiteSavedData.get(member.player().serverLevel()).getRite(member.uuid()) != null;
-			boolean leave = false; // PacketLedgerAction offers summon, recall, set point and disband only; no dialogue leaves
-			PlaythroughLog.note(helper, "memberRouteToD7", "CHAIN-3: the leader's Throne " + sat.saidKeys() + " bound=" + bound
-					+ "; Bloodline Founding " + founding.saidKeys() + " started=" + founds + "; a leave action " + leave);
-			helper.assertTrue(bound || founds || leave, "DECISION CHAIN-3: a D6 member has some road to D7 (bind the leader's"
-					+ " Throne, found a line, or leave the line); the Throne said " + sat.saidKeys() + ", Founding said "
-					+ founding.saidKeys());
+			PlaythroughLog.note(helper, "memberRouteToD7", "PT-90: the leader's Throne " + sat.saidKeys() + " bound=" + bound
+					+ "; Bloodline Founding " + founding.saidKeys() + " started=" + founds);
+			helper.assertTrue(bound, "PT-90: a D6 member binds the leader's Throne in their line's Fane; the Throne said "
+					+ sat.saidKeys());
+			helper.assertFalse(founds, "a member still cannot found a second line (LF-2); Founding said " + founding.saidKeys());
 		}).run();
 	}
 
@@ -1405,11 +1415,12 @@ public final class PlaythroughSanctifiedGameTests {
 		helper.succeed();
 	}
 
-	/** The Mnemonist's Anchorite counsel while the chain waits on it: a player would expect its sigil to stay. */
-	// DECISION NPC-4: the Mnemonist's Anchorite counsel is a lore card, so its sigil clears once read while the chain
-	// still waits on the counsel. Options: a Quest Work card with a sigil until the counsel is recorded / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void counselIsALoreCard(GameTestHelper helper) {
+	/**
+	 * PT-71: the Mnemonist's Anchorite counsel is a Quest Work card whose sigil stays while the chain waits on it, and
+	 * taking the counsel records it.
+	 */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void counselIsAQuestCard(GameTestHelper helper) {
 		Mason mason = Mason.at(helper);
 		PlaythroughPlayer p = mason.player;
 		Entity anchorite = mason.respite.anchorite();
@@ -1420,20 +1431,24 @@ public final class PlaythroughSanctifiedGameTests {
 		DialogueView before = p.talkTo(mason.mnemonist);
 		Optional<DialogueTopic> card = before.topic(HarbingerMnemonistDialogueTrees.EVENT_ANCHORITE_COUNSEL);
 		DialogueAttention sigilBefore = Dialogue.attention(mason.mnemonist, p.player());
-		PlaythroughLog.note(helper, "counselIsALoreCard", "NPC-4: card " + card.map(PlaythroughSanctifiedGameTests::card).orElse("none")
+		PlaythroughLog.note(helper, "counselIsAQuestCard", "PT-71: card " + card.map(PlaythroughSanctifiedGameTests::card).orElse("none")
 				+ " sigil " + sigilBefore);
 		helper.assertTrue(card.isPresent(), "the counsel has a card in the Mnemonist's hub: " + before.describe());
 		p.openTopic(mason.mnemonist, card.get().id());
 		DialogueView after = p.talkTo(mason.mnemonist);
 		Optional<DialogueTopic> read = after.topic(HarbingerMnemonistDialogueTrees.EVENT_ANCHORITE_COUNSEL);
 		DialogueAttention sigilAfter = Dialogue.attention(mason.mnemonist, p.player());
-		PlaythroughLog.note(helper, "counselIsALoreCard", "NPC-4: after reading, card " + read.map(PlaythroughSanctifiedGameTests::card).orElse("none")
+		PlaythroughLog.note(helper, "counselIsAQuestCard", "PT-71: after reading, card " + read.map(PlaythroughSanctifiedGameTests::card).orElse("none")
 				+ " sigil " + sigilAfter + " counsel recorded=" + p.has(adv(VeinMasonAssignments.D6_COUNSEL)));
 		helper.assertFalse(p.has(adv(VeinMasonAssignments.D6_COUNSEL)), "reading the card is not the counsel");
 		helper.assertTrue(sigilAfter != DialogueAttention.NONE
 						&& read.map(topic -> topic.attention() != DialogueAttention.NONE).orElse(false),
-				"NPC-4 expected: the counsel still flags while the chain waits on it; card "
+				"PT-71: the counsel still flags while the chain waits on it; card "
 						+ read.map(PlaythroughSanctifiedGameTests::card).orElse("none") + ", sigil " + sigilAfter);
+		helper.assertTrue(read.map(topic -> topic.category() == DialogueCategory.QUESTS).orElse(false),
+				"PT-71: the counsel is filed under Quest Work; card " + read.map(PlaythroughSanctifiedGameTests::card).orElse("none"));
+		p.choose(mason.mnemonist, HarbingerMnemonistDialogueTrees.EVENT_ANCHORITE_COUNSEL);
+		helper.assertTrue(p.has(adv(VeinMasonAssignments.D6_COUNSEL)), "taking the counsel records it");
 		helper.succeed();
 	}
 
@@ -1710,9 +1725,8 @@ public final class PlaythroughSanctifiedGameTests {
 	// =================================================================================================================
 
 	/** The Eternal Covenant across a death: a player would expect the sealed covenant and its bonus to stay. */
-	// DECISION D6-3 (S-1): Eternal Covenant is a root persistent key, so its +500 mL bonus is lost on death and the
-	// rite can be performed again. Options: move it with S-1 (PlayerPersisted or its own attachment) / keep until S-1.
-	@GameTest(template = EMPTY, timeoutTicks = 1500, batch = RITES, required = false)
+	// RULING PT-66 (2026-11-13): the seal lives in the degree attachment, so it survives death and stays sealed.
+	@GameTest(template = EMPTY, timeoutTicks = 1500, batch = RITES)
 	public static void eternalCovenantAcrossDeath(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.sanctifiedD6(p); // ARRANGE
@@ -1721,8 +1735,8 @@ public final class PlaythroughSanctifiedGameTests {
 		PlaythroughSites.RiteFloor floor = PlaythroughSites.riteFloor(p, helper.absolutePos(RITE_ORIGIN), "eternal_covenant");
 		clearRiteAtEnd(p);
 		// ARRANGE: the covenant sealed as its completion seals it (the rite needs a sworn helper; the Vigil tests play
-		// that ceremony kind): the root key, the max-blood ledger applied, the advancement.
-		p.player().getPersistentData().putBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG, true);
+		// that ceremony kind): the seal on the degree attachment, the max-blood ledger applied, the advancement.
+		HemoCapabilityAccess.getInitiatoryDegree(p.player()).setEternalCovenantSealed(true);
 		MaxBloodLedger.apply(p.player(), HemoCapabilityAccess.getBloodVolume(p.player()));
 		HarbingerAdvancementGranter.grantIfNotDone(p.player(), HarbingerAdvancementGranter.ADV_ETERNAL_COVENANT_SEALED);
 		double sealedMax = HemoCapabilityAccess.getBloodVolume(p.player()).getMaxBloodVolume();
@@ -1743,19 +1757,36 @@ public final class PlaythroughSanctifiedGameTests {
 			PlaythroughStates.blood(p, 5000.0D); // ARRANGE
 			p.tickOnce();
 			afterMax[0] = HemoCapabilityAccess.getBloodVolume(p.player()).getMaxBloodVolume();
-			keyAfter[0] = p.player().getPersistentData().getBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG);
+			keyAfter[0] = HemoCapabilityAccess.getInitiatoryDegree(p.player()).isEternalCovenantSealed();
 			p.moveTo(PlaythroughRites.riteStand(floor));
 			p.wield(ItemInit.living_staff.get());
 			Outcome again = p.useOn(floor.focus());
 			boolean started = CardinalRiteSavedData.get(p.player().serverLevel()).getRite(p.uuid()) != null;
-			PlaythroughLog.note(helper, "eternalCovenantAcrossDeath", "D6-3: after death max " + afterMax[0] + " (sealed "
+			PlaythroughLog.note(helper, "eternalCovenantAcrossDeath", "PT-66: after death max " + afterMax[0] + " (sealed "
 					+ sealedMax + ") key kept=" + keyAfter[0] + " advancement kept="
 					+ p.has(adv(HarbingerAdvancementGranter.ADV_ETERNAL_COVENANT_SEALED)) + " replant started=" + started
 					+ " said " + again.saidKeys());
 			clearRiteNow(p);
 			helper.assertTrue(keyAfter[0] && afterMax[0] >= sealedMax && !started,
-					"D6-3 expected: the sealed covenant and its bonus survive death and the rite stays sealed");
+					"PT-66: the sealed covenant and its bonus survive death and the rite stays sealed");
 		}).run();
+	}
+
+	/** The Unstained cure clears the Eternal Covenant seal with the rest of the Harbinger progress. */
+	// RULING NQ-11-14 (2026-11-14): the cure clears the seal, so the rite can be done again after a return.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void cureClearsTheEternalCovenantSeal(GameTestHelper helper) {
+		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
+		PlaythroughStates.sanctifiedD6(p); // ARRANGE
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(p.player());
+		degree.setEternalCovenantSealed(true); // ARRANGE: the sealed covenant
+		// The cure's completion, as UnstainedCardinalRiteEvents calls it.
+		com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper.completeUnstainedCure(p.player(),
+				HemoCapabilityAccess.getUnstainedProgress(p.player()));
+		helper.assertFalse(HemoCapabilityAccess.getInitiatoryDegree(p.player()).isEternalCovenantSealed(),
+				"the cure clears the Eternal Covenant seal");
+		helper.assertTrue(PlaythroughStates.lineOf(p) == null, "the cured progenitor's line is gone");
+		helper.succeed();
 	}
 
 	// =================================================================================================================

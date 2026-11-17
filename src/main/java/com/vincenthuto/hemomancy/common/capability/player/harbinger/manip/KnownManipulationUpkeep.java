@@ -75,7 +75,7 @@ public final class KnownManipulationUpkeep {
 	}
 
 	private static boolean sanitizeSelectedManipulation(IKnownManipulations known) {
-		BloodManipulation selected = safeSelectedManipulation(known);
+		BloodManipulation selected = known.getSelectedManip();
 		if (selected == null || selected == BloodManipulation.BLANK) {
 			return false;
 		}
@@ -85,14 +85,6 @@ public final class KnownManipulationUpkeep {
 		BloodManipulation fallback = firstActiveManipulation(known);
 		known.setSelectedManip(fallback != null ? fallback : BloodManipulation.BLANK);
 		return true;
-	}
-
-	private static BloodManipulation safeSelectedManipulation(IKnownManipulations known) {
-		try {
-			return known.getSelectedManip();
-		} catch (RuntimeException ignored) {
-			return BloodManipulation.BLANK;
-		}
 	}
 
 	private static BloodManipulation firstActiveManipulation(IKnownManipulations known) {

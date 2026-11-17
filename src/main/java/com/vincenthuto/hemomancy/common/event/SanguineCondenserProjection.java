@@ -23,7 +23,7 @@ import java.util.OptionalDouble;
  * so these are the only projection targets that make them.
  */
 public final class SanguineCondenserProjection {
-    private static final BloodAccounting.Source CONDENSER = BloodAccounting.Source.of("sanguine_condenser", Category.STATION, true, false);
+    private static final BloodAccounting.Source CONDENSER = BloodAccounting.Source.of("sanguine_condenser", Category.STATION, false);
     private SanguineCondenserProjection() {
     }
 
@@ -46,14 +46,16 @@ public final class SanguineCondenserProjection {
             SanguineCondenserEffects.converted(level, target);
         }
 
-        double accepted = condenser.receiveProjectedBlood(player,
-                Math.min(tileTransferRate, blood.getBloodVolume()));
-        if (accepted <= 0.0D || !BloodAccounting.pay(player, accepted, CONDENSER).satisfied()) {
+        // The player pays first and the pool takes only what was paid, so a refused payment moves no blood.
+        double offered = condenser.acceptable(Math.min(tileTransferRate, blood.getBloodVolume()));
+        if (offered <= 0.0D || !BloodAccounting.canPayInFull(player, offered, CONDENSER)) {
             if (!condenser.isRiteLocked() && condenser.getBloodVolume() >= condenser.getMaxBloodVolume())
                 player.displayClientMessage(Component.translatable("hemomancy.sanguine_condenser.full")
                         .withStyle(ChatFormatting.DARK_RED), true);
             return OptionalDouble.of(0.0D);
         }
-        return OptionalDouble.of(accepted);
+        BloodAccounting.Payment payment = BloodAccounting.pay(player, offered, CONDENSER);
+        if (!payment.satisfied()) return OptionalDouble.of(0.0D);
+        return OptionalDouble.of(condenser.receiveProjectedBlood(player, payment.paid()));
     }
 }

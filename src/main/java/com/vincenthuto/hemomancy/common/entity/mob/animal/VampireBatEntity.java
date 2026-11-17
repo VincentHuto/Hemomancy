@@ -16,6 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -40,6 +41,11 @@ public final class VampireBatEntity extends Bat {
 	private static final ParticleColor BITE_BLOOD = new ParticleColor(170, 14, 24);
 	/** Client only: ticks left of the jaw snapping shut on a bite. */
 	private int biteTicks;
+	/** Server only: the wet stain this bat has scented and is flying to drink (core-loop Track 10), or null. */
+	private BlockPos scent;
+	/** How far a bat scents a wet stain, and how often it looks. */
+	private static final int SCENT_RADIUS = 10;
+	private static final int SCENT_CHECK_TICKS = 20;
 
 	/** 1 as the jaw snaps shut on a bite, falling to 0 over a few ticks. */
 	public float biteSnap(float partialTick) {
@@ -64,7 +70,7 @@ public final class VampireBatEntity extends Bat {
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Bat.createAttributes();
+		return Bat.createAttributes().add(Attributes.ATTACK_DAMAGE, 1.0D);
 	}
 
 	@Override
@@ -83,6 +89,12 @@ public final class VampireBatEntity extends Bat {
 
 	public boolean isManifestedAggregate() {
 		return entityData.get(AGGREGATE);
+	}
+
+	/** A manifested aggregate bites for twice the attribute. */
+	private float biteDamage() {
+		float bite = (float) getAttributeValue(Attributes.ATTACK_DAMAGE);
+		return isManifestedAggregate() ? bite * 2.0F : bite;
 	}
 
 	public boolean isHunting() {
@@ -141,6 +153,10 @@ public final class VampireBatEntity extends Bat {
 			discard();
 			return;
 		}
+		if (prey == null && !isManifestedAggregate() && scavenge()) {
+			entityData.set(HUNTING, true);
+			return;
+		}
 		entityData.set(HUNTING, prey != null);
 		if (prey == null) return;
 		setResting(false);
@@ -153,10 +169,66 @@ public final class VampireBatEntity extends Bat {
 		yBodyRot = facing;
 		yHeadRot = facing;
 		if (tickCount % (isManifestedAggregate() ? 25 : 60) == 0 && distanceToSqr(prey) < 2.25D
-				&& prey.hurt(damageSources().mobAttack(this), isManifestedAggregate() ? 2.0F : 1.0F)) {
+				&& prey.hurt(damageSources().mobAttack(this), biteDamage())) {
 			level().broadcastEntityEvent(this, BITE_EVENT);
 			playSound(SoundEvents.BAT_AMBIENT, 0.35F, 1.7F);
 		}
+	}
+
+	/**
+	 * With no bleeding prey near, a bat follows the scent of a wet blood stain and drinks it up, the world cleaning
+	 * what a Harbinger left (core-loop Track 10). Returns whether it is scavenging this tick.
+	 */
+	private boolean scavenge() {
+		if (!(level() instanceof ServerLevel server)) return false;
+		if (scent != null && !isWetStain(server, scent)) scent = null;
+		if (scent == null && (tickCount + getId()) % SCENT_CHECK_TICKS == 0) {
+			scent = com.vincenthuto.hemomancy.common.world.answer.WorldAnswer.wetStains(server, blockPosition(), SCENT_RADIUS)
+					.stream().min(Comparator.comparingDouble(pos -> pos.distToCenterSqr(position()))).orElse(null);
+		}
+		if (scent == null) return false;
+		setResting(false);
+		Vec3 target = Vec3.atCenterOf(scent);
+		Vec3 delta = target.subtract(position());
+		if (delta.lengthSqr() < 1.2D) {
+			// The bat drinks the whole cell: every face of it comes off the count.
+			var drunk = server.getBlockState(scent);
+			server.removeBlock(scent, false);
+			for (net.minecraft.core.Direction face : net.minecraft.core.Direction.values()) {
+				if (net.minecraft.world.level.block.MultifaceBlock.hasFace(drunk, face)) {
+					com.vincenthuto.hemomancy.common.world.answer.WorldAnswer.stainCleaned(server, scent);
+				}
+			}
+			server.broadcastEntityEvent(this, BITE_EVENT);
+			playSound(SoundEvents.BAT_AMBIENT, 0.35F, 1.4F);
+			scent = null;
+			return true;
+		}
+		setDeltaMovement(getDeltaMovement().scale(0.75D).add(delta.normalize().scale(0.05D)));
+		float facing = (float) (Mth.atan2(delta.z, delta.x) * Mth.RAD_TO_DEG) - 90.0F;
+		setYRot(facing);
+		yBodyRot = facing;
+		yHeadRot = facing;
+		return true;
+	}
+
+	private static boolean isWetStain(ServerLevel level, BlockPos pos) {
+		var state = level.getBlockState(pos);
+		return state.getBlock() instanceof com.vincenthuto.hemomancy.common.block.harbinger.ground.BloodStainBlock
+				&& state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.ground.BloodStainBlock.AGE)
+				== com.vincenthuto.hemomancy.common.world.ground.GroundRunRules.WET;
+	}
+
+	/** While a scent leads it, the bat neither wanders to the vanilla bat's random points nor roosts. */
+	@Override
+	protected void customServerAiStep() {
+		if (scent != null) return;
+		super.customServerAiStep();
+	}
+
+	/** The stain this bat is flying to drink, or null (tests). */
+	public BlockPos scent() {
+		return scent;
 	}
 
 	private LivingEntity aggregateOwner() {

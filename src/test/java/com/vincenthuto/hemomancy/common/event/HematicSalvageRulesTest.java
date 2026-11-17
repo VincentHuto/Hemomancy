@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import org.junit.jupiter.api.Test;
+
 public final class HematicSalvageRulesTest {
 	private HematicSalvageRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertDouble("no damaged armor uses base chance", 0.12,
 				HematicSalvageRules.calculateChance(0, 0.12, 0.04, 0.25));
 		assertDouble("damaged armor adds per-piece chance", 0.20,

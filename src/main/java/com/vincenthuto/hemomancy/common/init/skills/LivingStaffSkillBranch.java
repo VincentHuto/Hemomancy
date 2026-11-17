@@ -90,6 +90,30 @@ public final class LivingStaffSkillBranch {
 					new SkillPoint(54, "skill_guarded_feeding", 525, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_vascular_mercy)
 							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(196, 604).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
 							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
+			SkillPointInit.skill_long_strand = SkillPointInit.registerSkill(branch,
+					new SkillPoint(74, "skill_long_strand", 300, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_living_conduit)
+							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(363, 386).setBranch("living_staff").setBranchColor(0xFFD9AD28)
+							.setIconItem(() -> new ItemStack(ItemInit.memory_blood_lash.get())));
+			SkillPointInit.skill_taut_line = SkillPointInit.registerSkill(branch,
+					new SkillPoint(75, "skill_taut_line", 375, 2, EnumSkillStates.LOCKED, SkillPointInit.skill_long_strand)
+							.setSkillPointCost(2).setRequiredDegree(3).setTreePosition(270, 344).setBranch("living_staff").setBranchColor(0xFFD9AD28)
+							.setIconItem(() -> new ItemStack(ItemInit.memory_searing_lash.get())));
+			SkillPointInit.skill_free_hand = SkillPointInit.registerSkill(branch,
+					new SkillPoint(76, "skill_free_hand", 375, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_long_strand)
+							.setSkillPointCost(2).setRequiredDegree(3).setTreePosition(323, 286).setBranch("living_staff").setBranchColor(0xFFD9AD28)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_projection.get())));
+			SkillPointInit.skill_whipcrack = SkillPointInit.registerSkill(branch,
+					new SkillPoint(77, "skill_whipcrack", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_taut_line)
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(343, 541).setBranch("living_staff").setBranchColor(0xFFD9AD28).addParents(SkillPointInit.deep_base_skill)
+							.setIconItem(() -> new ItemStack(ItemInit.memory_gloam_laceration.get())));
+			SkillPointInit.skill_deep_brand = SkillPointInit.registerSkill(branch,
+					new SkillPoint(78, "skill_deep_brand", 475, 2, EnumSkillStates.LOCKED, SkillPointInit.skill_long_strand)
+							.setSkillPointCost(2).setRequiredDegree(5).setTreePosition(382, 530).setBranch("living_staff").setBranchColor(0xFFD9AD28).addParents(SkillPointInit.deep_base_skill)
+							.setIconItem(() -> new ItemStack(ItemInit.memory_hemorrhage.get())));
+			SkillPointInit.skill_second_strand = SkillPointInit.registerSkill(branch,
+					new SkillPoint(79, "skill_second_strand", 650, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_whipcrack)
+							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(302, 571).setBranch("living_staff").setBranchColor(0xFFD9AD28).addParents(SkillPointInit.skill_free_hand, SkillPointInit.deep_base_skill)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
 		// </skill-editor>
 	}
 }

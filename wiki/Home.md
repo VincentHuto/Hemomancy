@@ -41,17 +41,15 @@ Players choose between two mutually exclusive paths:
 
 ### For Lore Enthusiasts
 - **[[Lore and Story]]**: The Fungal Entity, factions, characters, and moral themes
-- **[[Factions]]**: The Hematic Order, The Unstained, and Our Lady of Still Waters
 - **[[The Qliphoth]]**: The Tree of Death and fungal communion
-- **[[Saints and Encounters]]**: the four Saints (Hemorath, Seraphae, Putriciel and Velorum), Annetta Knowles, and the planned trial chambers
+- **[[Saints and Encounters]]**: the four Saints (Hemorath, Seraphae, Putriciel and Velorum), their mausoleums, and Annetta Knowles
 
 ### For Modpack Creators
-- **[[Mod Compatibility]]**: Required dependencies, JEI support, and dormant MnA/Curios notes
+- **[[Mod Compatibility]]**: Required dependencies, JEI support, and notes on the removed MnA and Curios integrations
 - **[[Configuration]]**: Server and client config options
 
 ### For Developers
 - **[[Developer Reference]]**: Technical documentation
-- **[[Contributing]]**: How to contribute to the mod
 
 ---
 
@@ -77,13 +75,14 @@ Harbingers advance through **eight degrees** of the Hematic Order:
 5. **Illuminatus**
 6. **Sanctified**
 7. **Archon**
-8. **Apotheos**: reached only through the post-projection Rite of Apotheosis
+8. **Apotheos** or **Silentium**: the eighth Degree's two equal ends, chosen after the first projection (the Rite of Apotheos, or Pruning and Vesper)
 
 ### Living World
-- **Fungal Biomes**: Find the Sporecrown Thicket, Hyphal Spires, and Fungal Gardens.
-- **Dynamic Structures**: Search Harbinger Outposts now; Saint mausoleums and trial chambers are planned.
+- **Fungal Biomes**: Find the Fungal Gardens in the Overworld; the Fungal Gardens dimension holds the Sporecrown Thicket, Hyphal Spires and more.
+- **Dynamic Structures**: Search Harbinger Outposts, the four Saint mausoleums, the Brined Court's Seats and the Crimson Troupe's pavilions.
 - **Blood Moons**: Survive a fungal surge while the Pale Lady mounts a costly containment response.
 - **Unique Mobs**: Fight Sanguine Thralls, Morphlings, Blood Constructs, and worse.
+- **The core loop**: Projection and Absorption as two verbs your selected memory shapes, blood that lives only while something alive holds it, Temper carried per school, kept and bred creatures, fed ground and strain beds, gouge runs and living veins, and a world that answers spilled blood. See [Blood Systems](Blood-Systems.md).
 
 ### Story and lore
 The story avoids a simple good-versus-evil split:
@@ -127,13 +126,12 @@ Do not read this as a good-versus-evil system. Neither path is objectively corre
 
 **Required Dependencies:**
 - [HutosLib](https://github.com/VincentHuto/HutosLib): Core library providing shared utilities
-- [GeckoLib](https://github.com/bernie-g/geckolib): Entity animations
 - [TerraBlender](https://github.com/Glitchfiend/TerraBlender): Biome integration
 
 **Optional Integrations:**
 - [Just Enough Items (JEI)](https://www.curseforge.com/minecraft/mc-mods/jei): Recipe viewing, alpha-ready in the current branch
-- [Mana and Artifice](https://www.curseforge.com/minecraft/mc-mods/mana-and-artifice): Dormant design/source target until a compatible NeoForge 1.21.1 build exists
-- [Curios API](https://www.curseforge.com/minecraft/mc-mods/curios): Dormant design/source target until a compatible NeoForge 1.21.1 build exists
+- [Mana and Artifice](https://www.curseforge.com/minecraft/mc-mods/mana-and-artifice): not supported; the old integration was removed on 2026-11-03
+- [Curios API](https://www.curseforge.com/minecraft/mc-mods/curios): not supported; the old integration was removed on 2026-11-03
 
 ---
 

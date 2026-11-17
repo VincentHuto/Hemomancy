@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.AfflictionDigestHelper;
@@ -90,16 +89,16 @@ public class ScarsEntityEventHandler {
 					AABB area = player.getBoundingBox().inflate(SaprovittaVestigiumItem.TRAIL_RADIUS
 							+ symbiosis * 0.4D);
 					float damage = SaprovittaVestigiumItem.TRAIL_DAMAGE * (1.0F + symbiosis * 0.08F);
-					List<Monster> mobs = player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
+					List<Monster> mobs = player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate));
 					for (Monster mob : mobs) {
-						mob.hurt(player.damageSources().magic(), damage);
+						mob.hurt(player.damageSources().indirectMagic(player, player), damage);
 					}
 				}
 			}
 		}
 	}
 
-	@SubscribeEvent
+	/** A reaction in the defender stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
 	public static void onLivingHurt(LivingDamageEvent.Pre event) {
 		LivingEntity harmed = event.getEntity();
 		Entity sourceEntity = event.getContainer().getSource().getEntity();
@@ -141,6 +140,8 @@ public class ScarsEntityEventHandler {
 
 	@SubscribeEvent
 	public static void onBlockBreak(BreakEvent event) {
+		// A permission check (an infusion, a craft, a conversion) is not a pickaxe swing: it never starts a vein.
+		if (com.vincenthuto.hemomancy.common.util.PlayerBlockEdits.isCheckingBreak()) return;
 		var scars = HemoCapabilityAccess.getScarState(event.getPlayer());
 		var manips = HemoCapabilityAccess.getKnownManipulations(event.getPlayer());
 		if (scars.getFungalScar().getItem() == ItemInit.talaromyces_minus.get()

@@ -1,12 +1,13 @@
 {
   "replace": false,
   "values": [
-	"hemomancy:bog_iron",
+    "hemomancy:bog_iron",
     "hemomancy:erythrocytic_dirt",
     "hemomancy:erythrocytic_mycelium",
     "hemomancy:mycelium_erythrocytic_dirt",
     "hemomancy:myelin_sheath",
     "hemomancy:packed_ash",
-    "hemomancy:sodden_mud_bricks"
+    "hemomancy:sodden_mud_bricks",
+    "hemomancy:stained_sod"
   ]
 }

@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class HarbingerHermitFarewellDeathSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -10,7 +14,8 @@ public final class HarbingerHermitFarewellDeathSourceTest {
 	private HarbingerHermitFarewellDeathSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String hermit = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitEntity.java");
 		String handler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/npc/HarbingerHermitRenderer.java");
@@ -137,17 +142,5 @@ public final class HarbingerHermitFarewellDeathSourceTest {
 			throw new AssertionError("missing expected source file '" + path + "'");
 		}
 		return Files.readString(file);
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
-		}
 	}
 }

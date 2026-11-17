@@ -47,12 +47,25 @@ public final class SchoolDamage {
 
     public static Scope scope(SchoolHitContext context) { return new Scope(context, null); }
     public static Scope scope(SchoolHitContext context, LivingEntity owner) { return new Scope(context, owner); }
+    /**
+     * A cast's scope. Inside the paid cast's own scope (a manipulation that opens one in its action) it keeps that
+     * cast's strength; otherwise it is full strength.
+     */
     public static Scope cast(BloodManipulation manipulation, LivingEntity caster, float charge) {
+        return cast(manipulation, caster, charge, Float.NaN);
+    }
+
+    /**
+     * A paid cast's scope; {@code strength} below 1 is a cast that ran dry of Temper, and its hits land softer. NaN
+     * keeps the strength of the paid cast already in scope.
+     */
+    public static Scope cast(BloodManipulation manipulation, LivingEntity caster, float charge, float strength) {
         if (caster instanceof net.minecraft.server.level.ServerPlayer player
                 && !manipulation.getName().equals("sanguine_marionette")
                 && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(player))
             com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(player, false);
-        return new Scope(context(manipulation, caster).withCharge(charge), caster);
+        SchoolHitContext context = context(manipulation, caster).withCharge(charge);
+        return new Scope(Float.isNaN(strength) ? context : context.withStrength(strength), caster);
     }
     @Nullable public static SchoolHitContext current() { return ACTIVE.get(); }
 
@@ -187,7 +200,8 @@ public final class SchoolDamage {
     public static DamageSource reaction(LivingEntity owner, SchoolHitContext hit) {
         SchoolHitContext parent = current();
         if (parent != null) hit = new SchoolHitContext(hit.ability(), hit.primary(), hit.secondary(), hit.owner(),
-                hit.direct(), parent.rootAttack(), hit.kind(), hit.role(), hit.charge(), hit.duration(), hit.levels());
+                hit.direct(), parent.rootAttack(), hit.kind(), hit.role(), hit.charge(), hit.duration(), hit.levels(),
+                parent.strength());
         return attributed(owner.damageSources().magic(), hit.child(SchoolHitContext.Kind.REACTION), owner);
     }
 }

@@ -119,6 +119,7 @@ public final class DialogueRouteCharacterisationGameTests {
 		routes.add(new Route(AnnettaDialogueTrees.EVENT_OFFER_DRAUGHT, Speaker.VICAR));
 		routes.add(new Route("circus_school_teach", Speaker.PERFORMER));
 		routes.add(new Route("circus_school_inspect", Speaker.PERFORMER));
+		routes.add(new Route("circus_accept_pact", Speaker.RINGMASTER));
 		routes.add(new Route("circus_reject_pact", Speaker.RINGMASTER));
 		routes.add(new Route("circus_reject_pact", Speaker.VICAR));
 		for (MnemonistStarterMemoryChoice choice : MnemonistStarterMemoryChoice.values()) {
@@ -231,7 +232,19 @@ public final class DialogueRouteCharacterisationGameTests {
 		add(routes, Speaker.MARROW_TENDER, CourtMemberDialogue.FOOD, CourtMemberDialogue.REST, CourtMemberDialogue.OFFER);
 		add(routes, Speaker.ROOTED_ELDER, CourtMemberDialogue.GIFT, CourtMemberDialogue.JOIN);
 		add(routes, Speaker.OFFERING_BEARER, CourtMemberDialogue.OFFER);
-		add(routes, Speaker.HEAD_TENDER, CourtMemberDialogue.GIFT, CourtMemberDialogue.JOIN);
+		add(routes, Speaker.HEAD_TENDER, CourtMemberDialogue.GIFT, CourtMemberDialogue.JOIN, CourtMemberDialogue.CHALLENGE);
+		// The core-loop lessons (round two P10): each opens its Liber pages for its own speaker.
+		for (com.vincenthuto.hemomancy.common.entity.npc.dialogue.CoreLoopLessons.Lesson lesson
+				: com.vincenthuto.hemomancy.common.entity.npc.dialogue.CoreLoopLessons.all()) {
+			routes.add(new Route(lesson.event(), switch (lesson.speaker()) {
+				case com.vincenthuto.hemomancy.common.entity.npc.dialogue.CoreLoopLessons.HERMIT -> Speaker.HERMIT;
+				case com.vincenthuto.hemomancy.common.entity.npc.dialogue.CoreLoopLessons.VICAR -> Speaker.VICAR;
+				case com.vincenthuto.hemomancy.common.entity.npc.dialogue.CoreLoopLessons.ALCHEMIST -> Speaker.ALCHEMIST;
+				case com.vincenthuto.hemomancy.common.entity.npc.dialogue.CoreLoopLessons.MNEMONIST -> Speaker.MNEMONIST;
+				case com.vincenthuto.hemomancy.common.entity.npc.dialogue.CoreLoopLessons.ARTIFICER -> Speaker.ARTIFICER;
+				default -> Speaker.ANCHORITE;
+			}));
+		}
 		routes.add(new Route("no_route_takes_this_event", Speaker.VICAR));
 		return routes;
 	}

@@ -61,9 +61,6 @@ public final class ThermalVisualGameTests {
         observer.setPos(at);var players=players(level);players.add(observer);
         var target=EntityType.HUSK.create(level);target.setPos(at.add(0,0,3));target.setNoAi(true);level.addFreshEntity(target);
         try {
-            com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip.settleDebt(observer);
-            require(packets.stream().noneMatch(p->p.form()==Form.HOUR_BREAK),"Inactive Hour emitted settlement fragments");
-            packets.clear();
             ManipulationInit.sanguine_ignition.get().getAction(observer,level,ItemStack.EMPTY,observer.blockPosition());
             require(packets.stream().anyMatch(p->p.form()==Form.IGNITION),"Ignition still shares Furnace's channel cue");
             packets.clear();target.invulnerableTime=0;

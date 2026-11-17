@@ -21,7 +21,7 @@ public final class KindledChampionRules {
 	public static final int ARENA_RADIUS = 12;
 
 	/** Health it regrows each second, by crown stage: Kinbud's regrowth at a miniboss's scale. */
-	private static final float[] REGROWTH = {2.0F, 3.0F, 4.5F};
+	private static final float[] REGROWTH = {2.0F, 3.0F, 3.0F};
 	/** The crown's stages: the eight it starts with, then four more buds at each threshold. */
 	public static final float[] BUD_THRESHOLDS = {0.66F, 0.33F};
 	public static final int CROWN = 8;
@@ -81,7 +81,7 @@ public final class KindledChampionRules {
 		YIELDED,
 		/** The challenger died: the wait starts and the Champion keeps the title. */
 		CHALLENGER_DIED,
-		/** The challenger left: nothing is recorded either way. */
+		/** The challenger logged out or left the fight: the same wait as a death, and the Champion keeps the title. */
 		GONE
 	}
 

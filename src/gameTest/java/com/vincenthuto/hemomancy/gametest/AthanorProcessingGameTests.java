@@ -53,8 +53,8 @@ public final class AthanorProcessingGameTests {
             tick(helper, machine, 99);
             helper.assertTrue(machine.getItem(2).isEmpty(), tier + " must retain the original 100-tick duration");
             tick(helper, machine, 1);
-            helper.assertTrue(machine.getItem(2).is(ItemInit.foul_paste.get()) && machine.getBloodVolume() == 100,
-                    tier + " must finish at 100 ticks with unchanged blood byproduct");
+            helper.assertTrue(machine.getItem(2).is(ItemInit.foul_paste.get()) && machine.getBloodVolume() == 0,
+                    tier + " must finish at 100 ticks and make no blood (core-loop Track 3)");
         }
         helper.succeed();
     }
@@ -69,22 +69,22 @@ public final class AthanorProcessingGameTests {
                 "Athanor must heat itself without producing an early result");
         tick(helper, machine, 1);
         helper.assertTrue(machine.getItem(2).is(ItemInit.foul_paste.get()) && machine.getItem(2).getCount() == 2
-                && machine.getItem(0).getCount() == 1 && machine.getBloodVolume() == 100,
-                "Athanor must finish ordinary distillation at 50 ticks with normal consumption");
+                && machine.getItem(0).getCount() == 1 && machine.getBloodVolume() == 0,
+                "Athanor must finish ordinary distillation at 50 ticks with normal consumption and no blood");
         helper.getLevel().setBlockAndUpdate(machine.getBlockPos().below(), Blocks.STONE.defaultBlockState());
         helper.getLevel().setBlockAndUpdate(machine.getBlockPos().below(), Blocks.AIR.defaultBlockState());
         helper.assertTrue(helper.getLevel().getBlockState(machine.getBlockPos()).getValue(AbstractFurnaceBlock.LIT),
                 "Neighbor changes must not extinguish the Athanor's permanent heat");
         tick(helper, machine, 50);
         helper.assertTrue(machine.getItem(2).getCount() == 4 && machine.getItem(0).isEmpty()
-                && machine.getBloodVolume() == 200, "Repeated batches must retain double speed and normal yields");
+                && machine.getBloodVolume() == 0, "Repeated batches must retain double speed and normal yields");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
     public static void athanorTincturesHalveTimeAndKeepTheirReservoirCosts(GameTestHelper helper) {
         for (boolean jug : new boolean[]{false, true}) {
-            int cost = jug ? 5000 : 2500;
+            int cost = jug ? 4000 : 2500;
             int ticks = jug ? 150 : 100;
             var machine = machine(helper, AlembicTier.ATHANOR, cost + 100);
             machine.setItem(0, new ItemStack(ItemInit.sanguine_formation.get()));

@@ -15,15 +15,23 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * What clients see of the active Cardinal Rites in a level: each rite's boundary, anchors, sigils, checklist and
- * guidance, sent every half second and on every change by {@link HarbingerCardinalRiteEvents}. Only the caster and
- * its allies see the bloodline pool a rite can draw on.
+ * guidance, sent every half second and on every change by {@link HarbingerCardinalRiteEvents}. A viewer is sent the
+ * rites within {@link #VIEW_RANGE} blocks and the rites it casts or helps; once it has been sent an empty list, no
+ * further empty list goes to it (FX-14). Only the caster and its allies see the bloodline pool a rite can draw on.
  */
-final class CardinalRiteSync {
+public final class CardinalRiteSync {
 	/** A full anchor's orb sits half sunk in its sore, just above the floor block's top. */
 	private static final double ANCHOR_ORB_Y = 1.06D;
+	/** How far from a rite's centre a viewer who is not its caster or ally still sees it. */
+	public static final double VIEW_RANGE = 128.0D;
+	/** Viewers whose last rite list was empty. Session state, cleared through TransientServerStateEvents. */
+	private static final Set<UUID> SENT_EMPTY = ConcurrentHashMap.newKeySet();
 
 	private CardinalRiteSync() {
 	}
@@ -31,31 +39,55 @@ final class CardinalRiteSync {
 	static PacketSyncActiveRites activeRiteSnapshot(ServerLevel level, ServerPlayer viewer) {
 		List<ActiveRiteData.RiteEntry> entries = new ArrayList<>();
 		for (ActiveCardinalRite rite : CardinalRiteSavedData.get(level).getActiveRites().values()) {
-			entries.add(toClientEntry(level, rite, mayReadPool(rite, viewer)));
+			if (sees(rite, viewer)) entries.add(toClientEntry(level, rite, mayReadPool(rite, viewer)));
 		}
+		if (entries.isEmpty()) SENT_EMPTY.add(viewer.getUUID());
+		else SENT_EMPTY.remove(viewer.getUUID());
 		return new PacketSyncActiveRites(entries);
 	}
 
 	/**
-	 * Every viewer sees every rite, but only the caster and its allies see the
-	 * bloodline pool the rite can draw on.
+	 * Each viewer is sent the rites it sees, and only the caster and its allies see the bloodline pool the rite can
+	 * draw on.
 	 */
 	static void syncActiveRites(ServerLevel level) {
 		List<ActiveCardinalRite> rites = new ArrayList<>(CardinalRiteSavedData.get(level).getActiveRites().values());
-		List<ActiveRiteData.RiteEntry> shared = new ArrayList<>(rites.size());
-		for (ActiveCardinalRite rite : rites) shared.add(toClientEntry(level, rite, false));
+		ActiveRiteData.RiteEntry[] shared = new ActiveRiteData.RiteEntry[rites.size()];
 		ActiveRiteData.RiteEntry[] revealed = new ActiveRiteData.RiteEntry[rites.size()];
-		PacketSyncActiveRites sharedPacket = new PacketSyncActiveRites(shared);
 		for (ServerPlayer viewer : level.players()) {
-			List<ActiveRiteData.RiteEntry> entries = null;
+			List<ActiveRiteData.RiteEntry> entries = new ArrayList<>();
 			for (int i = 0; i < rites.size(); i++) {
-				if (!mayReadPool(rites.get(i), viewer)) continue;
-				if (revealed[i] == null) revealed[i] = toClientEntry(level, rites.get(i), true);
-				if (entries == null) entries = new ArrayList<>(shared);
-				entries.set(i, revealed[i]);
+				ActiveCardinalRite rite = rites.get(i);
+				if (!sees(rite, viewer)) continue;
+				if (mayReadPool(rite, viewer)) {
+					if (revealed[i] == null) revealed[i] = toClientEntry(level, rite, true);
+					entries.add(revealed[i]);
+				} else {
+					if (shared[i] == null) shared[i] = toClientEntry(level, rite, false);
+					entries.add(shared[i]);
+				}
 			}
-			PacketHandler.sendToPlayer(viewer, entries == null ? sharedPacket : new PacketSyncActiveRites(entries));
+			if (entries.isEmpty()) {
+				if (!SENT_EMPTY.add(viewer.getUUID())) continue;
+			} else {
+				SENT_EMPTY.remove(viewer.getUUID());
+			}
+			PacketHandler.sendToPlayer(viewer, new PacketSyncActiveRites(entries));
 		}
+	}
+
+	/** The caster and its allies always see their rite; anyone else sees it within {@link #VIEW_RANGE}. */
+	public static boolean sees(ActiveCardinalRite rite, ServerPlayer viewer) {
+		return mayReadPool(rite, viewer)
+				|| viewer.distanceToSqr(rite.getCenterPos().getCenter()) <= VIEW_RANGE * VIEW_RANGE;
+	}
+
+	public static void logout(net.minecraft.world.entity.player.Player player) {
+		SENT_EMPTY.remove(player.getUUID());
+	}
+
+	public static void clearSessionState() {
+		SENT_EMPTY.clear();
 	}
 
 	private static boolean mayReadPool(ActiveCardinalRite rite, ServerPlayer viewer) {
@@ -125,7 +157,19 @@ final class CardinalRiteSync {
 						rite.isWorkingCraft() ? WorkingCraftRites.subjectStates(level, rite).stream()
 								.mapToInt(net.minecraft.world.level.block.Block::getId).toArray() : new int[0],
 						rite.getPhase() == CardinalRitePhase.SUBJECT_FEEDING ? rite.subjectFill()
-								: rite.isWorkingCraft() ? 1.0F : 0.0F);
+								: rite.isWorkingCraft() ? 1.0F : 0.0F)
+				.withStaffRings(plantedStaffRings(level, rite, caster));
+	}
+
+	/**
+	 * The rings the planted Staff shows: its own stamp, else its owner's growth while they are online; 0 when no Staff
+	 * stands in the Focus.
+	 */
+	private static int plantedStaffRings(ServerLevel level, ActiveCardinalRite rite, ServerPlayer caster) {
+		if (!rite.hasEscrowedStaff() || !rite.isStaffImpactReached()) return 0;
+		int stamped = rite.escrowedStaffRings(level.registryAccess());
+		if (stamped >= 0) return stamped;
+		return caster == null ? 0 : com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffGrowth.ring(caster);
 	}
 
 	private static Component sacrificeLine(ActiveCardinalRite rite) {

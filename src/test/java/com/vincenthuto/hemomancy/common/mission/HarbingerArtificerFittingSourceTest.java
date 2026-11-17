@@ -1,11 +1,16 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class HarbingerArtificerFittingSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -30,7 +35,8 @@ public final class HarbingerArtificerFittingSourceTest {
 	private HarbingerArtificerFittingSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		fittingItemsAreInertHarbingerEquipment();
 		fittingSlotIsAddedToScarletVanity();
 		artificerRewardsGrantPhysicalFittings();
@@ -52,8 +58,8 @@ public final class HarbingerArtificerFittingSourceTest {
 				"HarbingerEquipmentType.FITTING");
 		assertContains("fitting item exposes a client visual id", fittingItem, "getStaffVisualId");
 		assertContains("fitting item stacks singly", fittingItem, "stacksTo(1)");
-		assertDoesNotContain("fitting item has no worn tick behavior", fittingItem, "onWornTick");
-		assertDoesNotContain("fitting item has no attack hook", fittingItem, "hurtEnemy");
+		assertNotContains("fitting item has no worn tick behavior", fittingItem, "onWornTick");
+		assertNotContains("fitting item has no attack hook", fittingItem, "hurtEnemy");
 		assertContains("fitting helper scans the fitting equipment slot", fittingHelper, "FITTING_SLOT_INDEX");
 		assertContains("fitting helper returns equipped fitting visuals", fittingHelper,
 				"LivingStaffFittingItem fitting");
@@ -77,7 +83,7 @@ public final class HarbingerArtificerFittingSourceTest {
 		String layerTogglePacket = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/ToggleEquipmentLayerVisibilityPacket.java"));
 
-		assertContains("equipment handler has nine slots", equipmentContainer, "SCAR_SLOTS = 9");
+		assertContains("equipment handler has ten slots (fitting at 8, the Titration Bandolier at 9)", equipmentContainer, "SCAR_SLOTS = 10");
 		assertContains("equipment type defines fitting slot", equipmentType, "FITTING(8)");
 		assertContains("menu exposes fitting slot index", menu, "FITTING_SLOT_INDEX = 8");
 		assertContains("menu exposes fitting menu slot", menu, "FITTING_MENU_SLOT = 7");
@@ -87,14 +93,14 @@ public final class HarbingerArtificerFittingSourceTest {
 		assertContains("screen renders the fitting slot background", screen, "FITTING_MENU_SLOT");
 		assertContains("screen routes fitting placeholder by menu slot", screen,
 				"menuSlot == HarbingerEquipmentMenu.FITTING_MENU_SLOT");
-		assertDoesNotContain("screen does not confuse slot index with jar equipment slot", screen,
+		assertNotContains("screen does not confuse slot index with jar equipment slot", screen,
 				"slot.index == HarbingerEquipmentMenu.JAR_SLOT_INDEX");
-		assertDoesNotContain("screen does not confuse slot index with fitting equipment slot", screen,
+		assertNotContains("screen does not confuse slot index with fitting equipment slot", screen,
 				"slot.index == HarbingerEquipmentMenu.FITTING_SLOT_INDEX");
 		assertContains("vanity table renders equipped fitting", renderer,
 				"HarbingerEquipmentMenu.FITTING_SLOT_INDEX");
-		assertDoesNotContain("fittings do not get a visibility eye toggle", layerTogglePacket, "FITTING_SLOT_INDEX");
-		assertDoesNotContain("fittings do not get a visibility eye toggle", screen, "toggleFitting");
+		assertNotContains("fittings do not get a visibility eye toggle", layerTogglePacket, "FITTING_SLOT_INDEX");
+		assertNotContains("fittings do not get a visibility eye toggle", screen, "toggleFitting");
 	}
 
 	private static void artificerRewardsGrantPhysicalFittings() throws IOException {
@@ -110,9 +116,10 @@ public final class HarbingerArtificerFittingSourceTest {
 		assertContains("Blood Lust set grants Crimson Vestment fitting", helper, "tryGrantBloodLustFitting");
 		assertContains("D7 set grants Monolithic Frame fitting", helper, "tryGrantD7Fitting");
 		assertContains("living arsenal grants Assumed Limb fitting", helper, "tryGrantLivingArsenalFitting");
-		assertContains("dialogue gives physical fitting item", eventHandler, "giveOrDropAtEntity(player, entityId, fitting.copy())");
+		// PT-3: the fitting is owed and delivered, never dropped at the Artificer's feet.
+		assertContains("dialogue gives physical fitting item", eventHandler, "OwedRewards.give(player, java.util.List.of(fitting.copy()))");
 		assertContains("dialogue reissues only missing fittings", eventHandler, "playerHasFitting");
-		assertDoesNotContain("generic fork seal reward removed", helper, "tryGrantForkSeal");
+		assertNotContains("generic fork seal reward removed", helper, "tryGrantForkSeal");
 
 		for (String id : FITTING_IDS) {
 			assertContains("reward code references " + id, helper + "\n" + eventHandler, id);
@@ -129,11 +136,11 @@ public final class HarbingerArtificerFittingSourceTest {
 		assertContains("staff visual checks equipped fittings", clientEvents,
 				"LivingStaffFittingHelper.staffVisualFor");
 		assertContains("fitting visual wins before morphling visuals", clientEvents, "return fittingVisual;");
-		assertDoesNotContain("old living staff morph predicate removed", clientEvents,
+		assertNotContains("old living staff morph predicate removed", clientEvents,
 				"ItemInit.living_staff.get(), Hemomancy.rloc(\"morph\")");
 		assertContains("living staff model uses unified visual predicate", livingStaff,
 				"\"hemomancy:staff_visual\"");
-		assertDoesNotContain("living staff model no longer uses morph predicate", livingStaff,
+		assertNotContains("living staff model no longer uses morph predicate", livingStaff,
 				"\"hemomancy:morph\"");
 
 		for (int visual = 0; visual <= 15; visual++) {
@@ -199,28 +206,9 @@ public final class HarbingerArtificerFittingSourceTest {
 		}
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertFileExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + " missing: " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String needle) {
-		if (!text.contains(needle)) {
-			throw new AssertionError(label + " missing: " + needle);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String needle) {
-		if (text.contains(needle)) {
-			throw new AssertionError(label + " still contains: " + needle);
 		}
 	}
 

@@ -54,11 +54,17 @@ public final class ManipulationEquipHelper {
 			}
 		}
 		equippedNames.clear();
-		equippedNames.add(BLOOD_ABSORPTION);
-		equippedNames.add(BLOOD_PROJECTION);
 		equippedNames.add(CONJURE_STAFF);
 		equippedNames.addAll(normalNames);
 		return !original.equals(equippedNames);
+	}
+
+	/**
+	 * Projection and Absorption are the two verbs (CL-2): known from Degree 1, chosen with the verb key, never equipped
+	 * or selected. A saved list that still names them drops them when normalized.
+	 */
+	public static boolean isVerb(String manipName) {
+		return BLOOD_ABSORPTION.equals(manipName) || BLOOD_PROJECTION.equals(manipName);
 	}
 
 	public static int countNormalEquippedNames(List<String> equippedNames) {
@@ -79,7 +85,6 @@ public final class ManipulationEquipHelper {
 	}
 
 	public static boolean isMemorizationCapExempt(String manipName) {
-		return BLOOD_ABSORPTION.equals(manipName) || BLOOD_PROJECTION.equals(manipName)
-				|| CONJURE_STAFF.equals(manipName);
+		return isVerb(manipName) || CONJURE_STAFF.equals(manipName);
 	}
 }

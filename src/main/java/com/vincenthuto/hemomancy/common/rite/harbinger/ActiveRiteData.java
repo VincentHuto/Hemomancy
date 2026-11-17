@@ -64,6 +64,7 @@ public final class ActiveRiteData {
 		private int escalation;
 		private int escalationTotal;
 		private int openRings = -1;
+		private int staffRings;
 		private int[] anchorRequirements = new int[0];
 		private List<com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem> problems = List.of();
 		private List<SocketMarker> socketMarkers = List.of();
@@ -296,6 +297,12 @@ public final class ActiveRiteData {
 		public RiteEntry withRings(int open, int[] requirements) {
 			openRings = Math.max(0, open);
 			anchorRequirements = requirements == null ? new int[0] : requirements.clone();
+			return this;
+		}
+		/** The planted Staff's growth rings, drawn as bone bands on its shaft; 0 for none. Synced, never saved. */
+		public int getStaffRings() { return staffRings; }
+		public RiteEntry withStaffRings(int rings) {
+			staffRings = Math.max(0, rings);
 			return this;
 		}
 		public RiteEntry withEscalation(int stage, int total) {

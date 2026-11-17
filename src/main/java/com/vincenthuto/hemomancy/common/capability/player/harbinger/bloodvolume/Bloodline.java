@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -18,8 +19,7 @@ public class Bloodline {
 
 	public static Bloodline deserialize(CompoundTag nbt) {
 		if (nbt != null && !nbt.isEmpty()) {
-			if (nbt.contains("name") && nbt.contains("leader") && nbt.contains("bloodlineUUID")
-					&& nbt.contains("players")) {
+			if (nbt.contains("leader") && nbt.contains("bloodlineUUID") && nbt.contains("players")) {
 				if (nbt.get("players") instanceof ListTag listtag) {
 					List<UUID> playerUUIDS = new ArrayList<>();
 					for (int i = 0; i < listtag.size(); i++) {
@@ -27,8 +27,9 @@ public class Bloodline {
 							playerUUIDS.add(comp.getUUID("player" + i));
 						}
 					}
-					Bloodline line = new Bloodline(nbt.getString("name"), nbt.getUUID("leader"),
+					Bloodline line = new Bloodline(nbt.getString("founder"), nbt.getUUID("leader"),
 							nbt.getUUID("bloodlineUUID"), playerUUIDS);
+					line.customName = nbt.getString("customName");
 					if (nbt.contains("sharedBloodVolume")) {
 						line.setBloodVolume(nbt.getFloat("sharedBloodVolume"));
 					}
@@ -63,7 +64,10 @@ public class Bloodline {
 		return Bloodline.NOBLOODLINE;
 	}
 
-	String name;
+	/** The founder's name as it was at the founding; the default line name is built from it in the reader's language. */
+	String founderName;
+	/** A name the line chose for itself. Nothing sets one yet; empty means the default name. */
+	String customName = "";
 	float bloodVolume, maxBloodVolume;
 	UUID leaderUUID, bloodlineUUID;
 
@@ -83,7 +87,7 @@ public class Bloodline {
 	private final Map<UUID, Long> npcBloodspentUntil = new HashMap<>();
 
 	public Bloodline() {
-		this.name = "No Bloodline";
+		this.founderName = "";
 		this.bloodVolume = 0;
 		this.maxBloodVolume = 0;
 		this.leaderUUID = INVALID_UUID;
@@ -91,8 +95,8 @@ public class Bloodline {
 		this.playerUUIDS = new ArrayList<>();
 	}
 
-	public Bloodline(String name, UUID leaderUUID, UUID bloodlineUUID, List<UUID> playerUUIDS) {
-		this.name = name;
+	public Bloodline(String founderName, UUID leaderUUID, UUID bloodlineUUID, List<UUID> playerUUIDS) {
+		this.founderName = founderName;
 		this.bloodVolume = 0;
 		this.leaderUUID = leaderUUID;
 		this.bloodlineUUID = bloodlineUUID;
@@ -318,8 +322,23 @@ public class Bloodline {
 		return maxBloodVolume;
 	}
 
-	public String getName() {
-		return name;
+	/** The line's name as a player reads it (PT-87). */
+	public Component displayName() {
+		return displayName(isValid(), founderName, customName);
+	}
+
+	public static Component displayName(boolean valid, String founderName, String customName) {
+		if (!valid) return Component.translatable("hemomancy.bloodline.none");
+		if (customName != null && !customName.isBlank()) return Component.literal(customName);
+		return Component.translatable("hemomancy.bloodline.default_name", founderName);
+	}
+
+	public String getFounderName() {
+		return founderName;
+	}
+
+	public String getCustomName() {
+		return customName;
 	}
 
 	public List<Player> getPlayers(Level level) {
@@ -339,7 +358,8 @@ public class Bloodline {
 
 	public CompoundTag serialize() {
 		CompoundTag tag = new CompoundTag();
-		tag.putString("name", name);
+		tag.putString("founder", founderName);
+		if (!customName.isEmpty()) tag.putString("customName", customName);
 		tag.putUUID("leader", getLeaderUUID());
 		tag.putUUID("bloodlineUUID", getBloodlineUUID());
 		tag.putFloat("sharedBloodVolume", bloodVolume);
@@ -386,10 +406,6 @@ public class Bloodline {
 
 	public void setMaxBloodVolume(float maxBloodVolume) {
 		this.maxBloodVolume = maxBloodVolume;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 }

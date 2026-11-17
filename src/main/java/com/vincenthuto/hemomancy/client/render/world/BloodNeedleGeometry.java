@@ -17,6 +17,10 @@ import java.util.List;
  */
 final class BloodNeedleGeometry {
     static final double LENGTH = .8, LANCE_LENGTH = 1.4, WIDTH = .09, LANCE_WIDTH = .12;
+    /** FX-25: a troupe knife is drawn at twice a needle's length and width. */
+    static final double KNIFE_SCALE = 2.0;
+    /** The bone of a troupe knife's wake. */
+    static final int KNIFE_WAKE = 0xE8DAC0;
     /** Splash radius for a needle puncture. */
     static final float PUNCTURE = .45F;
 
@@ -64,5 +68,19 @@ final class BloodNeedleGeometry {
             glint = 0;
         }
         needle(p, v, base, tip, camera, right, up, lance ? LANCE_WIDTH : WIDTH, seed, alpha, glint, lance);
+    }
+
+    /** A troupe knife: a needle at {@link #KNIFE_SCALE} with a bone wake, so each throw reads across the ring. */
+    static void knife(PoseStack p, VertexConsumer v, List<Vec3> path, Vec3 heading, Vec3 camera, Vec3 right, Vec3 up,
+            double time, int seed, float alpha, float wake, boolean lodged) {
+        if (path.isEmpty()) return;
+        Vec3 head = path.getLast();
+        if (path.size() >= 2 && wake > 0)
+            ribbonPath(p, v, path, camera, .01, .09, RIBBON, seed, KNIFE_WAKE, wake * .85f);
+        Vec3 axis = heading.lengthSqr() > 1e-8 ? heading.normalize() : new Vec3(0, -1, 0);
+        double length = LENGTH * KNIFE_SCALE;
+        Vec3 tip = head.add(axis.scale(length * .5)), base = head.subtract(axis.scale(length * .5));
+        float glint = lodged ? 0 : (float) (.55 + .45 * Math.pow(Math.max(0, Math.sin(time * .6 + seed)), 4));
+        needle(p, v, base, tip, camera, right, up, WIDTH * KNIFE_SCALE, seed, alpha, glint, false);
     }
 }

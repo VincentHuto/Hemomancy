@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * Extracts moisture/blood from prey. Fast, low profile, venomous.
  */
 public class DesiccantEntity extends Monster {
-	private static final BloodAccounting.Source STING = BloodAccounting.Source.of("desiccant_sting", Category.HAZARD, false, false);
+	private static final BloodAccounting.Source STING = BloodAccounting.Source.of("desiccant_sting", Category.HAZARD, false);
 	private static final EntityDataAccessor<Integer> DATA_STING_TICKS = SynchedEntityData.defineId(
 			DesiccantEntity.class, EntityDataSerializers.INT);
 	public static final int STING_ANIMATION_TICKS = 16;

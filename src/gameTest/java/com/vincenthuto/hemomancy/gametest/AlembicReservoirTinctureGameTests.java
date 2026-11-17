@@ -75,17 +75,14 @@ public final class AlembicReservoirTinctureGameTests {
         machine.setItem(0, new ItemStack(BlockInit.devils_tooth.get()));
         machine.setItem(1, ItemStack.EMPTY);
         machine.setItem(3, ItemStack.EMPTY);
-        tick(helper, machine, 100);
-        helper.assertTrue(machine.getItem(2).isEmpty() && machine.getBloodVolume() == 5000
-                && machine.getProcessingStatus() == GhastlyAlembicBlockEntity.Status.TANK_FULL,
-                "Ordinary distillation must still wait for byproduct capacity");
-        HemoCapabilityAccess.getBloodVolume(machine).orElseThrow().setBloodVolume(4800);
+        // Core-loop Track 3: machines do not make blood, so a full tank neither stops nor grows from free distillation.
         tick(helper, machine, 100);
         helper.assertTrue(machine.getItem(2).is(ItemInit.foul_paste.get()) && machine.getItem(2).getCount() == 2
-                && machine.getBloodVolume() == 4900, "Ordinary distillation must generate exactly 100 mL");
+                && machine.getBloodVolume() == 5000, "Ordinary distillation must run at a full tank and make no blood");
+        HemoCapabilityAccess.getBloodVolume(machine).orElseThrow().setBloodVolume(4800);
         machine.setItem(1, new ItemStack(HLItemInit.cured_clay_flask.get()));
         tick(helper, machine, 1);
-        helper.assertTrue(machine.getBloodVolume() == 2400 && machine.getItem(1).isEmpty()
+        helper.assertTrue(machine.getBloodVolume() == 2300 && machine.getItem(1).isEmpty()
                 && machine.getItem(4).is(ItemInit.bloody_flask.get()), "Standalone bottling must still use the container area");
         helper.succeed();
     }
@@ -103,7 +100,7 @@ public final class AlembicReservoirTinctureGameTests {
             helper.assertTrue(machine.getItem(2).is(BuiltInRegistries.ITEM.get(ResourceLocation.parse(
                     "hemomancy:tincture_" + memories[i])))
                     && com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(machine.getItem(2)) == jug
-                    && machine.getBloodVolume() == (jug ? 0 : 2500)
+                    && machine.getBloodVolume() == (jug ? 1000 : 2500)
                     && machine.getItem(0).isEmpty() && machine.getItem(1).isEmpty() && machine.getItem(3).isEmpty(),
                     "Tincture " + memories[i] + " must charge its reservoir cost and consume empty packaging");
             helper.getLevel().removeBlock(machine.getBlockPos(), false);
@@ -119,7 +116,7 @@ public final class AlembicReservoirTinctureGameTests {
         try {
             DistillationRecipeSerializer.STREAM_CODEC.encode(buffer, recipe);
             var decoded = DistillationRecipeSerializer.STREAM_CODEC.decode(buffer);
-            helper.assertTrue(decoded.getBloodCost() == 5000 && decoded.matchesItems(
+            helper.assertTrue(decoded.getBloodCost() == 4000 && decoded.matchesItems(
                     new ItemStack(ItemInit.sanguine_formation.get()), new ItemStack(ItemInit.fervent_enzyme.get()),
                     new ItemStack(ItemInit.cured_clay_jug.get())) && !decoded.matchesItems(
                     new ItemStack(ItemInit.sanguine_formation.get()), new ItemStack(ItemInit.fervent_enzyme.get()),
@@ -183,7 +180,7 @@ public final class AlembicReservoirTinctureGameTests {
         tick(helper, machine, 1);
         helper.assertTrue(machine.getItem(2).is(ItemInit.tincture_sanguine_fists.get())
                 && com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(machine.getItem(2))
-                && machine.getItem(1).isEmpty() && machine.getBloodVolume() == 0,
+                && machine.getItem(1).isEmpty() && machine.getBloodVolume() == 1000,
                 "Full tank must permit a paid jug tincture without generating blood byproduct");
         helper.succeed();
     }

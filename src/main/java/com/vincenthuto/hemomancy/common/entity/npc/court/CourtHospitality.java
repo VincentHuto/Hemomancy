@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtL
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtStandingRules;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.Offer;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtMemberDialogue;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeService;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.CourtHouse;
 import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.ChatFormatting;
@@ -151,7 +152,7 @@ public final class CourtHospitality {
 			case CourtMemberDialogue.FOOD -> !turnedAway && role.offers(Offer.FOOD) && feed(player) || refuse(player);
 			case CourtMemberDialogue.REST -> !turnedAway && role.offers(Offer.REST) && rest(player, member) || refuse(player);
 			case CourtMemberDialogue.GIFT -> !turnedAway && role.offers(Offer.GIFT) && give(player, member) || refuse(player);
-			case CourtMemberDialogue.OFFER -> !turnedAway && role.offers(Offer.CUSTOM) && offer(player, house) || refuse(player);
+			case CourtMemberDialogue.OFFER -> !turnedAway && role.offers(Offer.CUSTOM) && offer(player, member, house) || refuse(player);
 			case CourtMemberDialogue.AMENDS -> (role.offers(Offer.FOOD) || role.offers(Offer.LESSON))
 					&& CourtLife.reconcile(player) || refuse(player);
 			case CourtMemberDialogue.LESSON -> role.offers(Offer.LESSON) && CourtLife.teachLesson(player).taught();
@@ -186,10 +187,14 @@ public final class CourtHospitality {
 		return true;
 	}
 
-	/** The house's custom: one offering from the main hand. Accepted every time; standing counts it once. */
-	private static boolean offer(ServerPlayer player, CourtHouse house) {
+	/**
+	 * The house's custom: one offering from the main hand. Accepted every time; standing counts it once, and it pays
+	 * the rapport the speaker's custom card pays, every time.
+	 */
+	private static boolean offer(ServerPlayer player, CourtMemberEntity member, CourtHouse house) {
 		if (!holdsCustom(player, house)) return false;
 		acceptCustom(player, house, player.getItemInHand(InteractionHand.MAIN_HAND));
+		NpcTradeService.creditCustom(player, member.tradeSpeakerId(), customAct(house));
 		return true;
 	}
 

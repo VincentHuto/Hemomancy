@@ -40,7 +40,9 @@ class CastBasicsVisualSourceTest {
     @Test void cellHandsAndAvatarSendTheirCues() throws IOException {
         String conjuration = read("common/manipulation/ferric/ConjurationManip.java");
         assertTrue(conjuration.contains("Form.CELL_HAND") && conjuration.contains("CellHandRules.DISPEL"));
-        assertTrue(read("common/network/capa/harbinger/manips/UseManipKeyPacket.java").contains("ConjurationManip.dispelled(player, mainStack)"));
+        assertTrue(conjuration.contains("dispelled(player, mainStack)"), "the shared dispel unravels the hand");
+        assertTrue(read("common/network/capa/harbinger/manips/UseManipKeyPacket.java").contains("ConjurationManip.dispelHeld("));
+        assertTrue(read("common/manipulation/verb/VerbSelection.java").contains("ConjurationManip.dispelHeld(player)"));
         assertTrue(read("common/item/harbinger/tool/living/BloodProjectionItem.java").contains("CellHandRules.PROJECTING"));
         assertTrue(read("common/item/harbinger/tool/living/BloodAbsorptionItem.java").contains("CellHandRules.ABSORBING"));
         String avatar = read("common/manipulation/animus/AvatarManifestationManager.java");

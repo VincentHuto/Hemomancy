@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.unstained.crafting;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
@@ -8,7 +10,6 @@ import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.tile.unstained.crafting.StillwaterCondenserBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -82,8 +83,9 @@ public class StillwaterCondenserBlock extends BaseEntityBlock {
 	}
 	@Override public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
 		if (random.nextFloat() < 0.45f) {
-			level.addParticle(ParticleTypes.END_ROD, pos.getX() + 0.35 + random.nextDouble() * 0.3,
-					pos.getY() + 0.72, pos.getZ() + 0.35 + random.nextDouble() * 0.3, 0, 0.008, 0);
+			level.addParticle(HemoParticleData.emberSpark(HemoPalette.STILL_WHITE, 0.031F, 0.8F, 30),
+					pos.getX() + 0.35 + random.nextDouble() * 0.3, pos.getY() + 0.72,
+					pos.getZ() + 0.35 + random.nextDouble() * 0.3, 0, 0.008, 0);
 		}
 	}
 }

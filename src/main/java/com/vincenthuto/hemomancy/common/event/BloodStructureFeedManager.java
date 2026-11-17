@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -17,7 +18,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
@@ -26,7 +27,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.*;
 
 public final class BloodStructureFeedManager {
-	private static final BloodAccounting.Source STRUCTURE_FEED = BloodAccounting.Source.of("blood_structure_feed", Category.RITE, false, false);
+	private static final BloodAccounting.Source STRUCTURE_FEED = BloodAccounting.Source.of("blood_structure_feed", Category.RITE, false);
 	private static final Map<FeedKey, FeedProgress> ACTIVE_FEEDS = new HashMap<>();
 	private static final Map<FeedKey, Long> COMPLETING_FEEDS = new HashMap<>();
 	private static final Map<UUID, Long> LAST_HINT_TICK = new HashMap<>();
@@ -89,6 +90,10 @@ public final class BloodStructureFeedManager {
 		}
 
 		if (progress == null) {
+			if (!PendingBloodCraftManager.mayConsume(player, match.match(), blockPattern.getWidth(),
+					blockPattern.getHeight(), blockPattern.getDepth())) {
+				return true;
+			}
 			progress = new FeedProgress();
 			ACTIVE_FEEDS.put(key, progress);
 		}
@@ -178,8 +183,7 @@ public final class BloodStructureFeedManager {
 			return;
 		}
 		player.displayClientMessage(message, true);
-		player.serverLevel().playLocalSound(player.blockPosition().getX(), player.blockPosition().getY(),
-				player.blockPosition().getZ(), SoundEvents.ENDERMAN_SCREAM, null, 0.35f, 1.25f, false);
+		player.playNotifySound(SoundInit.RITE_CANCEL.get(), SoundSource.PLAYERS, 0.35f, 1.25f);
 		LAST_HINT_TICK.put(player.getUUID(), gameTime);
 	}
 

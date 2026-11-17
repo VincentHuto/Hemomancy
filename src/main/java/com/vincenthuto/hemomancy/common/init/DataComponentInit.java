@@ -47,6 +47,24 @@ public class DataComponentInit {
 			.registerComponentType("ahaematic_sample", builder -> builder
 					.persistent(AhaematicSample.CODEC)
 					.networkSynchronized(AhaematicSample.STREAM_CODEC));
+	/** Game time a Bloody Flask or Jug was bottled; it clots from then like any inert container (Track 3). */
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> BOTTLED_AT = COMPONENTS
+			.registerComponentType("bottled_at", builder -> builder
+					.persistent(Codec.LONG)
+					.networkSynchronized(ByteBufCodecs.VAR_LONG));
+	/**
+	 * Growth rings a Living Staff (or a form it took) has laid down, stamped from its owner's handled blood so every
+	 * side reads the same tier and draws the same bands (Track 8).
+	 */
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> STAFF_RINGS = COMPONENTS
+			.registerComponentType("staff_rings", builder -> builder
+					.persistent(Codec.INT)
+					.networkSynchronized(ByteBufCodecs.VAR_INT));
+	/** The blood paid for the cast that conjured this Staff or cell hand; dispelling returns 90% of it (NQ-04-15). */
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<Double>> CONJURE_PAID = COMPONENTS
+			.registerComponentType("conjure_paid", builder -> builder
+					.persistent(Codec.DOUBLE)
+					.networkSynchronized(ByteBufCodecs.DOUBLE));
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> LISTENING_SCAR_STATE = COMPONENTS
 			.registerComponentType("listening_scar_state", builder -> builder
 					.persistent(Codec.INT)
@@ -91,6 +109,12 @@ public class DataComponentInit {
 
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> BLOOD_SAMPLE_IDENTIFIED = COMPONENTS
 			.registerComponentType("blood_sample_identified", builder -> builder
+					.persistent(Codec.BOOL)
+					.networkSynchronized(ByteBufCodecs.BOOL));
+
+	/** Hematic Cleats the Armature set into these boots; the value is the inner-radial toggle, true while on (CN-10). */
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CLEATS = COMPONENTS
+			.registerComponentType("cleats", builder -> builder
 					.persistent(Codec.BOOL)
 					.networkSynchronized(ByteBufCodecs.BOOL));
 

@@ -30,6 +30,6 @@ class PhlegethonticCollectionTeachingTest {
                 key + " must explain the filled-rack transfer");
         assertTrue(text.contains("remove") && text.contains("without spinning"),
                 key + " must preserve the loose specimen instead of separating it");
-        assertTrue(text.contains("main hand"), key + " must explain how the Alchemist reads the sample");
+        assertTrue(text.contains("either hand"), key + " must explain how the Alchemist reads the sample (PT-41)");
     }
 }

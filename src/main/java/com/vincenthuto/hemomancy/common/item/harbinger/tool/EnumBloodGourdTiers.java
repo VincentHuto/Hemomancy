@@ -10,7 +10,7 @@ public enum EnumBloodGourdTiers {
 	CRIMSON(2, 1800, 12, 3.0, 1.25, 0.0),
 	ASHEN(3, 3500, 20, 0.75, 1.0, 0.0),
 	HORN(4, 1500, 5, 5.0, 0.5, 0.0),
-	RIB(5, 5000, 5, 2.5, 1.25, 0.25),
+	RIB(5, 5000, 5, 2.5, 1.25, 0.125),
 	DRIED(0, 0, 0, 0, 0, 0);
 
 	private final int tierLevel;

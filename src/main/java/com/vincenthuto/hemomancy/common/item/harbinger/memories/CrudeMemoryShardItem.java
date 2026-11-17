@@ -9,11 +9,13 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +37,7 @@ import java.util.List;
  * manipulation.
  */
 public class CrudeMemoryShardItem extends Item {
-	private static final BloodAccounting.Source ABSORPTION = BloodAccounting.Source.of("crude_memory_shard", Category.TOOL, false, false);
+	private static final BloodAccounting.Source ABSORPTION = BloodAccounting.Source.of("crude_memory_shard", Category.TOOL, false);
 
 	/** Blood cost to absorb a crude memory. */
 	private static final double BLOOD_COST = 500.0;
@@ -63,7 +65,7 @@ public class CrudeMemoryShardItem extends Item {
 			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.blood_cost_to_absorb_ml",
 					(int) BLOOD_COST).withStyle(ChatFormatting.DARK_RED));
 			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.right_click_with_active_blood_learning",
-					ManipulationRankGates.minDegreeForRank(getManip().getRank())).withStyle(ChatFormatting.GRAY));
+					ManipulationRankGates.minDegreeFor(getManip())).withStyle(ChatFormatting.GRAY));
 			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.casting_requires_alignment",
 					(int) getManip().getAlignLevel(),
 					BloodManipulation.temperName(getManip().getTend()),
@@ -95,10 +97,10 @@ public class CrudeMemoryShardItem extends Item {
 			return InteractionResultHolder.fail(stack);
 		}
 		int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		if (!ManipulationRankGates.playerMeetsRank(playerDegree, manipulation.getRank())) {
+		if (!ManipulationRankGates.playerMeets(playerDegree, manipulation)) {
 			player.displayClientMessage(
 					HemoText.translatable("message.hemomancy.crude_memory_shard_item.this_memory_requires_degree",
-							ManipulationRankGates.minDegreeForRank(manipulation.getRank())).withStyle(ChatFormatting.DARK_RED),
+							ManipulationRankGates.minDegreeFor(manipulation)).withStyle(ChatFormatting.DARK_RED),
 					true);
 			return InteractionResultHolder.fail(stack);
 		}
@@ -125,6 +127,7 @@ public class CrudeMemoryShardItem extends Item {
 		KnownManipulationGrantHelper.learnAndEquipIfPossible(known, manipulation,
 				ManipSlotHelper.getMaxSlots(player));
 		KnownManipulationEvents.syncPlayerEvent(player);
+		if (player instanceof ServerPlayer server) LiberKnowledgeHelper.unlockForMemory(server, manipulation);
 		stack.shrink(1);
 
 		player.displayClientMessage(

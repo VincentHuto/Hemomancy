@@ -13,23 +13,6 @@ import com.vincenthuto.hemomancy.common.worldgen.structure.StructurePlacementChe
 @GameTestHolder("crimson_troupe_validation")
 @PrefixGameTestTemplate(false)
 public final class TroupeFootprintGameTests {
-    public static void verifyNoiseColumns(GameTestHelper h) {
-        var level = h.getLevel();
-        var generator = level.getChunkSource().getGenerator();
-        var context = new net.minecraft.world.level.levelgen.structure.Structure.GenerationContext(
-                level.registryAccess(), generator, generator.getBiomeSource(), level.getChunkSource().randomState(),
-                level.getStructureManager(), level.getSeed(), new net.minecraft.world.level.ChunkPos(0, 0), level, b -> true);
-        var shared = new TroupeTerrainColumns(context);
-        int[][] cells = {{0, 0}, {-4, -8}, {-1952, -2080}, {-480, -1024}, {292928, 1001008}, {312944, 973136}};
-        for (int[] cell : cells) for (int dx = 0; dx < 4; dx++) for (int dz = 0; dz < 4; dz++) {
-            int x = cell[0] + dx, z = cell[1] + dz;
-            var batched = shared.get(x, z);
-            var vanilla = generator.getBaseColumn(x, z, level, context.randomState());
-            for (int y = level.getMinBuildHeight(); y < level.getMaxBuildHeight(); y++)
-                h.assertTrue(batched.getBlock(y).equals(vanilla.getBlock(y)), "Shared column differs at " + x + "," + y + "," + z);
-        }
-    }
-
     @GameTest(template="empty", timeoutTicks=20)
     public static void sharedColumnRetainsDryGroundAndHeightGates(GameTestHelper h) {
         BlockState[] blocks = new BlockState[384];

@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,8 @@ public class BloodTemperament implements IBloodTemperament, INBTSerializable<Com
 
 	@Override
 	public void addTemperAlignment(EnumBloodTemper temperIn, float value) {
-		if (temper != null) {
-			if (getOpposingTemper(temperIn) != null) {
-				temper.put(temperIn, temper.getOrDefault(temperIn, 0F) + value);
-			}
+		if (temperIn != null) {
+			temper.put(temperIn, temper.getOrDefault(temperIn, 0F) + value);
 		}
 	}
 
@@ -37,6 +36,15 @@ public class BloodTemperament implements IBloodTemperament, INBTSerializable<Com
 		if (Math.abs(transientAlignment.get(temperIn)) < 0.0001F) {
 			transientAlignment.remove(temperIn);
 		}
+	}
+
+	@Override
+	public void setTransientAlignments(Map<EnumBloodTemper, Float> scars) {
+		transientAlignment.clear();
+		if (scars == null) return;
+		scars.forEach((school, value) -> {
+			if (school != null && value != null && Math.abs(value) >= 0.0001F) transientAlignment.put(school, value);
+		});
 	}
 
 	@Override
@@ -66,35 +74,10 @@ public class BloodTemperament implements IBloodTemperament, INBTSerializable<Com
 	}
 
 	@Override
-	public EnumBloodTemper getOpposingTemper(EnumBloodTemper temperIn) {
-		switch (temperIn) {
-		case ANIMUS:
-			return EnumBloodTemper.MORTEM;
-		case MORTEM:
-			return EnumBloodTemper.ANIMUS;
-		case DUCTILIS:
-			return EnumBloodTemper.FERRIC;
-		case FERRIC:
-			return EnumBloodTemper.DUCTILIS;
-		case LUX:
-			return EnumBloodTemper.TENEBRIS;
-		case TENEBRIS:
-			return EnumBloodTemper.LUX;
-		case FLAMMEUS:
-			return EnumBloodTemper.CONGEATIO;
-		case CONGEATIO:
-			return EnumBloodTemper.FLAMMEUS;
-		default:
-			return null;
-		}
-	}
-
-	@Override
 	public float getPercentByTemper(EnumBloodTemper temperIn) {
 		float total = getTotalAlignment();
-		float current = getAlignmentByTemper(temperIn);
-		float per = (current / total) * 100;
-		return per;
+		if (Math.abs(total) < 0.0001F) return 0.0F;
+		return getAlignmentByTemper(temperIn) / total * 100.0F;
 	}
 
 	@Override
@@ -118,15 +101,19 @@ public class BloodTemperament implements IBloodTemperament, INBTSerializable<Com
 
 	@Override
 	public void setTemper(Map<EnumBloodTemper, Float> temper) {
-		this.temper = temper;
+		// Copied into a map of its own with every temper present: the caller's map may be immutable or partial.
+		Map<EnumBloodTemper, Float> copy = new EnumMap<>(EnumBloodTemper.class);
+		for (EnumBloodTemper value : EnumBloodTemper.values()) {
+			Float given = temper == null ? null : temper.get(value);
+			copy.put(value, given == null ? 0.0F : given);
+		}
+		this.temper = copy;
 	}
 
 	@Override
 	public void setTemperAlignment(EnumBloodTemper temperIn, float value) {
-		if (temper != null) {
-			if (getOpposingTemper(temperIn) != null) {
-				temper.put(temperIn, value);
-			}
+		if (temperIn != null) {
+			temper.put(temperIn, value);
 		}
 	}
 

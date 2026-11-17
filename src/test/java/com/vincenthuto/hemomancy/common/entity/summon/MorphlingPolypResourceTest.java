@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class MorphlingPolypResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -12,7 +17,8 @@ public final class MorphlingPolypResourceTest {
 	private MorphlingPolypResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertExists("layer enum", SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/summon/MorphlingPolypLayer.java"));
 		assertExists("layer rules", SOURCE_ROOT.resolve(
@@ -77,28 +83,9 @@ public final class MorphlingPolypResourceTest {
 		return read(RESOURCE_ROOT.resolve(relativePath));
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": contained " + unexpected);
 		}
 	}
 }

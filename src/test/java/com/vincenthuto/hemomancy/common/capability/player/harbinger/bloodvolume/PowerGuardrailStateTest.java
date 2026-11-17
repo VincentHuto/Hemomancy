@@ -1,14 +1,18 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class PowerGuardrailStateTest {
 	private PowerGuardrailStateTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String source = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/PowerGuardrailState.java"));
 		serializesAndDeserializesGuardrailState(source);
@@ -47,11 +51,5 @@ public final class PowerGuardrailStateTest {
 				"this.borrowedBlood = Math.max(0.0D, borrowedBlood)");
 		assertContains("cooldown clamps to zero", source,
 				"this.lastRiteCooldownUntil = Math.max(0L, lastRiteCooldownUntil)");
-	}
-
-	private static void assertContains(String label, String source, String expected) {
-		if (!source.contains(expected)) {
-			throw new AssertionError(label + ": missing `" + expected + "`");
-		}
 	}
 }

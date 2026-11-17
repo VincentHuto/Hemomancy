@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.event.worldevent;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class FaneFootprintSourceTest {
 	private static final Path FOOTPRINT = Path.of(
@@ -13,7 +16,8 @@ public final class FaneFootprintSourceTest {
 	private FaneFootprintSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String footprint = Files.readString(FOOTPRINT).replace("\r\n", "\n");
 		String savedData = Files.readString(SAVED_DATA).replace("\r\n", "\n");
 
@@ -30,11 +34,5 @@ public final class FaneFootprintSourceTest {
 		assertContains("persists heart tag", savedData, "\"Heart\"");
 		assertContains("persists stakes tag", savedData, "\"Stakes\"");
 		assertContains("exposes footprint snapshot", savedData, "getAllFootprints()");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

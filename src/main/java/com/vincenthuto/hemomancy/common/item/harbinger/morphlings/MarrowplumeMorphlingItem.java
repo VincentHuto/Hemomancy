@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.utility.MorphlingFieldEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -104,7 +104,7 @@ public class MarrowplumeMorphlingItem extends HouseMorphlingItem {
 		if (!(player.level() instanceof ServerLevel level)) return;
 		int stage = stage(stack);
 		if (stage >= 4 && MarrowplumeRules.mayInherit(victim instanceof Player,
-				ManipulationReactiveEvents.isBoss(victim), isSpawnerMob(victim))) {
+				HemoEntityPredicates.isBoss(victim), isSpawnerMob(victim))) {
 			if (level.random.nextFloat() < MarrowplumeRules.inheritanceChance(stage)) {
 				rollBonusLoot(level, player, victim);
 			}

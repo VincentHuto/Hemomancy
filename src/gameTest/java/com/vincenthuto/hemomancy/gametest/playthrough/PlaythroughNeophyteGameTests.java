@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.gametest.playthrough;
 
 import com.google.gson.JsonElement;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
@@ -9,6 +11,8 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTopic;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PlayerStateSync;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
@@ -117,7 +121,6 @@ public final class PlaythroughNeophyteGameTests {
 	private static final String ROAD_REPORTED = "hemomancy.dialogue.event.vicar_hermit_road_reported";
 	private static final String ROAD_KNOWN = "hemomancy.dialogue.event.vicar_hermit_road_known";
 	private static final String ROAD_UNPROVEN = "hemomancy.dialogue.event.vicar_hermit_road_unproven";
-	private static final String EMPTY_HAND = "message.hemomancy.use_manip_key_packet.conjuration_requires_an_empty_hand";
 	private static final String NO_BLOOD_TO_SHED = "message.hemomancy.blood_manipulation.not_enough_blood_to_be_shed";
 
 	/** The F-11 lines: the Hermit Road report gives ash and a record, never a ledger (HEMOMANCY_REFERENCE:227). */
@@ -234,10 +237,12 @@ public final class PlaythroughNeophyteGameTests {
 	}
 
 	/**
-	 * Dispelling a conjured cell hand gives blood back, and the refund reaches the client in the same tick, through
-	 * the blood-flow ledger. The refund amount is logged (whether it should scale with wear is decision D-25).
+	 * Dispelling a conjured cell hand gives blood back through the blood-flow ledger, and the refund reaches the client
+	 * at the end of the same tick. The refund is 90% of what the conjure paid (NQ-04-15, PT-25).
 	 */
 	// FIX: UseManipKeyPacket filled the volume directly with no owner sync; it now goes through BloodFlowLedger.
+	// The ledger's syncVolume raises the volume's dirty flag and PlayerStateSync sends it at the end of the tick to the
+	// server's player list; the captured player is not on that list, so the test runs the end-of-tick flush itself.
 	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void dispelRefundIsSyncedAndRecorded(GameTestHelper helper) {
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 10, 8));
@@ -248,13 +253,23 @@ public final class PlaythroughNeophyteGameTests {
 		Outcome conjure = player.castSelected();
 		helper.assertTrue(player.player().getMainHandItem().is(ItemInit.blood_absorption.get()),
 				"the cast conjures the hand; " + conjure);
+		PlayerStateSync.flushDirty(player.player()); // the conjure's own end-of-tick sync
+		int syncsBefore = player.sent(BloodVolumeServerPacket.class).size();
 		Outcome dispel = player.castSelected();
 		PlaythroughLog.note(helper, "dispel refund: " + (dispel.bloodAfter() - dispel.bloodBefore()) + " mL after a conjure that cost "
 				+ conjure.bloodSpent() + " mL; " + dispel.describe());
 		helper.assertTrue(player.player().getMainHandItem().isEmpty(), "the second cast dispels the hand; " + dispel);
 		helper.assertTrue(dispel.bloodAfter() > dispel.bloodBefore(), "dispelling gives blood back; " + dispel);
-		helper.assertFalse(dispel.sent(BloodVolumeServerPacket.class).isEmpty(),
-				"the refund is sent to the client in the same tick; " + dispel);
+		double refund = dispel.bloodAfter() - dispel.bloodBefore();
+		helper.assertTrue(Math.abs(refund - conjure.bloodSpent() * 0.9D) < 0.5D,
+				"dispelling returns 90% of the " + conjure.bloodSpent() + " mL the conjure paid, not " + refund + "; " + dispel);
+		helper.assertTrue(BloodFlowLedger.collect(player.player(), HemoCapabilityAccess.getBloodVolume(player.player()))
+						.contributions().stream().anyMatch(entry -> "conjuration_dispel".equals(entry.sourceId())),
+				"the refund is recorded in the blood-flow ledger as conjuration_dispel; " + dispel);
+		PlayerStateSync.flushDirty(player.player()); // the end-of-tick flush the server runs for listed players
+		int syncs = player.sent(BloodVolumeServerPacket.class).size() - syncsBefore;
+		helper.assertTrue(syncs == 1, "the refund is sent to the client once, at the end of the tick; sent " + syncs
+				+ "; " + dispel);
 		helper.succeed();
 	}
 
@@ -363,22 +378,24 @@ public final class PlaythroughNeophyteGameTests {
 	}
 
 	/**
-	 * The cast key with an item in hand is refused with the empty-hand line; with no blood it is refused for want of
-	 * blood; after a flask it conjures Blood Absorption into the hand and pays for it.
+	 * The verb key with an item in hand switches the verb and conjures nothing (CL-2); with an empty hand and no blood
+	 * the conjuring is refused for want of blood; after a flask it conjures Blood Absorption into the hand and pays.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void conjureAbsorptionNeedsEmptyHandAndBlood(GameTestHelper helper) {
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 10, 8));
 		PlaythroughStates.neophyteD1(player); // ARRANGE
 		Item absorption = ItemInit.blood_absorption.get();
-		player.select(ManipulationInit.blood_absorption.get().getName());
 
 		player.give(new ItemStack(Items.STICK)); // ARRANGE: something to hold
 		player.wield(Items.STICK);
-		Outcome busyHand = player.castSelected();
-		busyHand.said(EMPTY_HAND);
+		player.select(ManipulationInit.blood_absorption.get().getName());
+		Outcome busyHand = player.pressVerbKey();
 		helper.assertTrue(player.player().getMainHandItem().is(Items.STICK) && busyHand.bloodSpent() == 0.0D,
 				"a full hand conjures nothing and costs nothing; " + busyHand);
+		helper.assertTrue(VerbChannel.activeVerb(player.player()) == Verb.PROJECT,
+				"the verb key with something in hand switches the verb; " + busyHand);
+		player.select(ManipulationInit.blood_absorption.get().getName());
 
 		emptyHand(player);
 		PlaythroughStates.blood(player, 0.0D); // ARRANGE: a drained vessel
@@ -454,9 +471,9 @@ public final class PlaythroughNeophyteGameTests {
 				.run();
 	}
 
-	/** D-2: a full vessel absorbing from a reservoir. The proof should count it; the count observed is logged. */
-	// DECISION: D-2 absorption counts only the room below max, while the hint says it counts everything.
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
+	/** PT-2: a full vessel absorbing from a reservoir counts nothing, and the Vicar's line says only room counts. */
+	// RULING PT-2 (2026-11-13): keep net counting; the hint no longer says everything counts.
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void fullVesselAbsorptionCounts(GameTestHelper helper) {
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 10, 8));
 		BlockPos reservoir = reservoir(helper, PlaythroughSites.stand(helper, 12, 8), 2000.0D);
@@ -467,8 +484,12 @@ public final class PlaythroughNeophyteGameTests {
 				.step(absorbFrom(player, reservoir, 40, () -> false))
 				.then(() -> {
 					double absorbed = progress(player).absorbedMl();
-					PlaythroughLog.note(helper, "D-2 full vessel: counted " + absorbed + " mL; " + player.last().describe());
-					helper.assertTrue(absorbed > 0.0D, "a full vessel's absorption is counted toward the proof; got " + absorbed);
+					PlaythroughLog.note(helper, "PT-2 full vessel: counted " + absorbed + " mL; " + player.last().describe());
+					helper.assertTrue(absorbed == 0.0D, "a full vessel has no room, so nothing counts; got " + absorbed);
+					String line = net.minecraft.locale.Language.getInstance()
+							.getOrDefault("hemomancy.vicar.blood_crafting.absorption");
+					helper.assertTrue(line.contains("room") && !line.contains("counts everything"),
+							"the Vicar says only blood that finds room counts: " + line);
 				})
 				.run();
 	}
@@ -477,7 +498,8 @@ public final class PlaythroughNeophyteGameTests {
 
 	/**
 	 * Holding Blood Projection on plain stone feeds it until it collapses into a Venous Stone; the player picks the
-	 * stone up and the ledger shows the proof. Cobblestone takes no blood and gives nothing.
+	 * stone up and the ledger shows the proof. Cobblestone takes no blood into itself and gives nothing; since core-loop
+	 * Track 6 the blood nothing takes lands on its face as one stain, for a few mL, once while the stain stays wet.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 500, batch = BATCH)
 	public static void venousStoneProjection(GameTestHelper helper) {
@@ -508,8 +530,9 @@ public final class PlaythroughNeophyteGameTests {
 					Outcome cobbled = player.last();
 					PlaythroughLog.note(helper, "cobblestone projection: " + cobbled.describe());
 					helper.assertTrue(helper.getLevel().getBlockState(cobble).is(Blocks.COBBLESTONE)
-									&& cobbled.drops().isEmpty() && cobbled.bloodSpent() <= 1.0E-6D,
-							"cobblestone takes no blood and gives nothing; " + cobbled);
+									&& cobbled.drops().isEmpty()
+									&& cobbled.bloodSpent() <= com.vincenthuto.hemomancy.common.world.ground.GroundRunRules.STAIN_ML + 1.0E-6D,
+							"cobblestone takes no blood and gives nothing but one stain; " + cobbled);
 					dispel(player);
 					FirstBloodcraftLedgerProgress shown = readLedger(player).firstBloodcraft();
 					PlaythroughLog.note(helper, "ledger after the stone: " + shown + " (" + shown.completedProofs() + "/4)");
@@ -549,8 +572,9 @@ public final class PlaythroughNeophyteGameTests {
 	}
 
 	/**
-	 * A second Neophyte gathers the first one's formation. The bystander gets the item and no proof; the contributor
-	 * loses the formation and still has no proof.
+	 * A second Neophyte, outside the first one's bloodline, tries to gather the first one's formation. Since core-loop
+	 * Track 3 (CL-8) only the owner and their bloodline may: the bystander is told why and gets nothing, the formation
+	 * stays in the cauldron, and neither player has the proof yet.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = (MAX_COLLAPSES + 2) * 300, batch = BATCH)
 	public static void bystanderCollectingFormation(GameTestHelper helper) {
@@ -570,9 +594,10 @@ public final class PlaythroughNeophyteGameTests {
 					Outcome taken = bystander.useOn(cauldron);
 					boolean gone = !(helper.getLevel().getBlockEntity(cauldron) instanceof SanguineCondenserBlockEntity held)
 							|| held.heldFormations() == 0;
-					PlaythroughLog.note(helper, "bystander gathered: " + taken.describe() + "; the owner's formation is "
+					PlaythroughLog.note(helper, "bystander tried: " + taken.describe() + "; the owner's formation is "
 							+ (gone ? "gone" : "still there") + "; owner " + progress(owner) + ", bystander " + progress(bystander));
-					taken.gave(ItemInit.sanguine_formation.get(), 1);
+					taken.gave(ItemInit.sanguine_formation.get(), 0).said("message.hemomancy.living_blood.not_yours");
+					helper.assertTrue(!gone, "a stranger took the owner's formation");
 					helper.assertTrue(!progress(bystander).formationProjected(), "a bystander earns no formation proof: "
 							+ progress(bystander));
 					helper.assertTrue(!progress(owner).formationProjected(), "the contributor has no proof without the item: "
@@ -688,13 +713,9 @@ public final class PlaythroughNeophyteGameTests {
 					Outcome claim = player.choose(vicar, CLAIM);
 					PlaythroughLog.note(helper, "claim: " + claim.describe());
 					claim.deliveredIs(true).degreeIs(2).earned(ADV_D2).earned(ADV_CLAIMED).said(CLAIM_GRANTED);
-					claim.dropped(ItemInit.hematic_iron_scrap.get(), 4, Outcome.Near.NPC)
-							.dropped(BlockInit.befouling_ash_trail.get(), 8, Outcome.Near.NPC)
-							.dropped(ItemInit.sanguine_formation.get(), 2, Outcome.Near.NPC);
-					helper.assertTrue(pickUp(player, claim, ItemInit.hematic_iron_scrap.get()) == 4
-									&& pickUp(player, claim, BlockInit.befouling_ash_trail.get()) == 8
-									&& pickUp(player, claim, ItemInit.sanguine_formation.get()) == 2,
-							"the whole kit can be picked up from the Vicar's feet; " + player.last());
+					claim.gave(ItemInit.hematic_iron_scrap.get(), 4).gave(BlockInit.befouling_ash_trail.get(), 8)
+							.gave(ItemInit.sanguine_formation.get(), 2);
+					helper.assertTrue(claim.drops().isEmpty(), "the whole kit goes to the pack, nothing drops; " + claim);
 				})
 				.run();
 	}
@@ -856,6 +877,40 @@ public final class PlaythroughNeophyteGameTests {
 				.run();
 	}
 
+	/**
+	 * PT-17, the structure half: the crafter logs out while the craft ring closes. The craft lands without them, and the
+	 * structure proof is theirs at the next login.
+	 */
+	@GameTest(template = EMPTY, timeoutTicks = 600, batch = BATCH)
+	public static void structureProofWaitsForTheNextLogin(GameTestHelper helper) {
+		PlaythroughPlayer player = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 10, 8));
+		BlockPos centre = PlaythroughSites.stand(helper, 14, 8);
+		PlaythroughClock.start(helper)
+				.then(() -> {
+					PlaythroughStates.neophyteD1(player); // ARRANGE
+					buildAshRing(player, centre, Items.IRON_BLOCK);
+					player.player().setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.INK_SAC)); // ARRANGE
+				})
+				.step(conjure(player, ManipulationInit.blood_projection, ItemInit.blood_projection.get()))
+				.then(() -> topUp(player, PROOF_ML)) // ARRANGE
+				.step(projectInto(player, centre, 200, () -> player.player().getOffhandItem().isEmpty()))
+				.then(() -> {
+					helper.assertTrue(helper.getLevel().getBlockState(centre).is(Blocks.IRON_BLOCK),
+							"the craft is scheduled but its ring has not closed; " + player.last());
+					player.offline();
+				})
+				.until(120, () -> !helper.getLevel().getBlockState(centre).is(Blocks.IRON_BLOCK),
+						"the craft ring closes while its crafter is offline")
+				.then(() -> {
+					player.relog();
+					boolean proof = progress(player).structureCrafted();
+					PlaythroughLog.note(helper, "PT-17: offline as the craft closed; structure proof on return "
+							+ (proof ? "recorded" : "lost"));
+					helper.assertTrue(proof, "the structure proof is recorded at the next login");
+				})
+				.run();
+	}
+
 	// --- The Hermit Road -------------------------------------------------------------------------------------------
 
 	/**
@@ -890,10 +945,9 @@ public final class PlaythroughNeophyteGameTests {
 		helper.assertTrue(found.offers(REPORT), "after the remnant the Vicar takes the report: " + found.describe());
 		Outcome report = player.choose(vicar, REPORT);
 		PlaythroughLog.note(helper, "Hermit Road report: " + report.describe());
-		report.said(ROAD_REPORTED).earned(ADV_REPORTED).dropped(BlockInit.befouling_ash_trail.get(), 4, Outcome.Near.NPC);
+		report.said(ROAD_REPORTED).earned(ADV_REPORTED).gave(BlockInit.befouling_ash_trail.get(), 4);
+		helper.assertTrue(report.drops().isEmpty(), "the 4 ash go to the pack, nothing drops; " + report);
 		helper.assertTrue(report.delta(ItemInit.harbinger_assignment_ledger.get()) == 0, "the report gives no ledger; " + report);
-		helper.assertTrue(pickUp(player, report, BlockInit.befouling_ash_trail.get()) == 4, "the 4 ash can be picked up; "
-				+ player.last());
 		OpenHarbingerAssignmentLedgerPacket page = readLedger(player);
 		helper.assertTrue(hermitRoad(page) == 2, "the Hermit Road card reads 2/2: " + hermitRoad(page));
 
@@ -910,9 +964,9 @@ public final class PlaythroughNeophyteGameTests {
 		helper.succeed();
 	}
 
-	/** D-15: a remnant first read at D2. The player should have a way to report it; the dead end observed is logged. */
-	// DECISION: D-15 the Hermit Road report is D1-only, so a remnant found later leaves the card at 1/2.
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
+	/** PT-15: a remnant first read at D2 can still be reported to the Vicar. */
+	// RULING PT-15 (2026-11-13): the Hermit Road report can be made at any Degree.
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void hermitRoadAfterD2IsDeadEnd(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 8, 8));
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 14, 8));
@@ -977,11 +1031,11 @@ public final class PlaythroughNeophyteGameTests {
 	}
 
 	/**
-	 * D-3: while the claimant talks, a second player stands at the Vicar's feet and walks over the kit first. The kit
-	 * should reach the claimant; who got it is logged.
+	 * While the claimant talks, a second player stands at the Vicar's feet. The kit reaches the claimant; who got it is
+	 * logged.
 	 */
-	// DECISION: D-3 NPC rewards drop at the NPC's feet, unowned, so anyone can take them.
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
+	// FIX: PT-3 (was D-3). One-time NPC rewards are owed to the claimant through PendingDelivery, never dropped.
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void secondPlayerTakesTheKit(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 8, 8));
 		PlaythroughPlayer claimant = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 11, 8));

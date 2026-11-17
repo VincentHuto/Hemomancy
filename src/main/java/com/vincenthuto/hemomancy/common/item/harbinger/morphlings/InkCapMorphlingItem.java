@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class InkCapMorphlingItem extends HouseMorphlingItem {
 	private static final BloodAccounting.Source INK_REPRIEVE = BloodAccounting.Source.of("ink_mantle_reprieve",
-			Category.MORPHLING, false, false);
+			Category.MORPHLING, false);
 	private static final BloodAccounting.Source DELIQUESCE = MorphlingItem.primalSource("deliquesce");
 	private static final String INK_REPRIEVE_KEY = "InkMantleReprieve";
 	private static final String WAKE_PREFIX = "inkcap.wake.";

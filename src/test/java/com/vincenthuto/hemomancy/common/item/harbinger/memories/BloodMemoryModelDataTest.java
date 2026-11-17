@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class BloodMemoryModelDataTest {
 	private static final Path MODEL_ROOT = Path.of("src/main/resources/assets/hemomancy/models/item");
@@ -15,7 +18,8 @@ public final class BloodMemoryModelDataTest {
 	private BloodMemoryModelDataTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		for (String memory : MEMORIES_WITH_NEW_OVERLAYS) {
 			String model = Files.readString(MODEL_ROOT.resolve("memory_" + memory + ".json"))
 					.replace("\r\n", "\n");
@@ -25,12 +29,6 @@ public final class BloodMemoryModelDataTest {
 					"\"layer1\": \"hemomancy:item/memories/memory_" + memory + "_overlay\"");
 			assertExists(memory + " overlay texture",
 					OVERLAY_ROOT.resolve("memory_" + memory + "_overlay.png"));
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
 		}
 	}
 

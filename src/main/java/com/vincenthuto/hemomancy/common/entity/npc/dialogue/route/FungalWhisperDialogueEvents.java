@@ -3,6 +3,9 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue.route;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -47,6 +50,8 @@ final class FungalWhisperDialogueEvents {
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 			degree.setArchonPath(EnumArchonPath.APOTHEOS_PENDING);
 			InitiatoryDegreeEvents.syncDegree(player, degree);
+			// PT-82: the Truth entry opens with the choice, so the Rite of Apotheos is discovered and can be imprinted.
+			LiberKnowledgeHelper.unlockEntry(player, LiberEntryDefinitions.TRUTH, HemomancyDiscoverySource.DIALOGUE);
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.archon_choice_eighth_degree")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),

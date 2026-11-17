@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
 import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -35,6 +34,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ChamberOfWillEvents {
+    private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
     private static final String OWNER_KEY = "hemomancy:chamber_of_will_owner";
     private static final String HANDLED_KEY = "hemomancy:orb_of_perspective_handled";
 
@@ -207,7 +207,7 @@ public final class ChamberOfWillEvents {
     private static void playThemeChangeEffect(ServerLevel level, ServerPlayer owner) {
         level.sendParticles(HemoParticleData.bloodCell(new ParticleColor(131, 0, 0)),
                 owner.getX(), owner.getY() + 1.0D, owner.getZ(), 12, 0.45D, 0.65D, 0.45D, 0.02D);
-        level.sendParticles(ParticleTypes.REVERSE_PORTAL,
+        level.sendParticles(HemoParticleData.willAbsorptionGlowPulse(BLOOD),
                 owner.getX(), owner.getY() + 1.0D, owner.getZ(), 8, 0.35D, 0.5D, 0.35D, 0.03D);
         level.playSound(null, owner.blockPosition(), SoundEvents.END_PORTAL_FRAME_FILL,
                 SoundSource.PLAYERS, 0.7F, 0.75F);

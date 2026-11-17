@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class EquippedMorphlingEvents {
-	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("morphling_upkeep", Category.MORPHLING, false, true);
+	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("morphling_upkeep", Category.MORPHLING, true);
 
 	private static final Map<String, Long> TEMPORARY_WEBS = new ConcurrentHashMap<>();
 	/** Hosts that wore a Morphling last tick, so taking it off runs {@link MorphlingPowers#clearHost} once. */

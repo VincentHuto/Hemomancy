@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.resource;
 
+import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -11,7 +12,8 @@ public final class PhaseTwoWorldRitualResourceTest {
 	private PhaseTwoWorldRitualResourceTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		for (String id : new String[] { "mnemonic_candle", "blood_wood_leaves" }) {
 			require(ASSETS.resolve("blockstates/" + id + ".json"));
 			require(ASSETS.resolve("models/block/" + id + ".json"));

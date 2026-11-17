@@ -5,7 +5,6 @@ public final class LivingStaffFocusRules {
 	private static final int STAFF_BASE_ABSORPTION_TARGET_CAP = 2;
 	private static final int STAFF_MAX_ABSORPTION_TARGET_CAP = 8;
 
-	private static final double BARE_ABSORPTION_RANGE = 5.0D;
 	private static final double BARE_ABSORPTION_DAMAGE = 1.0D;
 
 	private static final double STAFF_BASE_ABSORPTION_RANGE = 6.0D;
@@ -57,17 +56,13 @@ public final class LivingStaffFocusRules {
 		return Math.min(STAFF_MAX_ABSORPTION_TARGET_CAP, cap);
 	}
 
-	public static double bareAbsorptionRange() {
-		return BARE_ABSORPTION_RANGE;
-	}
-
 	public static double bareAbsorptionDamagePerTick() {
 		return BARE_ABSORPTION_DAMAGE;
 	}
 
 	public static double bareAbsorptionPerSecond() {
 		return BARE_ABSORPTION_DAMAGE * (20.0D
-				/ BloodAbsorptionChannelRules.livingTargetPulseInterval(false, 0));
+				/ BloodAbsorptionChannelRules.livingTargetPulseInterval());
 	}
 
 	public static double bareBlockAbsorptionPerTick() {
@@ -80,7 +75,7 @@ public final class LivingStaffFocusRules {
 		}
 		int targets = Math.min(absorptionTargetCap(true, focus), availableTargets);
 		return absorptionDamagePerTarget(focus) * targets * (20.0D
-				/ BloodAbsorptionChannelRules.livingTargetPulseInterval(true, 0));
+				/ BloodAbsorptionChannelRules.livingTargetPulseInterval());
 	}
 
 	public static double blockAbsorptionPerTick(LivingStaffFocusProfile focus) {
@@ -92,7 +87,7 @@ public final class LivingStaffFocusRules {
 			rate += VESPER_TILE_ABSORPTION_RATE_BONUS;
 			rate += safeFocus.vespersRefusalLevel() * VESPER_REFUSAL_TILE_ABSORPTION_RATE_BONUS;
 		}
-		return rate;
+		return rate * ringRate(safeFocus);
 	}
 
 	public static double absorptionRange(LivingStaffFocusProfile focus) {
@@ -104,7 +99,7 @@ public final class LivingStaffFocusRules {
 			range += VESPER_ABSORPTION_RANGE_BONUS;
 			range += safeFocus.vespersRefusalLevel() * VESPER_REFUSAL_ABSORPTION_RANGE_BONUS;
 		}
-		return range;
+		return range + LivingStaffGrowthRules.reachBonus(safeFocus.growthRing());
 	}
 
 	public static double absorptionDamagePerTarget(LivingStaffFocusProfile focus) {
@@ -116,7 +111,7 @@ public final class LivingStaffFocusRules {
 			damage += VESPER_ABSORPTION_DAMAGE_BONUS;
 			damage += safeFocus.vespersRefusalLevel() * VESPER_REFUSAL_ABSORPTION_DAMAGE_BONUS;
 		}
-		return damage;
+		return damage * ringRate(safeFocus);
 	}
 
 	public static double structureProjectionRate(boolean usingLivingStaff, LivingStaffFocusProfile focus) {
@@ -131,7 +126,7 @@ public final class LivingStaffFocusRules {
 			rate += VESPER_STRUCTURE_PROJECTION_RATE_BONUS;
 			rate += safeFocus.vespersRefusalLevel() * VESPER_REFUSAL_STRUCTURE_PROJECTION_RATE_BONUS;
 		}
-		return rate;
+		return rate * ringRate(safeFocus);
 	}
 
 	public static double bloodTileProjectionRate(boolean usingLivingStaff, LivingStaffFocusProfile focus) {
@@ -146,7 +141,12 @@ public final class LivingStaffFocusRules {
 			rate += VESPER_TILE_PROJECTION_RATE_BONUS;
 			rate += safeFocus.vespersRefusalLevel() * VESPER_REFUSAL_TILE_PROJECTION_RATE_BONUS;
 		}
-		return rate;
+		return rate * ringRate(safeFocus);
+	}
+
+	/** Ring 3 and later move blood a tenth faster through the Staff (core-loop Track 8). */
+	private static double ringRate(LivingStaffFocusProfile focus) {
+		return LivingStaffGrowthRules.channelRateMultiplier(focus.growthRing());
 	}
 
 	private static LivingStaffFocusProfile safeFocus(LivingStaffFocusProfile focus) {

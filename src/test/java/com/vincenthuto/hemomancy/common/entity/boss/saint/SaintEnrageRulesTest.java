@@ -43,6 +43,27 @@ class SaintEnrageRulesTest {
 	}
 
 	@Test
+	void anApotheosAnywhereInTheChamberWakesAnUnopenedTombEnraged() {
+		assertTrue(SaintEnrageRules.apotheosPresent(false, List.of(false, true)),
+				"a non-Apotheos hand on the tomb with an Apotheos in the chamber");
+		assertTrue(SaintEnrageRules.apotheosPresent(true, List.of()));
+		assertFalse(SaintEnrageRules.apotheosPresent(false, List.of(false, false)));
+		assertEquals("FORCED", SaintEnrageRules.effectiveMode("NONE",
+				SaintEnrageRules.apotheosPresent(false, List.of(true))));
+		assertEquals("PROPER", SaintEnrageRules.effectiveMode("PROPER",
+				SaintEnrageRules.apotheosPresent(false, List.of(true))), "a properly opened door stays proper for a mixed party");
+	}
+
+	@Test
+	void aLateApotheosAtAnUnopenedTombGetsOnlyAFragment() {
+		assertTrue(SaintEnrageRules.fragmentOnly("NONE", "NONE", true), "an Apotheos joined a fight no door was opened for");
+		assertFalse(SaintEnrageRules.fragmentOnly("NONE", "NONE", false));
+		assertFalse(SaintEnrageRules.fragmentOnly("PROPER", "PROPER", true), "a proper door pays in full whoever fights");
+		assertTrue(SaintEnrageRules.fragmentOnly("FORCED", "FORCED", false));
+		assertTrue(SaintEnrageRules.fragmentOnly("FORCED", "NONE", false), "an inferred forced wake");
+	}
+
+	@Test
 	void onlyARealDoorRecordIsWrittenBackToTheTomb() {
 		assertEquals("FORCED", SaintEnrageRules.recordToKeep("FORCED"));
 		assertEquals("PROPER", SaintEnrageRules.recordToKeep("PROPER"));

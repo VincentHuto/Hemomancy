@@ -32,11 +32,11 @@
   "tone": "solemn, forgiving"
  },
  "hemomancy.court.arbor.directions.line1": {
-  "about": "an Arbor elder explaining that the houses descend as the light does, each holding a little less sun than the one above",
+  "about": "an Arbor elder explaining that the houses descend as the light does, and naming the Holding Stone's Tide Refuge and the Shared Wake's nursery in open water",
   "tone": "tender, wistful"
  },
  "hemomancy.court.arbor.directions.line2": {
-  "about": "an Arbor elder saying the Kindling at the bottom feed the heads in the dark and that the many do not reach so far, which they grieve",
+  "about": "an Arbor elder naming the Vent Sanctum at the bottom, where the Kindling feed the heads in the dark, and saying the many do not reach so far, which they grieve",
   "tone": "tender, sorrowful"
  },
  "hemomancy.court.arbor.greet.known": {
@@ -100,11 +100,11 @@
   "tone": "spare, grateful"
  },
  "hemomancy.court.bellwarden.directions.line1": {
-  "about": "the Bellwarden placing the Veiled Fold at their depth under warmer water and the Woven Current's lines above both in the twilight",
+  "about": "the Bellwarden naming the Veiled Fold's Screened Cleft at the same depth under warmer water and the Woven Current's Line Camp above them both",
   "tone": "spare, precise"
  },
  "hemomancy.court.bellwarden.directions.line2": {
-  "about": "the Bellwarden naming the Last Marrow on the whale falls and the Kindling at the vents below, and asking if the player's air will be enough",
+  "about": "the Bellwarden naming the Last Marrow's Whale Fall and the Kindling's Vent Sanctum below, and checking the player's air is enough",
   "tone": "spare, wary"
  },
  "hemomancy.court.bellwarden.gift.line1": {
@@ -144,7 +144,7 @@
   "tone": "spare, exact"
  },
  "hemomancy.court.bellwarden.item_inquiry.morphling_hushbell.line2": {
-  "about": "the Bellwarden telling the player to feed Hushbell in the bell after the Lightkeeper's lesson, where it grows faster in home water",
+  "about": "the Bellwarden telling the player to wear Hushbell in the bell after the Lightkeeper's lesson, where it bonds faster at home",
   "tone": "spare, instructive"
  },
  "hemomancy.court.bellwarden.join.early": {
@@ -183,12 +183,16 @@
   "about": "the Bellwarden noting Hushbell on the player will slow their hunger, and telling them not to waste what it saves",
   "tone": "spare, firm"
  },
+ "hemomancy.court.bellwarden.strain.primal": {
+  "about": "the Bellwarden noting the player's Primal strain, saying in the bell that takes a lifetime, and that the player did not spend one",
+  "tone": "exact, dry"
+ },
  "hemomancy.court.braced_elder.directions.line1": {
-  "about": "the Braced elder saying the Giving Light feeds those reaching the shore above, and the Shared Wake swims the open sea past the reef as one school",
+  "about": "the Braced elder naming the Giving Light at the Lighthouse Garden above and the Shared Wake's nursery in open water past the reef",
   "tone": "steadfast, patient"
  },
  "hemomancy.court.braced_elder.directions.line2": {
-  "about": "the Braced elder saying the houses grow quieter the deeper they live, down to the Kindling at the vents, whom they have never left their door to see",
+  "about": "the Braced elder saying the houses grow quieter the deeper they live and that the Kindling keep the Vent Sanctum at the bottom, which the elder has never left the door to see",
   "tone": "steadfast, wistful"
  },
  "hemomancy.court.braced_elder.gift.line1": {
@@ -224,7 +228,7 @@
   "tone": "steadfast, patient"
  },
  "hemomancy.court.braced_elder.item_inquiry.morphling_holdfast.line1": {
-  "about": "the Braced elder explaining that Holdfast takes the hands then the feet and will in time hold the carrier to stone as it holds the speaker to the door",
+  "about": "the Braced elder explaining that Holdfast takes the hands then the feet and will hold the carrier to stone as it holds the speaker to the door",
   "tone": "steadfast, solemn"
  },
  "hemomancy.court.braced_elder.item_inquiry.morphling_holdfast.line2": {
@@ -263,6 +267,10 @@
   "about": "the Braced elder noting Holdfast growing round the guest's wrists where it always starts, and that one day it may hold a door of its own",
   "tone": "steadfast, quietly proud"
  },
+ "hemomancy.court.braced_elder.strain.primal": {
+  "about": "the Braced elder seeing the player's Primal strain, saying the elder's reached Primal after a lifetime holding the door, and not knowing what road brought the player's there so soon",
+  "tone": "slow, weighted"
+ },
  "hemomancy.court.champion.buds": {
   "about": "narration that the Champion buds another ring of its crown during the fight",
   "tone": "plain narration"
@@ -270,6 +278,10 @@
  "hemomancy.court.champion.called": {
   "about": "the Head-tender calling the Champion out from among the elders because a petitioner has asked for its title",
   "tone": "formal, ceremonial"
+ },
+ "hemomancy.court.champion.forfeit": {
+  "about": "a system message that the player left the Champion's challenge (logged out or went too far), that it counts as a loss, and that they must wait a day",
+  "tone": "plain label"
  },
  "hemomancy.court.champion.named": {
   "about": "the Head-tender announcing that the head lowered its crown and the Sanctum names the player Champion of the Kindling",
@@ -281,6 +293,10 @@
  },
  "hemomancy.court.champion.refused_champion": {
   "about": "a system message that the player already holds the Champion's title",
+  "tone": "plain label"
+ },
+ "hemomancy.court.champion.refused_degree": {
+  "about": "a system message that the player needs the fifth Degree before they can challenge the Champion",
   "tone": "plain label"
  },
  "hemomancy.court.champion.refused_shunned": {
@@ -312,11 +328,11 @@
   "tone": "hushed, awed"
  },
  "hemomancy.court.edge_swimmer.directions.line1": {
-  "about": "the Edge-swimmer saying the Giving Light is on the reef shoreward and the Holding Stone is in the rocks at the waterline",
+  "about": "the Edge-swimmer, in fragments, naming the Giving Light's Lighthouse Garden on the reef and the Holding Stone's Tide Refuge at the waterline",
   "tone": "hurried, clipped"
  },
  "hemomancy.court.edge_swimmer.directions.line2": {
-  "about": "the Edge-swimmer saying the Woven Current's lines are below, the quiet houses deeper, and that the school does not swim that far",
+  "about": "the Edge-swimmer pointing to the school's nursery in open water over the twilight slope, saying the loop will not take the player there and to find the Nursery tender, then naming the Woven Current's Line Camp deeper down",
   "tone": "hurried, clipped"
  },
  "hemomancy.court.edge_swimmer.greet.known": {
@@ -352,7 +368,7 @@
   "tone": "hurried, clipped"
  },
  "hemomancy.court.edge_swimmer.item_inquiry.morphling_mermaids_purse.line2": {
-  "about": "the Edge-swimmer saying the Lightkeeper's lesson comes first, then the purse should be fed at the nursery where it grows faster",
+  "about": "the Edge-swimmer saying the Lightkeeper's lesson comes first, then the purse should be worn at the nursery, where it bonds faster",
   "tone": "hurried, clipped"
  },
  "hemomancy.court.edge_swimmer.shunned.line1": {
@@ -379,12 +395,16 @@
   "about": "the Gardener accepting food the player brought for the table, explaining it is the Garden's own custom and will be shared round",
   "tone": "motherly, delighted"
  },
+ "hemomancy.court.gardener.degree.late": {
+  "about": "the Gardener noticing the player is past the sixth Degree, saying there is always a seat at the Garden whatever waits at the end of their road, and asking if they have eaten",
+  "tone": "warm, a little wistful"
+ },
  "hemomancy.court.gardener.directions.line1": {
-  "about": "the Gardener listing the houses below the Garden: the Holding Stone on the shore, the Shared Wake in open water and the Woven Current in the twilight",
+  "about": "the Gardener naming the Holding Stone's Tide Refuge below the Garden, and pointing to the Shared Wake's nursery in open water over the twilight slope: the school's loop does not lead there, and the Nursery tender is who takes people in",
   "tone": "motherly, helpful"
  },
  "hemomancy.court.gardener.directions.line2": {
-  "about": "the Gardener naming the deeper houses, the Veiled Fold, Still Bell, Last Marrow and Kindling, and telling the player to eat before going that far",
+  "about": "the Gardener naming the deeper houses with their sites (the Line Camp, the Screened Cleft, the Still Bell's bell, the Whale Fall, the Vent Sanctum) and asking the player to eat before going that far",
   "tone": "motherly, fussing"
  },
  "hemomancy.court.gardener.food.line1": {
@@ -432,7 +452,7 @@
   "tone": "motherly, delighted"
  },
  "hemomancy.court.gardener.item_inquiry.morphling_sunburst.line2": {
-  "about": "the Gardener telling the player to feed Sunburst in the Garden's water after the Lightkeeper's lesson because it grows faster at home",
+  "about": "the Gardener telling the player to wear Sunburst in the Garden after the Lightkeeper's lesson, because it bonds faster at home",
   "tone": "motherly, helpful"
  },
  "hemomancy.court.gardener.item_inquiry.relay_chart.line1": {
@@ -459,13 +479,21 @@
   "about": "the Gardener delighting at Sunburst on the player, already turning to the light, and saying it knows it has come home",
   "tone": "motherly, fond"
  },
+ "hemomancy.court.gardener.strain.primal": {
+  "about": "the Gardener delighted that the player's strain is Primal, saying the Garden's strains get that far only after a lifetime in home water, and asking how the player did it",
+  "tone": "warm, amazed"
+ },
  "hemomancy.court.head_tender.challenge.line1": {
-  "about": "the Head-tender acknowledging a petitioner's request to take the Champion's title, calling it an honor to be asked and a greater one to be refused by strength",
+  "about": "the Head-tender, after the challenge is confirmed and the Champion is already called, saying the Champion rises from the elders to answer, and that it is an honor to ask and a greater one to be refused by strength",
   "tone": "formal, ceremonial"
  },
  "hemomancy.court.head_tender.challenge.line2": {
-  "about": "the Head-tender explaining the challenge is fought in the vent water before the heads, that a loser may ask again after a day, and asking if the petitioner is ready",
+  "about": "the Head-tender's warning before the Champion is called: the challenge is fought in the vent water before the heads, a petitioner who falls or leaves may ask again after a day, and asking if the petitioner is ready",
   "tone": "formal, solemn"
+ },
+ "hemomancy.court.head_tender.challenge.refused_degree": {
+  "about": "the Head-tender refusing the challenge because the player has not reached the fifth Degree, and telling them to prepare and return when they have",
+  "tone": "formal, firm"
  },
  "hemomancy.court.head_tender.challenge.refused_shunned": {
   "about": "the Head-tender refusing the challenge because the Sanctum will not set its Champion against someone carrying the still water",
@@ -484,15 +512,19 @@
   "tone": "formal, firm"
  },
  "hemomancy.court.head_tender.challenge.refused_wait": {
-  "about": "the Head-tender refusing the challenge because the player fell less than a day ago, and telling them to rest until the day has turned",
+  "about": "the Head-tender refusing the challenge because the player fell or left the fight less than a day ago, and telling them to rest until the day has turned",
   "tone": "formal, patient"
  },
+ "hemomancy.court.head_tender.degree.late": {
+  "about": "the Head-tender noting the player has come past the sixth Degree, further along the land's road than most petitioners, saying the heads do not weigh Degrees but the Sanctum sees the distance",
+  "tone": "formal, measuring"
+ },
  "hemomancy.court.head_tender.directions.line1": {
-  "about": "the Head-tender saying the houses rise from the vents as the heat fades: Last Marrow on the whale fall, then Still Bell and Veiled Fold in the midnight water",
+  "about": "the Head-tender naming the houses rising from the Sanctum with their sites: the Last Marrow's Whale Fall, the Still Bell's sealed bell and the Veiled Fold's Screened Cleft in the midnight water",
   "tone": "formal, instructive"
  },
  "hemomancy.court.head_tender.directions.line2": {
-  "about": "the Head-tender saying above those lie the Woven Current, Shared Wake and Holding Stone, and at the very top the Giving Light who feed whoever comes",
+  "about": "the Head-tender naming the Line Camp, the Shared Wake's nursery and the Tide Refuge above, and the Giving Light's Lighthouse Garden at the top, where they feed whoever comes",
   "tone": "formal, instructive"
  },
  "hemomancy.court.head_tender.gift.line1": {
@@ -555,6 +587,14 @@
   "about": "the Head-tender saying the Sanctum does not know the petitioner yet and telling them to return, witness the feeding and let the heads know them first",
   "tone": "formal, patient"
  },
+ "hemomancy.court.head_tender.primal.line1": {
+  "about": "the Head-tender explaining that in the Sanctum a strain becomes Primal through a lifetime in home water, worn by one who prepares daily without asking when",
+  "tone": "formal, ceremonial"
+ },
+ "hemomancy.court.head_tender.primal.line2": {
+  "about": "the Head-tender saying the land keeps another road, Morphic Nectar after the eighth Degree, which the Sanctum knows only by report and neither follows nor keeps",
+  "tone": "formal, distant"
+ },
  "hemomancy.court.head_tender.shunned.line1": {
   "about": "the Head-tender telling the petitioner that being scrubbed of every partner could spread to the heads, which the Sanctum will not risk",
   "tone": "formal, firm"
@@ -571,16 +611,20 @@
   "about": "the Head-tender noting that Kinbud grows on the player as on every Kindling, beginning the long preparation for the one body",
   "tone": "formal, solemn"
  },
+ "hemomancy.court.head_tender.strain.primal": {
+  "about": "the Head-tender seeing the player's Primal strain, saying in the Sanctum it comes only from a lifetime in home water, so the player came by another road, which the heads will note",
+  "tone": "formal, weighing"
+ },
  "hemomancy.court.host.custom.line1": {
   "about": "the Host accepting ink for the door's screen, saying it keeps the door dark and nobody will know who gave it",
   "tone": "guarded, grateful"
  },
  "hemomancy.court.host.directions.line1": {
-  "about": "the Host saying the Woven Current hangs its lines up the slope, that they will want to tie the player in, and asking if the player wants that",
+  "about": "the Host naming the Woven Current's Line Camp up the slope, warning that they will want to tie the player in, and asking if the player wants that",
   "tone": "guarded, questioning"
  },
  "hemomancy.court.host.directions.line2": {
-  "about": "the Host naming the Still Bell's cold, the Last Marrow and the vents deeper down, and asking where the player will go",
+  "about": "the Host naming the Still Bell's bell, the Last Marrow's Whale Fall and the Vent Sanctum deeper down, and asking where the player will go",
   "tone": "guarded, questioning"
  },
  "hemomancy.court.host.greet.known": {
@@ -616,7 +660,7 @@
   "tone": "guarded, probing"
  },
  "hemomancy.court.host.item_inquiry.morphling_ink_cap.line2": {
-  "about": "the Host asking whether the Lightkeeper has given the first lesson, then telling the player to feed Ink Cap in the Fold where it grows faster",
+  "about": "the Host asking if the player has had the Lightkeeper's lesson, then telling them to wear Ink Cap in the Fold, where it bonds faster",
   "tone": "guarded, questioning"
  },
  "hemomancy.court.host.rest.line1": {
@@ -696,11 +740,11 @@
   "tone": "plain label"
  },
  "hemomancy.court.lamp_colony.directions.line1": {
-  "about": "the Lamp-colony describing the light growing above the camp through the Shared Wake and Holding Stone up to the Giving Light at the surface",
+  "about": "the Lamp-colony naming, in long even sentences, the Shared Wake's nursery, the Holding Stone's Tide Refuge and the Giving Light's Lighthouse Garden above the camp",
   "tone": "calm, descriptive"
  },
  "hemomancy.court.lamp_colony.directions.line2": {
-  "about": "the Lamp-colony describing the lightless depths below the camp where the Veiled Fold, Still Bell, Last Marrow and the Kindling lowest of all live",
+  "about": "the Lamp-colony naming the houses below the camp with their sites, the Screened Cleft, the Still Bell's bell and the Whale Fall, and the Kindling's Vent Sanctum lowest of all",
   "tone": "calm, hushed"
  },
  "hemomancy.court.lamp_colony.gift.line1": {
@@ -740,7 +784,7 @@
   "tone": "calm, reflective"
  },
  "hemomancy.court.lamp_colony.item_inquiry.morphling_dead_mans_rope.line2": {
-  "about": "the Lamp-colony telling the player to feed the rope in the camp after the Lightkeeper's lesson because a strain grows faster in its own house's water",
+  "about": "the Lamp-colony telling the player to wear Dead Man's Rope in the camp after the Lightkeeper's lesson, because a strain bonds faster inside its own house",
   "tone": "calm, instructive"
  },
  "hemomancy.court.lamp_colony.join.early": {
@@ -775,6 +819,10 @@
   "about": "the Lamp-colony noting its rope is in the player's veins so the network can feel them through it, while the strain grows toward tying them to whomever they choose",
   "tone": "calm, thoughtful"
  },
+ "hemomancy.court.lamp_colony.strain.primal": {
+  "about": "the Lamp-colony seeing the player's Primal strain, saying the network's strains became Primal after a lifetime in the camp's water, so the player must have come by a road that does not pass through the Court",
+  "tone": "even, interested"
+ },
  "hemomancy.court.lesson.already_taught": {
   "about": "a system message that the player already knows the Lightkeeper's lesson",
   "tone": "plain label"
@@ -792,19 +840,23 @@
   "tone": "plain label"
  },
  "hemomancy.court.lesson.taught": {
-  "about": "a system message that a strain fed in its own house's waters grows faster and the player now knows it",
+  "about": "a system message that the player has learned the first lesson: a strain worn where its own house lives bonds faster",
   "tone": "plain label"
  },
  "hemomancy.court.lightkeeper.amends.line1": {
   "about": "the Lightkeeper thanking the player for their offering, saying it is on the table with everyone's and the Garden is open to them again",
   "tone": "kindly, forgiving"
  },
+ "hemomancy.court.lightkeeper.degree.late": {
+  "about": "the Lightkeeper noting the player is past the sixth Degree, further along the Order's road than most visitors, saying the Court's road is slower and stays in the water, and asking if the player knows where theirs ends",
+  "tone": "patient, curious"
+ },
  "hemomancy.court.lightkeeper.directions.line1": {
-  "about": "the Lightkeeper naming the houses by depth: Holding Stone on the shore, Shared Wake in open water, Woven Current in the twilight",
+  "about": "the Lightkeeper naming the Holding Stone's Tide Refuge and the Woven Current's Line Camp, and pointing to the Shared Wake's nursery in open water above the twilight slope, which the school's loop does not lead to, where the Nursery tender takes people in",
   "tone": "kindly, informative"
  },
  "hemomancy.court.lightkeeper.directions.line2": {
-  "about": "the Lightkeeper naming the deepest houses, Veiled Fold, Still Bell, Last Marrow and Kindling, and noting each house feeds its own strain best",
+  "about": "the Lightkeeper naming the deeper houses with their sites down to the Vent Sanctum, saying the Relay Chart ends at the Garden so the player needs the names from here, and checking they have them",
   "tone": "kindly, informative"
  },
  "hemomancy.court.lightkeeper.food.line1": {
@@ -852,7 +904,7 @@
   "tone": "kindly, explanatory"
  },
  "hemomancy.court.lightkeeper.item_inquiry.morphling_sunburst.line2": {
-  "about": "the Lightkeeper explaining that Sunburst fed in the Garden's water after the first lesson grows faster because it is home water",
+  "about": "the Lightkeeper saying Sunburst worn in the Garden after the first lesson bonds faster than anywhere else, because the Garden is its home",
   "tone": "kindly, explanatory"
  },
  "hemomancy.court.lightkeeper.join.early": {
@@ -876,16 +928,24 @@
   "tone": "kindly, patient"
  },
  "hemomancy.court.lightkeeper.lesson.known": {
-  "about": "the Lightkeeper reminding the player they already had the first lesson and telling them to take their strain home to its own house's water",
+  "about": "the Lightkeeper reminding the player they have had the lesson: wear the strain where its own house lives, where it bonds fastest",
   "tone": "kindly, gentle"
  },
  "hemomancy.court.lightkeeper.lesson.line1": {
-  "about": "the Lightkeeper teaching the first lesson: a strain fed inside its own house's water grows faster than anywhere else",
+  "about": "the Lightkeeper giving the first lesson in one plain step: a strain worn where its own house lives bonds to its bearer faster than anywhere else",
   "tone": "kindly, teacherly"
  },
  "hemomancy.court.lightkeeper.lesson.line2": {
-  "about": "the Lightkeeper saying the player's Morphling is a partner that wants its home water and answers when fed there, and asking if they see why it is called partnership",
+  "about": "the Lightkeeper saying a Morphling is a partner that wants its home, that worn there it answers its bearer sooner, and asking if the player sees why they call it partnership",
   "tone": "kindly, teacherly"
+ },
+ "hemomancy.court.lightkeeper.primal.line1": {
+  "about": "the Lightkeeper explaining that in the Court a strain turns Primal only after a lifetime worn in its home water, the way the elders reached it",
+  "tone": "patient, plain"
+ },
+ "hemomancy.court.lightkeeper.primal.line2": {
+  "about": "the Lightkeeper saying the Order has another road on land, Morphic Nectar after the eighth Degree, which the Lightkeeper knows only by report and cannot teach",
+  "tone": "honest, a little tired"
  },
  "hemomancy.court.lightkeeper.shunned.line1": {
   "about": "the Lightkeeper apologizing that the player is clean of every partner the Garden lives with, and whatever did that could take the Garden's strains too",
@@ -903,16 +963,20 @@
   "about": "the Lightkeeper noting the player carries Sunburst, that it will grow faster in this water once they have had the lesson, and telling them to ask for it",
   "tone": "kindly, encouraging"
  },
+ "hemomancy.court.lightkeeper.strain.primal": {
+  "about": "the Lightkeeper seeing the player's Primal strain, saying the Court's strains reach Primal only after a lifetime in home water, and wanting to know how the player's came to it so soon",
+  "tone": "patient, interested"
+ },
  "hemomancy.court.linesman.custom.line1": {
   "about": "the Linesman accepting a gift of line for the camp, saying it will hold a pod if the water pulls tonight",
   "tone": "easygoing, grateful"
  },
  "hemomancy.court.linesman.directions.line1": {
-  "about": "the Linesman saying the Shared Wake, Holding Stone and Giving Light lie above the camp, and advising the player to follow the light if going up",
+  "about": "the Linesman naming the Shared Wake and its nursery in open water, the Holding Stone's Tide Refuge and the Giving Light's Garden above the camp, and saying to follow the light going up",
   "tone": "easygoing, helpful"
  },
  "hemomancy.court.linesman.directions.line2": {
-  "about": "the Linesman saying the Veiled Fold and the Still Bell lie below, and advising a slow descent because the light ends at the camp",
+  "about": "the Linesman naming the Veiled Fold's Screened Cleft and the Still Bell's bell below the camp, and saying to go slowly going down because the light ends here",
   "tone": "easygoing, cautionary"
  },
  "hemomancy.court.linesman.greet.known": {
@@ -948,7 +1012,7 @@
   "tone": "easygoing, explanatory"
  },
  "hemomancy.court.linesman.item_inquiry.morphling_dead_mans_rope.line2": {
-  "about": "the Linesman telling the player to feed Dead Man's Rope in the camp after the Lightkeeper's lesson because the camp's water makes it grow faster",
+  "about": "the Linesman offering that Dead Man's Rope worn in the camp after the Lightkeeper's lesson will bond faster",
   "tone": "easygoing, helpful"
  },
  "hemomancy.court.linesman.shunned.line1": {
@@ -972,11 +1036,11 @@
   "tone": "blunt, approving"
  },
  "hemomancy.court.marrow_tender.directions.line1": {
-  "about": "the Marrow-tender saying the Still Bell in the cold and the Veiled Fold in its clefts lie above and will take the player in carefully",
+  "about": "the Marrow-tender naming the Still Bell's bell in the cold and the Veiled Fold's Screened Cleft above, who will take the player in carefully",
   "tone": "blunt, practical"
  },
  "hemomancy.court.marrow_tender.directions.line2": {
-  "about": "the Marrow-tender saying only the Kindling lie below at the vents, who give bodies to their heads, while the speaker would rather their own fed people",
+  "about": "the Marrow-tender naming the Kindling's Vent Sanctum below, saying they would give a body to their heads, and that the tender would rather theirs fed people",
   "tone": "blunt, wry"
  },
  "hemomancy.court.marrow_tender.food.line1": {
@@ -1016,7 +1080,7 @@
   "tone": "blunt, matter-of-fact"
  },
  "hemomancy.court.marrow_tender.item_inquiry.morphling_marrowplume.line2": {
-  "about": "the Marrow-tender telling the player to feed Marrowplume at the fall after the Lightkeeper's lesson because it grows faster in home water",
+  "about": "the Marrow-tender telling the player to wear Marrowplume at the fall after the Lightkeeper's lesson, where it bonds faster at home",
   "tone": "blunt, instructive"
  },
  "hemomancy.court.marrow_tender.rest.line1": {
@@ -1080,7 +1144,7 @@
   "tone": "gentle, cautionary"
  },
  "hemomancy.court.nursery_tender.directions.line2": {
-  "about": "the Nursery tender saying the Giving Light and Holding Stone are shoreward, the Woven Current's lines hang below in the twilight, and the young are not taken that deep",
+  "about": "the Nursery tender naming the Lighthouse Garden and the Tide Refuge shoreward and the Woven Current's Line Camp in the twilight below, where they do not take the young",
   "tone": "gentle, protective"
  },
  "hemomancy.court.nursery_tender.gift.line1": {
@@ -1120,7 +1184,7 @@
   "tone": "gentle, explanatory"
  },
  "hemomancy.court.nursery_tender.item_inquiry.morphling_mermaids_purse.line2": {
-  "about": "the Nursery tender telling the player to feed Mermaid's Purse at the nursery after the Lightkeeper's lesson because it grows faster on home ground",
+  "about": "the Nursery tender telling the player to wear the purse at the nursery after the Lightkeeper's lesson, because it bonds faster on home ground",
   "tone": "gentle, helpful"
  },
  "hemomancy.court.nursery_tender.join.early": {
@@ -1155,12 +1219,16 @@
   "about": "the Nursery tender noting Mermaid's Purse on the player's flank, which gives its banked blood to whoever in the school is hurt",
   "tone": "gentle, approving"
  },
+ "hemomancy.court.nursery_tender.strain.primal": {
+  "about": "the Nursery tender noticing the player's Primal strain, saying the school's strains get there only after a lifetime with the school, and asking if the player raised it elsewhere",
+  "tone": "brisk, curious"
+ },
  "hemomancy.court.offering_bearer.custom.line1": {
   "about": "the Offering-bearer accepting the player's offering, saying it goes down to the heads with the Kindling's own and they are fed",
   "tone": "solemn, grateful"
  },
  "hemomancy.court.offering_bearer.directions.line1": {
-  "about": "the Offering-bearer placing the Last Marrow on the whale-fall bones above, with the Still Bell and Veiled Fold above them",
+  "about": "the Offering-bearer naming the Last Marrow's Whale Fall above, then the Still Bell's bell and the Veiled Fold's Screened Cleft",
   "tone": "solemn, measured"
  },
  "hemomancy.court.offering_bearer.directions.line2": {
@@ -1312,7 +1380,7 @@
   "tone": "slow, reflective"
  },
  "hemomancy.court.rooted_elder.item_inquiry.morphling_marrowplume.line2": {
-  "about": "the Rooted elder telling the player to feed Marrowplume on the fall once they have had the Lightkeeper's lesson, since a strain grows faster in its own house's water",
+  "about": "the Rooted elder telling the player to wear Marrowplume on the fall after the Lightkeeper's lesson, because a strain bonds faster inside its own house",
   "tone": "slow, instructive"
  },
  "hemomancy.court.rooted_elder.join.early": {
@@ -1346,6 +1414,10 @@
  "hemomancy.court.rooted_elder.strain.own": {
   "about": "the Rooted elder noting Marrowplume already on the player's arms, which at its fullest will let them root as the elder has, though roots can always be drawn out again",
   "tone": "slow, tender"
+ },
+ "hemomancy.court.rooted_elder.strain.primal": {
+  "about": "the Rooted elder seeing the player's Primal strain, saying its own became Primal only after a lifetime in the house's water, so the player walked another road to it",
+  "tone": "calm, generous"
  },
  "hemomancy.court.sleeper.greet.known": {
   "about": "narration of frost forming along the lowest fold of the mantle, with nothing inside it stirring, as a player who found the bell alone arrives",
@@ -1400,11 +1472,11 @@
   "tone": "clipped, grateful"
  },
  "hemomancy.court.tidewarden.directions.line1": {
-  "about": "the Tidewarden saying the Giving Light is above in the sun where the player can eat, and the Shared Wake swims open water and is to be followed",
+  "about": "the Tidewarden, clipped, naming the Giving Light's Lighthouse Garden above and the Shared Wake, whose nursery is out in open water",
   "tone": "clipped, helpful"
  },
  "hemomancy.court.tidewarden.directions.line2": {
-  "about": "the Tidewarden describing the Woven Current's lines in the twilight, and saying they themselves do not go deeper because their post is here",
+  "about": "the Tidewarden naming the Woven Current's Line Camp in the twilight and saying they go no deeper, because their passage is here",
   "tone": "clipped, dutiful"
  },
  "hemomancy.court.tidewarden.greet.known": {
@@ -1436,11 +1508,11 @@
   "tone": "clipped, brisk"
  },
  "hemomancy.court.tidewarden.item_inquiry.morphling_holdfast.line1": {
-  "about": "the Tidewarden identifying Holdfast as their house's strain that grips stone not shell and grips sooner when fed here",
+  "about": "the Tidewarden saying Holdfast is the house's strain, that it grips stone rather than shell, and that it holds to walls and currents",
   "tone": "clipped, matter-of-fact"
  },
  "hemomancy.court.tidewarden.item_inquiry.morphling_holdfast.line2": {
-  "about": "the Tidewarden telling the player to feed Holdfast in the refuge's water after the Lightkeeper's lesson because it grows faster at home",
+  "about": "the Tidewarden telling the player to wear Holdfast in the refuge after the Lightkeeper's lesson, where it bonds faster at home, as a promise",
   "tone": "clipped, instructive"
  },
  "hemomancy.court.tidewarden.item_inquiry.relay_chart.line1": {
@@ -1504,7 +1576,7 @@
   "tone": "terse, quiet"
  },
  "hemomancy.court.veiled_resident.item_inquiry.morphling_ink_cap.line2": {
-  "about": "the Veiled resident saying the Lightkeeper's lesson comes first and then Ink Cap should be fed in the Fold, where it grows faster",
+  "about": "the Veiled resident saying the Lightkeeper's lesson comes first, then wear Ink Cap here, where it bonds faster",
   "tone": "terse, quiet"
  },
  "hemomancy.court.veiled_resident.join.early": {
@@ -1539,6 +1611,10 @@
   "about": "the Veiled resident noting the veil is starting on the player and telling them to keep it",
   "tone": "terse, approving"
  },
+ "hemomancy.court.veiled_resident.strain.primal": {
+  "about": "the Veiled resident noting the player's Primal strain, saying its own took a lifetime, and asking how long the player's took",
+  "tone": "terse, curious"
+ },
  "hemomancy.court.warden.amends": {
   "about": "a Garden warden telling the player their returned offering is all anyone wanted and inviting them to sit with the house again",
   "tone": "warm, forgiving"
@@ -1562,6 +1638,10 @@
  "hemomancy.court.warden.turned_away": {
   "about": "a Garden warden turning the player away until they make amends, and telling them to bring an offering of food",
   "tone": "firm, sorrowful"
+ },
+ "hemomancy.dialogue.court.confirm.switch": {
+  "about": "narration shown before a member joins a second house: the custom allows one move between houses, joining spends it, and the house left keeps them as a guest",
+  "tone": "plain narration"
  },
  "hemomancy.dialogue.court.option.amends": {
   "about": "offering the food in the player's hand to the house as amends for a wrong",
@@ -1639,6 +1719,10 @@
   "about": "giving the wool in the player's hand for the bell's warmth",
   "tone": "polite"
  },
+ "hemomancy.dialogue.court.option.primal": {
+  "about": "the player asking a Court lead how a strain becomes Primal",
+  "tone": "curious"
+ },
  "hemomancy.dialogue.court.option.read_letter": {
   "about": "asking who a sealed letter was meant for",
   "tone": "polite"
@@ -1648,15 +1732,15 @@
   "tone": "polite"
  },
  "hemomancy.dialogue.newcomer.court_arbor": {
-  "about": "an Arbor elder telling the player, new to the blood, that the Order's Vicars walk on land and will show them the first steps",
+  "about": "the arbor sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "tender, gentle"
  },
  "hemomancy.dialogue.newcomer.court_bellwarden": {
-  "about": "the Bellwarden telling a player new to the blood to go to a Vicar on land first, who teaches the beginning, and to come back after",
+  "about": "the bellwarden sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "spare, firm"
  },
  "hemomancy.dialogue.newcomer.court_braced_elder": {
-  "about": "the Braced elder telling a guest new to the blood that the Order's Vicars teach beginners on land, so go to them first, and the door will wait",
+  "about": "the braced elder sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "steadfast, patient"
  },
  "hemomancy.dialogue.newcomer.court_edge_swimmer": {
@@ -1672,31 +1756,31 @@
   "tone": "formal, courteous"
  },
  "hemomancy.dialogue.newcomer.court_host": {
-  "about": "the Host asking if the player is new to the blood, telling them to find a Vicar on land first to teach them, and adding that the Vicar will not ask why they came either",
+  "about": "the host sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "guarded, wry"
  },
  "hemomancy.dialogue.newcomer.court_kindled_elder": {
-  "about": "the Kindled elder telling the player they are too new and must go to the Vicars on land first",
+  "about": "the kindled elder sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "fragmentary, dismissive"
  },
  "hemomancy.dialogue.newcomer.court_lamp_colony": {
-  "about": "the Lamp-colony telling a player new to the blood to go first to the Vicars on land, who teach the beginnings, and to return to the lines later",
+  "about": "the lamp colony sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "calm, kind"
  },
  "hemomancy.dialogue.newcomer.court_lightkeeper": {
-  "about": "the Lightkeeper telling a player very new to the blood to find an Order Vicar on land first, and promising the Garden will still be there after",
+  "about": "the lightkeeper sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "kindly, patient"
  },
  "hemomancy.dialogue.newcomer.court_linesman": {
-  "about": "the Linesman asking if the player is new to the blood and advising them, if they will take advice, to find a Vicar on land first who teaches the start, saying the camp will keep",
+  "about": "the linesman sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "easygoing, advising"
  },
  "hemomancy.dialogue.newcomer.court_marrow_tender": {
-  "about": "the Marrow-tender telling a player new to the blood to go to a Vicar on land first to learn the start, and then they will be some use down here",
+  "about": "the marrow tender sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "blunt, practical"
  },
  "hemomancy.dialogue.newcomer.court_nursery_tender": {
-  "about": "the Nursery tender asking if the player is new to the blood, telling them to find a Vicar on land first because they teach the beginnings, and saying the tender only teaches the young to swim",
+  "about": "the nursery tender sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "gentle, wry"
  },
  "hemomancy.dialogue.newcomer.court_offering_bearer": {
@@ -1704,7 +1788,7 @@
   "tone": "solemn, formal"
  },
  "hemomancy.dialogue.newcomer.court_rooted_elder": {
-  "about": "the Rooted elder telling you who follow, new to the blood, to go to the Vicars on land first because they teach the beginnings",
+  "about": "the rooted elder sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "slow, gentle"
  },
  "hemomancy.dialogue.newcomer.court_sleeper": {
@@ -1716,7 +1800,7 @@
   "tone": "clipped, dry"
  },
  "hemomancy.dialogue.newcomer.court_veiled_resident": {
-  "about": "the Veiled resident asking if the player is new to the blood and telling them to go to a Vicar on land first",
+  "about": "the veiled resident sending a newcomer who has not met a Vicar to the Order's Vicars on land first, without opening on \"new to the blood\"",
   "tone": "terse, flat"
  },
  "hemomancy.dialogue.rapport.court_bellwarden.the_sleepers": {

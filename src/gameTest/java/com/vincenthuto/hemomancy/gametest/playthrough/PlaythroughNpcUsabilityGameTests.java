@@ -655,19 +655,8 @@ public final class PlaythroughNpcUsabilityGameTests {
 						if (offered.getOrDefault(event.role(), List.of()).contains(event.eventId())) continue;
 						Entity speaker = wing.get(event.role());
 						forged++;
-						List<String> into = findings;
-						if (SpecimenJarLessonDialogue.TEACH.equals(event.eventId()) && state.degree() >= 3) {
-							// DECISION: the Specimen Jar lesson is offered only from the Degree 2 tree's
-							// living_bestiary_intro node, but SpecimenJarLesson.canTeach (and so a forged event)
-							// holds from Degree 2 on. A player who reaches D3 untaught is never offered it again.
-							// Options: offer it at D3+ too / gate canTeach to D2 / keep. Logged, not failed.
-							into = new ArrayList<>();
-						}
 						forgeExpectingNothing(helper, scenario, player, event.eventId(), speaker.getId(),
-								state + ": unoffered " + event, into);
-						if (into != findings) {
-							for (String note : into) PlaythroughLog.note(helper, scenario, "DECISION specimen jar " + note);
-						}
+								state + ": unoffered " + event, findings);
 					}
 					PlaythroughLog.note(helper, scenario, state + ": forged " + forged + " unoffered events; offered "
 							+ offered);
@@ -977,7 +966,8 @@ public final class PlaythroughNpcUsabilityGameTests {
 	/**
 	 * FIX: F-4. Every one-time claim, then a real death and respawn: the claim is not offered again and a forged one
 	 * pays nothing. Covers the root-key claims (the Mnemonist starter memory, the Artificer's Worn Vow scrap) that the
-	 * death clone drops today.
+	 * death clone drops today. The Mason's Respite map is reissued when it is not carried (PT-4): the death drops it,
+	 * so the Vicar gives exactly one more.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void deathReclaimSweep(GameTestHelper helper) {
@@ -1002,6 +992,13 @@ public final class PlaythroughNpcUsabilityGameTests {
 					PlaythroughLog.note(helper, scenario, claim + ": first " + first.reward() + ", re-offered after death "
 							+ reoffered + ", forged after death " + again.reward());
 					if (first.reward() <= 0) findings.add(claim + ": the first claim gave nothing; " + first);
+					if (claim.name().equals("masons_respite_directive")) {
+						Take twice = take(player, () -> player.forge(run.eventId(), run.npc().getId()));
+						if (!reoffered || again.reward() != 1 || twice.reward() != 0)
+							findings.add(claim + ": the lost map is not reissued exactly once; offered " + reoffered + ", "
+									+ again + ", then " + twice);
+						return;
+					}
 					if (reoffered) findings.add(claim + ": offered again after death");
 					if (again.reward() != 0) findings.add(claim + ": a claim after death paid again; " + again);
 				} finally {
@@ -1013,10 +1010,10 @@ public final class PlaythroughNpcUsabilityGameTests {
 	}
 
 	/**
-	 * DECISION: D-3 one-time NPC rewards drop unowned at the NPC's feet. For every claim, records where the reward
-	 * lands (inventory, PendingDelivery, the player's feet, the NPC's feet) and expects only the first two.
+	 * FIX: PT-3 (was D-3). For every one-time claim, records where the reward lands (inventory, PendingDelivery, the
+	 * player's feet, the NPC's feet) and expects only the first two.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void rewardLandingSurvey(GameTestHelper helper) {
 		String scenario = "rewardLandingSurvey";
 		List<String> findings = new ArrayList<>();
@@ -1128,11 +1125,10 @@ public final class PlaythroughNpcUsabilityGameTests {
 			HarbingerChapterMilestone.VEIN_MASON, List.of("vein-mason", "mason", "effigy"));
 
 	/**
-	 * DECISION: D-7 the Vicar's D3 hint says "Bloodline system" and the D4 hint says "skill tree"; neither names the
-	 * real gate. At D1 to D4 the Vicar's degree hint should name the chapter milestone the next rank needs
+	 * PT-7: at D1 to D4 the Vicar's degree hint names the chapter milestone the next rank needs
 	 * ({@code HarbingerChapterMilestone.requiredForTargetDegree}): its title or a word that points at it.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void degreeHintMatchesTheChapterGate(GameTestHelper helper) {
 		String scenario = "degreeHintMatchesTheChapterGate";
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, helper.absolutePos(NPC));
@@ -1173,16 +1169,20 @@ public final class PlaythroughNpcUsabilityGameTests {
 	}
 
 	// =================================================================================================================
-	// newcomerGuidanceOnlyBeforeTheHermit (X F-6)
+	// newcomerGuidanceOnlyBeforeTheVicar (X F-6, DL-6)
 	// =================================================================================================================
 
 	/**
-	 * FIX: F-6. At D0 the outpost NPCs show the newcomer card until the player has talked to a Hermit. Standing within
-	 * 48 blocks of one (the sigil read every half second) is not talking to him, and once the card is gone it stays
-	 * gone after a death.
+	 * FIX: F-6 and DL-6. At D0 the outpost NPCs show the newcomer card ("Who are the Harbingers?", answered with "ask the
+	 * Vicar") until the player has talked to a Vicar. Standing within 48 blocks of him (the sigil read every half
+	 * second) is not talking to him, nor is talking to a Hermit, and once the card is gone it stays gone after a death.
+	 * The Vicar's own card ("Where should I begin?", answered with "at a Hermit's temple") stays while the player's
+	 * blood is asleep, a death included.
 	 */
+	// FIX: the met-Vicar flag was never set in play (d5a7ddbfa moved the gate from the Hermit to the Vicar but dropped
+	// the only call); HarbingerVicarEntity.mobInteract now records it on a right-click.
 	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
-	public static void newcomerGuidanceOnlyBeforeTheHermit(GameTestHelper helper) {
+	public static void newcomerGuidanceOnlyBeforeTheVicar(GameTestHelper helper) {
 		Entity alchemist = PlaythroughNpcs.alchemist(helper, helper.absolutePos(NPC));
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, helper.absolutePos(new BlockPos(8, Y, 12)));
 		HarbingerHermitEntity hermit = PlaythroughNpcs.hermit(helper, helper.absolutePos(new BlockPos(27, Y, 20)));
@@ -1191,21 +1191,26 @@ public final class PlaythroughNpcUsabilityGameTests {
 
 		helper.assertTrue(newcomerCard(player, alchemist), "a fresh D0 player sees the Alchemist's newcomer card; "
 				+ player.talkTo(alchemist).describe());
-		helper.assertTrue(newcomerCard(player, vicar), "a fresh D0 player sees the Vicar's newcomer card; "
-				+ player.talkTo(vicar).describe());
 
 		int markers = player.sent(PacketSyncNpcProgressionMarkers.class).size();
 		player.tickOnce();
-		PlaythroughLog.note(helper, "newcomerGuidanceOnlyBeforeTheHermit", "standing "
-				+ String.format("%.1f", player.player().distanceTo(hermit)) + " blocks from the Hermit, the sigil read sent "
+		PlaythroughLog.note(helper, "newcomerGuidanceOnlyBeforeTheVicar", "standing "
+				+ String.format("%.1f", player.player().distanceTo(vicar)) + " blocks from the Vicar, the sigil read sent "
 				+ (player.sent(PacketSyncNpcProgressionMarkers.class).size() - markers) + " marker payload(s)");
 		helper.assertTrue(newcomerCard(player, alchemist),
-				"standing near a Hermit without talking to him keeps the Alchemist's newcomer card");
+				"standing near a Vicar without talking to him keeps the Alchemist's newcomer card");
 
 		player.approach(hermit);
 		player.talkTo(hermit);
 		player.moveTo(helper.absolutePos(STAND));
-		helper.assertFalse(newcomerCard(player, alchemist), "after talking to the Hermit the newcomer card is gone; "
+		helper.assertTrue(newcomerCard(player, alchemist),
+				"talking to a Hermit is not talking to the Vicar: the Alchemist still sends the player to him");
+
+		player.approach(vicar);
+		helper.assertTrue(newcomerCard(player, vicar), "a D0 player whose blood is asleep sees the Vicar's own card; "
+				+ player.talkTo(vicar).describe());
+		player.moveTo(helper.absolutePos(STAND));
+		helper.assertFalse(newcomerCard(player, alchemist), "after talking to the Vicar the Alchemist's card is gone; "
 				+ player.talkTo(alchemist).describe());
 
 		Outcome death = player.die();
@@ -1213,7 +1218,9 @@ public final class PlaythroughNpcUsabilityGameTests {
 		player.respawn();
 		helper.assertFalse(newcomerCard(player, alchemist), "the newcomer card stays gone after a death; "
 				+ player.talkTo(alchemist).describe());
-		helper.assertFalse(newcomerCard(player, vicar), "the Vicar's newcomer card stays gone after a death");
+		player.approach(vicar);
+		helper.assertTrue(newcomerCard(player, vicar), "the Vicar's own card stays while the blood is asleep, after a "
+				+ "death too; " + player.talkTo(vicar).describe());
 		helper.succeed();
 	}
 
@@ -1604,11 +1611,11 @@ public final class PlaythroughNpcUsabilityGameTests {
 	}
 
 	/**
-	 * DECISION: D-23 an outpost resident whose marker is obstructed silently fails to spawn. The outpost's own
-	 * {@code afterPlace} runs over the four resident markers (light blocks 11 to 14, as the template authors them),
-	 * one of them with a block over its head. Expect every resident present; log any that is missing.
+	 * RULING PT-23 (2026-11-13): an obstructed resident marker uses the nearest clear cell within 3 blocks. The
+	 * outpost's own {@code afterPlace} runs over the four resident markers (light blocks 11 to 14, as the template
+	 * authors them), one of them with a block over its head. Every resident is present.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void outpostSpawnsAllResidents(GameTestHelper helper) {
 		String scenario = "outpostSpawnsAllResidents";
 		ServerLevel level = helper.getLevel();

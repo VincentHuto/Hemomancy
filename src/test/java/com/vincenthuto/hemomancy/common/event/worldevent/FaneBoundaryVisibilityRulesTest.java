@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.event.worldevent;
 
+import org.junit.jupiter.api.Test;
+
 public final class FaneBoundaryVisibilityRulesTest {
 	private FaneBoundaryVisibilityRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		classifiesBloodlineMembersAsMembers();
 		classifiesMundaneNonMembersAsMundaneOutsiders();
 		classifiesInitiatedNonMembersAsOutsiders();

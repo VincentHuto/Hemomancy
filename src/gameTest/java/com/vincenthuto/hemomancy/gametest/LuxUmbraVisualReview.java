@@ -23,7 +23,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /** Opt-in moving material study. Only runs in the disposable review save. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class LuxUmbraVisualReview {
-    private static final Form[] FORMS = {Form.VERDICT_CHARGE, Form.VERDICT, Form.BEACON, Form.EYE,
+    private static final Form[] FORMS = {Form.VERDICT_CHARGE, Form.VERDICT, Form.BEACON,
             Form.FLARE, Form.LUX_MENDING, Form.WELL_CHARGE, Form.WELL, Form.VEIL, Form.TELEPORT,
             Form.UMBRA_SLASH, Form.SUTURE, Form.UMBRA_ARRIVAL};
     private static int ticks, frame;

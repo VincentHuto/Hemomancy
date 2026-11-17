@@ -29,11 +29,12 @@ class FieldMycologyResourceTest {
 					.getAsJsonObject("to_place").getAsJsonObject("state");
 			naturalPlants.add(state.get("Name").getAsString());
 		}
-		JsonArray stages = resourceJson("data/hemomancy/worldgen/biome/fungal_gardens.json")
-				.getAsJsonArray("features");
-		assertTrue(java.util.stream.StreamSupport.stream(stages.spliterator(), false)
-				.flatMap(stage -> java.util.stream.StreamSupport.stream(stage.getAsJsonArray().spliterator(), false))
-				.anyMatch(feature -> "hemomancy:small_infected_fungus".equals(feature.getAsString())));
+		// The Overworld Gardens takes the field fungi from the is_overworld modifier since it joined that tag (NQ-06-1).
+		assertTrue(resourceText("data/minecraft/tags/worldgen/biome/is_overworld.json")
+				.contains("\"hemomancy:fungal_gardens\""), "the Overworld Gardens left #minecraft:is_overworld");
+		JsonObject fieldFungi = resourceJson("data/hemomancy/neoforge/biome_modifier/add_field_fungi.json");
+		assertEquals("#minecraft:is_overworld", fieldFungi.get("biomes").getAsString());
+		assertEquals("hemomancy:small_infected_fungus", fieldFungi.get("features").getAsString());
 		for (var specimen : specimens) {
 			String id = specimen.getAsString();
 			assertTrue(naturalPlants.contains(id), id + " is not in the Gardens' fungus selector");

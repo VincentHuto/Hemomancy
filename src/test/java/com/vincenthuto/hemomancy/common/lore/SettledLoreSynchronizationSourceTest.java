@@ -1,13 +1,16 @@
 package com.vincenthuto.hemomancy.common.lore;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class SettledLoreSynchronizationSourceTest {
 	private SettledLoreSynchronizationSourceTest() {}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String lore = read("docs/LORE_REFERENCE.md");
 		String mechanics = read("docs/HEMOMANCY_REFERENCE.md");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
@@ -51,10 +54,6 @@ public final class SettledLoreSynchronizationSourceTest {
 
 		assertContains(lore, "Broken Wills are remnants of failed former Harbingers");
 		assertContains(lore, "Sent Wills are purpose-built by the Fungal Entity");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(Path.of(path)).replace("\r\n", "\n");
 	}
 
 	private static void assertContains(String source, String expected) {

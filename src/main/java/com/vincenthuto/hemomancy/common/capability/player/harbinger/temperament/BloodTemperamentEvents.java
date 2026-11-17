@@ -53,6 +53,8 @@ public class BloodTemperamentEvents {
 		if (source == null || !(source.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.TEMPER_SHIFT_ON_KILL_ENABLED.get()) return;
+		// A kill by draw already paid its Temper: no kill shift as well (CL-24).
+		if (!com.vincenthuto.hemomancy.common.damage.HemoDamageTypes.paysKillBounty(source)) return;
 
 		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player).isActive();
 		if (!bloodActive) return;
@@ -145,7 +147,7 @@ public class BloodTemperamentEvents {
 	// Sync
 
 	public static void syncTemperament(ServerPlayer player, IBloodTemperament temper) {
-		PacketHandler.sendToPlayer(player, new BloodTemperamentServerPacket(temper.getTemper()));
+		PacketHandler.sendToPlayer(player, BloodTemperamentServerPacket.of(temper));
 	}
 
 }

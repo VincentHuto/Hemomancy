@@ -59,6 +59,7 @@ final class CastImpactGeometry {
             case PROJECTILE -> projectile(at, v, tint);
             case AREA -> area(at, v, tint);
             case TETHER -> tether(at, v, tint);
+            case SWEEP -> sweep(at, v, tint);
         }
         flourish(at, cue.primary(), flows);
         if (cue.secondary() != null && cue.secondary() != cue.primary()) {
@@ -184,6 +185,25 @@ final class CastImpactGeometry {
             Vec3 unit = at.basis[0].scale(Math.cos(a)).add(at.basis[1].scale(Math.sin(a))).add(at.out.scale(.4)).normalize();
             ray(at, v, unit, .05, .45, .03, SLASH, tint, 1, i);
         }
+    }
+
+    /**
+     * A strand's stroke (core-loop Track 12): one long bowed cut laid the way the strand was travelling, a hot seam
+     * down its middle, and blood flung on ahead of the stroke rather than back toward the caster.
+     */
+    private static void sweep(Impact at, VertexConsumer v, int tint) {
+        double half = (.35 + .65 * at.grow) * at.s;
+        List<Vec3> cut = new ArrayList<>(13);
+        double[] wide = new double[13], seam = new double[13];
+        for (int i = 0; i <= 12; i++) {
+            double u = i / 6.0 - 1, swell = 1 - u * u;
+            cut.add(at.dir.scale(u * half).add(at.basis[0].scale(swell * .2 * at.s)));
+            wide[i] = (.012 + .07 * swell) * at.s;
+            seam[i] = (.004 + .02 * swell) * at.s;
+        }
+        ribbonPath(at.p, v, cut, at.camera, wide, RIBBON, at.seed + 9, tint, at.alpha);
+        ribbonPath(at.p, v, cut, at.camera, seam, RIBBON, at.seed + 10, CORE, at.alpha * (1 - .6f * at.grow));
+        for (int i = 0; i < 6; i++) ray(at, v, cone(at.dir, at.basis, i, at.seed, .7), .25, 1.25, .035, SLASH, tint, 1, i);
     }
 
     //  The school's flourish

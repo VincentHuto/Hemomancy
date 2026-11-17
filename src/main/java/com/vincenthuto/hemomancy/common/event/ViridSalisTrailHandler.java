@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.LeechEntity;
@@ -10,7 +12,6 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.ThirsterEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.IBloodConstruct;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -95,9 +96,9 @@ public class ViridSalisTrailHandler {
         }
 
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.SCRAPE,
+            serverLevel.sendParticles(HemoParticleData.emberSpark(HemoPalette.VERDIGRIS, 0.031F, 0.9F, 20),
                     pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5,
-                    4, 0.35, 0.05, 0.35, 0.01);
+                    4, 0.35, 0.05, 0.35, 0.005);
         }
     }
 

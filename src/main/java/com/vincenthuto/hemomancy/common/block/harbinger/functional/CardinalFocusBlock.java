@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.ChatFormatting;
@@ -52,7 +55,7 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
 			Player player, InteractionHand hand, BlockHitResult hit) {
-		if (!player.isShiftKeyDown() && isActivationTool(stack)) {
+		if (!player.isShiftKeyDown() && isActivationTool(stack) && !floorWantsFormation(level, pos, stack)) {
 			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		}
 		if (level.isClientSide) return ItemInteractionResult.SUCCESS;
@@ -89,6 +92,26 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 			Player player, BlockHitResult hit) {
 		if (!player.isShiftKeyDown()) return InteractionResult.PASS;
 		return useItemOn(ItemStack.EMPTY, state, level, pos, player, InteractionHand.MAIN_HAND, hit).result();
+	}
+
+	/**
+	 * Whether a plain click with a Sanguine Formation seats it: the Focus is empty, no rite runs there, and some rite
+	 * on the floor formed round it takes the Formation as its medium. Any other plain click tries the floor.
+	 */
+	private static boolean floorWantsFormation(Level level, BlockPos pos, ItemStack stack) {
+		if (!(level instanceof ServerLevel server) || !stack.is(ItemInit.sanguine_formation.get())) return false;
+		if (!(level.getBlockEntity(pos) instanceof CardinalFocusBlockEntity focus) || focus.hasMedium()
+				|| CardinalRiteSavedData.get(server).hasRiteAt(pos)) return false;
+		var formed = CardinalRiteStationMatcher.formedFloor(server, pos).orElse(null);
+		if (formed == null) return false;
+		for (CardinalRiteRecipe recipe : CardinalRiteRecipe.getAllRecipes(server)) {
+			if (!recipe.hasLayeredStation() || !recipe.hasMedium() || !recipe.getMedium().test(stack)) continue;
+			var required = CardinalRiteFloorRegistry.get(recipe.getFloorId()).orElse(null);
+			if (required != null && required.requirement().accepts(formed.floor().style(), formed.floor().tier())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean isActivationTool(ItemStack stack) {

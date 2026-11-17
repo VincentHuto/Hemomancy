@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.client.font;
 
+import org.junit.jupiter.api.Test;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class AbocipherFontResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -14,7 +18,8 @@ public final class AbocipherFontResourceTest {
 	private AbocipherFontResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String fontDefinition = read(RESOURCE_ROOT.resolve("assets/hemomancy/font/abocipher.json"));
 
 		assertContains("abocipher font should preserve vanilla spacing",
@@ -45,13 +50,6 @@ public final class AbocipherFontResourceTest {
 		assertEquals("stitched abocipher atlas height", 48, image.getHeight());
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertPathExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
@@ -66,12 +64,6 @@ public final class AbocipherFontResourceTest {
 			if (header.length <= i || header[i] != pngHeader[i]) {
 				throw new AssertionError(label + ": invalid PNG header");
 			}
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
 		}
 	}
 

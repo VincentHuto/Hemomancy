@@ -24,6 +24,7 @@ import java.util.Optional;
 public final class SpecimenJarData {
 	public static final String TAG_SPECIMEN = "Specimen";
 	public static final String TAG_MORPHLING_LAYERS = "MorphlingLayers";
+	public static final String TAG_KEPT = "Kept";
 	public static final String MORPHLING_POLYP_ID = "hemomancy:morphling_polyp";
 
 	private static final String TAG_ID = "id";
@@ -61,6 +62,37 @@ public final class SpecimenJarData {
 
 	public static void clearSpecimen(ItemStack stack) {
 		setSpecimen(stack, new CompoundTag());
+		setKeptState(stack, null);
+	}
+
+	/** A kept creature's Vigor, husk state and recorded maximum health, carried by its vessel item (core-loop Track 5). */
+	public static void setKeptState(ItemStack stack, double vigor, boolean husk, float maxHealth) {
+		setKeptState(stack, vigor, husk, maxHealth, Long.MIN_VALUE);
+	}
+
+	/** As above, with the game time a parent rests until after a birth ({@code Long.MIN_VALUE} for none). */
+	public static void setKeptState(ItemStack stack, double vigor, boolean husk, float maxHealth, long restUntil) {
+		CompoundTag kept = new CompoundTag();
+		kept.putDouble("Vigor", vigor);
+		if (husk) kept.putBoolean("Husk", true);
+		if (maxHealth >= 0.0F) kept.putFloat("KeptMaxHealth", maxHealth);
+		if (restUntil != Long.MIN_VALUE) kept.putLong("BroodRestUntil", restUntil);
+		setKeptState(stack, kept);
+	}
+
+	private static void setKeptState(ItemStack stack, CompoundTag kept) {
+		CompoundTag root = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		if (kept == null || kept.isEmpty()) root.remove(TAG_KEPT);
+		else root.put(TAG_KEPT, kept);
+		if (root.isEmpty()) stack.remove(DataComponents.CUSTOM_DATA);
+		else stack.set(DataComponents.CUSTOM_DATA, CustomData.of(root));
+	}
+
+	public static CompoundTag getKeptState(ItemStack stack) {
+		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+		if (data == null) return new CompoundTag();
+		CompoundTag root = data.copyTag();
+		return root.contains(TAG_KEPT, Tag.TAG_COMPOUND) ? root.getCompound(TAG_KEPT).copy() : new CompoundTag();
 	}
 
 	public static ItemStack createStackWithSpecimen(CompoundTag specimen) {

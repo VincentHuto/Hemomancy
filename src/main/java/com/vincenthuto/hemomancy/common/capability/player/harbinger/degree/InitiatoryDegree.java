@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.degree;
 
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -25,11 +26,15 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	private boolean fungalRevelationWitnessed = false;
 	private boolean fungalSpineGranted = false;
 	private boolean hematicFortification = false;
+	private boolean eternalCovenantSealed = false;
+	@Nullable private BoundThrone boundThrone;
 	private int ancestralCommunions = 0;
 	private EnumArchonPath archonPath = EnumArchonPath.NONE;
 	private int mycophantExposureTicks;
 	private int mycophantRetryCooldownTicks;
 	private boolean mycophantDefeated;
+	private boolean mycophantRematchOwed;
+	private final java.util.EnumSet<EnumSaintType> saintTrialsEnded = java.util.EnumSet.noneOf(EnumSaintType.class);
 
 	@Override
 	public int getDegreeNumber() {
@@ -120,6 +125,7 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		mycophantExposureTicks = 0;
 		mycophantRetryCooldownTicks = 0;
 		mycophantDefeated = false;
+		mycophantRematchOwed = false;
 	}
 
 	@Override
@@ -138,6 +144,10 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	@Override public void setFungalSpineGranted(boolean granted) { fungalSpineGranted = granted; }
 	@Override public boolean hasHematicFortification() { return hematicFortification; }
 	@Override public void setHematicFortification(boolean fortified) { hematicFortification = fortified; }
+	@Override public boolean isEternalCovenantSealed() { return eternalCovenantSealed; }
+	@Override public void setEternalCovenantSealed(boolean sealed) { eternalCovenantSealed = sealed; }
+	@Override @Nullable public BoundThrone getBoundThrone() { return boundThrone; }
+	@Override public void setBoundThrone(@Nullable BoundThrone throne) { boundThrone = throne; }
 	@Override public int getAncestralCommunions() { return ancestralCommunions; }
 	@Override public void setAncestralCommunions(int communions) {
 		ancestralCommunions = Math.max(0, communions);
@@ -150,6 +160,10 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	@Override public void setMycophantRetryCooldownTicks(int ticks) { mycophantRetryCooldownTicks = Math.max(0, ticks); }
 	@Override public boolean isMycophantDefeated() { return mycophantDefeated; }
 	@Override public void setMycophantDefeated(boolean defeated) { mycophantDefeated = defeated; }
+	@Override public boolean isMycophantRematchOwed() { return mycophantRematchOwed; }
+	@Override public void setMycophantRematchOwed(boolean owed) { mycophantRematchOwed = owed; }
+	@Override public boolean hasEndedSaintTrial(EnumSaintType saint) { return saint != null && saintTrialsEnded.contains(saint); }
+	@Override public void recordSaintTrialEnded(EnumSaintType saint) { if (saint != null) saintTrialsEnded.add(saint); }
 
 	@Override
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
@@ -163,11 +177,19 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		tag.putBoolean("fungal_revelation_witnessed", fungalRevelationWitnessed);
 		tag.putBoolean("fungal_spine_granted", fungalSpineGranted);
 		tag.putBoolean("hematic_fortification", hematicFortification);
+		if (eternalCovenantSealed) tag.putBoolean("eternal_covenant_sealed", true);
+		if (boundThrone != null) tag.put("bound_throne", boundThrone.save());
 		tag.putInt("ancestral_communions", ancestralCommunions);
 		tag.putString("archon_path", archonPath.name());
 		tag.putInt("mycophant_exposure_ticks", mycophantExposureTicks);
 		tag.putInt("mycophant_retry_cooldown_ticks", mycophantRetryCooldownTicks);
 		tag.putBoolean("mycophant_defeated", mycophantDefeated);
+		if (mycophantRematchOwed) tag.putBoolean("mycophant_rematch_owed", true);
+		if (!saintTrialsEnded.isEmpty()) {
+			CompoundTag trials = new CompoundTag();
+			for (EnumSaintType saint : saintTrialsEnded) trials.putBoolean(saint.name().toLowerCase(java.util.Locale.ROOT), true);
+			tag.put("saint_trials_ended", trials);
+		}
 		CompoundTag progressTag = new CompoundTag();
 		pomeCommunionProgress.forEach((origin, count) ->
 				progressTag.putInt(String.valueOf(origin), count));
@@ -190,11 +212,18 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		fungalRevelationWitnessed = nbt.getBoolean("fungal_revelation_witnessed");
 		fungalSpineGranted = nbt.getBoolean("fungal_spine_granted");
 		hematicFortification = nbt.getBoolean("hematic_fortification");
+		eternalCovenantSealed = nbt.getBoolean("eternal_covenant_sealed");
+		boundThrone = nbt.contains("bound_throne") ? BoundThrone.load(nbt.getCompound("bound_throne")) : null;
 		ancestralCommunions = Math.max(0, nbt.getInt("ancestral_communions"));
 		archonPath = EnumArchonPath.byName(nbt.getString("archon_path"));
 		mycophantExposureTicks = Math.max(0, nbt.getInt("mycophant_exposure_ticks"));
 		mycophantRetryCooldownTicks = Math.max(0, nbt.getInt("mycophant_retry_cooldown_ticks"));
 		mycophantDefeated = nbt.getBoolean("mycophant_defeated");
+		mycophantRematchOwed = nbt.getBoolean("mycophant_rematch_owed");
+		saintTrialsEnded.clear();
+		CompoundTag trials = nbt.getCompound("saint_trials_ended");
+		for (EnumSaintType saint : EnumSaintType.values())
+			if (trials.getBoolean(saint.name().toLowerCase(java.util.Locale.ROOT))) saintTrialsEnded.add(saint);
 		pomeCommunionProgress.clear();
 		pomeCommunionProgressByBloom.clear();
 		CompoundTag progressTag = nbt.getCompound("pome_communion_progress");

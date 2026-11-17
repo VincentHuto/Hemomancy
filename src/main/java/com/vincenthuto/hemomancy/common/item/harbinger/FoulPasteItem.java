@@ -12,6 +12,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 public class FoulPasteItem extends Item {
 
@@ -33,7 +34,9 @@ public class FoulPasteItem extends Item {
 		}
 
 		if (isGrassLike(state)) {
-			level.setBlockAndUpdate(pos, BlockInit.erythrocytic_mycelium.get().defaultBlockState());
+			if (!PlayerBlockEdits.replace(ctx.getPlayer(), pos, BlockInit.erythrocytic_mycelium.get().defaultBlockState())) {
+				return InteractionResult.FAIL;
+			}
 			level.playSound(null, pos, SoundEvents.FUNGUS_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
 			if (!ctx.getPlayer().getAbilities().instabuild) {
 				ctx.getItemInHand().shrink(1);
@@ -42,7 +45,9 @@ public class FoulPasteItem extends Item {
 		}
 
 		if (isWoodLike(state)) {
-			level.setBlockAndUpdate(pos, BlockInit.infested_wood.get().defaultBlockState());
+			if (!PlayerBlockEdits.replace(ctx.getPlayer(), pos, BlockInit.infested_wood.get().defaultBlockState())) {
+				return InteractionResult.FAIL;
+			}
 			level.playSound(null, pos, SoundEvents.FUNGUS_PLACE, SoundSource.BLOCKS, 1.0F, 0.6F);
 			if (!ctx.getPlayer().getAbilities().instabuild) {
 				ctx.getItemInHand().shrink(1);

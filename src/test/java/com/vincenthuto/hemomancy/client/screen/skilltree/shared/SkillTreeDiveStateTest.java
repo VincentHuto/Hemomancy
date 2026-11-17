@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import org.junit.jupiter.api.Test;
+
 public final class SkillTreeDiveStateTest {
 	private SkillTreeDiveStateTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		SkillTreeDiveState state = new SkillTreeDiveState();
 
 		assertEquals("starts on surface", SkillTreeLayer.SURFACE, state.activeLayer());

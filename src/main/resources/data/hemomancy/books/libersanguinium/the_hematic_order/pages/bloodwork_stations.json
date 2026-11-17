@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Bloodwork Stations",
   "subtitle": "Equipment and implantation",
-  "text": "At Degree 3, the Scarlet Vanity is a Working craft: build its frame beside the Cardinal Focus, feed it, and let the Working floor take it. The Vanity equips one active charm, blood gourd, morphling bond, and Living Staff fitting. At Degree 4, the Fungal Implantation Pylon is raised the same way, with Hyphal Substrate as its medium. The Pylon installs, replaces, or removes one cultivated fungal scar; it does not grant extra fungal slots.",
+  "text": "At Degree 3, the Scarlet Vanity is a Working craft: build its frame beside the Cardinal Focus, feed it, and let the Working floor take it. The Vanity equips one active charm, blood gourd, morphling bond, and Living Staff fitting. At Degree 4, the Fungal Implantation Pylon is raised the same way, with Hyphal Substrate as its medium. The Pylon installs, replaces, or removes one cultivated fungal scar; it does not grant extra fungal slots. The Hematic Armature and its two rites have a chapter of their own.",
   "icon": "hemomancy:scarlet_vanity"
 }

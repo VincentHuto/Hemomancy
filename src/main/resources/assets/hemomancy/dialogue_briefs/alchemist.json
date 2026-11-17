@@ -203,6 +203,166 @@
     "about": "narration of the Alchemist looking straight through the player and silently returning to work",
     "tone": "cold, dismissive"
   },
+  "hemomancy.alchemist.craft.beds.crops.line1": {
+    "about": "the Alchemist giving the recipes for glowroot (carrot and glowstone) and emberpod (nether wart and blaze powder), each its own seed needing fed ground, a basin or the Lantern",
+    "tone": "procedural"
+  },
+  "hemomancy.alchemist.craft.beds.crops.line2": {
+    "about": "the Alchemist explaining both are weak Lux and Flammeus catalysts, and that crops over a fresh basin or feeding run sometimes give a Tainted Harvest, never from a drip",
+    "tone": "clinical"
+  },
+  "hemomancy.alchemist.craft.beds.line1": {
+    "about": "the Alchemist explaining a spore on the right ground roots as a strain that needs no light but will not grow on dry wood or from bone meal",
+    "tone": "clinical"
+  },
+  "hemomancy.alchemist.craft.beds.line2": {
+    "about": "the Alchemist explaining a ripe strain returns its spore and often a second, and the spore still fruits enzymes under the Lantern",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.craft.beds.strains.line1": {
+    "about": "the Alchemist listing strain grounds: Ravenous Heartwood for Vivacious, Fervent, Ruinous; Salt-Stained Timber for Neurotic, Frigid, Ferric; podzol or mycelium for Incandescent and Umbral",
+    "tone": "exact"
+  },
+  "hemomancy.alchemist.craft.beds.strains.line2": {
+    "about": "the Alchemist explaining a drip lets a strain creep, while a planting basin or lit feeding run beside it lets it grow at its own pace",
+    "tone": "procedural"
+  },
+  "hemomancy.alchemist.craft.beds.timber.line1": {
+    "about": "the Alchemist giving the recipe: one drowned voyager's log crafted with eight ordinary logs makes eight timber and is spent",
+    "tone": "dry"
+  },
+  "hemomancy.alchemist.craft.beds.timber.line2": {
+    "about": "the Alchemist explaining one timber and dried kelp then seed four more logs, returning the timber with them",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.craft.fed.basin.line1": {
+    "about": "the Alchemist describing a planting basin as soil over a small tank, filled by hand or gutter, growing its plant and neighbours far faster while fresh",
+    "tone": "procedural"
+  },
+  "hemomancy.alchemist.craft.fed.basin.line2": {
+    "about": "the Alchemist noting a basin clots like any tank into Formations, and a stem in a basin sets its fruit on the ground beside it",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.craft.fed.drip.line1": {
+    "about": "the Alchemist explaining a scab spike drips when fresh blood stands above its root, in its block or a basin, machine or wet gutter on it, and only takes blood its placer may draw",
+    "tone": "exact"
+  },
+  "hemomancy.alchemist.craft.fed.drip.line2": {
+    "about": "the Alchemist explaining each drop costs a few millilitres and feeds soil for about five minutes, and dripping into an empty cauldron makes a Sanguine Condenser",
+    "tone": "exact"
+  },
+  "hemomancy.alchemist.craft.fed.effusion.line1": {
+    "about": "the Alchemist explaining Vital Effusion with held Projection grows a bone-mealable plant a step a second by soaking its soil",
+    "tone": "procedural"
+  },
+  "hemomancy.alchemist.craft.fed.effusion.line2": {
+    "about": "the Alchemist offering the Mycelial Lantern instead: seeds in its culture slot grow a stage every thirty seconds for twenty-five millilitres and are resown when ripe",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.craft.fed.line1": {
+    "about": "the Alchemist explaining fed ground grows faster and the blood gourd grows only there, not in dry soil or from bone meal",
+    "tone": "clinical"
+  },
+  "hemomancy.alchemist.craft.fed.line2": {
+    "about": "the Alchemist naming three ways to feed a crop: a dripping scab spike, a wet stain beside the soil, or a planting basin, with a stain feeding only briefly",
+    "tone": "procedural"
+  },
+  "hemomancy.alchemist.craft.humours.dose.line1": {
+    "about": "the Alchemist explaining plain Projection into a passive animal doses it into season, at the cost of tainted meat that feeds the player and sickens others",
+    "tone": "clinical"
+  },
+  "hemomancy.alchemist.craft.humours.dose.line2": {
+    "about": "the Alchemist warning further doses risk the animal going feral for a minute, and that its young may carry the player's school weakly",
+    "tone": "dry, cautionary"
+  },
+  "hemomancy.alchemist.craft.humours.line1": {
+    "about": "the Alchemist explaining a creature's blood stays an unread humour until a sample of its kind is examined under the Hematic Microscope, and until then a draw gives half its Temper though the blood comes in full",
+    "tone": "clinical"
+  },
+  "hemomancy.alchemist.craft.humours.line2": {
+    "about": "the Alchemist explaining examination knowledge is the examiner's whoever drew the sample, and a traded sample stays unread to someone who has not done the work",
+    "tone": "dry"
+  },
+  "hemomancy.alchemist.craft.humours.sample.line1": {
+    "about": "the Alchemist giving the sampling cost: a vial takes two health, a Living Syringe one, and the creature cannot be drawn again for half a minute",
+    "tone": "exact"
+  },
+  "hemomancy.alchemist.craft.humours.sample.line2": {
+    "about": "the Alchemist explaining a kept creature pays in Vigor, and a thick-hided kind refuses a vial anywhere and needs the Living Syringe",
+    "tone": "procedural"
+  },
+  "hemomancy.alchemist.craft.humours.study.line1": {
+    "about": "the Alchemist explaining that three examined individuals, or one kept creature at three Vigor levels, let a vessel's screen show yield and behaviour",
+    "tone": "procedural"
+  },
+  "hemomancy.alchemist.craft.humours.study.line2": {
+    "about": "the Alchemist explaining every sampled, kept or seen kind gets a Living Bestiary page whose humours stay hollow until examined",
+    "tone": "clinical"
+  },
+  "hemomancy.alchemist.craft.living_blood.clot.line1": {
+    "about": "the Alchemist explaining Blood Absorption on a tank takes the fresh blood first and then the clot as Sanguine Formations",
+    "tone": "procedural"
+  },
+  "hemomancy.alchemist.craft.living_blood.clot.line2": {
+    "about": "the Alchemist noting a neglected tank yields far fewer formations than a Sanguine Condenser, so use the Condenser for formations",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.craft.living_blood.gauge.line1": {
+    "about": "the Alchemist telling the player to use a Vascular Status Gauge on a machine to read its tank",
+    "tone": "brisk"
+  },
+  "hemomancy.alchemist.craft.living_blood.gauge.line2": {
+    "about": "the Alchemist explaining only the owner and their bloodline can draw from a placed machine, so Absorption on a stranger's tank gets nothing",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.alchemist.craft.living_blood.keepers.line1": {
+    "about": "the Alchemist saying the player is the keeper: from the third Degree a Hematic Suture feeds a machine from them within sixteen blocks, keeping its buffer fresh",
+    "tone": "clinical"
+  },
+  "hemomancy.alchemist.craft.living_blood.keepers.line2": {
+    "about": "the Alchemist warning that walking away, logging out or falling stalls the machine and clots its buffer, and nothing keeps blood living without a keeper",
+    "tone": "dry, flat"
+  },
+  "hemomancy.alchemist.craft.living_blood.line1": {
+    "about": "the Alchemist explaining blood is fuel only while something alive holds it, and that blood in a machine or flask stays fresh for about five minutes after last fed",
+    "tone": "brisk, clinical"
+  },
+  "hemomancy.alchemist.craft.living_blood.line2": {
+    "about": "the Alchemist explaining blood then sets a tenth a minute and is all clot within an hour, that clot is not fuel and takes room, so fill a machine only when running it",
+    "tone": "brisk, practical"
+  },
+  "hemomancy.alchemist.craft.temper.catalysts.line1": {
+    "about": "the Alchemist explaining that a catalyst of a short school dissolves in its place, worth ten, five or three, and that the smallest that covers the shortfall goes, the off hand winning a tie",
+    "tone": "exact, procedural"
+  },
+  "hemomancy.alchemist.craft.temper.catalysts.line2": {
+    "about": "the Alchemist listing the old reagents by school and pointing to the phials on the bandolier that show what is held",
+    "tone": "exact"
+  },
+  "hemomancy.alchemist.craft.temper.dry.line1": {
+    "about": "the Alchemist saying a dry casting still goes but costs more blood and lands softer",
+    "tone": "flat, reassuring"
+  },
+  "hemomancy.alchemist.craft.temper.dry.line2": {
+    "about": "the Alchemist noting death takes half, and that a carved scar of the school slows the burn and refills a little, carved by the Vein-Mason from the fourth Degree",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.craft.temper.fill.line1": {
+    "about": "the Alchemist explaining a drawn creature gives its schools with its blood, naming creeper and parrot, saying a blaze or skeleton gives nothing, and that a full body still takes the Temper while the blood is lost",
+    "tone": "clinical"
+  },
+  "hemomancy.alchemist.craft.temper.fill.line2": {
+    "about": "the Alchemist adding that a faltering Will taken whole gives ten per tier, kept creatures give Temper through the glass, and the Order's meats a little",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.craft.temper.line1": {
+    "about": "the Alchemist separating Temperament, what you have done and never spend, from Temper, what you carry of each school now and burn with each casting",
+    "tone": "clinical, precise"
+  },
+  "hemomancy.alchemist.craft.temper.line2": {
+    "about": "the Alchemist giving the Temper burn: casts by rank two, three and a half, up to eight; a held Sculpting by its price from half a measure a second to two; carrying twenty of any school and up to eighty of the player's own",
+    "tone": "exact"
+  },
   "hemomancy.alchemist.deep_dark_commission.bearing": {
     "about": "the Alchemist giving Deep Dark terrain coordinates (X, Y, Z filled in) in the Overworld, telling the player to find a safe way down and look for a sculk catalyst without fighting a Warden, and warning the bearing marks a region, not a safe entrance or Vigil archive",
     "tone": "cautionary, matter-of-fact"
@@ -240,7 +400,7 @@
     "tone": "brisk, list-like"
   },
   "hemomancy.alchemist.enzyme_uses.culture": {
-    "about": "the Alchemist explaining that from Degree 3 an enzyme combined with a Spore Sac and Hyphal Substrate makes a matching culture, which in a Mycelial Lantern keeps fruiting that enzyme at 600 blood per 2,400 ticks",
+    "about": "the Alchemist explaining that from Degree 3 an enzyme combined with a Spore Sac and Hyphal Substrate makes a matching culture, which in a Mycelial Lantern keeps fruiting that enzyme at 150 blood per 2,400 ticks",
     "tone": "instructive, precise"
   },
   "hemomancy.alchemist.enzyme_uses.workshop": {
@@ -443,6 +603,14 @@
     "about": "the Alchemist noting saving or overwriting a pattern costs blood and raw experience, with three patterns held at first and more opened by deeper synaptic discipline",
     "tone": "matter-of-fact, informative"
   },
+  "hemomancy.alchemist.item_inquiry.emberpod.line1": {
+    "about": "the Alchemist identifying emberpod as nether wart worked with blaze powder, grown like glowroot and its own seed",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.item_inquiry.emberpod.line2": {
+    "about": "the Alchemist explaining emberpod is a weak Flammeus catalyst worth two against an enzyme's ten, sparing blaze powder for brewing",
+    "tone": "practical"
+  },
   "hemomancy.alchemist.item_inquiry.enzyme_ferric.line1": {
     "about": "the Alchemist describing Ferric Enzyme as the iron temper, blood that conducts, reinforces and binds structure, used by Ferric manipulations to harden the body and channel energy precisely",
     "tone": "clinical, informative"
@@ -542,6 +710,14 @@
   "hemomancy.alchemist.item_inquiry.glass_bottle.line2": {
     "about": "the Alchemist saying to use bottles for unstabilized material and to keep blood distillation, processing and temper work in the proper vessel",
     "tone": "curt, practical"
+  },
+  "hemomancy.alchemist.item_inquiry.glowroot.line1": {
+    "about": "the Alchemist identifying glowroot as a glowstone-dusted carrot that is its own seed and grows only on fed ground, in a basin or under the Lantern",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.item_inquiry.glowroot.line2": {
+    "about": "the Alchemist explaining glowroot is a weak Lux catalyst worth two against an enzyme's ten, and gives a little light when ripe",
+    "tone": "practical"
   },
   "hemomancy.alchemist.item_inquiry.glowstone_dust.line1": {
     "about": "the Alchemist describing glowstone dust as a luminescent Nether mineral the Alembic counts as a good Lux input and strips into Incandescent Enzyme concentrate",
@@ -703,6 +879,14 @@
     "about": "the Alchemist refusing to teach blood-work about an item to a player who is deliberately washing their blood away",
     "tone": "cold, disapproving"
   },
+  "hemomancy.alchemist.item_inquiry.salt_stained_timber.line1": {
+    "about": "the Alchemist identifying Salt-Stained Timber as logs worked with a drowned voyager's log, its salt's culture run through the grain",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.item_inquiry.salt_stained_timber.line2": {
+    "about": "the Alchemist explaining Neurotic, Frigid and Ferric spores root only in it, and one timber with dried kelp seeds four more logs",
+    "tone": "practical"
+  },
   "hemomancy.alchemist.item_inquiry.salt_stained_voyager_log.line1": {
     "about": "the Alchemist remarking that field logs are full of errors but some are worth having, since someone tested reef tissue, vent scale and seawater in one alembic and lived to write annoyed corrections",
     "tone": "wry, appreciative"
@@ -774,6 +958,14 @@
   "hemomancy.alchemist.item_inquiry.spore_sac.line2": {
     "about": "the Alchemist explaining Spore Sacs are used in fungal recipes and cultures, and that at Degree 4 Hyphal Substrate in a Cardinal Focus lets a Working floor forge a Fungal Implantation Pylon",
     "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.tainted_harvest.line1": {
+    "about": "the Alchemist identifying a Tainted Harvest as a crop ripened over a fresh basin or feeding run, carrying the player's blood",
+    "tone": "practical"
+  },
+  "hemomancy.alchemist.item_inquiry.tainted_harvest.line2": {
+    "about": "the Alchemist explaining it feeds the player, sickens others and feeds a gouge run, and that drip-fed crops never taint",
+    "tone": "practical"
   },
   "hemomancy.alchemist.item_inquiry.unknown": {
     "about": "the Alchemist saying the item is outside what they work with and telling the player to ask someone else",
@@ -946,6 +1138,10 @@
   "hemomancy.alchemist.phlegethontic_commission.lead": {
     "about": "the Alchemist describing Nether basins of dark ichor banked with blackstone and living-looking growth, admitting the place reads nearly organic to them but that this is interpretation, not fact to be written down",
     "tone": "thoughtful, careful"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.phlegethosoma": {
+    "about": "the Alchemist telling how the Phlegethosoma is called: hold Blood Projection on a broad pool of basin ichor until about 500 mL has gone in; it fights whoever fed it, a long pause lets the ichor thin the count, and with nothing to fight it goes back under within a minute",
+    "tone": "instructive, precise"
   },
   "hemomancy.alchemist.phlegethontic_commission.recorded": {
     "about": "narration of the Alchemist recording the Basin comparison and returning the sample and all five Scyphus",
@@ -1219,6 +1415,90 @@
     "about": "asking the Alchemist where to look for the Brined Court",
     "tone": "curious"
   },
+  "hemomancy.dialogue.alchemist.option.craft.back": {
+    "about": "going back to the Alchemist's lesson with one more question",
+    "tone": "plain"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.beds": {
+    "about": "asking the Alchemist whether spores can be planted",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.beds.crops": {
+    "about": "asking the Alchemist about glowroot and emberpod",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.beds.strains": {
+    "about": "asking the Alchemist what ground each fungal strain needs",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.beds.timber": {
+    "about": "asking the Alchemist where Salt-Stained Timber comes from",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.fed": {
+    "about": "asking the Alchemist how to feed a crop with blood",
+    "tone": "interested"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.fed.basin": {
+    "about": "asking the Alchemist what a planting basin is",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.fed.drip": {
+    "about": "asking the Alchemist how a scab spike feeds a crop",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.fed.effusion": {
+    "about": "asking the Alchemist whether a crop can be grown by hand",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.humours": {
+    "about": "asking the Alchemist how to read a creature's blood",
+    "tone": "attentive"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.humours.dose": {
+    "about": "asking the Alchemist what Projection does to an animal",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.humours.sample": {
+    "about": "asking the Alchemist how to take a blood sample",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.humours.study": {
+    "about": "asking the Alchemist what further study of a kind gives",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.living_blood": {
+    "about": "asking the Alchemist how long blood keeps in a machine",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.living_blood.clot": {
+    "about": "asking the Alchemist what to do with clotted blood",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.living_blood.gauge": {
+    "about": "asking the Alchemist how to check what a tank holds",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.living_blood.keepers": {
+    "about": "asking the Alchemist what keeps machine blood fresh",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.temper": {
+    "about": "asking the Alchemist what Temper is",
+    "tone": "attentive"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.temper.catalysts": {
+    "about": "asking the Alchemist which catalysts count toward Temper",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.temper.dry": {
+    "about": "asking the Alchemist what happens when Temper runs out",
+    "tone": "wary"
+  },
+  "hemomancy.dialogue.alchemist.option.craft.temper.fill": {
+    "about": "asking the Alchemist how to fill Temper",
+    "tone": "practical"
+  },
   "hemomancy.dialogue.alchemist.option.crimson_vessel": {
     "about": "asking the Alchemist how to make a Crimson Vessel",
     "tone": "curious"
@@ -1459,6 +1739,10 @@
     "about": "narration of the Alchemist comparing the player's Bestiary notes with the Artificer's work and giving another matching reagent",
     "tone": "neutral narration"
   },
+  "hemomancy.dialogue.event.alchemist_bandolier_given": {
+    "about": "narration of the Alchemist handing over a Titration Bandolier, saying where to fit it and how to make another if it is lost",
+    "tone": "exact, procedural"
+  },
   "hemomancy.dialogue.event.alchemist_bestiary_known": {
     "about": "narration of the Alchemist tapping the jar and saying it is already recorded, followed by the Living Bestiary progress count (current of total filled in)",
     "tone": "dry narration"
@@ -1556,7 +1840,7 @@
     "tone": "intriguing, light"
   },
   "hemomancy.dialogue.recruit.alchemist.accept": {
-    "about": "the Alchemist saying that if the player says yes their expertise goes into the pool, with the Order's craft behind every drop, so spend it carefully",
+    "about": "the Alchemist, once the pledge is taken, saying their expertise now goes into the pool and asking the player to spend it carefully",
     "tone": "dry, businesslike"
   },
   "hemomancy.dialogue.recruit.alchemist.consider": {

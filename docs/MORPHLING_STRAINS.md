@@ -40,7 +40,7 @@ Bonding blood is absorbed through equipped upkeep and resets at each stage. The 
 
 | Strain | Home |
 | --- | --- |
-| Sunburst | daytime with open sky, or in water within 5 blocks below a sky-lit air block in daytime |
+| Sunburst | daytime with open sky, or in water within 5 blocks below a sky-lit air block in daytime (HN-3, ruled 2026-11-13; `sunburstHomeReachesFiveBlocksUnderASunlitSurface` pins 5 as home and 6 as not) |
 | Holdfast | stone-type block below or beside at feet or head height, or submerged |
 | Mermaid's Purse | sprint-swimming, in water in a deep-ocean or Pelagic (open, twilight, midnight, carrion, hydrothermal) biome, or an ally within 8 blocks |
 | Dead Man's Rope | submerged, or holding at least one strand |
@@ -79,13 +79,13 @@ Bird's nest fungus for the purse pouches (small cups holding egg-like packets), 
 
 | Stage | Power | Numbers |
 | --- | --- | --- |
-| Passive | Purse Siphon | 1 / 1.5 / 2 / 2.5 / 3 / 3.5 mL per proc (circulation income); swim speed 0 / 5 / 10 / 15 / 20 / 25% in water, x1.5 at home, never past 35%, and never past 35% together with the full Prismatic or Phantasmal Bloodlust set |
+| Passive | Purse Siphon | 1 / 1.5 / 2 / 2.5 / 3 / 3.5 mL per proc (circulation income); swim speed 0 / 5 / 10 / 15 / 20 / 25% in water, x1.5 at home, never past 35%: the strain's own share, whatever armour is worn |
 | Developing | Feed Banking | strike damage x6 into borrowed blood (x7.2 / 8.4 / 9.6 Mature / Apex / Primal); sprint-swimming x1.5 |
 | Mature | School's Share | host or ally within 8 at 30%: 200 mL (banked first) heals the lowest 6 / 9 / 12 HP; 10 s; kill banking up to 160 mL |
 | Apex | Raise the Sail | sprint-swimming: Dolphin's Grace; allies within 6 behind: Dolphin's Grace (Speed I on land); bill strike within 2 s of a sprint-swim: +4 damage, double banking, once per 8 s |
 | Primal | Shared Wake | 450 mL; 20 s: strikes heal injured group members within 12 up to 2.5 HP and bank up to 35 mL; 60 s, 15 s Morphic Strain |
 
-+35% is a ceiling on the total, not only on the strain's share. The full Prismatic (or Phantasmal Bloodlust) set already gives x1.35, so a Purse worn inside the set adds no swim speed; out of the set it gives its own 0-35%. Raise the Sail's Dolphin's Grace has no amplifier, so a second source adds nothing. Healing the host (School's Share alone, Marrow Feeding, Kinbud regrowth) claims the circulation window, so a low-degree host can get less than the listed heal in one second.
++35% is the strain's own share (HN-2, ruled 2026-11-13). The full Prismatic (or Phantasmal Bloodlust) set's x1.35 is a separate total multiplier, so the two multiply: x1.82 for a Primal Purse at home inside the set, x1.62 at Apex away from home (for the PR-30 tuning pass). Out of the set the Purse gives its own 0-35%. Raise the Sail's Dolphin's Grace has no amplifier, so a second source adds nothing. Healing the host (School's Share alone, Marrow Feeding, Kinbud regrowth) claims the circulation window, so a low-degree host can get less than the listed heal in one second.
 
 ## Dead Man's Rope (Funiculospora nexilis)
 

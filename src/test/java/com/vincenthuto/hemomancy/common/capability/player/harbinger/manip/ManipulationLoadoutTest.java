@@ -1,15 +1,18 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 public final class ManipulationLoadoutTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private ManipulationLoadoutTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		nBTContractPersistsNameSelectionAndOrder();
 		blankNamesDefaultToSlotIndex();
 		mechanicalManipulationsAreNotSavedAsLoadoutEntries();
@@ -48,21 +51,5 @@ public final class ManipulationLoadoutTest {
 
 		assertContains("known manipulations defensively copies equipped names before normalization", knownSource,
 				"this.equippedManipNames = names != null ? new ArrayList<>(names) : new ArrayList<>()");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
-		}
 	}
 }

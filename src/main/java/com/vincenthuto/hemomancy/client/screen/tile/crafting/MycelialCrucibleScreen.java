@@ -85,7 +85,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         super.render(gfx, mouseX, mouseY, partial);
         this.renderTooltip(gfx, mouseX, mouseY);
         BloodVolumeBarWidget.renderTooltip(gfx, font, bloodBarBounds,
-                te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
+                com.vincenthuto.hemomancy.common.tile.ReservoirReading.of(te), mouseX, mouseY);
         if (BloodVolumeBarWidget.Bounds.EMPTY != null) return;
 
         // Blood bar tooltip
@@ -336,7 +336,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         int barY = gy + 74 - barH - 4;
         if (BloodVolumeBarWidget.Bounds.EMPTY != null) {
             bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
-                    te.getBloodVolume(), te.getMaxBloodVolume(), animTime, BORDER_RED, BORDER_INNER);
+                    com.vincenthuto.hemomancy.common.tile.ReservoirReading.of(te), animTime, BORDER_RED, BORDER_INNER);
             return;
         }
 

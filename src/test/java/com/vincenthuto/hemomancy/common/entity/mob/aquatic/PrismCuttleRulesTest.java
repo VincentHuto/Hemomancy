@@ -1,11 +1,15 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+
 final class PrismCuttleRulesTest {
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		spawnsOnlyInOpenWarmWater();
 		maintainsSwimmingDepthBelowSurface();
 		defensiveFlashIsBriefAndPlayerScoped();
@@ -116,12 +120,6 @@ final class PrismCuttleRulesTest {
 
 	private static void assertFalse(boolean condition, String message) {
 		assertTrue(!condition, message);
-	}
-
-	private static void assertContains(String label, String content, String expected) {
-		if (!content.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 
 	private static void assertSpawnEggModel(String itemId) throws IOException {

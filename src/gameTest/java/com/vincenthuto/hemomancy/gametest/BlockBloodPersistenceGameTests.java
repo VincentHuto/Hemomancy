@@ -37,7 +37,7 @@ public final class BlockBloodPersistenceGameTests {
 			new Store(BlockInit.mycelial_lantern, "bloodLevel", false),
 			new Store(BlockInit.pallid_retort, "whiteHumorLevel", true),
 			new Store(BlockInit.hematic_armature, "BloodLevel", false),
-			new Store(BlockInit.somatic_loom, "bloodLevel", false),
+			// The Somatic Loom keeps no tank since core-loop Track 3; tanklessLoomReadsEmpty covers it.
 			new Store(BlockInit.vial_centrifuge, "bloodLevel", false),
 			new Store(BlockInit.sanguine_vigil, "bloodLevel", false),
 			new Store(BlockInit.gourdvine_tap, "bloodLevel", false),
@@ -82,7 +82,6 @@ public final class BlockBloodPersistenceGameTests {
 		List<Store> stations = List.of(
 				new Store(BlockInit.ghastly_alembic, "BloodLevel", false),
 				new Store(BlockInit.hematic_armature, "BloodLevel", false),
-				new Store(BlockInit.somatic_loom, "bloodLevel", false),
 				new Store(BlockInit.vial_centrifuge, "bloodLevel", false),
 				new Store(BlockInit.enzymatic_scriptorium, "BloodVolume", false),
 				new Store(BlockInit.resonant_forge, "BloodVolume", false),
@@ -101,6 +100,22 @@ public final class BlockBloodPersistenceGameTests {
 			helper.assertFalse(before.equals(station.upgradeSnapshot(registries)), name + " snapshot ignores a blood change");
 			helper.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR);
 		}
+		helper.succeed();
+	}
+
+	/** Core-loop Track 3: the loom never spends blood, so it keeps no tank, saves none and reads none from an old copy. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void tanklessLoomReadsEmpty(GameTestHelper helper) {
+		var registries = helper.getLevel().registryAccess();
+		Store loom = new Store(BlockInit.somatic_loom, "bloodLevel", false);
+		BlockEntity entity = place(helper, loom, new BlockPos(1, 2, 1));
+		CompoundTag legacy = entity.saveWithoutMetadata(registries);
+		legacy.putDouble(loom.legacyKey(), LEGACY_VOLUME);
+		entity.loadWithComponents(legacy, registries);
+		var blood = HemoCapabilityAccess.getBloodVolume(entity).orElseThrow();
+		helper.assertTrue(blood.getBloodVolume() == 0.0D && blood.getMaxBloodVolume() == 0.0D, "the loom still keeps a tank");
+		helper.assertFalse(blood.fill(10.0D) && blood.getBloodVolume() > 0.0D, "the loom's tank took blood");
+		helper.assertFalse(entity.saveWithoutMetadata(registries).contains(loom.legacyKey()), "the loom still saves a blood level");
 		helper.succeed();
 	}
 

@@ -22,6 +22,7 @@ final class HermitDialogueEvents {
 
 	/** Handles the event when it is one of this NPC's; false lets the next route try. */
 	public static boolean handle(DialogueEvent event) {
+		if (CoreLoopLessonRoutes.teach(event, CoreLoopLessons.HERMIT, HarbingerHermitEntity.class)) return true;
 		ServerPlayer player = event.getPlayer();
 		switch (event.getEventId()) {
 		case "hermit_accept_guidance" -> {
@@ -36,8 +37,14 @@ final class HermitDialogueEvents {
                         && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, hermit)
                         && !hermit.isFarewellDying() && ProgressionGates.isDegree(player, 0)
                         && !HemoCapabilityAccess.getBloodVolume(player).isActive()) {
-                    TempleOathRules.bless(player, hermit.getUUID());
-                    player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.hermit_heart_offered"), false);
+                    var display = com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity.of(hermit);
+                    if (display != null && display.isClaimed()) {
+                        player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.hermit_heart_spent")
+                                .withStyle(ChatFormatting.GRAY), false);
+                    } else {
+                        TempleOathRules.bless(player, hermit.getUUID());
+                        player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.hermit_heart_offered"), false);
+                    }
                 }
             }
 		case "hermit_farewell_die" -> {

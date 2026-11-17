@@ -11,7 +11,7 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
 /**
  * Holds the GameTest server at noon. With the daylight cycle running, a long suite reaches dusk (day time 12542),
- * where the Blood Moon roll (1 in 7) can start a Blood Moon that discounts every manipulation's cost and breaks
+ * where the Blood Moon roll (by moon phase and spilled blood) can start a Blood Moon that discounts every manipulation's cost and breaks
  * exact-cost assertions depending on how far the suite has run. Only the headless GameTest server is touched; client
  * reviews and acceptance drivers set their own time.
  */

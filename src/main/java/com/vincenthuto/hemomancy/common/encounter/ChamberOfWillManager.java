@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
+import com.vincenthuto.hemomancy.common.util.LastSent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -52,6 +53,13 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ChamberOfWillManager extends SavedData {
+    private record ChamberSnapshot(ResourceLocation skyTheme, int tier, int radius, int pomes,
+            PacketSyncVesperFightScene scene) {
+    }
+
+    /** What each player last had of their Chamber, so the 40-tick pass sends only a change. */
+    private static final LastSent<ChamberSnapshot> SENT = new LastSent<>();
+
     public static final ResourceKey<Level> CHAMBER_OF_WILL = ResourceKey.create(
             Registries.DIMENSION, Hemomancy.rloc("chamber_of_will"));
 
@@ -641,7 +649,7 @@ public class ChamberOfWillManager extends SavedData {
             if (refresh.radiusIncreased() && growth.expandedFromExistingRoom()) {
                 playExpansionEffects(serverLevel, manager.cellPos(manager.idFor(player.getUUID())), growth);
             }
-            manager.syncTo(player);
+            manager.syncIfChanged(player);
 
             if (player.isCreative() || player.isSpectator()) {
                 continue;
@@ -657,18 +665,52 @@ public class ChamberOfWillManager extends SavedData {
     }
 
     public void syncTo(ServerPlayer player) {
+        ChamberSnapshot snapshot = snapshot(player);
+        SENT.changed(player, snapshot);
+        send(player, snapshot);
+    }
+
+    /** The 40-tick pass: sends the Chamber state only when it changed since the player last had it (FX-14). */
+    public void syncIfChanged(ServerPlayer player) {
+        ChamberSnapshot snapshot = snapshot(player);
+        if (SENT.changed(player, snapshot)) send(player, snapshot);
+    }
+
+    private ChamberSnapshot snapshot(ServerPlayer player) {
         ChamberState state = getChamberState(player.getUUID());
-        PacketHandler.sendToPlayer(player, new PacketSyncChamberOfWill(
-                state.skyTheme(), state.tier(), radiusFor(player.getUUID()), qliphothPomeCount(player)));
+        PacketSyncVesperFightScene scene;
         if (VesperOrdealManager.isActive(player)) {
-            PacketHandler.sendToPlayer(player,
-                    PacketSyncVesperFightScene.activate(VesperOrdealManager.arenaCenter(player)));
+            scene = PacketSyncVesperFightScene.activate(VesperOrdealManager.arenaCenter(player));
         } else if (THEME_VESPER_FIGHT.equals(state.skyTheme())) {
-            PacketHandler.sendToPlayer(player,
-                    PacketSyncVesperFightScene.activate(cellPos(idFor(player.getUUID()))));
+            scene = PacketSyncVesperFightScene.activate(cellPos(idFor(player.getUUID())));
         } else {
-            PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.clearScene());
+            scene = PacketSyncVesperFightScene.clearScene();
         }
+        return new ChamberSnapshot(state.skyTheme(), state.tier(), radiusFor(player.getUUID()),
+                qliphothPomeCount(player), scene);
+    }
+
+    private static void send(ServerPlayer player, ChamberSnapshot snapshot) {
+        PacketHandler.sendToPlayer(player, new PacketSyncChamberOfWill(
+                snapshot.skyTheme(), snapshot.tier(), snapshot.radius(), snapshot.pomes()));
+        PacketHandler.sendToPlayer(player, snapshot.scene());
+    }
+
+    /**
+     * Sends a Vesper fight scene outside the 40-tick pass (entering, leaving or ending the ordeal) and forgets what
+     * the pass last sent, so its next run resends the whole Chamber state and the two cannot disagree (FX-14).
+     */
+    public static void sendScene(ServerPlayer player, PacketSyncVesperFightScene scene) {
+        PacketHandler.sendToPlayer(player, scene);
+        SENT.forget(player);
+    }
+
+    public static void logout(net.minecraft.world.entity.player.Player player) {
+        SENT.forget(player);
+    }
+
+    public static void clearSessionState() {
+        SENT.clear();
     }
 
     public static void syncFor(ServerPlayer player) {

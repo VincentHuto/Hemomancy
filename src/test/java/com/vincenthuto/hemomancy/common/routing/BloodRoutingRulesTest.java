@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.routing;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingRules;
 
 public final class BloodRoutingRulesTest {
 
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         drawsEquippedGourdBeforePlayer();
         respectsPlayerSafetyFloor();
         maintainsWorkingReserveInsteadOfFillingTarget();
@@ -185,28 +187,6 @@ public final class BloodRoutingRulesTest {
         @Override
         public boolean wouldOverstrain(double points) {
             return blood - points < 0;
-        }
-
-        @Override
-        public void addDamage(double amount) {
-        }
-
-        @Override
-        public void addBloodSpend(double amount) {
-        }
-
-        @Override
-        public double consumeDebt() {
-            return 0;
-        }
-
-        @Override
-        public double getBloodDebt() {
-            return 0;
-        }
-
-        @Override
-        public void resetBloodDebt() {
         }
 
         @Override

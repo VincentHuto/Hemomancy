@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class HarbingerAssignmentLedgerCollapseSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -10,7 +13,8 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 	private HarbingerAssignmentLedgerCollapseSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		ledgerDefinesCollapsibleAssignmentSections();
 		ledgerUsesDynamicAssignmentHeights();
 		ledgerOrdersAssignmentsByDegree();
@@ -167,12 +171,6 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 			throw new AssertionError("missing " + path);
 		}
 		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " missing: " + expected);
-		}
 	}
 
 	private static void assertOccurrences(String label, String text, String expected, int count) {

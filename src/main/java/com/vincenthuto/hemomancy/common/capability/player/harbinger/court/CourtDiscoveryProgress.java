@@ -2,12 +2,17 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.court;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BrinedVotaryEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCourtProgress;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
+import com.vincenthuto.hemomancy.config.HemoCommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -59,6 +64,9 @@ public final class CourtDiscoveryProgress {
 	public static CourtIntroductionRules.Arrival markKnown(ServerPlayer player, CourtProgress.Route route) {
 		CourtProgress progress = progress(player);
 		CourtIntroductionRules.Arrival arrival = CourtIntroductionRules.arrive(progress.known());
+		// NQ-16-3: the Liber's Court chapter opens with the Court, by whichever route; a later route repairs a missed page.
+		LiberKnowledgeHelper.unlockEntry(player, LiberEntryDefinitions.COURT_HOUSES, route == CourtProgress.Route.FOUND
+				? CommonDiscoverySource.STRUCTURE_DISCOVER : HemomancyDiscoverySource.DIALOGUE);
 		if (arrival == CourtIntroductionRules.Arrival.ACKNOWLEDGED) return arrival;
 		progress.setKnown(route);
 		sync(player);
@@ -150,13 +158,21 @@ public final class CourtDiscoveryProgress {
 		return player.serverLevel().structureManager().getStructureWithPieceAt(player.blockPosition(), COURT).isValid();
 	}
 
+	/**
+	 * Whether the Court's Seats and outposts generate in this world (Pelagic worldgen on). Off, nothing points the
+	 * player seaward: no Court topic at the Vicar, Voyager or Alchemist and no letter.
+	 */
+	public static boolean sitesGenerate() {
+		return HemoCommonConfig.enablePelagicWorldgen();
+	}
+
 	/** A Votary carries one letter per player, for a killer who doesn't know the Court yet: never a loot table. */
 	@SubscribeEvent
 	public static void onLivingDrops(LivingDropsEvent event) {
 		if (!(event.getEntity() instanceof BrinedVotaryEntity votary)
 				|| !(event.getSource().getEntity() instanceof ServerPlayer player)) return;
 		CourtProgress progress = progress(player);
-		if (!CourtIntroductionRules.letterDrops(progress.known(), progress.letterDropped())) return;
+		if (!CourtIntroductionRules.letterDrops(progress.known(), progress.letterDropped(), sitesGenerate())) return;
 		progress.setLetterDropped(true);
 		sync(player);
 		event.getDrops().add(new ItemEntity(votary.level(), votary.getX(), votary.getY() + 0.5D, votary.getZ(),

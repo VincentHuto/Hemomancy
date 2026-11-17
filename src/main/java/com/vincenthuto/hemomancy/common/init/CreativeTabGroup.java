@@ -28,16 +28,16 @@ public enum CreativeTabGroup {
 			"blood_absorption", "blood_projection", "living_syringe", "bloody_vial", "cleansing_hemolymph", "vial_rack",
 			"bloody_flask", "bloody_jug", "blood_gourd_white", "blood_gourd_red", "blood_gourd_black","curved_horn",
 			"hematic_microscope", "scrying_dish", "hematic_suture_needle", "vascular_poultice", "vitality_chalice", "vascular_status_gauge",
-			"sanguine_conduit", "charm_of_vascularium", "unsigned_ancestral_ledger",
-			"terrestrial_speculum", "sporitic_thurible", "mind_spike", "listening_scar", "ahaematic_colloid", "wax_cylinder",
-			"ambergris_cylinder", "corpse_wax_cylinder", "memory_thread")),
+			"sanguine_conduit", "charm_of_vascularium", "titration_bandolier", "unsigned_ancestral_ledger",
+			"terrestrial_speculum", "mind_spike", "listening_scar", "ahaematic_colloid", "wax_cylinder",
+			"ambergris_cylinder", "corpse_wax_cylinder", "memory_thread", "sporitic_thurible")),
 	STATIONS(List.of(
 			"gourd", "vial_centrifuge", "centrifugal_governor_kit", "fractionating_rotor_kit",
 			"phlebotomists_field_case", "phlebotomists_cabinet", "ghastly_alembic", "hematic_condenser_kit",
 			"sanguine_athanor_kit", "somatic_loom", "ganglionic_harness", "cortical_crown", "mnemonic_reliquary",
 			"clairaudiograph", "antecedent_vessel", "scar_station", "mason_effigy", "iron_brazier", "vacant_effigy",
 			"sanguine_condenser", "clotting_lattice", "druse_heart", "scarlet_vanity", "morphling_incubator", "morphling_cradle", "sanguine_vigil",
-			"specimen_jar", "enzymatic_scriptorium", "rubricators_quill", "palimpsest_burin", "resonant_forge",
+			"specimen_jar", "specimen_vat", "enzymatic_scriptorium", "rubricators_quill", "palimpsest_burin", "resonant_forge",
 			"precision_governor_kit", "master_cam_kit", "hematic_armature", "vicars_consecration_kit",
 			"monolithic_cornerstone", "consecrated_bloodwell", "cardinal_focus", "covenant_throne",
 			"sanguine_monolith", "scrying_podium", "mycelial_crucible", "mycelial_lantern", "fungal_podium",
@@ -72,12 +72,12 @@ public enum CreativeTabGroup {
 	ARSENAL(List.of(
 			"living_staff", "worn_vow_fitting", "barbed_fitting", "chitinite_fitting", "prismatic_fitting",
 			"crimson_vestment_fitting", "monolithic_frame_fitting", "assumed_limb_fitting", "living_weapon_graft",
-			"living_blade", "living_axe", "living_spear", "living_baghnakh", "living_crossbow", "living_torch",
+			"living_blade", "living_axe", "living_pickaxe", "living_spear", "living_baghnakh", "living_crossbow", "living_torch",
 			"living_flail", "hematic_iron_knapper", "vivianite_scalpel", "hematic_iron_sword", "barbed_blade",
 			"barbed_shield", "chitinite_mace", "chitinite_shield", "chitinite_arm_banner", "sanguis_lancea",
 			"annettas_sanguis_lancea")),
 	ARMOR(List.of(
-			"hematic_iron_helm", "hematic_iron_chestplate", "hematic_iron_leggings", "hematic_iron_boots",
+			"hematic_iron_helm", "hematic_iron_chestplate", "hematic_iron_leggings", "hematic_iron_boots", "hematic_cleats",
 			"barbed_helm", "barbed_chestplate", "barbed_leggings", "barbed_boots", "chitinite_helm",
 			"chitinite_chestplate", "chitinite_leggings", "chitinite_boots", "prismatic_helm", "prismatic_chestplate",
 			"prismatic_leggings", "prismatic_boots", "hemolymphopoda_headpiece", "lantern_tick_helmet",
@@ -96,9 +96,10 @@ public enum CreativeTabGroup {
 	MATERIALS(List.of(
 			"sanguine_formation", "sanguine_blob", "blood_crystal_shard", "sanguine_quintessence", "hematic_iron_scrap",
 			"hematic_iron_powder", "vivianite_cluster", "adipocere", "blood_rock", "blood_stained_stone", "bleeding_bulb",
-			"dried_gourd", "constrictor_cord", "scale_grip")),
+			"dried_gourd", "scale_grip")),
 	FOOD(List.of(
-			"gourd_seeds", "gourd_slice", "gourd_stew", "raw_venison", "cooked_venison")),
+			"gourd_seeds", "gourd_slice", "gourd_stew", "raw_venison", "cooked_venison", "tainted_meat", "tainted_harvest",
+			"glowroot", "emberpod")),
 	BUILDING(List.of(
 			"venous_stone", "venous_stone_stairs", "venous_stone_slab", "venous_stone_wall", "polished_venous_stone",
 			"polished_venous_stone_stairs", "polished_venous_stone_slab", "polished_venous_stone_wall",

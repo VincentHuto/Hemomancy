@@ -1,5 +1,7 @@
 {
-  "tempers": [],
+  "tempers": [
+    "mortem"
+  ],
   "properties": [
     "hemomancy:blood_properties/undead"
   ],

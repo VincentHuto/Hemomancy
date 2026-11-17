@@ -311,13 +311,13 @@ public class ManipulationsTabController implements IProgressTab {
         }
     }
 
-	private static int manipMinDegree(EnumManipulationRank rank) {
-		return ManipulationRankGates.minDegreeForRank(rank);
+	private static int manipMinDegree(BloodManipulation manip) {
+		return ManipulationRankGates.minDegreeFor(manip);
 	}
 
 	private boolean isManipRankLocked(BloodManipulation manip) {
 		if (manip == null) return false;
-		return !ManipulationRankGates.playerMeetsRank(playerDegree, manip.getRank());
+		return !ManipulationRankGates.playerMeets(playerDegree, manip);
 	}
 
     private int sx(ProgressScreenContext ctx, int cx) { return panZoom.sx(ctx.guiLeft(), cx); }
@@ -673,7 +673,7 @@ public class ManipulationsTabController implements IProgressTab {
 		BloodManipulation manipulation = ManipulationInit.getByName(satellite.form().id());
 		if (manipulation != null && isManipRankLocked(manipulation)) {
 			tip.add(HemoText.translatable("screen.hemomancy.manipulations_tab_controller.requires_degree",
-					manipMinDegree(manipulation.getRank())).withStyle(s -> s.withColor(0xAA4444)));
+					manipMinDegree(manipulation)).withStyle(s -> s.withColor(0xAA4444)));
 		} else if (!satellite.masteryEligible()) {
 			tip.add(HemoText.translatable("screen.hemomancy.manipulations_tab_controller.requires_mastery_level",
 					satellite.form().requiredLevel()).withStyle(s -> s.withColor(0xAA4444)));
@@ -724,7 +724,7 @@ public class ManipulationsTabController implements IProgressTab {
             if (rankLocked) {
                 tip.add(Component.literal("???").withStyle(s -> s.withColor(0x555555).withBold(true)));
                 if (manip != null) {
-                    int reqDeg = manipMinDegree(manip.getRank());
+                    int reqDeg = manipMinDegree(manip);
                     EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
                     Component degreeName = needed != null ? needed.displayName()
                             : Component.translatable("screen.hemomancy.manipulations_tab_controller.degree_number", reqDeg);
@@ -882,9 +882,9 @@ public class ManipulationsTabController implements IProgressTab {
         ty += 5;
 
         if (rankLocked) {
-            EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(manipMinDegree(manip.getRank()));
+            EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(manipMinDegree(manip));
             Component degreeName = needed != null ? needed.displayName()
-                    : Component.translatable("screen.hemomancy.manipulations_tab_controller.degree_number", manipMinDegree(manip.getRank()));
+                    : Component.translatable("screen.hemomancy.manipulations_tab_controller.degree_number", manipMinDegree(manip));
             gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.manipulations_tab_controller.locked"), tx, ty, 0xFF555555, false);
             ty += lineH;
             gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.manipulations_tab_controller.requires", degreeName), tx, ty, 0xFFAA4444, false);

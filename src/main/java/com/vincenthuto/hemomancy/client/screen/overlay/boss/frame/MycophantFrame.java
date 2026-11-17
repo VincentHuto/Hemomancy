@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.client.screen.overlay.GuiCanvas;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrame;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrameContext;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFramePainter;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantCombatRules;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -28,7 +29,7 @@ public final class MycophantFrame implements BossBarFrame {
 
 	@Override
 	public float[] notches() {
-		return new float[] { 0.5F };
+		return new float[] { MycophantCombatRules.PHASE_TWO_FRACTION };
 	}
 
 	@Override

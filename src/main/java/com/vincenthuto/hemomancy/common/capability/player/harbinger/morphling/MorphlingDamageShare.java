@@ -30,8 +30,7 @@ import java.util.List;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class MorphlingDamageShare {
-	private static final BloodAccounting.Source BREAKWATER = BloodAccounting.Source.of("breakwater", Category.MORPHLING,
-			false, false);
+	private static final BloodAccounting.Source BREAKWATER = BloodAccounting.Source.of("breakwater", Category.MORPHLING, false);
 	private static boolean redirecting;
 
 	private MorphlingDamageShare() {

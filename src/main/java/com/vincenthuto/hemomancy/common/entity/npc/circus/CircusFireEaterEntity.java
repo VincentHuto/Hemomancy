@@ -31,7 +31,7 @@ public final class CircusFireEaterEntity extends CircusPerformerEntity {
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 30.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.22D).add(Attributes.ARMOR, 2.0D)
-				.add(Attributes.FOLLOW_RANGE, 24.0D);
+				.add(Attributes.ATTACK_DAMAGE, 4.0D).add(Attributes.FOLLOW_RANGE, 24.0D);
 	}
 
 	@Override protected String roleId() { return "circus_fire_eater"; }
@@ -86,7 +86,7 @@ public final class CircusFireEaterEntity extends CircusPerformerEntity {
 		CircusEffects.gather(server, mouth, CircusEffects.FLAME, charge);
 		server.sendParticles(HemoParticleData.emberSpark(CircusEffects.FLAME_CORE, 0.18F, 0.9F, 8), mouth.x,
 				mouth.y, mouth.z, 1 + Math.round(charge * 3.0F), 0.1D, 0.1D, 0.1D, 0.0D);
-		if (tick % 4 == 0) BossTelegraphs.cone(server, position(), breathFacing, 5.0D, 55.0D, CircusEffects.FLAME);
+		CircusEffects.coneFootprint(server, position(), breathFacing, 5.0D, 55.0D, charge);
 	}
 
 	@Override
@@ -103,9 +103,8 @@ public final class CircusFireEaterEntity extends CircusPerformerEntity {
 		level().playSound(null, blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 1.0F, 0.7F);
 		for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(5.0D))) {
 			Vec3 offset = victim.position().subtract(position());
-			if (victim == this || isTroupeMember(victim)
-					|| !CircusPerformerRules.insideCone(facing.x, facing.z, offset.x, offset.z)) continue;
-			if (victim.hurt(damageSources().mobAttack(this), 4.0F)) {
+			if (!canStrike(victim) || !CircusPerformerRules.insideCone(facing.x, facing.z, offset.x, offset.z)) continue;
+			if (victim.hurt(damageSources().mobAttack(this), (float) getAttributeValue(Attributes.ATTACK_DAMAGE))) {
 				victim.igniteForSeconds(3.0F);
 				victim.push(facing.x * 0.7D, 0.2D, facing.z * 0.7D);
 			}

@@ -1,14 +1,18 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class TemperWeaponHelperSourceTest {
 	private TemperWeaponHelperSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String helper = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/TemperWeaponHelper.java"));
 		assertContains("helper imports WillEntity", helper,
@@ -19,12 +23,6 @@ public final class TemperWeaponHelperSourceTest {
 		assertContains("pure temper opposition helper exists", helper,
 				"public static boolean isOpposingTemper(@Nullable EnumBloodTemper weaponTemper,");
 		assertContains("pure helper compares against opposing temper", helper,
-				"getOpposingTemper(weaponTemper) == targetTemper");
-	}
-
-	private static void assertContains(String label, String source, String expected) {
-		if (!source.contains(expected)) {
-			throw new AssertionError(label + ": missing `" + expected + "`");
-		}
+				"weaponTemper.opposite() == targetTemper");
 	}
 }

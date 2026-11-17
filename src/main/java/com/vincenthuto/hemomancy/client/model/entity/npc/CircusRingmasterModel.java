@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterMoves.Move;
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -139,17 +141,15 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		return LayerDefinition.create(mesh, 128, 128);
 	}
 
-	/** The throw's whole beat: the wind-up the server waits before the knife leaves, then the follow-through. */
-	private static final float THROW_TICKS = CircusRingmasterEntity.KNIFE_THROW.total();
+	private static final float THROW_TICKS = Move.KNIFE_THROW.timeline().total();
 	/** Where in the beat the knife leaves: the commit tick of the server's throw. */
-	private static final float THROW_RELEASE = CircusRingmasterEntity.KNIFE_THROW.commitTick() / THROW_TICKS;
-	private static final float STRIKE_TICKS = CircusRingmasterEntity.STAFF_STRIKE.total();
-	private static final float STRIKE_COMMIT = CircusRingmasterEntity.STAFF_STRIKE.commitTick();
+	private static final float THROW_RELEASE = Move.KNIFE_THROW.timeline().commitTick() / THROW_TICKS;
 
 	/**
 	 * Perched in the rafters he crouches on the beam, staff planted, only the head and the throwing arm moving. On
 	 * the carousel he stands and presents, staff raised, the free arm thrown wide. Descended, he walks and strikes
-	 * like any man, the calves bending under the vanilla stride and the vanilla swing on the staff arm.
+	 * like any man, the calves bending under the vanilla stride. Each move replays the server's synced move tick
+	 * ({@code moveTime}) on the client clock. In the closing beat he kneels (Succession) or slumps (Liberation).
 	 */
 	@Override
 	public void setupAnim(CircusRingmasterEntity entity, float limbSwing, float limbSwingAmount,
@@ -162,6 +162,12 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		leftCalf.resetPose();
 		rightCalf.resetPose();
 		float breath = Mth.sin(ageInTicks * 0.045F) * 0.025F;
+		float time = entity.moveTime(ageInTicks - entity.tickCount);
+		staffTopper.visible = entity.hasTopper();
+		if (phase == CircusPavilionStateRules.Phase.CURTAIN) {
+			curtain(time, breath);
+			return;
+		}
 		if (onFoot) {
 			stride(breath);
 		} else if (phase == CircusPavilionStateRules.Phase.CAROUSEL) {
@@ -169,17 +175,19 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		} else {
 			perch(breath);
 		}
-		entity.throwState.updateTime(ageInTicks, 1.0F);
-		if (entity.throwState.isStarted()) {
-			float ticks = entity.throwState.getAccumulatedTime() / 50.0F;
-			if (ticks > THROW_TICKS) entity.throwState.stop();
-			else throwBeat(ticks / THROW_TICKS);
-		}
-		entity.strikeState.updateTime(ageInTicks, 1.0F);
-		if (entity.strikeState.isStarted()) {
-			float ticks = entity.strikeState.getAccumulatedTime() / 50.0F;
-			if (ticks > STRIKE_TICKS) entity.strikeState.stop();
-			else staffStrike(ticks);
+		Move move = entity.move();
+		BossMoveTimeline timeline = move.timeline();
+		if (timeline != null) {
+			switch (move) {
+				case KNIFE_THROW -> throwBeat(Math.min(1.0F, time / THROW_TICKS));
+				case STAFF_STRIKE, SLEIGHT -> staffStrike(time, timeline.commitTick(), timeline.total());
+				case KNIFE_BOARD -> knifeBoard(time, timeline.commitTick());
+				case SPOTLIGHT -> spotlight(time, timeline.commitTick(), timeline.total(), ageInTicks);
+				case CUE -> cue(time, timeline.commitTick(), timeline.total());
+				case STRINGS_CUT -> pullStrings(time, timeline.commitTick(), timeline.total());
+				default -> {
+				}
+			}
 		}
 		float pulse = 1.0F + Mth.sin(ageInTicks * 0.11F) * (phase == CircusPavilionStateRules.Phase.CAROUSEL ? 0.09F : 0.04F);
 		staffTopper.xScale = staffTopper.yScale = staffTopper.zScale = pulse;
@@ -243,11 +251,11 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 	}
 
 	/** The staff comes up over the head through the wind-up, the body rearing back, then cracks down on the commit tick. */
-	private void staffStrike(float ticks) {
-		float raise = HemoEasing.smoothstep(0.0F, STRIKE_COMMIT, ticks)
-				* (1.0F - HemoEasing.smoothstep(STRIKE_COMMIT - 0.5F, STRIKE_COMMIT + 1.0F, ticks));
-		float smash = HemoEasing.smoothstep(STRIKE_COMMIT - 0.5F, STRIKE_COMMIT + 1.0F, ticks)
-				* (1.0F - HemoEasing.smoothstep(STRIKE_COMMIT + 2.0F, STRIKE_TICKS, ticks));
+	private void staffStrike(float ticks, float commit, float total) {
+		float raise = HemoEasing.smoothstep(0.0F, commit, ticks)
+				* (1.0F - HemoEasing.smoothstep(commit - 0.5F, commit + 1.0F, ticks));
+		float smash = HemoEasing.smoothstep(commit - 0.5F, commit + 1.0F, ticks)
+				* (1.0F - HemoEasing.smoothstep(commit + 2.0F, total, ticks));
 		rightArm.xRot = Mth.lerp(raise, rightArm.xRot, -3.0F);
 		rightArm.zRot = Mth.lerp(raise, rightArm.zRot, -0.15F);
 		body.xRot = Mth.lerp(raise, body.xRot, -0.2F);
@@ -255,5 +263,78 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		rightArm.xRot = Mth.lerp(smash, rightArm.xRot, -0.75F);
 		body.xRot = Mth.lerp(smash, body.xRot, 0.25F);
 		leftArm.xRot = Mth.lerp(raise, leftArm.xRot, -0.9F);
+	}
+
+	/** Both hands drawn back and spread through the wind-up, as if setting knives in a board, then thrown forward. */
+	private void knifeBoard(float ticks, float commit) {
+		float draw = HemoEasing.smoothstep(0.0F, commit, ticks) * (1.0F - HemoEasing.smoothstep(commit, commit + 2.0F, ticks));
+		float throwOut = HemoEasing.smoothstep(commit - 1.0F, commit + 1.0F, ticks)
+				* (1.0F - HemoEasing.smoothstep(commit + 2.0F, commit + 8.0F, ticks));
+		leftArm.xRot = Mth.lerp(draw, leftArm.xRot, -2.6F);
+		leftArm.zRot = Mth.lerp(draw, leftArm.zRot, -0.9F);
+		rightArm.zRot = Mth.lerp(draw, rightArm.zRot, 0.6F);
+		body.xRot = Mth.lerp(draw, body.xRot, -0.15F);
+		leftArm.xRot = Mth.lerp(throwOut, leftArm.xRot, -1.4F);
+		leftArm.zRot = Mth.lerp(throwOut, leftArm.zRot, 0.1F);
+		body.xRot = Mth.lerp(throwOut, body.xRot, 0.2F);
+	}
+
+	/** The staff lifted high and held, the free hand pointing down at the lit pool, for the whole of the light. */
+	private void spotlight(float ticks, float commit, float total, float ageInTicks) {
+		float hold = HemoEasing.smoothstep(0.0F, commit * 0.6F, ticks) * (1.0F - HemoEasing.smoothstep(total - 6.0F, total, ticks));
+		float sway = Mth.sin(ageInTicks * 0.15F) * 0.05F;
+		rightArm.xRot = Mth.lerp(hold, rightArm.xRot, -2.9F + sway);
+		rightArm.zRot = Mth.lerp(hold, rightArm.zRot, 0.2F);
+		leftArm.xRot = Mth.lerp(hold, leftArm.xRot, -1.3F);
+		leftArm.yRot = Mth.lerp(hold, leftArm.yRot, 0.3F);
+		head.xRot = Mth.lerp(hold, head.xRot, 0.25F);
+	}
+
+	/** The Cue: the staff raised like a baton through the count, then brought down hard on the beat. */
+	private void cue(float ticks, float commit, float total) {
+		float count = HemoEasing.smoothstep(0.0F, commit, ticks) * (1.0F - HemoEasing.smoothstep(commit - 1.0F, commit, ticks));
+		float down = HemoEasing.smoothstep(commit - 1.0F, commit + 0.5F, ticks)
+				* (1.0F - HemoEasing.smoothstep(commit + 2.0F, total, ticks));
+		rightArm.xRot = Mth.lerp(count, rightArm.xRot, -3.1F);
+		rightArm.zRot = Mth.lerp(count, rightArm.zRot, -0.3F);
+		leftArm.xRot = Mth.lerp(count, leftArm.xRot, -2.2F);
+		leftArm.zRot = Mth.lerp(count, leftArm.zRot, -1.0F);
+		head.xRot = Mth.lerp(count, head.xRot, -0.3F);
+		rightArm.xRot = Mth.lerp(down, rightArm.xRot, -0.4F);
+		leftArm.zRot = Mth.lerp(down, leftArm.zRot, -0.3F);
+		body.xRot = Mth.lerp(down, body.xRot, 0.3F);
+	}
+
+	/** Strings Cut: both fists close and haul back on a thread through the wind-up, then the borrowed act lands. */
+	private void pullStrings(float ticks, float commit, float total) {
+		float haul = HemoEasing.smoothstep(0.0F, commit, ticks) * (1.0F - HemoEasing.smoothstep(commit, commit + 1.5F, ticks));
+		float release = HemoEasing.smoothstep(commit, commit + 1.5F, ticks) * (1.0F - HemoEasing.smoothstep(commit + 3.0F, total, ticks));
+		leftArm.xRot = Mth.lerp(haul, leftArm.xRot, -1.6F);
+		leftArm.yRot = Mth.lerp(haul, leftArm.yRot, -0.6F);
+		rightArm.xRot = Mth.lerp(haul, rightArm.xRot, -1.2F);
+		rightArm.yRot = Mth.lerp(haul, rightArm.yRot, 0.6F);
+		body.xRot = Mth.lerp(haul, body.xRot, -0.25F);
+		rightArm.xRot = Mth.lerp(release, rightArm.xRot, -1.9F);
+		leftArm.xRot = Mth.lerp(release, leftArm.xRot, -1.9F);
+		body.xRot = Mth.lerp(release, body.xRot, 0.3F);
+	}
+
+	/**
+	 * The closing beat. Yield: he sinks onto one knee, the staff planted beside him and the head bowed. Collapse: the
+	 * same kneel, then the body folds forward and the arms hang as the threads let go.
+	 */
+	private void curtain(float ticks, float breath) {
+		float kneel = HemoEasing.smoothstep(0.0F, 14.0F, ticks);
+		float fold = HemoEasing.smoothstep(20.0F, 40.0F, ticks);
+		body.xRot = Mth.lerp(kneel, 0.0F, 0.35F + breath) + 0.4F * fold;
+		head.xRot = Mth.lerp(kneel, 0.0F, 0.55F) + 0.2F * fold;
+		rightLeg.xRot = Mth.lerp(kneel, 0.0F, -1.45F);
+		rightCalf.xRot = Mth.lerp(kneel, 0.0F, 1.5F);
+		leftLeg.xRot = Mth.lerp(kneel, 0.0F, 0.2F);
+		leftCalf.xRot = Mth.lerp(kneel, 0.0F, 1.6F);
+		rightArm.xRot = Mth.lerp(kneel, rightArm.xRot, -0.6F);
+		rightArm.zRot = Mth.lerp(kneel, rightArm.zRot, 0.15F);
+		leftArm.xRot = Mth.lerp(kneel, leftArm.xRot, 0.1F) + 0.4F * fold;
+		leftArm.zRot = Mth.lerp(kneel, leftArm.zRot, -0.1F);
 	}
 }

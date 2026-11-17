@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -63,8 +63,8 @@ public class LetheanChaliceItem extends Item {
 			level.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 0.8f, 1.4f);
 			level.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.7f, 1.2f);
 			if (level instanceof ServerLevel serverLevel) {
-				serverLevel.sendParticles(ParticleTypes.SPLASH, player.getX(), player.getY() + 1.0, player.getZ(),
-						24, 0.4, 0.6, 0.4, 0.02);
+				serverLevel.sendParticles(HemoParticleData.letheanDrip(), player.getX(), player.getEyeY() - 0.15,
+						player.getZ(), 24, 0.4, 0.6, 0.4, 0.0);
 			}
 			player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
 		}

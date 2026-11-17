@@ -4,10 +4,18 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import io.netty.buffer.Unpooled;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.mojang.serialization.JsonOps;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.vincenthuto.hemomancy.common.recipe.serializer.*;
 import net.minecraft.core.NonNullList;
 import net.minecraft.gametest.framework.GameTest;
@@ -77,6 +85,53 @@ public final class RecipeCodecGameTests {
     public static void cardinalRiteRetainsResultFormatsAndRegistryContext(GameTestHelper helper) throws Exception {
         checkFamily(helper, new CardinalRiteRecipeSerializer().codec().codec(), "cardinal_rite/ancestral_communion");
         helper.succeed();
+    }
+
+    /**
+     * FX-10: every loaded Cardinal Rite encodes with JSON ops and with NBT ops and decodes back to the same recipe, read
+     * as the bytes its stream codec writes.
+     */
+    @GameTest(template = "empty")
+    public static void everyCardinalRiteSurvivesJsonAndNbtRoundTrips(GameTestHelper helper) {
+        var serializer = new CardinalRiteRecipeSerializer();
+        var codec = serializer.codec().codec();
+        var registries = helper.getLevel().registryAccess();
+        List<DynamicOps<?>> allOps = List.of(registries.createSerializationContext(JsonOps.INSTANCE),
+                registries.createSerializationContext(NbtOps.INSTANCE));
+        List<String> broken = new ArrayList<>();
+        var rites = CardinalRiteRecipe.getAllRecipes(helper.getLevel());
+        for (CardinalRiteRecipe rite : rites) {
+            byte[] original = wire(serializer, registries, rite);
+            for (DynamicOps<?> ops : allOps) {
+                var copy = roundTrip(codec, ops, rite);
+                if (copy.error().isPresent()) {
+                    broken.add(rite.getId() + " via " + ops.getClass().getSimpleName() + ": " + copy.error().get().message());
+                } else if (!Arrays.equals(original, wire(serializer, registries, copy.getOrThrow()))) {
+                    broken.add(rite.getId() + " via " + ops.getClass().getSimpleName() + " changed");
+                }
+            }
+        }
+        helper.assertTrue(!rites.isEmpty(), "Cardinal Rites must load");
+        helper.assertTrue(broken.isEmpty(), broken.size() + " round trips failed: " + String.join("; ", broken));
+        helper.succeed();
+    }
+
+    private static <T> DataResult<CardinalRiteRecipe> roundTrip(Codec<CardinalRiteRecipe> codec, DynamicOps<T> ops,
+            CardinalRiteRecipe rite) {
+        return codec.encodeStart(ops, rite).flatMap(encoded -> codec.parse(ops, encoded));
+    }
+
+    private static byte[] wire(CardinalRiteRecipeSerializer serializer, net.minecraft.core.RegistryAccess registries,
+            CardinalRiteRecipe rite) {
+        var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), registries);
+        try {
+            serializer.streamCodec().encode(buffer, rite);
+            byte[] bytes = new byte[buffer.readableBytes()];
+            buffer.readBytes(bytes);
+            return bytes;
+        } finally {
+            buffer.release();
+        }
     }
 
     private static <R> void checkFamily(GameTestHelper helper, Codec<R> codec, String path) throws Exception {

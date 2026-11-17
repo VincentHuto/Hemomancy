@@ -16,7 +16,8 @@ public final class VesperCombatRules {
 	public static final float ANCHOR_HITBOX_WIDTH = 2.0F;
 	public static final float ANCHOR_HITBOX_HEIGHT = 2.2F;
 	public static final int ANCHOR_HIT_FLASH_TICKS = 4;
-	private static final float[] ANCHOR_THRESHOLDS = { 0.72F, 0.42F, 0.12F };
+	/** The three wound anchors, first to last (CR-19). */
+	private static final float[] ANCHOR_THRESHOLDS = { 0.70F, 0.40F, 0.10F };
 	private static final Map<EnumBloodTemper, StanceProfile> STANCES = createStances();
 
 	private VesperCombatRules() {
@@ -31,6 +32,24 @@ public final class VesperCombatRules {
 			}
 		}
 		return -1;
+	}
+
+	public static float anchorThreshold(int anchor) {
+		return ANCHOR_THRESHOLDS[anchor];
+	}
+
+	public static float[] anchorThresholds() {
+		return ANCHOR_THRESHOLDS.clone();
+	}
+
+	/** The grounded burrow opens 2% under the first wound (CR-28), or once the wings have grown. */
+	public static boolean mayGroundBurrow(float health, float maxHealth, boolean wingsGrown) {
+		return wingsGrown || health <= maxHealth * (ANCHOR_THRESHOLDS[0] - 0.02F);
+	}
+
+	/** Idle pause between his grounded attacks: shorter once the second wound's health is reached. */
+	public static int groundedIdleTicks(float health, float maxHealth) {
+		return health <= maxHealth * ANCHOR_THRESHOLDS[1] ? 24 : 36;
 	}
 
 	public static float healthFloor(float maxHealth, int brokenAnchorMask) {

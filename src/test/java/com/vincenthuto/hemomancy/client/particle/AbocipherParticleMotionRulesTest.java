@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.client.particle;
 
+import org.junit.jupiter.api.Test;
+
 final class AbocipherParticleMotionRulesTest {
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		horizontalSwimCanCrossAChunkRoom();
 		verticalDriftDoesNotDominateSwim();
 	}

@@ -35,17 +35,23 @@ public final class ManipulationVisualRenderer {
 
     public static void accept(ManipulationVisualPacket packet) {
         ClientLevel current = Minecraft.getInstance().level;
-        if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); PuppetStringStates.clear(); world = current; }
+        if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); PuppetStringStates.clear();
+            com.vincenthuto.hemomancy.client.data.StrandClientState.clear(); world = current; }
         if (current == null || !Float.isFinite(packet.radius()) || packet.radius() < 0 || packet.radius() > 100000
-                || (packet.radius()>128 && packet.form()!=ManipulationVisuals.Form.DEBT && packet.form()!=ManipulationVisuals.Form.HOUR && packet.form()!=ManipulationVisuals.Form.HOUR_BREAK)
+                || packet.radius()>128
                 || !finite(packet.from()) || !finite(packet.to())) return;
         long now = current.getGameTime();
+        // A strand is drawn by every client from the caster's look; its cue only opens, refreshes and ends it.
+        if (packet.form() == ManipulationVisuals.Form.STRAND) {
+            com.vincenthuto.hemomancy.client.data.StrandClientState.accept(packet, current);
+            return;
+        }
         PuppetStringStates.accept(packet,now);
         com.vincenthuto.hemomancy.client.render.layer.MortemSkinLayer.accept(packet,current);
         com.vincenthuto.hemomancy.client.render.layer.ThermalSkinLayer.accept(packet,current);
         boolean keyed = packet.entityId() >= 0 || packet.form() == ManipulationVisuals.Form.WELL
                 || packet.form() == ManipulationVisuals.Form.BEACON || packet.form() == ManipulationVisuals.Form.ORE
-                || packet.form() == ManipulationVisuals.Form.CRUOR_SURFACE;
+                || packet.form() == ManipulationVisuals.Form.CRUOR_SURFACE || packet.form() == ManipulationVisuals.Form.UMBRAL_FIELD;
         if (keyed) {
             for (Cue cue : CUES) {
                 if (!cue.life.retiring() && sameSource(cue.packet, packet)) {
@@ -133,11 +139,13 @@ public final class ManipulationVisualRenderer {
     public static void tick(ClientTickEvent.Post event) {
         ClientLevel current = Minecraft.getInstance().level;
         if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); PuppetStringStates.clear();
+            com.vincenthuto.hemomancy.client.data.StrandClientState.clear();
             com.vincenthuto.hemomancy.client.render.item.harbinger.HeldWeaponPose.clear(); world = current; }
         LuxUmbraEffects.tick();
         BloodFlowEffects.tick();
         BloodProjectileEffects.tick();
         BloodBindingTendrilRenderer.tick();
+        StrandRenderer.tick();
         WorkingCraftSwallowRenderer.tick();
         WorldRiteFinaleGeometry.tick();
         FerricDuctilisEffects.tick();
@@ -197,6 +205,8 @@ public final class ManipulationVisualRenderer {
                     && !LodestoneFieldGeometry.handles(packet.form())
                     && !WeaponConjureGeometry.handles(packet.form()) && !SanguineMendingGeometry.handles(packet.form())
                     && !ForgedNeedleGeometry.handlesCharge(packet.form()) && !HemorathReliquaryGeometry.handles(packet.form())
+                    && !StrandRenderer.handlesAccent(packet.form())
+                    && !canonGift(packet.form())
                     && !CastImpactGeometry.handles(packet.form()))continue;
             Vec3 from = cue.lastFrom;
             if (!cue.life.retiring() && packet.entityId() >= 0) {
@@ -212,6 +222,7 @@ public final class ManipulationVisualRenderer {
                     if ((packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART
                             || bodyAnchored(packet.form())
                             || RadiantWakeGeometry.handles(packet.form())
+                            || canonGift(packet.form())
                             || packet.form()==ManipulationVisuals.Form.RIPOSTE || PhoenixDebtGeometry.handles(packet.form()))
                             && entity instanceof net.minecraft.world.entity.LivingEntity living) {
                         cue.bodyYaw=Mth.rotLerp(partial,living.yBodyRotO,living.yBodyRot);
@@ -292,13 +303,30 @@ public final class ManipulationVisualRenderer {
                     AvatarManifestGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),eye,right,up,time,age,opacity,frame);
                 poses.popPose();continue;
             }
+            if(canonGift(packet.form())) {
+                // The Saint gifts author their own timelines; iron and bone in the solid pass, blood and light in the flow pass.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                if(source!=null && source.isInvisible()) {poses.popPose();continue;}
+                var caster=packet.form()==ManipulationVisuals.Form.TITHE_CHAIN?world.getEntity(packet.count()):source;
+                if(packet.form()==ManipulationVisuals.Form.TITHE_CHAIN && caster==null) {poses.popPose();continue;}
+                CasterFrame frame=packet.form()==ManipulationVisuals.Form.TITHE_CHAIN?giftChainFrame(caster,partial,from)
+                        :casterFrame(cue,source,partial,from);
+                var gift=new CanonGiftDraw(poses,FLOWS,buffers,solids,camera.subtract(from),
+                        right,up,time,age,opacity,frame,source,caster,from,partial);
+                if(CrimsonTitheGeometry.handles(packet.form())) CrimsonTitheGeometry.draw(packet,gift);
+                else if(UnclosingEyeGeometry.handles(packet.form())) UnclosingEyeGeometry.draw(packet,gift);
+                else if(BloomOfRotGeometry.handles(packet.form())) BloomOfRotGeometry.draw(packet,gift);
+                else EndlessHourGeometry.draw(packet,gift);
+                poses.popPose();continue;
+            }
             if(FerricDuctilisGeometry.handles(packet.form())) {
                 float formation=cue.life.retiring()?cue.life.retiredFormation():cue.life.formation(time);
                 float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):cue.life.presence(time);
                 var source=world.getEntity(packet.entityId());
                 FerricDuctilisGeometry.draw(packet,poses,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
                         solids?FerricDuctilisGeometry.DISCARD:FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),camera.subtract(from),right,up,time,age,formation,opacity,
-                        source instanceof net.minecraft.world.entity.LivingEntity living?living:null);
+                        source instanceof net.minecraft.world.entity.LivingEntity living?living:null,cue.life.born);
                 poses.popPose();continue;
             }
             if(LodestoneCollapseGeometry.handles(packet.form())) {
@@ -313,6 +341,13 @@ public final class ManipulationVisualRenderer {
                 float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
                 LodestoneFieldGeometry.draw(packet,poses,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
                         solids?FerricDuctilisGeometry.DISCARD:FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(StrandRenderer.handlesAccent(packet.form())) {
+                // A strand's accent authors its own flash, burst and fray.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                StrandRenderer.drawAccent(packet,poses,FLOWS,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
+                        solids,camera.subtract(from),right,up,time,age,opacity);
                 poses.popPose();continue;
             }
             if(SearingLashGeometry.handles(packet.form())) {
@@ -489,17 +524,20 @@ public final class ManipulationVisualRenderer {
                 float formation=cue.life.retiring()?cue.life.retiredFormation():cue.life.formation(time);
                 float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):cue.life.presence(time);
                 if(!cue.surface.patches().isEmpty()) {
-                    double spread=packet.radius()*Math.min(1,(age+1)/12.0);
-                    int seed=Math.floorMod(packet.entityId(),113);
+                    boolean chum=packet.form()==ManipulationVisuals.Form.CHUM_BLOOM;
+                    double spread=packet.radius()*Math.min(1,(age+1)/(chum?20.0:12.0));
+                    int seed=Math.floorMod(CueSeed.of(packet,cue.life.born),113);
+                    // Chum lies thin and partly clear on the water, by the pool's strength (its count, in hundredths).
+                    float patchAlpha=chum?opacity*(.1f+.16f*Math.min(1,packet.count()/100f)):opacity*.8f;
                     for(var patch:cue.surface.patches()) {
                         Vec3 local=patch.center().subtract(from);
                         if(local.x*local.x+local.z*local.z>spread*spread)continue;
-                        LuxUmbraGeometry.ground(poses,FLOWS.vertices(LuxUmbraBatch.Material.MORTEM),local,
-                                patch.halfWidth(),packet.form()==ManipulationVisuals.Form.BLOOM?8:2,seed++,0xFFFFFF,opacity*.8f);
+                        LuxUmbraGeometry.ground(poses,FLOWS.vertices(chum?LuxUmbraBatch.Material.ANIMUS:LuxUmbraBatch.Material.MORTEM),local,
+                                patch.halfWidth(),2,seed++,0xFFFFFF,patchAlpha);
                     }
                 }
                 AnimusMortemGeometry.draw(packet,poses,FLOWS.vertices(AnimusMortemGeometry.mortem(packet.form())
-                        ?LuxUmbraBatch.Material.MORTEM:LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,time,age,formation,opacity);
+                        ?LuxUmbraBatch.Material.MORTEM:LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,time,age,formation,opacity,cue.life.born);
                 poses.popPose();continue;
             }
             if(ThermalGeometry.handles(packet.form())) {
@@ -508,14 +546,14 @@ public final class ManipulationVisualRenderer {
                 var thermalPacket=packet.form()==ManipulationVisuals.Form.CRUOR_SURFACE?
                         new ManipulationVisualPacket(packet.form(),packet.entityId(),packet.from(),packet.to(),packet.radius(),packet.ticks(),cue.exposedFaces):packet;
                 ThermalGeometry.draw(thermalPacket,poses,FLOWS,buffers.getBuffer(ThermalRenderTypes.CORE),from,camera.subtract(from),right,up,
-                        time,age,formation,opacity,cue.surface,cue.fragments,partial,mc.options.particles().get()!=net.minecraft.client.ParticleStatus.MINIMAL);
+                        time,age,formation,opacity,cue.surface,cue.fragments,partial,mc.options.particles().get()!=net.minecraft.client.ParticleStatus.MINIMAL,cue.life.born);
                 poses.popPose();continue;
             }
             if (LuxUmbraGeometry.handles(packet.form())) {
                 float formation = cue.life.retiring() ? cue.life.retiredFormation() : cue.life.formation(time);
                 float opacity = cue.life.retiring() ? cue.life.retiredOpacity() * cue.life.residue(time) : cue.life.presence(time);
                 LuxUmbraGeometry.draw(packet, poses, FLOWS.vertices(LuxUmbraGeometry.umbra(packet.form())), camera.subtract(from), right, up,
-                        time, age, formation, opacity);
+                        time, age, formation, opacity, cue.life.born);
                 poses.popPose();
                 continue;
             }
@@ -527,7 +565,7 @@ public final class ManipulationVisualRenderer {
                     if(ManipulationBloodFormation.retainsDissolvingBody(packet.form()) && cue.life.retiredOpacity()>0) {
                         poses.pushPose();
                         draw(packet,poses,new CoalescingVertexConsumer(vertices,cue.life.retiredFormation(),departure,true),
-                                time,age,cue.life.retiredOpacity());
+                                time,age,cue.life.retiredOpacity(),cue.life.born);
                         poses.popPose();
                     }
                     ManipulationBloodFormation.draw(packet,poses,vertices,departure,true,time);
@@ -537,7 +575,7 @@ public final class ManipulationVisualRenderer {
                 VertexConsumer body=packet.form()==ManipulationVisuals.Form.ORE?vertices:
                         new CoalescingVertexConsumer(vertices,formation,departure);
                 poses.pushPose();
-                draw(packet,poses,body,time,age,1);
+                draw(packet,poses,body,time,age,1,cue.life.born);
                 poses.popPose();
                 if(formation<1 && packet.form()!=ManipulationVisuals.Form.ORE)
                     ManipulationBloodFormation.draw(packet,poses,vertices,formation,false,time);
@@ -547,12 +585,14 @@ public final class ManipulationVisualRenderer {
         if(solids) {
             FerricDuctilisEffects.render(poses,FLOWS,buffers.getBuffer(FerricDuctilisRenderTypes.IRON),camera,right,up,time,partial,true);
             BloodProjectileEffects.renderIron(poses,buffers.getBuffer(FerricDuctilisRenderTypes.IRON),camera,time,partial);
+            StrandRenderer.collectIron(poses,buffers.getBuffer(FerricDuctilisRenderTypes.IRON),camera,time,partial);
             buffers.endBatch(FerricDuctilisRenderTypes.IRON);return;
         }
         BloodProjectileEffects.render(poses,FLOWS,camera,right,up,time,partial);
         BloodEffectParticles.render(poses,FLOWS,camera,right,up,time);
         BloodFlowEffects.render(poses,FLOWS,camera,right,up,time,partial);
         BloodBindingTendrilRenderer.collect(poses,FLOWS,camera,partial);
+        StrandRenderer.collect(poses,FLOWS,camera,right,up,time,partial);
         WorkingCraftSwallowGeometry.collect(poses,FLOWS,camera,partial);
         WorldRiteFinaleGeometry.collect(poses,FLOWS,camera,partial);
         LuxUmbraEffects.render(poses, FLOWS, camera, right, up, time, partial);
@@ -570,6 +610,26 @@ public final class ManipulationVisualRenderer {
         buffers.endBatch(HemoRenderTypes.MANIPULATION_LOCATOR);
         renderBoundaries(poses,buffers,camera,time,true);
         renderBoundaries(poses,buffers,camera,time,false);
+    }
+
+    /**
+     * How deep {@code viewer} stands in a field of dark (core-loop round two P8), 0 to 1: the deepest of the live
+     * {@code UMBRAL_FIELD} cues by {@code DarkFieldRules.depth}, eased in as the cue forms and out as it retires.
+     */
+    public static float umbralDepth(Vec3 viewer, double time) {
+        if (world == null || viewer == null) return 0;
+        float deepest = 0;
+        for (Cue cue : CUES) {
+            if (cue.packet.form() != ManipulationVisuals.Form.UMBRAL_FIELD) continue;
+            // A dome carried by this client's own player is theirs to see through.
+            var me = net.minecraft.client.Minecraft.getInstance().player;
+            if (cue.packet.entityId() >= 0 && me != null && cue.packet.entityId() == me.getId()) continue;
+            float presence = cue.life.retiring() ? cue.life.retiredOpacity() * cue.life.residue(time) : cue.life.presence(time);
+            float depth = com.vincenthuto.hemomancy.common.world.ground.DarkFieldRules.depth(
+                    viewer.distanceTo(cue.packet.entityId() >= 0 ? cue.lastFrom : cue.packet.from()), cue.packet.radius()) * presence;
+            deepest = Math.max(deepest, depth);
+        }
+        return deepest;
     }
 
     /**
@@ -625,6 +685,34 @@ public final class ManipulationVisualRenderer {
                 cue.packet.from().subtract(from),fingers);
     }
 
+    /** A Tithe chain's frame: the caster's palm in world space, offset from the chained body's feet {@code from}. */
+    /** The Saint gifts' own geometry (D-1): each authors its timeline over the flow and solid passes. */
+    private static boolean canonGift(ManipulationVisuals.Form form) {
+        return CrimsonTitheGeometry.handles(form) || UnclosingEyeGeometry.handles(form) || BloomOfRotGeometry.handles(form)
+                || EndlessHourGeometry.handles(form);
+    }
+
+    private static CasterFrame giftChainFrame(net.minecraft.world.entity.Entity caster,float partial,Vec3 from) {
+        var mc=Minecraft.getInstance();
+        boolean firstPerson=caster==mc.player && mc.options.getCameraType().isFirstPerson();
+        Vec3 feet=caster.getPosition(partial);
+        float yaw=caster instanceof net.minecraft.world.entity.LivingEntity living?Mth.rotLerp(partial,living.yBodyRotO,living.yBodyRot):caster.getYRot();
+        Vec3 palm=null;
+        if(caster instanceof net.minecraft.world.entity.player.Player player) {
+            var arm=player.getMainArm();
+            if(firstPerson) {
+                palm=com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.world(arm);
+                if(palm==null)palm=com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.itemHand(arm);
+            } else {
+                Vec3 captured=com.vincenthuto.hemomancy.client.render.outpouring.OutpouringAnchors.capturedMainHand(player);
+                if(captured!=null && captured.distanceToSqr(feet)<9)palm=captured;
+            }
+        }
+        Vec3 look=caster.getViewVector(partial);
+        if(palm==null)palm=feet.add(CasterFrame.estimateHand(yaw,1,caster.isCrouching(),firstPerson,look,1));
+        return new CasterFrame(yaw,yaw,1,caster.isCrouching(),firstPerson,palm.subtract(from),look,Vec3.ZERO,Vec3.ZERO,null);
+    }
+
     private static void renderBoundaries(PoseStack poses,MultiBufferSource.BufferSource buffers,
             Vec3 camera,double time,boolean glow) {
         var type=glow?com.vincenthuto.hemomancy.client.render.RenderTypeInit.RITE_BOUNDARY_GLOW:
@@ -647,9 +735,9 @@ public final class ManipulationVisualRenderer {
     }
 
     private static void draw(ManipulationVisualPacket packet, PoseStack p, VertexConsumer v,
-            double time, float age, float fade) {
+            double time, float age, float fade, long salt) {
         if(packet.form()!=ManipulationVisuals.Form.ORE) {
-            int seed=packet.entityId()>=0?packet.entityId():packet.from().hashCode();
+            int seed=CueSeed.of(packet,salt);
             v=new UndulatingVertexConsumer(v,new ManipulationUndulation(packet.form(),time,age,seed,
                     packet.radius(),packet.to().subtract(packet.from())));
         }
@@ -702,24 +790,6 @@ public final class ManipulationVisualRenderer {
             case ORE -> {
                 VisceralMesh.locatorBox(p,v,.48,0xF0C985,fade*.6F);
             }
-        }
-    }
-
-    public static void hud(net.minecraft.client.gui.GuiGraphics graphics) {
-        var mc=Minecraft.getInstance();if(mc.player==null || world!=mc.level || mc.options.hideGui)return;
-        int y=graphics.guiHeight()-65;
-        for(Cue cue:CUES) {
-            var p=cue.packet;if(p.entityId()!=mc.player.getId())continue;
-            boolean tithe=p.form()==ManipulationVisuals.Form.DEBT;
-            if(!tithe && p.form()!=ManipulationVisuals.Form.HOUR)continue;
-            if(cue.life.retiring())continue;
-            long seconds=(cue.life.remaining(world.getGameTime())+19)/20;
-            net.minecraft.network.chat.Component text=tithe
-                    ?net.minecraft.network.chat.Component.translatable("gui.hemomancy.manipulation_visual_renderer.tithe",p.count(),Math.round(p.radius()),seconds)
-                    :net.minecraft.network.chat.Component.translatable("gui.hemomancy.manipulation_visual_renderer.endless_hour",String.format(java.util.Locale.ROOT,"%.1f",p.radius()),seconds);
-            int x=(graphics.guiWidth()-mc.font.width(text))/2;
-            graphics.fill(x-4,y-2,x+mc.font.width(text)+4,y+11,0xBB170A16);
-            graphics.drawString(mc.font,text,x,y,seconds<=5?0xFF6878:0xEAC3B6);y-=15;
         }
     }
 

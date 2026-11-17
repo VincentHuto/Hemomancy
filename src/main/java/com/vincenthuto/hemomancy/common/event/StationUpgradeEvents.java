@@ -13,9 +13,7 @@ public final class StationUpgradeEvents {
 
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        HemoCapabilityAccess.stationUpgrades(player).deliver(player);
-        HemoCapabilityAccess.stationUpgrades(player).unlockEligibleLessons(player);
+        if (event.getEntity() instanceof ServerPlayer player) HemoCapabilityAccess.stationUpgrades(player).unlockEligibleLessons(player);
     }
 
     /**

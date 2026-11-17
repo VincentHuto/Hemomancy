@@ -87,7 +87,19 @@ public final class SanguineCondenserGameTests {
         condenser.receiveProjectedBlood(filler, 750);
         tick(helper, condenser, 120);
 
-        helper.assertTrue(condenser.collect(bystander) == 1, "the bystander could not collect");
+        // CL-8 (core-loop Track 3): a stranger may not take the owner's formations; kin may.
+        helper.assertTrue(condenser.collect(bystander) == 0, "a stranger collected the owner's formation");
+        var bloodlines = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData
+                .get(helper.getLevel().getServer().overworld());
+        var line = new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline("Shared cauldron",
+                filler.getUUID(), java.util.UUID.randomUUID(),
+                new java.util.ArrayList<>(java.util.List.of(filler.getUUID(), bystander.getUUID())));
+        bloodlines.registerBloodline(line);
+        try {
+            helper.assertTrue(condenser.collect(bystander) == 1, "the owner's bloodline could not collect");
+        } finally {
+            bloodlines.disbandBloodline(line.getBloodlineUUID());
+        }
         tick(helper, condenser, 120);
         helper.assertTrue(!FirstBloodcraftAssignment.progress(bystander).formationProjected(),
                 "collecting someone else's formation counted for the Vicar");

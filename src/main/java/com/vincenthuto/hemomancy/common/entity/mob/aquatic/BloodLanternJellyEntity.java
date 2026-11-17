@@ -4,7 +4,8 @@ import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
 import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.phys.Vec3;
 
 public class BloodLanternJellyEntity extends PathfinderMob {
+	private static final ParticleColor BELL_GLOW = new ParticleColor(214, 30, 46);
 
 	public BloodLanternJellyEntity(EntityType<? extends BloodLanternJellyEntity> type, Level level) {
 		super(type, level);
@@ -76,8 +78,8 @@ public class BloodLanternJellyEntity extends PathfinderMob {
 		this.setNoGravity(this.isInWater());
 		if (this.level().isClientSide()) {
 			if (this.random.nextInt(12) == 0) {
-				this.level().addParticle(ParticleTypes.CRIMSON_SPORE, this.getX(), this.getY() + 0.25D, this.getZ(),
-						0.0D, 0.01D, 0.0D);
+				this.level().addParticle(HemoParticleData.emberSpark(BELL_GLOW, 0.031F, 0.8F, 30),
+						this.getX(), this.getY() + 0.25D, this.getZ(), 0.0D, 0.01D, 0.0D);
 			}
 		}
 	}

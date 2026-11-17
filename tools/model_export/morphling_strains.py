@@ -77,7 +77,7 @@ class Rig:
         return ''.join(w.capitalize() for w in self.strain.split('_')) + anchor + 'Model'
 
     def part(self, name, parent='root', pivot=(0, 0, 0), rotation=(0, 0, 0), stage=2, limb=None, motion='NONE',
-             amp=0.0, speed=0.0, phase=0.0, flags=(), glow_group=0):
+             amp=0.0, speed=0.0, phase=0.0, flags=(), glow_group=0, until=5):
         assert name not in self.names, (self.name, name)
         assert motion in MOTIONS, motion
         assert all(f in FLAG_BITS for f in flags), flags
@@ -93,7 +93,7 @@ class Rig:
         self.names.add(name)
         self.parts.append(dict(name=name, parent=parent, pivot=tuple(pivot), rotation=tuple(rotation), stage=stage,
                                limb=limb, motion=motion, amp=amp, speed=speed, phase=phase, flags=tuple(flags),
-                               glow_group=glow_group, cubes=[]))
+                               glow_group=glow_group, until=until, cubes=[]))
         return name
 
     def get(self, name):
@@ -147,7 +147,7 @@ PURSE = dict(cobalt=mat((40, 70, 170), style='scale'), silver=mat((190, 200, 214
              purse=mat((150, 28, 40), style='leather'), ridge=mat((106, 18, 30), style='leather'),
              horn=mat((196, 78, 66)), fin=mat((58, 92, 196, 235), style='fin'),
              sail=mat((48, 78, 182, 240), (232, 58, 92), 'sail'), crimson=mat((172, 30, 52), (226, 70, 96)))
-ROPE = dict(vein=mat((140, 124, 232, 210), (178, 160, 255), 'vein'), strand=mat((116, 106, 214, 175), (150, 138, 255), 'strand'),
+ROPE = dict(vein=mat((140, 124, 232, 210), (178, 160, 255), 'vein'), strand=mat((96, 84, 198, 215), (150, 138, 255), 'strand'),
             bead=mat((196, 186, 255, 225), (220, 212, 255)), node=mat((92, 80, 190, 225), (170, 150, 255)))
 INK_CAP = dict(cap=mat((232, 226, 214), style='shag'), cap_light=mat((246, 242, 232), style='shag'),
                cap_dark=mat((44, 38, 48), style='shag'), ink=mat((16, 13, 20)), veil=mat((22, 18, 28, 160), style='veil'),
@@ -178,18 +178,19 @@ def sunburst():
         body.cube(r, (-.75, -.75, 1.25, 1.5, .5, .75), 'crust')
         body.cube(r, (-.5, -.75, -.5, .5, .25, .5), 'alga')
     crust = body.part('crust_back', pivot=(0, 0, 2), stage=3)
-    for box, m in [((-3.5, .5, 0, 7, 3, .5), 'crust'), ((-2.5, 3.5, 0, 5, 1.5, .5), 'crust'),
-                   ((-4, 1, 0, 1, 2, .5), 'crust_dark'), ((3, 1, 0, 1, 2, .5), 'crust_dark'),
-                   ((-3, .25, .25, 2, 1, .5), 'crust_light'), ((1, .75, .25, 2.25, 1, .5), 'crust_light'),
-                   ((-1, 2.5, .25, 2, 1, .5), 'crust_dark'), ((-2.25, 4.5, 0, 1.25, 1, .5), 'crust_light'),
-                   ((1.5, 4.25, .25, 1, .75, .5), 'alga'), ((-.5, 1.5, .5, 1, .5, .25), 'alga')]:
+    for box, m in [((-4, .5, 0, 8, 4, 1), 'crust'), ((-3, 4.5, 0, 6, 2.5, 1), 'crust'),
+                   ((-4.5, 1, 0, 1, 3, 1), 'crust_dark'), ((3.5, 1, 0, 1, 3, 1), 'crust_dark'),
+                   ((-3.5, .25, 1, 2.5, 1.5, .5), 'crust_light'), ((1, .75, 1, 2.5, 1.5, .5), 'crust_light'),
+                   ((-1.5, 2.5, 1, 3, 1.5, .75), 'crust_dark'), ((-2.5, 5, 1, 1.5, 1.5, .5), 'crust_light'),
+                   ((1.5, 5, 1, 1.25, 1, .5), 'alga'), ((-.5, 1.5, 1.5, 1.5, 1, .5), 'alga'),
+                   ((-2, 7, 0, 4, 1, .75), 'crust_dark')]:
         body.cube(crust, box, m)
     for s in (-1, 1):
-        bud = body.part(f'frond_bud_{side(s)}', pivot=(s * 2, 2.5, 2.5), rotation=(-.35, 0, s * .3), stage=3,
+        bud = body.part(f'frond_bud_{side(s)}', pivot=(s * 2.25, 2.5, 3), rotation=(-.35, 0, s * .3), stage=3,
                         motion='SWAY', amp=.05, speed=.05, phase=s)
-        body.cube(bud, (-.5, -2, -.25, 1, 2, .5), 'frond')
-        body.cube(bud, (-.75, -2.75, -.25, 1.5, .75, .5), 'frond')
-        body.cube(bud, (-.25, -1.5, 0, .5, 1.5, .5), 'rib')
+        body.cube(bud, (-1, -3.5, -.25, 2, 3.5, .5), 'frond')
+        body.cube(bud, (-1.5, -4.75, -.25, 3, 1.25, .5), 'frond')
+        body.cube(bud, (-.25, -3, 0, .5, 3, .5), 'rib')
     # Apex: broad fronds fanning from the back and shoulders; they open wide with the light, Lantern Fronds and Bloom.
     for i, spread in enumerate((-1.05, -.52, 0, .52, 1.05)):
         f = body.part(f'frond_{i}', pivot=(spread * 2.2, 1.5 + abs(spread), 2.5), rotation=(-.5, 0, spread),
@@ -245,6 +246,11 @@ def holdfast():
         for box in [(2, y, -2.25, .5, 1, 4.5), (-2.5, y, -2.25, .5, 1, 4.5), (-2, y, 2, 4, 1, .5), (-2, y, -2.5, 4, 1, .5)]:
             arms.cube(band, box, 'root')
     arms.cube(band, (2.25, -.25, -.5, .5, .5, .5), 'pink')
+    knots = arms.part('forearm_knots', 'forearm_roots', (0, 0, 0), stage=3)
+    for box, m in [((2, -2.5, -1.5, 1.5, 2, 2), 'stone'), ((-1.5, -2, 2, 2.5, 2, 1.25), 'stone_dark'),
+                   ((-3, -1, -1, 1.25, 2, 1.75), 'stone'), ((.5, .5, -3, 1.75, 1.5, 1), 'stone'),
+                   ((3, -.5, .75, .75, .75, .75), 'pink')]:
+        arms.cube(knots, box, m)
     for i, (pivot, rot) in enumerate((((3.1, 2.5, 1), (.45, 0, 0)), ((1, 2.5, 2.1), (0, 0, .45)),
                                       ((-1.1, 3, -1), (-.4, 0, 0)), ((2, 3, -2.1), (0, 0, -.5)))):
         r = arms.part(f'wrap_root_{i}', pivot=pivot, rotation=rot, stage=3, limb='LOWER')
@@ -387,12 +393,13 @@ def vein_path(rig, name, points, stage, limb, group, axis='x'):
 
 def ink_cap():
     head = Rig('ink_cap', 'HEAD', INK_CAP, hide_at=5)
-    sc = head.part('crown_scales', pivot=(0, -8, 0), stage=2)
+    # The cap and its crown scales give way to the ink hood at Primal, so neither shows above it.
+    sc = head.part('crown_scales', pivot=(0, -8, 0), stage=2, until=4)
     for box, m in [((-1.5, -.75, -1, 1, .75, 1), 'cap'), ((.5, -1, 0, 1, 1, 1), 'cap_light'),
                    ((-.5, -.75, 1, 1, .75, 1), 'cap'), ((1.5, -.5, -1.5, .75, .5, .75), 'cap_light'),
                    ((-2.5, -.5, .5, .75, .5, .75), 'cap'), ((-.25, -1.25, -.5, .5, .5, .5), 'cap_light')]:
         head.cube(sc, box, m)
-    cap = head.part('cap', pivot=(0, -7, 0), stage=3, motion='SWAY', amp=.015, speed=.04)
+    cap = head.part('cap', pivot=(0, -7, 0), stage=3, motion='SWAY', amp=.015, speed=.04, until=4)
     for box, m in [((-5, .5, -5, 10, 1.5, 10), 'cap_dark'), ((-4.75, -2.5, -4.75, 9.5, 3, 9.5), 'cap'),
                    ((-4.25, -5.5, -4.25, 8.5, 3, 8.5), 'cap'), ((-3.5, -8, -3.5, 7, 2.5, 7), 'cap_light'),
                    ((-2.5, -10, -2.5, 5, 2, 5), 'cap'), ((-1.5, -11, -1.5, 3, 1, 3), 'cap_light')]:
@@ -794,10 +801,11 @@ def write_java(rig, body):
     specs = []
     for p in rig.parts:
         grows = p['parent'] == 'root' or rig.get(p['parent'])['stage'] < p['stage']
+        until = f', {p["until"]}' if p['until'] < 5 else ''
         specs.append(f'            new MorphlingPartSpec("{p["name"]}", "{p["parent"]}", {p["stage"]}, '
                      f'MorphlingPartSpec.Limb.{p["limb"]}, MorphlingPartSpec.Motion.{p["motion"]}, '
                      f'{p["amp"]:.3f}F, {p["speed"]:.3f}F, {p["phase"]:.3f}F, {flags_expr(p["flags"])}, '
-                     f'{p["glow_group"]}, {str(grows).lower()})')
+                     f'{p["glow_group"]}, {str(grows).lower()}{until})')
     glow_tex = (f'Hemomancy.rloc("textures/models/morphling/{rig.name}_glow.png")' if rig.has_glow else 'null')
     source = f'''package com.vincenthuto.hemomancy.client.model.entity.morphling;
 
@@ -916,7 +924,7 @@ def world_cubes(rig, stage, flags=()):
     transforms = {'root': (np.eye(3), np.zeros(3))}
     out = []
     for part in rig.parts:
-        if stage < part['stage']:
+        if not part['stage'] <= stage <= part['until']:
             transforms[part['name']] = None
             continue
         parent = transforms[part['parent']]

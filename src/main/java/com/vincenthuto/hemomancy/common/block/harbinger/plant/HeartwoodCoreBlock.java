@@ -92,4 +92,9 @@ public class HeartwoodCoreBlock extends BaseEntityBlock implements BlockBloodEnd
 	public double projectBloodIntoBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player, double maxAmount) {
 		return level.getBlockEntity(pos) instanceof HeartwoodCoreBlockEntity core ? core.receiveProjectedBlood(player, maxAmount) : 0.0D;
 	}
+
+	@Override
+	public boolean holdsProjectedBlood() {
+		return false;
+	}
 }

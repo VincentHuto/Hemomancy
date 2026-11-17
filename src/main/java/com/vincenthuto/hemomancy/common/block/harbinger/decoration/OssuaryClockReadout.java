@@ -26,4 +26,19 @@ public final class OssuaryClockReadout {
 	public static String moonPhase(long dayCount) {
 		return MOON_PHASES[(int) Math.floorMod(dayCount, MOON_PHASES.length)];
 	}
+
+	/** The lunette's state (core-loop Track 10): 2 while a Blood Moon is up, 1 when tonight's chance is an omen, else 0. */
+	public static int omen(boolean active, double chanceTonight) {
+		if (active) return 2;
+		return chanceTonight >= com.vincenthuto.hemomancy.common.world.answer.WorldAnswerRules.OMEN_CHANCE ? 1 : 0;
+	}
+
+	/** Tonight's chance as the dial says it: none, faint, possible, likely or strong. */
+	public static String omenWord(double chanceTonight) {
+		if (chanceTonight <= 0.0D) return "none";
+		if (chanceTonight < 0.05D) return "faint";
+		if (chanceTonight < 0.15D) return "possible";
+		if (chanceTonight < 0.4D) return "likely";
+		return "strong";
+	}
 }

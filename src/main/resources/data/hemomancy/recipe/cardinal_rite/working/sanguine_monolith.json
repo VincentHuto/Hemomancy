@@ -4,7 +4,7 @@
   "bloodCost": 0,
   "riteType": "greater",
   "purpose": "making",
-  "required_degree": 6,
+  "required_degree": 5,
   "rankup": false,
   "riteName": "Working of the Sanguine Monolith",
   "riteDescription": "Build the Sanguine Monolith beside the Cardinal Focus, feed it, and let the Working floor take it.",

@@ -136,7 +136,7 @@ public final class MausoleumWardGameTests {
 	 * Registers a one-piece Hemorath mausoleum over {@code box}, so {@link MausoleumEvents#hallowed} holds there as in a
 	 * generated complex; the returned action puts every touched chunk's starts and references back.
 	 */
-	private static Runnable consecrate(GameTestHelper helper, BoundingBox box) {
+	static Runnable consecrate(GameTestHelper helper, BoundingBox box) {
 		ServerLevel level = helper.getLevel();
 		Structure structure = level.registryAccess().registryOrThrow(Registries.STRUCTURE)
 				.get(Hemomancy.rloc("mausoleum_hemorath"));

@@ -61,7 +61,7 @@ The server already distinguishes the four types; the client plays them different
 - **Quick.** Gameplay has executed before the client sees RELEASE, so the track plays release then recovery. A new cast replaces recovery cleanly. The spec's local quick-cast flick was dropped: Hematic Riposte's arm geometry and parry window both arrive with the RELEASE packet, so a client-side opening could not improve sync and could show a cast the server refuses.
 - **Charged.** OPENING plays on the first heartbeat; HOLD blends hold toward strain by charge; RELEASE leaves from the current strain. Charged casts that repeat while held re-enter HOLD without replaying OPENING.
 - **Continuous.** OPENING, then HOLD with the track's loop. Upkeep pulses never retrigger OPENING.
-- **Passive.** Manual activation plays `on` (16 ticks, drawing the power inward) and dismissal plays `off` (12 ticks, throwing it outward). These are complete gestures rather than the spec's split 6/4/6 and 4/3/5 phases; the totals match. Avatar, Phoenix Debt, Blackhearted and Sovereign Instinct author on/off gestures. Passives without a bespoke style (Vigil of Glass, Hematic Ballast) play their school's release for activation and its cancel for dismissal. Automatic triggers keep their own effect accents, and passives never change idle posture.
+- **Passive.** Manual activation plays `on` (16 ticks, drawing the power inward) and dismissal plays `off` (12 ticks, throwing it outward). These are complete gestures rather than the spec's split 6/4/6 and 4/3/5 phases; the totals match. Avatar, Phoenix Debt, Blackhearted and Sovereign Instinct author on/off gestures. A passive without a bespoke style would play its school's release for activation and its cancel for dismissal; of the passives registered today only Axonal Transduction has no bespoke style. Automatic triggers keep their own effect accents, and passives never change idle posture.
 
 ## Aim layer
 
@@ -303,10 +303,10 @@ The JVM suite covers every school and rank in both views with every required seg
 
 ### Two-client review fixture
 
-`tools/oneoff/casting-animation-review.init.gradle` and the flag-gated `CastingClientAcceptance` GameTest source provide a disposable two-client capture run. Never use a personal world: the fixture prepares a quartz stage and test inventories in its own review directory.
+`tools/review/casting-animation-review.init.gradle` and the flag-gated `CastingClientAcceptance` GameTest source provide a disposable two-client capture run. Never use a personal world: the fixture prepares a quartz stage and test inventories in its own review directory.
 
 1. Run `./gradlew.bat classes gameTestClasses` once. Concurrent compilation into the same output directory is unsafe.
-2. Launch `runServer`, `runCastingCaster` and `runCastingObserver`, each with `-I tools/oneoff/casting-animation-review.init.gradle -PcastingRun=<name>`. The server is localhost-only on port 25579 under `build/<name>-server`; both clients have first-run accessibility onboarding disabled.
+2. Launch `runServer`, `runCastingCaster` and `runCastingObserver`, each with `-I tools/review/casting-animation-review.init.gradle -PcastingRun=<name>`. The server is localhost-only on port 25579 under `build/<name>-server`; both clients have first-run accessibility onboarding disabled.
 3. The sweep covers the 40 school and rank profiles, every bespoke style (sent as the manipulation that owns it, passives as on/off gestures) and the five Still Art stages before the integration scenes. `-PcastingIntegrationOnly=true` on the server skips straight to the integration scenes; `-PcastingCasterName=CastCaster1` selects the WIDE skin model.
 4. `-PcastingBasicsOnly=true` on the server captures the body-anchored cast visuals instead, from a closer observer and the caster's own view: Blood Rush (the real dash), Sanguine Ward at a full and a half pool, Sanguine Mending on a damaged pickaxe, all nine Living Arsenal conjures, the cell-hand summon (the real cast), projecting, absorbing and dispel, the five avatar stages (the real toggle) and the dismissal. Blood Rush's own effect particles linger into the next few scenes.
 

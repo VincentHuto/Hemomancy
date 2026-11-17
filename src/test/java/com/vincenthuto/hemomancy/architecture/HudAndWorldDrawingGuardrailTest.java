@@ -78,8 +78,7 @@ class HudAndWorldDrawingGuardrailTest {
 				+ "hud(SaintMeterLayer::render))"), "the Saint meter draws just above the boss bars, behind the HUD rules");
 		String markers = SourceAssertions.section(registrar, "Hemomancy.rloc(\"hud_markers\")", "})");
 		assertInOrder(markers, List.of("translate(0.0F, 0.0F, -graphics.pose().last().pose().m32())",
-				"EarthenVeinTravelClientEvents.renderTooltip(graphics)", "ManipulationVisualRenderer.hud(graphics)",
-				"AntecedentClientEffects.render(graphics)"));
+				"EarthenVeinTravelClientEvents.renderTooltip(graphics)", "AntecedentClientEffects.render(graphics)"));
 		assertTrue(registrar.lastIndexOf("registerAboveAll(") == registrar.indexOf("registerAboveAll(Hemomancy.rloc(\"hud_markers\")"),
 				"the HUD markers are the last Hemomancy layer");
 	}

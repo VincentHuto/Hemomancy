@@ -46,7 +46,7 @@ final class VoyagerDialogueEvents {
 		boolean recorded = record.test(player);
 		ItemStack chart = CourtDiscoveryProgress.takeChart(player);
 		if (!chart.isEmpty()) {
-			DialogueRewards.giveOrDropAtEntity(player, entityId, chart);
+			com.vincenthuto.hemomancy.common.mission.shared.OwedRewards.give(player, java.util.List.of(chart));
 			player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.relay_chart_issued")
 					.withStyle(ChatFormatting.DARK_AQUA), false);
 		} else if (CourtDiscoveryProgress.isKnown(player)) {

@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCourtPr
 import com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusPerception;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPossession;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSporeLoad;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodTemper;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncTendonAnchor;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -14,6 +16,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Initi
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentEntityEventHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledgeEvents;
@@ -36,6 +39,8 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServer
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.LivingStaffProgressServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncManipulationHearts;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncDegree;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFungalProjection;
+import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncIchorianKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncLastDeathMemory;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncThelemicMemory;
@@ -80,17 +85,30 @@ public final class PlayerStateSync {
 	public enum Entry {
 		TEMPER(HemoAttachmentTypes.BLOOD_TEMPERAMENT, BloodTemperamentServerPacket.class, ALWAYS,
 				player -> BloodTemperamentEvents.syncTemperament(player, HemoCapabilityAccess.getBloodTemperament(player))),
+		/** Temper, the spendable pool; spending, filling and the scar floor raise the dirty flag. */
+		TEMPER_POOL(HemoAttachmentTypes.BLOOD_TEMPER, PacketSyncBloodTemper.class, ALWAYS,
+				player -> HemoCapabilityAccess.getBloodTemper(player).sync(player, true),
+				player -> HemoCapabilityAccess.getBloodTemper(player).isSyncDirty(),
+				player -> {
+					HemoCapabilityAccess.getBloodTemper(player).sync(player, true);
+					// The Scrying cost preview reads the pool: resend it when the selected memory's Temper line changed.
+					ManipulationDiagnosticsSync.refreshTemperPreview(player);
+				}),
 		VASCULAR(HemoAttachmentTypes.VASCULAR_SYSTEM, VascularSystemServerPacket.class, ALWAYS,
 				player -> VascularSystemEvents.syncVascular(player, HemoCapabilityAccess.getVascularSystem(player))),
 		BLOOD_VOLUME(HemoAttachmentTypes.BLOOD_VOLUME, BloodVolumeServerPacket.class, ALWAYS,
 				player -> BloodVolumeEvents.sendVolume(player, HemoCapabilityAccess.getBloodVolume(player)),
 				player -> HemoCapabilityAccess.getBloodVolume(player).isSyncDirty(),
 				BloodVolumeEvents::flushVolume),
-		/** Login only, as before this table: a respawn or dimension resend would be new behaviour. */
-		SKILLS(HemoAttachmentTypes.SKILL_PROGRESS, PacketSyncSkills.class, EnumSet.of(Lifecycle.LOGIN),
-				SkillPointGainEvents::syncSkills),
+		SKILLS(HemoAttachmentTypes.SKILL_PROGRESS, PacketSyncSkills.class, ALWAYS, SkillPointGainEvents::syncSkills),
 		DEGREE(HemoAttachmentTypes.INITIATORY_DEGREE, PacketSyncDegree.class, ALWAYS,
 				player -> InitiatoryDegreeEvents.syncDegree(player, HemoCapabilityAccess.getInitiatoryDegree(player))),
+		/**
+		 * The D7 first projection's time left (PT-75: a logout pauses it). Its two keys are root player data beside the
+		 * degree, so the entry files under the degree's attachment.
+		 */
+		FUNGAL_PROJECTION(HemoAttachmentTypes.INITIATORY_DEGREE, PacketSyncFungalProjection.class, ALWAYS,
+				FungalGardenTravelHelper::syncProjection),
 		KNOWN_MANIPULATIONS(HemoAttachmentTypes.KNOWN_MANIPULATIONS, KnownManipulationServerPacket.class, ALWAYS,
 				KnownManipulationEvents::syncPlayerEvent,
 				player -> HemoCapabilityAccess.getKnownManipulations(player).isSyncDirty()),
@@ -115,9 +133,8 @@ public final class PlayerStateSync {
 				player -> UnstainedProgressEvents.syncProgress(player, HemoCapabilityAccess.getUnstainedProgress(player))),
 		KNOWN_STILL_ARTS(HemoAttachmentTypes.KNOWN_STILL_ARTS, KnownStillArtsServerPacket.class, ALWAYS,
 				player -> KnownStillArtEvents.sync(player, HemoCapabilityAccess.getKnownStillArts(player))),
-		/** No dimension-change resend: adding one is F-20, still pending approval. */
-		ICHORIAN_KNOWLEDGE(HemoAttachmentTypes.ICHORIAN_KNOWLEDGE, PacketSyncIchorianKnowledge.class,
-				EnumSet.of(Lifecycle.LOGIN, Lifecycle.RESPAWN), IchorianKnowledgeEvents::sync),
+		ICHORIAN_KNOWLEDGE(HemoAttachmentTypes.ICHORIAN_KNOWLEDGE, PacketSyncIchorianKnowledge.class, ALWAYS,
+				IchorianKnowledgeEvents::sync),
 		STATION_UPGRADES(HemoAttachmentTypes.STATION_UPGRADES, PacketSyncStationUpgrades.class, ALWAYS,
 				player -> HemoCapabilityAccess.stationUpgrades(player).sync(player, true),
 				player -> HemoCapabilityAccess.stationUpgrades(player).isSyncDirty()),
@@ -137,6 +154,18 @@ public final class PlayerStateSync {
 				},
 				player -> HemoCapabilityAccess.hasPossession(player)
 						&& HemoCapabilityAccess.getPossession(player).isSyncDirty()),
+		/**
+		 * Where the Tendon Line is rooted, for the line's drawing and the haul's claim on the client. The anchor is
+		 * transient: a respawn starts loose, and a dimension change drops it.
+		 */
+		TENDON_ANCHOR(HemoAttachmentTypes.TENDON_ANCHOR, PacketSyncTendonAnchor.class, ALWAYS,
+				com.vincenthuto.hemomancy.common.manipulation.animus.TendonLineSculpting::sync),
+		/**
+		 * Venous Cling (core-loop Track 9): transient and server-owned. A login, respawn or dimension change lets go;
+		 * a root or release also goes to the players tracking the owner, from the cling service.
+		 */
+		CLING(HemoAttachmentTypes.CLING, com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCling.class, ALWAYS,
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.cling.ClingService::resync),
 		POWER_GUARDRAILS(HemoAttachmentTypes.POWER_GUARDRAILS, PacketSyncManipulationHearts.class, ALWAYS,
 				ManipulationReactiveEvents::syncHearts),
 		/** Strain tooltips and the Bestiary read Court knowledge on the client (Brined Court decision M7). */

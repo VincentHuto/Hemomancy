@@ -50,6 +50,8 @@ public final class BossPresentationIds {
 	public static final ResourceLocation SCENE_CIRCUS_RINGMASTER = Hemomancy.rloc("circus_ringmaster");
 	public static final ResourceLocation SCENE_CIRCUS_CAROUSEL_CARD = Hemomancy.rloc("impaled_procession_card");
 	public static final ResourceLocation SCENE_CIRCUS_DESCENT_CARD = Hemomancy.rloc("circus_descent_card");
+	public static final ResourceLocation SCENE_CIRCUS_YIELD = Hemomancy.rloc("circus_yield");
+	public static final ResourceLocation SCENE_CIRCUS_COLLAPSE_CARD = Hemomancy.rloc("circus_collapse_card");
 	public static final ResourceLocation SCENE_POSSESSION_DEPARTURE = Hemomancy.rloc("possession_departure");
 	public static final ResourceLocation SCENE_POSSESSION_ARRIVAL = Hemomancy.rloc("possession_arrival");
 	public static final ResourceLocation SCENE_POSSESSION_BROKEN_GARDENS = Hemomancy.rloc("possession_broken_gardens");
@@ -78,7 +80,7 @@ public final class BossPresentationIds {
 			SCENE_PUTRICIEL_PURIFIER_CARD, SCENE_PUTRICIEL_ROT_RETURNS_CARD, SCENE_POSSESSION_DEPARTURE, SCENE_POSSESSION_ARRIVAL, SCENE_POSSESSION_BROKEN_GARDENS,
 			SCENE_POSSESSION_BROKEN_RITE, SCENE_POSSESSION_CLEAN_GARDENS, SCENE_POSSESSION_CLEAN_RITE, SCENE_MARIMO_PRESENCE,
 			SCENE_HYDRA_RISE, SCENE_BLOOM_WARDEN, SCENE_KINDLED_CHAMPION, SCENE_CIRCUS_RINGMASTER,
-			SCENE_CIRCUS_CAROUSEL_CARD, SCENE_CIRCUS_DESCENT_CARD);
+			SCENE_CIRCUS_CAROUSEL_CARD, SCENE_CIRCUS_DESCENT_CARD, SCENE_CIRCUS_YIELD, SCENE_CIRCUS_COLLAPSE_CARD);
 
 	/** The director scene for one half of a possession's cinematic. */
 	public static ResourceLocation possessionScene(PossessionSceneRules.Scene scene) {

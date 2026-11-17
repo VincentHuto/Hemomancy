@@ -9,6 +9,10 @@ import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 class HarbingerHermitRoadMissionSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -33,7 +37,7 @@ class HarbingerHermitRoadMissionSourceTest {
 				"TempleOathRules.recordHeartClaim");
 		assertContains("mortal display activates attached Degree 0 blood", source,
 				"EarlyInitiation.activate(serverPlayer)");
-		assertDoesNotContain("mortal display no longer calls explosion", source, "worldIn.explode(");
+		assertNotContains("mortal display no longer calls explosion", source, "worldIn.explode(");
 	}
 
 	private static void ledgerIsSeparateFromFieldNotesAndUsesGuideRenderer() throws IOException {
@@ -63,7 +67,7 @@ class HarbingerHermitRoadMissionSourceTest {
 		assertContains("assignment ledger has 3D entity item model", model, "\"parent\": \"builtin/entity\"");
 		assertContains("assignment ledger model uses Liber-style texture", model, "hemomancy:items/liber_sanguinum");
 		assertContains("assignment ledger opens screen packet", ledgerItem, "OpenHarbingerAssignmentLedgerPacket");
-		assertDoesNotContain("assignment ledger no longer prints chat status", ledgerItem,
+		assertNotContains("assignment ledger no longer prints chat status", ledgerItem,
 				"displayClientMessage");
 		assertContains("assignment ledger packet is registered", read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java")),
@@ -94,11 +98,11 @@ class HarbingerHermitRoadMissionSourceTest {
 				"renderAssignmentHeader");
 		assertContains("assignment ledger separates taxonomy progress from title", ledgerScreen,
 				"renderTaxonomyHeader");
-		assertDoesNotContain("assignment ledger no longer uses vanilla done button", ledgerScreen,
+		assertNotContains("assignment ledger no longer uses vanilla done button", ledgerScreen,
 				"Button.builder");
-		assertDoesNotContain("assignment ledger no longer references vanilla done text", ledgerScreen,
+		assertNotContains("assignment ledger no longer references vanilla done text", ledgerScreen,
 				"gui.done");
-		assertDoesNotContain("assignment ledger no longer uses local single-pixel border helper", ledgerScreen,
+		assertNotContains("assignment ledger no longer uses local single-pixel border helper", ledgerScreen,
 				"private static void drawBorder");
 		assertContains("assignment ledger owns milestone drawer state", ledgerScreen, "MilestoneDrawerState milestoneState");
 		assertContains("assignment ledger draws milestone drawer", ledgerScreen, "MilestoneDrawerView.draw");
@@ -116,7 +120,7 @@ class HarbingerHermitRoadMissionSourceTest {
 				"renderRightAnchoredTooltip");
 		assertContains("assignment ledger anchors tooltips to the right of the cursor", ledgerScreen,
 				"TOOLTIP_CURSOR_OFFSET");
-		assertDoesNotContain("assignment ledger no longer uses vanilla tooltip placement", ledgerScreen,
+		assertNotContains("assignment ledger no longer uses vanilla tooltip placement", ledgerScreen,
 				"renderTooltip(font,");
 		assertContains("milestone drawer is thinner", milestoneDrawer,
 				"DRAWER_W      = 140");
@@ -128,11 +132,11 @@ class HarbingerHermitRoadMissionSourceTest {
 				"drawMilestoneScrollbar");
 		assertContains("milestone drawer has scrollbar width", milestoneDrawer,
 				"MILESTONE_SCROLLBAR_WIDTH");
-		assertDoesNotContain("progress screen no longer owns milestone drawer state", progressScreen,
+		assertNotContains("progress screen no longer owns milestone drawer state", progressScreen,
 				"MilestoneDrawerState milestoneState");
-		assertDoesNotContain("progress screen no longer draws milestone drawer", progressScreen,
+		assertNotContains("progress screen no longer draws milestone drawer", progressScreen,
 				"MilestoneDrawerView.draw");
-		assertDoesNotContain("progress screen no longer toggles milestone drawer", progressScreen,
+		assertNotContains("progress screen no longer toggles milestone drawer", progressScreen,
 				"MilestoneDrawerView.isOverToggle");
 	}
 
@@ -268,7 +272,7 @@ class HarbingerHermitRoadMissionSourceTest {
 		String docs = read(Path.of("docs/HEMOMANCY_REFERENCE.md"));
 
 		assertContains("hematic memory recipe uses neurotic enzyme", recipe, "\"item\": \"hemomancy:neurotic_enzyme\"");
-		assertDoesNotContain("hematic memory recipe no longer uses redstone", recipe, "\"item\": \"minecraft:redstone\"");
+		assertNotContains("hematic memory recipe no longer uses redstone", recipe, "\"item\": \"minecraft:redstone\"");
 		assertContains("advancement constant exists for woven vessel", advancementGranter,
 				"ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE");
 		assertContains("advancement helper checks woven vessel completion", advancementGranter,
@@ -281,7 +285,7 @@ class HarbingerHermitRoadMissionSourceTest {
 				"ADV_MNEMONIST_FIRST_WEAVE_COMPLETE");
 		assertContains("alchemist d3 breadcrumb points to mnemonist", alchemistTrees,
 				"hemomancy.alchemist.initiate.mnemonist_breadcrumb");
-		assertDoesNotContain("alchemist d3 breadcrumb no longer requires taxonomy completion", alchemistTrees,
+		assertNotContains("alchemist d3 breadcrumb no longer requires taxonomy completion", alchemistTrees,
 				"redTaxonomyComplete");
 		assertContains("alchemist breadcrumb points to mnemonist", alchemistTrees,
 				"hemomancy.alchemist.initiate.mnemonist_breadcrumb");
@@ -306,15 +310,17 @@ class HarbingerHermitRoadMissionSourceTest {
 		assertContains("ledger packet carries first weave completion", ledgerPacket, "mnemonistFirstWeaveComplete");
 		assertContains("ledger screen renders woven vessel assignment", ledgerScreen, "renderWovenVessel");
 		assertContains("woven vessel progress is computed", ledgerScreen, "wovenVesselProgress()");
-		assertContains("woven vessel progress displays three steps", ledgerScreen,
-				"progress, 3, mnemonistFirstWeaveComplete");
-		assertDoesNotContain("woven vessel progress no longer includes red taxonomy", ledgerScreen,
+		// PT-6: the card counts the two required steps; the Mnemonist's index is optional Side work.
+		assertContains("woven vessel progress displays two steps", ledgerScreen,
+				"progress, WOVEN_VESSEL_STEPS, mnemonistFirstWeaveComplete");
+		assertContains("woven vessel card has two steps", ledgerScreen, "WOVEN_VESSEL_STEPS = 2");
+		assertNotContains("woven vessel progress no longer includes red taxonomy", ledgerScreen,
 				"if (redTaxonomyComplete) completed++");
-		assertDoesNotContain("woven vessel progress no longer includes degree reached", ledgerScreen,
+		assertNotContains("woven vessel progress no longer includes degree reached", ledgerScreen,
 				"if (degree >= 3) completed++");
 		assertContains("woven vessel language title exists", language,
 				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title");
-		assertContains("mnemonist recipe dialogue names formations", language, "four Sanguine Formations");
+		assertContains("mnemonist recipe dialogue names the stone formation", language, "a Sanguine Formation and redstone");
 		assertContains("mnemonist recipe dialogue names remnant stone", language, "four Blood Stained Stones");
 		assertContains("mnemonist recipe dialogue names the enzyme source", language, "Chicken blood can yield Neurotic Enzyme");
 		assertContains("mnemonist recipe dialogue explains the variable spin", language, "some spins yield Vivacious instead");
@@ -385,31 +391,12 @@ class HarbingerHermitRoadMissionSourceTest {
 				"hemomancy:crimson_flames");
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static String readCompressedTemplate(Path path) throws IOException {
 		if (!Files.exists(path)) {
 			throw new AssertionError("missing " + path);
 		}
 		try (GZIPInputStream input = new GZIPInputStream(new ByteArrayInputStream(Files.readAllBytes(path)))) {
 			return new String(input.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": still contains " + forbidden);
 		}
 	}
 

@@ -56,7 +56,8 @@ public final class PuppeteerCrossbarCommands {
 			return false;
 		}
 		String oldName = MarionetteCrossbarItem.getSelectedSummonName(crossbar);
-		if (selectedName == null || selectedName.isBlank() || selectedName.equals(oldName)) {
+		if (selectedName == null || selectedName.isBlank() || selectedName.equals(oldName)
+				|| !PuppeteerSummonRules.inTranspositionRing(selectedName)) {
 			return false;
 		}
 		Optional<PuppeteerSummonDefinition> definitionOpt = PuppeteerSummonDefinitions.byName(selectedName);

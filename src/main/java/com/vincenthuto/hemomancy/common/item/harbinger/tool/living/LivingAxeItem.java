@@ -26,29 +26,24 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 public class LivingAxeItem extends LivingToolItem {
-	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
-	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_axe", Category.TOOL, false, false);
+	/** Reserve-protected (F-15): a dormant volume pays nothing, and a short one loses the weapon without paying. */
+	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_axe", Category.TOOL, true);
 
 	public static String TAG_STATE = "state";
 
 	public LivingAxeItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -3.0f, EnumBloodTemper.FERRIC, tier, builderIn);
+		super(speedIn, attackDamageIn, -3.0f, EnumBloodTemper.FERRIC, BlockTags.MINEABLE_WITH_AXE, tier, builderIn);
 	}
 
+	/** The axe digs: it follows the Staff's ring tier and pays blood per block (Track 8). */
 	@Override
-	public float getDestroySpeed(ItemStack stack, BlockState state) {
-		return state.is(BlockTags.MINEABLE_WITH_AXE) ? speed : 0.5f;
-	}
-
-	@Override
-	public boolean isCorrectToolForDrops(BlockState state) {
-		return state.is(BlockTags.MINEABLE_WITH_AXE);
+	public boolean digs() {
+		return true;
 	}
 
 	@Override
@@ -75,23 +70,20 @@ public class LivingAxeItem extends LivingToolItem {
 				IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 						;
 				float damageMod = this.getLivingAttackDamage() * 75f;
-				if (playerVolume.getBloodVolume() > damageMod) {
+				if (!playerVolume.isActive()) {
+					return true;
+				}
+				if (BloodAccounting.canPayInFull(playerIn, damageMod, BLOOD_PRICE)) {
 					BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 				} else {
-					BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 					if (!LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(stack, attacker)) {
-						stack.hurtAndBreak(stack.getMaxDamage() + 10, attacker, EquipmentSlot.MAINHAND);
+						crumble(stack, attacker, EquipmentSlot.MAINHAND);
 					}
 				}
 
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
 	@Override

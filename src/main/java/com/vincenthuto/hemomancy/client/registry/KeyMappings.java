@@ -24,8 +24,6 @@ public final class KeyMappings {
             "key.hemomancy.category");
     public static final KeyMapping bloodCrafting = new KeyMapping("key.hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_K,
             "key.hemomancy.category");
-    public static final KeyMapping bloodDraw = new KeyMapping("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_ALT,
-            "key.hemomancy.category");
     public static final KeyMapping cycleSelectedManip = new KeyMapping("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
             "key.hemomancy.category");
     public static final KeyMapping useQuickManip = new KeyMapping("key.hemomancy.quickusemanip.desc", GLFW.GLFW_KEY_R,
@@ -50,6 +48,9 @@ public final class KeyMappings {
             GLFW.GLFW_KEY_N, "key.hemomancy.category");
     public static final KeyMapping bloodBallDrop = new KeyMapping("key.hemomancy.bloodballdrop.desc", GLFW.GLFW_KEY_V,
             "key.hemomancy.category");
+    /** The verb key: conjures the active verb's cell hand into an empty hand, otherwise switches Projection and Absorption. */
+    public static final KeyMapping bloodVerb = new KeyMapping("key.hemomancy.bloodverb.desc", GLFW.GLFW_KEY_Y,
+            "key.hemomancy.category");
 
     public static boolean isKeyDown(KeyMapping keybind) {
         if (keybind.isUnbound())
@@ -71,7 +72,6 @@ public final class KeyMappings {
         event.register(bloodFormation);
         event.register(burnSpores);
         event.register(bloodCrafting);
-        event.register(bloodDraw);
         event.register(cycleSelectedManip);
         event.register(useManip);
         event.register(useStillArt);
@@ -81,6 +81,7 @@ public final class KeyMappings {
         event.register(toggleGourd);
         event.register(openMorphlingJarViewer);
         event.register(bloodBallDrop);
+        event.register(bloodVerb);
 
     }
 }

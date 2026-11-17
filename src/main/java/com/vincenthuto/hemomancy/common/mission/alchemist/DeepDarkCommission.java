@@ -33,11 +33,13 @@ public final class DeepDarkCommission {
     public static boolean report(ServerPlayer player, Entity teacher) {
         if (!(teacher instanceof HarbingerAlchemistEntity) || !EarlyInitiation.near(player, teacher)
                 || !eligible(player) || !progress(player).ready()) return false;
+        AlchemistCommissionReward.owe(player);
         CompoundTag data = data(player);
         data.putBoolean(REPORTED, true);
         save(player, data);
         player.displayClientMessage(Component.translatable("hemomancy.alchemist.deep_dark_commission.recorded")
                 .withStyle(ChatFormatting.DARK_RED), false);
+        AlchemistCommissionReward.pay(player);
         return true;
     }
 

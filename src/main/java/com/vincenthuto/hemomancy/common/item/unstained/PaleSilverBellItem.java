@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -61,8 +62,8 @@ public class PaleSilverBellItem extends Item {
 			}
 
 			if (level instanceof ServerLevel serverLevel) {
-				serverLevel.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.0, player.getZ(),
-						36, 1.4, 0.8, 1.4, 0.03);
+				serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_SILVER), player.getX(),
+						player.getY() + 1.0, player.getZ(), 36, 1.4, 0.8, 1.4, 0.015);
 			}
 			player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
 		}

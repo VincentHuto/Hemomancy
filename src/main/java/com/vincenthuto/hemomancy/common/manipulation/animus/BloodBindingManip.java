@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTetherRules;
@@ -20,6 +21,12 @@ import net.neoforged.neoforge.common.CommonHooks;
 
 import java.util.*;
 
+/**
+ * Blood Binding and its lingering, chain and lattice variants. Since core-loop Track 2 the binding is first a Sculpting
+ * of Projection ({@link BloodBindingSculpting}: hold Projection on a creature, which stays bound while blood flows and
+ * slowed by constriction for a short tail after). The R cast below is kept for players who have not switched and is
+ * marked for removal after one review pass; both use the same target rules.
+ */
 public class BloodBindingManip extends BloodManipulation {
 	public static final double RANGE = 8.0D;
 	public static final int DURATION_TICKS = 120;
@@ -73,6 +80,11 @@ public class BloodBindingManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItemMainhand, float chargeTicks) {
 		if (target(player, player.level()) != null) return true;
+		LivingEntity aimed = ManipulationCombatHelper.aimedTarget(player, player.level(), RANGE, AIM_DOT);
+		if (aimed != null && HemoEntityPredicates.isBoss(aimed) && BossBindings.spent(aimed)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.blood_binding.boss_spent", aimed.getDisplayName()), true);
+			return false;
+		}
 		player.displayClientMessage(Component.translatable("message.hemomancy.blood_binding_manip.no_unbound_vessel_in_sight"), true);
 		return false;
 	}
@@ -84,6 +96,7 @@ public class BloodBindingManip extends BloodManipulation {
 
 	private boolean eligible(Player player, LivingEntity target) {
 		if (target == null || target.isSpectator() || player.isAlliedTo(target)) return false;
+		if (HemoEntityPredicates.isBoss(target) && BossBindings.spent(target)) return false;
 		if (target instanceof Player targetPlayer
 				&& (targetPlayer.isCreative() || !player.canHarmPlayer(targetPlayer))) return false;
 		MobEffectInstance binding = bindingFor(target);
@@ -103,17 +116,41 @@ public class BloodBindingManip extends BloodManipulation {
 
 	private MobEffectInstance bindingFor(LivingEntity target) {
 		int normal = durationTicks(mode);
-		int duration = ManipulationReactiveEvents.isBoss(target) ? normal / 2 : normal;
+		int duration = HemoEntityPredicates.isBoss(target) ? normal / 2 : normal;
 		return new MobEffectInstance(EffectInit.blood_binding, duration, 0, false, false, true);
 	}
 
-	private static boolean applyBinding(Player player, LivingEntity target, MobEffectInstance binding) {
-		if (!ManipulationReactiveEvents.isBoss(target)) return target.addEffect(binding, player);
+	/**
+	 * Lays {@code binding} on {@code target}. A boss takes it only within its life's count and only when the attempt does
+	 * not slip ({@link BossBindings#tryTake}); a slip still costs the blood the caller paid.
+	 */
+	static boolean applyBinding(Player player, LivingEntity target, MobEffectInstance binding) {
+		if (!HemoEntityPredicates.isBoss(target)) return target.addEffect(binding, player);
+		if (!BossBindings.tryTake(player, target)) return false;
 		target.forceAddEffect(binding, player);
 		return target.getEffect(EffectInit.blood_binding) == binding;
 	}
 
+	/** The creatures one binding reaches from {@code target}: the target, then the mode's chain or lattice. */
+	static List<LivingEntity> reach(Player player, Level world, LivingEntity target, Mode mode,
+			java.util.function.Predicate<LivingEntity> eligible) {
+		return switch (mode) {
+			case CHAIN -> chainTargets(player, world, target, eligible);
+			case LATTICE -> latticeTargets(player, world, target, eligible);
+			default -> List.of(target);
+		};
+	}
+
 	private List<LivingEntity> chainTargets(Player player, Level world, LivingEntity initial) {
+		return chainTargets(player, world, initial, candidate -> eligible(player, candidate));
+	}
+
+	private List<LivingEntity> latticeTargets(Player player, Level world, LivingEntity initial) {
+		return latticeTargets(player, world, initial, candidate -> eligible(player, candidate));
+	}
+
+	private static List<LivingEntity> chainTargets(Player player, Level world, LivingEntity initial,
+			java.util.function.Predicate<LivingEntity> eligible) {
 		List<LivingEntity> result = new ArrayList<>();
 		Set<LivingEntity> used = new HashSet<>();
 		LivingEntity current = initial;
@@ -123,7 +160,7 @@ public class BloodBindingManip extends BloodManipulation {
 			LivingEntity from = current;
 			current = world.getEntitiesOfClass(LivingEntity.class, current.getBoundingBox().inflate(5),
 					candidate -> candidate != player && !used.contains(candidate) && candidate.isAlive()
-							&& eligible(player, candidate)).stream()
+							&& eligible.test(candidate)).stream()
 					.min(Comparator.comparingDouble(from::distanceToSqr)).orElse(null);
 			if (current == null) break;
 			result.add(current);
@@ -132,12 +169,13 @@ public class BloodBindingManip extends BloodManipulation {
 		return result;
 	}
 
-	private List<LivingEntity> latticeTargets(Player player, Level world, LivingEntity initial) {
+	private static List<LivingEntity> latticeTargets(Player player, Level world, LivingEntity initial,
+			java.util.function.Predicate<LivingEntity> eligible) {
 		List<LivingEntity> result = new ArrayList<>();
 		result.add(initial);
 		world.getEntitiesOfClass(LivingEntity.class, initial.getBoundingBox().inflate(4),
 				candidate -> candidate != initial && candidate != player && candidate.isAlive()
-						&& eligible(player, candidate)).stream()
+						&& eligible.test(candidate)).stream()
 				.sorted(Comparator.comparingDouble(initial::distanceToSqr)).limit(7).forEach(result::add);
 		return result;
 	}

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.animus;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -68,7 +69,7 @@ class HematicRiposteSourceTest {
         String events = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/animus/HematicRiposteEvents.java");
         assertTrue(events.contains("@SubscribeEvent(priority = EventPriority.NORMAL)\n\tpublic static void onIncomingDamage"));
         assertTrue(events.contains("onProjectileImpact(ProjectileImpactEvent event)"));
-        assertTrue(events.contains("ManipulationReactiveEvents.isBoss(attacker)"), "bosses must not be marked Conductive");
+        assertTrue(events.contains("HemoEntityPredicates.isBoss(attacker)"), "bosses must not be marked Conductive");
         assertFalse(events.contains("setOwner("), "a swat never transfers projectile ownership");
         assertTrue(events.contains("capCooldown(player, REFUND_COOLDOWN)"));
         assertTrue(read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java")
@@ -79,9 +80,5 @@ class HematicRiposteSourceTest {
     void documentationMentionsTheParry() throws IOException {
         assertTrue(read("docs/HEMOMANCY_REFERENCE.md").contains("`" + ID + "`"));
         assertTrue(read("wiki/School-Combat.md").contains("`" + ID + "`"));
-    }
-
-    private static String read(String path) throws IOException {
-        return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
     }
 }

@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionRules.O
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossIntroWindow;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtMemberEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtPresences;
@@ -57,7 +59,8 @@ import java.util.UUID;
  *
  * <p>Worn down, it yields and lives: it kneels, the title passes to the victor, Hydra's largest head rises and lowers
  * its crown over them, and it steps back among the elders as an ordinary Kindled elder. A challenger who dies has lost
- * and waits a day ({@code CourtLife.recordUsurpLoss}); the Champion keeps the title.
+ * and waits a day ({@code CourtLife.recordUsurpLoss}); one who logs out or leaves the fight waits the same day. The
+ * Champion keeps the title.
  */
 public class KindledChampionEntity extends CourtMemberEntity {
 	public static final int FIGHT = 0, YIELDING = 1, RETURNING = 2;
@@ -143,6 +146,7 @@ public class KindledChampionEntity extends CourtMemberEntity {
 		champion.setTarget(player);
 		level.addFreshEntity(champion);
 		BossScenes.play(champion, BossPresentationIds.SCENE_KINDLED_CHAMPION);
+		LiberKnowledgeHelper.unlockForEncounter(player, LiberEntryDefinitions.KINDLED_CHAMPION);
 		return champion;
 	}
 
@@ -157,9 +161,15 @@ public class KindledChampionEntity extends CourtMemberEntity {
 
 	@Nullable
 	private ServerPlayer challenger() {
+		ServerPlayer player = onlineChallenger();
+		return player != null && player.level() == level() ? player : null;
+	}
+
+	/** The challenger wherever they are, while they are online. */
+	@Nullable
+	private ServerPlayer onlineChallenger() {
 		if (challenger == null || !(level() instanceof ServerLevel server)) return null;
-		return server.getServer().getPlayerList().getPlayer(challenger) instanceof ServerPlayer player
-				&& player.level() == level() ? player : null;
+		return server.getServer().getPlayerList().getPlayer(challenger);
 	}
 
 	public int state() {
@@ -217,7 +227,7 @@ public class KindledChampionEntity extends CourtMemberEntity {
 		}
 		ServerPlayer player = challenger();
 		if (player == null || player.distanceToSqr(this) > KindledChampionRules.LEASH * KindledChampionRules.LEASH * 4) {
-			if (++missing > KindledChampionRules.TARGET_GRACE) end(Outcome.GONE, null);
+			if (++missing > KindledChampionRules.TARGET_GRACE) end(Outcome.GONE, onlineChallenger());
 			return;
 		}
 		missing = 0;
@@ -439,7 +449,7 @@ public class KindledChampionEntity extends CourtMemberEntity {
 
 	/**
 	 * Ends the challenge. Yielded: the title passes to the victor, Hydra's largest head crowns them and the Head-tender
-	 * names them. The challenger died: the wait starts. Either way the Champion steps back among the elders.
+	 * names them. The challenger died or left: the wait starts. Either way the Champion steps back among the elders.
 	 */
 	public void end(Outcome how, @Nullable ServerPlayer player) {
 		if (outcome != null) return;
@@ -455,6 +465,9 @@ public class KindledChampionEntity extends CourtMemberEntity {
 		if (!(level() instanceof ServerLevel server)) return;
 		if (how == Outcome.CHALLENGER_DIED && player != null) {
 			CourtLife.recordUsurpLoss(player);
+		} else if (how == Outcome.GONE && player != null) {
+			CourtLife.recordUsurpLoss(player);
+			player.displayClientMessage(Component.translatable("hemomancy.court.champion.forfeit").withStyle(ChatFormatting.GRAY), false);
 		} else if (how == Outcome.YIELDED && player != null) {
 			CourtLife.grantChampion(player);
 			BossTelegraphs.glow(server, position().add(0, 1.5D, 0), AMBER, 16, 0.8D);

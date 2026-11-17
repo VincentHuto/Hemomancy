@@ -19,9 +19,12 @@ import java.util.List;
 
 /** The Iron Brazier's offering rites and the absorption lifecycle they share. */
 public final class BrazierRites {
-	/** Tried in order; the first rite that handles an absorption tick owns it. */
+	/**
+	 * Tried in order; the first rite that handles an absorption tick owns it. The recipe-driven transmutation rite
+	 * comes last and accepts only offerings none of the others claims.
+	 */
 	public static final List<BrazierRite<?>> RITES = List.of(MemoryBrazierRite.INSTANCE, ScarBrazierRite.INSTANCE,
-			LivingWeaponGraftRite.INSTANCE);
+			LivingWeaponGraftRite.INSTANCE, BrazierTransmutationRite.INSTANCE);
 
 	private BrazierRites() {
 	}

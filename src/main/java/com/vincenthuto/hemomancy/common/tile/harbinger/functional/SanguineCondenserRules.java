@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.CoagulationRules;
+
 /** Pool, pace and yield of a Sanguine Condenser at each installed stage (0 = Sanguine Cauldron). */
 public final class SanguineCondenserRules {
     private SanguineCondenserRules() {
@@ -13,12 +15,9 @@ public final class SanguineCondenserRules {
         };
     }
 
+    /** The yield rules live with the rest of coagulation; the Condenser is its best-yield station. */
     public static double formationCost(int stage) {
-        return switch (clamp(stage)) {
-            case 0 -> 150.0D;
-            case 1 -> 125.0D;
-            default -> 100.0D;
-        };
+        return CoagulationRules.condenserMlPerFormation(stage);
     }
 
     public static int ticksPerFormation(int stage) {
@@ -37,13 +36,12 @@ public final class SanguineCondenserRules {
         };
     }
 
-    /** Only a bare cauldron can lose a formation; Sanguine Crystallization steadies it by 5% a level. */
     public static double collapseChance(int stage, int crystallizationLevel) {
-        return clamp(stage) == 0 ? Math.max(0.0D, 0.25D - 0.05D * crystallizationLevel) : 0.0D;
+        return CoagulationRules.collapseChance(stage, crystallizationLevel);
     }
 
     public static double bonusChance(int stage) {
-        return clamp(stage) == 2 ? 0.25D : 0.0D;
+        return CoagulationRules.bonusChance(stage);
     }
 
     /** Blood surface above the block's floor, from the cauldron's inner floor (4/16) to its brim (15/16). */

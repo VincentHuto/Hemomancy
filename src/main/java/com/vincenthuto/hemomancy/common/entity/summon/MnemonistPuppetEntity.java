@@ -94,9 +94,8 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 		if (BoundSummonBehavior.commonServerTick(this, this)) {
 			Optional<Player> owner = BoundSummonBehavior.ownerFor(this, this);
 			if (getTarget() == null && owner.isPresent()
-					&& BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner.get(), this)
-					&& distanceToSqr(owner.get()) > 25.0) {
-				getNavigation().moveTo(owner.get(), 1.0);
+					&& BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner.get(), this)) {
+				BoundSummonBehavior.followOwnerOnFoot(this, owner.get(), 1.0);
 			}
 			tickMemoryReplay();
 		}
@@ -121,27 +120,33 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 
 	private void tickMemoryReplay() {
 		MnemonistPuppetRules.pruneExpired(memories, level().getGameTime());
-		if (tickCount % MnemonistPuppetRules.REPLAY_INTERVAL_TICKS != 0 || !(level() instanceof ServerLevel serverLevel)) {
-			return;
-		}
+		if (tickCount % MnemonistPuppetRules.REPLAY_INTERVAL_TICKS != 0) return;
+		replayNow();
+	}
+
+	/** Replays the remembered wound on the current target now. False when there is no target or nothing to replay. */
+	public boolean replayNow() {
+		if (!(level() instanceof ServerLevel serverLevel)) return false;
+		MnemonistPuppetRules.pruneExpired(memories, level().getGameTime());
 		LivingEntity target = getTarget();
 		if (target == null || !target.isAlive() || distanceToSqr(target) > 18.0D * 18.0D) {
-			return;
+			return false;
 		}
 		MnemonistPuppetRules.AttackMemory memory =
 				MnemonistPuppetRules.pollReplayMemory(memories, target.getUUID(), level().getGameTime());
 		if (memory == null) {
-			return;
+			return false;
 		}
 		float damage = MnemonistPuppetRules.replayDamage(memory.damage());
 		if (damage <= 0.0F) {
-			return;
+			return false;
 		}
 		MnemonistPuppetEvents.withReplayDamage(() -> {
-            if (target.hurt(level().damageSources().magic(), damage))
+            if (target.hurt(level().damageSources().indirectMagic(this, this), damage))
                 com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController.replay(this, target, memory.attackerId());
         });
 		playReplayEffects(serverLevel, target);
+		return true;
 	}
 
 	private void playReplayEffects(ServerLevel serverLevel, LivingEntity target) {

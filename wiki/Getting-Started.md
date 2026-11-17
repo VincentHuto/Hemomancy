@@ -12,7 +12,6 @@ Install the required mods, find a Blood Temple, and use the Mortal Display to de
 - **Java:** Version 21 or higher
 - **Required Dependencies:**
   - HutosLib 7.3.5+
-  - GeckoLib 4.8.4+
   - TerraBlender 4.1.0.8+
 
 ### Installation Steps
@@ -24,7 +23,7 @@ Install the required mods, find a Blood Temple, and use the Mortal Display to de
 ### Optional Mods
 - **Just Enough Items (JEI)**: Adds recipe viewing for custom crafting stations. It is the recommended alpha companion mod.
 - **Mana and Artifice** - Not supported; the old integration was removed.
-- **Curios API** - Dormant on the NeoForge 1.21.1 branch; Charm of Vascularium behavior currently uses Hemomancy's own equipment surfaces instead of a Curios slot
+- **Curios API** - Not supported; the old integration was removed. The Charm of Vascularium uses Hemomancy's own equipment surfaces instead of a Curios slot
 
 See **[[Public Alpha Readiness]]** for the current alpha status and known limitations.
 
@@ -80,7 +79,7 @@ Early memories do not require a loom. Player-killed Thirsters can drop crude Blo
 
 Right-click a crude memory with active blood and its required learning degree to learn it for **500 mL**. Casting alignment and casting blood cost are separate requirements, shown on the item. Duplicate learning keeps your blood and shard. Degree I grants Blood Absorption and Blood Projection automatically; the Living Staff comes through its Degree-I structure recipe.
 
-The self-built Somatic Loom remains **Degree III**. Ask the Mnemonist about The Woven Vessel or the Loom to learn the blank Hematic Memory recipe. It needs four Sanguine Formations, four Blood Stained Stones and one Neurotic Enzyme. Make each stained stone from Venous Stone, a Sanguine Formation and redstone dust; crafting all four brings the total to eight formations. Stones found in Hermitage Remnants also work. Spin ordinary chicken Blood Vials for Neurotic Enzyme. Chicken blood can also yield Vivacious Enzyme, so collect more than one vial. Bring the blank, a book, an ink sac and three paper to the Mnemonist for the Blood Shot starter materials. The actual weave then requires its listed catalyst, enzymes and blood.
+The self-built Somatic Loom remains **Degree III**. Ask the Mnemonist about The Woven Vessel or the Loom to learn the blank Hematic Memory recipe. It needs four Blood Stained Stones and one Neurotic Enzyme. Make each stained stone from Venous Stone, a Sanguine Formation and redstone dust, so a blank of crafted stones costs four formations. Stones found in Hermitage Remnants also work. Spin ordinary chicken Blood Vials for Neurotic Enzyme. Chicken blood can also yield Vivacious Enzyme, so collect more than one vial. Bring the blank, a book, an ink sac and three paper to the Mnemonist for the Blood Shot starter materials. The actual weave then requires its listed catalyst, enzymes and blood.
 
 In the Mnemonist's **Quest Work**, choose **How do I prepare a blank memory?** for The Woven Vessel. General Loom teaching remains a lore card under **Conversation**. Indexing supplies the starter materials; finishing the weave is still the Main proof.
 
@@ -152,17 +151,16 @@ Read **[[Harbinger Path]]** for the full progression
 **Theme:** Purify yourself of blood corruption
 
 If you view blood magic as infection to be cleansed:
-1. Craft **Hemolytic Solution** (formaldehyde-equivalent)
-2. Perform purification rituals at **Copper Altars**
-3. Progress through purification stages
-4. Gain immunity to blood magic and corruption
-5. Become a Guardian sworn to Our Lady of Still Waters
+1. Find an Unstained Church and speak to the Zealot
+2. Suppress the infection with **Hemolytic Solution** at the **Unstained Podium**
+3. Perform the **Rite of Lethean Baptism** to begin Purity
+4. Climb the purity stages (Tainted, Cleansing, Absolved, Purified); the first Rite of the Closed Vein at Purified is the cure
+5. Unlock Clarity with the Rite of Clarity Ascension and earn the Still Arts
 
 **Pros:**
-- Immunity to fungal corruption
-- Biological immortality (configurable)
-- Guardian combat abilities with blunt weapons
-- Copper-based defensive powers
+- Still Arts: nine pale counter-arts earned through Clarity
+- Verdigris Aura and Silver Ward against blood-coded threats
+- Biology that shrugs off poison and healing potions as Clarity rises
 - Clarity of purpose
 
 **Cons:**
@@ -175,7 +173,7 @@ If you view blood magic as infection to be cleansed:
 Read **[[Unstained Path]]** for the full progression
 
 ### Can You Change Paths?
-**No.** This is a one-way choice by design. Starting Unstained purification zeros out Harbinger progress, and completing a degree rite zeros out Unstained progress.
+**No.** This is a one-way choice by design. The first Rite of the Closed Vein at Purified strips Harbinger progress, and completing a Harbinger degree rite zeros out Unstained progress.
 
 Choose before you spend heavily on a path. Switching back and forth is not a supported way to min-max progression.
 
@@ -185,52 +183,41 @@ Choose before you spend heavily on a path. Switching back and forth is not a sup
 
 ### For Everyone
 
-**Field Notes (Book)**
-- Opens your journal and progression tracker
-- Keybind: `B` by default
-- Shows blood volume, temper, known manipulations, and more
+**Field Notes**
+- The pending-discovery notes the HUD keeps for you; captured memos are read in the Liber Sanguinium or the Liber Immaculatus
 
 **Vials and Containers**
-- **Blood Vial**: Stores 250 mL of your blood for later use
-- **Vial Rack**: Wall-mounted storage for vials
-- **Hemoclysm**: Portable blood container (holds 1000 mL)
-
-**Basic Tools**
-- **Sanguine Chisel**: Used at the Chisel Station to craft scars
-- **Visceral Recaller**: Stores your respawn point in blood
+- **Bloody Vial**: holds one blood sample, drawn with the Living Syringe; injected, examined under the Hematic Microscope or spun in the Vial Centrifuge
+- **Vial Rack**: holds vials
+- **Blood Gourds**: a worn reserve of blood beside your own (White 1,000 mL, Red 1,800 mL, Black 3,500 mL), raised by the Alchemist's vessel rites
 
 ### For Harbingers
 
-**Cardinal Altar**
-- Required for degree advancement rituals
-- Place in the world and perform rites using specific items
-- Multi-block structure for higher degrees
+**Cardinal Focus and rite floors**
+- Rites are cast on a floor around a Cardinal Focus with the Living Staff; the floor's purpose and size set what can be cast there
+- Read **[[Harbinger Path]]** for the rite lifecycle
 
 **Somatic Loom**
 - Where you weave Hematic Memories to learn manipulations
-- Requires blank memories, enzymes, and catalysts
-- Complex but rewarding crafting system
+- Requires blank memories, enzymes, and catalysts, and a short engram-threading puzzle
+
+**Living Staff**
+- Your channel for Projection and Absorption, rites and the living weapon forms
 
 **Hematic Stakes**
 - Extend your Founding Fane boundaries (Degree 5+)
-- Place around your base for powerful buffs
 
 ### For Unstained
 
-**Copper Altar**
-- Used for purification rituals
-- Craft with copper blocks and hemolytic solution
-- Place in sacred spaces for best results
+**Unstained Podium and Altar of Cleansing**
+- The Podium takes Hemolytic Solution (to suppress the infection) and later Consecrated Copper (to prepare Clarity)
+- The Altar of Cleansing takes the Tears of Silthmere, Lethean Poppy Wreaths and other offerings for purity
 
 **Hemolytic Solution**
-- The key purifying agent
-- Crafted from specific materials (recipe in JEI)
-- Painful but necessary for purification
+- The key purifying agent (recipe in JEI)
 
 **Blunt Weapons**
-- Unstained refuse to spill blood
-- Use maces, hammers, and clubs instead of swords
-- Special Unstained weapons available at higher purities
+- The Unstained Warhammer and Unstained Shield; the Unstained refuse to spill blood
 
 ---
 
@@ -238,14 +225,17 @@ Choose before you spend heavily on a path. Switching back and forth is not a sup
 
 ### Biomes to Find
 
-**Overworld Biomes:**
-- **Sporecrown Thicket**: Dense fungal forest with towering mushroom caps
-- **Hyphal Spires**: Tall fungal pillars reaching skyward
-- **Drifting Mycelium**: Ethereal floating islands of mycelium
+**Overworld:**
+- **Fungal Gardens**: a TerraBlender infection zone that replaces some swamps and jungles
+- **Pelagic oceans**: Rockpool Shore, Erythrocoral Reef, Pelagic, Twilight, Midnight, Carrion and Hydrothermal waters, layered by depth
 
-**Nether Biomes:**
-- **Fungal Gardens**: Crimson gardens with blood-red fungi
-- **Fungal Isles**: Floating islands of alien vegetation
+**The Nether:**
+- **Phlegethontic Basin**: ichor reservoirs, spillways and the Phlegethosoma
+
+**The End:**
+- **Cortical Drift**: the Vagrant Minds and their nerve fields
+
+**The Fungal Gardens dimension** (reached late): Mycelial Meadows, Fungal Isles, Sporecrown Thicket, Hyphal Spires, Drifting Mycelium, Mycelial Depths and Hemorrhagic Plateau
 
 ### Structures to Explore
 
@@ -256,14 +246,9 @@ Choose before you spend heavily on a path. Switching back and forth is not a sup
 - Contains supply storage and recruitable residents
 - Can be looted or joined depending on your path
 
-**Mausoleums** (not generating naturally yet)
-- One generic underground crypt: a trial room, a Saint's sarcophagus and a treasure room
-- Dangerous but rewarding
-
-**Trial Chambers** (planned)
-- A dedicated encounter area for each Saint
-- Hemorath and the other Saints are reserved together for the first major post-release content update
-- Their chambers, rewards, Canon memories, and final encounter presentation remain WIP until that update
+**Saint Mausoleums**
+- Four complexes, one per Saint, generate naturally
+- The outer halls are open from about Degree 3; the ward, the Chapels, the ring door and the Saint are Degree 8 (see **[[Saints and Encounters]]**)
 
 ### Important Resources
 
@@ -277,10 +262,8 @@ Choose before you spend heavily on a path. Switching back and forth is not a sup
 - Key ingredient in many rituals and recipes
 - Forms beautiful underwater reefs
 
-**Bloodwort**
-- Plant that grows in fungal biomes
-- Used in brewing and ritual components
-- Can be cultivated
+**Bleeding Bulbs and Sarcodes**
+- Sarcodes distil into Bleeding Bulbs in the Ghastly Alembic, a common catalyst
 
 ---
 
@@ -299,13 +282,18 @@ Right-click an NPC to open its dialogue. Most NPCs open on four boxes:
 - **Conversation**: one card per thing to talk about. A card with the lore glyph is lore, and its dot stays until you've read it.
 - **Trade**: the NPC's want cards. Each card names what they want (an item, blood, or a house's custom) and what they give for it.
 
+The outpost Harbingers also teach the everyday work of blood as lore cards under Conversation: the Hermit the two verbs and what spilled blood draws, the Vicar the verb key, the day, the world's count and keeping creatures, the Alchemist living blood, fed ground, Temper, reading a creature and strain beds, the Mnemonist Sculptings, strands and the ground memories, the Artificer hot gouge runs, the Staff, the strand skills and climbing, and the Vein-Mason (from the fourth Degree) ground marks, carried crossings and walls. Asking any question in a lesson opens its Liber pages.
+
 Click a card to see which of your stacks would pay it. NPCs appraise what you offer: a badly worn or empty offering is refused, and a fine one can earn more. Nothing is taken unless the whole trade goes through, including room for what you get. Trading builds rapport with that one NPC, which opens better cards and more Conversation lines. The Unstained won't trade with a Harbinger at the first Degree or above. The Brined Court never sells: its cards are its customs, and they earn standing. A trade never teaches a manipulation or counts as a step on either path.
 
 ### Keybinds (Default)
-- **`B`**: Open Field Notes journal
-- **`V`**: Manipulation selection wheel (hold and move mouse)
-- **`R`**: Use selected manipulation (configurable)
-- **`Left Mouse`**: Quick-cast manipulation (if applicable)
+- **`R`**: Use the selected manipulation
+- **`C`**: Cycle known manipulations
+- **`Y`**: Blood Verb (conjure the cell hand, switch Projection and Absorption)
+- **`J`**: Blood Formation; **`K`**: bloodcraft (start a Blood Structure or rite)
+- **`N`**: Morphling Jar; **`H`**: open or close the worn gourd
+- **`B`**: charm slot; **`X`**: vascular charm menu; **`V`**: drop a blood ball
+- **`Left Mouse`** with a lash selected: a lash tap
 
 Check Options > Controls > Hemomancy for full keybind list.
 
@@ -358,13 +346,13 @@ An entry's icon, chapter, title, and subtitle appear on its opening page only. C
 **Problem:** I clicked the Mortal Display but nothing happened
 - Check if blood volume is enabled in config
 - Try relogging
-- Ensure you're not already active (check Field Notes with `B`)
+- Ensure you're not already active (the HUD vessel shows once your blood is awake)
 
 **Problem:** I can't use manipulations
 - Ensure you have enough blood volume
 - Check if the manipulation is on cooldown
-- Verify you've learned the manipulation (Field Notes > Manipulations tab)
-- Make sure you've selected the manipulation (press `V`)
+- Verify you've learned the manipulation (the Tempers tab of the Sanguine Conduit)
+- Make sure you've selected the manipulation (press `C`, or use the radial)
 
 **Problem:** Blood isn't regenerating
 - Check config settings for regeneration rate

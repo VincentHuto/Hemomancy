@@ -46,7 +46,7 @@ Knowledge is distributed by discipline:
 
 - The **Alchemist** explains blood compatibility, donated samples, and Sanguine Quintessence.
 - The **Mnemonist** explains Bequests, memory inheritance, mnemonic rejection, and restoration.
-- The **Artificer** teaches fabrication of the Vacant Effigy through a blood-structure recipe.
+- The **Artificer** teaches fabrication of the Vacant Effigy, a Greater Working craft (`recipe/cardinal_rite/working/vacant_effigy.json`).
 - Bloodline progression combines those teachings into the Rite of Hematic Succession.
 
 ## Mnemonic Bequests and Consent
@@ -73,8 +73,7 @@ The **Vacant Effigy** is a generic, portable artificial body produced before the
 
 ### Manufacture
 
-- D5 blood-structure craft using Sanguine Formation and 250 mL personal blood. The horizontal 3×3 pattern has a Venous Stone center, four Conscious Mass corners, and four Hematic Iron edge blocks.
-- The manufacturing structure is external to the Cardinal Rite and does not occupy its ritual floor.
+- D5 Working craft on a Greater Working floor (`working/vacant_effigy.json`: purpose `making`, floor `hemomancy:working_greater`, its subject fed 250 mL). It was first written as a floorless blood-structure craft; a hand projection into the old frame is now only a hint (B02, 2026-11-14).
 - Its model should resemble the existing Bog Body: prone, preserved, human-shaped, and visibly organic.
 - The completed effigy can be carried as an item and placed on a Venous Stone plinth beside the Cardinal Focus, two blocks from the Focus horizontally and two blocks above its floor level.
 
@@ -138,7 +137,7 @@ The rite requires:
 
 Membership and POI reservation are locked when the rite begins. A player leaving or being removed from the bloodline midway does not transfer ownership or confuse the result.
 
-The six-phase body sequence lasts 1,200 server ticks (60 seconds), following the normal staff planting. There are no scheduled combat waves. Seat Quintessence in the Focus. The first three marked floor sockets hold donor blood, officiant blood, and Ambergris respectively; restoration uses the first two for remnant and officiant blood.
+The six-phase body sequence lasts 1,200 server ticks (60 seconds), following the normal staff planting. There are no scheduled combat waves. Seat Quintessence in the Focus. The first three braziers, read clockwise, hold donor blood, officiant blood, and Ambergris respectively (the recipe's `brazier_signature`); restoration uses the first two for remnant and officiant blood.
 
 ### Ritual phases
 
@@ -291,7 +290,7 @@ This turns D5 from personal apprenticeship into institutional authorship: the pr
 The first implementation should include:
 
 - Persistent bloodline-wide Mnemonic Bequests.
-- The Vacant Effigy and its blood-structure manufacturing recipe.
+- The Vacant Effigy and its Working craft.
 - Profession-to-POI compatibility data.
 - Rite of Hematic Succession.
 - One generic successor framework supporting existing professional NPC roles.

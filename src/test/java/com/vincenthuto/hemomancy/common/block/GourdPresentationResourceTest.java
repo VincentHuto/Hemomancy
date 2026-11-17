@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.block;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class GourdPresentationResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -11,13 +15,14 @@ public final class GourdPresentationResourceTest {
 	private GourdPresentationResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String blockModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/gourd.json"));
 		String gourdBlock = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/plant/GourdBlock.java"));
 		String blockInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/BlockInit.java"));
 
-		assertDoesNotContain("gourd model should not inherit a full cube column", blockModel,
+		assertNotContains("gourd model should not inherit a full cube column", blockModel,
 				"\"parent\": \"minecraft:block/cube_column\"");
 		assertContains("gourd model has explicit element geometry", blockModel, "\"elements\"");
 		assertContains("gourd model has the lower pod body", blockModel, "\"from\": [4, 0, 4]");
@@ -40,21 +45,5 @@ public final class GourdPresentationResourceTest {
 				"\"render_type\": \"cutout\"");
 		assertContains("attached gourd stem restores the custom age-7 stem when fruit is removed", blockInit,
 				"new AttachedStemBlock(GOURD_STEM_BLOCK_KEY, GOURD_BLOCK_KEY, GOURD_SEED_ITEM_KEY");
-	}
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 }

@@ -8,7 +8,7 @@ Mnemonic Whales remain living archives collected from without killing the whale.
 
 The premise is direct: blood magic is a fungal infection, ancient cosmic entities reproduce through human bodies, and salvation can look a lot like dissolution.
 
-The repository's [LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/LORE_REFERENCE.md) is the authority for complete lore details.
+The repository's [LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/LORE_REFERENCE.md) is the authority for complete lore details.
 
 ---
 
@@ -320,7 +320,7 @@ A massive fungal tree structure summoned at high degree.
 
 ### The Saints
 
-Four ancient hemomancers whose blood outgrew their bodies. Their own people sealed them in tombs, and the Hematic Order inherited and keeps those tombs. Sainthood marks what the blood became, not virtue. All four have prototype encounters behind the post-release Saints boundary, and none of them can be killed: every fight returns the Saint to its sarcophagus. See [Saints and Encounters](Saints-and-Encounters.md) for how they are found.
+Four ancient hemomancers whose blood outgrew their bodies. Their own people sealed them in tombs, and the Hematic Order inherited and keeps those tombs. Sainthood marks what the blood became, not virtue. All four have their fights in the game (implemented, overhauls pending), and none of them can be killed: every fight returns the Saint to its sarcophagus. See [Saints and Encounters](Saints-and-Encounters.md) for how they are found.
 
 **Hemorath, the Hollow Vessel** (Animus + Ferric)
 - One of the first and most powerful Hemomancers, older than the Order's structure and Erythravane's Fane, and never a true Harbinger. Erythravane was the first Vicar and Archon. He learned to harden the iron in his blood and to draw blood from other creatures, then fed until the absorption overloaded his body
@@ -418,7 +418,7 @@ The Spawn Mother: the hivemind's brood cultivator and the mother of every Erythr
 - You wake bound in her Morphic Nursery as she tends her brood, back turned; she turns, roars and rushes to embrace you
 - First she tries to take you back like a stray child: holds against her gestation sac, a feeding siphon, brood that herd you to her
 - She answers wherever you stand: claws and a crushing belly up close, a tail and spore vents behind her, spit, egg mortars and a nursed brood at range
-- At half health her skull splits over a flowering face of eyes and hyphae wings grow: she tries to join with you as an equal
+- At 60% health her skull splits over a flowering face of eyes and hyphae wings grow: she tries to join with you as an equal
 - Her wings drive lances and nets, her many eyes sweep a burning gaze, and near the end she opens her gestation sac to take you in
 - Survive every claim and she yields, offers you her Tendril, and the hive names you its heir
 
@@ -514,8 +514,8 @@ When engaging with Hemomancy's story, remember:
 - **Lady's Whispers**: Messages from Pale Lady
 
 ### External Sources
-- **[LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/LORE_REFERENCE.md)**: Complete lore documentation
-- **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)**: Implementation details and status
+- **[LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/LORE_REFERENCE.md)**: Complete lore documentation
+- **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/HEMOMANCY_REFERENCE.md)**: Implementation details and status
 - **Community Discussions**: Players sharing interpretations
 
 ---

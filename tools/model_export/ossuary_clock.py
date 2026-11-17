@@ -4,14 +4,19 @@ A knuckle-footed plinth with a skull plaque, a trunk flanked by stacked vertebra
 door over a bone pendulum with a Mnemonic Ambergris bob and two bound-bone weights, and a hood
 carrying a bone chapter dial under a blood-moon lunette (the clock reports the moon phase).
 
-Emits the lower and upper block models, the item model, the painted atlas and an editable
-Blockbench project. Python 3 + Pillow + NumPy. `--preview` also writes a textured turnaround to
+The lunette is the clock's omen (core-loop Track 10): a pale moon on a night ground while tonight's chance of a
+Blood Moon is low, a moon half drowned in red when the omen is on it, and a full crimson moon while a Blood Moon
+is up. The upper storey is a multipart of the hood and one lunette model per omen state.
+
+Emits the lower and upper block models, the lunette models, the multipart blockstate, the item model, the painted
+atlas and an editable Blockbench project. Python 3 + Pillow + NumPy. `--preview` also writes a textured turnaround to
 build/model-previews/ossuary_clock.png.
 
 Coordinates are block pixels for the north-facing state, authored as one 32-pixel-tall piece and cut
 at y = 16 into the two block halves. The front (player side) is z = 0.
 """
 import argparse
+import json
 import math
 
 from clairaudiograph import clamp, noise
@@ -95,7 +100,6 @@ def clock():
     e.append(box('bezel_top', (4.75, 27.75, 1.875), (11.25, 28, 2.25), 'ferric', skip=('south',)))
     e.append(box('bezel_bottom', (4.75, 21.5, 1.875), (11.25, 21.75, 2.25), 'ferric', skip=('south',)))
     e += pair(box('bezel_side', (4.75, 21.75, 1.875), (5, 27.75, 2.25), 'ferric', skip=('south',)))
-    e.append(box('lunette', (5.5, 28, 2), (10.5, 29.25, 2.25), 'lacquer_deep', north='lunette', skip=('south',)))
     e += pair(box('lunette_step', (5.25, 28, 1.875), (5.5, 29.25, 2.25), 'ferric', skip=('south',)))
     e += pair(box('lunette_shoulder', (5.5, 29.25, 1.875), (6.5, 29.5, 2.25), 'ferric', skip=('south',)))
     e.append(box('lunette_crown', (6.5, 29.25, 1.875), (9.5, 29.75, 2.25), 'ferric', skip=('south',)))
@@ -114,6 +118,14 @@ def clock():
     e.append(box('finial_plinth', (6.5, 30.5, 1.5), (9.5, 31, 3.5), 'lacquer'))
     e.append(box('finial', (7, 31, 1.75), (9, 32, 3.75), 'ambergris'))
     return e
+
+
+OMENS = ('quiet', 'omen', 'risen')
+
+
+def lunette_group(omen):
+    """The lunette in upper-storey coordinates; its face is painted by the omen its group names."""
+    return [box('lunette', (5.5, 12, 2), (10.5, 13.25, 2.25), 'lacquer_deep', north='lunette', skip=('south',))]
 
 
 # --- special faces --------------------------------------------------------------------------
@@ -143,11 +155,15 @@ def dial(face, lx, ly, w, h, key):
 
 
 def lunette(face, lx, ly, w, h, key):
-    """Moon-phase arch: a blood moon rising between two bone hemispheres on a night ground."""
+    """Moon arch: a moon between two bone hemispheres on a night ground, pale, half red or crimson by the omen."""
+    omen = key[0].removeprefix('lunette_') if isinstance(key[0], str) else 'risen'
     mid = w / 2
     moon = (abs(lx + .5 - mid) <= (1 if ly != 1 else 2)) and ly < 3
     if moon:
-        return ((214, 70, 78) if (ly, lx) == (0, int(mid) - 1) else (170, 22, 34)) + (255,)
+        bright = (ly, lx) == (0, int(mid) - 1)
+        if omen == 'quiet' or (omen == 'omen' and lx + .5 < mid):
+            return ((236, 228, 210) if bright else (196, 188, 170)) + (255,)
+        return ((214, 70, 78) if bright else (170, 22, 34)) + (255,)
     if (ly >= h - 2 and (lx < 2 or lx >= w - 2)) or (ly == h - 3 and (lx == 0 or lx == w - 1)):
         return clamp(PALETTE['bone'], int(noise('hemisphere', lx, ly) * 10) - 10) + (255,)
     if noise('star', lx, ly) > .9:
@@ -198,6 +214,26 @@ DISPLAY = {
 }
 
 
+FACING_Y = {'north': 0, 'east': 90, 'south': 180, 'west': 270}
+
+
+def blockstate():
+    """Multipart: each storey by facing, and the upper storey's lunette by facing and omen."""
+    parts = []
+    for facing, y in FACING_Y.items():
+        def apply(model):
+            out = {'model': f'hemomancy:block/{model}'}
+            if y:
+                out['y'] = y
+            return out
+        parts.append({'when': {'facing': facing, 'half': 'lower'}, 'apply': apply('ossuary_clock')})
+        parts.append({'when': {'facing': facing, 'half': 'upper'}, 'apply': apply('ossuary_clock_upper')})
+        for index, omen in enumerate(OMENS):
+            parts.append({'when': {'facing': facing, 'half': 'upper', 'omen': str(index)},
+                          'apply': apply(f'ossuary_clock_lunette_{omen}')})
+    return {'multipart': parts}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--preview', action='store_true')
@@ -205,16 +241,23 @@ def main():
     elements = clock()
     moved = separate(elements)
     lower, upper = split_storeys(elements)
-    atlas, models = build({'lower': lower, 'upper': upper}, SPECIAL)
+    groups = {'lower': lower, 'upper': upper}
+    for omen in OMENS:
+        groups[f'lunette_{omen}'] = lunette_group(omen)
+    atlas, models = build(groups, SPECIAL)
     atlas.save(ASSETS / f'textures/block/{ATLAS}.png')
-    item = model_json(item_elements((models['lower'], 0), (models['upper'], 16)), ATLAS, atlas.height, PARTICLE,
-                      DISPLAY)
+    item = model_json(item_elements((models['lower'], 0), (models['upper'] + models['lunette_quiet'], 16)), ATLAS,
+                      atlas.height, PARTICLE, DISPLAY)
     outputs = {
         'block/ossuary_clock': model_json(models['lower'], ATLAS, atlas.height, PARTICLE),
         'block/ossuary_clock_upper': model_json(models['upper'], ATLAS, atlas.height, PARTICLE),
         'item/ossuary_clock': item,
     }
+    for omen in OMENS:
+        outputs[f'block/ossuary_clock_lunette_{omen}'] = model_json(models[f'lunette_{omen}'], ATLAS, atlas.height,
+                                                                    PARTICLE)
     write(outputs, 'ossuary_clock', item)
+    (ASSETS / 'blockstates' / 'ossuary_clock.json').write_text(json.dumps(blockstate(), indent=2) + '\n')
     print(f'Exported Ossuary Clock: {len(lower)} lower + {len(upper)} upper cubes, {moved} faces separated, '
           f'128x{atlas.height} atlas')
     if args.preview:

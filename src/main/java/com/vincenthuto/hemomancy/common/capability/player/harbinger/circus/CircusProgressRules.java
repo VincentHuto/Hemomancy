@@ -43,45 +43,13 @@ public final class CircusProgressRules {
 			};
 		}
 
-		public float motionJitter() {
-			return switch (this) {
-				case DISTURBED -> 0.035F;
-				case ACCLIMATING -> 0.012F;
-				default -> 0.0F;
-			};
-		}
 
-		public int silhouetteCount() {
-			return switch (this) {
-				case UNAWARE -> 0;
-				case DISTURBED -> 2;
-				case ACCLIMATING -> 3;
-				case ATTUNED -> 4;
-			};
-		}
 
-		public int clothCount() {
-			return switch (this) {
-				case UNAWARE -> 0;
-				case DISTURBED -> 2;
-				case ACCLIMATING -> 4;
-				case ATTUNED -> 6;
-			};
-		}
 
-		public int lightCount() {
-			return switch (this) {
-				case UNAWARE -> 0;
-				case DISTURBED -> 1;
-				case ACCLIMATING -> 3;
-				case ATTUNED -> 6;
-			};
-		}
 
 		public int motionEchoAlpha() {
 			return switch (this) {
 				case DISTURBED -> 72;
-				case ACCLIMATING -> 38;
 				default -> 0;
 			};
 		}

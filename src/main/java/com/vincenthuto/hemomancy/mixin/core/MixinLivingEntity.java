@@ -63,7 +63,8 @@ public abstract class MixinLivingEntity extends Entity {
 		if (item instanceof SilthmereGlaiveItem) return 16;
 		if (item instanceof LivingSickleItem) return LivingSickleItem.mode(stack) == LivingSickleMode.BLOOD_HOOK ? 14 : 9;
 		if (item instanceof SanguisLanceaItem || item instanceof AnnettasSanguisLanceaItem) return 12;
-		if (item instanceof LivingBladeItem || item instanceof LivingSpearItem || item instanceof LivingTorchItem) return 10;
+		if (item instanceof LivingBladeItem || item instanceof LivingSpearItem || item instanceof LivingTorchItem
+				|| item instanceof com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingPickaxeItem) return 10;
 		if (item instanceof AbsolutionDaggerItem) return 9;
 		if (item instanceof LivingBaghnakhItem) return 7;
 		return 6;

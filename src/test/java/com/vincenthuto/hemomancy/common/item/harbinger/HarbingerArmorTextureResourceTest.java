@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class HarbingerArmorTextureResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -28,7 +32,8 @@ public final class HarbingerArmorTextureResourceTest {
 	private HarbingerArmorTextureResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		for (String item : DISTINCT_ITEM_TEXTURES) {
 			assertItemModelUsesOwnTexture(item);
 			String model = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/" + item + ".json"));
@@ -91,13 +96,6 @@ public final class HarbingerArmorTextureResourceTest {
 		}
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
@@ -127,12 +125,6 @@ public final class HarbingerArmorTextureResourceTest {
 			return Files.readString(path).contains(text);
 		} catch (IOException e) {
 			throw new AssertionError("could not read " + path, e);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
 		}
 	}
 }

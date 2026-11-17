@@ -60,7 +60,7 @@ import java.util.UUID;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class HarbingerCardinalRiteEvents {
-	private static final BloodAccounting.Source BOUNDARY = BloodAccounting.Source.of("rite_boundary", Category.RITE, false, false);
+	private static final BloodAccounting.Source BOUNDARY = BloodAccounting.Source.of("rite_boundary", Category.RITE, false);
 
 	private static final float CASTER_BOUNDARY_DAMAGE_PER_TICK = 1.0f;
 	private static final double CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK = 25.0;
@@ -99,7 +99,7 @@ public class HarbingerCardinalRiteEvents {
 		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 
 		// Tick pending blood structure crafts (delayed block breaking)
-		PendingBloodCraftManager.tick();
+		PendingBloodCraftManager.tick(sLevel);
 		BloodStructureFeedManager.tick(sLevel);
 		BloodInfusionManager.tick(sLevel);
 
@@ -115,7 +115,6 @@ public class HarbingerCardinalRiteEvents {
 		if (sLevel.getGameTime() % 20 == 0) {
 			for (ServerPlayer player : sLevel.players()) {
 				CardinalRiteSavedData.get(sLevel.getServer().overworld()).deliverRecovery(player);
-				HemoCapabilityAccess.stationUpgrades(player).deliver(player);
 			}
 		}
 		Map<UUID, ActiveCardinalRite> activeRites = savedData.getActiveRites();
@@ -520,8 +519,7 @@ public class HarbingerCardinalRiteEvents {
 								entity instanceof Player,
 								caster.isAlliedTo(entity),
 								entity instanceof net.minecraft.world.entity.TamableAnimal tame && tame.isTame(),
-								entity instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon
-										|| entity instanceof net.minecraft.world.entity.boss.wither.WitherBoss));
+								HemoEntityPredicates.isBoss(entity)));
 
 		boolean fedThisTick = false;
 		BlockPos center = rite.getCenterPos();

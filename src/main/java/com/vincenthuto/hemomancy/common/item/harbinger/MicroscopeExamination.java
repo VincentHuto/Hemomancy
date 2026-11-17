@@ -41,6 +41,8 @@ public final class MicroscopeExamination {
         long releasedAt = -1;
         int ticks;
         boolean complete;
+        /** The viewer has not examined this kind yet (core-loop Track 5): a labelled vial still teaches them. */
+        final boolean unknownToViewer;
         Session(Player player, ItemStack instrument, ItemStack sample) {
             level = player.level();
             startedAt = level.getGameTime();
@@ -51,8 +53,10 @@ public final class MicroscopeExamination {
             snapshot = sample.copy();
             profile = BloodSampleData.profile(sample, false);
             complete = false;
+            unknownToViewer = !com.vincenthuto.hemomancy.common.mission.alchemist.BloodResearch.knows(player,
+                    BloodSampleData.sourceId(sample));
         }
-        boolean pending() { return !complete && !profile.identified() && BloodSampleData.examinable(sample); }
+        boolean pending() { return !complete && (!profile.identified() || unknownToViewer) && BloodSampleData.examinable(sample); }
         boolean held(Player player) {
             return player.isAlive() && !player.isSpectator() && player.level() == level
                     && player.getInventory().selected == slot && player.getMainHandItem() == instrument

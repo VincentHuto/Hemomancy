@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.entity.mob.will;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class WillRendererSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -10,7 +14,8 @@ public final class WillRendererSourceTest {
 	private WillRendererSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/mob/will/WillRenderer.java");
 		String renderTypes = read("src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
 		String shader = read("src/main/resources/assets/hemomancy/shaders/core/item/will_state_monolith.fsh");
@@ -24,7 +29,7 @@ public final class WillRendererSourceTest {
 				"flickerAlpha");
 		assertContains("Will renderer only applies fast absorption flicker while absorbing", renderer,
 				"entity.getPhase() == WillPhase.ABSORBING");
-		assertDoesNotContain("Will renderer no longer depends on absorption dissolve state", renderer,
+		assertNotContains("Will renderer no longer depends on absorption dissolve state", renderer,
 				"isAbsorptionDissolving");
 		assertContains("Will render type accepts dissolve progress", renderTypes,
 				"float dissolveProgress");
@@ -52,17 +57,5 @@ public final class WillRendererSourceTest {
 			throw new AssertionError("missing " + path);
 		}
 		return Files.readString(resolved).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (still contains '" + unexpected + "')");
-		}
 	}
 }

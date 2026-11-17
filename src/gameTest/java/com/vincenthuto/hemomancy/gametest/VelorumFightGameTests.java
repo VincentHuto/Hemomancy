@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import net.minecraft.world.item.ItemStack;
+import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.block.harbinger.decoration.FrozenDevoteeBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.boss.BossFootprint;
@@ -688,6 +692,36 @@ public final class VelorumFightGameTests {
 			velorum.discard();
 			a.discard();
 			b.discard();
+		}
+	}
+
+	/**
+	 * The Endless Hour near Velorum (D-1, NQ-08-11): it is his hour. A challenger holding one loses the planted guard,
+	 * and their stillness in his meter fills half again as fast.
+	 */
+	@GameTest(template = TEMPLATE, timeoutTicks = 100, batch = "velorum_fight_gift")
+	public static void hisOwnHourStillsItsCasterFasterAndTakesTheGuard(GameTestHelper h) {
+		VelorumEntity velorum = velorum(h);
+		ServerPlayer plain = challenger(h, velorum, new Vec3(3.0D, 0.0D, 0.0D));
+		ServerPlayer planted = challenger(h, velorum, new Vec3(-3.0D, 0.0D, 0.0D));
+		EndlessHourManip hour = (EndlessHourManip) ManipulationInit.endless_hour.get();
+		CanonGiftGameTests.ready(planted, hour);
+		try {
+			tick(velorum, 2);
+			hour.getAction(planted, h.getLevel(), ItemStack.EMPTY, planted.blockPosition());
+			h.assertTrue(EndlessHourManip.holding(planted), "the Hour holds");
+			h.assertTrue(EndlessHourManip.taken(planted) == 1.0D, "in his fight the planted caster keeps no guard");
+			float plainBefore = stillness(velorum, plain), plantedBefore = stillness(velorum, planted);
+			tick(velorum, 20);
+			float plainGain = stillness(velorum, plain) - plainBefore, plantedGain = stillness(velorum, planted) - plantedBefore;
+			h.assertTrue(plainGain > 0.0F, "a still challenger stills");
+			h.assertTrue(plantedGain >= plainGain * 1.4F, "the Hour's caster stills half again as fast: " + plantedGain + " vs " + plainGain);
+			h.succeed();
+		} finally {
+			CanonGiftState.end(planted.getUUID());
+			velorum.discard();
+			plain.discard();
+			planted.discard();
 		}
 	}
 }

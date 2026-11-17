@@ -1,6 +1,7 @@
 {
   "tempers": [
-    "ductilis"
+    "ductilis",
+    "flammeus"
   ],
   "properties": [
     "hemomancy:blood_properties/explosive"

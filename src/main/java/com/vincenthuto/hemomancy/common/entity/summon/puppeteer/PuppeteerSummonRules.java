@@ -24,6 +24,11 @@ public final class PuppeteerSummonRules {
 		return Math.max(0, currentShaped - Math.max(0, recalledMatching)) + Math.max(0, replacements);
 	}
 
+	/** D-38, NQ-15-9 A: the Ringmaster Pattern is called at the Spindle; the transposition ring never swaps it in. */
+	public static boolean inTranspositionRing(String summonName) {
+		return !PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(summonName);
+	}
+
 	public static int activeSummonCap(int puppetSkeinLevel) {
 		return 1 + Math.max(0, puppetSkeinLevel);
 	}

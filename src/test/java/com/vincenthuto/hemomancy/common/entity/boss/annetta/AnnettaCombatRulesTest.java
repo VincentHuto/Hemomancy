@@ -151,6 +151,17 @@ class AnnettaCombatRulesTest {
     }
 
     @Test
+    void onlyTheEndsOfAPlungeLineSound() {
+        int sounded = 0;
+        for (int i = 0; i < PriestessCombatRules.PLUNGE_LINE; i++) {
+            if (PriestessCombatRules.plungeThornSounds(i)) sounded++;
+        }
+        assertEquals(2, sounded, "UN-17: two thorns of the line sound, not seven");
+        assertTrue(PriestessCombatRules.plungeThornSounds(0));
+        assertTrue(PriestessCombatRules.plungeThornSounds(PriestessCombatRules.PLUNGE_LINE - 1));
+    }
+
+    @Test
     void javelinLeavesHerHandAndGrowsBack() {
         assertEquals(1.0F, PriestessCombatRules.heldSpear(0), 1.0E-6F);
         assertEquals(0.0F, PriestessCombatRules.heldSpear(PriestessCombatRules.JAVELIN_RELEASE), 1.0E-6F);

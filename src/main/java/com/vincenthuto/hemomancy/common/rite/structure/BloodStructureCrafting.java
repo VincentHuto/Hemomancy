@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.structure;
 
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -17,7 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +33,7 @@ import net.minecraft.world.phys.HitResult;
  * Projection, so the key points the player there. A formation whose catalyst is missing says what it needs.
  */
 public final class BloodStructureCrafting {
-	private static final BloodAccounting.Source STRUCTURE_CRAFT = BloodAccounting.Source.of("blood_structure_craft", Category.RITE, false, false);
+	private static final BloodAccounting.Source STRUCTURE_CRAFT = BloodAccounting.Source.of("blood_structure_craft", Category.RITE, false);
 
 	private BloodStructureCrafting() {
 	}
@@ -100,6 +101,10 @@ public final class BloodStructureCrafting {
 					int patW = blockPat.getWidth();
 					int patH = blockPat.getHeight();
 					int patD = blockPat.getDepth();
+					if (!PendingBloodCraftManager.mayConsume((ServerPlayer) player, patternHelper, patW, patH, patD)) {
+						handled = true;
+						break;
+					}
 					AABB bounds = PatternOrigins.bounds(patternHelper, blockPat);
 					int minX = (int) bounds.minX, maxX = (int) bounds.maxX - 1;
 					int minY = (int) bounds.minY, maxY = (int) bounds.maxY - 1;
@@ -134,9 +139,7 @@ public final class BloodStructureCrafting {
 				} else {
 					player.displayClientMessage(
 							Component.translatable("message.hemomancy.blood_structure_crafting.not_enough_blood_can_be_drawn"), true);
-					sLevel.playLocalSound(player.blockPosition().getX(),
-							player.blockPosition().getY(), player.blockPosition().getZ(),
-							SoundEvents.ENDERMAN_SCREAM, null, 1f, 1f, false);
+					player.playNotifySound(SoundInit.RITE_CANCEL.get(), SoundSource.PLAYERS, 0.35f, 1.25f);
 					handled = true;
 				}
 				break;

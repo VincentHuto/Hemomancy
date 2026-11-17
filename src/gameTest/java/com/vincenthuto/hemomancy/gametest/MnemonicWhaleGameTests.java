@@ -83,7 +83,8 @@ public final class MnemonicWhaleGameTests {
         assertMeal(helper, whale, prey);
     }
 
-    @GameTest(template = "pool", timeoutTicks = 100)
+    /** The whale swims to its prey before each bite, so this allows the same 240 ticks as the other hunts. */
+    @GameTest(template = "pool", timeoutTicks = 240)
     public static void strongerPreyNeedsMultipleBitesBeforeReward(GameTestHelper helper) {
         pool(helper);
         MnemonicWhaleEntity whale = whale(helper);
@@ -92,7 +93,9 @@ public final class MnemonicWhaleGameTests {
         prey.getAttribute(Attributes.MAX_HEALTH).setBaseValue(24);
         prey.setHealth(24);
         helper.startSequence()
-                .thenWaitUntil(() -> helper.assertTrue(prey.getHealth() == 12, "First bite was not 12 damage"))
+                .thenWaitUntil(() -> helper.assertTrue(prey.getHealth() == 12, "First bite was not 12 damage: prey health "
+                        + prey.getHealth() + " at tick " + helper.getTick() + ", whale target " + whale.getTarget()
+                        + ", " + String.format("%.1f", whale.distanceTo(prey)) + " blocks away"))
                 .thenExecute(() -> helper.assertTrue(ambergris(helper) == 0, "Nonlethal bite rewarded ambergris"))
                 .thenIdle(15)
                 .thenExecute(() -> helper.assertTrue(prey.isAlive(), "Whale ignored its 20-tick bite interval"))

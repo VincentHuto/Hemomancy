@@ -52,7 +52,7 @@ import java.util.UUID;
  * Tick controller for interactive ceremony phases and reshuffled ordeal waves.
  */
 public final class CardinalRiteOrdealEngine {
-	private static final BloodAccounting.Source THREAT_DRAIN = BloodAccounting.Source.of("fargone_dive_threat", Category.HAZARD, false, false);
+	private static final BloodAccounting.Source THREAT_DRAIN = BloodAccounting.Source.of("fargone_dive_threat", Category.HAZARD, false);
 	private static final int WAVE_TIMEOUT_TICKS = CardinalRiteWaveRules.DEADLINE_TICKS;
 	/** Counterfeit anchors raised by a false-omens wave, relative to the rite centre. */
 	static final BlockPos[] FALSE_OMEN_OFFSETS = {

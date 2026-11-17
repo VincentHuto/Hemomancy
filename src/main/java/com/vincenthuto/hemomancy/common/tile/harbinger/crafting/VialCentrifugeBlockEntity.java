@@ -54,7 +54,6 @@ public class VialCentrifugeBlockEntity extends HemoContainerBlockEntity
 	public static final int SLOT_BLOOD = 1;
 	public static final int SLOT_FLASK_OUTPUT = 19;
 	public static final int INVENTORY_SIZE = 20;
-	private static final double BLOOD_GAIN_PER_SPIN = 250D;
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 	public static final int SPIN_TOTAL_TIME = 200;
@@ -158,18 +157,8 @@ public class VialCentrifugeBlockEntity extends HemoContainerBlockEntity
 		te.processBloodSlot();
 		if (te.spinningProgress <= 0) return;
 		te.spinningProgress--;
-		if (te.spinningProgress == 0 && te.outputResults()) te.addOperationBlood();
+		if (te.spinningProgress == 0) te.outputResults();
 		te.sendUpdates();
-	}
-
-	private void addOperationBlood() {
-		IBloodVolume vol = resolveVolume();
-		if (vol == null || vol.isFull()) return;
-		double spaceRemaining = vol.getMaxBloodVolume() - vol.getBloodVolume();
-		double amountToAdd = Math.min(BLOOD_GAIN_PER_SPIN, Math.max(0D, spaceRemaining));
-		if (amountToAdd <= 0) return;
-		vol.fill(amountToAdd);
-		sendUpdates();
 	}
 
 	private static ItemStack insertFraction(NonNullList<ItemStack> outputs, ItemStack result,
@@ -413,7 +402,7 @@ public class VialCentrifugeBlockEntity extends HemoContainerBlockEntity
 		if (isSpinning()) return startup(VialCentrifugeStartupResult.ALREADY_RUNNING);
 		if (pendingBatch) {
 			var result = validateBatch();
-			if (result == VialCentrifugeStartupResult.SUCCESS && outputResults()) addOperationBlood();
+			if (result == VialCentrifugeStartupResult.SUCCESS) outputResults();
 			return startup(result);
 		}
 		if (!balanced()) return startup(VialCentrifugeStartupResult.IMBALANCE);
@@ -423,6 +412,8 @@ public class VialCentrifugeBlockEntity extends HemoContainerBlockEntity
 		batchPrimary = emptyBatch();
 		batchSecondary = emptyBatch();
 		batchPowder = 0;
+		if (player != null && FirstSeparationAssignment.hasPendingAssignmentSpin(player))
+			return startup(VialCentrifugeStartupResult.ASSIGNED_SPIN_PENDING);
 		boolean assignmentSpin = player != null && FirstSeparationAssignment.canBeginAssignmentSpin(player);
 		for (int i = 0; i < 8; i++) {
 			var sample = inventory.get(i + 2);
@@ -620,7 +611,8 @@ public class VialCentrifugeBlockEntity extends HemoContainerBlockEntity
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			vol.setActive(true);
-			vol.setMaxBloodVolume(2000f);
+			// A working buffer (core-loop Track 3); a spin no longer makes blood.
+			vol.setMaxBloodVolume(com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingRules.DEFAULT_WORKING_RESERVE);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 import org.junit.jupiter.api.Test;
 
@@ -41,9 +42,5 @@ class CardinalRiteVisualsSourceTest {
 		assertFalse(particles.contains("rite_pillar"));
 		assertFalse(Files.exists(ROOT.resolve("src/main/resources/assets/hemomancy/particles/rite_pillar.json")));
 		assertFalse(Files.exists(ROOT.resolve(SRC + "client/particle/RitePillarParticle.java")));
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
 	}
 }

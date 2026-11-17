@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.HashMap;
@@ -33,13 +34,21 @@ public final class OfferedDialogues {
 	 * The last tree sent to {@code player} speaks for {@code entityId} and has a lore topic whose read id is
 	 * {@code topicId} ({@code <dialogue id>/<topic read path>}, as the dialogue screen reports it).
 	 */
-	public static boolean offersTopic(ServerPlayer player, int entityId, net.minecraft.resources.ResourceLocation topicId) {
+	public static boolean offersTopic(ServerPlayer player, int entityId, ResourceLocation topicId) {
 		DialogueTree tree = OFFERED.get(player.getUUID());
-		if (tree == null || tree.entityId() != entityId || tree.presentation() == null) return false;
-		net.minecraft.resources.ResourceLocation dialogueId = tree.presentation().dialogueId();
-		return tree.presentation().topics().stream().anyMatch(topic -> topicId.equals(
-				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(dialogueId.getNamespace(),
-						dialogueId.getPath() + "/" + topic.readPath())));
+		return tree != null && tree.entityId() == entityId && listsLoreTopic(tree, topicId);
+	}
+
+	/**
+	 * {@code tree} has a lore topic whose read id is {@code topicId}. Only lore cards are recorded as read, and only
+	 * they are matched: other cards' ids can carry characters a resource path refuses (a stack-aware item inquiry is
+	 * {@code <item>#<hash>}), so building their ids would throw.
+	 */
+	public static boolean listsLoreTopic(DialogueTree tree, ResourceLocation topicId) {
+		if (tree == null || tree.presentation() == null || topicId == null) return false;
+		ResourceLocation dialogueId = tree.presentation().dialogueId();
+		return tree.presentation().topics().stream().filter(DialogueTopic::lore).anyMatch(topic -> topicId.equals(
+				ResourceLocation.tryBuild(dialogueId.getNamespace(), dialogueId.getPath() + "/" + topic.readPath())));
 	}
 
 	public static void logout(ServerPlayer player) {

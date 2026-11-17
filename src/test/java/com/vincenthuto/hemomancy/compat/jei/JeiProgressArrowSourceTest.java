@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class JeiProgressArrowSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java/com/vincenthuto/hemomancy/compat/jei");
@@ -22,7 +26,8 @@ public final class JeiProgressArrowSourceTest {
 	private JeiProgressArrowSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String helper = read("JeiProgressArrow.java");
 		assertContains("shared arrow helper owns trail width", helper, "float trail = 0.34f;");
 		assertContains("shared arrow helper owns animated head columns", helper,
@@ -48,17 +53,5 @@ public final class JeiProgressArrowSourceTest {
 			throw new AssertionError("missing " + path);
 		}
 		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String haystack, String needle) {
-		if (!haystack.contains(needle)) {
-			throw new AssertionError(label + ": missing " + needle);
-		}
-	}
-
-	private static void assertNotContains(String label, String haystack, String needle) {
-		if (haystack.contains(needle)) {
-			throw new AssertionError(label + ": should not contain " + needle);
-		}
 	}
 }

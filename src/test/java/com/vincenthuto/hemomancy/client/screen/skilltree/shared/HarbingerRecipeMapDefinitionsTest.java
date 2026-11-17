@@ -15,7 +15,7 @@ final class HarbingerRecipeMapDefinitionsTest {
 	@Test
 	void everyBuiltInHarbingerEntryHasAnAuthoredFamily() {
 		assertEquals(56, HarbingerRecipeMapDefinitions.ritePaths().size());
-		// 9 floorless Blood Structures and 20 Working crafts.
+		// 9 floorless Blood Structures and 18 Working crafts.
 		assertEquals(27, HarbingerRecipeMapDefinitions.craftingPaths().size());
 		assertEquals(4, HarbingerRecipeMapDefinitions.puppetryPaths().size());
 		assertEquals("Order", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/initiate_rite"));

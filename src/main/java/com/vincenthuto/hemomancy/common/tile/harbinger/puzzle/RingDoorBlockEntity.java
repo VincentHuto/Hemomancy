@@ -72,7 +72,7 @@ public class RingDoorBlockEntity extends HemoBlockEntity implements ProjectedBlo
 			TAG_SKIPPED = "Skipped", TAG_FILLERS_PLACED = "FillersPlaced", TAG_CHARGE = "Charge", TAG_PATH = "Path",
 			TAG_ORIGIN = "Origin", TAG_FEEDING = "Feeding";
 
-	private static final BloodAccounting.Source RING = BloodAccounting.Source.of("ring_door", Category.WORLD, true, false);
+	private static final BloodAccounting.Source RING = BloodAccounting.Source.of("ring_door", Category.WORLD, false);
 	private static final ParticleColor CRIMSON = new ParticleColor(168, 36, 54);
 	private static final ParticleColor HYPHAE = new ParticleColor(236, 226, 186);
 	private static final ParticleColor HYPHAE_GOLD = new ParticleColor(242, 214, 128);
@@ -293,8 +293,9 @@ public class RingDoorBlockEntity extends HemoBlockEntity implements ProjectedBlo
 
 	/** Where the projection meets the door: its trace's point when that lands on the part, else the part's centre. */
 	private static Vec3 struckPoint(ServerLevel level, ServerPlayer player, BlockPos hitPos) {
-		HitResult trace = SanguineProjectionTargeting.pick(level, player, SanguineProjectionTargeting.PROJECTION_REACH,
-				true);
+		HitResult trace = SanguineProjectionTargeting.pick(level, player,
+				com.vincenthuto.hemomancy.common.manipulation.verb.VerbReach.of(player,
+						com.vincenthuto.hemomancy.common.manipulation.verb.Verb.PROJECT), true);
 		if (trace instanceof BlockHitResult block && block.getBlockPos().equals(hitPos)) return block.getLocation();
 		return Vec3.atCenterOf(hitPos);
 	}

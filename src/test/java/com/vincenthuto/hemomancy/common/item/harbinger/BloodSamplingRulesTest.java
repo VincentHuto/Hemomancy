@@ -35,4 +35,21 @@ class BloodSamplingRulesTest {
 		assertEquals(BloodSamplingResult.SUCCESS,
 				BloodSamplingRules.evaluate(false, true, true, false, true));
 	}
+
+	@Test
+	void aDrawCostsTheCreatureAndARecentlyDrawnOneRefuses() {
+		// Core-loop Track 5: a vial takes 2 health, a syringe 1, and the creature recovers for 30 seconds.
+		assertEquals(2.0F, BloodSamplingRules.healthCost(false));
+		assertEquals(1.0F, BloodSamplingRules.healthCost(true));
+		assertEquals(600, BloodSamplingRules.COOLDOWN_TICKS);
+		assertEquals(true, BloodSamplingRules.recentlyDrawn(1_000L, 999L));
+		assertEquals(false, BloodSamplingRules.recentlyDrawn(1_000L, 1_000L));
+		assertEquals(BloodSamplingResult.RECENTLY_DRAWN,
+				BloodSamplingRules.evaluate(false, true, true, false, true, false, false, true));
+		assertEquals(BloodSamplingResult.SUCCESS,
+				BloodSamplingRules.evaluate(false, true, true, false, true, false, false, false));
+		// Every other refusal still comes first: an empty vial check never reports the cooldown over them.
+		assertEquals(BloodSamplingResult.REQUIRES_LIVING_SYRINGE,
+				BloodSamplingRules.evaluate(false, true, true, false, true, true, false, true));
+	}
 }

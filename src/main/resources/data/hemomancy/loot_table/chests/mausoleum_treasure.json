@@ -97,23 +97,18 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 5,
+          "weight": 6,
           "name": "hemomancy:memory_exsanguinate"
         },
         {
           "type": "minecraft:item",
-          "weight": 5,
+          "weight": 6,
           "name": "hemomancy:memory_blood_eclipse"
         },
         {
           "type": "minecraft:item",
-          "weight": 4,
+          "weight": 5,
           "name": "hemomancy:memory_void_shroud"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 3,
-          "name": "hemomancy:memory_crimson_tithe"
         },
         {
           "type": "minecraft:empty",

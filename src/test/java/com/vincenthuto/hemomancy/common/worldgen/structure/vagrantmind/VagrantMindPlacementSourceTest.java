@@ -2,18 +2,12 @@ package com.vincenthuto.hemomancy.common.worldgen.structure.vagrantmind;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 class VagrantMindPlacementSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
-
-	private static String read(String relativePath) throws IOException {
-		return Files.readString(ROOT.resolve(relativePath));
-	}
 
 	@Test
 	void structureTypeIsRegistered() throws IOException {

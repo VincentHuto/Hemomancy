@@ -2,17 +2,25 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeLeavePacket;
 import com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket;
 import com.vincenthuto.hemomancy.common.network.heartnode.PacketOpenHeartNodeScreen;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity;
 import com.vincenthuto.hemomancy.common.world.HeartNodeSavedData;
 import com.vincenthuto.hemomancy.common.world.HeartNodeService;
 import com.vincenthuto.hemomancy.common.world.HeartNodeSettings;
+import com.vincenthuto.hemomancy.common.world.PriorRespawn;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -119,6 +127,104 @@ public final class HeartNodeScreenGameTests {
 								&& data.strangerTo(stranger.player.getUUID(), heart.east(3)) == strangerBefore
 								&& data.insideOwnEnvelope(id, heart.east(3)),
 						"With everything off the owner's benefit and the stranger's refusal are unchanged");
+				helper.succeed();
+			} finally {
+				data.remove(id, heart);
+				helper.setBlock(NODE, Blocks.AIR);
+			}
+		}
+	}
+
+	/**
+	 * The Leave the Gardens button (NQ-12-4): a stranger's packet and the owner's from out of reach are ignored, and the
+	 * owner's own in reach sends no one anywhere outside the Gardens.
+	 */
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void leavePacketsAreGuarded(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		HeartNodeSavedData data = HeartNodeSavedData.get(level);
+		BlockPos heart = helper.absolutePos(NODE);
+		try (CapturedPlayer owner = CapturedPlayer.create(helper); CapturedPlayer stranger = CapturedPlayer.create(helper)) {
+			plant(helper, owner);
+			try {
+				standBeside(helper, stranger, 1);
+				helper.assertFalse(HeartNodeLeavePacket.accept(stranger.player, new HeartNodeLeavePacket(heart)),
+						"A stranger's packet is ignored");
+				standBeside(helper, owner, 20);
+				helper.assertFalse(HeartNodeLeavePacket.accept(owner.player, new HeartNodeLeavePacket(heart)),
+						"The owner's packet from out of reach is ignored");
+				standBeside(helper, owner, 1);
+				BlockPos before = owner.player.blockPosition();
+				helper.assertFalse(HeartNodeLeavePacket.accept(owner.player, new HeartNodeLeavePacket(heart)),
+						"Outside the Gardens there is nothing to leave");
+				helper.assertTrue(owner.player.blockPosition().equals(before) && owner.player.level() == level,
+						"and the owner stays where they stand");
+				helper.succeed();
+			} finally {
+				data.remove(owner.player.getUUID(), heart);
+				helper.setBlock(NODE, Blocks.AIR);
+			}
+		}
+	}
+
+	/**
+	 * The way home's destination (PT-80): the bed the player had before the node while it stands, the world spawn once it
+	 * is gone or when there was none. Working it out leaves the player's respawn as it was.
+	 */
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void theWayHomeFindsTheBedElseTheWorldSpawn(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		try (CapturedPlayer player = CapturedPlayer.create(helper)) {
+			BlockPos foot = new BlockPos(3, 2, 3);
+			helper.setBlock(foot, Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH)
+					.setValue(BedBlock.PART, BedPart.FOOT));
+			helper.setBlock(foot.north(), Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH)
+					.setValue(BedBlock.PART, BedPart.HEAD));
+			BlockPos bed = helper.absolutePos(foot.north());
+			BlockPos node = helper.absolutePos(NODE).above();
+			player.player.setRespawnPosition(level.dimension(), node, 0f, true, false); // ARRANGE: the node holds the spawn
+			PriorRespawn home = new PriorRespawn(level.dimension(), bed, 0f, false);
+
+			DimensionTransition toBed = FungalGardenTravelHelper.homeTransition(player.player, home);
+			helper.assertTrue(!toBed.missingRespawnBlock() && toBed.newLevel() == level
+					&& toBed.pos().distanceTo(Vec3.atCenterOf(bed)) < 3.0D, "The way home ends beside the bed: " + toBed.pos());
+			helper.assertTrue(node.equals(player.player.getRespawnPosition()) && player.player.isRespawnForced(),
+					"Working it out leaves the node as the respawn");
+
+			helper.setBlock(foot, Blocks.AIR);
+			helper.setBlock(foot.north(), Blocks.AIR);
+			DimensionTransition noBed = FungalGardenTravelHelper.homeTransition(player.player, home);
+			helper.assertTrue(noBed.missingRespawnBlock() && noBed.newLevel() == level.getServer().overworld(),
+					"With the bed gone the way home is the world spawn");
+			DimensionTransition none = FungalGardenTravelHelper.homeTransition(player.player, null);
+			helper.assertTrue(none.newLevel() == level.getServer().overworld() && !none.missingRespawnBlock(),
+					"With no bed remembered it is the world spawn too");
+			helper.succeed();
+		}
+	}
+
+	/**
+	 * FX-16 item 5: a player who stops being an Apotheos loses the sanctum. The node withers and the respawn it took
+	 * goes back to the bed remembered at planting. The Gardens are not loaded here, so the node stands in the test level.
+	 */
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void aForsakenNodeWithersAndGivesTheBedBack(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		HeartNodeSavedData data = HeartNodeSavedData.get(level);
+		BlockPos heart = helper.absolutePos(NODE);
+		try (CapturedPlayer owner = CapturedPlayer.create(helper).online()) {
+			UUID id = owner.player.getUUID();
+			BlockPos bed = helper.absolutePos(new BlockPos(2, 2, 2));
+			helper.setBlock(NODE, BlockInit.heart_node.get());
+			((HeartNodeBlockEntity) level.getBlockEntity(heart)).plant(id, level.getGameTime());
+			data.plant(id, heart, level.getGameTime(), new PriorRespawn(level.dimension(), bed, 45f, false)); // ARRANGE
+			owner.player.setRespawnPosition(level.dimension(), heart.above(), 0f, true, false); // ARRANGE: the node's spawn
+			try {
+				HeartNodeService.forsake(owner.player, level);
+				helper.assertTrue(!level.getBlockState(heart).is(BlockInit.heart_node.get()) && data.entry(id) == null,
+						"The node withers and its record goes");
+				helper.assertTrue(bed.equals(owner.player.getRespawnPosition()) && !owner.player.isRespawnForced()
+						&& owner.player.getRespawnAngle() == 45f, "The bed is the respawn again: " + owner.player.getRespawnPosition());
 				helper.succeed();
 			} finally {
 				data.remove(id, heart);

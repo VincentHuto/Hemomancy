@@ -3,11 +3,16 @@ package com.vincenthuto.hemomancy.client.screen.overlay.boss;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.frame.NaeglerophaeonFrame;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.frame.VesperCrownedRefusalFrame;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.frame.VesperEveningStarFrame;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantCombatRules;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.BossEvent;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
@@ -23,7 +28,7 @@ class BossBarFramePhaseEndgameTest {
 	@Test
 	void crownedRefusalCountsOpenWounds() {
 		assertEquals(1, VesperCrownedRefusalFrame.phaseOf(0.8F));
-		assertEquals(2, VesperCrownedRefusalFrame.phaseOf(0.72F));
+		assertEquals(2, VesperCrownedRefusalFrame.phaseOf(0.70F));
 		assertEquals(3, VesperCrownedRefusalFrame.phaseOf(0.3F));
 		assertEquals(4, VesperCrownedRefusalFrame.phaseOf(0.1F));
 	}
@@ -44,5 +49,18 @@ class BossBarFramePhaseEndgameTest {
 		assertInstanceOf(NaeglerophaeonFrame.class, BossBarFrames.get(BossPresentationIds.FRAME_NAEGLEROPHAEON));
 		assertInstanceOf(VesperCrownedRefusalFrame.class, BossBarFrames.get(BossPresentationIds.FRAME_VESPER_CROWNED_REFUSAL));
 		assertInstanceOf(VesperEveningStarFrame.class, BossBarFrames.get(BossPresentationIds.FRAME_VESPER_EVENING_STAR));
+	}
+
+	@Test
+	void barNotchesAreTheServerThresholds() {
+		float[] anchors = VesperCombatRules.anchorThresholds();
+		Arrays.sort(anchors);
+		float[] wounds = BossBarFrames.get(BossPresentationIds.FRAME_VESPER_CROWNED_REFUSAL).notches();
+		Arrays.sort(wounds);
+		assertArrayEquals(new float[] { 0.10F, 0.40F, 0.70F }, anchors);
+		assertArrayEquals(anchors, wounds);
+		assertEquals(0.6F, MycophantCombatRules.PHASE_TWO_FRACTION);
+		assertArrayEquals(new float[] { MycophantCombatRules.PHASE_TWO_FRACTION },
+				BossBarFrames.get(BossPresentationIds.FRAME_MYCOPHANT).notches());
 	}
 }

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
@@ -23,12 +24,14 @@ public final class BloodContainerTransfer {
                 slots.getBloodContainerInputSlot(),
                 slots.getEmptyBloodContainerOutputSlot(),
                 slots.acceptsBloodGourdInput(),
-                slots.getBloodGourdInputTransferRate());
+                slots.getBloodGourdInputTransferRate(),
+                reservoir instanceof BlockEntity be && be.getLevel() != null ? be.getLevel().getGameTime() : -1L);
     }
 
+    /** {@code gameTime} is the reservoir's clock for a carried vessel's clot; -1 when it has none. */
     private static boolean fillReservoirFromSlot(Container container, @Nullable IBloodVolume reservoir,
                                                  int filledContainerSlot, int emptyContainerOutputSlot,
-                                                 boolean acceptBloodGourds, double gourdTransferRate) {
+                                                 boolean acceptBloodGourds, double gourdTransferRate, long gameTime) {
         if (reservoir == null || reservoir.isFull()) return false;
 
         ItemStack bloodStack = container.getItem(filledContainerSlot);
@@ -44,8 +47,13 @@ public final class BloodContainerTransfer {
             ItemStack outputStack = container.getItem(emptyContainerOutputSlot);
             if (!canAcceptEmptyFlask(outputStack)) return false;
 
+            // An unstamped vessel (loot a hopper fed in) starts its clock here, so none pours fresh forever (FX-2).
+            if (gameTime >= 0L) BloodyFlaskItem.stampBottled(bloodStack, gameTime);
+            // A vessel pours its fresh share as blood; its clotted share goes in as clot (core-loop Track 3).
+            double fresh = gameTime >= 0L ? amount * BloodyFlaskItem.freshShare(bloodStack, gameTime) : amount;
             bloodStack.shrink(1);
-            reservoir.addBloodVolume(amount);
+            if (fresh > 0.0D) reservoir.addBloodVolume(fresh);
+            if (amount - fresh > 0.0D && reservoir instanceof BlockBloodVolume block) block.addClot(amount - fresh);
             addEmptyFlask(container, emptyContainerOutputSlot);
             return true;
         }

@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class HarbingerAssignmentReturnReadySourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,7 +14,8 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 	private HarbingerAssignmentReturnReadySourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		returnReadyAdvancementConstantsExist();
 		returnReadyHooksAreWired();
 		returnReadyAdvancementResourcesExist();
@@ -138,18 +142,5 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 				"full-set Artificer fitting prompts");
 		assertContains("docs describe First Separation completion prompt", docs,
 				"first_separation_complete");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String needle) {
-		if (!text.contains(needle)) {
-			throw new AssertionError(label + " missing: " + needle);
-		}
 	}
 }

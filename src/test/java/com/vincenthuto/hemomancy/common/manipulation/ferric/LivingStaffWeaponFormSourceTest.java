@@ -1,16 +1,18 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LivingStaffWeaponFormSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private LivingStaffWeaponFormSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String manipInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		String changePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/ChangeSelectedManipPacket.java");
@@ -46,15 +48,5 @@ public final class LivingStaffWeaponFormSourceTest {
 				"LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure");
 		assertContains("crossbow restore hook", crossbow,
 				"LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
 	}
 }

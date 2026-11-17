@@ -9,6 +9,10 @@
     "type": "minecraft:random_spread",
     "spacing": 32,
     "separation": 10,
-    "salt": 2030148873
+    "salt": 2030148873,
+    "exclusion_zone": {
+      "other_set": "hemomancy:circus_pavilion",
+      "chunk_count": 6
+    }
   }
 }

@@ -122,7 +122,7 @@ public class ShaderInit {
 
 	public static ShaderHolder CARDINAL_FLOOR_MEMBRANE = new ShaderHolder(Hemomancy.rloc("world/cardinal_floor_membrane"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FloorSeed", "FloorStyle", "FloorHalf", "Spread",
-			"Front", "Beat", "FloorLight", "FocusOffset", "BaseColor", "VeinColor", "GlowColor",
+			"Front", "Beat", "FloorLight", "FocusOffset", "FloorFacing", "BaseColor", "VeinColor", "GlowColor",
 			"RiteRings", "RiteSurge", "RiteDraw", "RiteMood", "RiteSwell", "WoundAngles", "WoundLevels", "RiteBlood");
 
 	public static ShaderHolder MNEMONIC_LOWTIDE_LAKE = new ShaderHolder(Hemomancy.rloc("world/mnemonic_lowtide_lake"),

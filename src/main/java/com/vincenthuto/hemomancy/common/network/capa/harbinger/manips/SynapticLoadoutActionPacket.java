@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SynapticLoadoutActionPacket implements CustomPacketPayload {
-	private static final BloodAccounting.Source SAVE_LOADOUT = BloodAccounting.Source.of("synaptic_loadout", Category.CAST, true, false);
+	private static final BloodAccounting.Source SAVE_LOADOUT = BloodAccounting.Source.of("synaptic_loadout", Category.CAST, false);
 	public enum Action {
 		SAVE_OR_OVERWRITE,
 		RENAME,

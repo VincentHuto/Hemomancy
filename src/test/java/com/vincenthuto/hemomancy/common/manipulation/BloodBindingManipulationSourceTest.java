@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -12,7 +13,8 @@ public final class BloodBindingManipulationSourceTest {
 	private BloodBindingManipulationSourceTest() {
 	}
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		assertFile("manipulation implementation",
 				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/animus/BloodBindingManip.java");
 		assertFile("memory model", "src/main/resources/assets/hemomancy/models/item/memory_blood_binding.json");

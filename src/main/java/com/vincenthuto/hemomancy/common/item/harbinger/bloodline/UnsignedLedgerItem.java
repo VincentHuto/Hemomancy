@@ -2,21 +2,18 @@ package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
 import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineMembership;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -33,9 +30,20 @@ public class UnsignedLedgerItem extends Item {
 
 	public static String TAG_STATE = "state";
 	public static String TAG_BLOODLINE = "bloodline";
+	/** Overworld game time the ledger was written; a ledger with none reads as written at 0. */
+	public static String TAG_MINTED = "minted";
 
 	public UnsignedLedgerItem(Properties prop) {
 		super(prop.stacksTo(1));
+	}
+
+	/** Writes {@code line} onto {@code ledger} as a signed copy, stamped {@code mintedAt}. */
+	public static void sign(ItemStack ledger, Bloodline line, long mintedAt) {
+		CompoundTag compound = ledger.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		compound.putBoolean(TAG_STATE, true);
+		compound.put(TAG_BLOODLINE, line.serialize());
+		compound.putLong(TAG_MINTED, mintedAt);
+		ledger.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 	}
 
 	@Override
@@ -48,7 +56,7 @@ public class UnsignedLedgerItem extends Item {
 			} else {
 				if (tag.contains(TAG_BLOODLINE)) {
 					Bloodline line = Bloodline.deserialize(tag.getCompound(TAG_BLOODLINE));
-					tooltip.add(Component.translatable("tooltip.hemomancy.unsigned_ledger.signed_with_s", line.getName())
+					tooltip.add(Component.translatable("tooltip.hemomancy.unsigned_ledger.signed_with_s", line.displayName())
 							.withStyle(ChatFormatting.RED));
 					tooltip.add(HemoText.translatable("tooltip.hemomancy.unsigned_ledger.members",
 							line.getPlayerUUIDS().size()).withStyle(ChatFormatting.DARK_RED));
@@ -80,87 +88,55 @@ public class UnsignedLedgerItem extends Item {
 		}
 		if (stack.getItem() instanceof UnsignedLedgerItem) {
 			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
-					;
+			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn);
 
 			if (!compound.getBoolean(TAG_STATE)) {
 				if (!worldIn.isClientSide) {
 					playerIn.displayClientMessage(Component.translatable("message.hemomancy.unsigned_ledger_item.only_the_bloodline_founding_rite_can").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				}
+			} else if (worldIn.isClientSide) {
+				// Only open the GUI if the player's current synced bloodline still matches this ledger.
+				Bloodline savedLine = Bloodline.deserialize(compound.getCompound(TAG_BLOODLINE));
+				Bloodline currentLine = volume.getBloodLine();
+				if (savedLine.isValid() && currentLine.isValid()
+						&& currentLine.getBloodlineUUID().equals(savedLine.getBloodlineUUID())
+						&& currentLine.hasMember(playerIn.getUUID())) {
+					ClientBridge.get().openLedger();
+				}
 			} else {
-				// Signed ledger: open the ledger GUI for lodge actions,
-				// or if another player uses it, they join the bloodline.
-				if (worldIn.isClientSide) {
-					// Only open the GUI if the player's current synced bloodline still matches this ledger.
-					Bloodline savedLine = Bloodline.deserialize(compound.getCompound(TAG_BLOODLINE));
-					Bloodline currentLine = volume.getBloodLine();
-					if (savedLine.isValid() && currentLine.isValid()
-							&& currentLine.getBloodlineUUID().equals(savedLine.getBloodlineUUID())
-							&& currentLine.hasMember(playerIn.getUUID())) {
-						ClientBridge.get().openLedger();
-					}
-					// If not a member yet, the server side handles joining below
+				ServerPlayer player = (ServerPlayer) playerIn;
+				Bloodline savedLine = Bloodline.deserialize(compound.getCompound(TAG_BLOODLINE));
+				if (!savedLine.isValid()) {
+					playerIn.displayClientMessage(
+							Component.translatable("message.hemomancy.unsigned_ledger_item.this_ledger_s_bloodline_is_corrupted").withStyle(ChatFormatting.RED),
+							true);
+					return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
+				}
+				if (BloodlineDisbandHelper.burnInvalidLedgerIfPresent(player, stack)) {
+					return InteractionResultHolder.fail(stack);
+				}
+
+				// Membership is read from world data, never from the copy written on the item (PT-37).
+				BloodlineSavedData savedData = BloodlineSavedData.get(player.server.overworld());
+				Bloodline globalLine = savedData.getBloodline(savedLine.getBloodlineUUID());
+				if (globalLine == null) {
+					playerIn.displayClientMessage(
+							Component.translatable("message.hemomancy.unsigned_ledger_item.bloodline_not_found_in_world_data").withStyle(ChatFormatting.RED),
+							true);
+				} else if (globalLine.hasMember(player.getUUID())) {
+					BloodlineMembership.sendPetitions(player);
 				} else {
-					Bloodline savedLine = Bloodline.deserialize(compound.getCompound(TAG_BLOODLINE));
-					if (!savedLine.isValid()) {
+					Bloodline current = savedData.getBloodlineForPlayer(player.getUUID());
+					if (current != null && current.isValid()) {
 						playerIn.displayClientMessage(
-								Component.translatable("message.hemomancy.unsigned_ledger_item.this_ledger_s_bloodline_is_corrupted").withStyle(ChatFormatting.RED),
+								HemoText.translatable("message.hemomancy.unsigned_ledger_item.you_already_belong_to_a_bloodline",
+										current.displayName()).withStyle(ChatFormatting.DARK_RED),
 								true);
-						return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
+						return InteractionResultHolder.fail(stack);
 					}
-
-					if (savedLine.hasMember(playerIn.getUUID())) {
-						// Already a member — GUI opened on client side, no server action needed
-					} else {
-						// New player joins the bloodline
-						ServerLevel overworld = ((ServerLevel) worldIn).getServer().overworld();
-						BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-						Bloodline current = savedData.getBloodlineForPlayer(playerIn.getUUID());
-						if (current != null && current.isValid()
-								&& !current.getBloodlineUUID().equals(savedLine.getBloodlineUUID())) {
-							playerIn.displayClientMessage(
-									HemoText.translatable("message.hemomancy.unsigned_ledger_item.you_already_belong_to_a_bloodline",
-											current.getName()).withStyle(ChatFormatting.DARK_RED),
-									true);
-							return InteractionResultHolder.fail(stack);
-						}
-						Bloodline globalLine = savedData.addMember(savedLine.getBloodlineUUID(),
-								playerIn.getUUID());
-
-						if (globalLine != null) {
-							volume.setBloodLine(globalLine);
-							// Update the item tag with the latest bloodline state
-							compound.put(TAG_BLOODLINE, globalLine.serialize());
-							stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
-
-							playerIn.playSound(SoundEvents.BOOK_PUT, 0.40f, 1F);
-							BloodVolumeEvents.syncVolume((ServerPlayer) playerIn, volume);
-							playerIn.displayClientMessage(
-									HemoText.translatable("message.hemomancy.unsigned_ledger_item.you_have_joined",
-											globalLine.getName()).withStyle(ChatFormatting.DARK_RED),
-									true);
-
-							// Award bloodline milestone
-							SkillPointGainEvents.onBloodlineJoined((ServerPlayer) playerIn);
-
-							// Notify online bloodline members
-							for (Player member : globalLine.getPlayers(worldIn)) {
-								if (!member.getUUID().equals(playerIn.getUUID())) {
-									member.displayClientMessage(
-											HemoText.translatable("message.hemomancy.unsigned_ledger_item.has_joined_your_bloodline",
-													playerIn.getName().getString()).withStyle(ChatFormatting.DARK_RED),
-											false);
-								}
-							}
-						} else {
-							playerIn.displayClientMessage(
-									Component.translatable("message.hemomancy.unsigned_ledger_item.bloodline_not_found_in_world_data").withStyle(ChatFormatting.RED),
-									true);
-						}
-					}
+					BloodlineMembership.petition(player, globalLine);
 				}
 			}
-
 		}
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 	}

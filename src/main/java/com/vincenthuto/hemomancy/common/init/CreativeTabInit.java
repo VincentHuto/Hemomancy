@@ -145,10 +145,7 @@ if (item.get() instanceof com.vincenthuto.hemomancy.common.item.harbinger.Thelem
 	}
 
 	private static boolean shouldShowItemInCreativeTab(Item item) {
-		// The dictation table's item comes from BlockInit's RegisterEvent, so this item loop never
-		// meets it and the check does nothing (audit F-22, awaiting a decision).
-		return item != BlockInit.dictation_table.get().asItem()
-				&& item != ItemInit.active_befouling_ash.get()
+		return item != ItemInit.active_befouling_ash.get()
 				&& item != ItemInit.active_smouldering_ash.get()
 				&& item != ItemInit.living_weapon_graft.get()
 				&& item != ItemInit.living_sickle.get()

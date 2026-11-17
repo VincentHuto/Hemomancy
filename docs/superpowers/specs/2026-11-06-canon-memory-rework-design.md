@@ -1,7 +1,25 @@
 # Canon Memory rework: the four Saint gifts
 
-Date: 2026-11-06. Answers OPEN_QUESTIONS D-1. Status: draft for the owner's review. Nothing here is built, and nothing
-gets built until the owner approves it. Every number below is a starting value and my call unless a ruling is quoted.
+Date: 2026-11-06. Answers OPEN_QUESTIONS D-1. Every number below is a starting value and my call unless a ruling is quoted.
+
+**Refresh, 2026-11-15.** The owner answered D-1 "yes as drafted" on 2026-11-14 and took the defaults of section 4
+(NQ-08-1 to NQ-08-17 in `docs/owner_answers/08-saints-and-mausoleums.md`). Package B17 built the gate (the trial
+record, Perfectus, 2 + 2 enzymes and 300 blood, the wider `never_sold` tag, the tree edges), `CanonGiftState`, Crimson
+Tithe and the Unclosing Eye. Bloom of Rot, Endless Hour, the Saints answering their gifts and removing the old forms
+(with the protocol bump) are the second half, built by B18 the same day (`docs/owner_answers/BUILD_LOG_2.md`). Where
+the code moved on since this was written:
+- "Tendency" is now Temper (kind) and Temperament (profile); read "temper pair" for "tendency pair".
+- Projection and Absorption are freeform held verbs worked through `VerbSculpting`; the gifts are cast manipulations
+  and have no Sculpting.
+- The living hematic HUD (2026-11-13) has no slot for a gift meter, which agrees with question 15.
+- `countsAsSpend` is gone from `BloodAccounting.Source` (B16): a source is `{id, category, reserveProtected}`.
+- The shared charge floor is 50% (CB-6), not 25%: the Eye's charge runs 25 to 50 ticks, its cost scales with the
+  charge, and "charge" in its formulas is 0 at the floor and 1 at full.
+- The Tithe's opening is paid as `crimson_tithe_open`; its upkeep is the channel's own 40 mL each second (the
+  ordinary cast source), not a separate 10 per 5-tick pulse.
+- The trial record lives in `InitiatoryDegree` (`saint_trials_ended`).
+- The Saint geometry draws through `CrimsonTitheGeometry` and `UnclosingEyeGeometry` with Hemorath's and Seraphae's
+  existing pieces (links, streams, iron spikes, bone spurs) and the Lux, Animus and Cruor flow materials; no new shader.
 
 ## 1. Purpose and the ruling
 

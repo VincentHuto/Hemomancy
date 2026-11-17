@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class SemiSentientConstructBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
-	private static final BloodAccounting.Source DRUDGE_BIRTH = BloodAccounting.Source.of("drudge_birth", Category.STATION, false, false);
+	private static final BloodAccounting.Source DRUDGE_BIRTH = BloodAccounting.Source.of("drudge_birth", Category.STATION, false);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_N = Stream

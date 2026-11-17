@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineMembership;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
+import com.vincenthuto.hemomancy.common.world.HeartNodeService;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
@@ -45,16 +46,19 @@ public final class PathMutualExclusionHelper {
 				|| degree.getTotalPomesConsumed() > 0
 				|| degree.getPomeEmpowermentExpiry() > 0L
 				|| degree.getArchonPath() != EnumArchonPath.NONE
-				|| degree.hasFungalSpineGranted();
+				|| degree.hasFungalSpineGranted()
+				|| degree.isEternalCovenantSealed();
 		if (!hadProgress) {
 			return false;
 		}
 		degree.setDegreeNumber(0);
 		degree.resetPomeCommunion();
+		degree.setEternalCovenantSealed(false);
 		clearEndgame(degree, HemoCapabilityAccess.getLivingStaffProgress(player));
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		LivingStaffBondHelper.syncProgress(player);
 		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(0));
+		HeartNodeService.forsake(player);
 		return true;
 	}
 
@@ -120,15 +124,11 @@ public final class PathMutualExclusionHelper {
 		degree.setHasFoundedBloodline(false);
 		degree.setFounderIntegrationSevered(false);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
+		BloodlineMembership.releaseCleansed(player);
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
-		Bloodline line = volume.getBloodLine();
-		if (line != null && line.isValid()) {
-			BloodlineSavedData.get(player.server.overworld()).removeMember(line.getBloodlineUUID(), player.getUUID());
-		}
 		volume.setActive(false);
 		volume.setBloodVolume(0);
 		volume.setBloodLine(Bloodline.NOBLOODLINE);
-		volume.resetBloodDebt();
 		volume.setTrickleEnabled(false);
 		volume.setAutoDrawEnabled(false);
 		volume.setBloodRoutingOptInEnabled(false);

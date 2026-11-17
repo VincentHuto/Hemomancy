@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
 import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DrudgeTenderSource;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
@@ -79,6 +81,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     private static final double ARRIVED_DIST_SQ = 4.0;
     /** Entity event byte for gore-particle death burst */
     private static final byte BURST_EVENT = 61;
+    private static final ParticleColor BURST_BLOOD = new ParticleColor(150, 14, 26);
 
     // ── Server-side fields ────────────────────────────────────────────────────
 
@@ -451,10 +454,9 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
                 double dx = (random.nextDouble() - 0.5) * 0.9;
                 double dy = random.nextDouble() * 0.5;
                 double dz = (random.nextDouble() - 0.5) * 0.9;
-                level().addParticle(
-                        new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.55f, 0.05f, 0.05f), 1.0f),
+                level().addParticle(HemoParticleData.bloodCell(BURST_BLOOD),
                         getX() + dx, getY() + dy, getZ() + dz,
-                        dx * 0.2, 0.1, dz * 0.2);
+                        dx * 0.2, 0.03, dz * 0.2);
             }
         } else {
             super.handleEntityEvent(id);

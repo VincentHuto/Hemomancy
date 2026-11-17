@@ -33,14 +33,17 @@ public final class CheapBloodInfusionHelper {
 		return CheapBloodInfusionRules.getManipulationCooldownMultiplier(amplifier);
 	}
 
-	public static void applySuccessfulInfusion(Player player, Item item) {
+	/** {@code share} is what the vessel gave of its fresh blood, read before this drink raised the level. */
+	public static void applySuccessfulInfusion(Player player, Item item, double share) {
 		int currentAmplifier = getActiveAmplifier(player);
 		int nextAmplifier = CheapBloodInfusionRules.nextAmplifier(currentAmplifier);
 		player.addEffect(new MobEffectInstance(EffectInit.blood_drunkenness,
 				CheapBloodInfusionRules.DURATION_TICKS, nextAmplifier,
 				false, true, true));
 		player.getCooldowns().addCooldown(item, CheapBloodInfusionRules.COOLDOWN_TICKS);
-		player.displayClientMessage(Component.translatable("message.hemomancy.blood_drunkenness")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+		Component message = share < 1.0D
+				? Component.translatable("message.hemomancy.blood_drunkenness.gave_less", Math.round(share * 100.0D))
+				: Component.translatable("message.hemomancy.blood_drunkenness");
+		player.displayClientMessage(message.copy().withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 	}
 }

@@ -2,13 +2,16 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
 import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
+import com.vincenthuto.hemomancy.common.item.shared.ScaleGripEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -60,7 +63,8 @@ public final class PendingDelivery {
 	private static final class Claims {
 		static final List<Claim> ALL = List.of(FirstDrawsAssignment.VIALS, FirstSeparationAssignment.TOOLS,
 				FirstSeparationAssignment.BRIEFING_VIALS, MycophantEncounterManager.TENDRIL, VesperOrdealManager.MEMORY,
-				QliphothBloomEvents.FUNGAL_SPINE, PallidVesselAssignment.REWARD, CircusPlayerProgress.FINALE_REWARDS);
+				QliphothBloomEvents.FUNGAL_SPINE, PallidVesselAssignment.REWARD, CircusPlayerProgress.FINALE_REWARDS,
+				StationUpgradeProgress.KITS, ScaleGripEvents.RETURNS, OwedRewards.CLAIM);
 	}
 
 	private PendingDelivery() {

@@ -94,7 +94,8 @@ public final class ManipulationChargeVisualGameTests {
 						registered.getName() + " preview started a gameplay cooldown");
                 tested++;
             }
-            require(tested == 17, "Expected coverage of all 17 registered charged manipulations, got " + tested);
+            // D-1 (B17): the Unclosing Eye is charged now, so 18.
+            require(tested == 18, "Expected coverage of all 18 registered charged manipulations, got " + tested);
 
             var mortar = ManipulationInit.hematic_mortar.get();
             known.setSelectedManip(mortar);

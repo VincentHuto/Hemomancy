@@ -11,6 +11,7 @@ ext.gameTestSuites = [
     'pelagic_ecology_validation': [alpha: true, run: 'pelagicEcologyGameTestServer', directory: 'build/pelagic-ecology/gametest'],
     'pelagic_worldgen_validation': [alpha: false, run: 'pelagicValidationServer', directory: null, reason: 'Requires a fresh seeded noise Overworld.', generator: 'com.vincenthuto.hemomancy.gametest.PelagicWorldValidation'],
     'court_worldgen_validation': [alpha: false, run: 'courtValidationServer', directory: null, reason: 'Requires a fresh seeded noise Overworld and a JFR travel recording.', generator: 'com.vincenthuto.hemomancy.gametest.CourtWorldValidation'],
+    'circus_worldgen_validation': [alpha: false, run: 'circusValidationServer', directory: null, reason: 'Requires a fresh seeded noise Overworld per seed (42, 1337, 8675309).', generator: 'com.vincenthuto.hemomancy.gametest.CircusWorldValidation'],
     'mnemonic_whale_validation': [alpha: true, run: 'mnemonicWhaleGameTestServer', directory: 'build/mnemonic-whale-gametest'],
     'station_upgrade_validation': [alpha: true, run: 'stationUpgradeGameTestServer', directory: 'build/station-upgrade-gametest'],
     'book_kit_validation': [alpha: true, run: 'bookKitGameTestServer', directory: 'build/book-kit-gametest'],
@@ -31,6 +32,19 @@ ext.gameTestSuites = [
     'morphling_strain_validation': [alpha: true, run: 'morphlingStrainGameTestServer', directory: 'build/morphling-strain-gametest'],
     'dialogue_route_validation': [alpha: true, run: 'dialogueRouteGameTestServer', directory: 'build/dialogue-route-gametest'],
     'npc_trade_validation': [alpha: true, run: 'npcTradeGameTestServer', directory: 'build/npc-trade-gametest'],
+    'sculpting_validation': [alpha: true, run: 'sculptingGameTestServer', directory: 'build/sculpting-gametest'],
+    'living_blood_validation': [alpha: true, run: 'livingBloodGameTestServer', directory: 'build/living-blood-gametest'],
+    'temper_validation': [alpha: true, run: 'temperGameTestServer', directory: 'build/temper-gametest'],
+    'ground_network_validation': [alpha: true, run: 'groundNetworkGameTestServer', directory: 'build/ground-network-gametest'],
+    'farming_validation': [alpha: true, run: 'farmingGameTestServer', directory: 'build/farming-gametest'],
+    'chum_validation': [alpha: true, run: 'chumGameTestServer', directory: 'build/chum-gametest'],
+    'menagerie_validation': [alpha: true, run: 'menagerieGameTestServer', directory: 'build/menagerie-gametest'],
+    'strand_validation': [alpha: true, run: 'strandGameTestServer', directory: 'build/strand-gametest'],
+    'staff_mining_validation': [alpha: true, run: 'staffMiningGameTestServer', directory: 'build/staff-mining-gametest'],
+    'living_land_validation': [alpha: true, run: 'livingLandGameTestServer', directory: 'build/living-land-gametest'],
+    'cling_validation': [alpha: true, run: 'clingGameTestServer', directory: 'build/cling-gametest'],
+    'daily_loop_validation': [alpha: true, run: 'dailyLoopGameTestServer', directory: 'build/daily-loop-gametest'],
+    'core_loop_validation': [alpha: true, run: 'coreLoopGameTestServer', directory: 'build/core-loop-gametest'],
     'playthrough_validation': [alpha: false, run: 'playthroughGameTestServer', directory: 'build/playthrough-gametest', reason: 'Long player-centric Harbinger D0-D5 playthroughs with real ceremonies and pending-decision probes; run on demand.'],
     'court_discovery_validation': [alpha: true, run: 'courtDiscoveryGameTestServer', directory: 'build/court-discovery-gametest'],
     'court_life_validation': [alpha: true, run: 'courtLifeGameTestServer', directory: 'build/court-life-gametest'],
@@ -68,6 +82,15 @@ ext.gameTestSuites = [
 def templateNamespaces = ['minecraft']
 def namespaceProperty = 'neoforge.enabledGameTestNamespaces'
 def alphaNamespaces = gameTestSuites.findAll { namespace, suite -> suite.alpha == true }.keySet().toList() + templateNamespaces
+// Test grids (not the seeded-world generators) run with the isolation mixins: wide gaps between tests, forced margin
+// chunks and a chunk-aligned origin. -PgameTestOrigin=x,z places the grid exactly; see docs/TESTING.md.
+def isolateTestGrid = { run ->
+    run.programArguments.addAll '--mixin', 'gametest-isolation.mixins.json'
+    def origin = providers.gradleProperty('gameTestOrigin').getOrElse('')
+    if (origin) run.systemProperty 'hemomancy.gametest.origin', origin
+    def margin = providers.gradleProperty('gameTestMarginChunks').getOrElse('')
+    if (margin) run.systemProperty 'hemomancy.gametest.marginChunks', margin
+}
 
 gameTestSuites.each { namespace, suite ->
     if (suite.run == null) return
@@ -100,6 +123,14 @@ gameTestSuites.each { namespace, suite ->
         run.systemProperty 'hemomancy.court.travelSeconds', providers.gradleProperty('courtTravelSeconds').getOrElse('45')
         run.programArguments.addAll '--mixin', 'pelagic-validation.mixins.json'
         run.jvmArguments.addAll '-Xms1G', '-Xmx5G', '--add-modules', 'jdk.jfr'
+    } else if (namespace == 'circus_worldgen_validation') {
+        def seed = providers.gradleProperty('circusSeed').getOrElse('42')
+        run.gameDirectory = file("build/circus-worlds/${seed}")
+        // The Pelagic test-world mixin reads its seed property; the Circus generator reads its own.
+        run.systemProperty 'hemomancy.pelagic.validationSeed', seed
+        run.systemProperty 'hemomancy.circus.validationSeed', seed
+        run.programArguments.addAll '--mixin', 'pelagic-validation.mixins.json'
+        run.jvmArguments.addAll '-Xms1G', '-Xmx5G'
     } else if (suite.generator != null) {
         def seed = providers.gradleProperty('phlegethonticSeed').getOrElse('42')
         def pass = providers.gradleProperty('phlegethonticRun').getOrElse('fresh')
@@ -109,6 +140,7 @@ gameTestSuites.each { namespace, suite ->
         run.programArguments.addAll '--mixin', 'phlegethontic-validation.mixins.json'
     } else {
         run.gameDirectory = file(suite.directory)
+        isolateTestGrid(run)
     }
 }
 def combined = neoForge.runs.maybeCreate('gameTestServer')
@@ -116,6 +148,30 @@ combined.type = 'gameTestServer'
 combined.gameDirectory = file(providers.gradleProperty('combinedGameTestDirectory')
         .getOrElse('build/phlegethontic-gametest'))
 combined.systemProperty namespaceProperty, alphaNamespaces.join(',')
+isolateTestGrid(combined)
+
+// Manual only (NQ-17-5): parallel sessions share build/, so no GameTest run deletes a world by itself.
+tasks.register('cleanGameTestWorlds') {
+    group = 'verification'
+    description = 'Deletes the reused GameTest worlds and leaked pack folders. Run it with no GameTest server running.'
+    doLast {
+        def roots = ([combined.gameDirectory.get().asFile] + gameTestSuites.values()
+                .findAll { it.directory && !it.generator }
+                .collect { file(it.directory) }).unique()
+        def removed = 0
+        roots.findAll { it.isDirectory() }.each { root ->
+            root.listFiles().findAll { child ->
+                child.isDirectory() && (child.name == 'world'
+                        || child.name.startsWith('blood-profile-packs-')
+                        || child.name.startsWith('blood-response-packs-'))
+            }.each { child ->
+                project.delete(child)
+                removed++
+            }
+        }
+        logger.lifecycle("Deleted ${removed} GameTest world and pack folders under ${roots.count { it.isDirectory() }} directories.")
+    }
+}
 
 def verifySuites = tasks.register('verifyGameTestSuites') {
     group = 'verification'
@@ -144,6 +200,16 @@ def verifySuites = tasks.register('verifyGameTestSuites') {
             }
             if ((code =~ /@GameTest\s*\(/).find() && !holders.find(0)) {
                 problems << "${source.name}: GameTest methods need an explicit GameTestHolder"
+            }
+            // NeoForge enables a test by its template's namespace, so a focused launcher drops tests on another one (UN-65).
+            def holder = (code =~ /@GameTestHolder\s*\(\s*"([a-z0-9_.-]+)"\s*\)/)
+            def holderNamespace = holder.find() ? holder.group(1) : null
+            if (holderNamespace && gameTestSuites[holderNamespace]?.run) {
+                (code =~ /templateNamespace\s*=\s*"([a-z0-9_.-]+)"/).each { match ->
+                    if (match[1] != holderNamespace) {
+                        problems << "${source.name}: a template in ${match[1]} never runs in ${gameTestSuites[holderNamespace].run}"
+                    }
+                }
             }
         }
         (discovered - gameTestSuites.keySet()).each { problems << "Undeclared GameTest namespace: ${it}" }

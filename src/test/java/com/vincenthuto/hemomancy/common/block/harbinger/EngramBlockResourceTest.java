@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -17,7 +18,8 @@ public final class EngramBlockResourceTest {
 	private EngramBlockResourceTest() {
 	}
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		Path blockstate = Path.of("src/main/resources/assets/hemomancy/blockstates/engram_block.json");
 		String json = Files.readString(blockstate);
 		for (int character = 0; character < 26; character++) {

@@ -60,6 +60,8 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
     public long bornAt() { return entityData.get(BORN); }
     public long expiresAt() { return isPlayerConstruct() ? entityData.get(EXPIRES) : level().getGameTime() + Math.max(0, 120 - tickCount); }
     public long energizedUntil() { return entityData.get(ENERGIZED); }
+    /** The player or creature whose iron this is, by UUID, as saved and synced. */
+    public Optional<UUID> ownerId() { return entityData.get(OWNER); }
     public void energize(long until) { entityData.set(ENERGIZED, Math.min(until, expiresAt())); }
 
     @Override public void setCreator(LivingEntity owner) {
@@ -113,7 +115,7 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
             onExpire(server, owner);
             discard(); return;
         }
-        if (constructKind() == Kind.WALL) {
+        if (constructKind().isWall()) {
             // A projectile may traverse the thin plate between ticks: test its next segment too.
             // The caster's and allies' shots pass through their own cover.
             for (Projectile shot : server.getEntitiesOfClass(Projectile.class, getBoundingBox().inflate(4),
@@ -137,7 +139,7 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
 
     /** A rampart is cover for its side: the caster's and allies' shots fly through the plate untouched. */
     public boolean letsThrough(Projectile shot) {
-        if (!isPlayerConstruct() || constructKind() != Kind.WALL) return false;
+        if (!isPlayerConstruct() || !constructKind().isWall()) return false;
         LivingEntity owner = getCreator();
         return owner != null && friendlyShot(owner, shot);
     }

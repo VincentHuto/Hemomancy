@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -44,7 +45,7 @@ public class SpecimenJarItemRenderer extends BlockEntityWithoutLevelRenderer {
 		CompoundTag specimen = SpecimenJarData.getSpecimen(stack);
 		Level level = minecraft.level;
 		if (level != null && !specimen.isEmpty()) {
-			specimenRenderer.renderSpecimen(level, specimen, minecraft.getFrameTimeNs(), poseStack, buffer, combinedLight);
+			specimenRenderer.renderSpecimen(level, specimen, AnimationTime.partialTick(), poseStack, buffer, combinedLight);
 		}
 		poseStack.popPose();
 

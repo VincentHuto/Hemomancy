@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.effect.SilverWardEffect;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -52,8 +53,10 @@ public class UnstainedMilestoneHandler {
 				? EnumClarityStage.byClarity(progress.getClarity())
 				: EnumClarityStage.AWAKENED;
 
-		//  Grant purity stage advancements 
+		//  Grant purity stage advancements
 		checkPurityStageAdvancements(serverPlayer, purityStage);
+		// The Liber Immaculatus pages each stage opens (core-loop round two P9), the Unstained floor beside the advancements.
+		LiberKnowledgeHelper.unlockForUnstained(serverPlayer, progress);
 
 		//  Grant clarity stage advancements 
 		if (progress.hasClarityUnlocked()) {
@@ -143,13 +146,10 @@ public class UnstainedMilestoneHandler {
 	//
 
 	/**
-	 * Reduces incoming damage from hemomancy-tagged sources when the player
-	 * has Silver Ward active, and applies bonus damage to hemomancy mobs
-	 * at ABSOLVED+ purity.
+	 * Silver Ward: reduces incoming damage from hemomancy-tagged sources. Defender stage of
+	 * {@link com.vincenthuto.hemomancy.common.damage.DamageStages}.
 	 */
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public static void onLivingHurt(LivingDamageEvent.Pre event) {
-		// — Silver Ward: reduce incoming blood damage —
+	public static void applySilverWard(LivingDamageEvent.Pre event) {
 		if (event.getEntity() instanceof Player player && !player.level().isClientSide()) {
 			MobEffectInstance ward = player.getEffect(EffectInit.silver_ward);
 			if (ward != null) {
@@ -163,8 +163,13 @@ public class UnstainedMilestoneHandler {
 				}
 			}
 		}
+	}
 
-		// — Absolved+ bonus: extra damage to hemomancy mobs —
+	/**
+	 * Absolved+ purity: extra damage to hemomancy mobs. Attacker stage of
+	 * {@link com.vincenthuto.hemomancy.common.damage.DamageStages}.
+	 */
+	public static void applyAbsolvedBonus(LivingDamageEvent.Pre event) {
 		if (event.getSource().getEntity() instanceof Player attacker && !attacker.level().isClientSide()) {
 			LivingEntity target = event.getEntity();
 			if (target.getType().is(EntityInit.HEMOMANCY_MOB)) {

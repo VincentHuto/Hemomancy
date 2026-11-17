@@ -29,18 +29,22 @@ public final class CourtDiscoveryDialogue {
 	static final ResourceLocation LETTER = Hemomancy.rloc("brine_sealed_letter");
 	private static final String READ_LETTER = "hemomancy.dialogue.court.option.read_letter";
 	private static final String LOST_LETTER = "hemomancy.dialogue.court.option.lost_letter";
+	private static final String LETTER_CHART = "hemomancy.dialogue.voyager.option.letter_chart";
 
 	private CourtDiscoveryDialogue() {
 	}
 
-	/** What the three speakers need to know about one player. */
+	/**
+	 * What the three speakers need to know about one player. {@code sitesGenerate} is off when Pelagic worldgen is off:
+	 * no Court sites exist, so none of them points the player seaward.
+	 */
 	public record View(int degree, boolean known, @Nullable CourtProgress.Route knownBy, boolean letterLost,
-			boolean carryingChart, int highestStrainMaturity) {
+			boolean carryingChart, int highestStrainMaturity, boolean sitesGenerate) {
 		public static View of(ServerPlayer player) {
 			CourtProgress progress = CourtDiscoveryProgress.progress(player);
 			return new View(HemoCapabilityAccess.getPlayerDegreeNumber(player), progress.known(), progress.knownBy(),
 					CourtDiscoveryProgress.letterLost(player), CourtDiscoveryProgress.carriesChart(player),
-					CourtDiscoveryProgress.highestStrainMaturity(player));
+					CourtDiscoveryProgress.highestStrainMaturity(player), CourtDiscoveryProgress.sitesGenerate());
 		}
 
 		String knownLine(String speaker) {
@@ -51,6 +55,7 @@ public final class CourtDiscoveryDialogue {
 
 	/** The Vicar refers a fifth-Degree player to the Voyagers, after the Reef Watch bearing if it isn't done. */
 	public static DialogueTree withVicar(DialogueTree tree, View view, boolean bearingAvailable) {
+		if (!view.sitesGenerate()) return tree;
 		if (!CourtIntroductionRules.vicarRefers(view.degree()) && !view.letterLost()) return tree;
 		String leave = "hemomancy.dialogue.vicar.option.leave";
 		List<String> lines;
@@ -71,6 +76,7 @@ public final class CourtDiscoveryDialogue {
 
 	/** A Voyager explains the Court at a cordial distance and issues, then reissues, the Relay Chart. */
 	public static DialogueTree withVoyager(DialogueTree tree, View view) {
+		if (!view.sitesGenerate()) return tree;
 		if (!CourtIntroductionRules.voyagerSpeaks(view.degree(), view.known(), view.letterLost())) return tree;
 		List<String> lines;
 		List<DialogueOption> options = new ArrayList<>();
@@ -91,6 +97,7 @@ public final class CourtDiscoveryDialogue {
 
 	/** Past the fifth Degree with a Mature strain, the Alchemist admits the best cultivators aren't in the Order. */
 	public static DialogueTree withAlchemist(DialogueTree tree, View view) {
+		if (!view.sitesGenerate()) return tree;
 		boolean points = CourtIntroductionRules.alchemistPoints(view.degree(), view.highestStrainMaturity());
 		if (!points && !view.letterLost()) return tree;
 		List<String> lines;
@@ -110,7 +117,8 @@ public final class CourtDiscoveryDialogue {
 
 	/**
 	 * The letter's item inquiry: unknown, it offers to record the letter; known, the speaker acknowledges the route
-	 * that came first. Run after {@code DialogueItemInquiryNodes} and before the hub decoration.
+	 * that came first, and a Voyager offers to draw the Relay Chart to a player who carries none. Run after
+	 * {@code DialogueItemInquiryNodes} and before the hub decoration.
 	 */
 	public static DialogueTree withLetterInquiry(DialogueTree tree, String speaker, String eventId, View view) {
 		String id = DialogueItemInquiryNodes.inventoryNodeId(LETTER);
@@ -120,7 +128,13 @@ public final class CourtDiscoveryDialogue {
 		if (view.known()) {
 			var lines = new ArrayList<>(node.lines());
 			lines.add(view.knownLine(speaker));
-			nodes.put(id, new DialogueNode(id, lines, node.options()));
+			var options = new ArrayList<DialogueOption>();
+			if (VOYAGER_LETTER.equals(eventId) && view.sitesGenerate()
+					&& CourtIntroductionRules.canIssueChart(true, view.carryingChart())) {
+				options.add(new DialogueOption(LETTER_CHART, null, VOYAGER_CHART));
+			}
+			options.addAll(node.options());
+			nodes.put(id, new DialogueNode(id, lines, options));
 		} else {
 			var options = new ArrayList<DialogueOption>();
 			options.add(new DialogueOption(READ_LETTER, null, eventId));

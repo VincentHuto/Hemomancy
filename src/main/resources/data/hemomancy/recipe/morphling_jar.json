@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "SIS",
+    "ISI",
     "IPI",
-    "SIS"
+    "ISI"
   ],
   "key": {
     "S": {

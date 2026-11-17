@@ -1,22 +1,35 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.tile.BlockBloodVolume;
 
 public final class BloodRoutingRules {
 
     public static final double DEFAULT_WORKING_RESERVE = 600.0;
     public static final double DEFAULT_PLAYER_SAFETY_RATIO = 0.5;
+    /** How near a sutured machine kin must stand to feed it for an offline owner (CN-9, NQ-01-16). */
+    public static final double STAND_IN_RANGE = 16.0;
 
     private BloodRoutingRules() {
     }
 
+    /**
+     * How much fresh blood a sutured buffer is short of its working reserve. A block tank's reserve is measured against
+     * its whole size, clot included, so a buffer whose clot fills its room still asks to be revived (LP-4).
+     */
     public static double calculateReserveRequest(IBloodVolume target, double workingReserve, double maxRequest) {
         if (target == null || maxRequest <= 0 || workingReserve <= 0) {
             return 0;
         }
-        double reserveCap = Math.min(workingReserve, target.getMaxBloodVolume());
+        double size = target instanceof BlockBloodVolume block ? block.capacity() : target.getMaxBloodVolume();
+        double reserveCap = Math.min(workingReserve, size);
         double missingReserve = Math.max(0, reserveCap - target.getBloodVolume());
         return Math.min(maxRequest, missingReserve);
+    }
+
+    /** Whether a member of the owner's bloodline may stand in: alive, at the third Degree, blood awake, near enough. */
+    public static boolean mayStandIn(boolean alive, boolean thirdDegree, boolean bloodActive, double distanceSqr) {
+        return alive && thirdDegree && bloodActive && distanceSqr <= STAND_IN_RANGE * STAND_IN_RANGE;
     }
 
     public static double workingReserve(int faneSutureLevel) {

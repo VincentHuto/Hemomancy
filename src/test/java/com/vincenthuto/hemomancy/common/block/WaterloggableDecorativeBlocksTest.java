@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.block;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class WaterloggableDecorativeBlocksTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -88,7 +92,8 @@ public final class WaterloggableDecorativeBlocksTest {
 	private WaterloggableDecorativeBlocksTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String helper = readSource(HELPER_PATH);
 		assertContains("shared waterlogging helper should expose placement helper", helper, "waterloggedForPlacement");
 		assertContains("shared waterlogging helper should expose fluid-state helper", helper, "fluidState");
@@ -121,8 +126,8 @@ public final class WaterloggableDecorativeBlocksTest {
 		if (blockstate.has("multipart") == blockstate.has("variants")) {
 			throw new AssertionError(label + ": expected one multipart or variants model definition");
 		}
-		assertDoesNotContain(label + " should not enumerate waterlogged variants", source, "waterlogged=");
-		assertDoesNotContain(label + " should not select multipart models by waterlogging", source, "\"waterlogged\"");
+		assertNotContains(label + " should not enumerate waterlogged variants", source, "waterlogged=");
+		assertNotContains(label + " should not select multipart models by waterlogging", source, "\"waterlogged\"");
 	}
 
 	private static String readSource(String path) throws IOException {
@@ -131,25 +136,6 @@ public final class WaterloggableDecorativeBlocksTest {
 
 	private static String readResource(String path) throws IOException {
 		return read(RESOURCE_ROOT.resolve(path));
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 
 	private record TargetBlock(String id, String sourcePath) {

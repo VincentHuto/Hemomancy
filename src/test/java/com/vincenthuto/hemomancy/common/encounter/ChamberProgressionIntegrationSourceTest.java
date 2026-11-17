@@ -3,10 +3,9 @@ package com.vincenthuto.hemomancy.common.encounter;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 final class ChamberProgressionIntegrationSourceTest {
 	@Test
@@ -28,9 +27,5 @@ final class ChamberProgressionIntegrationSourceTest {
 		assertTrue(clientHandler.contains("ChamberOfWillClientData.set(msg.skyTheme(), msg.tier(), msg.radius()"));
 		assertTrue(manager.contains("ChamberExpansionRules.floorBand"));
 		assertTrue(manager.contains("state.is(BlockInit.sporite_crystal.get())"));
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(Path.of(path)).replace("\r\n", "\n");
 	}
 }

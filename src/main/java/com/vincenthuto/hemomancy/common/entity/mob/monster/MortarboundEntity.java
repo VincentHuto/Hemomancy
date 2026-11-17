@@ -5,7 +5,8 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilSites;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -42,6 +43,7 @@ import net.neoforged.neoforge.event.VanillaGameEvent;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class MortarboundEntity extends Monster {
     private static final int HEARD_MEMORY_TICKS = 160;
+    private static final ParticleColor CLOT = new ParticleColor(70, 6, 14);
     private static final EntityDataAccessor<Integer> FACE = SynchedEntityData.defineId(MortarboundEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ATTACK = SynchedEntityData.defineId(MortarboundEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> FORM = SynchedEntityData.defineId(MortarboundEntity.class, EntityDataSerializers.INT);
@@ -142,13 +144,13 @@ public class MortarboundEntity extends Monster {
         if (level().isClientSide) {
             var form = formState().form();
             if ((form == MortarboundFormRules.Form.EMERGING || form == MortarboundFormRules.Form.RETREATING) && tickCount % 4 == 0) {
-                level().addParticle(ParticleTypes.SQUID_INK, getX(), getY() + .7, getZ(), 0, -.015, 0);
-                level().addParticle(ParticleTypes.SCULK_SOUL, getX(), getY() + 1, getZ(), 0, .01, 0);
+                level().addParticle(HemoParticleData.darkGlow(CLOT), getX(), getY() + .7, getZ(), 0, -.015, 0);
+                level().addParticle(HemoParticleData.daemonDiffuseGlow(0.18F), getX(), getY() + 1, getZ(), 0, .01, 0);
             }
             if (emergence(0) > 0 && (tickCount % 18 == 0 || attackTicks() > 0 && tickCount % 3 == 0))
-                level().addParticle(ParticleTypes.SCULK_SOUL, getX(), getY() + 1.3, getZ(), 0, .015, 0);
+                level().addParticle(HemoParticleData.daemonDiffuseGlow(0.18F), getX(), getY() + 1.3, getZ(), 0, .015, 0);
             if (tickCount % 31 == 0)
-                level().addParticle(ParticleTypes.SQUID_INK, getX(), getY() + .8, getZ(), 0, -.02, 0);
+                level().addParticle(HemoParticleData.darkGlow(CLOT), getX(), getY() + .8, getZ(), 0, -.02, 0);
             return;
         }
         if (cooldown > 0) cooldown--;

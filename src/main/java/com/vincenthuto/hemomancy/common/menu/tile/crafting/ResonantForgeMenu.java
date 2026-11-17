@@ -66,6 +66,8 @@ public class ResonantForgeMenu extends HemoContainerMenu {
     public int totalTicks() { return data.get(1); }
     public int blood() { return data.get(2); }
     public int capacity() { return data.get(3); }
+    /** The tank as its bar draws it: fresh blood over clot (core-loop Track 3). */
+    public com.vincenthuto.hemomancy.common.tile.ReservoirReading reading() { return com.vincenthuto.hemomancy.common.tile.ReservoirReading.ofMenu(blood(), capacity(), forge); }
     public int hammerUses() { return data.get(4); }
     public int wheelUses() { return data.get(5); }
     public int tier() { return data.get(6); }

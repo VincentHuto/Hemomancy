@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.worldgen.terrain.cortical;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,10 +19,6 @@ class CorticalArchipelagoFeatureSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final String FEATURE =
 			"src/main/java/com/vincenthuto/hemomancy/common/worldgen/feature/CorticalArchipelagoFeature.java";
-
-	private static String read(String relativePath) throws IOException {
-		return Files.readString(ROOT.resolve(relativePath));
-	}
 
 	@Test
 	void islandsComeFromThePlanAndShape() throws IOException {

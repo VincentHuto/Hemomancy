@@ -1,15 +1,16 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.PhantasmalEchoEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
 import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -22,11 +23,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class PhanstmalBloodlustArmorAbilityHandler {
 	private static final int MASQUERADE_ECHO_COUNT = 8;
 	private static final int MASQUERADE_ECHO_DURATION_TICKS = 200;
@@ -34,18 +32,19 @@ public final class PhanstmalBloodlustArmorAbilityHandler {
 	private static final double MASQUERADE_MAX_SPAWN_RADIUS = 3.0D;
 	private static final double PHANTASMAL_DISPLACEMENT = 8.0D;
 	private static final int PHANTASMAL_REACTIVE_COOLDOWN_TICKS = 40;
+	private static final ParticleColor TENEBRIS = EnumBloodTemper.TENEBRIS.getColor();
 
 	private PhanstmalBloodlustArmorAbilityHandler() {
 	}
 
 	public static void activateMasqueradeOfTheForgotten(ServerPlayer player) {
 		spawnMasqueradeEchoes(player);
-		player.serverLevel().sendParticles(ParticleTypes.REVERSE_PORTAL,
+		player.serverLevel().sendParticles(HemoParticleData.willAbsorptionGlowPulse(TENEBRIS),
 				player.getX(), player.getY() + 1.0D, player.getZ(),
-				90, 1.0D, 0.75D, 1.0D, 0.08D);
-		player.serverLevel().sendParticles(ParticleTypes.SMOKE,
+				40, 1.0D, 0.75D, 1.0D, 0.08D);
+		player.serverLevel().sendParticles(HemoParticleData.daemonDiffuseGlow(0.5F),
 				player.getX(), player.getY() + 0.8D, player.getZ(),
-				45, 0.9D, 0.45D, 0.9D, 0.02D);
+				20, 0.9D, 0.45D, 0.9D, 0.02D);
 		player.level().playSound(null, player.blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE,
 				SoundSource.PLAYERS, 0.9F, 0.85F);
 	}
@@ -56,7 +55,7 @@ public final class PhanstmalBloodlustArmorAbilityHandler {
 		}
 	}
 
-	@SubscribeEvent
+	/** A reaction in the defender stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
 	public static void onPlayerDamage(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) {
 			return;
@@ -84,9 +83,9 @@ public final class PhanstmalBloodlustArmorAbilityHandler {
 			attacker.teleportTo(destination.getX() + 0.5D, destination.getY(), destination.getZ() + 0.5D);
 			player.level().playSound(null, destination, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.7F, 0.8F);
 		}
-		player.serverLevel().sendParticles(ParticleTypes.REVERSE_PORTAL,
+		player.serverLevel().sendParticles(HemoParticleData.willAbsorptionGlow(TENEBRIS),
 				attacker.getX(), attacker.getY() + 1.0D, attacker.getZ(),
-				32, 0.45D, 0.75D, 0.45D, 0.04D);
+				16, 0.45D, 0.75D, 0.45D, 0.04D);
 	}
 
 	private static void spawnMasqueradeEchoes(ServerPlayer player) {

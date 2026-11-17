@@ -1,18 +1,21 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class HarbingerRecruitmentDialogueSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final String PLEDGE_OPTION = "hemomancy.dialogue.recruit.option.pledge_blood";
 	private static final String RELEASE_OPTION = "hemomancy.dialogue.recruit.option.release_blood";
 
 	private HarbingerRecruitmentDialogueSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertMutuallyExclusiveRecruitmentOptions("Vicar",
 				read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java"));
 		assertMutuallyExclusiveRecruitmentOptions("Alchemist",
@@ -177,22 +180,6 @@ public final class HarbingerRecruitmentDialogueSourceTest {
 		}
 		String greetingOptions = source.substring(start, greetingEnd);
 		assertContains(label + " offers item inquiry from greeting", greetingOptions, optionKey);
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": unexpected " + unexpected);
-		}
 	}
 
 	private static void assertCount(String label, String text, String needle, int expectedCount) {

@@ -12,6 +12,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Utility class for programmatically granting Hemomancy Harbinger-path
  * advancements when initiatory degrees are attained or when specific
@@ -205,6 +208,63 @@ public final class HarbingerAdvancementGranter {
 	public static final ResourceLocation ADV_SANGUINE_DOMAIN =
 			Hemomancy.rloc("hemomancy/sanguine_domain");
 
+	// ── Core loop firsts (core-loop Track 11): one per system, each granted where the act happens ──
+	/** The first paid pulse of a Sculpting (a strand counts). */
+	public static final ResourceLocation ADV_SCULPTED = Hemomancy.rloc("hemomancy/sculpted");
+	/** Clot scraped out of a machine as a Sanguine Formation. */
+	public static final ResourceLocation ADV_SET_THROUGH = Hemomancy.rloc("hemomancy/set_through");
+	/** A carried catalyst dissolved into a cast or pulse in the pool's place. */
+	public static final ResourceLocation ADV_CARRIED = Hemomancy.rloc("hemomancy/carried");
+	/** A creature leashed by a held Blood Binding. */
+	public static final ResourceLocation ADV_KEPT = Hemomancy.rloc("hemomancy/kept");
+	/** A gouge run lit by a projected pulse. */
+	public static final ResourceLocation ADV_CUT_AND_LIT = Hemomancy.rloc("hemomancy/cut_and_lit");
+	/** The Living Staff's first growth ring. */
+	public static final ResourceLocation ADV_FIRST_RING = Hemomancy.rloc("hemomancy/first_ring");
+	/** A lash's crack landing on a creature. */
+	public static final ResourceLocation ADV_FIRST_CRACK = Hemomancy.rloc("hemomancy/first_crack");
+	/** Rooted to a wall or ceiling by Venous Cling. */
+	public static final ResourceLocation ADV_CLINGING = Hemomancy.rloc("hemomancy/clinging");
+	/** A meal that paid blood. */
+	public static final ResourceLocation ADV_MEAT_IS_BLOOD = Hemomancy.rloc("hemomancy/meat_is_blood");
+	/** A young born in glass to two kept creatures (core-loop round two, P6). */
+	public static final ResourceLocation ADV_FIRST_BROOD = Hemomancy.rloc("hemomancy/first_brood");
+	/** A ripe fungal strain cut from its substrate (core-loop round two, P7). */
+	public static final ResourceLocation ADV_FIRST_STRAIN_BED = Hemomancy.rloc("hemomancy/first_strain_bed");
+	// Round two P9: the firsts the rest of the core loop and round two never had.
+	/** A scab spike's drop from the player's own tank landing on soil and feeding it. */
+	public static final ResourceLocation ADV_FIRST_DRIP = Hemomancy.rloc("hemomancy/first_drip");
+	/** A ripe crop cut from ground a fresh planting basin or a feeding run feeds at level 2. */
+	public static final ResourceLocation ADV_BASIN_HARVEST = Hemomancy.rloc("hemomancy/basin_harvest");
+	/** A Tainted Harvest found in a ripe crop cut from over-fed ground. */
+	public static final ResourceLocation ADV_TAINTED_HARVEST = Hemomancy.rloc("hemomancy/tainted_harvest");
+	/** One of a chum pool's own catches fished up. */
+	public static final ResourceLocation ADV_CHUM_CATCH = Hemomancy.rloc("hemomancy/chum_catch");
+	/** A led creature put into a Specimen Jar or Vat. */
+	public static final ResourceLocation ADV_IN_GLASS = Hemomancy.rloc("hemomancy/in_glass");
+	/** A kind's blood examined in enough individuals that its yield is known. */
+	public static final ResourceLocation ADV_STUDIED = Hemomancy.rloc("hemomancy/studied");
+	/** Ground woken by Living Land landing a strike on an enemy. */
+	public static final ResourceLocation ADV_LAND_STRIKE = Hemomancy.rloc("hemomancy/living_land_strike");
+	/** A whole night slept with the blood awake. */
+	public static final ResourceLocation ADV_FULL_NIGHT = Hemomancy.rloc("hemomancy/full_night");
+	/** A Blood Moon that rose only because of blood spilled where the player stood. */
+	public static final ResourceLocation ADV_MOON_BROUGHT_ON = Hemomancy.rloc("hemomancy/moon_brought_on");
+	/** Carrion Communion's Sculpting drawing from remains (round two P4). */
+	public static final ResourceLocation ADV_CARRION_DRAWN = Hemomancy.rloc("hemomancy/carrion_drawn");
+	/** A paid pulse of a strand poured with its twin from the off hand (round two P5). */
+	public static final ResourceLocation ADV_TWIN_STRAND = Hemomancy.rloc("hemomancy/twin_strand");
+	/** A plant sunk into a wet stain set off so it runs along the stain (round two P5). */
+	public static final ResourceLocation ADV_STAIN_RUN = Hemomancy.rloc("hemomancy/stain_run");
+	/** A creature held in Blood Binding taking the binder's brand (round two P5). */
+	public static final ResourceLocation ADV_BOUND_AND_BRANDED = Hemomancy.rloc("hemomancy/bound_and_branded");
+	/** Light drawn in by Blood Eclipse hanging as a field of dark (round two P8). */
+	public static final ResourceLocation ADV_FIELD_OF_DARK = Hemomancy.rloc("hemomancy/field_of_dark");
+	/** An Earthen Vein opening sated for a crossing a living vein carries (round two P8). */
+	public static final ResourceLocation ADV_CARRIED_CROSSING = Hemomancy.rloc("hemomancy/carried_crossing");
+	/** A furnace burning on a hot gouge run's heat (round two P8). */
+	public static final ResourceLocation ADV_STOKED = Hemomancy.rloc("hemomancy/stoked");
+
 	/** Ordered array of degree advancements, index 0 = degree 1. */
 	private static final ResourceLocation[] DEGREE_ADVANCEMENTS = {
 		ADV_DEGREE_1_NEOPHYTE,
@@ -280,6 +340,20 @@ public final class HarbingerAdvancementGranter {
 		for (String criterion : progress.getRemainingCriteria()) {
 			player.getAdvancements().award(advancement, criterion);
 		}
+	}
+
+	/** Takes back every awarded criterion of {@code id}. Returns whether the player had it done. */
+	public static boolean revoke(ServerPlayer player, ResourceLocation id) {
+		AdvancementHolder advancement = player.server.getAdvancements().get(id);
+		if (advancement == null) return false;
+		AdvancementProgress progress = player.getAdvancements().getOrStartProgress(advancement);
+		boolean done = progress.isDone();
+		List<String> awarded = new ArrayList<>();
+		progress.getCompletedCriteria().forEach(awarded::add);
+		for (String criterion : awarded) {
+			player.getAdvancements().revoke(advancement, criterion);
+		}
+		return done;
 	}
 
 	public static boolean hasAdvancement(ServerPlayer player, ResourceLocation id) {

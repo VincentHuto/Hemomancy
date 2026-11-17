@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import org.junit.jupiter.api.Test;
+
 public final class MycelialLanternAutomationRulesTest {
 
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         assertSlots(MycelialLanternAutomationRules.Side.TOP, new int[] { 0 });
         assertSlots(MycelialLanternAutomationRules.Side.SIDE, new int[] { 1 });
         assertSlots(MycelialLanternAutomationRules.Side.BOTTOM, new int[] { 2, 3 });

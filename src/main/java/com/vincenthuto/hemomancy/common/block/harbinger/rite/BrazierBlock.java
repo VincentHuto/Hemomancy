@@ -70,7 +70,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * spilling its offering, when what holds it up is gone.
  */
 public class BrazierBlock extends Block implements EntityBlock, SimpleWaterloggedBlock, BlockBloodEndpoint {
-	private static final BloodAccounting.Source LIGHTING = BloodAccounting.Source.of("brazier_lighting", Category.RITE, true, false);
+	private static final BloodAccounting.Source LIGHTING = BloodAccounting.Source.of("brazier_lighting", Category.RITE, false);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -308,7 +308,8 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.55F, 1.0F);
 			return drawn;
 		}
-		// An offering is drawn out by whichever brazier rite claims it (Memory, Scar, Living Weapon Graft).
+		// An offering is drawn out by whichever brazier rite claims it (Memory, Scar, Living Weapon Graft, then the
+		// recipe-driven transmutation for offerings none of those claims).
 		return BrazierRites.absorb(level, pos, state, player, maxAmount);
 	}
 

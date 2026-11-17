@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.client.render.item.harbinger;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.data.StrandClientState;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.registry.ModelRegistrar;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -98,7 +100,18 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 		HumanoidArm activeArm = player.getUsedItemHand() == InteractionHand.MAIN_HAND
 				? player.getMainArm()
 				: player.getMainArm().getOpposite();
+		StrandClientState.Strand strand = StrandClientState.of(player.getId());
+		boolean strandOut = strand != null && strand.cue != null && strand.released < 0;
+		// With a twin (Second Strand) the off hand's cell hand works the second strand the same way.
+		if (strandOut && activeArm != side && strand.cue.twin()) {
+			applyStrandArmTransform(matrixStackIn, player, strand, side, true);
+			return;
+		}
 		if (activeArm != side) {
+			return;
+		}
+		if (strandOut) {
+			applyStrandArmTransform(matrixStackIn, player, strand, side, false);
 			return;
 		}
 
@@ -113,6 +126,76 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 		matrixStackIn.mulPose(Vector3.YP.rotationDegrees(sideSign * (6.0F + 4.0F * wave)).toMoj());
 		matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(sideSign * 6.0F * pulse).toMoj());
 		matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-8.0F - 5.0F * wave).toMoj());
+	}
+
+	/**
+	 * The first-person arm while a strand is out (core-loop round two P5), in place of the idle wave. A lash's arm leads
+	 * the stroke: it turns toward the chain's second node, which lags the look, so the arm swings ahead and follows
+	 * through after a reversal. A jet's arm is straight and braced and trembles as the pressure builds. A spray's palm
+	 * opens and rolls side to side. A plant's palm pitches down toward the point. A brand's arm draws slowly back as it
+	 * takes. Applied in view space before the arm's own first-person transform, so the drawn palm (the strand's root)
+	 * moves with it.
+	 */
+	private static void applyStrandArmTransform(PoseStack pose, LocalPlayer player, StrandClientState.Strand strand,
+			HumanoidArm side, boolean twin) {
+		float partial = AnimationTime.partialTick();
+		double time = AnimationTime.gameTime(player.level(), (double) partial);
+		float sideSign = side == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+		switch (strand.form()) {
+			case LASH -> {
+				var lash = twin ? strand.twinLash : strand.lash;
+				if (!lash.seeded()) return;
+				var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+				Vec3 right = new Vec3(camera.getLeftVector()).scale(-1.0D), up = new Vec3(camera.getUpVector()),
+						ahead = new Vec3(camera.getLookVector());
+				Vec3 lead = lash.previous(2).lerp(lash.node(2), partial).subtract(camera.getPosition());
+				double forward = Math.max(0.2D, lead.dot(ahead));
+				float yaw = Mth.clamp((float) Math.toDegrees(Math.atan2(lead.dot(right), forward)) * 1.4F, -25.0F, 25.0F);
+				float pitch = Mth.clamp((float) Math.toDegrees(Math.atan2(lead.dot(up), forward)) * 1.2F, -18.0F, 18.0F);
+				// The arm swings with the lag; a reversal throws the wrist through before it comes back.
+				float through = strand.reversed ? 6.0F * Math.signum(yaw) : 0.0F;
+				pose.translate(0.12F * yaw / 25.0F, 0.04F * pitch / 18.0F, -0.05F);
+				pose.mulPose(Vector3.YP.rotationDegrees(-(yaw + through)).toMoj());
+				pose.mulPose(Vector3.XP.rotationDegrees(pitch - 6.0F).toMoj());
+				pose.mulPose(Vector3.ZP.rotationDegrees(-sideSign * yaw * 0.5F).toMoj());
+			}
+			case JET -> {
+				double pressure = strand.jet.pressure();
+				float tremor = (float) (pressure * pressure);
+				float shakeX = (float) (Math.sin(time * 2.9D) * 0.5D + Math.sin(time * 5.3D + 1.1D) * 0.5D) * 0.012F * tremor;
+				float shakeY = (float) (Math.sin(time * 3.7D + 0.4D) * 0.5D + Math.sin(time * 6.1D) * 0.5D) * 0.010F * tremor;
+				// Straight out and braced: the arm thrust forward, level with the look.
+				pose.translate(-sideSign * 0.06F + shakeX, 0.06F + shakeY, -0.16F - 0.04F * (float) pressure);
+				pose.mulPose(Vector3.XP.rotationDegrees(-14.0F - 4.0F * (float) pressure).toMoj());
+				pose.mulPose(Vector3.YP.rotationDegrees(sideSign * 4.0F).toMoj());
+			}
+			case SPRAY -> {
+				float roll = (float) Math.sin(time * 0.32D) * 16.0F;
+				float sway = (float) Math.sin(time * 0.32D + 0.6D) * 5.0F;
+				pose.translate(0.0F, 0.03F, -0.1F);
+				pose.mulPose(Vector3.YP.rotationDegrees(sideSign * (4.0F + sway)).toMoj());
+				pose.mulPose(Vector3.XP.rotationDegrees(-10.0F).toMoj());
+				pose.mulPose(Vector3.ZP.rotationDegrees(roll).toMoj());
+			}
+			case PLANT -> {
+				float fill = (float) strand.cue.param();
+				float throb = (float) Math.sin(time * 0.9D) * 1.5F;
+				// The palm pitches down toward the ground it sinks into, pressing lower as the plant fills.
+				pose.translate(0.0F, -0.06F - 0.05F * fill, -0.06F);
+				pose.mulPose(Vector3.XP.rotationDegrees(22.0F + 10.0F * fill + throb).toMoj());
+				pose.mulPose(Vector3.YP.rotationDegrees(sideSign * 3.0F).toMoj());
+			}
+			case BRAND -> {
+				double progress = com.vincenthuto.hemomancy.common.manipulation.verb.strand.BrandRules.progress(strand.brand,
+						com.vincenthuto.hemomancy.common.manipulation.verb.strand.StrandSkills.brandSetTicks(strand.cue.skill()));
+				float pull = (float) progress;
+				float strain = pull > 0.7F ? (float) Math.sin(time * 4.3D) * 0.006F * (pull - 0.7F) / 0.3F : 0.0F;
+				// A slow pull back toward the body as the brand takes, the wrist cocking up with it.
+				pose.translate(strain, 0.02F * pull, 0.14F * pull - 0.04F);
+				pose.mulPose(Vector3.XP.rotationDegrees(-6.0F - 10.0F * pull).toMoj());
+				pose.mulPose(Vector3.YP.rotationDegrees(sideSign * (2.0F + 4.0F * pull)).toMoj());
+			}
+		}
 	}
 
 	// ModelBloodArm model = new ModelBloodArm(1.0f);

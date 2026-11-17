@@ -252,6 +252,40 @@ public final class PlaythroughClock {
 			private CardinalRitePhase phase;
 			private int phaseTicks;
 			private boolean walkedIn;
+			private java.util.Map<BlockPos, net.minecraft.world.level.block.Block> ground;
+			private int groundNotes;
+			private ActiveCardinalRite lastRite;
+
+			/**
+			 * Diagnostic: the blocks round the focus when the rite starts, so a floor disturbed while the rite runs is
+			 * logged with its cell, tick, phase and what the player was doing (this found the Projection infusing the
+			 * Vascular Mending floor).
+			 */
+			private void watchGround(ActiveCardinalRite rite, int ticks) {
+				var level = player.player().serverLevel();
+				BlockPos centre = rite.getCenterPos();
+				if (ground == null) {
+					ground = new java.util.HashMap<>();
+					for (BlockPos pos : BlockPos.betweenClosed(centre.offset(-5, -2, -5), centre.offset(5, 2, 5))) {
+						var state = level.getBlockState(pos);
+						if (!state.isAir() && level.getBlockEntity(pos) == null) ground.put(pos.immutable(), state.getBlock());
+					}
+					return;
+				}
+				// A completed rite may consume its own structure; only a change while it still runs is news.
+				if (groundNotes >= 3 || rite.isComplete() || rite.getPhase() == CardinalRitePhase.COMPLETE) return;
+				for (var cell : ground.entrySet()) {
+					var now = level.getBlockState(cell.getKey()).getBlock();
+					if (now == cell.getValue()) continue;
+					PlaythroughLog.note(helper, "rite ground changed at " + cell.getKey().toShortString() + " ("
+							+ cell.getKey().subtract(centre).toShortString() + " from the focus): " + cell.getValue() + " -> " + now
+							+ " at tick " + ticks + ", phase " + rite.getPhase() + ", wave " + rite.getCurrentWave()
+							+ ", player at " + player.player().position() + " holding " + player.player().getMainHandItem()
+							+ " using " + player.player().getUseItem() + ", projecting " + projecting);
+					cell.setValue(now);
+					if (++groundNotes >= 3) return;
+				}
+			}
 
 			private void release() {
 				if (projecting) player.releaseHold();
@@ -277,15 +311,18 @@ public final class PlaythroughClock {
 				}
 				ActiveCardinalRite rite = saved.getRite(player.uuid());
 				if (rite == null) {
+					if (lastRite != null) watchGround(lastRite, ticks);
 					release();
 					probe.finish();
 					return true;
 				}
+				lastRite = rite;
 				if (plan.pauseWhen().getAsBoolean()) {
 					release();
 					probe.finish();
 					return true;
 				}
+				watchGround(rite, ticks);
 				CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(player.player().level(), rite.getRecipeId());
 				if (limit <= 0) limit = PlaythroughRites.defaultTicks(recipe);
 				if (ticks > limit) {
@@ -427,19 +464,26 @@ public final class PlaythroughClock {
 		return nearest;
 	}
 
-	/** An open anchor's aim point (an anchor that needs blood or instability repair), or null. */
+	/**
+	 * An open anchor's aim point (an anchor that needs blood or instability repair), or null. Dry anchors come first,
+	 * damaged or not: a dry anchor takes Projection as fill before its repair (PT-88), and while any anchor is dry the
+	 * deficit keeps pressing instability back onto the ring, so mending a full anchor first never ends. Repairs follow.
+	 */
 	private static Vec3 anchorAim(PlaythroughPlayer player, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
 		if (recipe == null || recipe.getCeremony() == null) return null;
 		var anchors = recipe.getCeremony().anchors();
-		// Dry anchors that are not flickering first: while stations run dry the deficit keeps pressing instability
-		// back onto the threatened anchor, so repairing it alone never ends (seen on the Rite of Apotheos's ring).
 		for (int index = 0; index < anchors.size(); index++) {
 			if (rite.bloodNeededForAnchor(index) > 0 && rite.instabilityRepairBloodNeeded(index) <= 0) {
 				return CardinalRiteTargetGeometry.anchorAimPoint(rite.getCenterPos(), anchors.get(index).offset());
 			}
 		}
 		for (int index = 0; index < anchors.size(); index++) {
-			if (rite.bloodNeededForAnchor(index) > 0 || rite.instabilityRepairBloodNeeded(index) > 0) {
+			if (rite.bloodNeededForAnchor(index) > 0) {
+				return CardinalRiteTargetGeometry.anchorAimPoint(rite.getCenterPos(), anchors.get(index).offset());
+			}
+		}
+		for (int index = 0; index < anchors.size(); index++) {
+			if (rite.instabilityRepairBloodNeeded(index) > 0) {
 				return CardinalRiteTargetGeometry.anchorAimPoint(rite.getCenterPos(), anchors.get(index).offset());
 			}
 		}

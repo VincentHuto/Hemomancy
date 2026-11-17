@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -30,9 +31,9 @@ public class SilverWardEffect extends MobEffect {
 		if (!entity.level().isClientSide && entity.level() instanceof ServerLevel serverLevel) {
 			if (entity.tickCount % PARTICLE_INTERVAL == 0) {
 				int count = 3 + amplifier * 2;
-				serverLevel.sendParticles(ParticleTypes.END_ROD,
+				serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_SILVER),
 						entity.getX(), entity.getY() + entity.getBbHeight() * 0.5, entity.getZ(),
-						count, 0.5, 0.8, 0.5, 0.01);
+						count, 0.5, 0.8, 0.5, 0.005);
 			}
 		}
 	

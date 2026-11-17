@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 public final class VenomRibCentipedeRules {
-	public static final double MAX_HEALTH = 34.0D;
+	public static final double MAX_HEALTH = 26.0D;
 	public static final double MOVEMENT_SPEED = 0.28D;
 	public static final double ATTACK_DAMAGE = 6.0D;
 	public static final double FOLLOW_RANGE = 20.0D;
-	public static final int NATURAL_SPAWN_WEIGHT = 3;
 	public static final int MIN_GROUP_SIZE = 1;
 	public static final int MAX_GROUP_SIZE = 1;
 	public static final double WARNING_RANGE_BLOCKS = 10.0D;

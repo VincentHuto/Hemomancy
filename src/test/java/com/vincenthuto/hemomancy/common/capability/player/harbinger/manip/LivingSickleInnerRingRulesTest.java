@@ -19,8 +19,7 @@ final class LivingSickleInnerRingRulesTest {
 		assertFalse(equipped.contains(ManipulationEquipHelper.CONJURE_SICKLE));
 		assertFalse(ManipulationEquipHelper.isFixedMechanicalManip(ManipulationEquipHelper.CONJURE_SICKLE));
 
-		List<String> full = new ArrayList<>(List.of(ManipulationEquipHelper.BLOOD_ABSORPTION,
-				ManipulationEquipHelper.BLOOD_PROJECTION, ManipulationEquipHelper.CONJURE_STAFF, "some_spell"));
+		List<String> full = new ArrayList<>(List.of(ManipulationEquipHelper.CONJURE_STAFF, "some_spell"));
 		assertFalse(ManipulationEquipHelper.equipNameIfPossible(full, ManipulationEquipHelper.CONJURE_SICKLE, 1));
 	}
 
@@ -28,9 +27,7 @@ final class LivingSickleInnerRingRulesTest {
 	void normalizationTreatsAnEquippedSickleLikeAnyOtherLoadoutEntryAndDoesNotGrantItEarly() {
 		List<String> unlocked = new ArrayList<>(List.of(ManipulationEquipHelper.CONJURE_SICKLE));
 		ManipulationEquipHelper.normalizeEquippedNames(unlocked);
-		assertEquals(List.of(ManipulationEquipHelper.BLOOD_ABSORPTION,
-				ManipulationEquipHelper.BLOOD_PROJECTION,
-				ManipulationEquipHelper.CONJURE_STAFF,
+		assertEquals(List.of(ManipulationEquipHelper.CONJURE_STAFF,
 				ManipulationEquipHelper.CONJURE_SICKLE), unlocked);
 
 		List<String> locked = new ArrayList<>();

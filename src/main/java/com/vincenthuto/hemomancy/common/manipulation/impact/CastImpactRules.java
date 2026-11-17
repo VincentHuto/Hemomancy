@@ -10,7 +10,8 @@ import javax.annotation.Nullable;
  * target may show one, and the 10-tick flash, burst and fray every impact plays.
  */
 public final class CastImpactRules {
-    public enum Delivery { MELEE, PROJECTILE, AREA, TETHER }
+    /** SWEEP is a strand's stroke (core-loop Track 12): a cut drawn along the way the strand was travelling. */
+    public enum Delivery { MELEE, PROJECTILE, AREA, TETHER, SWEEP }
     public record Decoded(EnumBloodTemper primary, @Nullable EnumBloodTemper secondary, Delivery delivery, int weight) {}
 
     public static final int FLASH_END = 2, BURST_END = 6, LIFE = 10, THROTTLE = 5;
@@ -31,16 +32,17 @@ public final class CastImpactRules {
         };
     }
 
-    /** Bits 0-3 primary, 4-7 secondary + 1 (0 for none), 8-9 delivery, 10-11 weight; bit 12 keeps it positive and non-zero. */
+    /** Bits 0-3 primary, 4-7 secondary + 1 (0 for none), 8-10 delivery, 11-12 weight; bit 13 keeps it positive and non-zero. */
     public static int encode(EnumBloodTemper primary, @Nullable EnumBloodTemper secondary, Delivery delivery, int weight) {
-        return 1 << 12 | Math.clamp(weight, 0, 2) << 10 | delivery.ordinal() << 8
+        return 1 << 13 | Math.clamp(weight, 0, 2) << 11 | delivery.ordinal() << 8
                 | (secondary == null ? 0 : secondary.ordinal() + 1) << 4 | primary.ordinal();
     }
 
     public static Decoded decode(int count) {
         int primary = Math.min(count & 15, SCHOOLS.length - 1), secondary = count >> 4 & 15;
+        Delivery[] deliveries = Delivery.values();
         return new Decoded(SCHOOLS[primary], secondary == 0 || secondary > SCHOOLS.length ? null : SCHOOLS[secondary - 1],
-                Delivery.values()[count >> 8 & 3], Math.min(2, count >> 10 & 3));
+                deliveries[Math.min(count >> 8 & 7, deliveries.length - 1)], Math.min(2, count >> 11 & 3));
     }
 
     /** Light under 3 damage, heavy from 10. */

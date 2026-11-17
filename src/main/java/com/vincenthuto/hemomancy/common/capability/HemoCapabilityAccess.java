@@ -60,6 +60,18 @@ public static com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodPr
 public static com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress stationUpgrades(Player player) {
     return player.getData(HemoAttachmentTypes.STATION_UPGRADES);
 }
+public static com.vincenthuto.hemomancy.common.capability.player.shared.inventory.OwedStacks scaleGripReturns(Player player) {
+    return player.getData(HemoAttachmentTypes.SCALE_GRIP_RETURNS);
+}
+public static com.vincenthuto.hemomancy.common.capability.player.shared.inventory.OwedStacks owedRewards(Player player) {
+    return player.getData(HemoAttachmentTypes.OWED_REWARDS);
+}
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IssuedScarLessons issuedScarLessons(Player player) {
+    return player.getData(HemoAttachmentTypes.ISSUED_SCAR_LESSONS);
+}
+public static boolean hasOwedRewards(Player player) {
+    return player.hasData(HemoAttachmentTypes.OWED_REWARDS);
+}
 
 public static ThelemicMemoryState thelemicMemory(Player player) {
     return player.getData(HemoAttachmentTypes.THELEMIC_MEMORY);
@@ -114,6 +126,93 @@ public static com.vincenthuto.hemomancy.common.damage.SchoolCombatState getSchoo
     return entity.getData(HemoAttachmentTypes.SCHOOL_COMBAT);
 }
 
+/** A chunk's fed-ground stamps (core-loop Track 7), or null when nothing in it was ever fed: reading adds nothing. */
+@javax.annotation.Nullable
+public static com.vincenthuto.hemomancy.common.world.farm.FedGroundStamps findFedGround(net.minecraft.world.level.chunk.LevelChunk chunk) {
+    return chunk.hasData(HemoAttachmentTypes.FED_GROUND) ? chunk.getData(HemoAttachmentTypes.FED_GROUND) : null;
+}
+
+/** A chunk's fed-ground stamps, made on first write; the caller marks the chunk unsaved. */
+public static com.vincenthuto.hemomancy.common.world.farm.FedGroundStamps getFedGround(net.minecraft.world.level.chunk.LevelChunk chunk) {
+    return chunk.getData(HemoAttachmentTypes.FED_GROUND);
+}
+
+/** A chunk's scab spike placers (CQ-3), or null when nobody placed one in it: reading adds nothing. */
+@javax.annotation.Nullable
+public static com.vincenthuto.hemomancy.common.world.farm.ScabSpikePlacers findScabSpikePlacers(net.minecraft.world.level.chunk.LevelChunk chunk) {
+    return chunk.hasData(HemoAttachmentTypes.SCAB_SPIKE_PLACERS) ? chunk.getData(HemoAttachmentTypes.SCAB_SPIKE_PLACERS) : null;
+}
+
+/** A chunk's scab spike placers, made on first write; the caller marks the chunk unsaved. */
+public static com.vincenthuto.hemomancy.common.world.farm.ScabSpikePlacers getScabSpikePlacers(net.minecraft.world.level.chunk.LevelChunk chunk) {
+    return chunk.getData(HemoAttachmentTypes.SCAB_SPIKE_PLACERS);
+}
+
+/** The Hematic Command on this mob, or null when it is free. Reading never creates the attachment. */
+@javax.annotation.Nullable
+public static com.vincenthuto.hemomancy.common.manipulation.HematicCommandState.Command getHematicCommand(Entity entity) {
+    return entity.hasData(HemoAttachmentTypes.HEMATIC_COMMAND)
+            ? entity.getData(HemoAttachmentTypes.HEMATIC_COMMAND).command() : null;
+}
+
+/** Puts {@code command} on the mob, or takes the attachment off it when {@code command} is null. */
+public static void setHematicCommand(Entity entity,
+        @javax.annotation.Nullable com.vincenthuto.hemomancy.common.manipulation.HematicCommandState.Command command) {
+    if (command == null) {
+        entity.removeData(HemoAttachmentTypes.HEMATIC_COMMAND);
+    } else {
+        entity.getData(HemoAttachmentTypes.HEMATIC_COMMAND).set(command);
+    }
+}
+
+/** The Tendon Line lead on this creature, or null when it is free. Reading never creates the attachment. */
+@javax.annotation.Nullable
+public static com.vincenthuto.hemomancy.common.entity.menagerie.LeashState.Leash getMenagerieLeash(Entity entity) {
+    return entity.hasData(HemoAttachmentTypes.MENAGERIE_LEASH)
+            ? entity.getData(HemoAttachmentTypes.MENAGERIE_LEASH).leash() : null;
+}
+
+/** Puts {@code leash} on the creature, or takes the attachment off it when {@code leash} is null. */
+public static void setMenagerieLeash(Entity entity,
+        @javax.annotation.Nullable com.vincenthuto.hemomancy.common.entity.menagerie.LeashState.Leash leash) {
+    if (leash == null) {
+        entity.removeData(HemoAttachmentTypes.MENAGERIE_LEASH);
+    } else {
+        entity.getData(HemoAttachmentTypes.MENAGERIE_LEASH).set(leash);
+    }
+}
+
+/** An animal's taint, or null when it was never dosed and inherited nothing. Reading never creates the attachment. */
+@javax.annotation.Nullable
+public static com.vincenthuto.hemomancy.common.entity.menagerie.AnimalTaintState findAnimalTaint(Entity entity) {
+    return entity.hasData(HemoAttachmentTypes.ANIMAL_TAINT) ? entity.getData(HemoAttachmentTypes.ANIMAL_TAINT) : null;
+}
+
+/** An animal's taint, made on first write. */
+public static com.vincenthuto.hemomancy.common.entity.menagerie.AnimalTaintState getAnimalTaint(Entity entity) {
+    return entity.getData(HemoAttachmentTypes.ANIMAL_TAINT);
+}
+
+/** The brand a strand set on this creature, or null when it carries none. Reading never creates the attachment. */
+public static com.vincenthuto.hemomancy.common.manipulation.verb.strand.StrandBrand findStrandBrand(Entity entity) {
+    return entity.hasData(HemoAttachmentTypes.STRAND_BRAND) ? entity.getData(HemoAttachmentTypes.STRAND_BRAND) : null;
+}
+
+/** Brands the creature, or takes the brand off when {@code brand} is null. */
+public static void setStrandBrand(Entity entity, com.vincenthuto.hemomancy.common.manipulation.verb.strand.StrandBrand brand) {
+    if (brand == null) entity.removeData(HemoAttachmentTypes.STRAND_BRAND);
+    else entity.setData(HemoAttachmentTypes.STRAND_BRAND, brand);
+}
+
+/** The game time until which a creature cannot be sampled again; 0 when it never was. */
+public static long getSampleDrawnUntil(Entity entity) {
+    return entity.hasData(HemoAttachmentTypes.SAMPLE_DRAWN_UNTIL) ? entity.getData(HemoAttachmentTypes.SAMPLE_DRAWN_UNTIL) : 0L;
+}
+
+public static void setSampleDrawnUntil(Entity entity, long until) {
+    entity.setData(HemoAttachmentTypes.SAMPLE_DRAWN_UNTIL, until);
+}
+
 /** Who holds this mob with Blood Binding, for the Rite of Possession. */
 public static com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTether getSurrogateTether(Entity entity) {
     return entity.getData(HemoAttachmentTypes.SURROGATE_TETHER);
@@ -131,13 +230,23 @@ public static Optional<IBloodVolume> getBloodVolume(Entity entity) {
 
 public static Optional<IBloodVolume> getBloodVolume(BlockEntity be) {
     if (be instanceof IBloodReservoir) {
-        return Optional.ofNullable(be.getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME));
+        return Optional.of(com.vincenthuto.hemomancy.common.tile.ReservoirBlood.settled(be));
     }
     return Optional.empty();
 }
 
 public static Optional<IBloodVolume> getBloodVolume(ItemStack stack) {
     return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_BLOOD_VOLUME));
+}
+
+/** Where the player's Tendon Line is rooted; transient, synced to the owner. */
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.tendon.TendonAnchor getTendonAnchor(Player player) {
+    return player.getData(HemoAttachmentTypes.TENDON_ANCHOR);
+}
+
+/** Whether and where the player clings (Venous Cling); transient, synced to the owner and trackers. */
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.cling.ClingState getCling(Player player) {
+    return player.getData(HemoAttachmentTypes.CLING);
 }
 
 public static SporeLoad getSporeLoad(Player player) {
@@ -181,6 +290,11 @@ public static WillAmbushState getWillAmbushState(Player player) {
 
 public static BloodTemperament getBloodTemperament(Player player) {
     return player.getData(HemoAttachmentTypes.BLOOD_TEMPERAMENT);
+}
+
+/** Temper: the spendable pool per school (core loop Track 4). Always present on players. */
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemper getBloodTemper(Player player) {
+    return player.getData(HemoAttachmentTypes.BLOOD_TEMPER);
 }
 
 public static Optional<IBloodTemperament> getBloodTemperament(Entity entity) {

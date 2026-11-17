@@ -49,16 +49,24 @@ public final class DialogueHubFactory {
 
 	public static DialogueTree decorate(DialogueTree tree, String npcId, ServerPlayer player) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		// The Vicar answers the question himself, so his own card stays while the player is new; a vow to the Church ends it.
+		// The Vicar answers the question himself: his card sends the player to a Hermit's temple, so it stays only until
+		// their blood wakes there. Other speakers send a newcomer to the Vicar until they have talked to him. A vow to
+		// the Church ends both.
+		boolean newcomerHere = "vicar".equals(npcId)
+				? !HemoCapabilityAccess.getBloodVolume(player).isActive()
+				: !hasMetVicar(player);
 		if (!"hermit".equals(npcId) && degree == 0 && !NpcTradeSides.is(npcId, NpcTradeSides.Side.CIRCUS)
-				&& !ProgressionGates.isUnstained(player) && ("vicar".equals(npcId) || !hasMetVicar(player))) {
+				&& !ProgressionGates.isUnstained(player) && newcomerHere) {
 			// The pavilion takes D0 visitors on its own terms; the Circus is not the Vicar's errand.
 			tree = addNewcomerGuidance(tree, npcId);
 		}
 		if (degree >= 7) {
-			EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
-			tree = withArchonAcknowledgment(tree, npcId, degree, path,
-					HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED));
+			var degreeState = HemoCapabilityAccess.getInitiatoryDegree(player);
+			boolean spineUnused = degreeState.isQliphothCommunionDone() && degreeState.hasFungalSpineGranted()
+					&& !degreeState.hasWitnessedFungalRevelation();
+			tree = withArchonAcknowledgment(tree, npcId, degree, degreeState.getArchonPath(),
+					HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED),
+					spineUnused);
 		}
 		int rapportTier = NpcTradeRules.tier(HemoCapabilityAccess.npcTrades(player).rapport(npcId));
 		// A speaker who won't deal with this player has no rapport to offer them either.
@@ -112,19 +120,23 @@ public final class DialogueHubFactory {
 
 	static DialogueTree withArchonAcknowledgment(DialogueTree tree, String npcId, int degree,
 			EnumArchonPath path) {
-		return withArchonAcknowledgment(tree, npcId, degree, path, false);
+		return withArchonAcknowledgment(tree, npcId, degree, path, false, false);
 	}
 
-	/** A Silence that has beaten Vesper but not drawn in his memory is sent to the brazier. */
+	/**
+	 * A Silence that has beaten Vesper but not drawn in his memory is sent to the brazier. An Archon who has finished
+	 * Communion and carries a Spine not yet used ({@code spineUnused}) hears the Alchemist name it (PT-78); the other
+	 * teachers keep their undecided line.
+	 */
 	static DialogueTree withArchonAcknowledgment(DialogueTree tree, String npcId, int degree,
-			EnumArchonPath path, boolean vesperDefeated) {
+			EnumArchonPath path, boolean vesperDefeated, boolean spineUnused) {
 		if (degree < 7 || !Set.of("vicar", "alchemist", "artificer", "mnemonist").contains(npcId)) {
 			return tree;
 		}
 		DialogueNode root = tree.getStartNode();
 		if (root == null) return tree;
 		String state = switch (path) {
-			case NONE -> "undecided";
+			case NONE -> spineUnused && "alchemist".equals(npcId) ? "communed" : "undecided";
 			case SILENT_PENDING -> vesperDefeated ? "silent_absorb" : "silent_pending";
 			case SILENTIUM -> "silent_archon";
 			case APOTHEOS_PENDING -> "apotheos_pending";
@@ -205,7 +217,9 @@ public final class DialogueHubFactory {
 			}
 			DialogueTopicState state = category == DialogueCategory.QUESTS
 					? questState(option, nodes) : DialogueTopicState.AVAILABLE;
-			topics.add(new DialogueTopic(topicId, category, option.text(), summaryKey(category), target,
+			String summary = category == DialogueCategory.CONVERSATION && CoreLoopLessons.isRootOption(option.text())
+					? CoreLoopLessons.CARD_SUMMARY : summaryKey(category);
+			topics.add(new DialogueTopic(topicId, category, option.text(), summary, target,
 					lore ? LORE_ICON : null, state, null, null, null, unread, attention, lore));
 		}
 

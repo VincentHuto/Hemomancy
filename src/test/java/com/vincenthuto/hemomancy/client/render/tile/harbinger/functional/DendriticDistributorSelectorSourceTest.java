@@ -3,11 +3,10 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class DendriticDistributorSelectorSourceTest {
 	@Test
@@ -35,9 +34,5 @@ class DendriticDistributorSelectorSourceTest {
 		assertTrue(screen.contains("distributor.getSelectedSlot()"), "screen opens on the selected pattern");
 		assertFalse(block.contains("bouton_lit") || block.contains("selector_"),
 				"the static block model must not bake a selection");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(Path.of(path)).replace("\r\n", "\n");
 	}
 }

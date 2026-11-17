@@ -74,7 +74,9 @@ class MemoryWeavingRedesignSourceTest {
 		for (String retired : new String[]{"frayDue", "recallLooseThreads", "weaveHome", "catchWithFeelers", "WeaveThread"})
 			assertNotContains("the witnessed weave's fight is retired: " + retired, loom, retired);
 		assertContains("the living staff threads engrams", staff, "EngramTracing.begin(playerIn, false)");
-		assertContains("a tracing staff opens no blood channel", staff, "EngramTracing.isTracing(player)");
+		assertContains("a tracing staff opens no blood channel", staff, "EngramTracing.isTracing(tracer)");
+		assertContains("a tracing staff channels no verb", com.vincenthuto.hemomancy.support.SourceAssertions.readMainJava(
+				"common/manipulation/verb/VerbChannel.java"), "!EngramTracing.isTracing(player)");
 		assertNotContains("the living staff no longer hooks threads", staff, "lookedAtSlackThread");
 		assertContains("the engram sigil shader is registered", shaderInit, "ENGRAM_SIGIL");
 		assertContains("the loom draws its engram", renderer, "EngramSigilRenderer.render(te, partialTicks, stack, buffer, dissolve)");

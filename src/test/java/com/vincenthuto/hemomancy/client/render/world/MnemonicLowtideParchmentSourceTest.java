@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class MnemonicLowtideParchmentSourceTest {
 	private static final Path LOWTIDE_EFFECTS = Path.of(
@@ -23,7 +28,8 @@ public final class MnemonicLowtideParchmentSourceTest {
 	private MnemonicLowtideParchmentSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String lowtideEffects = read(LOWTIDE_EFFECTS);
 		String renderTypes = read(RENDER_TYPES);
 		String shaderInit = read(SHADER_INIT);
@@ -171,22 +177,6 @@ public final class MnemonicLowtideParchmentSourceTest {
 				"rippleOffset");
 		assertContains("parchment fragment shader samples atlas", parchmentFragmentShader,
 				"texture(Sampler0");
-	}
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
-		}
 	}
 
 	private static void assertFileExists(String label, Path path) {

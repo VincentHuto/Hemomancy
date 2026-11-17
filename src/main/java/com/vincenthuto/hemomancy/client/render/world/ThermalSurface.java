@@ -26,7 +26,7 @@ final class ThermalSurface {
     }
 
     void update(ClientLevel level,Form form,Vec3 origin,double radius) {
-        if(form!=Form.BLOOM && form!=Form.COMMUNION && form!=Form.BLACKHEART_RUPTURE && form!=Form.MORTEM_BURST && form!=Form.FURNACE && form!=Form.STILLNESS && form!=Form.IGNITION && form!=Form.CRYOGENIC_PULSE && form!=Form.ICE)return;
+        if(form!=Form.CHUM_BLOOM && form!=Form.COMMUNION && form!=Form.BLACKHEART_RUPTURE && form!=Form.MORTEM_BURST && form!=Form.FURNACE && form!=Form.STILLNESS && form!=Form.IGNITION && form!=Form.CRYOGENIC_PULSE && form!=Form.ICE)return;
         long now=level.getGameTime();
         if(sampled!=null && now-updated<5)return;
         if(sampled!=null && sampled.distanceToSqr(origin)<.16 && now-updated<20)return;
@@ -38,8 +38,10 @@ final class ThermalSurface {
             Vec3 at=origin.add(dx,1.3,dz);
             var hit=level.clip(new ClipContext(at,at.add(0,-3.6,0),ClipContext.Block.COLLIDER,
                     ClipContext.Fluid.ANY,net.minecraft.world.phys.shapes.CollisionContext.empty()));
-            if(hit.getType()==HitResult.Type.BLOCK && hit.getDirection()==net.minecraft.core.Direction.UP)
-                patches.add(new Patch(hit.getLocation().add(0,.028,0),step*.79));
+            if(hit.getType()!=HitResult.Type.BLOCK || hit.getDirection()!=net.minecraft.core.Direction.UP)continue;
+            // Chum lies only on water, never on the bank round it.
+            if(form==Form.CHUM_BLOOM && !level.getFluidState(hit.getBlockPos()).is(net.minecraft.tags.FluidTags.WATER))continue;
+            patches.add(new Patch(hit.getLocation().add(0,.028,0),step*.79));
         }
     }
 }

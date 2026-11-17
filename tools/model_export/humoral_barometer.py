@@ -5,14 +5,20 @@ A blood-wood banjo board inlaid with a bone ring carries an iron bezel and a qua
 column draws blood down from the Bleeding Bulb crowning the board, between two bone scales.
 No brass: the bezel, collar and needle are hematic iron (copper is an antiseptic Unstained metal).
 
-Emits the block model, the painted atlas and an editable Blockbench project; the item model parents
-the block. Python 3 + Pillow + NumPy. `--preview` also writes a textured turnaround to
+The needle and the blood in the column read the blood spilled in the barometer's region (core-loop
+Track 10): five pressure bands, from still (needle hard over against the choleric quarter, column all but
+empty) to seething (needle deep in the sanguine quarter, column brimming). The block is a multipart of the body and
+one needle model per band; the item model (and the legacy block model) is the body with the still needle.
+
+Emits the block models, the multipart blockstate, the painted atlas and an editable Blockbench project; the item
+model parents the block. Python 3 + Pillow + NumPy. `--preview` also writes a textured turnaround to
 build/model-previews/humoral_barometer.png.
 
 Coordinates are block pixels for the south-facing state: the wall is at z = 16 and the dial faces
 -z. HumoralBarometerBlock's shapes follow these bounds.
 """
 import argparse
+import json
 import math
 
 from clairaudiograph import clamp, noise
@@ -24,6 +30,26 @@ DIAL_CENTRE = (8, 5.5)
 FLAT = ('south', 'east', 'west', 'up', 'down')
 # Banjo body as pixel-circle slices (y0, y1, half width) so the front faces never overlap.
 BODY = [(.5, 1.5, 2), (1.5, 2.5, 3.5), (2.5, 3.5, 4.5), (3.5, 7.5, 5), (7.5, 8.5, 4.5), (8.5, 9.5, 3.5)]
+
+
+# Needle angle and column top per pressure band, still to seething (the five angles a model may rotate by). In game
+# the sanguine quarter is upper left as the player faces the dial, so seething swings the needle to -45.
+NEEDLE_ANGLES = (45, 22.5, 0, -22.5, -45)
+COLUMN_TOPS = (10.5, 11.25, 12, 12.75, 13.5)
+
+
+def needle_group(band):
+    """The parts that move with the pressure: the needle and its tail, and the blood standing in the column."""
+    cx, cy = DIAL_CENTRE
+    pivot = (cx, cy, 13.8125)
+    angle = NEEDLE_ANGLES[band]
+    return [
+        box('needle', (cx - .125, cy, 13.75), (cx + .125, cy + 3, 13.875), 'ferric', north='needle',
+            skip=('south',), rotation=spin('z', angle, pivot), density=2),
+        box('needle_tail', (cx - .25, cy - 1.25, 13.75), (cx + .25, cy, 13.875), 'iron', skip=('south',),
+            rotation=spin('z', angle, pivot)),
+        box('column_blood', (7.75, 10, 14.125), (8.25, COLUMN_TOPS[band], 14.375), 'blood', skip=('south',)),
+    ]
 
 
 def barometer():
@@ -43,17 +69,11 @@ def barometer():
                  density=2))
     e.append(box('dial', (cx - 3.5, cy - 3.5, 14), (cx + 3.5, cy + 3.5, 14.25), 'bone', north='humour_dial',
                  skip=FLAT, density=2))
-    pivot = (cx, cy, 13.8125)
-    e.append(box('needle', (cx - .125, cy, 13.75), (cx + .125, cy + 3, 13.875), 'ferric', north='needle',
-                 skip=('south',), rotation=spin('z', -22.5, pivot), density=2))
-    e.append(box('needle_tail', (cx - .25, cy - 1.25, 13.75), (cx + .25, cy, 13.875), 'iron', skip=('south',),
-                 rotation=spin('z', -22.5, pivot)))
     e.append(box('needle_boss', (cx - .5, cy - .5, 13.625), (cx + .5, cy + .5, 14), 'ferric', skip=('south',)))
 
     # Neck: a glass humour column fed from the Bleeding Bulb, between two bone scales.
     e.append(box('column_foot', (7.25, 9.5, 13.875), (8.75, 10, 14.5), 'ferric', skip=('south',)))
     e.append(box('column_glass', (7.5, 10, 14), (8.5, 13.5, 14.5), 'tube', skip=('south', 'up', 'down'), density=4))
-    e.append(box('column_blood', (7.75, 11, 14.125), (8.25, 13.5, 14.375), 'blood', skip=('south',)))
     e.append(box('scale', (6.25, 10.25, 14.5), (7.25, 13.25, 14.75), 'bone', north='scale', skip=('south',),
                  density=2))
     e.append(mirror_x(e[-1]))
@@ -151,20 +171,50 @@ DISPLAY = {
 }
 
 
+FACING_Y = {'north': 180, 'south': 0, 'west': 90, 'east': 270}
+
+
+def blockstate():
+    """Multipart: the body by facing, and the needle and column of the pressure band by facing."""
+    parts = []
+    for facing, y in FACING_Y.items():
+        apply = {'model': 'hemomancy:block/humoral_barometer_body'}
+        if y:
+            apply['y'] = y
+        parts.append({'when': {'facing': facing}, 'apply': apply})
+        for band in range(len(NEEDLE_ANGLES)):
+            apply = {'model': f'hemomancy:block/humoral_barometer_needle_{band}'}
+            if y:
+                apply['y'] = y
+            parts.append({'when': {'facing': facing, 'pressure': str(band)}, 'apply': apply})
+    return {'multipart': parts}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--preview', action='store_true')
     args = parser.parse_args()
-    elements = barometer()
-    moved = separate(elements)
-    atlas, models = build({'block': elements}, SPECIAL)
+    body = barometer()
+    groups = {'body': body}
+    for band in range(len(NEEDLE_ANGLES)):
+        groups[f'needle_{band}'] = needle_group(band)
+    moved = sum(separate(elements) for elements in groups.values())
+    atlas, models = build(groups, SPECIAL)
     atlas.save(ASSETS / f'textures/block/{ATLAS}.png')
-    block = model_json(models['block'], ATLAS, atlas.height, PARTICLE, DISPLAY)
-    write({'block/humoral_barometer': block}, 'humoral_barometer', block)
-    print(f'Exported Humoral Barometer: {len(elements)} cubes, {moved} faces separated, 128x{atlas.height} atlas')
+    whole = model_json(models['body'] + models['needle_0'], ATLAS, atlas.height, PARTICLE, DISPLAY)
+    outputs = {'block/humoral_barometer': whole,
+               'block/humoral_barometer_body': model_json(models['body'], ATLAS, atlas.height, PARTICLE)}
+    for band in range(len(NEEDLE_ANGLES)):
+        outputs[f'block/humoral_barometer_needle_{band}'] = model_json(models[f'needle_{band}'], ATLAS, atlas.height,
+                                                                       PARTICLE)
+    write(outputs, 'humoral_barometer', whole)
+    (ASSETS / 'blockstates' / 'humoral_barometer.json').write_text(json.dumps(blockstate(), indent=2) + '\n')
+    print(f'Exported Humoral Barometer: {len(body)} body cubes, {len(NEEDLE_ANGLES)} needle bands, '
+          f'{moved} faces separated, 128x{atlas.height} atlas')
     if args.preview:
-        preview(models['block'], ATLAS, 'Humoral Barometer - block model (wall at +z), actual atlas',
-                'humoral_barometer')
+        for band in (0, 4):
+            preview(models['body'] + models[f'needle_{band}'], ATLAS,
+                    f'Humoral Barometer - pressure band {band} (wall at +z), actual atlas', f'humoral_barometer_{band}')
 
 
 if __name__ == '__main__':

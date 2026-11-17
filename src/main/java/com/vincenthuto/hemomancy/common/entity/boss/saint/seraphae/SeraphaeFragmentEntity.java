@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintCompanion;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintDamageTypes;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -26,6 +27,10 @@ import java.util.UUID;
  * them if it reaches them; left alone it returns to her after 300 ticks. A challenger draws it in with held Blood
  * Absorption, leads it into a held anchor, or strikes it apart; each way it ends tells her (design section 9). It has
  * no goals: its glide is its own tick. It is never killed: a blow ends it as {@code STRUCK}.
+ *
+ * <p>A fragment raised by her Downfall Chapel ({@link #setChapelWave}) has no Seraphae to return to (NQ-08-23). It
+ * hunts the nearest challenger it may harm, strikes them each {@link #WAVE_STRIKE_TICKS} ticks it touches them, and
+ * stays until a blow strikes it apart.
  */
 public class SeraphaeFragmentEntity extends Monster implements SaintCompanion {
 	private static final EntityDataAccessor<Float> DATA_DRAWN =
@@ -40,12 +45,16 @@ public class SeraphaeFragmentEntity extends Monster implements SaintCompanion {
 	/** Ticks without absorption before the draw starts to fade. */
 	public static final int DRAW_GRACE = 6;
 	private static final int OWNER_GRACE = 40;
+	/** Ticks between a Chapel wave fragment's strikes on the challenger it touches. */
+	public static final int WAVE_STRIKE_TICKS = 20;
 
 	@Nullable
 	private UUID parentId;
 	private boolean resolved;
 	private int drawnTicks;
 	private int sinceDrawn = Integer.MAX_VALUE / 2;
+	private boolean chapelWave;
+	private int strikeCooldown;
 
 	public SeraphaeFragmentEntity(EntityType<? extends SeraphaeFragmentEntity> type, Level level) {
 		super(type, level);
@@ -82,6 +91,15 @@ public class SeraphaeFragmentEntity extends Monster implements SaintCompanion {
 		return parentId;
 	}
 
+	/** Raised by a Downfall Chapel: no Seraphae and no return; the wave waits on it until it is struck apart. */
+	public void setChapelWave(boolean chapelWave) {
+		this.chapelWave = chapelWave;
+	}
+
+	public boolean isChapelWave() {
+		return chapelWave;
+	}
+
 	@Override
 	public UUID saintId() {
 		return parentId == null ? new UUID(0L, 0L) : parentId;
@@ -107,6 +125,10 @@ public class SeraphaeFragmentEntity extends Monster implements SaintCompanion {
 	public void tick() {
 		super.tick();
 		if (!(level() instanceof ServerLevel server) || resolved) return;
+		if (chapelWave) {
+			tickWave(server);
+			return;
+		}
 		SeraphaeEntity seraphae = parent();
 		if (seraphae == null || !seraphae.knows(this)) {
 			if (tickCount > OWNER_GRACE || seraphae != null) discard();
@@ -131,6 +153,21 @@ public class SeraphaeFragmentEntity extends Monster implements SaintCompanion {
 				&& ManipulationCombatHelper.canHarmFor(this, quarry)) {
 			seraphae.fragmentGrafted(quarry);
 			resolve(SeraphaeIntegrityRules.FragmentEnd.GRAFTED, quarry.position().add(0.0D, 1.0D, 0.0D));
+		}
+	}
+
+	private void tickWave(ServerLevel server) {
+		if (strikeCooldown > 0) strikeCooldown--;
+		Player quarry = server.getNearestPlayer(getX(), getY(), getZ(), getAttributeValue(Attributes.FOLLOW_RANGE),
+				entity -> entity instanceof Player player && ManipulationCombatHelper.canHarmFor(this, player));
+		Vec3 delta = quarry == null ? Vec3.ZERO : quarry.position().add(0.0D, HOVER, 0.0D).subtract(position());
+		double length = delta.length();
+		setDeltaMovement(length < 1.0E-4D ? Vec3.ZERO : delta.scale(Math.min(SEEK_SPEED, length) / length));
+		if (quarry != null && strikeCooldown == 0
+				&& quarry.position().add(0.0D, 1.0D, 0.0D).distanceTo(position()) <= GRAFT_REACH + 0.6D) {
+			quarry.hurt(damageSources().source(SaintDamageTypes.SERAPHAE, this),
+					(float) getAttributeValue(Attributes.ATTACK_DAMAGE));
+			strikeCooldown = WAVE_STRIKE_TICKS;
 		}
 	}
 
@@ -182,12 +219,14 @@ public class SeraphaeFragmentEntity extends Monster implements SaintCompanion {
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		if (parentId != null) tag.putUUID("ParentSeraphae", parentId);
+		if (chapelWave) tag.putBoolean("ChapelWave", true);
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		parentId = tag.hasUUID("ParentSeraphae") ? tag.getUUID("ParentSeraphae") : null;
+		chapelWave = tag.getBoolean("ChapelWave");
 	}
 
 	@Override

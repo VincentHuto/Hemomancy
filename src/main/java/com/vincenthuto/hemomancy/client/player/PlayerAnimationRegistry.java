@@ -48,6 +48,10 @@ public final class PlayerAnimationRegistry {
 			claims("living_torch_breath", PlayerAnimationRegistry::torchBreath),
 			claims("unstained_weapon_swing", PlayerAnimationRegistry::unstainedSwing),
 			claims("living_weapon_stroke", PlayerAnimationRegistry::livingStroke),
+			claims("strand_stroke", (entity, model, partialTick) ->
+					entity instanceof Player player && StrandPlayerPose.apply(player, model, partialTick)),
+			claims("venous_cling", (entity, model, partialTick) ->
+					entity instanceof Player player && ClingPlayerPose.apply(player, model, partialTick)),
 			always("somnolent_seat", (entity, model, partialTick) -> {
 				WarpChairPlayerPose.applyModelPose(entity, model);
 				return false;

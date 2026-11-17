@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SkillRegenFormulaTest {
 	@Test
-	void sanguineSurgeIsAQuarterMillilitrePerTickPerLevel() {
+	void sanguineSurgeIsOneMillilitrePerSecondPerLevel() {
 		assertEquals(0.0D, SkillPointHelper.sanguineSurgeRegenPerTick(0), 1.0E-9);
-		assertEquals(0.25D, SkillPointHelper.sanguineSurgeRegenPerTick(1), 1.0E-9);
-		assertEquals(0.75D, SkillPointHelper.sanguineSurgeRegenPerTick(3), 1.0E-9);
-		// 5 / 10 / 15 mL per second
-		assertEquals(15.0D, SkillPointHelper.sanguineSurgeRegenPerTick(3) * 20, 1.0E-9);
+		assertEquals(0.05D, SkillPointHelper.sanguineSurgeRegenPerTick(1), 1.0E-9);
+		assertEquals(0.15D, SkillPointHelper.sanguineSurgeRegenPerTick(3), 1.0E-9);
+		// CB-2: 1 / 2 / 3 mL per second
+		assertEquals(1.0D, SkillPointHelper.sanguineSurgeRegenPerTick(1) * 20, 1.0E-9);
+		assertEquals(3.0D, SkillPointHelper.sanguineSurgeRegenPerTick(3) * 20, 1.0E-9);
 	}
 
 	@Test

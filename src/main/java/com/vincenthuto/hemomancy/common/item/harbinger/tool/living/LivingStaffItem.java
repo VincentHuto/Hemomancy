@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -17,6 +16,11 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.manipulation.verb.SculptingDispatcher;
+import com.vincenthuto.hemomancy.common.manipulation.verb.SculptingSessions;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbReach;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
@@ -49,11 +53,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class LivingStaffItem extends LivingItem implements IDispellable {
 	private static final String UTILITY_SESSION_BLOOD_HANDLED_KEY = "HemomancyLivingStaffUtilityBloodHandled";
+	/** The part of a press's blood that grows rings: spent or drawn from creatures, never cycled through a tank (CQ-8). */
+	private static final String UTILITY_SESSION_RING_BLOOD_KEY = "HemomancyLivingStaffUtilityRingBlood";
+	/** A press of a second or less that moved no blood is a tap: it calls the equipped Primal Morphling. */
+	static final int MORPHLING_TAP_TICKS = 20;
 
 	public LivingStaffItem(Properties properties) {
 		super(properties);
@@ -67,6 +74,15 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			Player player = ClientBridge.get().localPlayer();
 			if (player != null) {
 				var progress = HemoCapabilityAccess.getLivingStaffProgress(player);
+				// The Staff's age (core-loop Track 8): rings laid, and how far the next one is.
+				int rings = LivingStaffGrowthRules.ring(progress.getBloodHandled());
+				tooltip.add(Component.translatable("item.hemomancy.living_staff.rings", rings,
+						LivingStaffGrowthRules.MAX_RING).withStyle(ChatFormatting.GRAY));
+				if (rings < LivingStaffGrowthRules.MAX_RING) {
+					tooltip.add(Component.translatable("item.hemomancy.living_staff.next_ring",
+							(int) Math.ceil(LivingStaffGrowthRules.untilNextRing(progress.getBloodHandled())))
+							.withStyle(ChatFormatting.DARK_GRAY));
+				}
 				if (progress.isVesperMemoryAwakened()) {
 					tooltip.add(Component.translatable("item.hemomancy.living_staff.vesper_awakened.tooltip")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
@@ -77,6 +93,15 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 					tooltip.add(equipped.getHoverName());
 				}
 			}
+		}
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity holder, int slot, boolean selected) {
+		super.inventoryTick(stack, level, holder, slot, selected);
+		// The Staff shows its owner's growth rings; the stamp is what every side draws and mines by.
+		if (!level.isClientSide && holder instanceof Player player && level.getGameTime() % 20L == slot % 20L) {
+			LivingStaffGrowth.refreshStamp(player, stack);
 		}
 	}
 
@@ -104,68 +129,71 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.tick(tracer);
 			return;
 		}
-		if (pLivingEntity instanceof Player player
-				&& isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
-			BloodAbsorptionItem.applyChannelMovementPenalty(player);
+		if (!(pLivingEntity instanceof Player player)) {
+			return;
 		}
-		if (pLivingEntity instanceof Player player
-				&& (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)
-				|| isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION))) {
-			if (pLevel.isClientSide) {
-				spawnStaffUtilityParticles(player, pStack);
-			} else if (pRemainingUseDuration % CellHandRules.USE_REFRESH == 0) {
-				// The staff channels the cell hands' utilities, so it draws the same streams from its head.
-				ManipulationVisuals.attached(player, ManipulationVisuals.Form.CELL_HAND, 1, CellHandRules.USE_TICKS,
-						CellHandRules.useMode(isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)));
-			}
+		// The staff channels the player's active verb (CL-2), whatever is selected.
+		Verb verb = VerbChannel.activeVerb(player);
+		VerbChannel.applyMovement(player);
+		if (pLevel.isClientSide) {
+			spawnStaffUtilityParticles(player, pStack);
+			return;
 		}
-		if (!pLevel.isClientSide && pLivingEntity instanceof Player player) {
-			if (player instanceof ServerPlayer serverPlayer
-					&& isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
+		if (pRemainingUseDuration % CellHandRules.USE_REFRESH == 0) {
+			// The staff channels the cell hands' verbs, so it draws the same streams from its head.
+			ManipulationVisuals.attached(player, ManipulationVisuals.Form.CELL_HAND, 1, CellHandRules.USE_TICKS,
+					CellHandRules.useMode(verb == Verb.ABSORB));
+		}
+		if (player instanceof ServerPlayer serverPlayer) {
+			if (verb == Verb.ABSORB) {
 				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
-				double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(pLevel, player,
-						LivingStaffFocusRules.absorptionRange(focus),
+				double reach = VerbReach.of(player, Verb.ABSORB);
+				double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(pLevel, player, reach,
 						WillAbsorptionRules.staffProgressPerTick(focus));
 				if (vesperHandled > 0.0D) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;
 				}
-				if (SaintChannelRouter.tryAbsorb(pLevel, player, LivingStaffFocusRules.absorptionRange(focus),
+				if (SaintChannelRouter.tryAbsorb(pLevel, player, reach,
 						LivingStaffFocusRules.blockAbsorptionPerTick(focus), true).handled()) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;
 				}
-				if (CardinalRiteCancellationHandler.tryChannel(
-						serverPlayer, LivingStaffFocusRules.absorptionRange(focus))) {
+				if (CardinalRiteCancellationHandler.tryChannel(serverPlayer, reach)) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;
 				}
-			}
-			if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
-				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
-				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
-				if (tryAbsorbFromLookedAtBlockWithStaff(pLevel, player, focus)) {
+				if (tryAbsorbFromLookedAtBlockWithStaff(pLevel, player, focus, reach)) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;
 				}
-				double willHandled = WillBloodUtilityInteractions.tryAbsorbFalteringWill(pLevel, player,
-						LivingStaffFocusRules.absorptionRange(focus),
+				double willHandled = WillBloodUtilityInteractions.tryAbsorbFalteringWill(pLevel, player, reach,
 						WillAbsorptionRules.staffProgressPerTick(focus));
 				if (willHandled > 0.0D) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;
 				}
+				SculptingDispatcher.Result sculpted = SculptingDispatcher.trySculpt(serverPlayer, Verb.ABSORB);
+				if (sculpted.claimed()) {
+					recordUtilityBloodHandled(player, sculpted.bloodPaid(), sculpted.bloodPaid());
+					BloodAbsorptionItem.updateChannelStrain(player, false);
+					return;
+				}
+				// A stain, gouge, vein or Lux trace on the aimed face is taken back up (core-loop Track 6).
+				if (com.vincenthuto.hemomancy.common.world.ground.GroundNetwork.tryAbsorb(serverPlayer, reach)) {
+					BloodAbsorptionItem.updateChannelStrain(player, false);
+					return;
+				}
 				int elapsed = getUseDuration(pStack, pLivingEntity) - pRemainingUseDuration;
-				int interval = BloodAbsorptionChannelRules.livingTargetPulseInterval(true,
-						SkillPointHelper.getAbsorptionCadenceLevel(player));
+				int interval = BloodAbsorptionChannelRules.livingTargetPulseInterval();
 				if (elapsed % interval == 0) {
 					double handled = absorbWithStaff(pLevel, player, pStack);
 					BloodAbsorptionItem.updateChannelStrain(player, handled > 0.0D);
 				} else {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 				}
-			} else if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION)) {
+			} else {
 				projectWithStaff(pLevel, player, pStack);
 			}
 		}
@@ -176,6 +204,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		super.onStopUsing(stack, entity, count);
 		if (entity instanceof Player player)
 			com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.end(player);
+		if (entity instanceof ServerPlayer player) SculptingSessions.end(player, true);
 	}
 
 	@Override
@@ -186,17 +215,15 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			return;
 		}
 		if (entityLiving instanceof Player player) {
-			boolean selectedUtility = isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)
-					|| isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION);
 			boolean handledUtilityBlood = !worldIn.isClientSide && hasUtilityBloodHandled(player);
-			if (selectedUtility || handledUtilityBlood) {
-				if (!worldIn.isClientSide) {
-					commitUtilityBloodHandled(player);
-				}
+			if (handledUtilityBlood) {
+				commitUtilityBloodHandled(player);
 				player.awardStat(Stats.ITEM_USED.get(this));
 				return;
 			}
-			if (player instanceof ServerPlayer serverPlayer && !player.isCrouching()) {
+			// The staff always channels a verb now; a tap that moved no blood calls the Primal Morphling instead.
+			int held = getUseDuration(stack, player) - timeLeft;
+			if (player instanceof ServerPlayer serverPlayer && !player.isCrouching() && held <= MORPHLING_TAP_TICKS) {
 				usePrimalMorphling(serverPlayer, HemoCapabilityAccess.getEquippedMorphling(player), stack, worldIn);
 			}
 		}
@@ -284,22 +311,20 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	}
 
 	private static boolean tryAbsorbFromLookedAtBlockWithStaff(Level level, Player player,
-			LivingStaffFocusProfile focus) {
-		double blockHandled = BlockBloodInteractions.tryAbsorbFromLookedAtBlock(level, player,
-				LivingStaffFocusRules.absorptionRange(focus),
+			LivingStaffFocusProfile focus, double reach) {
+		double blockHandled = BlockBloodInteractions.tryAbsorbFromLookedAtBlock(level, player, reach,
 				LivingStaffFocusRules.blockAbsorptionPerTick(focus));
 		if (blockHandled <= 0.0D) {
 			return false;
 		}
-		recordUtilityBloodHandled(player, blockHandled);
+		recordUtilityBloodHandled(player, blockHandled, 0.0D);
 		return true;
 	}
 
 	private static double absorbWithStaff(Level level, Player player, ItemStack stack) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				;
-		if (!BloodAbsorptionChannelRules.canDrainLivingTarget(volume.isActive(), volume.isFull(),
-				SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_sated_siphon))) {
+		if (!BloodAbsorptionChannelRules.canDrainLivingTarget(volume.isActive())) {
 			return 0.0D;
 		}
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
@@ -307,21 +332,20 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		int targetCap = LivingStaffFocusRules.absorptionTargetCap(true, focus);
 		boolean distributed = SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_distributed_siphon);
 		int availableLimit = distributed ? targetCap : 1;
-		List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
-						player.getBoundingBox().inflate(LivingStaffFocusRules.absorptionRange(focus)),
-						target -> BloodAbsorptionItem.isValidAbsorptionTarget(player, target)
-								&& BloodAbsorptionItem.passesSelectiveHunger(player, target))
+		// The same order as the bare hand: the player's own branded creatures first, then the nearest (core-loop Track 12).
+		List<LivingEntity> targets = BloodAbsorptionItem.absorptionTargets(player, VerbReach.of(player, Verb.ABSORB))
 				.stream()
-				.sorted(Comparator.comparingDouble(player::distanceToSqr))
 				.limit(availableLimit)
 				.toList();
 		double amountPerTarget = ToggleableAbsorptionRules.damagePerTarget(distributed,
-				LivingStaffFocusRules.absorptionDamagePerTarget(focus), targets.size());
+				LivingStaffFocusRules.absorptionDamagePerTarget(focus)
+						* BloodAbsorptionChannelRules.cadenceDrainMultiplier(
+								SkillPointHelper.getAbsorptionCadenceLevel(player)), targets.size());
 		double handled = 0.0D;
 		for (LivingEntity target : targets) {
 			handled += BloodAbsorptionItem.absorbFromTarget(level, player, target, amountPerTarget);
 		}
-		recordUtilityBloodHandled(player, handled);
+		recordUtilityBloodHandled(player, handled, handled);
 		return handled;
 	}
 
@@ -333,19 +357,27 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		}
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
+		double[] intoTanks = {0.0D};
 		double handled = BloodProjectionItem.projectFromEntity(level, player,
 				LivingStaffFocusRules.structureProjectionRate(true, focus),
-				LivingStaffFocusRules.bloodTileProjectionRate(true, focus), true);
-		recordUtilityBloodHandled(player, handled);
+				LivingStaffFocusRules.bloodTileProjectionRate(true, focus), true, moved -> intoTanks[0] += moved);
+		recordUtilityBloodHandled(player, handled, handled - intoTanks[0]);
 	}
 
-	private static void recordUtilityBloodHandled(Player player, double handled) {
+	/**
+	 * Records a press's blood: all of it {@code handled} counts as blood moved (a press that moved any is no tap),
+	 * only {@code ringBlood} ages the Staff.
+	 */
+	private static void recordUtilityBloodHandled(Player player, double handled, double ringBlood) {
 		if (handled <= 0.0D) {
 			return;
 		}
 		CompoundTag data = player.getPersistentData();
 		data.putDouble(UTILITY_SESSION_BLOOD_HANDLED_KEY,
 				data.getDouble(UTILITY_SESSION_BLOOD_HANDLED_KEY) + handled);
+		if (ringBlood > 0.0D) {
+			data.putDouble(UTILITY_SESSION_RING_BLOOD_KEY, data.getDouble(UTILITY_SESSION_RING_BLOOD_KEY) + ringBlood);
+		}
 	}
 
 	private static boolean hasUtilityBloodHandled(Player player) {
@@ -354,50 +386,38 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 
 	private static void commitUtilityBloodHandled(Player player) {
 		CompoundTag data = player.getPersistentData();
-		double handled = data.getDouble(UTILITY_SESSION_BLOOD_HANDLED_KEY);
-		if (handled > 0.0D) {
-			var progress = HemoCapabilityAccess.getLivingStaffProgress(player);
-			progress.addBloodHandled(handled);
-			if (player instanceof ServerPlayer serverPlayer) {
-				LivingStaffBondHelper.syncProgress(serverPlayer);
-			}
+		double ringBlood = data.getDouble(UTILITY_SESSION_RING_BLOOD_KEY);
+		if (ringBlood > 0.0D && player instanceof ServerPlayer serverPlayer) {
+			// The blood spent or drawn ages the Staff; a ring that closes is announced (core-loop Track 8).
+			LivingStaffGrowth.record(serverPlayer, ringBlood);
 		}
 		data.remove(UTILITY_SESSION_BLOOD_HANDLED_KEY);
+		data.remove(UTILITY_SESSION_RING_BLOOD_KEY);
 	}
 
 	private static void clearUtilityBloodHandled(Player player) {
-		player.getPersistentData().remove(UTILITY_SESSION_BLOOD_HANDLED_KEY);
+		CompoundTag data = player.getPersistentData();
+		data.remove(UTILITY_SESSION_BLOOD_HANDLED_KEY);
+		data.remove(UTILITY_SESSION_RING_BLOOD_KEY);
 	}
 
+	/** Whether {@code living} is channelling a verb through the Living Staff {@code stack}. */
 	public static boolean isLivingStaffUtilityUse(LivingEntity living, ItemStack stack) {
-		return isLivingStaffAbsorptionUse(living, stack) || isLivingStaffProjectionUse(living, stack);
+		return isLivingStaffVerbUse(living, stack, Verb.ABSORB) || isLivingStaffVerbUse(living, stack, Verb.PROJECT);
 	}
 
 	public static boolean isLivingStaffAbsorptionUse(LivingEntity living, ItemStack stack) {
-		return isLivingStaffSelectedUtility(living, stack, ManipulationEquipHelper.BLOOD_ABSORPTION);
+		return isLivingStaffVerbUse(living, stack, Verb.ABSORB);
 	}
 
 	public static boolean isLivingStaffProjectionUse(LivingEntity living, ItemStack stack) {
-		return isLivingStaffSelectedUtility(living, stack, ManipulationEquipHelper.BLOOD_PROJECTION);
+		return isLivingStaffVerbUse(living, stack, Verb.PROJECT);
 	}
 
-	private static boolean isLivingStaffSelectedUtility(LivingEntity living, ItemStack stack, String manipName) {
+	private static boolean isLivingStaffVerbUse(LivingEntity living, ItemStack stack, Verb verb) {
 		return stack.getItem() instanceof LivingStaffItem
-				&& living instanceof Player player
 				&& living.isUsingItem()
-				&& !com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.isTracing(player)
-				&& isSelectedStaffUtility(player, manipName);
-	}
-
-	public static boolean isSelectedStaffUtility(Player player, String manipName) {
-		var known = HemoCapabilityAccess.getKnownManipulations(player);
-		if (known.getManipList().isEmpty()) {
-			return false;
-		}
-		var selected = known.getSelectedMemoryRef();
-		return selected != null
-				&& selected.kind() == MemoryEntryKind.MANIPULATION
-				&& LivingStaffUtilitySelectionRules.isSelectedUtility(selected.id(), manipName);
+				&& VerbChannel.verbOf(living, stack).map(channelled -> channelled == verb).orElse(false);
 	}
 
 	@OnlyIn(Dist.CLIENT)

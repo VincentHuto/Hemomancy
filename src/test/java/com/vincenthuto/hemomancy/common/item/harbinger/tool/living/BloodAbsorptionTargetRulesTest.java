@@ -1,34 +1,46 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
 import java.util.List;
 
 public final class BloodAbsorptionTargetRulesTest {
 	private BloodAbsorptionTargetRulesTest() {
 	}
 
-	public static void main(String[] args) {
-		bareAbsorptionChoosesNearestValidTarget();
-		invalidTargetsAreIgnored();
+	@Test
+	void allChecksPass() {
+		bareAbsorptionChoosesNearestTarget();
+		aBrandedTargetComesBeforeAnythingNearer();
+		brandedTargetsKeepTheirOwnDistanceOrder();
 	}
 
-	private static void bareAbsorptionChoosesNearestValidTarget() {
+	private static void bareAbsorptionChoosesNearestTarget() {
 		List<Candidate> candidates = List.of(
-				new Candidate("near", false, true, 1.0),
-				new Candidate("looked_at", true, true, 9.0));
-
-		Candidate selected = BloodAbsorptionTargetRules.chooseBareTarget(candidates,
-				Candidate::valid, Candidate::lookedAt, Candidate::distanceSqr).orElseThrow();
-		assertEquals("nearest valid target wins", "near", selected.id());
+				new Candidate("far", false, 9.0),
+				new Candidate("near", false, 1.0));
+		assertEquals("nearest target wins", "near", order(candidates).getFirst().id());
 	}
 
-	private static void invalidTargetsAreIgnored() {
+	private static void aBrandedTargetComesBeforeAnythingNearer() {
 		List<Candidate> candidates = List.of(
-				new Candidate("invalid_looked_at", true, false, 1.0),
-				new Candidate("valid_far", false, true, 9.0));
+				new Candidate("near", false, 1.0),
+				new Candidate("branded_far", true, 64.0));
+		assertEquals("the drawer's brand is picked first (core-loop Track 12)", "branded_far", order(candidates).getFirst().id());
+	}
 
-		Candidate selected = BloodAbsorptionTargetRules.chooseBareTarget(candidates,
-				Candidate::valid, Candidate::lookedAt, Candidate::distanceSqr).orElseThrow();
-		assertEquals("invalid looked-at candidate is skipped", "valid_far", selected.id());
+	private static void brandedTargetsKeepTheirOwnDistanceOrder() {
+		List<Candidate> candidates = List.of(
+				new Candidate("plain", false, 1.0),
+				new Candidate("branded_far", true, 49.0),
+				new Candidate("branded_near", true, 16.0));
+		List<Candidate> ordered = order(candidates);
+		assertEquals("brands first, nearest brand first", "branded_near", ordered.get(0).id());
+		assertEquals("then the farther brand", "branded_far", ordered.get(1).id());
+		assertEquals("then the unbranded", "plain", ordered.get(2).id());
+	}
+
+	private static List<Candidate> order(List<Candidate> candidates) {
+		return BloodAbsorptionTargetRules.orderTargets(candidates, Candidate::branded, Candidate::distanceSqr);
 	}
 
 	private static void assertEquals(String label, String expected, String actual) {
@@ -37,6 +49,6 @@ public final class BloodAbsorptionTargetRulesTest {
 		}
 	}
 
-	private record Candidate(String id, boolean lookedAt, boolean valid, double distanceSqr) {
+	private record Candidate(String id, boolean branded, double distanceSqr) {
 	}
 }

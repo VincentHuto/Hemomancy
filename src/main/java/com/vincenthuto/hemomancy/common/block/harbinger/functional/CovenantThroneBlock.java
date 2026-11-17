@@ -10,6 +10,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.BoundThrone;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.entity.utility.CovenantThroneSeatEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -56,12 +59,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 
 /**
- * Progenitor-only covenant shrine.  First valid right-click claims the respawn
- * point and seats the Progenitor; right-clicking while seated enters Covenant
- * Trance.  Sneak is left to normal dismount behavior.
+ * Covenant shrine of a line's Fane.  Any member of the line whose Fane holds it
+ * binds it: the first valid right-click claims the respawn point and seats them.
+ * Right-clicking while seated enters the Covenant Trance, for the Progenitor
+ * only.  Sneak is left to normal dismount behavior.
  */
 public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock, SimpleWaterloggedBlock {
-	private static final BloodAccounting.Source TRANCE = BloodAccounting.Source.of("covenant_throne_trance", Category.STATION, false, false);
+	private static final BloodAccounting.Source TRANCE = BloodAccounting.Source.of("covenant_throne_trance", Category.STATION, false);
 
     public static final MapCodec<CovenantThroneBlock> CODEC = simpleCodec(CovenantThroneBlock::new);
 
@@ -269,10 +273,9 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
             return InteractionResult.SUCCESS;
         }
 
-        if (!isProgenitor(serverPlayer)) {
-            player.sendSystemMessage(Component.translatable(
-                    "block.hemomancy.covenant_throne.not_progenitor")
-                    .withStyle(ChatFormatting.DARK_RED));
+        String refusal = bindRefusal(serverPlayer, pos);
+        if (refusal != null) {
+            player.sendSystemMessage(Component.translatable(refusal).withStyle(ChatFormatting.DARK_RED));
             return InteractionResult.SUCCESS;
         }
 
@@ -281,6 +284,13 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
         }
 
         if (isSeatedOnThisThrone(player, pos)) {
+            // Members get the bond and the respawn point only; the Trance stays the Progenitor's (NQ-11-11).
+            if (!isProgenitor(serverPlayer)) {
+                player.sendSystemMessage(Component.translatable(
+                        "block.hemomancy.covenant_throne.trance_progenitor_only")
+                        .withStyle(ChatFormatting.GRAY));
+                return InteractionResult.SUCCESS;
+            }
             triggerCovenantTrance(level, pos, serverPlayer);
         } else {
             BlockState state = level.getBlockState(pos);
@@ -298,6 +308,9 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
         Direction facing = state.hasProperty(FACING) ? state.getValue(FACING) : Direction.SOUTH;
         BlockPos returnPos = pos.relative(facing);
         player.setRespawnPosition(level.dimension(), returnPos, respawnAngle(facing), true, false);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+        degree.setBoundThrone(new BoundThrone(level.dimension(), pos.immutable(), returnPos.immutable()));
+        InitiatoryDegreeEvents.syncDegree(player, degree);
         player.sendSystemMessage(Component.translatable(
                 "block.hemomancy.covenant_throne.respawn_set")
                 .withStyle(ChatFormatting.DARK_RED));
@@ -403,6 +416,21 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
         player.sendSystemMessage(Component.translatable(
                 "block.hemomancy.covenant_throne.trance_entered")
                 .withStyle(ChatFormatting.DARK_RED));
+    }
+
+    /**
+     * The one binding rule (PT-64, PT-65): active blood, a line, and this Throne inside that line's Fane, which is
+     * keyed to its leader. Returns the refusal key, or null when the player may bind.
+     */
+    @Nullable
+    private static String bindRefusal(ServerPlayer player, BlockPos pos) {
+        IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
+        Bloodline line = blood.getBloodLine();
+        if (!blood.isActive() || !line.isValid()) return "block.hemomancy.covenant_throne.no_line";
+        if (!FoundingFaneSavedData.get(player.serverLevel()).isWithinFane(line.getLeaderUUID(), pos)) {
+            return "block.hemomancy.covenant_throne.not_in_line_fane";
+        }
+        return null;
     }
 
     public static boolean isProgenitor(Player player) {

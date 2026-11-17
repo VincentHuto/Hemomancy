@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.world.farm.BloodFedGrowthRules;
+import com.vincenthuto.hemomancy.common.world.farm.ClochePlanting;
+import net.minecraft.server.level.ServerLevel;
+
 import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -36,7 +40,8 @@ import javax.annotation.Nullable;
 public class MycelialLanternBlockEntity extends HemoContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess, IMultiBlockEntity, WorldlyContainer {
 
     public static final String TAG_BLOOD_LEVEL = "bloodLevel";
-    private static final float MAX_BLOOD = 4_000F;
+    /** A working buffer (core-loop Track 3): eight enzymes' worth at 150 mL each (CB-13). */
+    private static final float MAX_BLOOD = 1_200F;
 
     public static final int SLOT_CULTURE = MycelialLanternAutomationRules.SLOT_CULTURE;
     public static final int SLOT_BLOOD = MycelialLanternAutomationRules.SLOT_BLOOD;
@@ -47,6 +52,9 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
     private NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
     private int craftingProgress;
     private int craftingTotalTime;
+    /** The cloche's planted crop (core-loop Track 7): its stage and the ticks since it last grew. */
+    private int plantStage;
+    private int plantTicks;
 
     public final ContainerData dataAccess = new ContainerData() {
         @Override
@@ -106,6 +114,10 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
                 te.craftingTotalTime = 0;
                 worldChanged = true;
             }
+            if (level instanceof ServerLevel server && te.tendPlant(server)) {
+                worldChanged = true;
+                syncChanged = true;
+            }
         } else {
             if (te.craftingTotalTime != recipe.getDuration()) {
                 te.craftingTotalTime = recipe.getDuration();
@@ -129,6 +141,78 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
         if (syncChanged) {
             te.sendUpdates();
         }
+    }
+
+    /**
+     * The cloche (core-loop Track 7): seeds in the culture slot grow under the bell at the top level of fed ground, one
+     * stage every {@link BloodFedGrowthRules#CLOCHE_STAGE_TICKS} that the buffer can pay
+     * {@link BloodFedGrowthRules#CLOCHE_STAGE_ML} of fresh blood for. A ripe crop goes to the output and is sown again.
+     * Returns whether anything a client sees changed.
+     */
+    private boolean tendPlant(ServerLevel server) {
+        BlockState seedling = ClochePlanting.seedling(inventory.get(SLOT_CULTURE));
+        if (seedling == null) {
+            boolean had = plantStage != 0 || plantTicks != 0;
+            plantStage = 0;
+            plantTicks = 0;
+            return had;
+        }
+        if (!BloodFedGrowthRules.clocheStageDue(++plantTicks)) return false;
+        IBloodVolume vol = resolveVolume();
+        int last = ClochePlanting.lastStage(seedling);
+        if (plantStage >= last) {
+            ItemStack harvest = ClochePlanting.harvest(server, worldPosition, ClochePlanting.atStage(seedling, last),
+                    inventory.get(SLOT_CULTURE));
+            if (!harvest.isEmpty() && !fitsOutput(harvest)) {
+                plantTicks = BloodFedGrowthRules.CLOCHE_STAGE_TICKS;
+                return false;
+            }
+            if (ClochePlanting.keepsFruiting(seedling)) {
+                if (!payStage(vol)) return false;
+            } else {
+                plantStage = 0;
+            }
+            plantTicks = 0;
+            addOutput(harvest);
+            return true;
+        }
+        if (!payStage(vol)) {
+            plantTicks = BloodFedGrowthRules.CLOCHE_STAGE_TICKS;
+            return false;
+        }
+        plantStage++;
+        plantTicks = 0;
+        return true;
+    }
+
+    /** One growth stage's fresh blood from the buffer; false when there is not that much. */
+    private static boolean payStage(@Nullable IBloodVolume vol) {
+        if (vol == null || vol.getBloodVolume() < BloodFedGrowthRules.CLOCHE_STAGE_ML) return false;
+        return vol.drain(BloodFedGrowthRules.CLOCHE_STAGE_ML);
+    }
+
+    private boolean fitsOutput(ItemStack stack) {
+        ItemStack output = inventory.get(SLOT_OUTPUT);
+        return output.isEmpty() || ItemStack.isSameItemSameComponents(output, stack)
+                && output.getCount() + stack.getCount() <= output.getMaxStackSize();
+    }
+
+    private void addOutput(ItemStack stack) {
+        if (stack.isEmpty()) return;
+        ItemStack output = inventory.get(SLOT_OUTPUT);
+        if (output.isEmpty()) inventory.set(SLOT_OUTPUT, stack.copy());
+        else output.grow(stack.getCount());
+    }
+
+    /** The planted crop as the bell shows it, or null when spores (or nothing) sit in the culture slot. */
+    @Nullable
+    public BlockState plantedState() {
+        BlockState seedling = ClochePlanting.seedling(inventory.get(SLOT_CULTURE));
+        return seedling == null ? null : ClochePlanting.atStage(seedling, plantStage);
+    }
+
+    public int getPlantStage() {
+        return plantStage;
     }
 
     @Nullable
@@ -250,6 +334,8 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
         if (slot == SLOT_CULTURE && !same) {
             craftingProgress = 0;
             craftingTotalTime = 0;
+            plantStage = 0;
+            plantTicks = 0;
         }
         setChanged();
     }
@@ -257,7 +343,7 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return switch (slot) {
-            case SLOT_CULTURE -> !findMatchingRecipe(stack).isEmpty();
+            case SLOT_CULTURE -> !findMatchingRecipe(stack).isEmpty() || ClochePlanting.plantable(stack);
             case SLOT_BLOOD -> BloodContainerTransfer.isFilledBloodContainer(stack) || BloodContainerTransfer.isBloodGourd(stack);
             default -> false;
         };
@@ -334,6 +420,8 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
         ContainerHelper.loadAllItems(tag, inventory, registries);
         craftingProgress = tag.getInt("CraftProgress");
         craftingTotalTime = tag.getInt("CraftTotalTime");
+        plantStage = tag.getInt("PlantStage");
+        plantTicks = tag.getInt("PlantTicks");
         IBloodVolume vol = resolveVolume();
         if (vol != null && tag.contains(TAG_BLOOD_LEVEL)) {
             vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
@@ -346,6 +434,8 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
         ContainerHelper.saveAllItems(tag, inventory, registries);
         tag.putInt("CraftProgress", craftingProgress);
         tag.putInt("CraftTotalTime", craftingTotalTime);
+        tag.putInt("PlantStage", plantStage);
+        tag.putInt("PlantTicks", plantTicks);
     }
 
     @Override
@@ -354,6 +444,8 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
         ContainerHelper.saveAllItems(tag, inventory, registries);
         tag.putInt("CraftProgress", craftingProgress);
         tag.putInt("CraftTotalTime", craftingTotalTime);
+        tag.putInt("PlantStage", plantStage);
+        tag.putInt("PlantTicks", plantTicks);
         IBloodVolume vol = resolveVolume();
         if (vol != null) tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
         return tag;
@@ -366,6 +458,8 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
         ContainerHelper.loadAllItems(tag, inventory, registries);
         craftingProgress = tag.getInt("CraftProgress");
         craftingTotalTime = tag.getInt("CraftTotalTime");
+        plantStage = tag.getInt("PlantStage");
+        plantTicks = tag.getInt("PlantTicks");
         IBloodVolume vol = resolveVolume();
         if (vol != null && tag.contains(TAG_BLOOD_LEVEL)) {
             vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));

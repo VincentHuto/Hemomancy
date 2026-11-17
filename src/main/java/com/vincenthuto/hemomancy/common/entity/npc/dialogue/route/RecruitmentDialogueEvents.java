@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
@@ -112,7 +114,8 @@ final class RecruitmentDialogueEvents {
 			// Sync updated bloodline state to client
 			BloodVolumeEvents.syncVolume(player, volume);
 
-			// Success feedback
+			// The speaker's acceptance comes only once the pledge is taken (UN-66).
+			player.displayClientMessage(Component.translatable(acceptLine(entity)), false);
 			String npcName = entity.getName().getString();
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.recruit.success", npcName)
@@ -138,6 +141,13 @@ final class RecruitmentDialogueEvents {
 						ParticleColor.BLOOD, 2, 12, 4, 0.6f);
 			}
 		}
+	}
+
+	/** The recruited speaker's own line on taking the pledge. */
+	static String acceptLine(Entity entity) {
+		String speaker = entity instanceof HarbingerVicarEntity ? "vicar"
+				: entity instanceof HarbingerAlchemistEntity ? "alchemist" : "mnemonist";
+		return "hemomancy.dialogue.recruit." + speaker + ".accept";
 	}
 
 	/**

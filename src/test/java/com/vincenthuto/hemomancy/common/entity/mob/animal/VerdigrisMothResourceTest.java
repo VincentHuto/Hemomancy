@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class VerdigrisMothResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,7 +16,8 @@ public final class VerdigrisMothResourceTest {
 	private VerdigrisMothResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String entityInit = readSource("com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String entity = readSource("com/vincenthuto/hemomancy/common/entity/mob/animal/VerdigrisMothEntity.java");
 		String itemInit = readSource("com/vincenthuto/hemomancy/common/init/ItemInit.java");
@@ -27,7 +33,7 @@ public final class VerdigrisMothResourceTest {
 		assertContains("spawn placement", entityInit, "VerdigrisMothEntity::canSpawnHere");
 		assertContains("attribute registration", entityInit, "VerdigrisMothEntity.setAttributes().build()");
 		assertContains("night-adjusted spawn brightness", entity, "level.getMaxLocalRawBrightness(pos)");
-		assertDoesNotContain("raw sky brightness blocks open night spawns", entity, "level.getRawBrightness(pos, 0)");
+		assertNotContains("raw sky brightness blocks open night spawns", entity, "level.getRawBrightness(pos, 0)");
 		assertContains("spawn egg", itemInit, "spawn_egg_verdigris_moth");
 		assertContains("renderer registration", clientEvents, "VerdigrisMothRenderer::new");
 		assertContains("model layer registration", layerEvents, "VerdigrisMothModel.LAYER_LOCATION");
@@ -40,7 +46,7 @@ public final class VerdigrisMothResourceTest {
 		assertContains("mountain cold spawn biome", spawnTag, "\"minecraft:grove\"");
 
 		assertContains("empty entity loot table", lootTable, "\"pools\": []");
-		assertDoesNotContain("death loot should not be a good Virid Salis source", lootTable,
+		assertNotContains("death loot should not be a good Virid Salis source", lootTable,
 				"hemomancy:virid_salis_trail");
 		assertContains("entity translation", lang, "\"entity.hemomancy.verdigris_moth\": \"Verdigris Moth\"");
 		assertContains("spawn egg translation", lang,
@@ -57,28 +63,9 @@ public final class VerdigrisMothResourceTest {
 		return read(RESOURCE_ROOT.resolve(path));
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
 		}
 	}
 }

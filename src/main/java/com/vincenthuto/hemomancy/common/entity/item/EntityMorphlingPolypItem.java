@@ -1,8 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.item;
 
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityMorphlingPolypItem extends ItemEntity {
+	private static final ParticleColor CRIMSON_SPORE = new ParticleColor(150, 40, 58);
+	private static final ParticleColor CLOT = new ParticleColor(70, 6, 14);
 
 	private int pickupDelayNew = 40;
 
@@ -46,7 +50,8 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 			double r = 0.1;
 			double m = 0.1;
 			for (int i = 0; i < 1; i++) {
-				level().addParticle(ParticleTypes.REVERSE_PORTAL, getX() + r * (Math.random() - 0.5),
+				level().addParticle(HemoParticleData.emberSpark(CRIMSON_SPORE, 0.031F, 0.7F, 30),
+						getX() + r * (Math.random() - 0.5),
 						getY() + r * (Math.random() - 0.5), getZ() + r * (Math.random() - 0.5),
 						m * (Math.random() - 0.5), m * (Math.random() - 0.5), m * (Math.random() - 0.5));
 			}
@@ -79,18 +84,17 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 						}
 
 						if (rec.matchesCatalysts(itemList)) {
-							if (!level().isClientSide) {
-								for (ItemEntity it : itemEntList) {
-									it.getItem().shrink(1);
-								}
-								level().addFreshEntity(new ItemEntity(level(), this.getX(), this.getY(), this.getZ(),
-										rec.getResultItemStack().copy()));
-								this.getItem().shrink(1);
-							} else {
-								level().addParticle(ParticleTypes.POOF, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D,
-										0.0D);
-								level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(), 0.0D,
-										0.0D, 0.0D);
+							for (ItemEntity it : itemEntList) {
+								it.getItem().shrink(1);
+							}
+							level().addFreshEntity(new ItemEntity(level(), this.getX(), this.getY(), this.getZ(),
+									rec.getResultItemStack().copy()));
+							this.getItem().shrink(1);
+							if (level() instanceof ServerLevel server) {
+								server.sendParticles(HemoParticleData.sporiticSpore(CRIMSON_SPORE),
+										this.getX(), this.getY(), this.getZ(), 6, 0.2D, 0.2D, 0.2D, 0.0D);
+								server.sendParticles(HemoParticleData.darkGlow(CLOT),
+										this.getX(), this.getY(), this.getZ(), 4, 0.2D, 0.2D, 0.2D, 0.0D);
 							}
 						}
 					}

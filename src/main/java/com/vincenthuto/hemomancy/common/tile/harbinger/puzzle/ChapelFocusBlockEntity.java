@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeFragmentEntity;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
@@ -25,7 +26,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -54,7 +54,9 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -103,7 +105,8 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 	private int lastOffer = -100;
 	@Nullable
 	private Item lastOfferItem;
-	private final List<UUID> wave = new ArrayList<>();
+	/** The risen wave: each mob and the chunk it was last seen in, so a mob in an unloaded chunk is waited on. */
+	private final Map<UUID, Long> wave = new LinkedHashMap<>();
 	private final List<Mark> marks = new ArrayList<>();
 	/** Players standing at the Litany stone now, so its words are shown once per approach. Not saved. */
 	private final Set<UUID> readers = new HashSet<>();
@@ -154,7 +157,12 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 			tell(player, "message.hemomancy.chapel.refused", ChatFormatting.DARK_RED);
 			return false;
 		}
-		if (phase != Phase.IDLE || cooldown > 0) return false;
+		if (phase != Phase.IDLE) return false;
+		if (cooldown > 0) {
+			tell(player, "message.hemomancy.chapel.cooldown", ChatFormatting.GRAY);
+			chime(worldPosition, 0.5f);
+			return false;
+		}
 		if (kind == ChapelRules.Kind.BEHOLDING && marksOf(MarkKind.WITNESS).isEmpty()) {
 			tell(player, "message.hemomancy.chapel.unmarked", ChatFormatting.GRAY);
 			return false;
@@ -252,7 +260,10 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, ChapelFocusBlockEntity focus) {
-		if (focus.cooldown > 0) focus.cooldown--;
+		if (focus.cooldown > 0) {
+			focus.cooldown--;
+			focus.setChanged();
+		}
 		if (focus.complete) return;
 		ServerLevel server = (ServerLevel) level;
 		if (focus.phase == Phase.IDLE) {
@@ -268,6 +279,7 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 			return;
 		}
 		focus.timer++;
+		focus.setChanged();
 		if (focus.kind == ChapelRules.Kind.LITANY && level.getGameTime() % 10 == 0) focus.watchWing(server);
 		switch (focus.phase) {
 			case SHOW -> focus.tickShow(server);
@@ -328,12 +340,22 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 		List<Mark> witnesses = marksOf(MarkKind.WITNESS);
 		if (sequence.get(index) >= witnesses.size()) return;
 		lightWitnesses(sequence.get(index));
+		if (ChapelRules.narratesBeholding(saint)) narrate(level, ChapelRules.beholdingLine(saint, index));
 		BlockPos witness = markPos(witnesses.get(sequence.get(index)));
 		level.sendParticles(HemoParticleData.glow(CRIMSON), witness.getX() + 0.5, witness.getY() + 0.9,
 				witness.getZ() + 0.5, 40, 0.2, 0.6, 0.2, 0.02);
 		level.sendParticles(HemoParticleData.glow(PALE), witness.getX() + 0.5, witness.getY() + 1.6,
 				witness.getZ() + 0.5, 12, 0.1, 0.3, 0.1, 0.01);
 		level.playSound(null, witness, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.6f, 0.6f + index * 0.2f);
+	}
+
+	/** One line of the Beholding's memory to its challenger, in chat, where it outlasts the flash. */
+	private void narrate(ServerLevel level, String key) {
+		ServerPlayer challenger = this.challenger == null ? null : level.getServer().getPlayerList().getPlayer(this.challenger);
+		if (challenger != null) {
+			challenger.displayClientMessage(Component.translatable(key).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+		}
 	}
 
 	private void tickAnswer(@Nullable ServerPlayer challenger) {
@@ -366,9 +388,12 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 	 */
 	private void tickDownfall(ServerLevel level, @Nullable ServerPlayer challenger) {
 		if (timer % 10 != 0) return;
-		wave.removeIf(id -> {
-			Entity mob = level.getEntity(id);
-			return mob == null || !mob.isAlive();
+		// A mob the level cannot find is dead only where its chunk's entities are loaded; elsewhere the wave waits.
+		wave.entrySet().removeIf(entry -> {
+			Entity mob = level.getEntity(entry.getKey());
+			if (mob == null) return level.areEntitiesLoaded(entry.getValue());
+			entry.setValue(mob.chunkPosition().toLong());
+			return !mob.isAlive();
 		});
 		markDueSeals();
 		if (!wave.isEmpty()) return;
@@ -395,9 +420,8 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 	/** Raises wave {@code step} from its seals (beside the focus when the wing has none) and counts it risen. */
 	private void spawnWave(ServerLevel level) {
 		EntityType<?> type = switch (saint) {
-			case "SERAPHAE" -> EntityType.VEX;
+			case "SERAPHAE" -> EntityInit.seraphae_fragment.get();
 			case "PUTRICIEL" -> EntityInit.bog_revenant.get();
-			case "VELORUM" -> EntityType.STRAY;
 			default -> EntityInit.hematic_construct.get();
 		};
 		List<Mark> seals = ChapelRules.seals(marks, step);
@@ -406,7 +430,11 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 					: markPos(seals.get(i % seals.size()));
 			Entity spawned = type.spawn(level, at, MobSpawnType.EVENT);
 			if (spawned instanceof Mob mob) mob.setPersistenceRequired();
-			if (spawned != null) wave.add(spawned.getUUID());
+			if (spawned instanceof SeraphaeFragmentEntity fragment) fragment.setChapelWave(true);
+			if (spawned != null) {
+				spawned.addTag(ChapelWaveEvents.TAG);
+				wave.put(spawned.getUUID(), spawned.chunkPosition().toLong());
+			}
 			level.sendParticles(HemoParticleData.glow(CRIMSON), at.getX() + 0.5, at.getY() + 0.1, at.getZ() + 0.5, 16,
 					0.4, 0.05, 0.4, 0.02);
 		}
@@ -491,7 +519,7 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 
 	private void fail(@Nullable Player player) {
 		if (level instanceof ServerLevel server) {
-			for (UUID id : wave) {
+			for (UUID id : wave.keySet()) {
 				Entity mob = server.getEntity(id);
 				if (mob != null) mob.discard();
 			}
@@ -513,6 +541,10 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 		challenger = null;
 		wave.clear();
 		restSetPieces(true);
+		if (kind == ChapelRules.Kind.BEHOLDING && ChapelRules.narratesBeholding(saint) && player != null) {
+			player.displayClientMessage(Component.translatable(ChapelRules.beholdingLine(saint, -1))
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+		}
 		if (level != null) {
 			level.setBlock(worldPosition, getBlockState().setValue(ChapelFocusBlock.LIT, true), Block.UPDATE_ALL);
 			level.playSound(null, worldPosition, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1f, 0.7f);
@@ -600,8 +632,15 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 		tag.putLong("Seed", seed);
 		tag.putInt("Step", step);
 		tag.putInt("Progress", progress);
+		tag.putInt("Timer", timer);
+		tag.putInt("Cooldown", cooldown);
 		ListTag mobs = new ListTag();
-		for (UUID id : wave) mobs.add(NbtUtils.createUUID(id));
+		wave.forEach((id, chunk) -> {
+			CompoundTag mob = new CompoundTag();
+			mob.putUUID("Id", id);
+			mob.putLong("Chunk", chunk);
+			mobs.add(mob);
+		});
 		tag.put("Wave", mobs);
 		ListTag marked = new ListTag();
 		for (Mark mark : marks) {
@@ -636,8 +675,13 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 		seed = tag.getLong("Seed");
 		step = tag.getInt("Step");
 		progress = tag.getInt("Progress");
+		timer = tag.getInt("Timer");
+		cooldown = tag.getInt("Cooldown");
 		wave.clear();
-		for (Tag id : tag.getList("Wave", Tag.TAG_INT_ARRAY)) wave.add(NbtUtils.loadUUID(id));
+		for (Tag element : tag.getList("Wave", Tag.TAG_COMPOUND)) {
+			CompoundTag mob = (CompoundTag) element;
+			if (mob.hasUUID("Id")) wave.put(mob.getUUID("Id"), mob.getLong("Chunk"));
+		}
 		marks.clear();
 		for (Tag element : tag.getList("Marks", Tag.TAG_COMPOUND)) {
 			CompoundTag entry = (CompoundTag) element;

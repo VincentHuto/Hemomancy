@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.lore;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class SupportingLoreCanonSourceTest {
 	private SupportingLoreCanonSourceTest() {}
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String saints = read("src/main/java/com/vincenthuto/hemomancy/common/entity/boss/saint/EnumSaintType.java");
 		String hemorath = read("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_crimson_tithe.json");
 		String seraphae = read("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_unclosing_eye.json");
@@ -20,10 +22,10 @@ public final class SupportingLoreCanonSourceTest {
 		String degreePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncDegree.java");
 		assertContains(saints, "HEMORATH(EnumBloodTemper.ANIMUS, EnumBloodTemper.FERRIC)");
 		assertContains(saints, "SERAPHAE(EnumBloodTemper.LUX, EnumBloodTemper.DUCTILIS)");
-		assertContains(hemorath, "\"animus\":  1");
-		assertContains(hemorath, "\"ferric\":  1");
-		assertContains(seraphae, "\"lux\":  1");
-		assertContains(seraphae, "\"ductilis\":  1");
+		assertContains(hemorath, "\"animus\":  2");
+		assertContains(hemorath, "\"ferric\":  2");
+		assertContains(seraphae, "\"lux\":  2");
+		assertContains(seraphae, "\"ductilis\":  2");
 		assertContains(paleSilver, "hemomancy:consecrated_copper_ingot");
 		assertNotContains(paleSilver, "minecraft:iron_ingot");
 		assertContains(dagger, "target.addEffect(new MobEffectInstance(EffectInit.hemolysis");
@@ -41,7 +43,6 @@ public final class SupportingLoreCanonSourceTest {
 		assertContains(degreePacket, "degree.setHasFoundedBloodline(msg.hasFoundedBloodline)");
 		assertContains(degreePacket, "degree.setArchonPath(msg.archonPath)");
 	}
-	private static String read(String path) throws IOException { return Files.readString(Path.of(path)); }
 	private static void assertContains(String source, String expected) { if (!source.contains(expected)) throw new AssertionError("missing " + expected); }
 	private static void assertNotContains(String source, String forbidden) { if (source.contains(forbidden)) throw new AssertionError("still contains " + forbidden); }
 }

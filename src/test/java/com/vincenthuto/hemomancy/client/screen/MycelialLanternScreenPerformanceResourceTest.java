@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class MycelialLanternScreenPerformanceResourceTest {
     private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -10,7 +14,8 @@ public final class MycelialLanternScreenPerformanceResourceTest {
     private MycelialLanternScreenPerformanceResourceTest() {
     }
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    void allChecksPass() throws IOException {
         String screen = read(SOURCE_ROOT.resolve(
                 "com/vincenthuto/hemomancy/client/screen/tile/crafting/MycelialLanternScreen.java"));
         String menu = read(SOURCE_ROOT.resolve(
@@ -28,37 +33,18 @@ public final class MycelialLanternScreenPerformanceResourceTest {
                 "gfx.enableScissor(gx, gy, gx + gw, gy + gh);");
         assertContains("mycelial lantern should use simple constant-cost borders", screen,
                 "ScreenDrawUtils.drawBevelBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT, BORDER_RED, BORDER_YELLOW, BORDER_INNER);");
-        assertDoesNotContain("mycelial lantern should not draw per-pixel gradient borders every frame", screen,
+        assertNotContains("mycelial lantern should not draw per-pixel gradient borders every frame", screen,
                 "drawGradientBorder");
-        assertDoesNotContain("mycelial lantern should not flash a square glow around the culture slot", screen,
+        assertNotContains("mycelial lantern should not flash a square glow around the culture slot", screen,
                 "renderCultureGlow");
 
-        assertDoesNotContain("mycelial lantern menu should rely on slot/data sync instead of full block sync every tick",
+        assertNotContains("mycelial lantern menu should rely on slot/data sync instead of full block sync every tick",
                 menu, "public void broadcastChanges()");
         assertContains("mycelial lantern should separate world changes from full client sync", blockEntity,
                 "boolean worldChanged = syncChanged;");
         assertContains("mycelial lantern should only full-sync when display inventory changes", blockEntity,
                 "if (syncChanged) {");
-        assertDoesNotContain("mycelial lantern should not full-sync every progress tick", blockEntity,
+        assertNotContains("mycelial lantern should not full-sync every progress tick", blockEntity,
                 "if (changed) {\n            te.sendUpdates();");
-    }
-
-    private static String read(Path path) throws IOException {
-        if (!Files.exists(path)) {
-            throw new AssertionError("missing " + path);
-        }
-        return Files.readString(path).replace("\r\n", "\n");
-    }
-
-    private static void assertContains(String label, String text, String expected) {
-        if (!text.contains(expected)) {
-            throw new AssertionError(label + ": missing " + expected);
-        }
-    }
-
-    private static void assertDoesNotContain(String label, String text, String forbidden) {
-        if (text.contains(forbidden)) {
-            throw new AssertionError(label + ": found " + forbidden);
-        }
     }
 }

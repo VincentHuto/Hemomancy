@@ -300,6 +300,14 @@ public final class PlaythroughSites {
 		return courtSite(helper, site, BoundingBox.fromCorners(centre.offset(-12, -4, -12), centre.offset(12, 8, 12)));
 	}
 
+	/**
+	 * Ticks a test waits for a far template site's chunks to become entity-ticking ({@link TemplateSite#ready}). The
+	 * GameTest server runs ticks back to back, but the chunks' entity sections load off the server thread, so in a large
+	 * reused world 200 ticks could pass before they arrive (successionFinale's "Still waiting after 200 ticks"). A site
+	 * that is ready sooner costs nothing; tests that wait add this to their timeout.
+	 */
+	public static final int SITE_READY_TICKS = 1000;
+
 	/** A mod structure template placed by {@link #template}: where it stands and the box it fills. */
 	public record TemplateSite(ResourceLocation id, BlockPos origin, BoundingBox box) {
 		public BlockPos centre() {
@@ -314,7 +322,7 @@ public final class PlaythroughSites {
 		/**
 		 * Whether every chunk under the box is entity-ticking. Entities the template placed (and NPCs placed in its box
 		 * right after) are not visible to {@code getEntitiesOfClass} until then, so wait on this before looking up the
-		 * site's actors: {@code clock.until(200, () -> site.ready(level), ...)}.
+		 * site's actors: {@code clock.until(SITE_READY_TICKS, () -> site.ready(level), ...)}.
 		 */
 		public boolean ready(net.minecraft.server.level.ServerLevel level) {
 			for (int x = box.minX() >> 4; x <= box.maxX() >> 4; x++) {
@@ -359,8 +367,9 @@ public final class PlaythroughSites {
 
 	/**
 	 * Where a test lays a site too big for its own template: {@code blocksEast} east of the test's corner, on its
-	 * floor layer. Tests in one batch sit side by side, so a site that is not alone in its batch picks a distinct
-	 * distance.
+	 * floor layer. Tests in one batch sit side by side, a plot's width plus the isolation gap apart (32 + 64 = 96
+	 * blocks for {@code EMPTY}, see {@code GameTestIsolation.GRID_GAP}), so anything past 95 east lands on the next
+	 * plot: a site that reaches that far must be alone in its batch.
 	 */
 	public static BlockPos farOrigin(GameTestHelper helper, int blocksEast) {
 		return helper.absolutePos(new BlockPos(0, STAND_Y - 1, 0)).east(blocksEast);

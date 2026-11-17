@@ -15,6 +15,18 @@ class DialogueThemeStyleConfigTest {
 		assertFrame(DialogueTheme.FUNGAL, "hemomancy:dialogue/fungal/frame");
 		assertFrame(DialogueTheme.STILL, "hemomancy:dialogue/still/frame");
 		assertFrame(DialogueTheme.STILL_MATERIAL, "hemomancy:dialogue/still/frame");
+		assertFrame(DialogueTheme.CIRCUS, "hemomancy:dialogue/circus/frame");
+	}
+
+	/** HN-9: the Circus theme shows one troupe crest for every speaker, and the theme is the enum's last value. */
+	@Test
+	void theCircusShowsOneTroupeCrest() {
+		assertEquals("hemomancy:dialogue/crests/circus",
+				DialogueThemeStyle.crest(DialogueTheme.CIRCUS, com.vincenthuto.hemomancy.Hemomancy.rloc("circus_acrobat")).toString());
+		assertEquals("hemomancy:dialogue/crests/vicar",
+				DialogueThemeStyle.crest(DialogueTheme.BLOOD, com.vincenthuto.hemomancy.Hemomancy.rloc("vicar")).toString());
+		DialogueTheme[] themes = DialogueTheme.values();
+		assertEquals(DialogueTheme.CIRCUS, themes[themes.length - 1], "the tree writes the theme as an ordinal");
 	}
 
 	@Test

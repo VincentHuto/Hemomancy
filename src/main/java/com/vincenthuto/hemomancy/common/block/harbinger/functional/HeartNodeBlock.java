@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.world.HeartNodeMoment;
 import com.vincenthuto.hemomancy.common.world.HeartNodeRules;
 import com.vincenthuto.hemomancy.common.world.HeartNodeSavedData;
 import com.vincenthuto.hemomancy.common.world.HeartNodeService;
+import com.vincenthuto.hemomancy.common.world.PriorRespawn;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -39,8 +40,8 @@ import java.util.List;
  * An Apotheos's heart-node: the heart of their personal Fane in the Gardens, the centre of an envelope their Mycelial
  * Synapses extend. Planting and privacy are gated in {@code HeartNodeEvents}; the block entity keeps the node's
  * maturity and shows it as {@link #STAGE}, which picks the model (tools/model_export/heart_node.py). Its owner opens it
- * to tend how the sanctum looks. Removing it forgets the node, its synapse records and the spawn it held, and shows
- * the players near it the node withering.
+ * to tend how the sanctum looks. Removing it forgets the node and its synapse records, gives its owner back the
+ * respawn they had before planting it, and shows the players near it the node withering.
  */
 public class HeartNodeBlock extends Block implements EntityBlock {
 	public static final IntegerProperty STAGE = IntegerProperty.create("stage", 0, HeartNodeRules.MATURE_STAGE);
@@ -104,12 +105,13 @@ public class HeartNodeBlock extends Block implements EntityBlock {
 				&& level.getBlockEntity(pos) instanceof HeartNodeBlockEntity node && node.owner() != null) {
 			// The block goes now; nearby clients keep its last frame as a ghost while it withers.
 			HeartNodeService.announce(server, pos, HeartNodeMoment.WITHERED, state.getValue(STAGE));
-			HeartNodeSavedData.get(server).remove(node.owner(), pos)
-					.ifPresent(entry -> MycelialSynapseBlock.witherAll(server, entry.synapses()));
+			HeartNodeSavedData data = HeartNodeSavedData.get(server);
+			data.remove(node.owner(), pos).ifPresent(entry -> MycelialSynapseBlock.witherAll(server, entry.synapses()));
 			ServerPlayer owner = server.getServer().getPlayerList().getPlayer(node.owner());
 			if (owner != null && level.dimension().equals(owner.getRespawnDimension())
 					&& pos.above().equals(owner.getRespawnPosition())) {
-				owner.setRespawnPosition(Level.OVERWORLD, null, 0f, false, false);
+				data.takeRemovedSpawnRecord(owner.getUUID(), pos.above())
+						.ifPresent(lost -> PriorRespawn.restore(owner, lost.prior()));
 			}
 		}
 		super.onRemove(state, level, pos, newState, movedByPiston);

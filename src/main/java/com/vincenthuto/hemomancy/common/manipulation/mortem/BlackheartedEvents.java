@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.util.LastSent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -24,6 +25,8 @@ import java.util.UUID;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class BlackheartedEvents {
 	private static final Set<UUID> RUPTURING = new HashSet<>();
+	/** Whether each player's Black Heart was last sent lit; an unlit heart is sent once, a lit one every second. */
+	private static final LastSent<Boolean> LIT = new LastSent<>();
 
 	private BlackheartedEvents() {
 	}
@@ -53,8 +56,18 @@ public final class BlackheartedEvents {
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 20 != 0) return;
 		var necrotic = HemoCapabilityAccess.getPowerGuardrails(player);
+		boolean lit = isActive(player) && necrotic.getNecroticSaturation() > 0;
+		if (!LIT.changed(player, lit) && !lit) return;
 		ManipulationVisuals.attached(player, ManipulationVisuals.Form.BLACK_HEART, necrotic.getNecroticSaturation(),
-				isActive(player) && necrotic.getNecroticSaturation() > 0 ? 25 : 0, 1);
+				lit ? 25 : 0, 1);
+	}
+
+	public static void logout(net.minecraft.world.entity.player.Player player) {
+		LIT.forget(player);
+	}
+
+	public static void clearSessionState() {
+		LIT.clear();
 	}
 
 	@SubscribeEvent

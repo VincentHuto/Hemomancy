@@ -23,16 +23,15 @@ Glacial Circulation and standalone Glacial Bastion remain retired. The active Gl
 Run from the repository root:
 
 ```powershell
-python tools/validate_thermal_shaders.py
 .\gradlew.bat test --tests '*Thermal*Test' --tests '*LuxUmbra*Test' --tests '*ManipulationLifecycleTest' --tests '*ManipulationParticleBudgetTest' --max-workers=1 --no-daemon
-.\gradlew.bat runClient -I tools/manipulation-visceral-review.init.gradle -PthermalReview -PthermalReviewModes=5 --max-workers=1 --no-daemon
-.\gradlew.bat runClient -I tools/manipulation-visceral-review.init.gradle -PthermalReview -PthermalCastReview --max-workers=1 --no-daemon
-.\gradlew.bat runClient -I tools/manipulation-visceral-review.init.gradle -PthermalReview -PthermalBenchmark -PthermalReviewModes=1 --max-workers=1 --no-daemon
+.\gradlew.bat runClient -I tools/review/manipulation-visceral-review.init.gradle -PthermalReview -PthermalReviewModes=5 --max-workers=1 --no-daemon
+.\gradlew.bat runClient -I tools/review/manipulation-visceral-review.init.gradle -PthermalReview -PthermalCastReview --max-workers=1 --no-daemon
+.\gradlew.bat runClient -I tools/review/manipulation-visceral-review.init.gradle -PthermalReview -PthermalBenchmark -PthermalReviewModes=1 --max-workers=1 --no-daemon
 ```
 
 The client harness requires the disposable `VisceralReview` save in `build/visceral-review-client`. It changes only that review world and its settings. Material scenes cover daylight, night, first/third person, particle settings, overlap and resource reload. The cast review uses paid actions, channels, their cancellation, and supported NPC actions; it also executes the packet-observer regression. The benchmark pass does not capture screenshots. It disables VSync and uses the 260/unlimited FPS setting at 1280 x 800. Use `-PthermalReviewStartMode=3 -PthermalReviewModes=4` to repeat the distant view alone. Add `-PthermalNpcReview` to the cast command for the eight supported NPC actions.
 
-For two-client review, start the cast command with `-PthermalMultiplayerReview`, then run `./tools/review-thermal-observer.ps1 -Label casts` in a second PowerShell session. The script prepares the observer arguments and starts Java directly, keeping dependency JARs intact while the first client is running. The first client waits for the observer before casting. These development clients use offline profiles and the disposable world; port 25579 closes when the review ends.
+For two-client review, start the cast command with `-PthermalMultiplayerReview`, then run `./tools/review/review-thermal-observer.ps1 -Label casts` in a second PowerShell session. The script prepares the observer arguments and starts Java directly, keeping dependency JARs intact while the first client is running. The first client waits for the observer before casting. These development clients use offline profiles and the disposable world; port 25579 closes when the review ends.
 
 ## Validation, 2026-09-09
 

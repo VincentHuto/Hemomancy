@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import org.junit.jupiter.api.Test;
+
 public final class MnemonistStarterMemoryChoiceTest {
 	private MnemonistStarterMemoryChoiceTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		eventIdsResolveToStarterChoices();
 		unknownEventDoesNotResolve();
 		claimRulesRequireDegreeTwoHarbingerState();

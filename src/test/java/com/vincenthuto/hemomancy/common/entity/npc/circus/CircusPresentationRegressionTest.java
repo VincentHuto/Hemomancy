@@ -49,10 +49,15 @@ class CircusPresentationRegressionTest {
 		String performer = source("client/render/entity/npc/CircusPerformerRenderer.java");
 		assertTrue(overlay.contains("graphics.fillGradient"));
 		assertTrue(overlay.contains("public static void renderWorld"));
-		assertTrue(overlay.contains("CircusCarouselEntity.class"));
-		assertTrue(overlay.contains("stage.silhouetteCount()"));
-		assertTrue(overlay.contains("stage.clothCount()"));
-		assertTrue(overlay.contains("stage.lightCount()"));
+		// D-29 (chunk 15 T12): the cues stand on the pavilion's own marks, not round the carousel.
+		assertFalse(overlay.contains("CircusCarouselEntity"));
+		assertTrue(overlay.contains("BlockInit.circus_gallery_rail"));
+		// 2026-11-16: the phantom show replaces the figure planes, cloth and diamonds; seats and the ring are marks too.
+		assertTrue(overlay.contains("BlockInit.circus_seating"));
+		assertTrue(overlay.contains("BlockInit.circus_ring_curb"));
+		assertTrue(overlay.contains("PhantomShow.render("));
+		assertFalse(overlay.contains("drawDiamond"));
+		assertFalse(performer.contains("motionJitter"));
 		assertTrue(events.contains("CircusPerceptionOverlay.renderWorld(event.getPoseStack(), partialTick)"));
 		assertTrue(performer.contains("motionEchoAlpha()"));
 		assertFalse(overlay.contains("System.currentTimeMillis"));

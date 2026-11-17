@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
 import com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules;
+import com.vincenthuto.hemomancy.common.manipulation.saint.BloomOfRotRules;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.EclipseWellManip;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
@@ -64,7 +65,7 @@ public final class ManipulationBalancePass2SchoolBGameTests {
         near(h, 175, ManipulationInit.hemolymphal_pulse.get().getCost(), "Hemolymphal Pulse cost");
         h.assertTrue(ManipulationInit.hemolymphal_pulse.get().getCooldownTicks() == 200,
                 "Hemolymphal Pulse cooldown: " + ManipulationInit.hemolymphal_pulse.get().getCooldownTicks());
-        near(h, 100, ManipulationInit.living_circuit.get().getCost(), "Living Circuit cost");
+        near(h, 30, ManipulationInit.living_circuit.get().getCost(), "Living Circuit cost");
         h.assertTrue(EclipseWellManip.collapses(80) && !EclipseWellManip.collapses(79),
                 "Only a fully charged Eclipse Well collapses");
         h.succeed();
@@ -145,15 +146,22 @@ public final class ManipulationBalancePass2SchoolBGameTests {
             var first = husk(h, p.position().add(3, 0, 0));
             var second = husk(h, p.position().add(0, 0, -5));
             var bloom = ManipulationInit.bloom_of_rot.get();
-            try {
-                bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                float mastery = (float) SkillPointHelper.getCrimsonMasteryMultiplier(p);
-                for (LivingEntity husk : List.of(first, second)) {
-                    near(h, 3 * mastery * affinity(p, husk, bloom), husk.getMaxHealth() - husk.getHealth(), "Bloom damage");
-                    h.assertTrue(SchoolStates.has(husk, SchoolState.NECROSIS), "Bloom did not infect a husk");
-                }
-                h.succeed();
-            } finally { first.discard(); second.discard(); p.discard(); }
+            // D-1 spec 3.3: the field's first rot pulse, 20 ticks after sowing, reaches every body standing on it
+            bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
+            h.onEachTick(() -> com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftEvents.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p)));
+            h.runAfterDelay(BloomOfRotRules.PULSE_TICKS + 1, () -> {
+                try {
+                    float mastery = (float) SkillPointHelper.getCrimsonMasteryMultiplier(p);
+                    for (LivingEntity husk : List.of(first, second)) {
+                        near(h, BloomOfRotRules.ROT_DAMAGE * mastery * affinity(p, husk, bloom), husk.getMaxHealth() - husk.getHealth(),
+                                "Bloom damage");
+                        h.assertTrue(SchoolStates.has(husk, SchoolState.NECROSIS), "Bloom did not infect a husk");
+                    }
+                    h.succeed();
+                } finally { com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState.end(p.getUUID());
+                    first.discard(); second.discard(); p.discard(); }
+            });
         });
     }
 
@@ -164,16 +172,21 @@ public final class ManipulationBalancePass2SchoolBGameTests {
             p.setPos(h.absoluteVec(CENTRE));
             var target = husk(h, p.position().add(3, 0, 0));
             var bloom = ManipulationInit.bloom_of_rot.get();
-            try {
-                HemoCapabilityAccess.getSkillProgress(p).setSkill(SkillPointInit.skill_crimson_mastery,
-                        EnumSkillStates.UNLOCKED, 3);
-                near(h, 1.45, SkillPointHelper.getCrimsonMasteryMultiplier(p), "Crimson Mastery 3 multiplier");
-                bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                // A literal 1.45: a second application of Crimson Mastery would show as 1.45 squared.
-                near(h, 3 * 1.45 * affinity(p, target, bloom), target.getMaxHealth() - target.getHealth(),
-                        "Bloom damage at Crimson Mastery 3");
-                h.succeed();
-            } finally { target.discard(); p.discard(); }
+            HemoCapabilityAccess.getSkillProgress(p).setSkill(SkillPointInit.skill_crimson_mastery,
+                    EnumSkillStates.UNLOCKED, 3);
+            near(h, 1.45, SkillPointHelper.getCrimsonMasteryMultiplier(p), "Crimson Mastery 3 multiplier");
+            bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
+            h.onEachTick(() -> com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftEvents.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p)));
+            h.runAfterDelay(BloomOfRotRules.PULSE_TICKS + 1, () -> {
+                try {
+                    // A literal 1.45: a second application of Crimson Mastery would show as 1.45 squared.
+                    near(h, BloomOfRotRules.ROT_DAMAGE * 1.45 * affinity(p, target, bloom), target.getMaxHealth() - target.getHealth(),
+                            "Bloom damage at Crimson Mastery 3");
+                    h.succeed();
+                } finally { com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState.end(p.getUUID());
+                    target.discard(); p.discard(); }
+            });
         });
     }
 

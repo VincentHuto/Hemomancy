@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 
 /** An Apotheos's bare hand on a Gardens cap grows it out into a bridge. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -36,7 +37,7 @@ public final class CapBridgeEvents {
 		BlockPos start = cap.relative(direction);
 		if (!level.getBlockState(start).isAir()) return;
 		CapBridgeBlock bridge = (CapBridgeBlock) BlockInit.cap_bridge.get();
-		level.setBlock(start, bridge.seed(direction), CapBridgeBlock.UPDATE_ALL);
+		if (!PlayerBlockEdits.place(player, start, bridge.seed(direction), CapBridgeBlock.UPDATE_ALL)) return;
 		level.playSound(null, start, SoundEvents.FUNGUS_PLACE, SoundSource.BLOCKS, 1.0f, 0.8f);
 		player.swing(InteractionHand.MAIN_HAND, true);
 		event.setCancellationResult(InteractionResult.SUCCESS);

@@ -32,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.*;
+import org.apache.commons.io.file.PathUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -198,12 +199,14 @@ public final class BloodProfileGameTests {
         h.getLevel().setBlockAndUpdate(pos, BlockInit.vial_centrifuge.get().defaultBlockState());
         var machine = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity) h.getLevel().getBlockEntity(pos);
         var types = List.of(EntityType.PIG, EntityType.IRON_GOLEM, EntityInit.fungling.get());
-        var items = List.of(ItemInit.vivacious_enzyme.get(), ItemInit.ferric_enzyme.get(), BlockInit.infected_fungus.get().asItem());
+        // The Fungling is Animus as well as fungal since NQ-06-12, so its vial gives fungus or Animus's enzyme.
+        var items = List.of(List.of(ItemInit.vivacious_enzyme.get()), List.of(ItemInit.ferric_enzyme.get()),
+                List.of(BlockInit.infected_fungus.get().asItem(), ItemInit.vivacious_enzyme.get()));
         for (int i = 0; i < types.size(); i++) {
             var target = types.get(i).create(h.getLevel());
             for (int attempt = 0; attempt < 8; attempt++) {
                 var result = machine.getResultFromVial(types.get(i));
-                h.assertTrue(result.is(items.get(i)) && result.getCount() >= 1
+                h.assertTrue(items.get(i).contains(result.getItem()) && result.getCount() >= 1
                         && result.getCount() <= (int) (target.getMaxHealth() / 10 * 3 + 1), "Centrifuge output changed: " + types.get(i));
             }
             target.discard();
@@ -236,6 +239,8 @@ public final class BloodProfileGameTests {
             h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 3 + filled,
                     "Wrong syringe model for a rack with " + filled + " filled vials");
             syringe.getItem().interactLivingEntity(syringe, player, target, InteractionHand.MAIN_HAND);
+            // A drawn cow needs time before another sample (core-loop Track 5); this test is about the rack's model.
+            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.setSampleDrawnUntil(target, 0L);
         }
         h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 0,
                 "The syringe still showed a rack after the last draw ejected it");
@@ -404,6 +409,24 @@ public final class BloodProfileGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "empty")
+    public static void goatsAndPolarBearsGiveACleanCongeatioDrawToALooseVial(GameTestHelper h) {
+        var player = player(h);
+        for (var type : List.of(EntityType.GOAT, EntityType.POLAR_BEAR)) {
+            var vial = new ItemStack(ItemInit.bloody_vial.get());
+            player.setItemInHand(InteractionHand.MAIN_HAND, vial);
+            var target = type.create(h.getLevel());
+            vial.getItem().onLeftClickEntity(vial, player, target);
+            h.assertTrue(BloodSampleData.entityType(vial) == type, "A loose vial could not draw " + type);
+            h.assertTrue(BloodSampleData.profile(vial, false).tempers().equals(List.of(
+                    com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.CONGEATIO)),
+                    type + " is not a clean Congeatio draw");
+            target.discard();
+        }
+        player.discard();
+        h.succeed();
+    }
+
     @SuppressWarnings("unchecked")
     @GameTest(template = "empty")
     public static void highHealthRestrictionsRespectApprovedSamplingExceptions(GameTestHelper h) {
@@ -482,6 +505,7 @@ public final class BloodProfileGameTests {
         } finally {
             apply.invoke(loader, original, null, InactiveProfiler.INSTANCE);
             BloodProfileData.receive(originalClient.json());
+            PathUtils.deleteDirectory(root);
         }
         h.succeed();
     }

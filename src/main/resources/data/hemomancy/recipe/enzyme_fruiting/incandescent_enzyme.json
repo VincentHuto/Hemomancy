@@ -4,5 +4,5 @@
   "culture": { "item": "hemomancy:incandescent_spores" },
   "result": { "id": "hemomancy:incandescent_enzyme", "count": 1 },
   "duration": 2400,
-  "blood_per_tick": 0.25
+  "blood_per_tick": 0.0625
 }

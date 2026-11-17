@@ -90,7 +90,15 @@ public final class ClinicalBloodKnowledge {
     public static void examined(ServerPlayer player, ItemStack vial) {
         if (!eligible(player) || !sample(vial) || !BloodSampleData.identified(vial)) return;
         var progress = HemoCapabilityAccess.clinicalBlood(player);
-        if (!progress.recordExamination(BloodSampleData.sourceId(vial).toString())) return;
+        String source = BloodSampleData.sourceId(vial).toString();
+        boolean newIndividual = progress.recordIndividual(source, BloodSampleData.donor(vial));
+        // The individual that completes a kind's study is the studied first.
+        if (newIndividual && progress.studied(source))
+            HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_STUDIED);
+        if (!progress.recordExamination(source)) {
+            if (newIndividual) sync(player);
+            return;
+        }
         unlockEntry(player, "microscopy");
         HarbingerAdvancementGranter.grantIfNotDone(player, Hemomancy.rloc("hemomancy/clinical_examined"));
         if (progress.sourceCount() >= 3) {

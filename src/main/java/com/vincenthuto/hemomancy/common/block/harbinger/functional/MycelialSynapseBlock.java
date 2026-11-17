@@ -51,7 +51,8 @@ import java.util.UUID;
  * A Mycelial Synapse: a Blood Structure that adds a lobe to its raiser's heart-node envelope, the way a Hematic Stake
  * extends a Founding Fane. Raised from a hematic iron block with a Sporite Crystal on any face, it grows toward where
  * the crystal stood. It has one owner and no members. A synapse whose record is gone (its node broken or replanted)
- * withers in place: it adds nothing and drops its inputs when broken, but it never removes itself.
+ * withers in place: it adds nothing and drops its inputs when broken, but it never removes itself. Removing a synapse
+ * withers every synapse of the owner's it leaves cut off from the heart (DS-2).
  */
 public class MycelialSynapseBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = DirectionalBlock.FACING;
@@ -155,9 +156,21 @@ public class MycelialSynapseBlock extends Block implements EntityBlock {
 	@Override
 	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
 		if (!state.is(newState.getBlock()) && !state.getValue(WITHERED) && level instanceof ServerLevel server
-				&& level.getBlockEntity(pos) instanceof MycelialSynapseBlockEntity synapse && synapse.owner() != null
-				&& HeartNodeSavedData.get(server).removeSynapse(synapse.owner(), pos)) {
-			HeartNodeEnvelopeSync.syncAround(server, pos);
+				&& level.getBlockEntity(pos) instanceof MycelialSynapseBlockEntity synapse && synapse.owner() != null) {
+			HeartNodeSavedData data = HeartNodeSavedData.get(server);
+			HeartNodeEntry before = data.entry(synapse.owner());
+			if (before != null && data.removeSynapse(synapse.owner(), pos)) {
+				HeartNodeEntry after = data.entry(synapse.owner());
+				List<BlockPos> pruned = before.synapses().stream()
+						.filter(other -> !other.equals(pos) && (after == null || !after.synapses().contains(other))).toList();
+				witherAll(server, pruned);
+				HeartNodeEnvelopeSync.syncAround(server, pos);
+				ServerPlayer owner = server.getServer().getPlayerList().getPlayer(synapse.owner());
+				if (!pruned.isEmpty() && owner != null) {
+					owner.displayClientMessage(Component.translatable("block.hemomancy.mycelial_synapse.pruned", pruned.size())
+							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+				}
+			}
 		}
 		super.onRemove(state, level, pos, newState, movedByPiston);
 	}

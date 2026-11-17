@@ -39,6 +39,24 @@ class VicarCovenantGuidanceTest {
                 guidance(base, 6, true, true, true, true, true));
     }
 
+    /** PT-69: at the sixth Degree the Throne step follows the line and its Fane, since a Throne binds only there. */
+    @Test
+    void degreeSixThroneStepFollowsTheLineAndItsFane() {
+        DialogueTree base = HarbingerVicarDialogueTrees.forDegree(6, 42, false);
+        assertEquals(List.of("hemomancy.vicar.covenant.found_bloodline"), sixth(base,
+                new CovenantProgress(false, true, true, false, true, false, false)));
+        assertEquals(List.of("hemomancy.vicar.covenant.found_fane"), sixth(base,
+                new CovenantProgress(true, true, true, false, true, true, false)));
+        assertEquals(List.of("hemomancy.vicar.covenant.line_has_no_fane"), sixth(base,
+                new CovenantProgress(true, true, true, false, true, false, false)));
+        assertEquals(List.of("hemomancy.vicar.covenant.bind_throne"), sixth(base,
+                new CovenantProgress(true, true, true, false, true, false, true)));
+    }
+
+    private static List<String> sixth(DialogueTree base, CovenantProgress covenant) {
+        return HarbingerVicarDialogueTrees.withCovenantGuidance(base, 6, covenant).getNode("degree_hint").lines();
+    }
+
     @Test
     void otherDegreesKeepTheirExistingDialogue() {
         DialogueTree base = HarbingerVicarDialogueTrees.forDegree(4, 42, false);

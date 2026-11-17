@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -27,7 +28,8 @@ import java.util.List;
  *
  * <p>Each enemy within six blocks takes a quarter of its <em>current</em> health as freeze damage, scaled by
  * Crimson Mastery, so healthy targets suffer more and near-dead targets are largely spared. Bosses (the shared
- * {@link ManipulationReactiveEvents#isBoss} predicate) are capped at twelve. Confirmed hits build Rime for
+ * {@link HemoEntityPredicates#isBoss} predicate) are capped at twelve, and any other body over 100 max health at
+ * twenty. Confirmed hits build Rime for
  * 4 seconds. With no enemy in reach the cast is refused before payment.
  *
  * <p>This rewards opening engagements — use it at the start of a fight when
@@ -40,12 +42,21 @@ public class OsseousBloomManip extends BloodManipulation {
 	private static final float HP_FRACTION = 0.25f;
 	private static final int RIME_DURATION = 80;  // 4 seconds
 	/** Shared boss cap: a full-health boss would otherwise lose a quarter of its life per bloom. */
-	private static final float BOSS_DAMAGE_CAP = 12.0F;
+	public static final float BOSS_DAMAGE_CAP = 12.0F;
+	/** Any other body over {@link #LARGE_BODY_MAX_HEALTH} max health takes at most this much a bloom (CB-8). */
+	public static final float LARGE_BODY_DAMAGE_CAP = 20.0F;
+	public static final float LARGE_BODY_MAX_HEALTH = 100.0F;
 
 	public OsseousBloomManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
+	}
+
+	/** The most one bloom deals to {@code target}; no cap for an ordinary body. */
+	public static float damageCap(LivingEntity target) {
+		if (HemoEntityPredicates.isBoss(target)) return BOSS_DAMAGE_CAP;
+		return target.getMaxHealth() > LARGE_BODY_MAX_HEALTH ? LARGE_BODY_DAMAGE_CAP : Float.MAX_VALUE;
 	}
 
 	private static List<LivingEntity> targets(Player player, Level world) {
@@ -76,7 +87,7 @@ public class OsseousBloomManip extends BloodManipulation {
 
 		for (LivingEntity target : targets) {
 			float damage = target.getHealth() * HP_FRACTION * masteryMult;
-			if (ManipulationReactiveEvents.isBoss(target)) damage = Math.min(BOSS_DAMAGE_CAP, damage);
+			damage = Math.min(damageCap(target), damage);
 			com.vincenthuto.hemomancy.common.damage.SchoolDamage.hurt(target, world.damageSources().freeze(), damage, RIME_DURATION, 1);
 		}
         for (LivingEntity target : targets) ManipulationVisuals.attached(target, ManipulationVisuals.Form.BONE, target.getBbWidth()*.7, 32, 1);

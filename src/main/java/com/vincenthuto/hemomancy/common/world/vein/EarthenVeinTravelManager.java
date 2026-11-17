@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -19,6 +20,7 @@ import com.vincenthuto.hemomancy.common.network.vein.OpenEarthenVeinDisplayPacke
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.common.util.HemoText;
+import com.vincenthuto.hemomancy.common.world.ground.GroundNetwork;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -53,7 +55,7 @@ import java.util.UUID;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class EarthenVeinTravelManager {
-	private static final BloodAccounting.Source VEIN_FEED = BloodAccounting.Source.of("earthen_vein_travel", Category.WORLD, true, false);
+	private static final BloodAccounting.Source VEIN_FEED = BloodAccounting.Source.of("earthen_vein_travel", Category.WORLD, false);
 	private static final ParticleColor HUNGRY_VOID = new ParticleColor(7, 0, 5);
 	private static final ParticleColor SATED_BLOOD = new ParticleColor(224, 4, 20);
 	private static final Map<UUID, EarthenVeinTravelSession> BY_PLAYER = new HashMap<>();
@@ -87,7 +89,7 @@ public final class EarthenVeinTravelManager {
 			return false;
 		}
 
-		List<EarthenVeinDestination> destinations = destinations(known, source, sourceLevel.dimension().location(), sourcePos);
+		List<EarthenVeinDestination> destinations = destinations(known, source, sourceLevel, sourcePos);
 		if (destinations.isEmpty()) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.earthen_vein_travel_manager.no_other_claimed_veins_answer_this").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
@@ -121,21 +123,25 @@ public final class EarthenVeinTravelManager {
 			if (!known.getVeinList().contains(claimed)
 					&& player.level().getBlockEntity(session.sourcePos()) instanceof EarthenVeinBlockEntity source) {
 				List<EarthenVeinDestination> remaining = destinations(known, source,
-						session.sourceDimension(), session.sourcePos());
+						player.serverLevel(), session.sourcePos());
 				PacketHandler.sendToPlayer(player, new OpenEarthenVeinDisplayPacket(session.nonce(),
 						session.sourceDimension(), session.sourcePos(), remaining));
 				if (remaining.isEmpty()) cancel(player.getUUID(), player.server, true);
 			}
 			return;
 		}
+		boolean carried = carried(player.serverLevel(), session.sourcePos(), session.temporarySource(),
+				destination.dimension(), destination.position());
 		int cost = EarthenVeinTravelRules.cost(session.sourcePos(), session.sourceDimension(),
-				destination.position(), destination.dimension());
+				destination.position(), destination.dimension(), carried);
 		destination = new EarthenVeinDestination(destination.id(), destination.name(), destination.dimension(),
 				destination.position(), cost);
 		if (!session.select(player.getUUID(), destination, player.level().getGameTime())) return;
 		keepTemporaryAlive(player, session, player.level().getGameTime());
 		sync(player, session.sourceDimension(), session.sourcePos(), EarthenVeinTravelPhase.FEEDING, 0.0F);
-		player.displayClientMessage(HemoText.translatable("message.hemomancy.earthen_vein_travel_manager.project_blood_into_the_opening_0",
+		player.displayClientMessage(HemoText.translatable(carried
+				? "message.hemomancy.earthen_vein_travel_manager.carried_by_the_living_vein"
+				: "message.hemomancy.earthen_vein_travel_manager.project_blood_into_the_opening_0",
 				cost).withStyle(ChatFormatting.DARK_RED), true);
 	}
 
@@ -160,6 +166,12 @@ public final class EarthenVeinTravelManager {
 					: Component.translatable("message.hemomancy.earthen_vein_travel_manager.fed_progress",
 							Math.round(session.fedBlood()), required);
 			player.displayClientMessage(text.copy().withStyle(ChatFormatting.DARK_RED), true);
+		}
+		// Sated for a crossing a living vein carries: the carried-crossing first, once the charge is paid in full.
+		EarthenVeinDestination destination = session.destination();
+		if (session.phase() == EarthenVeinTravelPhase.READY && destination != null && carried(level, session.sourcePos(),
+				session.temporarySource(), destination.dimension(), destination.position())) {
+			HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_CARRIED_CROSSING);
 		}
 		return accepted;
 	}
@@ -335,16 +347,35 @@ public final class EarthenVeinTravelManager {
 	}
 
 	private static List<EarthenVeinDestination> destinations(IKnownManipulations known, EarthenVeinBlockEntity source,
-			ResourceLocation sourceDimension, BlockPos sourcePos) {
+			ServerLevel sourceLevel, BlockPos sourcePos) {
+		ResourceLocation sourceDimension = sourceLevel.dimension().location();
 		List<EarthenVeinDestination> result = new ArrayList<>();
 		for (VeinLocation vein : known.getVeinList()) {
 			if ((!source.isTemporary() && vein.getUUID().equals(source.getLoc().getUUID()))
 					|| vein.getDimension().equals(sourceDimension) && vein.getPosition().equals(sourcePos)) continue;
-			int cost = EarthenVeinTravelRules.cost(sourcePos, sourceDimension, vein.getPosition(), vein.getDimension());
+			int cost = costFor(sourceLevel, sourcePos, source.isTemporary(), vein.getDimension(), vein.getPosition());
 			result.add(new EarthenVeinDestination(vein.getUUID(), vein.getName(), vein.getDimension(),
 					vein.getPosition(), cost));
 		}
 		return List.copyOf(result);
+	}
+
+	/**
+	 * What a crossing from {@code sourcePos} to a claimed vein costs, the same for the display and the charge: carried by
+	 * a living vein that joins the two (core-loop round two P8), or by distance. A temporary Speculum origin touches no
+	 * vein and is never carried.
+	 */
+	private static int costFor(ServerLevel sourceLevel, BlockPos sourcePos, boolean temporarySource, ResourceLocation destinationDimension,
+			BlockPos destination) {
+		return EarthenVeinTravelRules.cost(sourcePos, sourceLevel.dimension().location(), destination, destinationDimension,
+				carried(sourceLevel, sourcePos, temporarySource, destinationDimension, destination));
+	}
+
+	/** Whether a living vein joins the opening at {@code sourcePos} to a claimed vein in the same level. */
+	private static boolean carried(ServerLevel sourceLevel, BlockPos sourcePos, boolean temporarySource, ResourceLocation destinationDimension,
+			BlockPos destination) {
+		return !temporarySource && sourceLevel.dimension().location().equals(destinationDimension)
+				&& GroundNetwork.livingRunJoins(sourceLevel, sourcePos, destination);
 	}
 
 	@Nullable

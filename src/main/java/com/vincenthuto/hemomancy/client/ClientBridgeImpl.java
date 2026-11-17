@@ -60,6 +60,26 @@ public final class ClientBridgeImpl implements ClientBridge {
 	}
 
 	@Override
+	public boolean isStrandOut(Player player) {
+		return com.vincenthuto.hemomancy.client.data.StrandClientState.has(player);
+	}
+
+	@Override
+	public java.util.OptionalDouble onlookerReach(Player player, com.vincenthuto.hemomancy.common.manipulation.verb.Verb verb) {
+		return com.vincenthuto.hemomancy.client.data.OnlookerVerbState.reach(player, verb);
+	}
+
+	@Override
+	public Optional<String> onlookerSelection(Player player) {
+		return com.vincenthuto.hemomancy.client.data.OnlookerVerbState.selection(player);
+	}
+
+	@Override
+	public Optional<com.vincenthuto.hemomancy.common.manipulation.verb.Verb> onlookerVerb(Player player) {
+		return com.vincenthuto.hemomancy.client.data.OnlookerVerbState.verb(player);
+	}
+
+	@Override
 	public boolean isCrossingLidlessDoor(Player player) {
 		return com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.isCrossing(player);
 	}

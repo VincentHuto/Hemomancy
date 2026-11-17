@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.succession;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -153,6 +154,7 @@ public final class SuccessionRites {
         c.putInt("Ticks", elapsed + 1); rite.tick();
         if (elapsed + 1 < DURATION) return true;
         if (!resolve(level, caster, rite)) fail(caster, "interrupted");
+        else LiberKnowledgeHelper.unlockForRite(caster, rite.getRecipeId().getPath());
         return false;
     }
     private static boolean structurallyValid(ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe, CompoundTag c) {

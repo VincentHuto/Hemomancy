@@ -124,9 +124,12 @@ public final class CastingAnimationManager {
         }
         var manipulation=ManipulationInit.getByName(packet.manipulation());
         if(manipulation==null || !canPresent(player,manipulation)) { finish(player,packet,CastPhase.CANCEL); return; }
-        if(manipulation.getType()==EnumManipulationType.CHARGED) {
+        // A working Sculpting holds its cue whatever the manipulation's cast type: it is a channel, not a charge.
+        boolean sculpting=com.vincenthuto.hemomancy.common.manipulation.verb.SculptingSessions.isActive(player.getUUID());
+        if(manipulation.getType()==EnumManipulationType.CHARGED && !sculpting) {
             if(now-packet.updated()>12)finish(player,packet,CastPhase.CANCEL);
-        } else if(!ManipulationChannelManager.isChanneling(player.getUUID())) finish(player,packet,CastPhase.CANCEL);
+        } else if(!ManipulationChannelManager.isChanneling(player.getUUID()) && !sculpting)
+            finish(player,packet,CastPhase.CANCEL);
         else if(now-packet.updated()>=20)publish(player,packet.at(CastPhase.HOLD,packet.started(),now,0));
     }
     @SubscribeEvent public static void tracking(PlayerEvent.StartTracking event) {

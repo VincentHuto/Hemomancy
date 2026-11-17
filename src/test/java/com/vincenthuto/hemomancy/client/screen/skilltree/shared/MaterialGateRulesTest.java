@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.support.EnglishText;
 
 public final class MaterialGateRulesTest {
 	private MaterialGateRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertVisibility("always-visible entries are unlocked",
 				MaterialGate.always().visibilityFor(MaterialAtlasPath.HARBINGER, 0, 0.0F, 0.0F),
 				MaterialVisibility.UNLOCKED);

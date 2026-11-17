@@ -47,7 +47,9 @@ public class SkillPointInit {
 			skill_bloodhound_sense, skill_reflexive_coagulation, skill_dormant_symbiote,
 			skill_symbiotic_metabolism, skill_nerves_of_steel, skill_iron_handed,
 			skill_bright_eyed, skill_light_footed, skill_high_strung, skill_sanguine_spinning,
-			skill_quick_caster;
+			skill_quick_caster,
+			skill_long_strand, skill_taut_line, skill_free_hand, skill_whipcrack, skill_deep_brand,
+			skill_second_strand;
 
 	public static void init() {
 		initBaseBranch();

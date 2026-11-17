@@ -5,9 +5,11 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureFeed;
 import com.vincenthuto.hemomancy.common.recipe.BloodInfusionRecipe;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -18,13 +20,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 
 public final class BloodInfusionManager {
-	private static final BloodAccounting.Source INFUSION = BloodAccounting.Source.of("blood_infusion", Category.RITE, false, false);
+	private static final BloodAccounting.Source INFUSION = BloodAccounting.Source.of("blood_infusion", Category.RITE, false);
 	private static final double SYNC_RANGE = 64.0D;
 	private static final int COMPLETION_VISIBLE_TICKS = BloodInfusionRules.COLLAPSE_TICKS + 22;
 	private static final Map<TargetKey, Progress> ACTIVE = new HashMap<>();
@@ -57,6 +58,12 @@ public final class BloodInfusionManager {
 			progress = null;
 		}
 		if (progress == null) {
+			// The collapse lifts the block, so a player who may not break it never starts the infusion.
+			if (!ManipulationCombatHelper.mayAlter(player, pos) || !PlayerBlockEdits.mayBreak(player, pos)) {
+				player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+						"message.hemomancy.player_block_edits.refused").withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
+				return true;
+			}
 			progress = new Progress(holder.id(), hit);
 			ACTIVE.put(key, progress);
 		}
@@ -77,7 +84,7 @@ public final class BloodInfusionManager {
 
 		if (BloodStructureFeedRules.isComplete(progress.bloodFed, recipe.bloodCost())) {
 			ACTIVE.remove(key);
-			PENDING.put(key, new Pending(recipe, BloodInfusionRules.COLLAPSE_TICKS, player.getUUID()));
+			PENDING.put(key, new Pending(recipe, BloodInfusionRules.COLLAPSE_TICKS, player));
 			sync(level, pos, progress.origin, 1.0F, false, COMPLETION_VISIBLE_TICKS);
 		}
 		return true;
@@ -102,7 +109,7 @@ public final class BloodInfusionManager {
 			if (!entry.getKey().dimension.equals(level.dimension()) || --entry.getValue().remainingTicks > 0) {
 				continue;
 			}
-			complete(level, entry.getKey().pos, entry.getValue().recipe, entry.getValue().playerId);
+			complete(level, entry.getKey().pos, entry.getValue());
 			pending.remove();
 		}
 	}
@@ -116,24 +123,27 @@ public final class BloodInfusionManager {
 		boolean hasBlockEntity = level.getBlockEntity(pos) != null;
 		return level.getRecipeManager().getAllRecipesFor(RecipeInit.blood_infusion_type.get()).stream()
 				.sorted(Comparator.comparing(holder -> holder.id().toString()))
+				// A recipe that names a Sculpting is that Sculpting's alone; plain infusion never runs it.
+				.filter(holder -> holder.value().sculpting().isEmpty())
 				.filter(holder -> holder.value().matches(level.getBlockState(pos), hasBlockEntity))
 				.findFirst().orElse(null);
 	}
 
-	private static void complete(ServerLevel level, BlockPos pos, BloodInfusionRecipe recipe, UUID playerId) {
+	private static void complete(ServerLevel level, BlockPos pos, Pending pending) {
+		BloodInfusionRecipe recipe = pending.recipe;
 		boolean matches = level.getBlockState(pos).is(recipe.input());
-		if (!BloodInfusionRules.canComplete(matches, level.getBlockEntity(pos) != null)) {
+		ServerPlayer player = pending.editor(level);
+		// The infuser lifts the block; one who has left, or may no longer break it, leaves it standing.
+		if (!BloodInfusionRules.canComplete(matches, level.getBlockEntity(pos) != null) || player == null
+				|| PlayerBlockEdits.lift(player, pos) == null) {
 			sync(level, pos, pos.getCenter(), 0.0F, true, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
 			return;
 		}
-		level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 		level.playSound(null, pos, SoundEvents.ENDERMAN_SCREAM, SoundSource.BLOCKS, 0.7F, 1.25F);
 		level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D,
 				pos.getZ() + 0.5D, recipe.resultStack()));
 		if (recipe.resultStack().is(com.vincenthuto.hemomancy.common.init.BlockInit.venous_stone.get().asItem())) {
-			ServerPlayer player = level.getServer().getPlayerList().getPlayer(playerId);
-			if (player != null)
-				com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordVenousStone(player);
+			com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordVenousStone(player);
 		}
 	}
 
@@ -162,12 +172,21 @@ public final class BloodInfusionManager {
 	private static final class Pending {
 		private final BloodInfusionRecipe recipe;
 		private final UUID playerId;
+		private final ServerPlayer infuser;
 		private int remainingTicks;
 
-		private Pending(BloodInfusionRecipe recipe, int remainingTicks, UUID playerId) {
+		private Pending(BloodInfusionRecipe recipe, int remainingTicks, ServerPlayer infuser) {
 			this.recipe = recipe;
 			this.remainingTicks = remainingTicks;
-			this.playerId = playerId;
+			this.playerId = infuser.getUUID();
+			this.infuser = infuser;
+		}
+
+		/** The infuser as the server knows them now (after a respawn, the new body), or null once they have left. */
+		private ServerPlayer editor(ServerLevel level) {
+			ServerPlayer online = level.getServer().getPlayerList().getPlayer(playerId);
+			if (online != null) return online;
+			return infuser.isRemoved() ? null : infuser;
 		}
 	}
 }

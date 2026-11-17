@@ -13,7 +13,14 @@ import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusAcrobatEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperEncounterPuppetEvents;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusFireEaterEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonFactory;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.ThreadRipperManip;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.Villager;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -226,6 +233,10 @@ public final class CircusRingmasterGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer player = connectedPlayer(helper, "circus-pact-order", origin);
 		CircusPlayerProgress.addAcclimation(player, 500);
+		// ARRANGE: the D-30 pact gate (Degree 4 and one school report) is met; pactGateNamesWhatIsMissing covers it.
+		com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(player)
+				.putBoolean("quest.empty_ring", true);
 		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
 		helper.assertTrue(carousel != null && ringmaster != null, "Circus fixtures must create");
@@ -243,6 +254,81 @@ public final class CircusRingmasterGameTests {
 				"Completing the attention act must unlock the warned route choice");
 
 		player.discard();
+		carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
+		carousel.discard();
+		ringmaster.discard();
+		CircusPavilionSavedData.get(helper.getLevel()).removeSite(helper.getLevel(), origin);
+		helper.succeed();
+	}
+
+	/**
+	 * D-30, D-31, NQ-15-6 B: the pact needs Degree 4 and any one school report, checked again at the finale; the Unstained
+	 * may take Liberation only, on The Missing Understudy report with no Degree.
+	 */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void pactGateNamesWhatIsMissing(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
+		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
+		helper.assertTrue(carousel != null && ringmaster != null, "Circus fixtures must create");
+		carousel.setPos(origin.getCenter());
+		ringmaster.setPos(origin.getCenter().add(0.0D, 3.0D, 2.0D));
+		helper.getLevel().addFreshEntity(carousel);
+		helper.getLevel().addFreshEntity(ringmaster);
+		var degree = (java.util.function.BiConsumer<ServerPlayer, Integer>) (p, d) ->
+				com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(d);
+		var school = (java.util.function.Function<ServerPlayer, CompoundTag>)
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress::state;
+
+		ServerPlayer harbinger = connectedPlayer(helper, "circus-pact-gate", origin);
+		CircusPlayerProgress.addAcclimation(harbinger, 500);
+		CircusPlayerProgress.completeChallenge(harbinger, 0, 0);
+		degree.accept(harbinger, 3);
+		school.apply(harbinger).putBoolean("quest.wrong_audience", true);
+		helper.assertTrue(CircusRingmasterEntity.pactGate(harbinger, CircusRouteRules.Route.SUCCESSION)
+				== CircusRouteRules.PactGate.NEEDS_DEGREE, "a Degree 3 visitor with a report is refused for the Degree");
+		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_ACCEPT);
+		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_REJECT);
+		helper.assertTrue(CircusPlayerProgress.route(harbinger) == CircusRouteRules.Route.NEUTRAL,
+				"a forged pact below Degree 4 must not choose a route");
+		degree.accept(harbinger, 4);
+		school.apply(harbinger).remove("quest.wrong_audience");
+		helper.assertTrue(CircusRingmasterEntity.pactGate(harbinger, CircusRouteRules.Route.LIBERATION)
+				== CircusRouteRules.PactGate.NEEDS_REPORT, "a Degree 4 visitor with no report is refused for the report");
+		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_REJECT);
+		helper.assertTrue(CircusPlayerProgress.route(harbinger) == CircusRouteRules.Route.NEUTRAL,
+				"a forged pact with no school report must not choose a route");
+		school.apply(harbinger).putBoolean("quest.wrong_audience", true);
+		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_REJECT);
+		helper.assertTrue(CircusPlayerProgress.route(harbinger) == CircusRouteRules.Route.LIBERATION,
+				"Degree 4 and any one report open the pact");
+		school.apply(harbinger).remove("quest.wrong_audience");
+		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_FINALE);
+		helper.assertTrue(CircusPavilionSavedData.get(helper.getLevel()).site(helper.getLevel(), origin).activeOwner() == null,
+				"the finale rechecks the gate and refuses a visitor who no longer meets it");
+
+		ServerPlayer unstained = connectedPlayer(helper, "circus-pact-cleansed", origin);
+		CircusPlayerProgress.addAcclimation(unstained, 500);
+		CircusPlayerProgress.completeChallenge(unstained, 0, 0);
+		com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getUnstainedProgress(unstained).setBaselineRestored(true);
+		degree.accept(unstained, 0);
+		school.apply(unstained).putBoolean("quest.empty_ring", true);
+		ringmaster.handleChoice(unstained, CircusRingmasterEntity.EVENT_REJECT);
+		helper.assertTrue(CircusPlayerProgress.route(unstained) == CircusRouteRules.Route.NEUTRAL,
+				"an Unstained Liberator needs The Missing Understudy, not any report");
+		school.apply(unstained).putBoolean("quest.missing_understudy", true);
+		ringmaster.handleChoice(unstained, CircusRingmasterEntity.EVENT_ACCEPT);
+		helper.assertTrue(CircusPlayerProgress.route(unstained) == CircusRouteRules.Route.NEUTRAL,
+				"the Unstained may never take Succession");
+		ringmaster.handleChoice(unstained, CircusRingmasterEntity.EVENT_REJECT);
+		helper.assertTrue(CircusPlayerProgress.route(unstained) == CircusRouteRules.Route.LIBERATION,
+				"an Unstained Liberator at Degree 0 with The Missing Understudy may take Liberation");
+		ringmaster.handleChoice(unstained, CircusRingmasterEntity.EVENT_REPAIR);
+		helper.assertTrue(CircusPlayerProgress.route(unstained) == CircusRouteRules.Route.LIBERATION,
+				"an Unstained Liberator cannot repair the route into Succession");
+
+		harbinger.discard();
+		unstained.discard();
 		carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
 		carousel.discard();
 		ringmaster.discard();
@@ -354,6 +440,118 @@ public final class CircusRingmasterGameTests {
 		carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
 		carousel.discard();
 		data.removeSite(helper.getLevel(), origin);
+		helper.succeed();
+	}
+
+	/** D-34: in DESCENT a puppet's blow counts as its owner's; a stranger's blow, or their puppet's, does not. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void ownersPuppetHitCountsInDescent(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		ServerPlayer owner = connectedPlayer(helper, "circus-puppet-owner", origin.offset(2, 0, 0));
+		ServerPlayer stranger = connectedPlayer(helper, "circus-puppet-stranger", origin.offset(-2, 0, 0));
+		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
+		helper.assertTrue(ringmaster != null, "Ringmaster fixture must create");
+		ringmaster.setPos(origin.getCenter());
+		CompoundTag saved = new CompoundTag();
+		ringmaster.addAdditionalSaveData(saved);
+		saved.putLong("CircusOrigin", origin.asLong());
+		ringmaster.readAdditionalSaveData(saved);
+		helper.getLevel().addFreshEntity(ringmaster);
+		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
+		data.begin(helper.getLevel(), origin, owner.getUUID(), CircusRouteRules.Route.LIBERATION);
+		data.setPhase(helper.getLevel(), origin, CircusPavilionStateRules.Phase.DESCENT);
+		var definition = PuppeteerSummonDefinitions.byName(PuppeteerSummonDefinitions.GOREBOUND_HULK).orElseThrow();
+		var puppet = PuppeteerSummonFactory.create(definition, helper.getLevel(), owner, UUID.randomUUID(), 0).orElseThrow();
+		var strangers = PuppeteerSummonFactory.create(definition, helper.getLevel(), stranger, UUID.randomUUID(), 0).orElseThrow();
+		puppet.setPos(origin.offset(1, 0, 0).getCenter());
+		strangers.setPos(origin.offset(-1, 0, 0).getCenter());
+		helper.getLevel().addFreshEntity(puppet);
+		helper.getLevel().addFreshEntity(strangers);
+
+		float health = ringmaster.getHealth();
+		helper.assertTrue(!ringmaster.hurt(ringmaster.damageSources().playerAttack(stranger), 2.0F)
+				&& !ringmaster.hurt(ringmaster.damageSources().mobAttack(strangers), 2.0F)
+				&& ringmaster.getHealth() == health, "A stranger, or a stranger's puppet, must not wound him in DESCENT");
+		helper.assertTrue(ringmaster.hurt(ringmaster.damageSources().mobAttack(puppet), 2.0F)
+				&& ringmaster.getHealth() < health, "The owner's puppet must wound him in DESCENT");
+
+		puppet.discard();
+		strangers.discard();
+		ringmaster.discard();
+		owner.discard();
+		stranger.discard();
+		data.removeSite(helper.getLevel(), origin);
+		helper.succeed();
+	}
+
+	/** D-34: in a finale the Fire Breather's cone burns its owner's body and spares a bystander beside it. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void finaleConeSparesABystander(GameTestHelper helper) throws ReflectiveOperationException {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		ServerPlayer owner = connectedPlayer(helper, "circus-cone-owner", origin.offset(-3, 0, 0));
+		var definition = PuppeteerSummonDefinitions.byName(PuppeteerSummonDefinitions.GOREBOUND_HULK).orElseThrow();
+		var body = PuppeteerSummonFactory.create(definition, helper.getLevel(), owner, UUID.randomUUID(), 0).orElseThrow();
+		Villager bystander = EntityType.VILLAGER.create(helper.getLevel());
+		CircusFireEaterEntity breather = EntityInit.circus_fire_eater.get().create(helper.getLevel());
+		helper.assertTrue(bystander != null && breather != null, "Cone fixtures must create");
+		body.setNoAi(true);
+		body.setPos(origin.getX() + 3.5D, origin.getY(), origin.getZ() + 0.5D);
+		bystander.setNoAi(true);
+		bystander.setPos(origin.getX() + 3.5D, origin.getY(), origin.getZ() + 1.5D);
+		breather.setNoAi(true);
+		breather.setPos(origin.getX() + 0.5D, origin.getY(), origin.getZ() + 0.5D);
+		helper.getLevel().addFreshEntity(body);
+		helper.getLevel().addFreshEntity(bystander);
+		helper.getLevel().addFreshEntity(breather);
+		breather.beginFinale(owner, false);
+		var tickDefense = CircusFireEaterEntity.class.getDeclaredMethod("tickDefense", LivingEntity.class);
+		var strikeDefense = CircusFireEaterEntity.class.getDeclaredMethod("strikeDefense", LivingEntity.class);
+		tickDefense.setAccessible(true);
+		strikeDefense.setAccessible(true);
+		tickDefense.invoke(breather, body);
+		float bodyHealth = body.getHealth();
+		strikeDefense.invoke(breather, body);
+
+		helper.assertTrue(body.getHealth() < bodyHealth, "The cone must still burn the body its finale's owner holds");
+		helper.assertTrue(bystander.getHealth() == bystander.getMaxHealth() && !bystander.isOnFire(),
+				"The cone must spare a bystander during the finale");
+		breather.discard();
+		bystander.discard();
+		body.discard();
+		owner.discard();
+		helper.succeed();
+	}
+
+	/** D-36: a vacant site survives a save and reload, and the Waybill reads it as done. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void vacantSiteSurvivesSavedDataRoundTrip(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		CircusPavilionSavedData data = new CircusPavilionSavedData();
+		data.site(helper.getLevel(), origin);
+		helper.assertTrue(!data.isCompletedNear(helper.getLevel(), origin), "A fresh site must read as unfinished");
+		data.setVacant(helper.getLevel(), origin, true);
+		helper.assertTrue(data.isCompletedNear(helper.getLevel(), origin), "A vacant site must read as done for the Waybill");
+		CircusPavilionSavedData restored = CircusPavilionSavedData.load(
+				data.save(new CompoundTag(), helper.getLevel().registryAccess()), helper.getLevel().registryAccess());
+		helper.assertTrue(restored.site(helper.getLevel(), origin).vacant()
+				&& restored.site(helper.getLevel(), origin).outcome() == CircusPavilionStateRules.Outcome.NEUTRAL
+				&& restored.isCompletedNear(helper.getLevel(), origin), "Vacancy must survive a save and reload");
+		helper.succeed();
+	}
+
+	/** D-35: Thread Ripper treats Vesper's encounter bodies as protected; an unmarked body is not. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void threadRipperSparesVespersBodies(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		ServerPlayer caster = connectedPlayer(helper, "circus-ripper", origin);
+		Zombie vesperBody = EntityType.ZOMBIE.create(helper.getLevel());
+		Zombie plain = EntityType.ZOMBIE.create(helper.getLevel());
+		helper.assertTrue(vesperBody != null && plain != null, "Body fixtures must create");
+		vesperBody.getPersistentData().putBoolean(VesperEncounterPuppetEvents.PUPPET_KEY, true);
+		helper.assertTrue(VesperEncounterPuppetEvents.isEncounterPuppet(vesperBody)
+				&& ThreadRipperManip.protectedBody(caster, vesperBody), "Vesper's body must be protected from Thread Ripper");
+		helper.assertTrue(!ThreadRipperManip.protectedBody(caster, plain), "An unmarked body must not be protected");
+		caster.discard();
 		helper.succeed();
 	}
 

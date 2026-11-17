@@ -10,6 +10,9 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogu
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFungalProjection;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.world.HeartNodeEntry;
+import com.vincenthuto.hemomancy.common.world.HeartNodeSavedData;
+import com.vincenthuto.hemomancy.common.world.PriorRespawn;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -25,9 +28,12 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.portal.DimensionTransition;
+
+import javax.annotation.Nullable;
 
 public final class FungalGardenTravelHelper {
-	private static final BloodAccounting.Source TRAVEL = BloodAccounting.Source.of("fungal_gardens_travel", Category.WORLD, false, false);
+	private static final BloodAccounting.Source TRAVEL = BloodAccounting.Source.of("fungal_gardens_travel", Category.WORLD, false);
 	public static final double TRAVEL_BLOOD_COST = 500.0;
 	public static final int MIN_DEGREE = 7;
 	private static final int GROUND_CEILING_Y = 160;
@@ -72,7 +78,10 @@ public final class FungalGardenTravelHelper {
 		return handleTravelUse(player, cooldownItem, false);
 	}
 
-	/** {@code bySpine}: the Fungal Spine makes one crossing in, the first; after it the Spine only brings its holder home. */
+	/**
+	 * The Spine or a Podium ({@code bySpine} false) makes one crossing in, the first; after it either only brings its
+	 * user home from the Gardens.
+	 */
 	public static InteractionResult handleTravelUse(ServerPlayer player, Item cooldownItem, boolean bySpine) {
 		boolean inFungalGardens = player.level().dimension().equals(FUNGAL_GARDENS);
 
@@ -84,14 +93,7 @@ public final class FungalGardenTravelHelper {
 				player.displayClientMessage(Component.translatable("message.hemomancy.fungal_garden_travel_helper.you_have_no_hands_here_the").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;
 			}
-			if (!player.getPersistentData().contains(RETURN_X)) {
-				player.displayClientMessage(
-						Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_spine_twitches_but_finds_no").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						true);
-				return InteractionResult.SUCCESS;
-			}
-
-			performReturnTravel(player);
+			returnHome(player);
 		} else {
 			if (isRevelationChoicePending(player)) {
 				PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.coreWitnessDialogue()));
@@ -111,12 +113,15 @@ public final class FungalGardenTravelHelper {
 			}
 
 			FungalProjectionRules.TravelKind travel = FungalProjectionRules.travelKind(
-					degreeState.hasWitnessedFungalRevelation(), degree, degreeState.hasFungalSpineGranted(),
-					degreeState.getArchonPath(), bySpine);
+					degreeState.hasWitnessedFungalRevelation(), degree, degreeState.hasFungalSpineGranted());
 			if (travel == FungalProjectionRules.TravelKind.DORMANT) {
-				player.displayClientMessage(Component.translatable(degreeState.getArchonPath() == EnumArchonPath.APOTHEOS
-						? "message.hemomancy.fungal_garden_travel_helper.spine_dormant_visitation"
-						: "message.hemomancy.fungal_garden_travel_helper.spine_dormant").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
+				boolean apotheos = degreeState.getArchonPath() == EnumArchonPath.APOTHEOS;
+				String dormant = bySpine
+						? apotheos ? "message.hemomancy.fungal_garden_travel_helper.spine_dormant_visitation"
+								: "message.hemomancy.fungal_garden_travel_helper.spine_dormant"
+						: apotheos ? "message.hemomancy.fungal_garden_travel_helper.podium_dormant_visitation"
+								: "message.hemomancy.fungal_garden_travel_helper.podium_dormant";
+				player.displayClientMessage(Component.translatable(dormant).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;
 			}
 			if (travel == FungalProjectionRules.TravelKind.REFUSED) {
@@ -132,11 +137,7 @@ public final class FungalGardenTravelHelper {
 			}
 
 			storeReturnPosition(player);
-			if (travel == FungalProjectionRules.TravelKind.FIRST_PROJECTION) {
-				startFirstProjection(player);
-			} else {
-				performFungalGardensTravel(player);
-			}
+			startFirstProjection(player);
 		}
 
 		player.getCooldowns().addCooldown(cooldownItem, TRAVEL_COOLDOWN);
@@ -160,6 +161,12 @@ public final class FungalGardenTravelHelper {
 
 	public static int getProjectionRemainingTicks(ServerPlayer player) {
 		return player.getPersistentData().getInt(PROJECTION_REMAINING);
+	}
+
+	/** The first projection's state as the client shows it: the time left, or none. */
+	public static void syncProjection(ServerPlayer player) {
+		PacketHandler.sendToPlayer(player, new PacketSyncFungalProjection(isProjectionActive(player),
+				isProjectionActive(player) ? getProjectionRemainingTicks(player) : 0, FungalProjectionRules.FIRST_VISIT_TICKS));
 	}
 
 	public static void startFirstProjection(ServerPlayer player) {
@@ -219,6 +226,42 @@ public final class FungalGardenTravelHelper {
 		player.displayClientMessage(
 				Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_spine_opens_like_a_wound").withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.ITALIC),
 				false);
+	}
+
+	/**
+	 * The way out of the Gardens, free as the Spine's return always was (PT-80, NQ-12-4): the stored return point; with
+	 * none (a death clears it), the respawn the player had before their heart-node, or their own respawn when it lies
+	 * outside the Gardens; where that bed or anchor is gone, or there was none, the world spawn.
+	 */
+	public static void returnHome(ServerPlayer player) {
+		if (player.getPersistentData().contains(RETURN_X)) {
+			performReturnTravel(player);
+			return;
+		}
+		player.changeDimension(homeTransition(player, homeRespawn(player)));
+		player.displayClientMessage(
+				Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_membrane_closes_behind_you_you").withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.ITALIC),
+				false);
+	}
+
+	/** Where a player with no stored return point goes home to, before the bed is checked; null for the world spawn. */
+	@Nullable
+	public static PriorRespawn homeRespawn(ServerPlayer player) {
+		ServerLevel gardens = player.server.getLevel(FUNGAL_GARDENS);
+		HeartNodeEntry node = gardens == null ? null : HeartNodeSavedData.get(gardens).entry(player.getUUID());
+		if (node != null) return node.priorRespawn();
+		PriorRespawn own = PriorRespawn.of(player);
+		return own == null || own.dimension().equals(FUNGAL_GARDENS) ? null : own;
+	}
+
+	/** Vanilla's own respawn search, run on {@code home} (beds, anchors, a forced point), with the world spawn after. */
+	public static DimensionTransition homeTransition(ServerPlayer player, @Nullable PriorRespawn home) {
+		if (home == null) return new DimensionTransition(player.server.overworld(), player, DimensionTransition.DO_NOTHING);
+		PriorRespawn current = PriorRespawn.of(player);
+		PriorRespawn.restore(player, home);
+		DimensionTransition way = player.findRespawnPositionAndUseSpawnBlock(true, DimensionTransition.DO_NOTHING);
+		PriorRespawn.restore(player, current);
+		return way;
 	}
 
 	public static void performReturnTravel(ServerPlayer player) {

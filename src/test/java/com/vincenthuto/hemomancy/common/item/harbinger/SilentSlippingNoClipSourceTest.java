@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class SilentSlippingNoClipSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -12,7 +16,8 @@ public final class SilentSlippingNoClipSourceTest {
 	private SilentSlippingNoClipSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String handler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/SilentArchonArmorAbilityHandler.java"));
 		String packetHandler = read(SOURCE_ROOT.resolve(
@@ -40,7 +45,7 @@ public final class SilentSlippingNoClipSourceTest {
 		assertContains("handler detects solid entry and exit", handler, "wasInsideSolid != insideSolid");
 		assertContains("handler sends slipping shard pulse", handler, "sendSilentSlippingShardPulse(player)");
 		assertContains("handler uses shard-only monolith visual", handler, "PacketHandler.sendMonolithShardPulse");
-		assertDoesNotContain("silent slipping no longer emits direct portal particles", handler,
+		assertNotContains("silent slipping no longer emits direct portal particles", handler,
 				"player.serverLevel().sendParticles(ParticleTypes.REVERSE_PORTAL,\n\t\t\t\tplayer.getX()");
 
 		assertContains("packet handler exposes shard-only helper", packetHandler, "sendMonolithShardPulse");
@@ -71,24 +76,5 @@ public final class SilentSlippingNoClipSourceTest {
 		assertContains("docs mention movement-collision reinforcement", docs,
 				"reinforced at the movement collision boundary");
 		assertContains("docs mention shard-only slipping pulses", docs, "small shard-only pulses");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": still contains " + forbidden);
-		}
 	}
 }

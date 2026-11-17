@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.world.HeartNodeRules;
 import com.vincenthuto.hemomancy.common.world.HeartNodeSavedData;
 import com.vincenthuto.hemomancy.common.world.HeartNodeService;
 import com.vincenthuto.hemomancy.common.world.HeartNodeSettings;
+import com.vincenthuto.hemomancy.common.world.PriorRespawn;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -96,7 +97,7 @@ public final class HeartNodeEvents {
 		long now = level.getGameTime();
 		if (level.getBlockEntity(pos) instanceof HeartNodeBlockEntity node) node.plant(player.getUUID(), now);
 		// The old node withers; its synapse records go with its entry, and the synapse blocks go inert.
-		HeartNodeSavedData.get(level).plant(player.getUUID(), pos, now).ifPresent(old -> {
+		HeartNodeSavedData.get(level).plant(player.getUUID(), pos, now, PriorRespawn.of(player)).ifPresent(old -> {
 			if (level.getBlockState(old.heart()).is(BlockInit.heart_node.get())) level.removeBlock(old.heart(), false);
 			MycelialSynapseBlock.witherAll(level, old.synapses());
 		});
@@ -216,7 +217,11 @@ public final class HeartNodeEvents {
 		BlockPos spot = cacheSpot(level, player.blockPosition());
 		if (spot == null) return;
 		level.setBlock(spot, BlockInit.fruiting_body_cache.get().defaultBlockState(), Block.UPDATE_ALL);
-		if (!(level.getBlockEntity(spot) instanceof FruitingBodyCacheBlockEntity cache)) return;
+		if (!(level.getBlockEntity(spot) instanceof FruitingBodyCacheBlockEntity cache)) {
+			// No owner could be bound: take the empty body back and let the gear drop as usual.
+			level.removeBlock(spot, false);
+			return;
+		}
 		List<net.minecraft.world.item.ItemStack> items = new ArrayList<>();
 		for (ItemEntity drop : event.getDrops()) items.add(drop.getItem());
 		cache.store(player.getUUID(), items);
@@ -230,9 +235,12 @@ public final class HeartNodeEvents {
 				&& HeartNodeSavedData.get(level).insideOwnEnvelope(player.getUUID(), player.blockPosition());
 	}
 
-	/** The nearest free spot to the death point, kept inside the build height; null when there is none. */
+	/**
+	 * The nearest replaceable spot to the death point (air, water, lava, grass), kept inside the build height; null
+	 * when there is none.
+	 */
 	@Nullable
-	static BlockPos cacheSpot(Level level, BlockPos death) {
+	public static BlockPos cacheSpot(Level level, BlockPos death) {
 		int y = Math.max(level.getMinBuildHeight() + 1, Math.min(level.getMaxBuildHeight() - 2, death.getY()));
 		BlockPos start = new BlockPos(death.getX(), y, death.getZ());
 		for (int radius = 0; radius <= HeartNodeRules.CACHE_SEARCH; radius++) {
@@ -240,7 +248,7 @@ public final class HeartNodeEvents {
 					start.offset(radius, radius, radius))) {
 				if (Math.max(Math.abs(pos.getX() - start.getX()), Math.max(Math.abs(pos.getY() - start.getY()),
 						Math.abs(pos.getZ() - start.getZ()))) != radius) continue;
-				if (level.isInWorldBounds(pos) && level.getBlockState(pos).isAir()) return pos.immutable();
+				if (level.isInWorldBounds(pos) && level.getBlockState(pos).canBeReplaced()) return pos.immutable();
 			}
 		}
 		return null;
@@ -250,13 +258,16 @@ public final class HeartNodeEvents {
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		ServerLevel gardens = player.server.getLevel(FungalGardenTravelHelper.FUNGAL_GARDENS);
-		BlockPos respawn = player.getRespawnPosition();
-		// Only the spawn of a node this player lost is cleared; thrones, beds and /spawnpoint are left alone.
-		if (gardens == null || respawn == null || !player.isRespawnForced()
-				|| !gardens.dimension().equals(player.getRespawnDimension())) return;
-		if (HeartNodeSavedData.get(gardens).takeRemovedSpawn(player.getUUID(), respawn)) {
-			player.setRespawnPosition(Level.OVERWORLD, null, 0f, false, false);
+		if (gardens == null) return;
+		// FX-16: a node outlives its owner's Apotheosis by no more than a login.
+		if (!ApotheosBodyEvents.isApotheos(player) && HeartNodeSavedData.get(gardens).entry(player.getUUID()) != null) {
+			HeartNodeService.forsake(player);
 		}
+		BlockPos respawn = player.getRespawnPosition();
+		// Only the spawn of a node this player lost is given back; thrones, beds and /spawnpoint are left alone.
+		if (respawn == null || !player.isRespawnForced() || !gardens.dimension().equals(player.getRespawnDimension())) return;
+		HeartNodeSavedData.get(gardens).takeRemovedSpawnRecord(player.getUUID(), respawn)
+				.ifPresent(lost -> PriorRespawn.restore(player, lost.prior()));
 	}
 
 	private static void tell(Player player, String key) {

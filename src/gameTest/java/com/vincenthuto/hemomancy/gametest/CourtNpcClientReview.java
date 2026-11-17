@@ -362,21 +362,41 @@ public final class CourtNpcClientReview {
 			out.add(new Shot("school", String.format(Locale.ROOT, "%02d-tank_corner", i), mid.add(corners[i][0], 0.5, corners[i][1]),
 					mid.add(0, -0.5, 0), 6000L, true, null));
 		}
+		Runnable chase = () -> {
+			// The next waypoint on from the leader, at its depth, looking back at it.
+			double[] ahead = com.vincenthuto.hemomancy.common.entity.npc.court.CourtSchoolRules.waypoint(
+					leader.schoolCentre().getX() + 0.5D, leader.schoolCentre().getZ() + 0.5D, leader.schoolRadius(),
+					leader.schoolWaypoint() + 1);
+			Vec3 eye = new Vec3(ahead[0], leader.getY() + 1.5D, ahead[1]);
+			Vec3 delta = leader.position().subtract(eye);
+			float yaw = (float) Math.toDegrees(Math.atan2(-delta.x, delta.z));
+			float pitch = (float) -Math.toDegrees(Math.atan2(delta.y, delta.horizontalDistance()));
+			camera.teleportTo(level, eye.x, eye.y - camera.getEyeHeight(), eye.z, yaw, pitch);
+		};
 		for (int i = 0; i < 4; i++) {
-			out.add(new Shot("school", String.format(Locale.ROOT, "%02d-chase", 3 + i), mid.add(0, -1, -20), mid, 6000L, true,
-					() -> {
-						// The next waypoint on from the leader, at its depth, looking back at it.
-						double[] ahead = com.vincenthuto.hemomancy.common.entity.npc.court.CourtSchoolRules.waypoint(
-								leader.schoolCentre().getX() + 0.5D, leader.schoolCentre().getZ() + 0.5D, leader.schoolRadius(),
-								leader.schoolWaypoint() + 1);
-						Vec3 eye = new Vec3(ahead[0], leader.getY() + 1.5D, ahead[1]);
-						Vec3 delta = leader.position().subtract(eye);
-						float yaw = (float) Math.toDegrees(Math.atan2(-delta.x, delta.z));
-						float pitch = (float) -Math.toDegrees(Math.atan2(delta.y, delta.horizontalDistance()));
-						camera.teleportTo(level, eye.x, eye.y - camera.getEyeHeight(), eye.z, yaw, pitch);
-					}));
+			out.add(new Shot("school", String.format(Locale.ROOT, "%02d-chase", 3 + i), mid.add(0, -1, -20), mid, 6000L, true, chase));
 		}
 		out.add(new Shot("school", "07-underwater", mid.add(-SCHOOL_RADIUS - 4, -1.5, 0), mid.add(0, -1.5, 0), 6000L, true, null));
+		// Close on the leader, ten blocks ahead of its stroke, so the Shared Wake's sail flush (FX-19a) can be judged: once
+		// by day and twice at night without night vision, where the flush reads against the dark water.
+		Runnable close = () -> {
+			// The live school (members found again, not the launch list), seen from five blocks off its middle.
+			List<CourtMemberEntity> swimmers = level.getEntitiesOfClass(CourtMemberEntity.class,
+					new net.minecraft.world.phys.AABB(centre).inflate(SCHOOL_RADIUS + 8), CourtMemberEntity::isSchooling);
+			if (swimmers.isEmpty()) return;
+			Vec3 middle = swimmers.stream().map(CourtMemberEntity::position).reduce(Vec3.ZERO, Vec3::add).scale(1.0D / swimmers.size());
+			Vec3 radial = middle.subtract(mid).multiply(1, 0, 1);
+			Vec3 side = radial.lengthSqr() < 1.0E-4D ? new Vec3(1, 0, 0) : radial.normalize();
+			Vec3 eye = middle.add(side.scale(-5.0D)).add(0, 1.0D, 0);
+			Vec3 delta = middle.add(0, 0.6D, 0).subtract(eye);
+			float yaw = (float) Math.toDegrees(Math.atan2(-delta.x, delta.z));
+			float pitch = (float) -Math.toDegrees(Math.atan2(delta.y, delta.horizontalDistance()));
+			camera.teleportTo(level, eye.x, eye.y - camera.getEyeHeight(), eye.z, yaw, pitch);
+		};
+		out.add(new Shot("school", "08-close_day", mid, mid, 6000L, true, close));
+		for (int i = 0; i < 2; i++) {
+			out.add(new Shot("school", String.format(Locale.ROOT, "%02d-close_night", 9 + i), mid, mid, 18000L, false, close));
+		}
 	}
 
 	private static CourtMemberEntity member(ServerLevel level, CourtRole role, BlockPos at, Direction facing, boolean still) {

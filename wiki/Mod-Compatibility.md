@@ -1,6 +1,6 @@
 # Mod Compatibility
 
-Hemomancy works with its required libraries. In the NeoForge 1.21.1 public alpha, **JEI is alpha-ready**. **Mana and Artifice** and **Curios** remain dormant until compatible upstream dependencies are available.
+Hemomancy works with its required libraries. In the NeoForge 1.21.1 public alpha, **JEI is alpha-ready**. The **Mana and Artifice** and **Curios** integrations were removed on 2026-11-03. The sections below keep the old design as a record.
 
 ---
 
@@ -14,21 +14,14 @@ Hemomancy works with its required libraries. In the NeoForge 1.21.1 public alpha
 - Core utility library
 - Particle systems
 - Dialogue tree framework (used for Item Inquiry)
-- Book/codex framework (used for Field Notes)
+- Book/codex framework (used for the Liber Sanguinium and Liber Immaculatus)
 - Shared code between VincentHuto mods
 
 **Installation:**
 - Download from CurseForge or Modrinth
 - Place in mods folder alongside Hemomancy
 
-### GeckoLib
-**Version:** 4.8.4+
-**Required:** Yes
-
-**What It Provides:**
-- Entity animation system
-- Used for mob animations
-- Model rendering support
+GeckoLib is not a dependency. It was removed on 2026-11-03; entity models and animations are Hemomancy's own.
 
 ### TerraBlender
 **Version:** 4.1.0.8+
@@ -45,9 +38,9 @@ Hemomancy works with its required libraries. In the NeoForge 1.21.1 public alpha
 
 ### Mana and Artifice
 
-**Status:** Dormant in the NeoForge 1.21.1 build
+**Status:** Removed on 2026-11-03
 
-Design and source are preserved for a future compatible MnA build, but this integration is not compiled or registered in the current alpha. `build.gradle` excludes the MnA compat package, the dependency is commented out, and `Hemomancy.java` does not register the MnA hooks on this branch.
+The MnA compat source, its config and its dependency are gone from the mod. Nothing below ships. A future integration would be written fresh.
 
 The planned MnA integration includes:
 
@@ -105,14 +98,14 @@ The planned MnA integration includes:
 - Rewards resource management
 
 #### Configuration
-The dormant `HemoMnAConfig` design covers:
+The old `HemoMnAConfig` design (deleted with the integration) covered:
 - Enable/disable individual components
 - Adjust conversion rates
 - Tune Blood Tithe costs
 - Balance combo effects
 
 #### Why This Integration?
-The reasons for each MnA feature are documented in [MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/archive/done/MNA_COMPATIBILITY_BRAINSTORM.md). The design connects the mods through mechanics and story instead of relying only on cross-mod recipes.
+The reasons for each MnA feature are documented in [MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/archive/done/MNA_COMPATIBILITY_BRAINSTORM.md). The design connects the mods through mechanics and story instead of relying only on cross-mod recipes.
 
 **Alpha note:** Installing Mana and Artifice alongside this NeoForge 1.21.1 alpha should not be expected to enable these features.
 
@@ -120,13 +113,13 @@ The reasons for each MnA feature are documented in [MNA_COMPATIBILITY_BRAINSTORM
 
 ### Curios API
 
-**Status:** Dormant in the NeoForge 1.21.1 build
+**Status:** Removed on 2026-11-03
 
-Curios source is preserved as a future compatibility target, but it is not compiled or registered in the current alpha. `build.gradle` excludes the Curios compat package and the Curios dependency is commented out pending compatible NeoForge 1.21.1 support.
+The Curios compat source and its dependency are gone from the mod. A future integration would be written fresh.
 
 #### Charm of Vascularium
 - Hemomancy bloodline/equipment item in the current branch
-- Future target: dedicated Curios slot when Curios compatibility is restored
+- Possible future target: a dedicated Curios slot, if a Curios integration is written again
 - Current alpha: use Hemomancy's own equipment and vanity surfaces
 
 **Effects:**
@@ -155,16 +148,8 @@ Hemomancy's JEI integration covers the custom crafting systems. This branch load
 
 #### Recipe Categories
 
-**Chisel Station**
-- Shows scar carving recipes
-- Input: Blank scar + chisel
-- Output: Specific scar types
-- Visual pattern guides
-
-**Visceral Recaller**
-- Shows respawn point recipes
-- Input: Blood + materials
-- Output: Bound recall point
+**Cerebral Scarring Station**
+- Shows scar carving recipes (`ScarStationRecipeCategory`)
 
 **Blood Structure Crafting**
 - Shows floorless structure recipes (Living Staff, Liber, Centrifuge, Alembic...)
@@ -323,7 +308,7 @@ if (volume.isActive()) {
 A formal API is planned for future versions. Until then, capabilities are the integration point.
 
 #### Documentation
-See [HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md) for technical details on:
+See [HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/neo-1.21.1/docs/HEMOMANCY_REFERENCE.md) for technical details on:
 - Capability system
 - Packet structure
 - Registry objects
@@ -371,7 +356,7 @@ Hemomancy provides extensive config options:
 - Mob spawn rates
 - Loot table modifications
 
-#### MnA Config (when available)
+#### MnA Config (removed with the integration; old design)
 - Blood Tithe conversion rates
 - Component costs
 - Faction reputation gains

@@ -20,7 +20,6 @@ import java.util.List;
 public final class MaxBloodLedger {
 	public static final double BASE_MAX_BLOOD = 5000.0D;
 	public static final double ETERNAL_COVENANT_BONUS = 500.0D;
-	public static final String ETERNAL_COVENANT_TAG = "hemomancy:eternal_covenant_used";
 
 	private MaxBloodLedger() {
 	}
@@ -58,7 +57,7 @@ public final class MaxBloodLedger {
 			contributions.add(MaxBloodContribution.bonus("capacity", "message.hemomancy.max_blood_ledger.capacity", Category.SKILL, capacityBonus));
 		}
 
-		if (player.getPersistentData().getBoolean(ETERNAL_COVENANT_TAG)) {
+		if (HemoCapabilityAccess.getInitiatoryDegree(player).isEternalCovenantSealed()) {
 			contributions.add(MaxBloodContribution.bonus("eternal_covenant", "message.hemomancy.max_blood_ledger.eternal_covenant",
 					Category.RITE, ETERNAL_COVENANT_BONUS));
 		}

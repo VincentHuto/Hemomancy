@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class BloodStainedStonePlacementResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,7 +14,8 @@ public final class BloodStainedStonePlacementResourceTest {
 	private BloodStainedStonePlacementResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String item = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/memories/BloodStainedStoneItem.java"));
 		String blockInit = read(SOURCE_ROOT.resolve(
@@ -30,7 +34,8 @@ public final class BloodStainedStonePlacementResourceTest {
 		assertContains("placement uses the hidden marker block", item,
 				"BlockInit.placed_blood_stained_stone.get().defaultBlockState()");
 		assertContains("placement consumes the item in survival", item, "context.getItemInHand().shrink(1)");
-		assertContains("placement writes the marker block", item, "level.setBlock(placePos, state");
+		assertContains("placement writes the marker block as the player's edit", item,
+				"PlayerBlockEdits.place(player, placePos, state");
 
 		assertContains("marker block is registered", blockInit,
 				"placed_blood_stained_stone = SPECIALBLOCKS.register(");
@@ -57,18 +62,5 @@ public final class BloodStainedStonePlacementResourceTest {
 		assertContains("model has sprite thickness", model, "\"to\": [14, 2, 14]");
 		assertContains("marker drops the original item", lootTable,
 				"\"name\": \"hemomancy:blood_stained_stone\"");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

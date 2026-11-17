@@ -18,6 +18,14 @@
     "hemomancy:saint_relic_hemorath",
     "hemomancy:saint_relic_seraphae",
     "hemomancy:saint_relic_putriciel",
-    "hemomancy:saint_relic_velorum"
+    "hemomancy:saint_relic_velorum",
+    "hemomancy:hallowed_residuum_fragment_hemorath",
+    "hemomancy:hallowed_residuum_fragment_seraphae",
+    "hemomancy:hallowed_residuum_fragment_putriciel",
+    "hemomancy:hallowed_residuum_fragment_velorum",
+    "hemomancy:memory_crimson_tithe",
+    "hemomancy:memory_unclosing_eye",
+    "hemomancy:memory_bloom_of_rot",
+    "hemomancy:memory_endless_hour"
   ]
 }

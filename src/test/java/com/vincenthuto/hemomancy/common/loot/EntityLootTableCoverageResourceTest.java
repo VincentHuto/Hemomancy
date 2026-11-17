@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.common.loot;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class EntityLootTableCoverageResourceTest {
 	private static final Path ENTITY_LOOT_ROOT = Path
@@ -52,13 +56,13 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("velorum", "hemomancy:sanguine_quintessence"),
 			new GuaranteedDrop("venom_rib_centipede", "hemomancy:toxicognath"),
 			new GuaranteedDrop("venous_strider", "hemomancy:vivacious_spores"),
-			new GuaranteedDrop("venous_strider", "hemomancy:venous_pinion"),
-			new GuaranteedDrop("vesper_evening_star", "hemomancy:memory_of_vesper") };
+			new GuaranteedDrop("venous_strider", "hemomancy:venous_pinion") };
 
 	private EntityLootTableCoverageResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertNoLegacyLootingFunctions();
 		for (GuaranteedDrop drop : GUARANTEED_MATERIAL_DROPS) {
 			assertGuaranteedBaseDrop(drop);
@@ -151,19 +155,6 @@ public final class EntityLootTableCoverageResourceTest {
 			}
 		}
 		throw new AssertionError("unclosed JSON object");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertNotContains(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 
 	private record GuaranteedDrop(String entity, String item) {

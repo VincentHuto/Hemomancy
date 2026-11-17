@@ -30,6 +30,9 @@ public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M ex
 	/** The right arm's grip in model pixels, and the frame the dispatcher placed this entity in. */
 	private final Vector3f grip;
 	private final Matrix4f entityRoot = new Matrix4f();
+	/** The Disturbed afterimage: a stutter this many ticks long, at most once this often per figure. */
+	private static final float STUTTER_TICKS = 6.0F;
+	private static final float STUTTER_EVERY = 120.0F;
 
 	public CircusPerformerRenderer(EntityRendererProvider.Context context, M model, String textureName,
 			float shadowRadius) {
@@ -72,13 +75,17 @@ public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M ex
 		public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T entity,
 				float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks,
 				float netHeadYaw, float headPitch) {
-			CircusProgressRules.Stage stage = CircusPerceptionOverlay.stage();
+			CircusProgressRules.Stage stage = CircusPerceptionOverlay.isRuined() ? CircusProgressRules.Stage.DISTURBED
+					: CircusPerceptionOverlay.stage();
 			int alpha = CircusPerceptionOverlay.isActive() ? stage.motionEchoAlpha() : 0;
 			if (alpha == 0) return;
-			float offset = stage.motionJitter() * 2.5F;
-			float time = AnimationTime.age(entity, partialTick) + entity.getId();
+			// Disturbed: now and then a brief afterimage stutters off the figure and snaps back.
+			float time = AnimationTime.age(entity, partialTick) + entity.getId() * 37.0F;
+			float within = time % STUTTER_EVERY;
+			if (within > STUTTER_TICKS) return;
+			float offset = 0.09F * (float) Math.sin(within / STUTTER_TICKS * Math.PI);
 			poseStack.pushPose();
-			poseStack.translate(Math.sin(time * 0.72F) * offset, 0.0D, Math.cos(time * 0.61F) * offset);
+			poseStack.translate(Math.sin(entity.getId() * 1.7D) * offset, 0.0D, Math.cos(entity.getId() * 1.7D) * offset);
 			VertexConsumer echo = buffer.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(entity)));
 			getParentModel().renderToBuffer(poseStack, echo, LightTexture.FULL_BRIGHT,
 					OverlayTexture.NO_OVERLAY, alpha << 24 | 0x9A143E);
@@ -95,14 +102,7 @@ public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M ex
 	public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack,
 			MultiBufferSource buffer, int packedLight) {
 		entityRoot.set(poseStack.last().pose());
-		float jitter = CircusPerceptionOverlay.isActive() ? CircusPerceptionOverlay.stage().motionJitter() : 0.0F;
-		poseStack.pushPose();
-		if (jitter > 0.0F) {
-			float time = AnimationTime.age(entity, partialTick) + entity.getId() * 0.71F;
-			poseStack.translate(Math.sin(time * 0.83F) * jitter, 0.0D, Math.cos(time * 0.67F) * jitter);
-		}
 		super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
-		poseStack.popPose();
 	}
 
 	@Override

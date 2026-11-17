@@ -60,6 +60,7 @@ public class HarbingerCicatrixAnchoriteEntity extends com.vincenthuto.hemomancy.
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!successionInteraction(player, hand)) return InteractionResult.SUCCESS;
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
+			com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.onD5TreeOpened(serverPlayer);
 			com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.refreshD5(serverPlayer);
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			DialogueTree tree = progressionDialogue(serverPlayer);
@@ -74,7 +75,9 @@ public class HarbingerCicatrixAnchoriteEntity extends com.vincenthuto.hemomancy.
 
 	@Override
 	public DialogueTree progressionDialogue(ServerPlayer player) {
-		return HarbingerCicatrixAnchoriteDialogueTrees.forState(this.getId(), AnchoriteProgressSnapshot.from(player));
+		// The lessons start at the fourth Degree, where the locked greeting ends.
+		return CoreLoopLessonDialogue.append(HarbingerCicatrixAnchoriteDialogueTrees.forState(this.getId(),
+				AnchoriteProgressSnapshot.from(player)), CoreLoopLessons.VEIN_MASON, player);
 	}
 
 	@Override

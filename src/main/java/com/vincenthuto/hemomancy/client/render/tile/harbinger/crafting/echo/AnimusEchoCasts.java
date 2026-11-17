@@ -24,6 +24,10 @@ final class AnimusEchoCasts {
 		EchoCasts.register("lingering_blood_binding", ctx -> binding(ctx, 0, 60));
 		EchoCasts.register("chain_blood_binding", ctx -> binding(ctx, 2, 24));
 		EchoCasts.register("blood_lattice", ctx -> binding(ctx, 3, 40));
+		EchoCasts.register("tendon_line", AnimusEchoCasts::tendonLine);
+		EchoCasts.register("blood_lash", AnimusEchoCasts::bloodLash);
+		EchoCasts.register("living_land", AnimusEchoCasts::livingLand);
+		EchoCasts.register("venous_cling", AnimusEchoCasts::venousCling);
 		EchoCasts.register("hematic_riposte", AnimusEchoCasts::riposte);
 		EchoCasts.register("summon_avatar", ctx -> avatar(ctx, 1));
 		EchoCasts.register("summon_avatar_arms", ctx -> avatar(ctx, 2));
@@ -89,6 +93,41 @@ final class AnimusEchoCasts {
 			EchoScheduler.later(4 + i * 4, () -> EchoFx.blood(BloodFlowPacket.Style.TEAR, from, to, ticks));
 			previous = to;
 		}
+	}
+
+	/** The Tendon Line thrown up and ahead to a root, then drawn taut along its length. */
+	private static void tendonLine(EchoCast.EchoContext ctx) {
+		EchoFx.activate(ctx);
+		Vec3 root = ctx.ahead(2.2).add(0, ctx.scaled(1.2), 0);
+		EchoFx.blood(BloodFlowPacket.Style.LIVING, ctx.hands(), root, 40);
+		EchoScheduler.later(6, () -> EchoFx.cue(Form.THREAD, ctx.hands(), root, ctx.scaled(0.35), 14));
+	}
+
+	/** A lash of living blood swung out from the hands, cracking ahead with a splash. */
+	private static void bloodLash(EchoCast.EchoContext ctx) {
+		EchoFx.activate(ctx);
+		Vec3 tip = ctx.ahead(3.0).add(0, ctx.scaled(0.6), 0);
+		EchoFx.cue(Form.THREAD, ctx.hands(), tip, ctx.scaled(0.35), 12);
+		EchoScheduler.later(8, () -> {
+			EchoFx.cue(Form.BLOOD_SPLASH, tip, tip.add(ctx.forward()), ctx.scaled(0.8), 16, 1);
+			EchoFx.claw(tip, ctx.forward(), ANIMUS_RED, false, 0.5F * ctx.figure());
+		});
+	}
+
+	/** Ground woken ahead of the figure: blood sinks into the floor, then a tooth of earth breaks out of it. */
+	private static void livingLand(EchoCast.EchoContext ctx) {
+		EchoFx.activate(ctx);
+		Vec3 patch = ctx.ahead(2.0);
+		EchoFx.blood(BloodFlowPacket.Style.LIVING, ctx.hands(), patch, 30);
+		EchoScheduler.later(10, () -> EchoFx.cue(Form.ANIMUS_IMPACT, patch, patch.add(0, ctx.scaled(1.2), 0), ctx.scaled(0.8), 14));
+	}
+
+	/** The figure's hands rooted to a face beside it by short veins. */
+	private static void venousCling(EchoCast.EchoContext ctx) {
+		EchoFx.activate(ctx);
+		Vec3 face = ctx.ahead(0.9).add(0, ctx.scaled(0.8), 0);
+		EchoFx.blood(BloodFlowPacket.Style.LIVING, ctx.hands(), face, 24);
+		EchoScheduler.later(6, () -> EchoFx.cue(Form.THREAD, ctx.hands(), face, ctx.scaled(0.25), 12));
 	}
 
 	/** The parry stance, a claw of blood across the blade, and the strike it returns. */

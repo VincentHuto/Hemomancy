@@ -84,7 +84,7 @@ public final class TemperWeaponHelper {
 		if (target instanceof WillEntity will) {
 			return isOpposingTemper(weaponTemper, will.getSchool());
 		}
-		EnumBloodTemper opposingTemper = getOpposingTemper(weaponTemper);
+		EnumBloodTemper opposingTemper = weaponTemper.opposite();
 		return BloodProfileData.profile(target.getType(),
                 target.level().isClientSide).tempers().contains(opposingTemper);
 	}
@@ -92,20 +92,7 @@ public final class TemperWeaponHelper {
 	public static boolean isOpposingTemper(@Nullable EnumBloodTemper weaponTemper,
 			@Nullable EnumBloodTemper targetTemper) {
 		return weaponTemper != null && targetTemper != null
-				&& getOpposingTemper(weaponTemper) == targetTemper;
-	}
-
-	public static EnumBloodTemper getOpposingTemper(EnumBloodTemper temper) {
-		return switch (temper) {
-			case ANIMUS -> EnumBloodTemper.MORTEM;
-			case MORTEM -> EnumBloodTemper.ANIMUS;
-			case DUCTILIS -> EnumBloodTemper.FERRIC;
-			case FERRIC -> EnumBloodTemper.DUCTILIS;
-			case LUX -> EnumBloodTemper.TENEBRIS;
-			case TENEBRIS -> EnumBloodTemper.LUX;
-			case FLAMMEUS -> EnumBloodTemper.CONGEATIO;
-			case CONGEATIO -> EnumBloodTemper.FLAMMEUS;
-		};
+				&& weaponTemper.opposite() == targetTemper;
 	}
 
 	public static String getTemperDisplayName(EnumBloodTemper temper) {
@@ -144,10 +131,7 @@ public final class TemperWeaponHelper {
 			return;
 		}
 
-		EnumBloodTemper opposingTemper = getOpposingTemper(weaponTemper);
-		if (opposingTemper == null) {
-			return;
-		}
+		EnumBloodTemper opposingTemper = weaponTemper.opposite();
 		String opposingTagName = getEntityTagDisplayName(opposingTemper);
 		String opposingTemperName = getTemperDisplayName(opposingTemper);
 		tooltip.add(HemoText.translatable("message.hemomancy.temper_weapon_helper.aligned_temper",

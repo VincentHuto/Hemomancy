@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class ApotheosFloorFunnelSourceTest {
 	private static final Path APOTHEOS_EFFECTS = Path.of(
@@ -61,7 +66,8 @@ public final class ApotheosFloorFunnelSourceTest {
 	private ApotheosFloorFunnelSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertFileExists("apotheos effects class", APOTHEOS_EFFECTS);
 		assertFileExists("apotheos floor shader json", SHADER_JSON);
 		assertFileExists("apotheos floor vertex shader", SHADER_VERTEX);
@@ -1048,10 +1054,6 @@ public final class ApotheosFloorFunnelSourceTest {
 				"APOTHEOS ceiling remains pending");
 	}
 
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertFileExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
@@ -1061,18 +1063,6 @@ public final class ApotheosFloorFunnelSourceTest {
 	private static void assertFileMissing(String label, Path path) {
 		if (Files.exists(path)) {
 			throw new AssertionError(label + ": still exists " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
 		}
 	}
 

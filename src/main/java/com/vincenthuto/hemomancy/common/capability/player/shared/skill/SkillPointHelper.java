@@ -163,9 +163,9 @@ public final class SkillPointHelper {
 		return sanguineSurgeRegenPerTick(progress.getLevel(sp));
 	}
 
-	/** Sanguine Surge: 0.25 mL/tick per level (5 / 10 / 15 mL/s). */
+	/** Sanguine Surge: 0.05 mL/tick per level (1 / 2 / 3 mL/s, CB-2). */
 	public static double sanguineSurgeRegenPerTick(int level) {
-		return Math.max(0, level) * 0.25;
+		return Math.max(0, level) * 0.05;
 	}
 
 	public static double getCrimsonMasteryMultiplier(Player player) {
@@ -420,11 +420,8 @@ public final class SkillPointHelper {
 	}
 
 	public static double getLivingStaffHotSwapCost(Player player) {
-		return LivingStaffWeaponFormRules.hotSwapCostForWeaponsMasterLevel(getWeaponsMasterLevel(player));
-	}
-
-	public static double getLivingStaffHotSwapCost() {
-		return LivingStaffWeaponFormRules.hotSwapCostForWeaponsMasterLevel(getWeaponsMasterLevel());
+		return LivingStaffWeaponFormRules.hotSwapCost(getWeaponsMasterLevel(player),
+				com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffGrowth.ring(player));
 	}
 
 	public static int getDraggingSiphonLevel(Player player) {
@@ -674,6 +671,81 @@ public final class SkillPointHelper {
 
 	private static int getPrimalMorphogenesisLevel(SkillProgress progress) {
 		return level(progress, SkillPointInit.skill_primal_morphogenesis);
+	}
+
+	// ── The projection strand line (core-loop round two P5) ──
+
+	public static int getLongStrandLevel(Player player) {
+		return getLongStrandLevel(progress(player));
+	}
+
+	public static int getLongStrandLevel() {
+		return getLongStrandLevel(progress(null));
+	}
+
+	private static int getLongStrandLevel(SkillProgress progress) {
+		return level(progress, SkillPointInit.skill_long_strand);
+	}
+
+	public static int getTautLineLevel(Player player) {
+		return getTautLineLevel(progress(player));
+	}
+
+	public static int getTautLineLevel() {
+		return getTautLineLevel(progress(null));
+	}
+
+	private static int getTautLineLevel(SkillProgress progress) {
+		return level(progress, SkillPointInit.skill_taut_line);
+	}
+
+	public static int getWhipcrackLevel(Player player) {
+		return getWhipcrackLevel(progress(player));
+	}
+
+	public static int getWhipcrackLevel() {
+		return getWhipcrackLevel(progress(null));
+	}
+
+	private static int getWhipcrackLevel(SkillProgress progress) {
+		return level(progress, SkillPointInit.skill_whipcrack);
+	}
+
+	public static int getFreeHandLevel(Player player) {
+		return getFreeHandLevel(progress(player));
+	}
+
+	public static int getFreeHandLevel() {
+		return getFreeHandLevel(progress(null));
+	}
+
+	private static int getFreeHandLevel(SkillProgress progress) {
+		return level(progress, SkillPointInit.skill_free_hand);
+	}
+
+	public static int getDeepBrandLevel(Player player) {
+		return getDeepBrandLevel(progress(player));
+	}
+
+	public static int getDeepBrandLevel() {
+		return getDeepBrandLevel(progress(null));
+	}
+
+	private static int getDeepBrandLevel(SkillProgress progress) {
+		return level(progress, SkillPointInit.skill_deep_brand);
+	}
+
+	public static boolean hasSecondStrand(Player player) {
+		return hasSecondStrand(progress(player));
+	}
+
+	public static boolean hasSecondStrand() {
+		return hasSecondStrand(progress(null));
+	}
+
+	private static boolean hasSecondStrand(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_second_strand;
+		return sp != null && progress.isUnlocked(sp);
 	}
 
 	private static int level(SkillProgress progress, SkillPoint skill) {

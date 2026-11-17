@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class MycophantCombatRulesTest {
 	@Test
-	void phaseTwoBeginsAtHalfHealth() {
-		assertEquals(1, MycophantCombatRules.phase(361.0F, 720.0F));
-		assertEquals(2, MycophantCombatRules.phase(360.0F, 720.0F));
+	void phaseTwoBeginsAtSixtyPercent() {
+		assertEquals(1, MycophantCombatRules.phase(433.0F, 720.0F));
+		assertEquals(2, MycophantCombatRules.phase(432.0F, 720.0F));
 	}
 
 	@Test

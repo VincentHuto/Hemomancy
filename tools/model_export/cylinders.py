@@ -137,20 +137,21 @@ def geometry(medium):
     for i, (name, left, right, radius, side_uv) in enumerate(profile):
         heights = [-radius, .5 - radius, 1.5 - radius, radius - 1.5, radius - .5, radius]
         widths = [radius - 1.5, radius - .75, radius, radius - .75, radius - 1.5]
+        # One texel per model unit: each face takes a face-sized window of its tile.
         u0, v0, u1, v1 = side_uv
+        u_end = u0 + min(right - left, u1 - u0)
         for j, half_width in enumerate(widths):
             bottom, top = heights[j:j + 2]
-            strip = [u0, v0 + (v1 - v0) * (radius - top) / (2 * radius),
-                     u1, v0 + (v1 - v0) * (radius - bottom) / (2 * radius)]
+            strip = [u0, v0 + radius - top, u_end, v0 + radius - bottom]
             faces = {direction: face(strip) for direction in ('north', 'south')}
+            flat = [u0, v0, u_end, v0 + min(2 * half_width, v1 - v0)]
             if j >= 2:
-                faces['up'] = face(side_uv)
+                faces['up'] = face(flat)
             if j <= 2:
-                faces['down'] = face(side_uv)
+                faces['down'] = face(flat)
             # One cap illustration spans the stepped cross section. Render the inner
             # shoulder only on the wider section to avoid coplanar end faces.
-            cap_uv = [4 - half_width * 1.6, 12 - top * 1.6,
-                      4 + half_width * 1.6, 12 - bottom * 1.6]
+            cap_uv = [4 - half_width, 12 - top, 4 + half_width, 12 - bottom]
             if i == 0 or radius > profile[i - 1][3]:
                 faces['west'] = face(cap_uv)
             if i == len(profile) - 1 or radius > profile[i + 1][3]:

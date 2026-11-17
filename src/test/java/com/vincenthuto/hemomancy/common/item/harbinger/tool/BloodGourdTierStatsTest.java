@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
+import org.junit.jupiter.api.Test;
+
 public final class BloodGourdTierStatsTest {
 	private BloodGourdTierStatsTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertDouble("white capacity", 1000.0, EnumBloodGourdTiers.SIMPLE.getMaxVolume());
 		assertDouble("white steady flow", 1.0, EnumBloodGourdTiers.SIMPLE.getTransferRate());
 		assertDouble("white modest kill siphon", 0.75, EnumBloodGourdTiers.SIMPLE.getKillSiphonMultiplier());
@@ -24,7 +27,7 @@ public final class BloodGourdTierStatsTest {
 		assertDouble("rib capacity", 5000.0, EnumBloodGourdTiers.RIB.getMaxVolume());
 		assertDouble("rib covenant flow", 2.5, EnumBloodGourdTiers.RIB.getTransferRate());
 		assertDouble("rib strong kill siphon", 1.25, EnumBloodGourdTiers.RIB.getKillSiphonMultiplier());
-		assertDouble("rib grows marrow blood", 0.25, EnumBloodGourdTiers.RIB.getPassiveGenerationRate());
+		assertDouble("rib grows marrow blood, halved (CB-2)", 0.125, EnumBloodGourdTiers.RIB.getPassiveGenerationRate());
 	}
 
 	private static void assertDouble(String label, double expected, double actual) {

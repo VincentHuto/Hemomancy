@@ -1,6 +1,11 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.decoration;
 
+import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
+import com.vincenthuto.hemomancy.common.world.answer.WorldAnswer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -25,7 +30,16 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+/**
+ * The Ossuary Clock: the time of day and the moon's phase, and (core-loop Track 10) the Blood Moon's omen. The
+ * lunette over the dial shows {@link #OMEN}: pale while tonight's chance is low, half red when it is an omen, crimson
+ * while a Blood Moon is up; the lower storey re-reads it every few seconds on its own scheduled tick. Using it reads
+ * the time, the phase, tonight's chance and the nights to the next full moon.
+ */
 public class OssuaryClockBlock extends Block {
+	public static final IntegerProperty OMEN = IntegerProperty.create("omen", 0, 2);
+	/** How often the lunette reads the night. */
+	public static final int READ_TICKS = 100;
 	public static final net.minecraft.world.level.block.state.properties.EnumProperty<DoubleBlockHalf> HALF =
 			BlockStateProperties.DOUBLE_BLOCK_HALF;
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -36,12 +50,13 @@ public class OssuaryClockBlock extends Block {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(HALF, DoubleBlockHalf.LOWER)
-				.setValue(FACING, Direction.NORTH));
+				.setValue(FACING, Direction.NORTH)
+				.setValue(OMEN, 0));
 	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(HALF, FACING);
+		builder.add(HALF, FACING, OMEN);
 	}
 
 	@Override
@@ -58,8 +73,52 @@ public class OssuaryClockBlock extends Block {
 
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-		level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER).setValue(FACING, state.getValue(FACING)),
-				Block.UPDATE_ALL);
+		level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER).setValue(FACING, state.getValue(FACING))
+				.setValue(OMEN, state.getValue(OMEN)), Block.UPDATE_ALL);
+	}
+
+	@Override
+	protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+		super.onPlace(state, level, pos, oldState, movedByPiston);
+		if (!level.isClientSide && !oldState.is(this) && state.getValue(HALF) == DoubleBlockHalf.LOWER) {
+			level.scheduleTick(pos, this, 1);
+		}
+	}
+
+	@Override
+	protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		if (state.getValue(HALF) != DoubleBlockHalf.LOWER) return;
+		read(level, pos, state);
+		level.scheduleTick(pos, this, READ_TICKS);
+	}
+
+	/** A clock placed without {@code onPlace} (a structure) starts its reading cycle on a random tick. */
+	@Override
+	protected boolean isRandomlyTicking(BlockState state) {
+		return state.getValue(HALF) == DoubleBlockHalf.LOWER;
+	}
+
+	@Override
+	protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		if (!level.getBlockTicks().hasScheduledTick(pos, this)) level.scheduleTick(pos, this, 1);
+	}
+
+	/** Tonight's chance of a Blood Moon, read where the clock stands. */
+	public static double chanceTonight(ServerLevel level, BlockPos pos) {
+		return WorldAnswer.moonChanceAt(level, pos);
+	}
+
+	/** Sets both storeys' lunette to tonight's omen; returns it. */
+	public static int read(ServerLevel level, BlockPos lower, BlockState state) {
+		boolean active = BloodMoonSavedData.get(level.getServer().overworld()).isActive();
+		int omen = OssuaryClockReadout.omen(active, chanceTonight(level, lower));
+		for (BlockPos part : new BlockPos[] {lower, lower.above()}) {
+			BlockState there = level.getBlockState(part);
+			if (there.is(state.getBlock()) && there.getValue(OMEN) != omen) {
+				level.setBlock(part, there.setValue(OMEN, omen), Block.UPDATE_CLIENTS);
+			}
+		}
+		return omen;
 	}
 
 	@Override
@@ -122,27 +181,36 @@ public class OssuaryClockBlock extends Block {
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
 			BlockHitResult hitResult) {
-		return handleUse(level, player);
+		return handleUse(state, level, pos, player);
 	}
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
 			Player player, InteractionHand hand, BlockHitResult hitResult) {
-		return handleUse(level, player) == InteractionResult.SUCCESS
+		return handleUse(state, level, pos, player) == InteractionResult.SUCCESS
 				? ItemInteractionResult.SUCCESS
 				: ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
-	private InteractionResult handleUse(Level level, Player player) {
-		if (level.isClientSide) {
+	private InteractionResult handleUse(BlockState state, Level level, BlockPos pos, Player player) {
+		if (!(level instanceof ServerLevel server)) {
 			return InteractionResult.SUCCESS;
 		}
 		long dayTime = level.getDayTime();
 		String time = OssuaryClockReadout.timeBand(dayTime);
 		String moon = OssuaryClockReadout.moonPhase(dayTime / 24000L);
-		player.displayClientMessage(Component.translatable("block.hemomancy.ossuary_clock.readout",
+		BlockPos lower = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+		BlockState lowerState = level.getBlockState(lower);
+		int omen = lowerState.is(this) ? read(server, lower, lowerState) : 0;
+		Component dial = Component.translatable("block.hemomancy.ossuary_clock.readout",
 				Component.translatable("block.hemomancy.ossuary_clock.time." + time),
-				Component.translatable("block.hemomancy.ossuary_clock.moon." + moon)), false);
+				Component.translatable("block.hemomancy.ossuary_clock.moon." + moon));
+		Component lunette = omen == 2
+				? Component.translatable("block.hemomancy.ossuary_clock.omen.risen")
+				: Component.translatable("block.hemomancy.ossuary_clock.omen.tonight",
+						Component.translatable("block.hemomancy.ossuary_clock.omen." + OssuaryClockReadout.omenWord(chanceTonight(server, lower))),
+						WorldAnswer.nightsToFullMoon(server));
+		player.displayClientMessage(Component.translatable("block.hemomancy.ossuary_clock.readout_with_omen", dial, lunette), false);
 		return InteractionResult.SUCCESS;
 	}
 }

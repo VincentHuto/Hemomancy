@@ -1,16 +1,19 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class ClawSlashRendererSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private ClawSlashRendererSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		rendererDrawsThreeTaperedRibbons();
 		rendererRandomizesShapeAndRotation();
 		packetAndClientEventsWireRenderer();
@@ -99,21 +102,5 @@ public final class ClawSlashRendererSourceTest {
 		assertContains("auto attack only targets entities", clientEvents, "minecraft.hitResult instanceof EntityHitResult entityHit");
 		assertContains("auto attack goes through game mode attack", clientEvents, "minecraft.gameMode.attack(player, entityHit.getEntity())");
 		assertContains("auto attack swings the main hand", clientEvents, "player.swing(InteractionHand.MAIN_HAND)");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing `" + expected + "`");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": found `" + unexpected + "`");
-		}
 	}
 }

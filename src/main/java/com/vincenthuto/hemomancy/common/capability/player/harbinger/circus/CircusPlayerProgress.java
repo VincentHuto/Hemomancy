@@ -134,12 +134,18 @@ public final class CircusPlayerProgress {
 
 	/** Records whether the player stands inside a pavilion; a change raises the perception dirty flag. */
 	public static void setInside(ServerPlayer player, boolean inside) {
+		setInside(player, inside, false);
+	}
+
+	/** As {@link #setInside(ServerPlayer, boolean)}, with whether that pavilion is a ruin (the show is only an echo). */
+	public static void setInside(ServerPlayer player, boolean inside, boolean ruined) {
 		progress(player).setInside(inside);
+		progress(player).setRuined(inside && ruined);
 	}
 
 	/** The {@code PlayerStateSync} lifecycle send: a login, respawn or new dimension starts outside the pavilion. */
 	public static void resyncPerception(ServerPlayer player) {
-		progress(player).setInside(false);
+		setInside(player, false);
 		syncPerception(player);
 	}
 
@@ -147,7 +153,8 @@ public final class CircusPlayerProgress {
 	public static void syncPerception(ServerPlayer player) {
 		CircusProgress progress = progress(player);
 		progress.clearPerceptionDirty();
-		PacketHandler.sendToPlayer(player, new PacketSyncCircusPerception(acclimation(player), progress.inside()));
+		PacketHandler.sendToPlayer(player, new PacketSyncCircusPerception(acclimation(player), progress.inside(),
+				progress.ruined()));
 	}
 
 	/**

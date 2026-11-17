@@ -5,6 +5,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class HeartNodeSavedDataTest {
 	private final UUID alice = UUID.randomUUID();
 	private final UUID bob = UUID.randomUUID();
+	private static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION,
+			ResourceLocation.withDefaultNamespace("overworld"));
 
 	@Test
 	void aNodeCannotBePlantedWhereItsHeartLobeWouldTouchAnotherOwnersEnvelope() {
@@ -81,6 +87,24 @@ class HeartNodeSavedDataTest {
 		assertEquals(List.of(new BlockPos(20, 0, 0)), data.entry(alice).synapses());
 	}
 
+	/** DS-2: taking out a middle synapse prunes the one beyond it, which no longer chains back to the heart. */
+	@Test
+	void removingAMiddleSynapsePrunesTheOnesItCutsOff() {
+		HeartNodeSavedData data = new HeartNodeSavedData();
+		data.plant(alice, BlockPos.ZERO, 0L);
+		BlockPos near = new BlockPos(18, 0, 0);
+		BlockPos middle = new BlockPos(32, 0, 0);
+		BlockPos outer = new BlockPos(46, 0, 0);
+		assertTrue(data.addSynapse(alice, near));
+		assertTrue(data.addSynapse(alice, middle));
+		assertTrue(data.addSynapse(alice, outer));
+		assertTrue(data.removeSynapse(alice, middle));
+		assertEquals(List.of(near), data.entry(alice).synapses(), "the cut-off outer synapse leaves the envelope");
+		assertFalse(data.insideOwnEnvelope(alice, outer), "its lobe is gone");
+		assertTrue(data.removeSynapse(alice, near));
+		assertEquals(List.of(), data.entry(alice).synapses());
+	}
+
 	@Test
 	void replantingOrLosingTheNodeForgetsItsSynapses() {
 		HeartNodeSavedData data = new HeartNodeSavedData();
@@ -109,6 +133,33 @@ class HeartNodeSavedDataTest {
 		assertFalse(data.takeRemovedSpawn(alice, new BlockPos(0, 80, 0)), "another forced spawn is left alone");
 		assertTrue(data.takeRemovedSpawn(alice, node.above()));
 		assertFalse(data.takeRemovedSpawn(alice, node.above()), "the record is used once");
+	}
+
+	/** PT-80: the node keeps the respawn it took over, through a replant, a save and its own loss. */
+	@Test
+	void theRespawnBeforeTheNodeIsRememberedAndGivenBack() {
+		HeartNodeSavedData data = new HeartNodeSavedData();
+		PriorRespawn bed = new PriorRespawn(OVERWORLD, new BlockPos(10, 64, -3), 90f, false);
+		BlockPos first = new BlockPos(5, 70, 5);
+		data.plant(alice, first, 0L, bed);
+		assertEquals(bed, data.entry(alice).priorRespawn());
+
+		BlockPos second = new BlockPos(300, 70, 5);
+		data.plant(alice, second, 10L, new PriorRespawn(OVERWORLD, first.above(), 0f, true));
+		assertEquals(bed, data.entry(alice).priorRespawn(), "a replant keeps the bed, not the old node's spawn");
+
+		HeartNodeSavedData back = HeartNodeSavedData.load(data.save(new CompoundTag(), null), null);
+		assertEquals(bed, back.entry(alice).priorRespawn(), "the bed survives the save");
+		back.remove(alice, second);
+		HeartNodeSavedData afterLoss = HeartNodeSavedData.load(back.save(new CompoundTag(), null), null);
+		assertEquals(bed, afterLoss.takeRemovedSpawnRecord(alice, second.above()).orElseThrow().prior(),
+				"the lost node gives the bed back at the next login");
+
+		data.plant(bob, first, 0L, null);
+		assertNull(data.entry(bob).priorRespawn(), "a player with no bed remembers none");
+		data.remove(bob, first);
+		data.plant(bob, second, 0L, new PriorRespawn(OVERWORLD, first.above(), 0f, true));
+		assertNull(data.entry(bob).priorRespawn(), "replanting before the login keeps the lost node's answer, not its spawn");
 	}
 
 	@Test

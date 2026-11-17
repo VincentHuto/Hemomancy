@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+
 class SpecimenJarCapturableResourceTest {
 	private static final Path TAG_PATH = Path.of(
 			"src/main/resources/data/hemomancy/tags/entity_type/specimen_jar_capturable.json");
@@ -20,11 +22,5 @@ class SpecimenJarCapturableResourceTest {
 		assertContains("venous striders are capturable", tag, "\"hemomancy:venous_strider\"");
 		assertContains("scarlet serpents are capturable", tag, "\"hemomancy:scarlet_serpent\"");
 		assertContains("venom rib centipedes are capturable", tag, "\"hemomancy:venom_rib_centipede\"");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

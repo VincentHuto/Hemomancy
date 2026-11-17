@@ -16,7 +16,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
 import com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules;
-import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
@@ -199,42 +198,6 @@ public final class ManipulationBalancePass2StateGameTests {
     }
 
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = BATCH)
-    public static void endlessHourSettlementAnswersToATotem(GameTestHelper h) {
-        ServerPlayer p = player(h);
-        try {
-            p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.TOTEM_OF_UNDYING));
-            ManipulationInit.endless_hour.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-            p.setHealth(5);
-            EndlessHourManip.accumulateDeferredDamage(p, 30);
-            p.getPersistentData().putLong("hemomancy:endless_hour_expiry", h.getLevel().getGameTime());
-            EndlessHourManip.tickEndlessHour(p);
-            h.assertTrue(p.isAlive(), "A totem did not answer the hour's lethal debt");
-            h.assertTrue(p.getMainHandItem().isEmpty(), "The totem was not consumed");
-            h.assertTrue(!p.getPersistentData().contains("hemomancy:endless_hour_deferred"), "Debt survived settlement");
-            settlementCannotBeRefusedByBastion(h);
-            h.succeed();
-        } finally { p.discard(); }
-    }
-
-    /** Sheolic Bastion zeroes every ordinary hit, but the hour's debt was already mitigated when deferred. */
-    private static void settlementCannotBeRefusedByBastion(GameTestHelper h) {
-        ServerPlayer p = player(h);
-        try {
-            p.getPersistentData().putLong("hemomancy:sheolic_bastion_until", h.getLevel().getGameTime() + 200);
-            h.assertTrue(com.vincenthuto.hemomancy.common.armor.ability.SheolicBastionBloodlustArmorAbilityHandler.isBastionActive(p),
-                    "Bastion fixture is not active");
-            var ordinary = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 5));
-            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(ordinary);
-            near(h, 0, ordinary.getNewDamage(), "Bastion did not refuse an ordinary hit");
-            ManipulationInit.endless_hour.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-            EndlessHourManip.accumulateDeferredDamage(p, 6);
-            p.getPersistentData().putLong("hemomancy:endless_hour_expiry", h.getLevel().getGameTime());
-            EndlessHourManip.tickEndlessHour(p);
-            near(h, 14, p.getHealth(), "Bastion refused the hour's debt");
-        } finally { p.discard(); }
-    }
-
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = BATCH)
     public static void phoenixDebtNeedsBloodForItsPrice(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
@@ -260,7 +223,7 @@ public final class ManipulationBalancePass2StateGameTests {
             blood.setBloodVolume(500);
             h.assertTrue(!ManipulationReactiveEvents.phoenixDebtReady(p), "Phoenix Debt showed ready without its price");
             var lethal = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 50));
-            ManipulationReactiveEvents.onFinalDamage(lethal);
+            com.vincenthuto.hemomancy.common.damage.DamageStages.deathSaves(lethal);
             near(h, 50, lethal.getNewDamage(), "An unaffordable Phoenix Debt still cancelled lethal damage");
             near(h, 20, p.getHealth(), "An unaffordable Phoenix Debt healed the caster");
             h.assertTrue(LastRiteHelper.PHOENIX_DEBT_ID.equals(LastRiteHelper.getArmedSource(p))

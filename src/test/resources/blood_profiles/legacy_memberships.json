@@ -1,7 +1,42 @@
 {
+  "hemomancy:abhorrent_thought": {
+    "tempers": [
+      "ductilis",
+      "tenebris"
+    ],
+    "properties": []
+  },
+  "hemomancy:antibody": {
+    "tempers": [],
+    "properties": []
+  },
+  "hemomancy:barbed_urchin": {
+    "tempers": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "hemomancy:blood_drunk_puppeteer": {
+    "tempers": [
+      "ductilis"
+    ],
+    "properties": []
+  },
   "hemomancy:blood_lantern_jelly": {
     "tempers": [
       "animus"
+    ],
+    "properties": []
+  },
+  "hemomancy:bloodlicker": {
+    "tempers": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "hemomancy:bog_revenant": {
+    "tempers": [
+      "mortem"
     ],
     "properties": []
   },
@@ -17,14 +52,61 @@
     ],
     "properties": []
   },
+  "hemomancy:choir_keeper": {
+    "tempers": [
+      "tenebris"
+    ],
+    "properties": []
+  },
+  "hemomancy:chthonian": {
+    "tempers": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "hemomancy:chthonian_queen": {
+    "tempers": [
+      "animus",
+      "ferric"
+    ],
+    "properties": []
+  },
   "hemomancy:crimson_doe": {
     "tempers": [
       "animus"
     ],
     "properties": []
   },
-  "hemomancy:fungling": {
+  "hemomancy:enthralled_doll": {
     "tempers": [],
+    "properties": []
+  },
+  "hemomancy:erythromycelium_eruptus": {
+    "tempers": [
+      "mortem"
+    ],
+    "properties": []
+  },
+  "hemomancy:facsimile_wolf": {
+    "tempers": [
+      "animus"
+    ],
+    "properties": [
+      "hemomancy:fungal"
+    ]
+  },
+  "hemomancy:fargone": {
+    "tempers": [
+      "animus"
+    ],
+    "properties": [
+      "hemomancy:fungal"
+    ]
+  },
+  "hemomancy:fungling": {
+    "tempers": [
+      "animus"
+    ],
     "properties": [
       "hemomancy:fungal"
     ]
@@ -42,6 +124,74 @@
     "properties": [
       "hemomancy:blood_properties/aquatic"
     ]
+  },
+  "hemomancy:hemolymphopoda": {
+    "tempers": [
+      "congeatio"
+    ],
+    "properties": []
+  },
+  "hemomancy:hunter_fungus": {
+    "tempers": [
+      "animus"
+    ],
+    "properties": [
+      "hemomancy:fungal"
+    ]
+  },
+  "hemomancy:ice_fish": {
+    "tempers": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "hemomancy:lantern_tick": {
+    "tempers": [
+      "lux"
+    ],
+    "properties": []
+  },
+  "hemomancy:leech": {
+    "tempers": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "hemomancy:lump_of_thought": {
+    "tempers": [
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "hemomancy:mnemonic_whale": {
+    "tempers": [
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "hemomancy:morphling_polyp": {
+    "tempers": [],
+    "properties": []
+  },
+  "hemomancy:mortarbound": {
+    "tempers": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "hemomancy:myelin_borer": {
+    "tempers": [
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "hemomancy:peacock_spider": {
+    "tempers": [
+      "lux"
+    ],
+    "properties": []
   },
   "hemomancy:phlegethontic_bombardier": {
     "tempers": [
@@ -62,6 +212,26 @@
     ],
     "properties": []
   },
+  "hemomancy:thirster": {
+    "tempers": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:fungal"
+    ]
+  },
+  "hemomancy:tooth_pecks": {
+    "tempers": [
+      "mortem"
+    ],
+    "properties": []
+  },
+  "hemomancy:vampire_bat": {
+    "tempers": [
+      "tenebris"
+    ],
+    "properties": []
+  },
   "hemomancy:venom_rib_centipede": {
     "tempers": [
       "ferric"
@@ -72,6 +242,10 @@
     "tempers": [
       "animus"
     ],
+    "properties": []
+  },
+  "hemomancy:verdigris_moth": {
+    "tempers": [],
     "properties": []
   },
   "minecraft:allay": {
@@ -120,7 +294,9 @@
     ]
   },
   "minecraft:bogged": {
-    "tempers": [],
+    "tempers": [
+      "mortem"
+    ],
     "properties": [
       "hemomancy:blood_properties/undead"
     ]
@@ -167,7 +343,8 @@
   },
   "minecraft:creeper": {
     "tempers": [
-      "ductilis"
+      "ductilis",
+      "flammeus"
     ],
     "properties": [
       "hemomancy:blood_properties/explosive"
@@ -267,9 +444,11 @@
   },
   "minecraft:goat": {
     "tempers": [
-      "ductilis"
+      "congeatio"
     ],
-    "properties": []
+    "properties": [
+      "hemomancy:blood_properties/cold_native"
+    ]
   },
   "minecraft:guardian": {
     "tempers": [
@@ -595,6 +774,13 @@
       "hemomancy:blood_properties/nether_native",
       "hemomancy:blood_properties/undead"
     ]
+  },
+  "minecraft:wolf": {
+    "tempers": [
+      "animus",
+      "congeatio"
+    ],
+    "properties": []
   },
   "minecraft:zoglin": {
     "tempers": [

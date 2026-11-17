@@ -3,14 +3,12 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class AlchemistDialogueScopeTest {
-    private static final Path ROOT = Path.of("").toAbsolutePath();
 
     @Test
     void alchemistDoesNotTeachArtificerOrVicarSubjects() throws IOException {
@@ -48,9 +46,5 @@ class AlchemistDialogueScopeTest {
         int to = source.indexOf(end, from + start.length());
         assertTrue(from >= 0 && to > from, "Dialogue source boundary not found");
         return source.substring(from, to);
-    }
-
-    private static String read(String path) throws IOException {
-        return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
     }
 }

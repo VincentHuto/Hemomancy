@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.progression;
 
+import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -13,7 +14,8 @@ public final class UnreachableHarbingerSourceTest {
 	private UnreachableHarbingerSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertBloodStructureSource("scarlet_vanity.json", 3, "hemomancy:scarlet_vanity");
 		assertBloodStructureSource("fungal_implantation_pylon.json", 4,
 				"hemomancy:fungal_implantation_pylon");

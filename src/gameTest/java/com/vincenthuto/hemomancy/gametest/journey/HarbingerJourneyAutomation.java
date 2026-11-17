@@ -95,11 +95,8 @@ public final class HarbingerJourneyAutomation {
 			case LIBER_CRAFTED -> craftStructure(player, origin, "liber_sanguinum", origin.above(), null);
 			case HEMATIC_IRON_CRAFTED -> craftStructure(player, origin, "hematic_iron_block", origin.above(), null);
 			case LIVING_STAFF_CRAFTED -> craftStructure(player, origin, "living_staff", origin.above(2), null);
-			case VICAR_REWARD -> {
-				dialogue(player, origin, HarbingerVicarEntity.class,
-						HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD);
-				touchDrop(player, origin, ItemInit.hematic_iron_scrap.get());
-			}
+			case VICAR_REWARD -> dialogue(player, origin, HarbingerVicarEntity.class,
+					HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD);
 			case DEGREE_2_REACHED -> { }
 			case ALCHEMIST_BRIEFING -> dialogue(player, origin, HarbingerAlchemistEntity.class,
 					HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF);
@@ -403,7 +400,7 @@ public final class HarbingerJourneyAutomation {
 				player.getOffhandItem(), recipe.getBloodCost() + 1.0D)) {
 			throw new IllegalStateException("Blood structure did not accept projection: " + recipePath);
 		}
-		for (int tick = 0; tick < 40; tick++) PendingBloodCraftManager.tick();
+		for (int tick = 0; tick < 40; tick++) PendingBloodCraftManager.tick(player.serverLevel());
 		touchDrop(player, origin, recipe.getResult().getItem());
 		if (placeResult != null) {
 			selectItem(player, placeResult);
@@ -673,8 +670,11 @@ public final class HarbingerJourneyAutomation {
 	}
 
 	private static void touchDrop(ServerPlayer player, BlockPos origin, Item item) {
-		player.serverLevel().getEntitiesOfClass(ItemEntity.class, HemoJourneyFixtures.bounds(origin),
-				entity -> entity.getItem().is(item)).getFirst().playerTouch(player);
+		var drops = player.serverLevel().getEntitiesOfClass(ItemEntity.class, HemoJourneyFixtures.bounds(origin),
+				entity -> entity.getItem().is(item));
+		// One-time NPC rewards are owed and delivered straight to the inventory (PT-3), not dropped.
+		if (drops.isEmpty() && player.getInventory().countItem(item) > 0) return;
+		drops.getFirst().playerTouch(player);
 	}
 
 	private static void selectItem(ServerPlayer player, Item item) {

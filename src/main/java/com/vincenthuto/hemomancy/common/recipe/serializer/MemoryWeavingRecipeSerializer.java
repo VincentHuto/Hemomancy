@@ -27,6 +27,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		double blood = json.has("blood")
 				? Math.max(0.0D, GsonHelper.getAsDouble(json, "blood"))
 				: legacyBloodCost(enzymes);
+		int requiredDegree = json.has("required_degree") ? Math.max(0, GsonHelper.getAsInt(json, "required_degree")) : 0;
 
 		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result", jsonOps);
 		if (result.isEmpty()) {
@@ -34,7 +35,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			result = new ItemStack(Items.BARRIER);
 		}
 
-		MemoryWeavingRecipe recipe = new MemoryWeavingRecipe(recipeId, catalysts, enzymes, blood, result);
+		MemoryWeavingRecipe recipe = new MemoryWeavingRecipe(recipeId, catalysts, enzymes, blood, requiredDegree, result);
 		return recipe;
 	}
 
@@ -104,7 +105,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		return requiredTempers * 50.0D;
 	}
 
-	private static final String[] KEYS = Stream.concat( Stream.of("id", "catalysts", "ingredient", "enzymes", "blood", "result", "count"), Stream.of(EnumBloodTemper.values()).map(e -> e.toString().toLowerCase())).toArray(String[]::new);
+	private static final String[] KEYS = Stream.concat( Stream.of("id", "catalysts", "ingredient", "enzymes", "blood", "required_degree", "result", "count"), Stream.of(EnumBloodTemper.values()).map(e -> e.toString().toLowerCase())).toArray(String[]::new);
 
 	private static final MapCodec<MemoryWeavingRecipe> CODEC = RecipeCodecJson.bridge("MemoryWeavingRecipe", "memory_weaving/unknown",
 			MemoryWeavingRecipeSerializer::fromJsonObject, MemoryWeavingRecipeSerializer::encode,
@@ -120,6 +121,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		}
 		prefix.add("enzymes", JsonOps.INSTANCE.convertTo(ops, enzymes));
 		prefix.add("blood", ops.createDouble(recipe.getBloodCost()));
+		if (recipe.getRequiredDegree() > 0) prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
 		prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItem(null)));
 		return prefix;
 	}
@@ -150,8 +152,9 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			enzymes.put(temper, buffer.readVarInt());
 		}
 		double blood = buffer.readDouble();
+		int requiredDegree = buffer.readVarInt();
 		ItemStack output = ItemStack.STREAM_CODEC.decode(buffer);
-		MemoryWeavingRecipe recipe = new MemoryWeavingRecipe(id, catalysts, enzymes, blood, output);
+		MemoryWeavingRecipe recipe = new MemoryWeavingRecipe(id, catalysts, enzymes, blood, requiredDegree, output);
 		return recipe;
 	}
 
@@ -165,6 +168,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			buffer.writeVarInt(recipe.getEnzymeRequirement(temper));
 		}
 		buffer.writeDouble(recipe.getBloodCost());
+		buffer.writeVarInt(recipe.getRequiredDegree());
 		ItemStack result = recipe.getResultItem(null);
 		ItemStack.STREAM_CODEC.encode(buffer, result.isEmpty() ? new ItemStack(Items.BARRIER) : result);
 	}

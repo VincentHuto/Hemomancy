@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
+import org.junit.jupiter.api.Test;
+
 final class ErythrocoralReefRulesTest {
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         rejectsDryOrShallowPositions();
         acceptsStableSubmergedFloors();
         keepsClusterShapeCompact();

@@ -92,7 +92,7 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
 				java.util.Optional.empty(), mouseX, mouseY);
 
         BloodVolumeBarWidget.renderTooltip(graphics, font, bloodBarBounds,
-                te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
+                com.vincenthuto.hemomancy.common.tile.ReservoirReading.of(te), mouseX, mouseY);
     }
 
     @Override
@@ -294,7 +294,7 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
         int barX = gx + 158;
         int barY = gy + 16;
         bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
-                te.getBloodVolume(), te.getMaxBloodVolume(), animTime, BORDER_OUTER, BORDER_INNER);
+                com.vincenthuto.hemomancy.common.tile.ReservoirReading.of(te), animTime, BORDER_OUTER, BORDER_INNER);
     }
 
 

@@ -259,6 +259,12 @@ public final class CourtFollowerGameTests {
 			h.assertTrue(tree.getStartNode().options().stream().noneMatch(o -> CourtMemberDialogue.CHALLENGE.equals(o.eventId())),
 					"the Head-tender offers no challenge while the gate is shut");
 			openGate(player);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
+			h.assertTrue(CourtLife.championGate(player) == CourtChampionRules.Gate.REFUSED_DEGREE, "a D4 is refused: "
+					+ CourtLife.championGate(player));
+			h.assertTrue(KindledChampionTrial.challenge(player, tender) == null && champions(h).isEmpty(),
+					"and no Champion comes out for a D4");
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			tree = CourtMemberDialogue.forMember(tender, player);
 			h.assertTrue(tree.getStartNode().options().stream().anyMatch(o -> CourtMemberDialogue.CHALLENGE.equals(o.eventId())),
 					"and offers it once the gate opens");

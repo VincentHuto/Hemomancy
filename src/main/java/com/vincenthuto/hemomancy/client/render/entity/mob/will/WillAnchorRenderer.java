@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 public class WillAnchorRenderer extends EntityRenderer<WillAnchorEntity> {
-	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/wretched_will/modelwretchedwill.png");
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/blank.png");
 
 	public WillAnchorRenderer(EntityRendererProvider.Context context) {
 		super(context);

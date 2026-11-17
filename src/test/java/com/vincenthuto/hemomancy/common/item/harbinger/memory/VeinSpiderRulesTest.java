@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memory;
 
+import org.junit.jupiter.api.Test;
+
 public final class VeinSpiderRulesTest {
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         transferSideProbeIncludesAllSidesBeforeNullFallback();
         courierProgressExpiresAfterDuration();
         partialFirstEndpointStoresSecondEndpointNext();

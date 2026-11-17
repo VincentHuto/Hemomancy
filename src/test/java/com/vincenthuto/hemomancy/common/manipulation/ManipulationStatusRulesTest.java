@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import org.junit.jupiter.api.Test;
+
 public final class ManipulationStatusRulesTest {
 	private ManipulationStatusRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		conductiveMarkOnlyRespondsToPlannedSchools();
 		conductiveMarkThrottlesPerTarget();
 		insatiableHungerUsesPlannedHealingAndFoodPenalties();
@@ -50,7 +53,10 @@ public final class ManipulationStatusRulesTest {
 				ManipulationStatusRules.crossedGraveDebtThreshold(8.0F, 5.0F, 20.0F));
 		assertFalse("already below threshold is not a new crossing",
 				ManipulationStatusRules.crossedGraveDebtThreshold(4.0F, 3.0F, 20.0F));
-		assertEquals("death refund", 250.0D, ManipulationStatusRules.GRAVE_DEBT_DEATH_REFUND);
+		assertEquals("the caster's kill returns 60% of what the mark cost", 72.0D,
+				ManipulationStatusRules.graveDebtRefund(120.0D, true));
+		assertEquals("another killer returns nothing", 0.0D, ManipulationStatusRules.graveDebtRefund(120.0D, false));
+		assertEquals("an unpaid mark returns nothing", 0.0D, ManipulationStatusRules.graveDebtRefund(0.0D, true));
 	}
 
 	private static void ironRetortUsesPlannedGuardValues() {

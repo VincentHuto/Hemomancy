@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 final class ErythrocoralReefTuningTest {
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		keepsTripledReefDensityInSync();
 		retainsReefGrazersAndSparseRelocatedVisitors();
 		keepsAquaticSpawnDepthsVisibleInDeepReefs();

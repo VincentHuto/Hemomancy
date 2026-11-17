@@ -59,6 +59,15 @@ public final class CircusSchoolQuests {
     public static void testimony(ServerPlayer player, String role) {
         CircusApprenticeshipProgress.state(player).putBoolean("testimony." + role, true);
     }
+    /** D-30: any one of the three school reports is on record. */
+    public static boolean hasAnyReport(net.minecraft.world.entity.player.Player player) {
+        var state = CircusApprenticeshipProgress.state(player);
+        return state.getBoolean("quest.empty_ring") || state.getBoolean("quest.wrong_audience")
+                || state.getBoolean("quest.missing_understudy");
+    }
+    public static boolean hasUnderstudyReport(net.minecraft.world.entity.player.Player player) {
+        return CircusApprenticeshipProgress.state(player).getBoolean("quest.missing_understudy");
+    }
     public static boolean report(ServerPlayer player) {
         boolean delivered = false;
         if (emptyRingDone(player)) delivered |= finish(player, "empty_ring", 100);

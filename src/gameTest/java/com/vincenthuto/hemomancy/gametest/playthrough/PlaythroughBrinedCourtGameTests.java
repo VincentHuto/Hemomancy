@@ -68,6 +68,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -453,12 +454,11 @@ public final class PlaythroughBrinedCourtGameTests {
 		helper.succeed();
 	}
 
-	/** The same custom given by dialogue and by the trade card should earn the same rapport with the Gardener. */
-	// DECISION NPC-2: The Court custom trade card adds rapport (2 with the Gardener); the dialogue offering adds none,
-	// though NPC_DIALOGUE_AND_TRADE.md says Court cards pay "exactly as the dialogue offering does".
-	// Options: both add rapport / neither does / fix the doc.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void tradeCardPaysRapportDialogueDoesNot(GameTestHelper helper) {
+	/** The same custom given by dialogue and by the trade card earns the same rapport with the Gardener. */
+	// FIX: PT-56 (was NPC-2): the card added rapport (2 with the Gardener) and the dialogue offering added none. The
+	// offering now pays the card's rapport through NpcTradeService.creditCustom.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void customPaysTheSameRapportByWordAndByCard(GameTestHelper helper) {
 		CourtMemberEntity gardener = member(helper, CourtRole.GARDENER, 16, 6);
 		PlaythroughPlayer byWord = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 12, 12));
 		PlaythroughPlayer byCard = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 20, 12));
@@ -480,20 +480,19 @@ public final class PlaythroughBrinedCourtGameTests {
 		PlaythroughLog.note(helper, "Gardener rapport after the custom: by dialogue " + wordRapport + ", by card " + cardRapport
 				+ "; standing " + CourtLife.standing(byWord.player(), CourtHouse.GIVING_LIGHT) + " / "
 				+ CourtLife.standing(byCard.player(), CourtHouse.GIVING_LIGHT));
-		helper.assertTrue(wordRapport == cardRapport, "the dialogue offering and the trade card pay the same rapport: "
-				+ wordRapport + " vs " + cardRapport);
+		helper.assertTrue(wordRapport == cardRapport && wordRapport > 0,
+				"the dialogue offering and the trade card pay the same rapport: " + wordRapport + " vs " + cardRapport);
 		helper.succeed();
 	}
 
 	/**
 	 * A player brings the Kindling's custom to its Offering Bearer before ever visiting the Vent Sanctum, then visits.
-	 * A player would expect the two acts to make them a friend, whatever the order, and so open the Champion.
+	 * The two acts make them a friend, whatever the order, and so open the Champion.
 	 */
-	// DECISION BC-1: Court standing depends on act order: a custom given before any visit lifts a stranger to guest,
-	// the later visit then adds nothing, and FRIEND (which the Kindled Champion needs) is out of reach for good.
-	// Options: order-independent standing / allow re-earning / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = SITE_ORDER, required = false)
-	public static void customBeforeVisitLocksGuest(GameTestHelper helper) {
+	// FIX: PT-45 (was BC-1): a custom given before any visit used to lock the house at guest. The first visit-kind act
+	// after the custom made the guest now makes a friend (CourtStandingRules.afterAct).
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = SITE_ORDER)
+	public static void customThenVisitMakesAFriend(GameTestHelper helper) {
 		clearCourtActors(helper);
 		CourtMemberEntity bearer = member(helper, CourtRole.OFFERING_BEARER, 4, 6);
 		CourtMemberEntity tender = member(helper, CourtRole.HEAD_TENDER, 28, 6);
@@ -550,9 +549,11 @@ public final class PlaythroughBrinedCourtGameTests {
 		helper.assertTrue(ready.offers(CourtMemberDialogue.LESSON), "at D5 the Lightkeeper teaches: " + ready);
 		p.choose(keeper, CourtMemberDialogue.LESSON).said(CourtLessonRules.Outcome.TAUGHT.translationKey());
 		helper.assertTrue(CourtLife.hasLesson(p.player()), "the lesson is taught");
-		// DECISION BC-7 (logged): "Feed it there" reads as Incubator feeding, but the x1.5 applies to worn upkeep only.
-		PlaythroughLog.note(helper, "DECISION BC-7 lesson wording: " + english(ready.node("lesson").map(DialogueNode::lines)
-				.orElse(List.of())));
+		// FIX: PT-51 (was BC-7): "Feed it there" read as Incubator feeding, but the x1.5 applies to a worn strain only.
+		List<String> lesson = english(ready.node("lesson").map(DialogueNode::lines).orElse(List.of()));
+		PlaythroughLog.note(helper, "lesson wording: " + lesson);
+		helper.assertTrue(!lesson.isEmpty() && lesson.stream().noneMatch(line -> line.toLowerCase(Locale.ROOT).matches(".*\\bfe(e)?d\\b.*"))
+				&& lesson.stream().anyMatch(line -> line.contains("Wear")), "the lesson is about wearing the strain, not feeding it: " + lesson);
 		DialogueView known = p.talkTo(keeper);
 		helper.assertTrue(known.hasNode("lesson_known") && !known.offers(CourtMemberDialogue.LESSON), "taught once: " + known);
 
@@ -600,9 +601,12 @@ public final class PlaythroughBrinedCourtGameTests {
 		p.approach(lamp);
 		DialogueView switching = p.talkTo(lamp);
 		helper.assertTrue(switching.offers(CourtMemberDialogue.JOIN), "the Lamp colony asks them in: " + switching);
-		// DECISION BC-3 (logged): asking to join spends the one free switch, and nothing shown before says so.
-		PlaythroughLog.note(helper, "DECISION BC-3 the switch is offered as an ordinary join: "
-				+ english(switching.node("join").map(DialogueNode::lines).orElse(List.of())));
+		// FIX: PT-47 (was BC-3): the switch sits behind a warning that it spends the one move between houses.
+		List<String> switchWarning = confirmLines(switching, CourtMemberDialogue.JOIN);
+		helper.assertTrue(switchWarning.equals(List.of(CourtMemberDialogue.SWITCH_PROMPT)),
+				"the switch warns before the move is spent: " + switchWarning);
+		helper.assertTrue(confirmLines(join, CourtMemberDialogue.JOIN).equals(List.of("hemomancy.dialogue.action.confirm")),
+				"a first entry keeps the plain confirm: " + confirmLines(join, CourtMemberDialogue.JOIN));
 		p.choose(lamp, CourtMemberDialogue.JOIN).said("hemomancy.court.membership.switched");
 		helper.assertTrue(CourtLife.house(p.player()) == CourtHouse.WOVEN_CURRENT && CourtLife.progress(p.player()).switchUsed(),
 				"switched, and the switch is spent");
@@ -674,8 +678,6 @@ public final class PlaythroughBrinedCourtGameTests {
 			for (CourtMemberEntity resident : residents) {
 				CourtRole role = resident.role();
 				p.approach(resident);
-				// ARRANGE: an empty hand. A held Lead (the Lamp-colony's gift) leashes a member instead (BC-12).
-				PlaythroughRites.emptyHand(p);
 				DialogueView view = p.talkTo(resident);
 				findings.addAll(view.missingLangKeys().stream().map(key -> role + ": " + key).toList());
 				findings.addAll(view.deadEnds().stream().map(end -> role + ": " + end).toList());
@@ -718,7 +720,6 @@ public final class PlaythroughBrinedCourtGameTests {
 						}
 					}
 				}
-				PlaythroughRites.emptyHand(p); // ARRANGE: the gift goes to the pack (BC-12)
 				if (role.offers(CourtRole.Offer.JOIN) && !p.talkTo(resident).offers(CourtMemberDialogue.JOIN)) {
 					findings.add(role + ": a D5 guest is not asked in");
 				}
@@ -734,13 +735,12 @@ public final class PlaythroughBrinedCourtGameTests {
 
 	/**
 	 * The Lamp-colony's gift is two Leads, and a gift lands in the empty hand the player talked with. Their next
-	 * right-click on any Court member then leashes it (vanilla {@code Mob#interact}) instead of opening its dialogue.
+	 * right-click on a Court member with the Lead still in hand opens its dialogue; members can't be leashed.
 	 */
-	// DECISION BC-12: Court members can be leashed, so a held Lead (the Lamp-colony's own gift) ties a member up rather
-	// than talking to it, and lets a player drag a mobile member off its mark. Options: canBeLeashed false for Court
-	// members, as for villagers / keep leashing (a deliberate trick) but open the dialogue first / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void heldLeadLeashesACourtMember(GameTestHelper helper) {
+	// FIX: PT-55 (was BC-12): Court members could be leashed, so a held Lead tied a member up instead of talking to it.
+	// CourtMemberEntity.canBeLeashed is false now, as for villagers.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void aHeldLeadDoesNotLeashACourtMember(GameTestHelper helper) {
 		clearCourtActors(helper);
 		CourtMemberEntity colony = member(helper, CourtRole.LAMP_COLONY, 10, 8);
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 10, 12));
@@ -950,13 +950,13 @@ public final class PlaythroughBrinedCourtGameTests {
 	}
 
 	/**
-	 * A logs out mid-fight and B swims more than 64 blocks off. A player would expect running from the usurpation to
-	 * cost the same day as dying to it.
+	 * A logs out mid-fight and B swims more than 64 blocks off. Running from the usurpation costs the same day as dying
+	 * to it.
 	 */
-	// DECISION BC-2: Logging out or leaving 64 blocks ends a usurpation (Outcome GONE after 100 ticks) with no retry
-	// wait, while dying costs a day. Options: the same wait for escape / pause and resume / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 400, batch = BATCH, required = false)
-	public static void usurpationEscapedByLogout(GameTestHelper helper) {
+	// FIX: PT-46 (was BC-2): leaving ended the fight (Outcome GONE) with no wait. A logout now ends it at once, a
+	// challenger who swims off is found online after the grace, and both record the day's wait.
+	@GameTest(template = EMPTY, timeoutTicks = 400, batch = BATCH)
+	public static void escapingAUsurpationCostsTheDay(GameTestHelper helper) {
 		clearCourtActors(helper);
 		CourtMemberEntity tender = member(helper, CourtRole.HEAD_TENDER, 12, 8);
 		member(helper, CourtRole.KINDLED_ELDER, 16, 8);
@@ -977,7 +977,8 @@ public final class PlaythroughBrinedCourtGameTests {
 						fights[i] = facing(helper, p);
 						helper.assertTrue(fights[i] != null, "the Champion steps out for " + i);
 					}
-					a.offline(); // logs out mid-fight
+					EventHooks.firePlayerLoggedOut(a.player()); // logs out mid-fight
+					a.offline();
 					b.moveTo(fights[1].blockPosition().east(70)); // swims off
 				})
 				.until(300, () -> fights[0].outcome() != null && fights[1].outcome() != null, "both usurpations end")
@@ -988,17 +989,58 @@ public final class PlaythroughBrinedCourtGameTests {
 					long bWait = CourtLife.progress(b.player()).usurpRetryAt();
 					PlaythroughLog.note(helper, "escaped usurpations: logout " + fights[0].outcome() + " wait " + aWait
 							+ ", 70 blocks " + fights[1].outcome() + " wait " + bWait + ", now " + now);
+					helper.assertTrue(fights[0].outcome() == KindledChampionRules.Outcome.GONE
+							&& fights[1].outcome() == KindledChampionRules.Outcome.GONE, "both left the fight");
 					helper.assertTrue(aWait > now && bWait > now, "running from the usurpation costs the day dying does: "
 							+ aWait + " / " + bWait);
+					helper.assertTrue(aWait <= now + CourtChampionRules.USURP_RETRY_TICKS
+							&& bWait <= now + CourtChampionRules.USURP_RETRY_TICKS, "one day, no more");
 				})
 				.run();
 	}
 
-	/** Choosing the challenge should ask once more before the Champion steps out. */
-	// DECISION BC-4: The Kindled Champion challenge fires the moment the option is chosen; there is no confirm node.
-	// Options: a confirm node / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void challengeStartsWithoutConfirm(GameTestHelper helper) {
+	/**
+	 * A challenger swims more than 64 blocks from the Champion and logs out inside the 100-tick grace. The Champion is
+	 * found at any distance, so the fight ends at the logout, the day's wait is recorded and the forfeit is said.
+	 */
+	// FIX: PT-46 gap (14 T1): the logout handler searched only 64 blocks round the player, so this challenger left
+	// with no wait.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void aFarChallengerWhoLogsOutStillForfeits(GameTestHelper helper) {
+		clearCourtActors(helper);
+		CourtMemberEntity tender = member(helper, CourtRole.HEAD_TENDER, 12, 8);
+		member(helper, CourtRole.KINDLED_ELDER, 16, 8);
+		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 8, 14));
+		PlaythroughStates.illuminatusD5(p); // ARRANGE
+		openChampionGate(p); // ARRANGE
+		p.approach(tender);
+		p.talkTo(tender);
+		p.choose(tender, CourtMemberDialogue.CHALLENGE);
+		KindledChampionEntity fight = facing(helper, p);
+		helper.assertTrue(fight != null, "the Champion steps out");
+		p.moveTo(fight.blockPosition().east(70)); // past the old 64-block search
+		int mark = p.mark();
+		EventHooks.firePlayerLoggedOut(p.player()); // logs out inside the grace
+		List<String> said = p.chatSince(mark).stream().flatMap(line -> line.keys().stream()).toList();
+		long now = helper.getLevel().getGameTime();
+		long wait = CourtLife.progress(p.player()).usurpRetryAt();
+		p.offline();
+		PlaythroughLog.note(helper, "far logout: outcome " + fight.outcome() + ", wait " + wait + ", now " + now + ", said " + said);
+		helper.assertTrue(fight.outcome() == KindledChampionRules.Outcome.GONE, "the logout ends the fight at once: " + fight.outcome());
+		helper.assertTrue(wait > now && wait <= now + CourtChampionRules.USURP_RETRY_TICKS, "the day's wait is recorded: " + wait);
+		helper.assertTrue(said.contains("hemomancy.court.champion.forfeit"), "the forfeit is said: " + said);
+		p.online();
+		helper.succeed();
+	}
+
+	/**
+	 * The challenge asks once more before the Champion steps out: the served hub puts it on a confirm step whose line
+	 * is the Head-tender's warning (falling or leaving costs a day), not the generic confirm.
+	 */
+	// FIX: PT-48 (was BC-4): the option fired behind the generic confirm only, and the warning came after the Champion
+	// was called. The old probe sent the event directly and could not see a confirm screen; this one reads the hub.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void challengeWarnsBeforeTheChampionSteps(GameTestHelper helper) {
 		clearCourtActors(helper);
 		CourtMemberEntity tender = member(helper, CourtRole.HEAD_TENDER, 12, 8);
 		member(helper, CourtRole.KINDLED_ELDER, 18, 8);
@@ -1007,30 +1049,41 @@ public final class PlaythroughBrinedCourtGameTests {
 		openChampionGate(p); // ARRANGE
 		p.approach(tender);
 		DialogueView view = p.talkTo(tender);
+		view.assertLangKeys(helper, "the Head-tender, gate open");
 		helper.assertTrue(view.offers(CourtMemberDialogue.CHALLENGE), "the gate is open: " + view);
-		Outcome chosen = p.choose(tender, CourtMemberDialogue.CHALLENGE);
-		KindledChampionEntity champion = facing(helper, p);
-		PlaythroughLog.note(helper, "choosing the challenge: " + chosen.describe() + "; Champion out " + (champion != null)
-				+ "; the node shown after it: " + english(view.node("challenge").map(DialogueNode::lines).orElse(List.of())));
-		helper.assertTrue(champion == null, "the Champion waits for a confirmation before stepping out");
+		List<String> warning = confirmLines(view, CourtMemberDialogue.CHALLENGE);
+		PlaythroughLog.note(helper, "the step that calls the Champion says: " + english(warning));
+		helper.assertTrue(warning.equals(List.of("hemomancy.court.head_tender.challenge.line2")),
+				"the challenge sits behind the Head-tender's warning: " + warning);
+		helper.assertTrue(english(warning).getFirst().contains("leave"), "the warning names leaving as well as falling");
+		helper.assertTrue(facing(helper, p) == null, "nothing is called before the choice");
+		p.choose(tender, CourtMemberDialogue.CHALLENGE);
+		helper.assertTrue(facing(helper, p) != null, "confirmed, the Champion steps out");
 		helper.succeed();
 	}
 
-	/** A Degree 4 player with an Apex strain from a shared Incubator should not be offered the usurpation. */
-	// DECISION BC-8: The Kindled Champion has no degree gate, while joining a house and the lesson need D5.
-	// Options: a D5 gate / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void championHasNoDegreeGate(GameTestHelper helper) {
+	/** A Degree 4 player with an Apex strain from a shared Incubator is not offered the usurpation. */
+	// FIX: PT-52 (was BC-8): the Champion had no Degree gate. It now needs the fifth, as joining and the lesson do.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void championNeedsTheFifthDegree(GameTestHelper helper) {
 		CourtMemberEntity tender = member(helper, CourtRole.HEAD_TENDER, 12, 8);
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 12, 14));
 		PlaythroughStates.adeptD4(p); // ARRANGE
 		openChampionGate(p); // ARRANGE: the Apex strain was grown by a D5 partner in a shared Incubator
 		p.approach(tender);
-		DialogueView view = p.talkTo(tender);
-		PlaythroughLog.note(helper, "a D4 at the Head-tender with an Apex strain and the Kindling's friendship: " + view
-				+ "; gate " + CourtLife.championGate(p.player()));
-		helper.assertFalse(view.offers(CourtMemberDialogue.CHALLENGE), "a D4 is not offered the usurpation: " + view);
+		gateNode(helper, p, tender, "challenge_refused_degree");
+		p.forge(CourtMemberDialogue.CHALLENGE, tender.getId()).said(CourtChampionRules.Gate.REFUSED_DEGREE.translationKey());
+		helper.assertTrue(facing(helper, p) == null, "no Champion steps out for a D4");
 		helper.succeed();
+	}
+
+	/**
+	 * The lines of the hub step that fires {@code eventId}, the warning a player reads before it happens. The greeting
+	 * still lists the option too, but the hub's card opens the step.
+	 */
+	private static List<String> confirmLines(DialogueView view, String eventId) {
+		return view.topic(eventId).flatMap(topic -> view.node(topic.targetNodeId())).map(DialogueNode::lines)
+				.orElse(List.of());
 	}
 
 	// =================================================================================================================
@@ -1039,16 +1092,14 @@ public final class PlaythroughBrinedCourtGameTests {
 
 	/**
 	 * A D5 guest of the Garden who carries the Relay Chart asks everyone on the way (the Vicar, the Voyager, the three
-	 * Giving Light roles) and reads the chart. Something should place the Vent Sanctum before the player stands at it.
-	 * BC-5, BC-9 and BC-10 are logged from the same pass.
+	 * Giving Light roles) and reads the chart. The Giving Light's directions place the Vent Sanctum and the Shared
+	 * Wake's nursery before the player stands at either, and the Gardener has more to say at D8 with a Primal strain.
+	 * The PT-53 Pelagic flag is asserted on.
 	 */
-	// DECISION BC-6: The Relay Chart points only at the nearest Lighthouse Garden and no line places the Vent Sanctum
-	// or the outposts (the residents' directions name depths, not places). Options: chart modes / resident directions
-	// name places / keep.
-	// DECISION BC-5 (logged): joining the Shared Wake needs its rare nursery, and nothing points to it.
-	// DECISION BC-9 (logged): with Pelagic worldgen off, the Vicar, Voyager and Alchemist still send the player seaward.
-	// DECISION BC-10 (logged): no Court NPC speaks past D5 or about Primal strains.
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
+	// FIX: PT-50 (was BC-6): residents name each house's site, and the Giving Light names the Vent Sanctum.
+	// FIX: PT-49 (was BC-5): the Gardener, Lightkeeper and Edge-swimmer point to the nursery in spoken lines.
+	// FIX: PT-54 (was BC-10): the Gardener greets the late Degrees and answers a Primal strain.
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void courtPointersPastTheGarden(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, PlaythroughSites.stand(helper, 4, 4));
 		HarbingerVoyagerEntity voyager = PlaythroughNpcs.voyager(helper, PlaythroughSites.stand(helper, 10, 4));
@@ -1075,17 +1126,12 @@ public final class PlaythroughBrinedCourtGameTests {
 		boolean sanctum = all.stream().anyMatch(line -> line.contains("Vent Sanctum"));
 		boolean nursery = all.stream().anyMatch(line -> line.toLowerCase(Locale.ROOT).contains("nursery"));
 		PlaythroughLog.note(helper, "on the way past the Garden: Vent Sanctum named " + sanctum + ", nursery named " + nursery
-				+ " (BC-5); heard " + heard);
+				+ "; heard " + heard);
 
-		boolean pelagic = true;
-		try {
-			pelagic = HemoCommonConfig.ENABLE_PELAGIC_WORLDGEN.get();
-		} catch (RuntimeException exception) {
-			PlaythroughLog.note(helper, "the Pelagic worldgen config could not be read: " + exception);
-		}
-		PlaythroughLog.note(helper, "DECISION BC-9: Pelagic worldgen is " + (pelagic ? "on" : "off")
-				+ " here; the Vicar's and Voyager's Court topics do not read it (shown: "
-				+ heard.keySet().stream().limit(2).toList() + ")");
+		// FIX: PT-53 (was BC-9): with Pelagic worldgen off the Vicar, Voyager and Alchemist add no Court topic and no
+		// Votary drops a letter (CourtDiscoveryDialogueTest covers the off case). This world has it on.
+		helper.assertTrue(HemoCommonConfig.enablePelagicWorldgen() && CourtDiscoveryProgress.sitesGenerate(),
+				"Pelagic worldgen is on in the test world, so the Court topics show");
 
 		// Its default Fane heart (home, four east) stays inside the template and clear of the members.
 		PlaythroughPlayer late = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 20, 18));
@@ -1098,11 +1144,13 @@ public final class PlaythroughBrinedCourtGameTests {
 		wear(late, strain(MorphlingStrains.SUNBURST, 5)); // ARRANGE: a Primal strain
 		List<String> atEight = late.talkTo(gardener).lineKeys();
 		List<String> added = atEight.stream().filter(key -> !atFive.contains(key)).toList();
-		PlaythroughLog.note(helper, "DECISION BC-10: the Gardener at D8 Apotheos with a Primal strain adds " + added
-				+ " to its D5 lines");
+		PlaythroughLog.note(helper, "the Gardener at D8 Apotheos with a Primal strain adds " + added + " to its D5 lines");
 		unwear(late);
 
 		helper.assertTrue(sanctum, "something on the way places the Vent Sanctum before the player reaches it: " + heard);
+		helper.assertTrue(nursery, "something on the way points to the Shared Wake's nursery: " + heard);
+		helper.assertTrue(added.contains("hemomancy.court.gardener.degree.late") && added.contains("hemomancy.court.gardener.strain.primal"),
+				"the Gardener greets the late Degrees and the Primal strain: " + added);
 		helper.succeed();
 	}
 

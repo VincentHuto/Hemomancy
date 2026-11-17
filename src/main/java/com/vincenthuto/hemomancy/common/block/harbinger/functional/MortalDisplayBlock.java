@@ -82,30 +82,38 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 
 	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player) {
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
+		if (worldIn.getBlockEntity(pos) instanceof MortalDisplayBlockEntity unlinked && unlinked.getLinkedHermit() == null)
+			unlinked.relink();
 		if (!(worldIn.getBlockEntity(pos) instanceof MortalDisplayBlockEntity display)
 				|| display.getLinkedHermit() == null) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.mortal_display_block.this_heart_has_no_living_oath").withStyle(ChatFormatting.GRAY), false);
 			return InteractionResult.SUCCESS;
 		}
-		if (!TempleOathRules.canClaimHeart(display.getLinkedHermit(),
-				TempleOathRules.blessedHermit(player), display.isClaimed())) {
-			player.displayClientMessage((display.isClaimed() ? Component.translatable("message.hemomancy.mortal_display_block.the_heart_has_already_been_claimed") : Component.translatable("message.hemomancy.mortal_display_block.speak_with_this_temple_s_hermit")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+		if (display.isClaimed()) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.mortal_display_block.the_heart_has_already_been_claimed").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return InteractionResult.SUCCESS;
 		}
-
         if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return InteractionResult.SUCCESS;
         var equipment = HemoCapabilityAccess.getEquipment(player);
+        // PT-8b: awakened blood is told the heart cannot attach before it is sent to a Hermit who cannot bless it.
         if (equipment == null || !equipment.getStackInSlot(5).isEmpty()
                 || !ProgressionGates.isDegree(player, 0)
                 || HemoCapabilityAccess.getBloodVolume(player).isActive()) {
             player.displayClientMessage(Component.translatable("hemomancy.initiation.cannot_attach"), false);
             return InteractionResult.SUCCESS;
         }
+		if (!TempleOathRules.canClaimHeart(display.getLinkedHermit(), TempleOathRules.blessedHermit(player), false)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.mortal_display_block.speak_with_this_temple_s_hermit").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			return InteractionResult.SUCCESS;
+		}
         equipment.setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
         display.claim(player.getUUID());
         TempleOathRules.recordHeartClaim(player, display.getLinkedHermit());
         com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(serverPlayer);
-        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.give(serverPlayer, new ItemStack(ItemInit.harbinger_lodestone.get()));
+        ItemStack lodestone = new ItemStack(ItemInit.harbinger_lodestone.get());
+        if (com.vincenthuto.hemomancy.common.capability.PendingDelivery.insert(serverPlayer, lodestone) < lodestone.getCount()) {
+            serverPlayer.drop(lodestone, false);
+        }
         player.displayClientMessage(Component.translatable("hemomancy.mortal_display.charm_equipped"), false);
         for (int i = 0; i < 10; i++) {
             Vec3 start = Vec3.atCenterOf(pos);
@@ -115,6 +123,28 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 
 		return InteractionResult.SUCCESS;
 
+	}
+
+	/** PT-8: in survival the Display cannot be broken while it holds a living Hermit's heart. */
+	@Override
+	protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+		return !player.getAbilities().instabuild && level.getBlockEntity(pos) instanceof MortalDisplayBlockEntity display
+				&& display.livingHermit() != null ? 0.0F : super.getDestroyProgress(state, player, level, pos);
+	}
+
+	@Override
+	public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest,
+			FluidState fluid) {
+		if (!player.getAbilities().instabuild && level.getBlockEntity(pos) instanceof MortalDisplayBlockEntity display
+				&& display.livingHermit() != null) return false;
+		return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @javax.annotation.Nullable net.minecraft.world.entity.LivingEntity placer,
+			ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		if (level.getBlockEntity(pos) instanceof MortalDisplayBlockEntity display) display.relink();
 	}
 
 	@Override

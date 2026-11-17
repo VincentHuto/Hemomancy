@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
+import org.junit.jupiter.api.Test;
+
 public final class SynapticLoadoutSlotHelperTest {
 	private SynapticLoadoutSlotHelperTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		baseAndMaximumSlotCountsMatchPlan();
 		skillLevelsAreClampedToFourBonusSlots();
 		slotIndexChecksUseUnlockedCount();

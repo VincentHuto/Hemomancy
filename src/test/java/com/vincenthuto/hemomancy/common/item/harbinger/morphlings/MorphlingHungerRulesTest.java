@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import org.junit.jupiter.api.Test;
+
 public final class MorphlingHungerRulesTest {
 	private MorphlingHungerRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		disabledHungerIsInert();
 		matureWildBoundMorphlingsAreExempt();
 		enabledMatureMorphlingsMoveThroughHungerStates();

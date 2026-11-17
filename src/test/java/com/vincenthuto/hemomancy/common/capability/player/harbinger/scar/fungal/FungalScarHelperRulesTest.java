@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
+import org.junit.jupiter.api.Test;
+
 public final class FungalScarHelperRulesTest {
 	private FungalScarHelperRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		rhizovittaRefundOnlyAppliesWhenRooted();
 		putrivoraDigestsOnlyPositiveDurationsAndCapsHealing();
 		cryostromaConserveRampRequiresStillnessAndCapsAtMax();

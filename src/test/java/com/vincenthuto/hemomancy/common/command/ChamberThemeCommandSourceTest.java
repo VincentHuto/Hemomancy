@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+
 public final class ChamberThemeCommandSourceTest {
 	private static final Path COMMAND = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/command/ChamberSubcommand.java");
@@ -20,11 +23,6 @@ public final class ChamberThemeCommandSourceTest {
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 
 	ChamberThemeCommandSourceTest() {
-	}
-
-	@Test
-	void chamberThemeRegistrationContract() throws IOException {
-		main(new String[0]);
 	}
 
 	@Test
@@ -45,7 +43,8 @@ public final class ChamberThemeCommandSourceTest {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void chamberThemeRegistrationContract() throws IOException {
 		String command = Files.readString(COMMAND).replace("\r\n", "\n");
 		String manager = Files.readString(MANAGER).replace("\r\n", "\n");
 		String registry = Files.readString(THEME_REGISTRY).replace("\r\n", "\n");
@@ -132,18 +131,6 @@ public final class ChamberThemeCommandSourceTest {
 				"/hemo chamber size set <radius> [player]");
 		assertContains("reference documents chamber size reset", reference,
 				"/hemo chamber size reset [player]");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": found " + unexpected);
-		}
 	}
 
 	private static String compact(String text) {

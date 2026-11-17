@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.unstained.plant.LetheanPoppyBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -93,9 +95,9 @@ public class WhiteHumorPurificationEvents {
 		data.putInt(TICKS_KEY, ticks);
 
 		if (level instanceof ServerLevel serverLevel && itemEntity.tickCount % 10 == 0) {
-			serverLevel.sendParticles(ParticleTypes.END_ROD,
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE),
 					itemEntity.getX(), itemEntity.getY() + 0.25, itemEntity.getZ(),
-					2 + Math.min(scan.bonus(), MAX_ABSORBER_BONUS), 0.12, 0.08, 0.12, 0.01);
+					2 + Math.min(scan.bonus(), MAX_ABSORBER_BONUS), 0.12, 0.08, 0.12, 0.005);
 		}
 
 		if (itemEntity.tickCount % ABSORBER_DEGRADE_INTERVAL == 0) {
@@ -128,12 +130,15 @@ public class WhiteHumorPurificationEvents {
 		ItemStack result = match.getResultItemRaw().copy();
 		result.setCount(match.getResultItemRaw().getCount() * transformedCount);
 
-		serverLevel.sendParticles(ParticleTypes.POOF,
+		serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE),
 				itemEntity.getX(), itemEntity.getY() + 0.45, itemEntity.getZ(),
-				16, 0.25, 0.2, 0.25, 0.02);
-		serverLevel.sendParticles(ParticleTypes.END_ROD,
+				16, 0.25, 0.2, 0.25, 0.01);
+		serverLevel.sendParticles(HemoParticleData.letheanDrip(),
+				itemEntity.getX(), itemEntity.getY() + 0.45, itemEntity.getZ(),
+				8, 0.25, 0.2, 0.25, 0.0);
+		serverLevel.sendParticles(HemoParticleData.emberSpark(HemoPalette.STILL_SILVER, 0.2F, 0.8F, 20),
 				itemEntity.getX(), itemEntity.getY() + 0.55, itemEntity.getZ(),
-				12, 0.25, 0.25, 0.25, 0.05);
+				12, 0.25, 0.25, 0.25, 0.025);
 		serverLevel.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME,
 				SoundSource.BLOCKS, 0.9f, 1.4f + level.random.nextFloat() * 0.25f);
 

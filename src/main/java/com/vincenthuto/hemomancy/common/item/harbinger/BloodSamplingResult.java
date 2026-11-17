@@ -6,6 +6,7 @@ public enum BloodSamplingResult {
 	INVALID_TARGET("invalid_target"),
 	INSUFFICIENT_CONDITION("insufficient_condition"),
 	REQUIRES_LIVING_SYRINGE("requires_living_syringe"),
+	RECENTLY_DRAWN("recently_drawn"),
 	FAILED("failed");
 
 	private final String translationKey;

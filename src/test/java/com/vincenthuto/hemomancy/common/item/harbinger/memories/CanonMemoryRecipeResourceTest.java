@@ -11,9 +11,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Each Canon Memory is woven from its Saint's residuum and its Saint's temper pair. The registered
+ * Each Canon Memory is woven from its Saint's residuum and its Saint's temper pair, two enzymes of each and 300 blood. The registered
  * manipulation's pair is checked over the live registry by canonMemoriesTakeTheirSaintsPair.
  */
 final class CanonMemoryRecipeResourceTest {
@@ -45,6 +46,19 @@ final class CanonMemoryRecipeResourceTest {
 					saint.getPrimaryTemper().name().toLowerCase(Locale.ROOT),
 					saint.getSecondaryTemper().name().toLowerCase(Locale.ROOT)));
 			assertEquals(pair, enzymes, memory + " takes " + saintId + "'s temper pair");
+			assertEquals(8, recipe.get("required_degree").getAsInt(), memory + " weaves only at D8 (C-6)");
+			recipe.getAsJsonObject("enzymes").entrySet().forEach(entry -> {
+				if (entry.getValue().getAsInt() > 0)
+					assertEquals(2, entry.getValue().getAsInt(), memory + " takes two of each " + entry.getKey() + " (NQ-08-1 A)");
+			});
+			assertEquals(300, recipe.get("blood").getAsInt(), memory + " costs 300 blood to weave (NQ-08-1 A)");
 		});
+	}
+
+	@Test
+	void theTreasureBarrelHoldsNoCanonMemory() {
+		String table = ResourceReader.data("loot_table/chests/mausoleum_treasure.json").toString();
+		CANON.values().forEach(memory -> assertFalse(table.contains("hemomancy:memory_" + memory),
+				"mausoleum_treasure drops no " + memory + " directly (C-6)"));
 	}
 }

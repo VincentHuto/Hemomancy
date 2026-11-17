@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedPriestessEnti
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -70,6 +72,13 @@ public final class EndgameBossMusicHandler {
 		}
 		if (entity instanceof StainedPriestessEntity priestess) {
 			return new BossMusicTarget(priestess, SoundInit.ENTITY_STAINED_PRIESTESS_MUSIC.get(), 0.5F);
+		}
+		if (entity instanceof CircusRingmasterEntity ringmaster) {
+			// D-36: the finale's music event has no track until the owner supplies one; it plays through the closing beat.
+			CircusPavilionStateRules.Phase phase = ringmaster.phase();
+			boolean finale = phase == CircusPavilionStateRules.Phase.RAFTERS || phase == CircusPavilionStateRules.Phase.CAROUSEL
+					|| phase == CircusPavilionStateRules.Phase.DESCENT || phase == CircusPavilionStateRules.Phase.CURTAIN;
+			return finale ? new BossMusicTarget(ringmaster, SoundInit.ENTITY_CIRCUS_RINGMASTER_MUSIC.get(), 0.5F) : null;
 		}
 		if (entity instanceof MycophantEntity mycophant) {
 			if (mycophant.isMusicSilent()) return null;

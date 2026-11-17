@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class BloodlineDisbandFaneSourceTest {
 	private static final Path HELPER = Path.of(
@@ -17,7 +20,8 @@ public final class BloodlineDisbandFaneSourceTest {
 	private BloodlineDisbandFaneSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String helper = Files.readString(HELPER).replace("\r\n", "\n");
 		String ledgerPacket = Files.readString(LEDGER_PACKET).replace("\r\n", "\n");
 		String command = Files.readString(COMMAND).replace("\r\n", "\n");
@@ -35,21 +39,18 @@ public final class BloodlineDisbandFaneSourceTest {
 		assertContains("helper removes physical bloodwell block on disband", helper, "level.removeBlock(heartPos, false)");
 		assertContains("helper checks hematic stake blocks before removal", helper, "BlockInit.hematic_stake");
 		assertContains("helper checks bloodwell blocks before removal", helper, "BlockInit.consecrated_bloodwell");
-		assertContains("ledger disband clears fanes for the disbanded bloodline", ledgerPacket,
-				"BloodlineDisbandHelper.removeOwnedFanes(player.server, globalLine)");
-		assertContains("command disband clears fanes for the disbanded bloodline", command,
-				"BloodlineDisbandHelper.removeOwnedFanes(source.getServer(), globalLine)");
-		assertContains("hematic unbinding clears fanes for the disbanded bloodline", riteEvents,
-				"BloodlineDisbandHelper.removeOwnedFanes(sLevel.getServer(), bloodline)");
-		assertOrder("ledger clears fanes before removing bloodline data", ledgerPacket,
-				"BloodlineDisbandHelper.removeOwnedFanes(player.server, globalLine)",
-				"savedData.disbandBloodline(globalLine.getBloodlineUUID())");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
+		String membership = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodlineMembership.java"))
+				.replace("\r\n", "\n");
+		assertContains("ledger disband goes through the one departure service", ledgerPacket,
+				"BloodlineMembership.dissolve(player.server, globalLine, BloodlineMembership.Dissolution.DISBAND");
+		assertContains("command disband goes through the one departure service", command,
+				"BloodlineMembership.dissolve(source.getServer(), globalLine, BloodlineMembership.Dissolution.COMMAND");
+		assertContains("hematic unbinding goes through the one departure service", riteEvents,
+				"BloodlineMembership.dissolve(sLevel.getServer(), bloodline, BloodlineMembership.Dissolution.UNBINDING");
+		assertOrder("the service clears fanes before removing bloodline data", membership,
+				"BloodlineDisbandHelper.removeOwnedFanes(server, line)",
+				"data.disbandBloodline(line.getBloodlineUUID())");
 	}
 
 	private static void assertOrder(String label, String text, String first, String second) {

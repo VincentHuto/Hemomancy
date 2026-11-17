@@ -31,7 +31,8 @@ public final class LivingArsenalInventoryGuard {
 				|| item == ItemInit.living_crossbow.get()
 				|| item == ItemInit.living_torch.get()
 				|| item == ItemInit.living_flail.get()
-				|| item == ItemInit.living_sickle.get();
+				|| item == ItemInit.living_sickle.get()
+				|| item == ItemInit.living_pickaxe.get();
 	}
 
 	public static boolean summonOrRecoverStaff(Player player, ItemStack heldItemMainhand) {

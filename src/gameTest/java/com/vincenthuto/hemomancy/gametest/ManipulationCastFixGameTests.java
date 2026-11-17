@@ -80,19 +80,25 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void registryTypesMatchUnifiedInputSemantics(GameTestHelper helper) {
 		var manipulations = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get()).toList();
-		helper.assertTrue(manipulations.size() == 108, "Expected 108 registered manipulations, got " + manipulations.size());
-		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 68,
+		// Core-loop Track 2 added the Tendon Line (QUICK, worked only through the verbs): 109 and 69.
+		// Core-loop Track 12 added Blood Lash (QUICK, a strand with nothing to cast): 110 and 70.
+		// Core-loop Track 8 added Conjure Pickaxe, Lode Draw and Hematic Hewing (all QUICK): 113 and 73.
+		// Core-loop Track 9 added Living Land and Venous Cling (both QUICK): 115 and 75.
+		// D-1 (B17) made Crimson Tithe a held drink and the Unclosing Eye a charged beam: 115 and 73.
+		helper.assertTrue(manipulations.size() == 115, "Expected 115 registered manipulations, got " + manipulations.size());
+		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 73,
 				"Quick manipulation count changed");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CHARGED).equals(Set.of(
 				"blood_needle", "activation_potential", "blood_aneurysm", "ironhearted", "vitric_combustion",
 				"deadly_gaze", "crimson_coronation", "synaptic_storm", "white_verdict", "rimebound_sentence",
 				"funeral_bell", "eclipse_well", "blood_needle_fan", "blood_needle_lance", "hematic_mortar",
-				"thread_ripper", "lodestone_collapse")),
+				"thread_ripper", "lodestone_collapse", "unclosing_eye")),
 				"Charged manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CONTINUOUS).equals(Set.of(
 				"sanguine_ward", "sanguine_mending", "vascular_dowsing", "living_circuit",
 				"furnace_veins", "absolute_stillness", "iron_choir", "carrion_communion",
-				"penumbral_drift", "lignum_mortis", "canopy_mortis", "worked_lignum", "sanguine_marionette", "radiant_wake")),
+				"penumbral_drift", "lignum_mortis", "canopy_mortis", "worked_lignum", "sanguine_marionette", "radiant_wake",
+				"crimson_tithe")),
 				"Continuous manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.PASSIVE).equals(Set.of(
 				"blackhearted", "sovereign_instinct", "phoenix_debt",
@@ -227,8 +233,11 @@ public final class ManipulationCastFixGameTests {
 		target.setPos(player.getX(), player.getEyeY() - target.getEyeHeight(), player.getZ() + 4.0D);
 		helper.getLevel().addFreshEntity(target);
 		try {
-			ManipulationInit.blood_binding.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
-					player.blockPosition());
+			// A boss binding can slip (LP-16, 15% on a full Wither); a slip does not count, so cast until one holds.
+			for (int attempt = 0; attempt < 20 && !target.hasEffect(EffectInit.blood_binding); attempt++) {
+				ManipulationInit.blood_binding.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
+						player.blockPosition());
+			}
 			helper.assertTrue(target.hasEffect(EffectInit.blood_binding),
 					"Blood Binding did not affect the recognized boss");
 			helper.assertTrue(target.getEffect(EffectInit.blood_binding).getDuration() == 60,
@@ -333,31 +342,6 @@ public final class ManipulationCastFixGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void crimsonTitheUsesTheBorrowedReserveAndCollectsAutomatically(GameTestHelper helper) {
-		ServerPlayer player = player(helper, "crimson-tithe-debt-test");
-		var blood = HemoCapabilityAccess.getBloodVolume(player);
-		blood.setActive(true);
-		blood.setBloodVolume(2_000.0D);
-		BorrowedBloodReserve.drainToCover(player, Double.MAX_VALUE);
-		ManipulationInit.crimson_tithe.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
-				player.blockPosition());
-		helper.assertTrue(Math.abs(BorrowedBloodReserve.get(player) - 500.0D) < 0.001D,
-				"Crimson Tithe did not issue its blood through the borrowed reserve");
-		helper.assertTrue(Math.abs(blood.getBloodVolume() - 2_000.0D) < 0.001D,
-				"Crimson Tithe still filled ordinary blood volume directly");
-		BorrowedBloodReserve.drainToCover(player, 500.0D);
-		player.getPersistentData().putLong("hemomancy:crimson_tithe_expiry",
-				helper.getLevel().getGameTime() - 1L);
-		ManipulationReactiveEvents.onPlayerTick(new PlayerTickEvent.Post(player));
-		helper.assertTrue(!player.getPersistentData().contains("hemomancy:crimson_tithe_expiry"),
-				"Crimson Tithe debt was not collected automatically at its deadline");
-		helper.assertTrue(Math.abs(blood.getBloodVolume() - 1_000.0D) < 0.001D,
-				"Crimson Tithe did not collect double the spent loan from owned blood");
-		player.discard();
-		helper.succeed();
-	}
-
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void hemolymphalPulseMarksWoundedBloodButIgnoresBloodless(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "hemolymphal-rework-test");
 		Zombie wounded = zombie(helper, player.position().add(2, 0, 0));
@@ -378,24 +362,6 @@ public final class ManipulationCastFixGameTests {
 		} finally {
 			wounded.discard();
 			bloodless.discard();
-			player.discard();
-		}
-	}
-
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void unclosingEyeContinuouslySuppressesConcealment(GameTestHelper helper) {
-		ServerPlayer player = player(helper, "unclosing-eye-rework-test");
-		Zombie target = zombie(helper, player.position().add(2, 0, 0));
-		try {
-			ManipulationInit.unclosing_eye.get().getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition());
-			target.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.INVISIBILITY, 200));
-			player.tickCount = 10;
-			ManipulationReactiveEvents.onPlayerTick(new PlayerTickEvent.Post(player));
-			helper.assertTrue(!target.isInvisible() && target.hasEffect(EffectInit.illuminated),
-					"Unclosing Eye did not suppress concealment after the initial cast");
-			helper.succeed();
-		} finally {
-			target.discard();
 			player.discard();
 		}
 	}
@@ -522,27 +488,27 @@ public final class ManipulationCastFixGameTests {
 		assertImplementation(helper, "eclipse_well", "EclipseWellManip");
 		assertMeta(helper, "crimson_coronation", 600, 70, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTemper.ANIMUS, EnumVeinSections.HEAD, 80, 120);
-		assertMeta(helper, "sovereign_instinct", 450, 60, EnumManipulationType.PASSIVE,
+		assertMeta(helper, "sovereign_instinct", 200, 60, EnumManipulationType.PASSIVE,
 				EnumManipulationRank.MAGISTER, EnumBloodTemper.DUCTILIS, EnumVeinSections.HEAD, 0, 0);
-		assertMeta(helper, "synaptic_storm", 900, 65, EnumManipulationType.CHARGED,
+		assertMeta(helper, "synaptic_storm", 490, 65, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTemper.DUCTILIS, EnumVeinSections.HEAD, 60, 100);
-		assertMeta(helper, "living_circuit", 100, 55, EnumManipulationType.CONTINUOUS,
+		assertMeta(helper, "living_circuit", 30, 55, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTemper.DUCTILIS, EnumVeinSections.BODY, 0, 80);
-		assertMeta(helper, "white_verdict", 800, 65, EnumManipulationType.CHARGED,
+		assertMeta(helper, "white_verdict", 735, 65, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTemper.LUX, EnumVeinSections.HEAD, 60, 100);
-		assertMeta(helper, "furnace_veins", 150, 55, EnumManipulationType.CONTINUOUS,
+		assertMeta(helper, "furnace_veins", 40, 55, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTemper.FLAMMEUS, EnumVeinSections.BODY, 0, 100);
 		assertMeta(helper, "phoenix_debt", 1200, 75, EnumManipulationType.PASSIVE,
 				EnumManipulationRank.PERFECTUS, EnumBloodTemper.FLAMMEUS, EnumVeinSections.HEART, 0, 0);
-		assertMeta(helper, "absolute_stillness", 300, 65, EnumManipulationType.CONTINUOUS,
+		assertMeta(helper, "absolute_stillness", 70, 65, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.PERFECTUS, EnumBloodTemper.CONGEATIO, EnumVeinSections.BODY, 0, 160);
-		assertMeta(helper, "rimebound_sentence", 750, 55, EnumManipulationType.CHARGED,
+		assertMeta(helper, "rimebound_sentence", 310, 55, EnumManipulationType.CHARGED,
 				EnumManipulationRank.MAGISTER, EnumBloodTemper.CONGEATIO, EnumVeinSections.ARMS, 70, 120);
-		assertMeta(helper, "iron_choir", 250, 60, EnumManipulationType.CONTINUOUS,
+		assertMeta(helper, "iron_choir", 50, 60, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTemper.FERRIC, EnumVeinSections.BODY, 0, 100);
-		assertMeta(helper, "funeral_bell", 1000, 75, EnumManipulationType.CHARGED,
+		assertMeta(helper, "funeral_bell", 430, 75, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTemper.MORTEM, EnumVeinSections.HEART, 80, 160);
-		assertMeta(helper, "carrion_communion", 220, 60, EnumManipulationType.CONTINUOUS,
+		assertMeta(helper, "carrion_communion", 50, 60, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTemper.MORTEM, EnumVeinSections.BODY, 0, 120);
 		assertMeta(helper, "penumbral_drift", 75, 55, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTemper.TENEBRIS, EnumVeinSections.LEGS, 0, 60);
@@ -858,8 +824,8 @@ public final class ManipulationCastFixGameTests {
 				AvatarManifestationManager.onPlayerTick(new PlayerTickEvent.Post(player));
 				helper.assertTrue(mastery.getXp() == 1.0D,
 						"Avatar did not award mastery after five uninterrupted seconds");
-				helper.assertTrue(Math.abs(blood.getBloodVolume() - 75.0D) < 0.001D,
-						"Avatar did not pay its initial cost and five upkeep pulses");
+				helper.assertTrue(Math.abs(blood.getBloodVolume() - (525.0D - 6 * 10.0D)) < 0.001D,
+						"Avatar did not pay its initial cost and five upkeep pulses of 10 mL (NQ-04-5): " + blood.getBloodVolume());
 				AvatarManifestationManager.dismiss(player);
 				helper.assertTrue(known.getActiveAvatarForm().isBlank(),
 						"Avatar remained active after dismissal");
@@ -1086,6 +1052,6 @@ public final class ManipulationCastFixGameTests {
 			public void send(net.minecraft.network.protocol.Packet<?> packet) {
 			}
 		};
-		return player;
+		return TemperFixtures.carry(player);
 	}
 }

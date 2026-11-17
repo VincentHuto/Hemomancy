@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 class UnstainedWeaponRendererRoutingSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
-	private static final Path ITEM_ROOT = ROOT.resolve(
-			"src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool");
 	private static final Path RENDERER_ROOT = ROOT.resolve(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained");
 
@@ -27,11 +29,11 @@ class UnstainedWeaponRendererRoutingSourceTest {
 		assertContains("dagger item uses its renderer",
 				daggerItem, "new AbsolutionDaggerItemRenderer(");
 
-		assertDoesNotContain("warhammer item should not route through shared weapon renderer",
+		assertNotContains("warhammer item should not route through shared weapon renderer",
 				warhammerItem, "UnstainedWeaponItemRenderer");
-		assertDoesNotContain("glaive item should not route through shared weapon renderer",
+		assertNotContains("glaive item should not route through shared weapon renderer",
 				glaiveItem, "UnstainedWeaponItemRenderer");
-		assertDoesNotContain("dagger item should not route through shared weapon renderer",
+		assertNotContains("dagger item should not route through shared weapon renderer",
 				daggerItem, "UnstainedWeaponItemRenderer");
 
 		assertRenderer("warhammer renderer", "UnstainedWarhammerItemRenderer.java",
@@ -60,24 +62,5 @@ class UnstainedWeaponRendererRoutingSourceTest {
 		assertContains(label + " owns its gui scale", renderer, guiScale);
 		assertContains(label + " moves right in gui", renderer, guiTranslateX);
 		assertContains(label + " moves up in gui", renderer, guiTranslateY);
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " missing: " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + " still contains: " + forbidden);
-		}
 	}
 }

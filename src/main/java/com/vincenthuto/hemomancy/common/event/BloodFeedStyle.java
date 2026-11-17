@@ -7,7 +7,9 @@ public enum BloodFeedStyle {
 	/** A single-block infusion: veins crawl from the projection point, then the block cracks and melts. */
 	INFUSION,
 	/** The bare overlay, as Lignum Mortis uses it. */
-	PLAIN;
+	PLAIN,
+	/** The bare overlay in blood, without Lignum's rot: the blocks a held Lode Draw has reached (Track 8). */
+	DRAWN;
 
 	public static BloodFeedStyle byId(int id) {
 		BloodFeedStyle[] values = values();

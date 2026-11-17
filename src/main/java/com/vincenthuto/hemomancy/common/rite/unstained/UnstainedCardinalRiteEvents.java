@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineMembership;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -30,7 +30,7 @@ import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSavedData;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -228,13 +228,11 @@ public class UnstainedCardinalRiteEvents {
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
 		BloodlineSavedData savedData = BloodlineSavedData.get(level.getServer().overworld());
 		Bloodline line = savedData.getBloodlineForPlayer(caster.getUUID());
-		Bloodline disbanded = line == null ? null : savedData.disbandBloodline(line.getBloodlineUUID());
-		if (disbanded == null) {
+		if (line == null) {
 			announceFailure(caster, UnstainedRitePreflight.Failure.NO_FOUNDERS_COVENANT);
 			return false;
 		}
-		BloodlineDisbandHelper.removeOwnedFanes(level.getServer(), disbanded);
-		BloodlineDisbandHelper.resetOnlineMembers(level.getServer(), disbanded,
+		BloodlineMembership.dissolve(level.getServer(), line, BloodlineMembership.Dissolution.SEVERED, caster,
 				member -> Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_founder_s_covenant_has_been").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		degree.setFounderIntegrationSevered(true);
 		InitiatoryDegreeEvents.syncDegree(caster, degree);
@@ -289,9 +287,7 @@ public class UnstainedCardinalRiteEvents {
 		caster.displayClientMessage(
 				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_still_waters_wash_over_you").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				caster.getX(), caster.getY() + 1.0, caster.getZ(),
-				30, 0.5, 1.0, 0.5, 0.05);
+		UnstainedRiteParticles.letheanBaptism(sLevel, caster);
 		return true;
 	}
 
@@ -312,9 +308,7 @@ public class UnstainedCardinalRiteEvents {
 		caster.displayClientMessage(
 				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.verdigris_smoke_gathers_into_the_first").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				caster.getX(), caster.getY() + 1.0, caster.getZ(),
-				50, 1.0, 1.5, 1.0, 0.02);
+		UnstainedRiteParticles.silverVeil(sLevel, caster);
 	}
 	/**
 	 * Rite of Clarity Ascension (Greater, 0 blood):
@@ -349,9 +343,7 @@ public class UnstainedCardinalRiteEvents {
 		caster.displayClientMessage(
 				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.blood_magic_is_no_longer_your").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 				false);
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				caster.getX(), caster.getY() + 1.0, caster.getZ(),
-				80, 1.5, 2.0, 1.5, 0.03);
+		UnstainedRiteParticles.clarityAscension(sLevel, caster);
 
 		com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
 				caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_PLEDGED_UNSTAINED);
@@ -384,8 +376,7 @@ public class UnstainedCardinalRiteEvents {
 		caster.displayClientMessage(HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.the_rite_of_the_closed_vein",
 				blessed).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 1.2f, 0.8f);
-		sLevel.sendParticles(ParticleTypes.END_ROD, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				120, CLOSED_VEIN_RADIUS * 0.25, 2.0, CLOSED_VEIN_RADIUS * 0.25, 0.015);
+		UnstainedRiteParticles.closedVein(sLevel, center, CLOSED_VEIN_RADIUS);
 	}
 
 	private static void completeAntisepticGround(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
@@ -395,8 +386,7 @@ public class UnstainedCardinalRiteEvents {
 		caster.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, 12000, 1, false, true, true));
 		caster.displayClientMessage(Component.translatable("message.hemomancy.unstained_cardinal_rite_events.antiseptic_ground_takes_hold_for_15").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1.0f, 1.4f);
-		sLevel.sendParticles(ParticleTypes.SCRAPE, center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
-				120, ANTISEPTIC_GROUND_RADIUS * 0.35, 0.5, ANTISEPTIC_GROUND_RADIUS * 0.35, 0.01);
+		UnstainedRiteParticles.antisepticGround(sLevel, center, ANTISEPTIC_GROUND_RADIUS);
 	}
 
 	private static void completeGlassLungs(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
@@ -417,8 +407,7 @@ public class UnstainedCardinalRiteEvents {
 		caster.displayClientMessage(HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.glass_lungs_open_in_unstained_body",
 				blessed).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 1.0f, 1.2f);
-		sLevel.sendParticles(ParticleTypes.SNOWFLAKE, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				140, GLASS_LUNGS_RADIUS * 0.25, 2.5, GLASS_LUNGS_RADIUS * 0.25, 0.015);
+		UnstainedRiteParticles.glassLungs(sLevel, center, GLASS_LUNGS_RADIUS);
 	}
 
 	private static void completeMoonWashedCopper(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
@@ -437,8 +426,7 @@ public class UnstainedCardinalRiteEvents {
 				blessed,
 				moonText).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.4f, isNight ? 1.7f : 1.25f);
-		sLevel.sendParticles(ParticleTypes.WAX_OFF, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				200, MOON_WASHED_COPPER_RADIUS * 0.22, 3.5, MOON_WASHED_COPPER_RADIUS * 0.22, 0.018);
+		UnstainedRiteParticles.moonWashedCopper(sLevel, center, MOON_WASHED_COPPER_RADIUS, isNight);
 	}
 
 	/**
@@ -482,9 +470,7 @@ public class UnstainedCardinalRiteEvents {
 		caster.displayClientMessage(
 				msg.copy().withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				100, LETHEAN_JUDGMENT_RADIUS * 0.5, 2.0, LETHEAN_JUDGMENT_RADIUS * 0.5, 0.01);
+		UnstainedRiteParticles.letheanJudgment(sLevel, center, LETHEAN_JUDGMENT_RADIUS);
 	}
 
 	//
@@ -534,8 +520,9 @@ public class UnstainedCardinalRiteEvents {
 					BlockPos pos = center.offset(x, y, z);
 					Block block = sLevel.getBlockState(pos).getBlock();
 					Block replacement = conversions.get(block);
-					if (replacement != null) {
-						sLevel.setBlock(pos, replacement.defaultBlockState(), 3);
+					// The cleansing is the caster's edit: ground they may not change stays as it is.
+					if (replacement != null && caster.level() == sLevel
+							&& PlayerBlockEdits.replace(caster, pos, replacement.defaultBlockState())) {
 						converted++;
 					}
 				}
@@ -558,13 +545,7 @@ public class UnstainedCardinalRiteEvents {
 				msg.copy().withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 
-		// Visual burst
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				150, SILVER_DAWN_RADIUS * 0.5, 3.0, SILVER_DAWN_RADIUS * 0.5, 0.02);
-		sLevel.sendParticles(ParticleTypes.SCRAPE,
-				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
-				80, SILVER_DAWN_RADIUS * 0.4, 1.5, SILVER_DAWN_RADIUS * 0.4, 0.01);
+		UnstainedRiteParticles.silverDawn(sLevel, center, SILVER_DAWN_RADIUS);
 	}
 
 	//
@@ -593,9 +574,7 @@ public class UnstainedCardinalRiteEvents {
 						durationMinutes).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				60, STILL_WATERS_RADIUS * 0.3, 1.5, STILL_WATERS_RADIUS * 0.3, 0.005);
+		UnstainedRiteParticles.stillWaters(sLevel, center, STILL_WATERS_RADIUS);
 	}
 
 	//
@@ -624,12 +603,7 @@ public class UnstainedCardinalRiteEvents {
 						durationMinutes).withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
 				false);
 
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				80, PALE_CONSECRATION_RADIUS * 0.4, 1.5, PALE_CONSECRATION_RADIUS * 0.4, 0.01);
-		sLevel.sendParticles(ParticleTypes.SCRAPE,
-				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
-				40, PALE_CONSECRATION_RADIUS * 0.3, 0.5, PALE_CONSECRATION_RADIUS * 0.3, 0.005);
+		UnstainedRiteParticles.paleConsecration(sLevel, center, PALE_CONSECRATION_RADIUS);
 	}
 
 	//
@@ -680,9 +654,7 @@ public class UnstainedCardinalRiteEvents {
 				msg.copy().withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 				false);
 
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				120, REMEMBRANCE_RADIUS * 0.3, 3.0, REMEMBRANCE_RADIUS * 0.3, 0.02);
+		UnstainedRiteParticles.silthmereRemembrance(sLevel, center, REMEMBRANCE_RADIUS);
 	}
 
 	//
@@ -715,9 +687,7 @@ public class UnstainedCardinalRiteEvents {
 				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.spawns_are_halved_silver_wards_keep").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 				false);
 
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				200, blockRadius * 0.2, 4.0, blockRadius * 0.2, 0.02);
+		UnstainedRiteParticles.letheCovenant(sLevel, center, blockRadius);
 	}
 	/**
 	 * Rite of the Lethean Tide (Greater, 0 blood, Unstained):
@@ -738,9 +708,7 @@ public class UnstainedCardinalRiteEvents {
 		unstained.addPurity(10f);
 		UnstainedProgressEvents.syncProgress(caster, unstained);
 
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				caster.getX(), caster.getY() + 1.0, caster.getZ(),
-				120, 7.0, 5.0, 7.0, 0.04);
+		UnstainedRiteParticles.letheanTide(sLevel, caster);
 		caster.displayClientMessage(
 				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_lethean_tide_rises_the_blood").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
@@ -781,12 +749,7 @@ public class UnstainedCardinalRiteEvents {
 		com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
 				caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_VIGILANT);
 
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				160, PALE_VIGIL_RADIUS * 0.25, 4.0, PALE_VIGIL_RADIUS * 0.25, 0.02);
-		sLevel.sendParticles(ParticleTypes.SCRAPE,
-				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
-				80, PALE_VIGIL_RADIUS * 0.2, 2.0, PALE_VIGIL_RADIUS * 0.2, 0.01);
+		UnstainedRiteParticles.paleVigil(sLevel, center, PALE_VIGIL_RADIUS);
 	}
 
 	// ════════════════════════════════════════════════════════════════════════
@@ -837,12 +800,7 @@ public class UnstainedCardinalRiteEvents {
 		com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
 				caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_ENLIGHTENED_SEEKER);
 
-		sLevel.sendParticles(ParticleTypes.END_ROD,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				300, blockRadius * 0.15, 5.0, blockRadius * 0.15, 0.025);
-		sLevel.sendParticles(ParticleTypes.SCRAPE,
-				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
-				150, blockRadius * 0.1, 3.0, blockRadius * 0.1, 0.015);
+		UnstainedRiteParticles.letheanFont(sLevel, center, blockRadius);
 	}
 
 }

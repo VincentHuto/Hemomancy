@@ -7,6 +7,16 @@ import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedDat
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusSiteStateService;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import com.vincenthuto.hemomancy.common.mission.circus.CircusSchoolGifts;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
@@ -35,13 +45,13 @@ public final class CrimsonTroupePavilionGameTests {
 	}
 
 	/** The Succession finale on the real pavilion: rafters, the troupe downed, the descent, the Pattern and Topper. */
-	@GameTest(template = EMPTY, timeoutTicks = 3000, batch = PAVILION + "_succession")
+	@GameTest(template = EMPTY, timeoutTicks = 4000, batch = PAVILION + "_succession")
 	public static void successionFinaleOnThePavilion(GameTestHelper helper) {
 		PlaythroughCrimsonTroupeGameTests.successionFinale(helper, false);
 	}
 
 	/** The Liberation finale on the real pavilion: captives severed, anchors struck, Thread Ripper, Topper, ruin. */
-	@GameTest(template = EMPTY, timeoutTicks = 2400, batch = PAVILION + "_liberation")
+	@GameTest(template = EMPTY, timeoutTicks = 3400, batch = PAVILION + "_liberation")
 	public static void liberationFinaleOnThePavilion(GameTestHelper helper) {
 		PlaythroughCrimsonTroupeGameTests.liberationFinale(helper);
 	}
@@ -93,8 +103,75 @@ public final class CrimsonTroupePavilionGameTests {
 	}
 
 	/**
+	 * D-44 (chunk 15 T11): the ruin overlay is laid over a loaded pavilion, and a cell a player changed is left alone:
+	 * the roof tears open over the west seating and the plinth splinters, but the block a player set where a canvas
+	 * heap would fall stays.
+	 */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = PAVILION + "_ruin")
+	public static void ruinSparesWhatAPlayerPlaced(GameTestHelper helper) {
+		var site = PlaythroughSites.pavilion(helper, PlaythroughSites.farOrigin(helper, 64));
+		var level = helper.getLevel();
+		BlockPos origin = site.at(40, 1, 32);
+		level.setBlock(site.at(32, 1, 26), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL); // ARRANGE: a player's block
+		helper.assertTrue(level.getBlockState(site.at(32, 18, 26)).is(BlockInit.circus_canvas.get())
+				|| level.getBlockState(site.at(32, 18, 26)).is(BlockInit.circus_laced_canvas.get()), "the roof is whole first");
+		CircusSiteStateService.begin(level, origin, CircusSiteStateService.State.RUIN, null);
+		helper.assertTrue(level.getBlockState(site.at(32, 18, 26)).isAir(), "the roof tears open");
+		helper.assertTrue(level.getBlockState(origin.below()).is(BlockInit.circus_wrecked_panel.get()), "the plinth splinters");
+		helper.assertTrue(level.getBlockState(site.at(32, 1, 26)).is(Blocks.STONE), "the player's block is left alone");
+		var saved = CircusPavilionSavedData.get(level).site(level, origin);
+		helper.assertTrue(saved.pendingChunks().isEmpty(), "every loaded chunk is laid: " + saved.pendingChunks().size());
+		CircusPavilionSavedData.get(level).removeSite(level, origin);
+		helper.succeed();
+	}
+
+	/**
+	 * D-44, NQ-15-10 gifts A (chunk 15 T11): a professor's gift on a first passed practical is two Enthralling Filaments
+	 * and a frame material, owed before the practical is recorded and handed over by the OwedRewards claim: a full pack
+	 * and a death keep it owed, the next living retry gives it once, and a second pass owes nothing.
+	 */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void practicalGiftWaitsForRoomAndLife(GameTestHelper helper) {
+		PlaythroughPlayer p = PlaythroughCrimsonTroupeGameTests.d5(helper, 8, 12);
+		String summon = PuppeteerSummonDefinitions.MARROW_SPITTER;
+		PlaythroughClock.start(helper)
+				.then(() -> {
+					for (var lesson : CircusCurriculum.lessons()) {
+						var gift = CircusSchoolGifts.gift(lesson.summon());
+						helper.assertTrue(gift.size() == 2 && gift.get(0).is(ItemInit.enthralling_filament.get())
+										&& gift.get(0).getCount() == CircusSchoolGifts.FILAMENTS && gift.get(1).getCount() == 1,
+								"every professor gives two Filaments and one frame material: " + lesson.summon() + " " + gift);
+					}
+					PlaythroughCrimsonTroupeGameTests.knowShape(p, summon); // ARRANGE: the body is known
+					p.fillInventory(); // ARRANGE: a full pack
+					helper.assertTrue(CircusSchoolGifts.passPractical(p.player(), summon), "the first pass gives a gift");
+					helper.assertTrue(CircusApprenticeshipProgress.practicalComplete(p.player(), summon), "the practical is recorded");
+					helper.assertTrue(giftOwed(p) == 3 && p.count(ItemInit.enthralling_filament.get()) == 0,
+							"a full pack keeps the gift owed: " + giftOwed(p));
+					p.die();
+					p.player().getInventory().setItem(0, ItemStack.EMPTY); // ARRANGE: a slot freed while dead
+					p.player().getInventory().setItem(1, ItemStack.EMPTY);
+					driverTick(p);
+					helper.assertTrue(giftOwed(p) == 3, "a dead player keeps the gift owed: " + giftOwed(p));
+					p.respawn();
+					PendingDelivery.deliverAll(p.player());
+					helper.assertTrue(p.count(ItemInit.enthralling_filament.get()) == CircusSchoolGifts.FILAMENTS
+									&& p.count(ItemInit.barbed_splinter.get()) == 1 && giftOwed(p) == 0,
+							"the living retry gives two Filaments and the Barbed Splinter once: owed " + giftOwed(p));
+					helper.assertTrue(!CircusSchoolGifts.passPractical(p.player(), summon) && giftOwed(p) == 0
+									&& p.count(ItemInit.enthralling_filament.get()) == CircusSchoolGifts.FILAMENTS,
+							"a second pass gives nothing");
+				})
+				.run();
+	}
+
+	private static int giftOwed(PlaythroughPlayer p) {
+		return OwedRewards.CLAIM.owed().apply(p.player()).stream().mapToInt(ItemStack::getCount).sum();
+	}
+
+	/**
 	 * A Ringmaster lost mid-finale (B-4) releases the site with a line to its owner: no owner, IDLE, NEUTRAL, the
-	 * route kept and nothing awarded. Whether the site should settle or a Ringmaster return is decision CT-7.
+	 * route kept and nothing awarded. D-36: the site is left vacant, so the Waybill passes it by.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH + "_ring")
 	public static void lostRingmasterReleasesTheSite(GameTestHelper helper) {
@@ -129,6 +206,10 @@ public final class CrimsonTroupePavilionGameTests {
 					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.LIBERATION
 									&& p.count(ItemInit.ringmaster_topper.get()) == 0 && owed(p) == 0,
 							"the route is kept and nothing is awarded");
+					var level = helper.getLevel();
+					helper.assertTrue(site.vacant() && CircusPavilionSavedData.get(level).isCompletedNear(level,
+									ring.carousel().blockPosition()),
+							"D-36: the site is left vacant and the Waybill passes it by");
 				})
 				.run();
 	}

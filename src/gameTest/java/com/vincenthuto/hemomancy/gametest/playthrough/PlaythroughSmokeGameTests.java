@@ -284,11 +284,11 @@ public final class PlaythroughSmokeGameTests {
 	 * suite's template namespace, so the mod's templates cannot be the test structure): {@code PlaythroughSites.pavilion}
 	 * places it with its troupe and registers the site. Optional: it reports what the template brings.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = "playthrough_smoke_pavilion", required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 1200, batch = "playthrough_smoke_pavilion", required = false)
 	public static void pavilionTemplateLoads(GameTestHelper helper) {
 		PlaythroughSites.TemplateSite site = PlaythroughSites.pavilion(helper, PlaythroughSites.farOrigin(helper, 64));
 		// The template's actors are visible only once every chunk under it is entity-ticking.
-		PlaythroughClock.start(helper).until(200, () -> site.ready(helper.getLevel()), "the pavilion's chunks show their entities")
+		PlaythroughClock.start(helper).until(PlaythroughSites.SITE_READY_TICKS, () -> site.ready(helper.getLevel()), "the pavilion's chunks show their entities")
 				.then(() -> {
 					var actors = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.Entity.class,
 							net.minecraft.world.phys.AABB.of(site.box()), entity -> !(entity instanceof net.minecraft.world.entity.player.Player));

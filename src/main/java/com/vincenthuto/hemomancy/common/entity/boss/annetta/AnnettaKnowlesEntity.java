@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossIntroWindow;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
@@ -142,7 +145,7 @@ public class AnnettaKnowlesEntity extends Monster {
 
     public static AttributeSupplier.Builder setAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 350.0D)
+                .add(Attributes.MAX_HEALTH, 51.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D)
                 .add(Attributes.ATTACK_DAMAGE, 7.0D)
                 .add(Attributes.FOLLOW_RANGE, 40.0D)
@@ -380,6 +383,8 @@ public class AnnettaKnowlesEntity extends Monster {
         addNearbyPlayersToBossBar(server);
         this.bossBar.setVisible(false);
         BossScenes.play(this, BossPresentationIds.SCENE_ANNETTA_KNOWLES);
+        // The Harbinger who turned the Tooth Pecks loose learns who she was (round two P9).
+        LiberKnowledgeHelper.unlockEntry(player, LiberEntryDefinitions.ANNETTA_KNOWLES, HemomancyDiscoverySource.DIALOGUE);
 
         server.playSound(null, this.blockPosition(), SoundEvents.GENERIC_HURT, SoundSource.HOSTILE, 1.2F, 1.3F);
         server.sendParticles(HemoParticleData.bloodCell(BLOOD), this.getX(), this.getEyeY() - 0.3D, this.getZ(),

@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
  */
 public final class SeraphaeIntegrityRules {
 	public static final float MAX = 100.0F;
-	public static final float START = 30.0F;
+	public static final float START = 20.0F;
 	/** Phase thresholds as fractions of the maximum, and the contained mark. */
 	public static final float PHASE_TWO = 0.40F;
 	public static final float PHASE_THREE = 0.75F;

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.gametest.playthrough;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
@@ -15,8 +16,8 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntit
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
-import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -28,6 +29,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
@@ -235,7 +237,8 @@ public final class PlaythroughOnboardingGameTests {
 
 	/**
 	 * A player who claimed the heart talks to the Vicar at D0: formal_introduction offers accept and remove, there is
-	 * no newcomer card (they met the Hermit), and every key resolves.
+	 * no newcomer card (it sends the player to a Hermit's temple, and their blood already woke there), and every key
+	 * resolves.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void vicarOffersInitiationToCharmBearer(GameTestHelper helper) {
@@ -256,7 +259,7 @@ public final class PlaythroughOnboardingGameTests {
 		helper.assertTrue(choices.contains(BEGIN) && choices.contains(RELEASE),
 				"the formal introduction offers accept and remove: " + choices);
 		helper.assertTrue(view.offers(BEGIN) && view.offers(RELEASE), "both choices are enabled: " + view.describe());
-		helper.assertFalse(hasNewcomerCard(view), "a player who met the Hermit sees no newcomer card: " + view.describe());
+		helper.assertFalse(hasNewcomerCard(view), "a charm-bearer whose blood woke sees no newcomer card: " + view.describe());
 		helper.succeed();
 	}
 
@@ -288,9 +291,11 @@ public final class PlaythroughOnboardingGameTests {
 					var known = HemoCapabilityAccess.getKnownManipulations(player.player());
 					for (String utility : List.of("blood_absorption", "blood_projection")) {
 						helper.assertTrue(player.knows(utility), utility + " is known at D1");
-						helper.assertTrue(known.getEquippedManipNames().contains(utility),
-								utility + " is equipped at D1: " + known.getEquippedManipNames());
+						helper.assertTrue(!known.getEquippedManipNames().contains(utility),
+								utility + " is a verb, never an equipped memory: " + known.getEquippedManipNames());
 					}
+					helper.assertTrue(known.getActiveVerb() == com.vincenthuto.hemomancy.common.manipulation.verb.Verb.PROJECT,
+							"Projection is the first active verb");
 					helper.assertTrue(LiberKnowledgeHelper.hasEntry(player.player(), LiberEntryDefinitions.HEMOMANCY)
 							&& LiberKnowledgeHelper.hasEntry(player.player(), LiberEntryDefinitions.THE_HARBINGERS),
 							"the Liber's Hemomancy and Harbingers entries are unlocked");
@@ -489,8 +494,8 @@ public final class PlaythroughOnboardingGameTests {
 	 * Claim, die, respawn: the charm and the woken blood survive, the Vicar offers initiation, and the newcomer card
 	 * ("our path starts at a Hermit's Blood Temple") does not contradict it.
 	 */
-	// FIX: F-6 the met-Hermit flag is set on talking to the Hermit, under PlayerPersisted, so a death does not bring
-	// the newcomer card back.
+	// FIX: F-6 and DL-6. The Vicar's own newcomer card stays only while the player's blood is asleep; the woken blood
+	// survives death, so a death does not bring the card back.
 	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void deathAfterClaimKeepsInitiationOffer(GameTestHelper helper) {
 		PlaythroughSites.BloodTemple temple = templeA(helper);
@@ -535,10 +540,8 @@ public final class PlaythroughOnboardingGameTests {
 	 * Two players blessed at one temple: P1 claims, P2's touch is told the heart is already claimed. P2 then asks the
 	 * Hermit again.
 	 */
-	// DECISION: D-8 the Hermit has no reference to his Display, so he blesses P2 again and says "Touch the Mortal
-	// Display and take my heart" for a heart that is gone. The expected (player) outcome is asserted; the line given is
-	// logged.
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
+	// RULING PT-8 (2026-11-13): the Hermit reads his Display's claimed state and offers no spent heart.
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void twoPlayersOneTemple(GameTestHelper helper) {
 		PlaythroughSites.BloodTemple temple = templeA(helper);
 		HarbingerHermitEntity hermit = temple.hermit();
@@ -611,10 +614,10 @@ public final class PlaythroughOnboardingGameTests {
 
 	/**
 	 * Every main slot is full except one holding 14 of 16 Bloody Flasks. The ceremony's four starter flasks must all
-	 * reach the player: held, or dropped at their feet.
+	 * reach the player: held, or still owed. Nothing is dropped; the rest lands once a slot is free.
 	 */
-	// FIX: F-2 regression guard. No code change was needed: in 1.21.1 Inventory.add returns false when it only partly
-	// inserts, so EarlyInitiation.give already drops the remainder.
+	// FIX: F-2 regression guard, rewritten for PT-16: the kit is a PendingDelivery claim, so what does not fit stays
+	// owed instead of dropping at the player's feet.
 	@GameTest(template = EMPTY, timeoutTicks = CEREMONY + 80, batch = BATCH)
 	public static void partialStackStarterFlasksAreNotLost(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = vicar(helper);
@@ -629,26 +632,32 @@ public final class PlaythroughOnboardingGameTests {
 				.then(() -> {
 					Outcome ceremony = player.last();
 					int held = ceremony.delta(ItemInit.bloody_flask.get());
-					int dropped = ceremony.dropped(ItemInit.bloody_flask.get(), Outcome.Near.ANY);
-					PlaythroughLog.note(helper, "partial stack: held +" + held + ", dropped " + dropped + "; " + ceremony);
+					int owed = owed(player, ItemInit.bloody_flask.get());
+					PlaythroughLog.note(helper, "partial stack: held +" + held + ", owed " + owed + "; " + ceremony);
 					ceremony.degreeIs(1);
-					helper.assertTrue(held + dropped == 4, "all 4 starter flasks reach the player (held " + held
-							+ ", dropped " + dropped + "); " + ceremony);
-					helper.assertTrue(ceremony.dropped(ItemInit.sanguine_conduit.get(), Outcome.Near.ANY) == 1,
-							"the conduit drops when it cannot fit; " + ceremony);
-					helper.assertTrue(ceremony.dropped(ItemInit.harbinger_assignment_ledger.get(), Outcome.Near.ANY) == 1,
-							"the ledger drops when it cannot fit; " + ceremony);
+					helper.assertTrue(held + owed == 4, "all 4 starter flasks reach the player or stay owed (held " + held
+							+ ", owed " + owed + "); " + ceremony);
+					helper.assertTrue(ceremony.drops().isEmpty(), "nothing of the kit is dropped; " + ceremony);
+					helper.assertTrue(owed(player, ItemInit.sanguine_conduit.get()) == 1
+							&& owed(player, ItemInit.harbinger_assignment_ledger.get()) == 1,
+							"the conduit and the ledger stay owed while they cannot fit; " + ceremony);
+					for (int slot = 1; slot <= 3; slot++) player.player().getInventory().items.set(slot, ItemStack.EMPTY);
+					PendingDelivery.deliverAll(player.player());
+					helper.assertTrue(player.count(ItemInit.bloody_flask.get()) == 18
+							&& player.count(ItemInit.sanguine_conduit.get()) == 1
+							&& player.count(ItemInit.harbinger_assignment_ledger.get()) == 1
+							&& OwedRewards.CLAIM.owed().apply(player.player()).isEmpty(),
+							"the rest of the kit lands once there is room; " + ceremony);
 				})
 				.run();
 	}
 
 	/**
-	 * A Creative player with a full inventory completes initiation. The player-expected outcome is the starter kit
-	 * delivered (held or dropped) or still owed (initiation_blood_claimed not recorded).
+	 * A Creative player with a full inventory completes initiation. The starter kit is not discarded: it stays owed
+	 * and lands once there is room.
 	 */
-	// DECISION: D-16 Inventory.add discards in Creative, so the conduit, flasks and ledger vanish while
-	// initiation_blood_claimed is still recorded. The outcome is logged.
-	@GameTest(template = EMPTY, timeoutTicks = CEREMONY + 80, batch = BATCH, required = false)
+	// FIX: PT-16 (was D-16). A Creative discard of the starter kit is treated as undelivered, as PendingDelivery does.
+	@GameTest(template = EMPTY, timeoutTicks = CEREMONY + 80, batch = BATCH)
 	public static void creativeFullInventoryStarterKit(GameTestHelper helper) {
 		HarbingerVicarEntity vicar = vicar(helper);
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 17, 11));
@@ -661,19 +670,32 @@ public final class PlaythroughOnboardingGameTests {
 				.step(player.tickPlayer(CEREMONY))
 				.then(() -> {
 					Outcome ceremony = player.last();
-					int flasks = ceremony.delta(ItemInit.bloody_flask.get())
-							+ ceremony.dropped(ItemInit.bloody_flask.get(), Outcome.Near.ANY);
-					int conduits = ceremony.delta(ItemInit.sanguine_conduit.get())
-							+ ceremony.dropped(ItemInit.sanguine_conduit.get(), Outcome.Near.ANY);
+					int flasks = ceremony.delta(ItemInit.bloody_flask.get());
+					int conduits = ceremony.delta(ItemInit.sanguine_conduit.get());
 					boolean claimed = player.has(STARTER_CLAIMED);
-					PlaythroughLog.note(helper, "creative full inventory: flasks reached=" + flasks + " conduits reached="
-							+ conduits + " initiation_blood_claimed=" + claimed + "; " + ceremony);
+					PlaythroughLog.note(helper, "creative full inventory: flasks reached=" + flasks + " owed="
+							+ owed(player, ItemInit.bloody_flask.get()) + ", conduits reached=" + conduits + " owed="
+							+ owed(player, ItemInit.sanguine_conduit.get()) + ", initiation_blood_claimed=" + claimed
+							+ "; " + ceremony);
 					ceremony.degreeIs(1);
-					helper.assertTrue(flasks == 4 || !claimed, "D-16: the starter flasks are delivered or still owed (reached "
-							+ flasks + ", claimed " + claimed + ")");
-					helper.assertTrue(conduits == 1, "D-16: the conduit reaches the Creative player (reached " + conduits + ")");
+					helper.assertTrue(flasks + owed(player, ItemInit.bloody_flask.get()) == 4,
+							"PT-16: the starter flasks are delivered or still owed");
+					helper.assertTrue(conduits + owed(player, ItemInit.sanguine_conduit.get()) == 1
+							&& owed(player, ItemInit.harbinger_assignment_ledger.get()) == 1,
+							"PT-16: the conduit and the ledger are delivered or still owed");
+					for (int slot = 0; slot < 3; slot++) player.player().getInventory().items.set(slot, ItemStack.EMPTY);
+					PendingDelivery.deliverAll(player.player());
+					helper.assertTrue(player.count(ItemInit.bloody_flask.get()) == 4
+							&& player.count(ItemInit.sanguine_conduit.get()) == 1
+							&& player.count(ItemInit.harbinger_assignment_ledger.get()) == 1,
+							"PT-16: the kit lands once the Creative player has room");
 				})
 				.run();
+	}
+
+	private static int owed(PlaythroughPlayer player, Item item) {
+		return OwedRewards.CLAIM.owed().apply(player.player()).stream().filter(stack -> stack.is(item))
+				.mapToInt(ItemStack::getCount).sum();
 	}
 
 	/**
@@ -717,9 +739,9 @@ public final class PlaythroughOnboardingGameTests {
 	 * A blessed player breaks the Display with a pickaxe, picks it up, places it back and touches it. The
 	 * player-expected outcome is a temple that still works.
 	 */
-	// DECISION: D-8 the Display is survival-breakable and its loot drops a plain item with no Hermit link, so the
-	// re-placed Display says no_living_oath and the temple is dead. The observed line is logged.
-	@GameTest(template = EMPTY, timeoutTicks = 80, batch = BATCH, required = false)
+	// RULING PT-8 (2026-11-13): the Display cannot be broken in survival while it holds a living Hermit's heart, and
+	// a Display placed without a link relinks to its temple's Hermit.
+	@GameTest(template = EMPTY, timeoutTicks = 80, batch = BATCH)
 	public static void brokenMortalDisplayLeavesNoOath(GameTestHelper helper) {
 		PlaythroughSites.BloodTemple temple = templeA(helper);
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, temple.stand());
@@ -757,9 +779,8 @@ public final class PlaythroughOnboardingGameTests {
 	 * A player who claimed temple A talks to temple B's Hermit. The player-expected outcome is that Hermit B does
 	 * not say "You have claimed my heart" and offers no farewell that cannot work.
 	 */
-	// DECISION: D-8 any active-blood D0 player gets the claimed-heart tree from every Hermit, and Hermit B's farewell
-	// silently does nothing. The tree and the farewell's effect are logged.
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
+	// RULING PT-8, NQ-10-12 (2026-11-14): a Hermit whose heart this player did not take offers no farewell.
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void wrongHermitClaimsAndSilentFarewell(GameTestHelper helper) {
 		PlaythroughSites.BloodTemple first = templeA(helper);
 		PlaythroughSites.BloodTemple other = templeB(helper);
@@ -820,12 +841,11 @@ public final class PlaythroughOnboardingGameTests {
 	}
 
 	/**
-	 * A D5 founder holds Blood Projection on a charm-bearer for the ceremony's length (the recruit ticking alongside).
-	 * The recruit reaches D1, joins the line and is told so. The probe records whether consent was asked.
+	 * A D5 founder holds Blood Projection on a charm-bearer who stands: nothing begins, and the recruit is told who
+	 * offers and how to accept. Then the recruit kneels for the ceremony's length: they reach D1 and join the line.
 	 */
-	// DECISION: D-9 founder reception needs no recruit consent: no dialogue or prompt reaches the recruit, and a
-	// projection pins them for 10 s. Logged.
-	@GameTest(template = EMPTY, timeoutTicks = CEREMONY + 120, batch = LEVEL_BATCH, required = false)
+	// RULING PT-9 (NQ-10-9, 2026-11-14): the recruit is told which founder offers and kneels (sneaks) to accept.
+	@GameTest(template = EMPTY, timeoutTicks = CEREMONY + 160, batch = LEVEL_BATCH)
 	public static void founderProjectionReceivesRecruit(GameTestHelper helper) {
 		PlaythroughPlayer founder = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 8, 6));
 		PlaythroughPlayer recruit = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 11, 6));
@@ -833,23 +853,36 @@ public final class PlaythroughOnboardingGameTests {
 		PlaythroughStates.charmBearerD0(recruit, (Entity) null); // ARRANGE: a charm-bearer
 		joinLevel(founder); // ARRANGE: the projection's entity trace only sees players in the level
 		joinLevel(recruit);
-		int promptsBefore = recruit.sent(OpenDialoguePacket.class).size();
+		int[] mark = new int[1];
 		Outcome[] founderHold = new Outcome[1];
 
 		PlaythroughClock.start(helper)
+				.then(() -> {
+					mark[0] = recruit.mark();
+					founder.startHold(ItemInit.blood_projection.get(), recruit.player().getBoundingBox().getCenter());
+				})
+				.step(ticks -> {
+					founder.aim(recruit.player().getBoundingBox().getCenter());
+					founder.holdTick();
+					recruit.tickOnce();
+					return ticks >= 25;
+				})
+				.then(() -> {
+					founder.releaseHold();
+					helper.assertTrue(recruit.degree() == 0 && !line.hasMember(recruit.uuid()),
+							"PT-9: a standing recruit is not received");
+					helper.assertTrue(recruit.chatSince(mark[0]).stream().anyMatch(chat -> chat.has(
+							"hemomancy.initiation.founder_offer")), "PT-9: the recruit is told who offers and how to accept");
+				})
 				.step(reception(founder, recruit, EarlyInitiation.DURATION + 5, founderHold))
 				.then(() -> {
 					Outcome received = recruit.last();
-					int prompts = recruit.sent(OpenDialoguePacket.class).size() - promptsBefore;
 					PlaythroughLog.note(helper, "reception: " + received);
 					PlaythroughLog.note(helper, "founder hold: " + founderHold[0] + " (blood spent "
 							+ (founderHold[0] == null ? "?" : String.format("%.0f", founderHold[0].bloodSpent())) + ")");
-					PlaythroughLog.note(helper, "D-9 consent: " + prompts + " dialogue prompt(s) reached the recruit before"
-							+ " reception; consent " + (prompts == 0 ? "was not asked" : "may have been asked"));
 					received.degreeIs(1).said(BLOODLINE_LINE).earned(DEGREE_ONE);
 					helper.assertTrue(line.hasMember(recruit.uuid()), "the recruit is a member of the founder's line");
 					helper.assertTrue(isMemberOf(recruit, line), "the recruit's blood names the founder's line");
-					helper.assertTrue(prompts > 0, "D-9: the recruit should be asked before a founder receives them");
 				})
 				.run();
 	}
@@ -858,8 +891,8 @@ public final class PlaythroughOnboardingGameTests {
 
 	/**
 	 * The real D0 claim: stand at the temple, talk to the Hermit, choose his heart, touch the Display empty-handed.
-	 * Used where the claim is a precondition that should still be played rather than fixtured (the Hermit talk sets
-	 * the met-Hermit state the Vicar reads).
+	 * Used where the claim is a precondition that should still be played rather than fixtured (the claim wakes
+	 * the blood, which is what the Vicar's own newcomer card reads).
 	 */
 	// --- Review follow-ups: the Display's refusals, a full pack, initiating before the farewell, founder cancels ------
 
@@ -898,8 +931,8 @@ public final class PlaythroughOnboardingGameTests {
 	 * A D1 player (or any player whose blood is awake) touching an unclaimed Display is told to speak with the
 	 * temple's Hermit, who can never bless them. Expected: they are told the heart cannot attach to awakened blood.
 	 */
-	// DECISION: D-8b an awakened player at an unclaimed Display is sent to a Hermit who cannot bless them.
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
+	// RULING PT-8b (2026-11-13): an awakened player is told the heart cannot attach.
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
 	public static void awakenedPlayerAtUnclaimedDisplay(GameTestHelper helper) {
 		PlaythroughSites.BloodTemple temple = templeA(helper);
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, temple.stand());
@@ -910,7 +943,8 @@ public final class PlaythroughOnboardingGameTests {
 		PlaythroughLog.note(helper, "D-8b D1 at an unclaimed Display: " + touch.describe() + "; the Hermit then offers "
 				+ hermit.reachableEvents());
 		helper.assertFalse(touch.saidKeys().contains(SPEAK_WITH_HERMIT) && !hermit.offers(HEART_OFFERED),
-				"D-8b expected: the player is not sent to a Hermit who cannot bless them");
+				"PT-8b: the player is not sent to a Hermit who cannot bless them");
+		touch.said("hemomancy.initiation.cannot_attach");
 		helper.succeed();
 	}
 
@@ -1154,11 +1188,13 @@ public final class PlaythroughOnboardingGameTests {
 			public boolean tick(int spent) {
 				Vec3 target = recruit.player().getBoundingBox().getCenter();
 				if (spent == 0) {
+					recruit.player().setShiftKeyDown(true); // the recruit kneels to accept (PT-9)
 					probe = Outcome.begin(recruit, null, "received by a founder x" + ticks);
 					founder.startHold(ItemInit.blood_projection.get(), target);
 					founder.helper().assertTrue(founder.player().isUsingItem(), "the founder starts projecting");
 				}
 				if (spent >= ticks) {
+					recruit.player().setShiftKeyDown(false);
 					founderHold[0] = founder.releaseHold();
 					probe.finish();
 					return true;

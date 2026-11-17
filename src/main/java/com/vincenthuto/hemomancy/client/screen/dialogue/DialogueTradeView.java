@@ -49,7 +49,10 @@ import java.util.stream.IntStream;
 final class DialogueTradeView {
 	/** Two seconds: long past any reply, so a dropped request doesn't leave the card grey. */
 	static final int PENDING_TIMEOUT_TICKS = 40;
-	private static final int LINE_HEIGHT = 9;
+	private static final int LINE_HEIGHT = DialogueTradeLayout.LINE_HEIGHT;
+	/** Space a card's title leaves on its right for the carried marker. */
+	private static final int TITLE_RIGHT = 28;
+	private static final int LINE_RIGHT = 16;
 	private static final int ICON_STEP = 18;
 	private static final int MAIN_SLOTS = 36;
 	private static final ResourceLocation BLOOD_DROP = DialogueThemeStyle.statusIcon("blood_drop");
@@ -110,7 +113,14 @@ final class DialogueTradeView {
 					: DialogueTradePicks.prePick(open.stacks(), open.counts());
 		}
 		boolean note = open != null && open.card().offerId().equals(noteOffer) && noteKey != null;
-		DialogueTradeLayout layout = DialogueTradeLayout.calculate(scrolled, rows.size(), expandedIndex,
+		int cardWidth = DialogueTradeLayout.cardWidth(scrolled);
+		int[] bodyHeights = new int[rows.size()];
+		for (int i = 0; i < rows.size(); i++) {
+			NpcTradeCard card = rows.get(i).card();
+			bodyHeights[i] = DialogueTradeLayout.bodyHeight(titleLines(font, card, cardWidth).size(),
+					cardLines(font, card, cardWidth).size());
+		}
+		DialogueTradeLayout layout = DialogueTradeLayout.calculate(scrolled, bodyHeights, expandedIndex,
 				open == null ? 0 : open.stacks().size(), note);
 
 		renderRapport(gfx, font, board, layout.rapport());
@@ -282,16 +292,16 @@ final class DialogueTradeView {
 		if (card.daily()) renderTodayRibbon(gfx, font, frame);
 
 		int textColor = enabled || waiting ? style.textColor() : style.disabledColor();
-		int titleWidth = body.width() - 16 - 12;
-		List<FormattedCharSequence> title = font.split(Component.translatable(card.titleKey()), titleWidth);
-		if (!title.isEmpty()) {
-			gfx.drawString(font, title.getFirst(), body.x() + 8, body.y() + 24,
+		List<FormattedCharSequence> title = titleLines(font, card, body.width());
+		for (int i = 0; i < title.size(); i++) {
+			gfx.drawString(font, title.get(i), body.x() + 8, body.y() + 24 + i * LINE_HEIGHT,
 					enabled ? style.optionColor() : style.disabledColor(), true);
 		}
 		renderCarried(gfx, row.carried(), body.right() - 16, body.y() + 24, viewport, mouseX, mouseY);
-		List<FormattedCharSequence> line = font.split(Component.translatable(card.lineKey()), body.width() - 16);
-		for (int i = 0; i < Math.min(2, line.size()); i++) {
-			gfx.drawString(font, line.get(i), body.x() + 8, body.y() + 34 + i * LINE_HEIGHT, textColor, false);
+		int lineY = body.y() + 34 + Math.max(0, title.size() - 1) * LINE_HEIGHT;
+		List<FormattedCharSequence> line = cardLines(font, card, body.width());
+		for (int i = 0; i < line.size(); i++) {
+			gfx.drawString(font, line.get(i), body.x() + 8, lineY + i * LINE_HEIGHT, textColor, false);
 		}
 		ResourceLocation offerId = card.offerId();
 		targets.add(body.x(), body.y(), body.width(), body.height(), enabled, () -> {
@@ -302,6 +312,14 @@ final class DialogueTradeView {
 			}
 		});
 		if (layout.expanded()) renderStrip(gfx, font, row, layout, enabled, viewport, mouseX, mouseY, targets);
+	}
+
+	private static List<FormattedCharSequence> titleLines(Font font, NpcTradeCard card, int cardWidth) {
+		return font.split(Component.translatable(card.titleKey()), Math.max(1, cardWidth - TITLE_RIGHT));
+	}
+
+	private static List<FormattedCharSequence> cardLines(Font font, NpcTradeCard card, int cardWidth) {
+		return font.split(Component.translatable(card.lineKey()), Math.max(1, cardWidth - LINE_RIGHT));
 	}
 
 	/** The want side: cycling ingredient stacks with counts, a blood drop and its amount, or the house crest. */

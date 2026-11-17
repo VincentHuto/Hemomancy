@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+
 class SpecimenJarItemRendererSourceTest {
 	private static final Path ITEM_SOURCE = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/functional/SpecimenJarBlockItem.java");
@@ -45,19 +48,7 @@ class SpecimenJarItemRendererSourceTest {
 				"broadSpecimenVisualWidth");
 		assertContains("jar renderer keeps captured specimens visually suspended", tileRenderer,
 				"freezeCapturedSpecimen");
-		assertDoesNotContain("jar renderer must not force walking legs in jars", tileRenderer,
+		assertNotContains("jar renderer must not force walking legs in jars", tileRenderer,
 				"walkAnimation.update(0.25F, 1.0F)");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": still contains " + forbidden);
-		}
 	}
 }

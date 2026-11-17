@@ -56,7 +56,7 @@ import javax.annotation.Nullable;
  * spear combos, wings wrapped round her as a shield and flung open as a sickly wind.
  */
 public class StainedPriestessEntity extends Monster {
-    private static final BloodAccounting.Source TENDRIL_DRAIN = BloodAccounting.Source.of("stained_priestess_drain", Category.HAZARD, false, false);
+    private static final BloodAccounting.Source TENDRIL_DRAIN = BloodAccounting.Source.of("stained_priestess_drain", Category.HAZARD, false);
     private static final EntityDataAccessor<Integer> DATA_MODE =
             SynchedEntityData.defineId(StainedPriestessEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_MODE_TICK =
@@ -639,13 +639,14 @@ public class StainedPriestessEntity extends Monster {
         Vec3 toward = target.position().subtract(position()).multiply(1.0D, 0.0D, 1.0D);
         Vec3 line = toward.lengthSqr() < 1.0E-4D ? facing : toward.normalize();
         point = position();
-        for (int i = 0; i < 7; i++) {
-            PriestessEruptionEntity.spawn(server, this, point.add(line.scale(1.8D + i * 1.4D)), PriestessCombatRules.lineDelay(i), false, 8.0F);
+        for (int i = 0; i < PriestessCombatRules.PLUNGE_LINE; i++) {
+            PriestessEruptionEntity.spawn(server, this, point.add(line.scale(1.8D + i * 1.4D)), PriestessCombatRules.lineDelay(i), false, 8.0F,
+                    PriestessCombatRules.plungeThornSounds(i));
         }
         for (int i = 0; i < 4; i++) {
             double a = i * Math.PI / 2.0D + Math.PI / 4.0D;
             PriestessEruptionEntity.spawn(server, this, point.add(Math.cos(a) * 1.6D, 0.0D, Math.sin(a) * 1.6D),
-                    PriestessCombatRules.ERUPTION_TELL - 2, false, 6.0F);
+                    PriestessCombatRules.ERUPTION_TELL - 2, false, 6.0F, false);
         }
         impactDust(server, point, 1.0F);
         server.playSound(null, blockPosition(), SoundEvents.TRIDENT_HIT_GROUND, SoundSource.HOSTILE, 1.6F, 0.5F);

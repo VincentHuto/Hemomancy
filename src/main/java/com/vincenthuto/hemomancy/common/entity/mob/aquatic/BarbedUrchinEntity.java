@@ -123,8 +123,8 @@ public class BarbedUrchinEntity extends AbstractFish {
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.ARMOR, 3.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 1.0D);
 	}
 
 	@Override
@@ -200,7 +200,7 @@ public class BarbedUrchinEntity extends AbstractFish {
 
 	private void touch(Mob pMob) {
 		int i = this.getPuffState();
-		if (pMob.hurt(this.damageSources().mobAttack(this), (float) (1 + i))) {
+		if (pMob.hurt(this.damageSources().mobAttack(this), (float) (getAttributeValue(Attributes.ATTACK_DAMAGE) + i))) {
 			pMob.addEffect(new MobEffectInstance(MobEffects.POISON, 60 * i, 0), this);
 			this.playSound(SoundEvents.PUFFER_FISH_STING, 1.0F, 1.0F);
 		}
@@ -213,7 +213,7 @@ public class BarbedUrchinEntity extends AbstractFish {
 	public void playerTouch(Player pEntity) {
 		int i = this.getPuffState();
 		if (pEntity instanceof ServerPlayer && i > 0
-				&& pEntity.hurt(this.damageSources().mobAttack(this), (float) (1 + i))) {
+				&& pEntity.hurt(this.damageSources().mobAttack(this), (float) (getAttributeValue(Attributes.ATTACK_DAMAGE) + i))) {
 			if (!this.isSilent()) {
 				((ServerPlayer) pEntity).connection
 						.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.PUFFER_FISH_STING, 0.0F));

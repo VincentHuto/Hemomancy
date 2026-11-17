@@ -12,6 +12,8 @@ import com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenRules.Phase
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossIntroWindow;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtMemberEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtPresences;
@@ -142,6 +144,7 @@ public class BloomWardenEntity extends CourtMemberEntity {
 		warden.begin(player, act);
 		level.addFreshEntity(warden);
 		BossScenes.playTo(player, warden, BossPresentationIds.SCENE_BLOOM_WARDEN, 0);
+		LiberKnowledgeHelper.unlockForEncounter(player, LiberEntryDefinitions.BLOOM_WARDEN);
 		return warden;
 	}
 

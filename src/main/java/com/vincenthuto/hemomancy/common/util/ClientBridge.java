@@ -65,6 +65,29 @@ public interface ClientBridge {
 	default void umbralMist(net.minecraft.world.phys.Vec3 at, net.minecraft.world.phys.Vec3 velocity, float size, int lifetime) {
 	}
 
+	/** Whether a client-side player has a strand out, from the strand cues the client has received. */
+	default boolean isStrandOut(Player player) {
+		return false;
+	}
+
+	/**
+	 * Another player's verb reach as their server last sent it ({@code PacketSyncVerbPresence}), for drawing their
+	 * stream where it lands. Empty for the local player, a player not seen channelling, and on a server.
+	 */
+	default java.util.OptionalDouble onlookerReach(Player player, com.vincenthuto.hemomancy.common.manipulation.verb.Verb verb) {
+		return java.util.OptionalDouble.empty();
+	}
+
+	/** Another player's equipped, selected manipulation by registry name ({@code ""} for none); empty as above. */
+	default Optional<String> onlookerSelection(Player player) {
+		return Optional.empty();
+	}
+
+	/** Another player's active verb (what their Staff channels); empty as above. */
+	default Optional<com.vincenthuto.hemomancy.common.manipulation.verb.Verb> onlookerVerb(Player player) {
+		return Optional.empty();
+	}
+
 	/** Whether a client-side player is mid-crossing through a Lidless Door, from the last state sync. */
 	default boolean isCrossingLidlessDoor(Player player) {
 		return false;

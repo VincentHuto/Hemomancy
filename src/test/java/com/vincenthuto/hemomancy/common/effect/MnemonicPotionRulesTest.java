@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import org.junit.jupiter.api.Test;
+
 public final class MnemonicPotionRulesTest {
 	private MnemonicPotionRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertEquals("whispers duration", 1200, MnemonicPotionRules.WHISPERS_DURATION_TICKS);
 		assertEquals("screams duration", 1200, MnemonicPotionRules.SCREAMS_DURATION_TICKS);
 		assertDouble("whispers cooldown multiplier", 0.75D,

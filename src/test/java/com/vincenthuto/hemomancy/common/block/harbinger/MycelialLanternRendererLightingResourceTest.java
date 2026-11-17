@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class MycelialLanternRendererLightingResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -10,7 +14,8 @@ public final class MycelialLanternRendererLightingResourceTest {
 	private MycelialLanternRendererLightingResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String renderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/MycelialLanternRenderer.java"));
 
@@ -22,28 +27,9 @@ public final class MycelialLanternRendererLightingResourceTest {
 				"renderDisplayItem(te, display, partialTick, poseStack, buffers, itemLight, overlay);");
 		assertContains("mycelial lantern should render displayed stacks with world item lighting context", renderer,
 				"renderStatic(stack, ItemDisplayContext.GROUND, itemLight, overlay, poseStack, buffers, te.getLevel(), 0)");
-		assertDoesNotContain("mycelial lantern should not render displayed stacks with raw block-entity light",
+		assertNotContains("mycelial lantern should not render displayed stacks with raw block-entity light",
 				renderer, "renderDisplayItem(te, display, partialTick, poseStack, buffers, light, overlay);");
-		assertDoesNotContain("mycelial lantern should not render displayed stacks without a level context",
+		assertNotContains("mycelial lantern should not render displayed stacks without a level context",
 				renderer, "renderStatic(stack, ItemDisplayContext.GROUND, light, overlay, poseStack, buffers, null, 0)");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 }

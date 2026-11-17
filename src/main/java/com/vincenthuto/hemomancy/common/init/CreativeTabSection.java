@@ -45,9 +45,17 @@ public enum CreativeTabSection {
 	CIRCUS("circus", Set.of(
 			"circus_waybill", "enthralling_filament", "veinwing_harness", "cinder_bellows_frame",
 			"marrow_spitter_carriage", "gorebound_yoke", "mnemonist_cradle", "scarlet_gorget", "sanguine_hound_bridle",
-			"tendon_line", "ringmaster_topper", "marionette_crossbar", "puppeteers_wool", "puppeteers_spindle",
+			"sinew_cord", "ringmaster_topper", "marionette_crossbar", "puppeteers_wool", "puppeteers_spindle",
 			"circus_stage_record", "circus_loft_record", "circus_quarters_record", "impaled_procession_record",
 			"laughing_mask", "mourning_mask", "blank_mask", "troupe_rigging", "circus_curtain",
+			"circus_canvas", "circus_laced_canvas", "circus_wainscot", "circus_sawdust", "circus_wagon_panel",
+			"circus_wrecked_panel", "circus_king_pole", "circus_quarter_pole", "circus_ring_curb",
+			"circus_seating", "circus_gallery_rail", "circus_trapeze", "circus_net",
+			"circus_valance", "circus_guy_stake", "circus_podium", "circus_footlight", "circus_crossbar_rig",
+			"circus_spindle_rack", "circus_trophy", "circus_pelt_drape", "circus_plinth", "circus_wagon_wheel",
+			"circus_cookpot", "circus_costume_rack", "circus_trunk", "circus_ticket_window", "circus_pennant_line",
+			"circus_knife_wheel", "circus_target_board", "circus_stilt_rack", "circus_weight_frame", "circus_fire_pit",
+			"circus_bellows_stand", "circus_hound_hoop", "circus_prompt_table",
 			"spawn_egg_blood_drunk_puppeteer", "spawn_egg_enthralled_doll", "spawn_egg_veinwing_vulture",
 			"spawn_egg_marrow_spitter", "spawn_egg_gorebound_hulk", "spawn_egg_mnemonist_puppet",
 			"spawn_egg_scarlet_mummer", "spawn_egg_sanguine_hound", "spawn_egg_circus_ringmaster",
@@ -56,7 +64,7 @@ public enum CreativeTabSection {
 			"spawn_egg_circus_threadkeeper", "spawn_egg_circus_understudy")),
 	BRINED_COURT("brined_court", withMorphlings(
 			"raw_pelagic_herring", "cooked_pelagic_herring", "cuttlefish_chromatophores", "erythrocoral_fragment",
-			"mnemonic_ambergris", "salt_stained_voyager_log", "relay_chart", "brine_sealed_letter", "chalybeate_sclerite", "erythrocoral_block", "calcified_erythrocoral", "mnemonic_ambergris_block",
+			"mnemonic_ambergris", "salt_stained_voyager_log", "salt_stained_timber", "relay_chart", "brine_sealed_letter", "chalybeate_sclerite", "erythrocoral_block", "calcified_erythrocoral", "mnemonic_ambergris_block",
 			"hematic_algal_crust", "tidepool_anemone", "bone_worm_colony", "giant_tube_worm_colony",
 			"erythrocoral_fan", "erythrocoral_tendril",
 			// The Court's set pieces, placeable for building and testing (review fixes 2026-10-30).
@@ -89,7 +97,7 @@ public enum CreativeTabSection {
 			"charred_bookshelf", "sodden_mud_bricks", "spore_shelf", "rimed_deepslate_bricks",
 			"rimed_deepslate_brick_wall", "rimed_deepslate_brick_slab", "rimed_deepslate_brick_stairs",
 			"rime_lantern", "hanging_icicle", "frozen_drip", "adipocere_crust", "dark_lacquer_planks", "dark_lacquer_planks_slab",
-			"dark_lacquer_planks_stairs", "blood_gutter", "venous_basin", "ossuary_clock",
+			"dark_lacquer_planks_stairs", "blood_gutter", "venous_basin", "vein_node", "catalyst_feeder", "planting_basin", "ossuary_clock",
 			// The mausoleum set pieces, placeable for building and testing (review fixes 2026-10-30).
 			"sealed_niche", "opened_niche", "reliquary_sconce", "rot_pyre", "frozen_devotee", "containment_anchor_block",
 			"chapel_focus", "witness_stone", "litany_stone", "offering_stand", "pulse_pylon", "downfall_seal")),

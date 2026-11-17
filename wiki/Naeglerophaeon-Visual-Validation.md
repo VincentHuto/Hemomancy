@@ -73,7 +73,7 @@ No quantitative frame-time benchmark is claimed.
 ## Art
 
 The editable 64x64 tissue atlas is `textures/entity/naeglerophaeon.png`. The built-in imagegen
-source and export details are recorded in `tools/model_export/naeglerophaeon-tissue-prompt.txt`.
+source and export details were recorded in `tools/model_export/naeglerophaeon-tissue-prompt.txt`, which is no longer in the tree.
 
 ## Overhaul review status: 2026-10-09
 

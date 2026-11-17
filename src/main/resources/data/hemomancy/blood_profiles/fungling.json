@@ -1,5 +1,7 @@
 {
-  "tempers": [],
+  "tempers": [
+    "animus"
+  ],
   "properties": [
     "hemomancy:fungal"
   ],

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
-import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +16,7 @@ public class MorphicNectarItemDecorator implements IItemDecorator {
 		}
 
 		boolean primal = MorphlingItem.isPrimal(stack);
-		long phase = Util.getMillis() / (primal ? MorphicNectarMutationRules.primalTendrilFrameMillis() : 180L);
+		long phase = (long) AnimationTime.itemMillis() / (primal ? MorphicNectarMutationRules.primalTendrilFrameMillis() : 180L);
 		if (primal) {
 			MorphicNectarTendrilRenderer.renderPrimalOverlay(graphics, xOffset, yOffset, phase);
 		} else {

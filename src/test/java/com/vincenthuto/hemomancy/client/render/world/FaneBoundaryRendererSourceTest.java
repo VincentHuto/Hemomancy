@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.support.SourceAssertions;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class FaneBoundaryRendererSourceTest {
 	private static final Path RENDERER = Path.of(
@@ -21,7 +25,8 @@ public final class FaneBoundaryRendererSourceTest {
 	private FaneBoundaryRendererSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String renderer = Files.readString(RENDERER).replace("\r\n", "\n");
 		String shaderInit = Files.readString(SHADER_INIT).replace("\r\n", "\n");
 		String clientConfig = Files.readString(CLIENT_CONFIG).replace("\r\n", "\n");
@@ -87,17 +92,5 @@ public final class FaneBoundaryRendererSourceTest {
 		assertContains("renderer avoids unnecessary frame copies", renderer, "requiresPostPass");
 		assertNotContains("shader init no longer registers outside post dome shader", shaderInit,
 				"FANE_BOUNDARY_DISTORTION");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
-		}
 	}
 }

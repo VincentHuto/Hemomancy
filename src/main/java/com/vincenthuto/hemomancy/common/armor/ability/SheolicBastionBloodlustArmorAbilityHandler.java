@@ -4,11 +4,15 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetBonusRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.util.HemoText;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +30,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class SheolicBastionBloodlustArmorAbilityHandler {
+	private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
 	private static final String BASTION_UNTIL_KEY = "hemomancy:sheolic_bastion_until";
 	private static final String BASTION_X_KEY = "hemomancy:sheolic_bastion_x";
 	private static final String BASTION_Y_KEY = "hemomancy:sheolic_bastion_y";
@@ -89,13 +94,12 @@ public final class SheolicBastionBloodlustArmorAbilityHandler {
 		}
 	}
 
-	@SubscribeEvent
+	/** Defender stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
 	public static void onPlayerDamage(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) {
 			return;
 		}
-		// The stance cannot refuse Endless Hour's debt: it was already mitigated when it was deferred.
-		if (isBastionActive(player) && !com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip.isSettlement(event.getSource())) {
+		if (isBastionActive(player)) {
 			event.setNewDamage(0.0F);
 			player.setDeltaMovement(Vec3.ZERO);
 			player.fallDistance = 0.0F;
@@ -154,15 +158,21 @@ public final class SheolicBastionBloodlustArmorAbilityHandler {
 	}
 
 	private static void triggerCrimsonRetribution(ServerPlayer player, LivingEntity attacker) {
-		attacker.hurt(player.damageSources().magic(), 4.0F);
+		if (!ManipulationCombatHelper.canHarm(player, attacker)) {
+			return;
+		}
+		attacker.hurt(player.damageSources().indirectMagic(player, player), 4.0F);
 		attacker.setRemainingFireTicks(Math.max(attacker.getRemainingFireTicks(), 80));
 		BlockPos pos = attacker.blockPosition();
 		BlockState state = player.level().getBlockState(pos);
 		if (state.canBeReplaced() || state.isAir()) {
-			player.level().setBlock(pos, BlockInit.crimson_flames.get().defaultBlockState(), 3);
+			PlayerBlockEdits.place(player, pos, BlockInit.crimson_flames.get().defaultBlockState());
 		}
-		player.serverLevel().sendParticles(ParticleTypes.CRIMSON_SPORE,
+		player.serverLevel().sendParticles(HemoParticleData.emberSpark(EnumBloodTemper.FLAMMEUS.getColor(), 0.05F, 1.0F, 20),
 				attacker.getX(), attacker.getY() + 0.8D, attacker.getZ(),
-				28, 0.35D, 0.65D, 0.35D, 0.04D);
+				20, 0.35D, 0.65D, 0.35D, 0.02D);
+		player.serverLevel().sendParticles(HemoParticleData.bloodCell(BLOOD),
+				attacker.getX(), attacker.getY() + 0.8D, attacker.getZ(),
+				8, 0.35D, 0.65D, 0.35D, 0.02D);
 	}
 }

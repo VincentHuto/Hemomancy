@@ -29,9 +29,9 @@ final class WorkingCraftRosterDataTest {
 			Map.entry("resonant_forge", new Craft(3, "minor", "hemomancy:ferric_binder", 500)),
 			Map.entry("scarlet_vanity", new Craft(3, "minor", "hemomancy:sanguine_formation", 300)),
 			Map.entry("somatic_loom", new Craft(3, "lesser", "hemomancy:sanguine_formation", 150)),
-			Map.entry("mycelial_lantern", new Craft(3, "lesser", "hemomancy:ferric_binder", 2500)),
+			Map.entry("mycelial_lantern", new Craft(3, "lesser", "hemomancy:ferric_binder", 750)),
 			Map.entry("fungal_implantation_pylon", new Craft(4, "lesser", "hemomancy:hyphal_substrate", 1200)),
-			Map.entry("sporitic_thurible", new Craft(4, "lesser", "hemomancy:spore_sac", 1000)),
+			Map.entry("sporitic_thurible", new Craft(8, "lesser", "hemomancy:spore_sac", 1000)),
 			Map.entry("enzymatic_scriptorium", new Craft(3, "greater", "hemomancy:ferric_binder", 500)),
 			Map.entry("mnemonic_reliquary", new Craft(3, "greater", "hemomancy:sanguine_formation", 75)),
 			Map.entry("somnolent_seat", new Craft(3, "greater", "hemomancy:sanguine_formation", 250)),
@@ -41,7 +41,7 @@ final class WorkingCraftRosterDataTest {
 			Map.entry("morphling_incubator", new Craft(5, "greater", "hemomancy:morphling_polyp", 200)),
 			Map.entry("morphling_cradle", new Craft(4, "lesser", "hemomancy:sanguine_formation", 200)),
 			Map.entry("vacant_effigy", new Craft(5, "greater", "hemomancy:sanguine_formation", 250)),
-			Map.entry("sanguine_monolith", new Craft(6, "greater", "hemomancy:sanguine_formation", 175)),
+			Map.entry("sanguine_monolith", new Craft(5, "greater", "hemomancy:sanguine_formation", 175)),
 			Map.entry("covenant_throne", new Craft(6, "greater", "hemomancy:sanguine_formation", 8000)),
 			Map.entry("vascular_effigy", new Craft(6, "grand", "hemomancy:sanguine_formation", 6500)));
 

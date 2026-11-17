@@ -1,16 +1,17 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class CircusDiscoveryIntegrationSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private CircusDiscoveryIntegrationSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String dialogue = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerMnemonistDialogueTrees.java");
 		String handler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String discovery = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/circus/CircusDiscoveryProgress.java");
@@ -27,10 +28,6 @@ public final class CircusDiscoveryIntegrationSourceTest {
 				"hemomancy:circus_pavilion");
 		assertContains(read("src/main/resources/assets/hemomancy/models/item/circus_waybill.json"),
 				"hemomancy:item/blood_structure_hint");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
 	}
 
 	private static void assertContains(String text, String expected) {

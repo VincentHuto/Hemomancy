@@ -23,7 +23,8 @@ import java.util.List;
  * With hemomancy.riteFloorReview, builds one greater Cardinal Rite floor of each style in a disposable world and
  * captures them forming, settled, at night, and withering after a block is broken, into
  * build/rite-floor-client-review/screenshots. With hemomancy.riteFloorReviewSpecial it builds the three grand special
- * floors instead, then raises the player to Degree 8 and captures the Liber's Rites &amp; Crafts map.
+ * floors instead, with a second Qliphoth floor turned to face east in the fourth slot so its motif can be checked
+ * against the floor's facing, then raises the player to Degree 8 and captures the Liber's Rites &amp; Crafts map.
  * Excluded from release jars.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
@@ -101,6 +102,8 @@ public final class RiteFloorClientReview {
                 for (int i = 0; i < floors.length; i++) {
                     build(level, row.offset(i * SPACING - SPACING * 3 / 2, 0, 0), floors[i], i == floors.length - 1);
                 }
+                if (special()) buildTurned(level, row.offset(3 * SPACING - SPACING * 3 / 2, 0, 0), "qliphoth_grand",
+                        Direction.EAST);
                 // A two-block pit along the threshold floor's near edge, so its membrane has a ledge to droop over.
                 // The grand special floors reach that edge, so they keep their ground.
                 for (BlockPos pos : special() ? List.<BlockPos>of()
@@ -109,10 +112,12 @@ public final class RiteFloorClientReview {
                 }
                 // East of the working floor: a one-block notch cut through the ground toward the floor, and a cliff
                 // just past the trench, for drapes and the trench's outer edge to meet.
-                for (BlockPos pos : BlockPos.betweenClosed(row.offset(25, -2, 0), row.offset(26, 0, 0))) {
+                for (BlockPos pos : special() ? List.<BlockPos>of()
+                        : BlockPos.betweenClosed(row.offset(25, -2, 0), row.offset(26, 0, 0))) {
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                 }
-                for (BlockPos pos : BlockPos.betweenClosed(row.offset(27, -2, -6), row.offset(30, 0, 6))) {
+                for (BlockPos pos : special() ? List.<BlockPos>of()
+                        : BlockPos.betweenClosed(row.offset(27, -2, -6), row.offset(30, 0, 6))) {
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                 }
                 Hemomancy.LOGGER.info("RITE_FLOOR_REVIEW built {} floors at {}", floors.length, row);
@@ -120,6 +125,14 @@ public final class RiteFloorClientReview {
         }
         if (row == null || ticks <= BUILD_TICK) return;
         int since = ticks - BUILD_TICK;
+        if (since == 100) {
+            for (int i = 0; i < 4; i++) {
+                if (mc.level.getBlockEntity(row.offset(i * SPACING - SPACING * 3 / 2, 0, 0))
+                        instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity focus)
+                    Hemomancy.LOGGER.info("RITE_FLOOR_REVIEW slot {} formed {} facing {}", i, focus.getFormedFloor(),
+                            focus.getFormedForwards());
+            }
+        }
         if (since == BREAK_TICK) {
             server.execute(() -> server.getPlayerList().getPlayer(uuid).serverLevel()
                     .setBlock(row.offset(SPACING * 3 / 2 + 1, 0, 1), Blocks.DIRT.defaultBlockState(), 3));
@@ -211,6 +224,22 @@ public final class RiteFloorClientReview {
                 level.setBlock(sockets.get(i), BlockInit.iron_brazier.get().defaultBlockState()
                         .setValue(com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock.RITUAL_PHASE,
                                 phases[i]), 3);
+            }
+        }
+    }
+
+    /** Lays the floor's pattern placed facing {@code forwards}, the way the floor matcher reads a turned floor. */
+    private static void buildTurned(ServerLevel level, BlockPos focus, String floorId, Direction forwards) {
+        CardinalRiteFloorDefinition floor = CardinalRiteFloorRegistry.get(Hemomancy.rloc(floorId)).orElseThrow();
+        String[][] layout = floor.pattern().getPatternArray();
+        var symbols = floor.pattern().getSymbolList();
+        for (int z = 0; z < layout.length; z++) {
+            String cells = layout[z][0];
+            for (int x = 0; x < cells.length(); x++) {
+                Block block = symbols.get(String.valueOf(cells.charAt(x)));
+                if (block == null) continue;
+                level.setBlock(com.vincenthuto.hemomancy.common.util.PatternOrigins.offset(focus, forwards, Direction.UP,
+                        new BlockPos(x - floor.focus().getX(), 0, z - floor.focus().getZ())), block.defaultBlockState(), 3);
             }
         }
     }

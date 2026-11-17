@@ -76,6 +76,12 @@ public class CovenantWaybillItem extends Item {
 	/** Writes {@code target} (or its absence) for {@code level}'s dimension and tells the player when asked. */
 	protected final void record(ItemStack stack, ServerLevel level, Player player, @Nullable BlockPos target,
 			boolean showFeedback) {
+		record(stack, level, player, target, showFeedback, null);
+	}
+
+	/** {@link #record} with the feedback naming what was sought, for a subclass whose lines take it. */
+	protected final void record(ItemStack stack, ServerLevel level, Player player, @Nullable BlockPos target,
+			boolean showFeedback, @Nullable Component sought) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putString(CHECKED_DIMENSION, level.dimension().location().toString());
 		if (target == null) {
@@ -84,7 +90,7 @@ public class CovenantWaybillItem extends Item {
 			tag.remove(TARGET_Z);
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 			if (showFeedback) {
-				player.displayClientMessage(Component.translatable(translationKey + ".not_found")
+				player.displayClientMessage(feedback(".not_found", sought)
 						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 			}
 			return;
@@ -95,9 +101,14 @@ public class CovenantWaybillItem extends Item {
 		tag.putInt(TARGET_Z, target.getZ());
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		if (showFeedback) {
-			player.displayClientMessage(Component.translatable(translationKey + ".attuned")
+			player.displayClientMessage(feedback(".attuned", sought)
 					.withStyle(ChatFormatting.DARK_RED), false);
 		}
+	}
+
+	private net.minecraft.network.chat.MutableComponent feedback(String suffix, @Nullable Component sought) {
+		return sought == null ? Component.translatable(translationKey + suffix)
+				: Component.translatable(translationKey + suffix, sought);
 	}
 
     protected BlockPos findTarget(ServerLevel level, Player player) {

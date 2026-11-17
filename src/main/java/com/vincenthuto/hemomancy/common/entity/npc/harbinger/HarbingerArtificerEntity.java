@@ -72,9 +72,9 @@ public class HarbingerArtificerEntity extends com.vincenthuto.hemomancy.common.e
 
 	@Override
 	public DialogueTree progressionDialogue(ServerPlayer player) {
-		return ResonantForgeDialogue.append(ClinicalBloodDialogue.append(
+		return CoreLoopLessonDialogue.append(ResonantForgeDialogue.append(ClinicalBloodDialogue.append(
 				HarbingerArtificerDialogueTrees.forState(this.getId(), ArtificerProgressSnapshot.from(player)),
-				player, "artificer"), player);
+				player, "artificer"), player), CoreLoopLessons.ARTIFICER, player);
 	}
 
 	@Override

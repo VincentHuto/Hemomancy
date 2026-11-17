@@ -6,7 +6,7 @@ import net.minecraft.util.Mth;
 
 public final class ManipulationCastingRules {
 	/** A charged manipulation released below this fraction of its charge fizzles before payment. */
-	public static final float MIN_CHARGE_FRACTION = 0.25F;
+	public static final float MIN_CHARGE_FRACTION = 0.5F;
 	/** Partial charges below this fraction do not count toward the family's mastery uses. */
 	public static final float MASTERY_USE_CHARGE_FRACTION = 0.5F;
 	/** Minimum server tolerance, in ticks, between the observed key-down and the client's reported charge. */

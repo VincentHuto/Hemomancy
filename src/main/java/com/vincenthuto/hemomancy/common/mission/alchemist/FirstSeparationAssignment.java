@@ -148,6 +148,23 @@ public final class FirstSeparationAssignment {
 		return isBriefed(player) && !HarbingerAdvancementGranter.isFirstSeparationComplete(player);
 	}
 
+	/** PT-18: an assigned spin was started and its output has not yet been taken, so a second one is refused. */
+	public static boolean hasPendingAssignmentSpin(ServerPlayer player) {
+		return canBeginAssignmentSpin(player) && parseUuid(durableString(player, DATA_ASSIGNED_SPIN)) != null;
+	}
+
+	/** NQ-10-6: the Alchemist clears a lost first output's spin, so the chapter cannot lock. */
+	public static boolean clearPendingAssignmentSpin(ServerPlayer player) {
+		if (!hasPendingAssignmentSpin(player)) return false;
+		putDurableString(player, DATA_ASSIGNED_SPIN, "");
+		return true;
+	}
+
+	/** The player an assigned output belongs to, or null for an ordinary output (NQ-10-10). */
+	public static UUID assignedPlayer(ItemStack stack) {
+		return parseUuid(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getString(TAG_PLAYER));
+	}
+
 	public static void markAssignmentOutput(ItemStack stack, UUID playerId, UUID spinId) {
 		if (stack.isEmpty() || playerId == null || spinId == null) return;
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();

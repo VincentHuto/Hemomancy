@@ -14,6 +14,8 @@ import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketMycophantIntro;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMycophantFightScene;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -85,11 +87,23 @@ public final class MycophantEncounterManager {
 
 	public static void tickGardensPlayer(ServerPlayer player) {
 		if (isActive(player) || !player.level().dimension().equals(FungalGardenTravelHelper.FUNGAL_GARDENS)) return;
+		tickHunt(player);
+	}
+
+	/** One Gardens tick of the hunt for a player standing in the Gardens: the cooldown, a re-armed rematch, exposure. */
+	public static void tickHunt(ServerPlayer player) {
+		if (isActive(player)) return;
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		if (degree.getMycophantRetryCooldownTicks() > 0 && player.isAlive()
 				&& !player.isCreative() && !player.isSpectator())
 			degree.setMycophantRetryCooldownTicks(degree.getMycophantRetryCooldownTicks() - 1);
 		if (degree.getMycophantRetryCooldownTicks() > 0) return;
+		if (MycophantEncounterRules.shouldRearmRematch(degree.getDegreeNumber(), degree.getArchonPath(),
+				degree.isMycophantDefeated(), degree.isMycophantRematchOwed(), degree.getMycophantRetryCooldownTicks(),
+				true, player.isAlive(), player.isCreative(), player.isSpectator(), false)) {
+			beginClaim(player, true);
+			return;
+		}
 		if (!MycophantEncounterRules.shouldAccumulate(degree.getDegreeNumber(), degree.getArchonPath(),
 				degree.isMycophantDefeated(), true, player.isAlive(), player.isCreative(), player.isSpectator(), false)) return;
 		int duration = huntDuration();
@@ -134,10 +148,10 @@ public final class MycophantEncounterManager {
 			for (int i = 0; i < roots; i++) {
 				double angle = Math.PI * 2.0D * i / roots + closing * 4.0D;
 				double height = 0.1D + closing * 1.6D;
-				level.sendParticles(HemoParticleData.sporiticSpore(new ParticleColor(0.48F, 0.72F, 0.34F)),
+				level.sendParticles(HemoParticleData.sporiticSpore(new ParticleColor(122, 184, 87)),
 						player.getX() + Math.cos(angle) * radius, player.getY() + height,
 						player.getZ() + Math.sin(angle) * radius, 1, 0.03D, 0.06D, 0.03D, 0.0D);
-				level.sendParticles(HemoParticleData.sporiticSpore(new ParticleColor(0.92F, 0.66F, 0.24F)),
+				level.sendParticles(HemoParticleData.sporiticSpore(new ParticleColor(235, 168, 61)),
 						player.getX() + Math.cos(angle + 0.3D) * radius * 0.9D, player.getY() + height * 0.6D,
 						player.getZ() + Math.sin(angle + 0.3D) * radius * 0.9D, 1, 0.02D, 0.03D, 0.02D, 0.0D);
 			}
@@ -179,6 +193,7 @@ public final class MycophantEncounterManager {
 				: PacketMycophantIntro.WAKING, sceneSeed(player)));
 		if (boss != null) BossScenes.playTo(player, boss, rematch ? BossPresentationIds.SCENE_MYCOPHANT_REMATCH
 				: BossPresentationIds.SCENE_MYCOPHANT_WAKING, 0);
+		LiberKnowledgeHelper.unlockForEncounter(player, LiberEntryDefinitions.MYCOPHANT);
 		return true;
 	}
 
@@ -207,27 +222,45 @@ public final class MycophantEncounterManager {
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		degree.setMycophantRetryCooldownTicks(retryCooldown());
 		if (!rematch && !degree.isMycophantDefeated()) degree.setMycophantExposureTicks(huntDuration());
+		if (rematch && degree.isMycophantDefeated()) degree.setMycophantRematchOwed(true);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		clear(player);
-		player.setHealth(Math.max(1.0F, player.getMaxHealth() * 0.35F));
-		player.removeAllEffects();
+		recoverFromCancelledDeath(player);
 		player.displayClientMessage(Component.translatable("message.hemomancy.mycophant.expelled")
 				.withStyle(ChatFormatting.DARK_GREEN), false);
 		ChamberOfWillManager.get(player.getServer()).exitChamber(player);
 	}
 
+	/** The killing blow on an owned Mycophant: the win is the owner's from here, whatever happens in the yield. */
+	public static void recordWin(MycophantEntity boss) {
+		if (!(boss.level() instanceof ServerLevel level) || boss.getEncounterOwner() == null) return;
+		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(boss.getEncounterOwner());
+		if (owner != null && isActive(owner)) MycophantWinSavedData.get(level.getServer()).record(owner.getUUID());
+	}
+
+	/** The end of the yield: settles the win while the owner is here; an owner away settles at the next login. */
 	public static void completeVictory(MycophantEntity boss) {
 		if (!(boss.level() instanceof ServerLevel level) || boss.getEncounterOwner() == null) return;
 		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(boss.getEncounterOwner());
 		if (owner == null || !isActive(owner)) return;
+		settleVictory(owner);
+	}
+
+	private static boolean hasUnsettledWin(ServerPlayer player) {
+		return MycophantWinSavedData.get(player.getServer()).isRecorded(player.getUUID());
+	}
+
+	private static void settleVictory(ServerPlayer owner) {
+		MycophantWinSavedData.get(owner.getServer()).clear(owner.getUUID());
 		boolean first = !HemoCapabilityAccess.getInitiatoryDegree(owner).isMycophantDefeated();
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
 		degree.setMycophantDefeated(true);
 		degree.setMycophantExposureTicks(huntDuration());
 		degree.setMycophantRetryCooldownTicks(0);
+		degree.setMycophantRematchOwed(false);
 		InitiatoryDegreeEvents.syncDegree(owner, degree);
 		clear(owner);
-		ChamberOfWillManager.get(level.getServer()).exitChamber(owner);
+		ChamberOfWillManager.get(owner.getServer()).exitChamber(owner);
 		if (first) {
 			var persisted = owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
 			persisted.putBoolean(TENDRIL_PENDING_KEY, true);
@@ -417,16 +450,27 @@ public final class MycophantEncounterManager {
 	private static int huntDuration() { return HemoServerConfig.MYCOPHANT_HUNT_TICKS == null ? 18_000 : HemoServerConfig.MYCOPHANT_HUNT_TICKS.get(); }
 	private static int retryCooldown() { return HemoServerConfig.MYCOPHANT_RETRY_COOLDOWN_TICKS == null ? 6_000 : HemoServerConfig.MYCOPHANT_RETRY_COOLDOWN_TICKS.get(); }
 
+	/** A death the encounter cancels leaves the player at 35% health with no effects. */
+	private static void recoverFromCancelledDeath(ServerPlayer player) {
+		player.setHealth(Math.max(1.0F, player.getMaxHealth() * 0.35F));
+		player.removeAllEffects();
+	}
+
 	@SubscribeEvent
 	public static void onDeath(LivingDeathEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player) || !isActive(player)) return;
 		event.setCanceled(true);
-		failAttempt(player);
+		if (hasUnsettledWin(player)) {
+			recoverFromCancelledDeath(player);
+			settleVictory(player);
+		}
+		else failAttempt(player);
 	}
 
 	@SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		if (hasUnsettledWin(player)) { settleVictory(player); return; }
 		if (!isActive(player)) return;
 		if (!player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) { clear(player); return; }
 		PacketHandler.sendToPlayer(player, PacketSyncMycophantFightScene.activate(arenaCenter(player)));
@@ -434,7 +478,9 @@ public final class MycophantEncounterManager {
 
 	@SubscribeEvent
 	public static void onChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player && isActive(player)
-				&& !event.getTo().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) failAttempt(player);
+		if (!(event.getEntity() instanceof ServerPlayer player) || !isActive(player)
+				|| event.getTo().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) return;
+		if (hasUnsettledWin(player)) settleVictory(player);
+		else failAttempt(player);
 	}
 }

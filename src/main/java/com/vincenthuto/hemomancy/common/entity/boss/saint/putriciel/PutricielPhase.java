@@ -18,8 +18,8 @@ public enum PutricielPhase {
 	INTERVAL(2, "boss.hemomancy.putriciel.phase.purifier", BossEvent.BossBarColor.PINK,
 			BossPresentationIds.SCENE_PUTRICIEL_PURIFIER_CARD, 10, 0, 4.0D, 0.0F, 10.0F, 14),
 	ROT_II(3, "boss.hemomancy.putriciel.phase.rot_returns", BossEvent.BossBarColor.GREEN,
-			BossPresentationIds.SCENE_PUTRICIEL_ROT_RETURNS_CARD, 16, 20, 8.0D, 1.5F, 6.0F, 16),
-	ROT_III(4, "boss.hemomancy.putriciel.phase.blight", BossEvent.BossBarColor.YELLOW, null, 12, 15, 9.0D, 2.0F, 8.0F, 12);
+			BossPresentationIds.SCENE_PUTRICIEL_ROT_RETURNS_CARD, 16, 10, 8.0D, 1.5F, 6.0F, 16),
+	ROT_III(4, "boss.hemomancy.putriciel.phase.blight", BossEvent.BossBarColor.YELLOW, null, 12, 8, 9.0D, 2.0F, 8.0F, 12);
 
 	/** The wind-up the rot moves lose in Rot III, never under the kind's floor. */
 	public static final int ROT_III_WINDUP_CUT = 3;

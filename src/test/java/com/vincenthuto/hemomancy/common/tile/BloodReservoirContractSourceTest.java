@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.common.tile;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class BloodReservoirContractSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -10,7 +15,8 @@ public final class BloodReservoirContractSourceTest {
 	private BloodReservoirContractSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		Path tileRoot = SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/tile");
 		String reservoir = read(tileRoot.resolve("IBloodReservoir.java"));
 		String slotAccess = read(tileRoot.resolve("IBloodContainerSlotAccess.java"));
@@ -32,21 +38,16 @@ public final class BloodReservoirContractSourceTest {
 		assertContains("slot processing composes reservoir and inventory", slotAccess,
 				"processBloodContainerInputSlot(Container container, IBloodReservoir reservoir)");
 		assertContains("capability lookup uses reservoir contract", capabilityAccess, "be instanceof IBloodReservoir");
-		assertContains("capability lookup reads reservoir attachment directly", capabilityAccess,
-				"be.getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME)");
+		assertContains("capability lookup reads the settled reservoir attachment", capabilityAccess,
+				"ReservoirBlood.settled(be)");
+		assertContains("reservoir reads the settled attachment", reservoir, "ReservoirBlood.settled(blockEntity)");
+		assertContains("reservoir declares living vessels", reservoir, "default boolean isLivingVessel()");
 		assertNotContains("capability lookup does not recurse through reservoir method", capabilityAccess,
 				"reservoir.getBloodCapability()");
 		assertContains("block interactions sync reservoirs", blockInteractions, "be instanceof IBloodReservoir reservoir");
 		assertContains("blood container transfer accepts reservoir", bloodTransfer, "IBloodReservoir reservoir");
 		assertNotContains("old blood tile contract removed", sourceTree, "IBloodTile");
 		assertNotContains("old reservoir-container contract removed", sourceTree, "IBloodReservoirContainer");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
 	}
 
 	private static String readAllJava(Path root) throws IOException {
@@ -57,17 +58,5 @@ public final class BloodReservoirContractSourceTest {
 			}
 		}
 		return combined.toString();
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": contained " + unexpected);
-		}
 	}
 }

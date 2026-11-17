@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.damage.*;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
@@ -57,7 +58,7 @@ public class RimeboundSentenceManip extends BloodManipulation {
 		if (!ManipulationCombatHelper.hurt(this, player, target, level,
 				(BASE_DAMAGE + CHARGE_DAMAGE * charge) * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player), duration, charge >= 1 ? 3 : 1)) return;
         ManipulationVisuals.attached(target, ManipulationVisuals.Form.RIMEBOUND, .7, duration, 1);
-		if (!ManipulationReactiveEvents.isBoss(target)) {
+		if (!HemoEntityPredicates.isBoss(target)) {
 			BlockPos base = target.blockPosition();
 			for (BlockPos offset : List.of(base.north(), base.south(), base.east(), base.west(), base.above(2))) {
 				TemporaryIceManager.placeOwned(level, offset, BlockInit.frozen_cruor.get().defaultBlockState(), duration, player.getUUID());

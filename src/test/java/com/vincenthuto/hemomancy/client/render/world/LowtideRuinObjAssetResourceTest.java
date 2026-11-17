@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LowtideRuinObjAssetResourceTest {
 	private static final Path MODEL_ROOT = Path.of("src/main/resources/assets/hemomancy/models/world/lowtide_ruin");
@@ -35,7 +40,8 @@ public final class LowtideRuinObjAssetResourceTest {
 	private LowtideRuinObjAssetResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		for (int index = 0; index < PIECES.length; index++) {
 			String piece = PIECES[index];
 			assertModelJson(piece);
@@ -231,10 +237,6 @@ public final class LowtideRuinObjAssetResourceTest {
 		assertFileExists(name + " texture", TEXTURE_ROOT.resolve(name + ".png"));
 	}
 
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertFileExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
@@ -244,18 +246,6 @@ public final class LowtideRuinObjAssetResourceTest {
 	private static void assertFileDoesNotExist(String label, Path path) {
 		if (Files.exists(path)) {
 			throw new AssertionError(label + ": still exists " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
 		}
 	}
 

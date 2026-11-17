@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * touched, so the count may only fall. When it falls, lower {@link #CEILING} to the new count.
  */
 class PrivateTestHelperRatchetTest {
-	/** Private read/assert helper declarations outside {@code support/} at the end of consolidation step 2. */
-	private static final int CEILING = 593;
+	/** Private read/assert helper declarations outside {@code support/} after the UN-71 housekeeping pass (2026-11-16). */
+	private static final int CEILING = 101;
 	private static final Pattern PRIVATE_HELPER = Pattern.compile(
 			"private\\s+static\\s+[\\w<>\\[\\],.? ]+?\\s+"
 					+ "(read|readResource|assertContains|assertNotContains|assertDoesNotContain)\\s*\\(");

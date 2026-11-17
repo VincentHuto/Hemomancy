@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
+import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -8,7 +9,8 @@ public final class ScaleGripRulesTest {
 	private ScaleGripRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		matchesOneGripAndOneUnprotectedTarget();
 		rejectsLooseGripCharmBehavior();
 		rejectsAlreadyProtectedTarget();

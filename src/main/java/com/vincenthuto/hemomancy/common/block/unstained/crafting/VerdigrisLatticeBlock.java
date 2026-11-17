@@ -1,10 +1,11 @@
 package com.vincenthuto.hemomancy.common.block.unstained.crafting;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -77,12 +78,12 @@ public class VerdigrisLatticeBlock extends Block {
 		if (random.nextFloat() > 0.65f) return;
 		double angle = random.nextDouble() * Math.PI * 2.0;
 		double radius = 0.42;
-		level.addParticle(ParticleTypes.WAX_OFF,
+		level.addParticle(HemoParticleData.emberSpark(HemoPalette.VERDIGRIS, 0.031F, 0.9F, 30),
 				pos.getX() + 0.5 + Math.cos(angle) * radius,
 				pos.getY() + 0.55 + random.nextDouble() * 0.45,
 				pos.getZ() + 0.5 + Math.sin(angle) * radius,
 				-Math.sin(angle) * 0.01, 0.006, Math.cos(angle) * 0.01);
-		if (random.nextFloat() < 0.2f) level.addParticle(ParticleTypes.END_ROD,
+		if (random.nextFloat() < 0.2f) level.addParticle(HemoParticleData.glow(HemoPalette.STILL_WHITE),
 				pos.getX() + 0.5, pos.getY() + 0.9, pos.getZ() + 0.5, 0, 0.01, 0);
 	}
 

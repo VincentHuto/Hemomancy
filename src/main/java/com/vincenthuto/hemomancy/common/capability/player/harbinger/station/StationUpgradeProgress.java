@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.station;
 
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
@@ -20,6 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +29,11 @@ import java.util.Set;
 
 /** Per-player machine use, upgrade-item claims and undelivered claims for every upgradeable station. */
 public final class StationUpgradeProgress implements INBTSerializable<CompoundTag> {
+    /** The claimed free kits, owed until they really land (F-19). */
+    public static final PendingDelivery.Claim KITS = new PendingDelivery.Claim("station_upgrade_kits",
+            player -> HemoCapabilityAccess.stationUpgrades(player).owedKits(), player -> true,
+            (player, left) -> HemoCapabilityAccess.stationUpgrades(player).settleKits(left));
+
     private final EnumMap<UpgradeStation, Set<String>> used = new EnumMap<>(UpgradeStation.class);
     private final EnumMap<UpgradeStation, Integer> claimed = new EnumMap<>(UpgradeStation.class);
     private final EnumMap<UpgradeStation, Integer> pending = new EnumMap<>(UpgradeStation.class);
@@ -109,28 +116,35 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
         syncDirty = false;
     }
 
-    /** Gives the upgrade item once, unlocks its repeat-craft recipe, and retries delivery if the inventory is full. */
+    /** Gives the upgrade item once, unlocks its repeat-craft recipe, and leaves the kit owed until it lands. */
     public boolean claim(ServerPlayer player, StationUpgradeTier tier) {
         if (claimState(player, tier) != StationUpgradeRules.ClaimState.READY) return false;
         markClaimed(tier.station(), tier.tier(), true);
         awardRecipe(player, tier);
-        deliver(player);
+        PendingDelivery.deliver(player, KITS);
         sync(player, true);
         return true;
     }
 
-    /** Inserts every pending kit that fits; a dead player keeps them pending, since a corpse's pack is lost. */
-    public void deliver(ServerPlayer player) {
-        if (!player.isAlive()) return;
+    private List<ItemStack> owedKits() {
+        List<ItemStack> owed = new ArrayList<>();
+        for (StationUpgradeTier tier : StationUpgradeCatalog.all()) {
+            if (hasPending(tier.station(), tier.tier())) owed.add(kit(tier));
+        }
+        return owed;
+    }
+
+    private void settleKits(List<ItemStack> left) {
         for (StationUpgradeTier tier : StationUpgradeCatalog.all()) {
             if (!hasPending(tier.station(), tier.tier())) continue;
-            ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(tier.upgradeItem()));
-            player.getInventory().add(stack);
-            if (stack.isEmpty()) {
-                pending.merge(tier.station(), bit(tier.tier()), (a, b) -> a & ~b);
-                syncDirty = true;
-            }
+            if (left.stream().anyMatch(stack -> stack.is(kit(tier).getItem()))) continue;
+            pending.merge(tier.station(), bit(tier.tier()), (a, b) -> a & ~b);
+            syncDirty = true;
         }
+    }
+
+    private static ItemStack kit(StationUpgradeTier tier) {
+        return new ItemStack(BuiltInRegistries.ITEM.get(tier.upgradeItem()));
     }
 
     static void awardRecipe(ServerPlayer player, StationUpgradeTier tier) {

@@ -108,10 +108,11 @@ final class LuxUmbraEchoCasts {
 		});
 	}
 
+	/** The eye opens in the echo's chest and its beam runs out along the loom's front. */
 	private static void unclosingEye(EchoCast.EchoContext ctx) {
 		EchoFx.activate(ctx);
-		EchoFx.cue(Form.EYE, ctx.feet(), ctx.feet(), ctx.scaled(1.0), 60, 1);
-		EchoFx.accent(EnumBloodTemper.LUX, null, ctx.feet().add(0, ctx.scaled(2.5), 0), Vec3.ZERO, false);
+		EchoFx.cue(Form.EYE_BEAM, ctx.chest(), ctx.ahead(6.0), 1.0, 30, 1);
+		EchoFx.accent(EnumBloodTemper.LUX, null, ctx.chest(), ctx.forward(), false);
 	}
 
 	//  Tenebris

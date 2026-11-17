@@ -38,37 +38,6 @@ final class MorphlingStaticSpriteTest {
     }
 
     @Test
-    void mouthStaysOnVesselThroughMirroringAndScaling() {
-        for (float scale : new float[] {0.25f, 1f, 1.5f, 4f}) {
-            for (boolean left : new boolean[] {true, false}) {
-                var a = EquippedMorphlingOverlayPlacement.attachment(left, 100f, 80f, scale);
-                assertEquals(100f, a.left() + a.mouthX() * scale, 0.0001f);
-                assertEquals(80f, a.top() + 16.5f * scale, 0.0001f);
-                assertEquals(32f * scale, a.size(), 0.0001f);
-                assertEquals(left ? 5.5f : 26.5f, a.mouthX());
-                assertEquals(!left, EquippedMorphlingOverlayPlacement.shouldMirror(left));
-            }
-        }
-    }
-
-    @Test
-    void bondMeterAvoidsTheBodyAtTopAndBottomHudPositions() {
-        for (float anchorY : new float[] {47.2f, 177.2f}) {
-            for (float scale : new float[] {0.25f, 1f, 1.5f, 4f}) {
-                for (boolean left : new boolean[] {true, false}) {
-                    var a = EquippedMorphlingOverlayPlacement.attachment(left, 150, anchorY, scale);
-                    int x = a.bondMeterX(left);
-                    int y = a.bondMeterY();
-                    assertTrue(y >= 2);
-                    boolean above = y + 14 < a.top();
-                    boolean beside = left ? x - 1 > a.left() + a.size() : x + 33 < a.left();
-                    assertTrue(above || beside, "Meter must avoid the scaled body on either HUD side");
-                }
-            }
-        }
-    }
-
-    @Test
     void mirroredUvsKeepPositiveGeometryWidth() {
         var normal = EquippedMorphlingOverlayPlacement.spriteBlit(false);
         var mirrored = EquippedMorphlingOverlayPlacement.spriteBlit(true);
@@ -95,26 +64,13 @@ final class MorphlingStaticSpriteTest {
     }
 
     @Test
-    void pulseKeepsTheFeedingPointFixedOnBothSides() {
-        for (boolean left : new boolean[] {true, false}) {
-            for (float configured : new float[] {0.25f, 1f, 1.5f, 4f}) {
-                float scale = EquippedMorphlingOverlayPlacement.morphlingRenderScale(configured, 0.08f);
-                assertEquals(configured * 1.032f, scale, 0.001f);
-                var pulsed = EquippedMorphlingOverlayPlacement.attachment(left, 100, 80, scale);
-                assertEquals(100f, pulsed.left() + pulsed.mouthX() * scale, 0.0001f);
-                assertEquals(80f, pulsed.top() + 16.5f * scale, 0.0001f);
-            }
-        }
-    }
-
-    @Test
     void staticSpritePulsesWithoutSamplingAnimationFrames() throws Exception {
         var source = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/EquippedMorphlingOverlay.java"));
         assertFalse(source.contains("feedingFrame"));
         assertTrue(source.contains("EquippedMorphlingOverlayPlacement.morphlingRenderScale("));
         assertFalse(source.contains("RENDER_MORPHLING_FEEDING_ANIMATION"));
-        assertTrue(source.contains("HemoClientConfig.MORPHLING_HUD_SCALE.get()"));
-        String bondMeter = source.substring(source.indexOf("private void renderBondMeter"), source.indexOf("private void renderLegacyIcon"));
+        assertTrue(source.contains("EquippedMorphlingOverlayPlacement.jarScale("), "the jar, not the config, sizes the Morphling");
+        String bondMeter = source.substring(source.indexOf("private void renderBondMeter"), source.indexOf("private void renderPrimalMotes"));
         assertFalse(bondMeter.contains("gfx.pose()"), "Bond meter must not leak a transform into the shared HUD pose");
     }
 }

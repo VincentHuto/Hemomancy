@@ -77,6 +77,7 @@ public class EntityInit {
     public static final TagKey<EntityType<?>> HEMOMANCY_MOB = createTag("hemomancy_mob");
     public static final TagKey<EntityType<?>> SPECIMEN_JAR_CAPTURABLE = createTag("specimen_jar_capturable");
     public static final TagKey<EntityType<?>> PUPPET_ATTENTION_IMMUNE = createTag("puppet_attention_immune");
+    public static final TagKey<EntityType<?>> BOSSES = createTag("bosses");
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenantThroneSeatEntity>> covenant_throne_seat =
             ENTITY_TYPES.register("covenant_throne_seat",
@@ -113,6 +114,17 @@ public class EntityInit {
                             .clientTrackingRange(8)
                             .updateInterval(2)
                             .build(Hemomancy.rloc("unsettled_ichor").toString()));
+
+    /** Core-loop Track 9: a column of real ground Living Land sends at an enemy and brings back. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.manipulation.LivingLandStrikeEntity>> living_land_strike =
+            ENTITY_TYPES.register("living_land_strike",
+                    () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.manipulation.LivingLandStrikeEntity>of(
+                                    com.vincenthuto.hemomancy.common.entity.manipulation.LivingLandStrikeEntity::new, MobCategory.MISC)
+                            .sized(0.9F, 0.9F)
+                            .clientTrackingRange(8)
+                            .updateInterval(1)
+                            .noSummon()
+                            .build(Hemomancy.rloc("living_land_strike").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<AwakenedIchorianSigilEntity>> awakened_ichorian_sigil =
             ENTITY_TYPES.register("awakened_ichorian_sigil",
@@ -918,14 +930,6 @@ public class EntityInit {
                     .setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).sized(0.5F, 0.5F)
                     .build(Hemomancy.rloc("blood_cloud").toString()));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<ConstrictorCordEntity>> constrictor_cord_projectile =
-            ENTITY_TYPES.register("constrictor_cord_projectile",
-                    () -> EntityType.Builder.<ConstrictorCordEntity>of(ConstrictorCordEntity::new, MobCategory.MISC)
-                            .sized(0.25F, 0.25F)
-                            .clientTrackingRange(4)
-                            .updateInterval(4)
-                            .build(Hemomancy.rloc("constrictor_cord_projectile").toString()));
-
     public static final DeferredHolder<EntityType<?>, EntityType<EntityIronPillar>> iron_pillar = ENTITY_TYPES.register("iron_pillar",
             () -> EntityType.Builder.<EntityIronPillar>of(EntityIronPillar::new, MobCategory.MISC).sized(0.75F, 2.8F)
                     .build(Hemomancy.rloc("iron_pillar").toString()));
@@ -981,17 +985,18 @@ public class EntityInit {
 							.sized(0.25F, 0.25F).clientTrackingRange(8).updateInterval(1)
 							.build(Hemomancy.rloc("circus_knife").toString()));
 
+    /** A thrown Cruor Javelin: drawn in the world pass from a keyed cue, so it has no renderer of its own. */
+    public static final DeferredHolder<EntityType<?>, EntityType<CruorJavelinEntity>> cruor_javelin = ENTITY_TYPES.register(
+            "cruor_javelin",
+            () -> EntityType.Builder.<CruorJavelinEntity>of(CruorJavelinEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
+                    .clientTrackingRange(6).setUpdateInterval(20)
+                    .build(Hemomancy.rloc("cruor_javelin").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<BloodNeedleEntity>> blood_needle = ENTITY_TYPES.register(
             "blood_needle",
             () -> EntityType.Builder.<BloodNeedleEntity>of(BloodNeedleEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
                     .clientTrackingRange(4).setUpdateInterval(20)
                     .build(Hemomancy.rloc("blood_needle").toString()));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<BloodBulletEntity>> blood_bullet = ENTITY_TYPES.register(
-            "blood_bullet",
-            () -> EntityType.Builder.<BloodBulletEntity>of(BloodBulletEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
-                    .clientTrackingRange(4).setUpdateInterval(20)
-                    .build(Hemomancy.rloc("blood_bullet").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BloodShotEntity>> blood_shot = ENTITY_TYPES.register("blood_shot",
             () -> EntityType.Builder.<BloodShotEntity>of(BloodShotEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
@@ -1017,7 +1022,6 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
-        event.register(phlegethosoma.get(),SpawnPlacementTypes.NO_RESTRICTIONS,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaSpawnRules::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(excoriated.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 ExcoriatedSpawnRules::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(phlegethontic_bombardier.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
@@ -1124,7 +1128,7 @@ public class EntityInit {
         event.register(EntityInit.lantern_tick.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LanternTickEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
-        // Dimension-biome mobs — wired in BiomeInit but need SpawnPlacements so the engine can place them.
+        // Dimension-biome mobs: listed in the Gardens biome files but need SpawnPlacements so the engine can place them.
         event.register(EntityInit.thirster.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ThirsterEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -1215,7 +1219,7 @@ public class EntityInit {
         event.put(EntityInit.facsimile_spider.get(), FacsimileSpiderEntity.setAttributes().build());
         event.put(EntityInit.thirster.get(), ThirsterEntity.setAttributes().build());
         event.put(EntityInit.chitinite.get(), ChitiniteEntity.setAttributes().build());
-        event.put(EntityInit.fervent_chitinite.get(), ChitiniteEntity.setAttributes().build());
+        event.put(EntityInit.fervent_chitinite.get(), FerventChitiniteEntity.setAttributes().build());
         event.put(EntityInit.chthonian.get(), ChthonianEntity.setAttributes().build());
         event.put(EntityInit.chthonian_queen.get(), ChthonianQueenEntity.setAttributes().build());
         event.put(EntityInit.lump_of_thought.get(), LumpOfThoughtEntity.setAttributes().build());

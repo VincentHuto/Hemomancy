@@ -12,6 +12,11 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTemperamentServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.VascularSystemServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -140,8 +145,11 @@ public final class OwnerSnapshotGameTests {
             assertTable(helper, captured, PlayerStateSync.Lifecycle.RESPAWN, slots);
             HemoCapabilityRegistrar.onDimensionChange(new PlayerEvent.PlayerChangedDimensionEvent(player, Level.OVERWORLD, Level.NETHER));
             assertTable(helper, captured, PlayerStateSync.Lifecycle.DIMENSION, slots);
-            helper.assertTrue(!PlayerStateSync.Entry.ICHORIAN_KNOWLEDGE.resendsOn(PlayerStateSync.Lifecycle.DIMENSION),
-                    "Ichorian knowledge gains a dimension resend only through F-20");
+            helper.assertTrue(PlayerStateSync.Entry.ICHORIAN_KNOWLEDGE.resendsOn(PlayerStateSync.Lifecycle.DIMENSION),
+                    "F-20: Ichorian knowledge resends on a dimension change");
+            helper.assertTrue(PlayerStateSync.Entry.SKILLS.resendsOn(PlayerStateSync.Lifecycle.RESPAWN)
+                    && PlayerStateSync.Entry.SKILLS.resendsOn(PlayerStateSync.Lifecycle.DIMENSION),
+                    "S-2b: skill progress resends on respawn and dimension change");
             helper.succeed();
         }
     }
@@ -161,5 +169,49 @@ public final class OwnerSnapshotGameTests {
         helper.assertTrue(packets.size() == 2, phase + " sent " + packets.size() + " owner packets");
         helper.assertTrue(packets.get(0) instanceof BloodTemperamentServerPacket, phase + " missed temper first");
         helper.assertTrue(packets.get(1) instanceof VascularSystemServerPacket, phase + " missed vascular second");
+    }
+
+    /**
+     * CQ-11: a known-manipulation save this build cannot read (keys from before the Temper rename) loads as an empty
+     * selection. Login upkeep, the owner packet and its wire round trip must not throw, so the player is not kicked.
+     */
+    @GameTest(template = "empty", batch = "owner_snapshot_old_manipulation_save")
+    public static void anUnreadableManipulationSaveLoadsWithoutKickingThePlayer(GameTestHelper helper) {
+        try (var captured = CapturedPlayer.create(helper)) {
+            var player = captured.player;
+            var known = HemoCapabilityAccess.getKnownManipulations(player);
+            var map = new java.util.LinkedHashMap<BloodManipulation, ManipLevel>();
+            map.put(ManipulationInit.getByName("blood_shot"), new ManipLevel(2, 0));
+            known.setKnownManips(map);
+            known.setSelectedManip(map.keySet().iterator().next());
+            var saved = known.serializeNBT(player.registryAccess());
+            for (var element : saved) {
+                var entry = (net.minecraft.nbt.CompoundTag) element;
+                for (String key : entry.getAllKeys()) {
+                    if ((key.equals("Selected") || key.startsWith("Manip")) && entry.get(key) instanceof net.minecraft.nbt.CompoundTag manip) {
+                        manip.putString("tend" + "ency", manip.getString("temper"));
+                        manip.remove("temper");
+                    }
+                }
+            }
+            known.deserializeNBT(player.registryAccess(), saved);
+            helper.assertTrue(!known.getKnownManips().containsKey(null), "an unreadable entry was kept as a null key");
+            KnownManipulationUpkeep.sanitizeKnownManipulations(known);
+            helper.assertTrue(known.getSelectedManip() == BloodManipulation.BLANK,
+                    "the selection should fall back to BLANK, got " + known.getSelectedManip().getName());
+            var packet = new KnownManipulationServerPacket(known);
+            var buffer = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+            try {
+                KnownManipulationServerPacket.STREAM_CODEC.encode(buffer, packet);
+                KnownManipulationServerPacket.STREAM_CODEC.decode(buffer);
+                helper.assertTrue(buffer.readableBytes() == 0, "the owner packet left " + buffer.readableBytes() + " unread bytes");
+            } finally {
+                buffer.release();
+            }
+            HemoCapabilityRegistrar.onLogin(new PlayerEvent.PlayerLoggedInEvent(player));
+            helper.assertTrue(!captured.sent(KnownManipulationServerPacket.class).isEmpty(),
+                    "login should still send the known-manipulation owner packet");
+            helper.succeed();
+        }
     }
 }

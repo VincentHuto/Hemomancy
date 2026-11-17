@@ -1,14 +1,18 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class WillResourceSourceTest {
 	private WillResourceSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		entityAndItemRegistrationsExist();
 		resourcesExistAndReferenceWills();
 		willEntityUsesConfiguredFalterBurstRules();
@@ -91,21 +95,5 @@ public final class WillResourceSourceTest {
 		assertContains("director queries placed structure pieces", director, "getStructureWithPieceAt");
 		assertContains("director feeds outpost into sanctuary rules", director,
 				"WillSanctuaryRules.isSanctuary(insideFane, inChamber, insideOutpost)");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(Path.of(path));
-	}
-
-	private static void assertContains(String label, String source, String expected) {
-		if (!source.contains(expected)) {
-			throw new AssertionError(label + ": missing `" + expected + "`");
-		}
-	}
-
-	private static void assertNotContains(String label, String source, String unexpected) {
-		if (source.contains(unexpected)) {
-			throw new AssertionError(label + ": found `" + unexpected + "`");
-		}
 	}
 }

@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -63,6 +62,8 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment {
 			}
 			tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.proper_vessel_no_blood_drunkenness")
 					.withStyle(ChatFormatting.GRAY));
+			tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.worn_only")
+					.withStyle(ChatFormatting.GRAY));
 			if (!data.isEmpty()) {
 				tooltip.add(HemoText.translatable("tooltip.hemomancy.blood_gourd.blood_volume_ml",
 						formatBloodAmount(bloodVolume.getBloodVolume())).withStyle(ChatFormatting.RED));
@@ -73,6 +74,25 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment {
 				}
 			}
 		});
+	}
+
+	/**
+	 * Pours {@code amount} into the first gourd the player wears, up to its tier's volume. Returns what it took. Sated
+	 * Siphon's home for the blood a full body cannot hold (NQ-04-10).
+	 */
+	public static double fillWornGourd(Player player, double amount) {
+		if (!(amount > 0.0D)) return 0.0D;
+		var equipment = HemoCapabilityAccess.getEquipment(player);
+		for (int slot = 0; slot < equipment.getSlots(); slot++) {
+			ItemStack stack = equipment.getStackInSlot(slot);
+			if (!(stack.getItem() instanceof BloodGourdItem gourd)) continue;
+			IBloodVolume gourdVolume = HemoCapabilityAccess.getBloodVolume(stack).orElse(null);
+			if (gourdVolume == null) return 0.0D;
+			double taken = Math.min(amount, Math.max(0.0D, gourd.getMaxBlood() - gourdVolume.getBloodVolume()));
+			if (taken > 0.0D) gourdVolume.fill(taken);
+			return taken;
+		}
+		return 0.0D;
 	}
 
 	public double getMaxBlood() {
@@ -90,17 +110,6 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment {
 	@Override
 	public HarbingerEquipmentType getHarbingerEquipmentType() {
 		return HarbingerEquipmentType.GOURD;
-	}
-
-	@Override
-	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		if (worldIn.isClientSide) {
-			return;
-		}
-		if (entityIn instanceof Player player) {
-			tickBloodTransfer(stack, player);
-		}
 	}
 
 	@Override

@@ -18,10 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Every material geometry writes the same vertices through {@code MaterialQuads} as it did with its own encoder: the
  * digest covers each vertex's position, colour and UV bits for Lux and Umbra, Thermal, Ferric and the rite surfaces,
- * across seeds that wrap (Ferric's 128 tiles included). The pinned digest was taken before the encoders were merged.
+ * across seeds that wrap. The digest was first taken before the encoders were merged, and re-taken on 2026-11-13 when
+ * Ferric moved from its own 128 seed tiles to the shared 127 (V-3b): a Ferric seed outside 0 to 126 now lands on
+ * another tile.
  */
 class MaterialQuadsEncodingTest {
-    private static final String DIGEST = "bf9d5654781adfef3b41a4ad197458c7df97707ca37a25d04beb14a1168a2b18";
+    private static final String DIGEST = "38a639689f4e721ed8ff01ce6567dba6c99156abb7a07011ca64b29775d3cadf";
     private static final int[] SEEDS = {0, 1, 63, 126, 127, 128, 254, 255, -1, -128, 40_001};
 
     @Test

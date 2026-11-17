@@ -38,7 +38,7 @@ import java.util.List;
  * </ol>
  */
 public class BloodThrallItem extends Item {
-    private static final BloodAccounting.Source THRALL_SPAWN = BloodAccounting.Source.of("blood_thrall", Category.TOOL, false, false);
+    private static final BloodAccounting.Source THRALL_SPAWN = BloodAccounting.Source.of("blood_thrall", Category.TOOL, false);
 
     private static final String TAG_SOURCE = "ThrallSource";
     private static final String TAG_DEST = "ThrallDest";

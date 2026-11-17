@@ -155,7 +155,6 @@ public class ToothPecksEntity extends PathfinderMob {
                 this.setDeltaMovement(Vec3.ZERO);
 
                 if (tickCount % 40 == 0) {
-                    HemoCapabilityAccess.getBloodVolume(player).addDamage(1.0);
                     player.addEffect(new MobEffectInstance(EffectInit.blood_loss, 100, 0));
                     player.hurt(player.damageSources().mobAttack(this), 0.5f);
                     playSound(SoundInit.ENTITY_TOOTH_PECKS_AMBIENT.get(), 0.4F, 1.0F + random.nextFloat() * 0.2F);

@@ -1,16 +1,18 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class SummonsSidebarHitTestSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private SummonsSidebarHitTestSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String view = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabView.java");
 		String state = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabState.java");
 
@@ -20,15 +22,5 @@ public final class SummonsSidebarHitTestSourceTest {
 				view, "height += entry.getValue().size() * 18 + rowH + 2;");
 		assertContains("sidebar content height should match the rendered selected degree height",
 				state, "total += rowH + 2;");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
 	}
 }

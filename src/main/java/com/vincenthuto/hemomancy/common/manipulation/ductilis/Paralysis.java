@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -42,7 +42,7 @@ public final class Paralysis {
 
     public static boolean apply(LivingEntity target, int ticks) {
         if (target.level().isClientSide || !target.isAlive()) return false;
-        if (ManipulationReactiveEvents.isBoss(target)) {
+        if (HemoEntityPredicates.isBoss(target)) {
             com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper.markConductive(target, 160);
             return false;
         }
@@ -79,7 +79,7 @@ public final class Paralysis {
             ((com.vincenthuto.hemomancy.mixin.core.MobEffectInstanceAccessor)(Object)event.getEffectInstance())
                     .hemomancy$setDuration(cap);
         }
-        if (ManipulationReactiveEvents.isBoss(target)
+        if (HemoEntityPredicates.isBoss(target)
                 || !DuctilisRules.canParalyze(target.level().getGameTime(),isParalyzed(target),RECOVERY.getOrDefault(target,0L))) {
             event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
         }

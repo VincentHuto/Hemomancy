@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.FerricConstructEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -18,6 +19,8 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastContext;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationStatusRules;
+import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialGraspManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.FerricConstructShapes;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
@@ -65,17 +68,37 @@ public final class ManipulationBalancePass2TargetingGameTests {
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = BATCH)
     public static void bossPredicateCoversVanillaBosses(GameTestHelper h) {
         var level = h.getLevel();
-        h.assertTrue(ManipulationReactiveEvents.isBoss(EntityType.WARDEN.create(level)), "A Warden is not a boss");
-        h.assertTrue(ManipulationReactiveEvents.isBoss(EntityType.ELDER_GUARDIAN.create(level)), "An Elder Guardian is not a boss");
-        h.assertTrue(ManipulationReactiveEvents.isBoss(EntityType.WITHER.create(level)), "The Wither stopped being a boss");
-        h.assertTrue(!ManipulationReactiveEvents.isBoss(EntityType.ZOMBIE.create(level)), "A zombie counted as a boss");
-        h.assertTrue(!ManipulationReactiveEvents.isBoss(EntityType.RAVAGER.create(level)), "A ravager counted as a boss");
+        h.assertTrue(HemoEntityPredicates.isBoss(EntityType.WARDEN.create(level)), "A Warden is not a boss");
+        h.assertTrue(HemoEntityPredicates.isBoss(EntityType.ELDER_GUARDIAN.create(level)), "An Elder Guardian is not a boss");
+        h.assertTrue(HemoEntityPredicates.isBoss(EntityType.WITHER.create(level)), "The Wither stopped being a boss");
+        h.assertTrue(!HemoEntityPredicates.isBoss(EntityType.ZOMBIE.create(level)), "A zombie counted as a boss");
+        h.assertTrue(!HemoEntityPredicates.isBoss(EntityType.RAVAGER.create(level)), "A ravager counted as a boss");
+        h.succeed();
+    }
+
+    /** G-2c: every body from the boss package (NQ-07-2) and the Circus Ringmaster (D-33) are bosses. */
+    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = BATCH)
+    public static void bossPredicateCoversEveryHemomancyBossBody(GameTestHelper h) {
+        var level = h.getLevel();
+        List<EntityType<?>> bosses = List.of(EntityInit.annetta_knowles.get(), EntityInit.stained_priestess.get(),
+                EntityInit.latent_annetta_infection.get(), EntityInit.vesper_crowned_refusal.get(),
+                EntityInit.vesper_evening_star.get(), EntityInit.mycophant.get(), EntityInit.naeglerophaeon.get(),
+                EntityInit.phlegethosoma.get(), EntityInit.bloom_warden.get(), EntityInit.kindled_champion.get(),
+                EntityInit.hemorath.get(), EntityInit.putriciel.get(), EntityInit.seraphae.get(),
+                EntityInit.seraphae_fragment.get(), EntityInit.velorum.get(), EntityInit.velorum_devotee.get(),
+                EntityInit.circus_ringmaster.get());
+        for (EntityType<?> type : bosses) {
+            Entity body = type.create(level);
+            h.assertTrue(body instanceof LivingEntity living && HemoEntityPredicates.isBoss(living),
+                    EntityType.getKey(type) + " is not a boss");
+            if (body != null) body.discard();
+        }
         h.succeed();
     }
 
     // Area spells reach past a fixture's bounds, so every area-sensitive test runs in a batch of its own.
     @GameTest(templateNamespace = "hemomancy", template = ROOM, batch = BATCH + "_exsanguinate", timeoutTicks = 200)
-    public static void exsanguinateRefundsTwoHundredFifty(GameTestHelper h) {
+    public static void exsanguinateRefundsSixtyPercentOfItsPrice(GameTestHelper h) {
         whenLoaded(h, () -> {
             ServerPlayer p = player(h);
             var victim = EntityType.ZOMBIE.create(h.getLevel());
@@ -90,10 +113,74 @@ public final class ManipulationBalancePass2TargetingGameTests {
                 h.assertTrue(exsanguinate.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0),
                         "Exsanguinate refused a weakened zombie");
                 h.assertTrue(!victim.isAlive(), "Exsanguinate did not execute the zombie");
-                near(h, 2000 - cost + 250 + 25, blood(p), "Exsanguinate refund (250) plus the separately attributed 25 mL kill reward");
+                near(h, 2000 - cost + cost * 0.6 + 25, blood(p), "Exsanguinate refund (60% of the price paid) plus the separately attributed 25 mL kill reward");
                 h.succeed();
             } finally { victim.discard(); p.discard(); }
         });
+    }
+
+    @GameTest(templateNamespace = "hemomancy", template = ROOM, batch = BATCH + "_grave_debt", timeoutTicks = 200)
+    public static void graveDebtRefundsOnlyThePaidCastersOwnKill(GameTestHelper h) {
+        whenLoaded(h, () -> {
+            CapturedPlayer captured = CapturedPlayer.create(h).online();
+            ServerPlayer p = captured.player;
+            p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
+            var volume = HemoCapabilityAccess.getBloodVolume(p);
+            volume.setActive(true);
+            volume.setBloodVolume(2000);
+            for (var temper : EnumBloodTemper.values())
+                HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
+            List<LivingEntity> spawned = new ArrayList<>();
+            try {
+                // Skeletons carry no blood, so no kill bounty mixes into the refund.
+                LivingEntity mine = skeleton(h, p, spawned);
+                var debt = ManipulationInit.grave_debt.get();
+                select(p, debt);
+                double cost = ManipulationCostLedger.collect(p, debt, 1).effectiveCost();
+                h.assertTrue(debt.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0),
+                        "Grave Debt refused a skeleton");
+                h.assertTrue(mine.hasEffect(EffectInit.grave_debt), "Grave Debt did not mark the skeleton");
+                near(h, 2000 - cost, blood(p), "Grave Debt price");
+                mine.hurt(p.damageSources().playerAttack(p), 1000);
+                h.assertTrue(!mine.isAlive(), "the caster's blow did not kill the debtor");
+                near(h, 2000 - cost + cost * 0.6, blood(p), "the caster's kill returns 60% of the price paid");
+
+                volume.setBloodVolume(2000);
+                LivingEntity stolen = skeleton(h, p, spawned);
+                SchoolHitHelper.markGraveDebt(stolen, p, ManipulationStatusRules.GRAVE_DEBT_TICKS, cost);
+                stolen.hurt(h.getLevel().damageSources().generic(), 1000);
+                h.assertTrue(!stolen.isAlive(), "the stray blow did not kill the debtor");
+                near(h, 2000, blood(p), "a death the caster did not cause returns nothing");
+
+                LivingEntity drudgeMarked = skeleton(h, p, spawned);
+                drudgeMarked.setPos(p.position().add(3, 0, -2));
+                var drudge = EntityInit.drudge.get().create(h.getLevel());
+                drudge.setNoAi(true);
+                drudge.setOwnerUUID(p.getUUID());
+                drudge.setPos(drudgeMarked.position().add(1, 0, 0));
+                h.getLevel().addFreshEntity(drudge);
+                spawned.add(drudge);
+                h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.DrudgeActions.graveDebt(drudge, h.getLevel(),
+                        drudgeMarked.blockPosition(), 1), "the Drudge found no debtor");
+                h.assertTrue(drudgeMarked.hasEffect(EffectInit.grave_debt), "the Drudge's Grave Debt did not mark the skeleton");
+                drudgeMarked.hurt(p.damageSources().playerAttack(p), 1000);
+                h.assertTrue(!drudgeMarked.isAlive(), "the owner's blow did not kill the Drudge's debtor");
+                near(h, 2000, blood(p), "a Drudge's unpaid mark returns nothing to its owner");
+                h.succeed();
+            } finally {
+                spawned.forEach(Entity::discard);
+                captured.close();
+            }
+        });
+    }
+
+    private static LivingEntity skeleton(GameTestHelper h, ServerPlayer p, List<LivingEntity> spawned) {
+        var skeleton = EntityType.SKELETON.create(h.getLevel());
+        skeleton.setNoAi(true);
+        skeleton.setPos(p.position().add(0, 0, 2));
+        h.getLevel().addFreshEntity(skeleton);
+        spawned.add(skeleton);
+        return skeleton;
     }
 
     @GameTest(templateNamespace = "hemomancy", template = ROOM, batch = BATCH + "_exsanguinate_boss", timeoutTicks = 200)

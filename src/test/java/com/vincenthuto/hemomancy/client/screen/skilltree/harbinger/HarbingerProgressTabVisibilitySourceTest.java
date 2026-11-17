@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.support.EnglishText;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class HarbingerProgressTabVisibilitySourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -12,7 +16,8 @@ public final class HarbingerProgressTabVisibilitySourceTest {
 	private HarbingerProgressTabVisibilitySourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String progressScreen = Files.readString(ROOT.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/HarbingerProgressScreen.java"));
 
@@ -36,21 +41,9 @@ public final class HarbingerProgressTabVisibilitySourceTest {
 				progressScreen, "activeTab = firstVisibleTab(playerDegree)");
 	}
 
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
 	private static void assertEnglish(String key, String expected) {
 		if (!EnglishText.of(key).equals(expected)) {
 			throw new AssertionError(key + " (expected '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
 		}
 	}
 }

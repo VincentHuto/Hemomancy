@@ -1,12 +1,15 @@
 package com.vincenthuto.hemomancy.common.lore;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class WikiLoreDownstreamSourceTest {
 	private WikiLoreDownstreamSourceTest() {}
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String home = read("wiki/Home.md");
 		String qliphoth = read("wiki/The-Qliphoth.md");
 		String harbinger = read("wiki/Harbinger-Path.md");
@@ -20,7 +23,6 @@ public final class WikiLoreDownstreamSourceTest {
 		assertNotContains(unstained, "blunt weapons only");
 		assertNotContains(lore, "accessed at Apotheos via **Fungal Spine**");
 	}
-	private static String read(String path) throws IOException { return Files.readString(Path.of(path)); }
 	private static void assertContains(String source, String expected) { if (!source.contains(expected)) throw new AssertionError("missing " + expected); }
 	private static void assertNotContains(String source, String forbidden) { if (source.contains(forbidden)) throw new AssertionError("still contains " + forbidden); }
 }

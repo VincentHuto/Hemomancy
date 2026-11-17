@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "hemomancy:blood_draw",
     "hemomancy:living_torch_breath",
     "hemomancy:marrow_dagger",
     "hemomancy:mycophant_refusal"

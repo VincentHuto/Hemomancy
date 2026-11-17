@@ -10,7 +10,10 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IH
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.tile.BlockBloodVolume;
+import com.vincenthuto.hemomancy.common.tile.CoagulationRules;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.tile.ReservoirReadout;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +29,8 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public final class BloodRoutingHelper {
-    private static final BloodAccounting.Source OWNER_DRAW = BloodAccounting.Source.of("blood_routing", Category.STATION, false, false);
+    private static final BloodAccounting.Source OWNER_DRAW = BloodAccounting.Source.of("blood_routing", Category.STATION, false);
+    private static final BloodAccounting.Source KIN_DRAW = BloodAccounting.Source.of("blood_routing_kin", Category.STATION, false);
     public static final double NEARBY_RANGE = 16.0;
     public static final int ROUTE_INTERVAL_TICKS = 10;
     public static final double DEFAULT_MAX_RATE_PER_TICK = 10.0;
@@ -72,7 +76,13 @@ public final class BloodRoutingHelper {
             return 0;
         }
 
-        double request = requestForTarget(be, targetVolume, effectiveWorkingReserve(level, link), maxAmount);
+        double reserve = effectiveWorkingReserve(level, link);
+        double request = BloodRoutingRules.calculateReserveRequest(targetVolume, reserve, maxAmount);
+        // The buffer clots like any tank; the suture's draw revives its clot from the owner, cheaply (LP-4, NQ-01-7).
+        BlockBloodVolume block = targetVolume instanceof BlockBloodVolume tank ? tank : null;
+        if (block != null) {
+            request = block.pourOf(request, CoagulationRules.reviveShare(), CoagulationRules.suturedReviveYield()).taken();
+        }
         if (request <= 0) {
             return 0;
         }
@@ -82,12 +92,13 @@ public final class BloodRoutingHelper {
             return 0;
         }
 
-        targetVolume.fill(drawn);
+        if (block != null) {
+            block.revive(drawn, CoagulationRules.reviveShare(), CoagulationRules.suturedReviveYield());
+        } else {
+            targetVolume.fill(drawn);
+        }
         if (be instanceof IBloodReservoir tile) {
             tile.sendUpdates();
-        }
-        if (be instanceof IBloodRoutingTarget routingTarget) {
-            routingTarget.onBloodRouted(drawn);
         }
         return drawn;
     }
@@ -98,22 +109,43 @@ public final class BloodRoutingHelper {
     }
 
     public static boolean canUseLink(ServerLevel level, BlockPos sourcePos, DirectBloodLinkData link) {
-        ServerPlayer owner = findOwner(level, link);
-        if (owner == null || !owner.isAlive()) {
-            return false;
+        return linkStatus(level, sourcePos, link).drawing();
+    }
+
+    /**
+     * Whether a suture can draw for the block at {@code sourcePos} now, and when it cannot, why: the owner is offline
+     * or dead, below the third Degree (the fifth for a fane link), their blood is asleep, they are out of a nearby
+     * link's reach, or the block is outside their fane. {@code NONE} for no link. With the owner offline, a member of
+     * their bloodline nearby stands in ({@code KIN_DRAWING}, CN-9).
+     */
+    public static ReservoirReadout.Link linkStatus(ServerLevel level, BlockPos sourcePos, @Nullable DirectBloodLinkData link) {
+        if (link == null) {
+            return ReservoirReadout.Link.NONE;
         }
-        int degree = HemoCapabilityAccess.getPlayerDegreeNumber(owner);
-        if (degree < 3) {
-            return false;
+        ServerPlayer owner = findOwner(level, link);
+        if (owner == null) {
+            return findStandIn(level, sourcePos, link) != null ? ReservoirReadout.Link.KIN_DRAWING
+                    : ReservoirReadout.Link.OWNER_OFFLINE;
+        }
+        if (!owner.isAlive()) {
+            return ReservoirReadout.Link.OWNER_DEAD;
+        }
+        if (!ProgressionGates.hasDegree(owner, 3)) {
+            return ReservoirReadout.Link.BELOW_DEGREE;
         }
         IBloodVolume ownerVolume = HemoCapabilityAccess.getBloodVolume(owner);
         if (ownerVolume == null || !ownerVolume.isActive()) {
-            return false;
+            return ReservoirReadout.Link.BLOOD_DORMANT;
         }
         if (link.mode() == BloodRoutingMode.NEARBY) {
-            return owner.level() == level && distanceSqr(owner, sourcePos) <= NEARBY_RANGE * NEARBY_RANGE;
+            return owner.level() == level && distanceSqr(owner, sourcePos) <= NEARBY_RANGE * NEARBY_RANGE
+                    ? ReservoirReadout.Link.DRAWING : ReservoirReadout.Link.OUT_OF_REACH;
         }
-        return degree >= 5 && isInOwnerFane(level, link.owner(), sourcePos);
+        if (!ProgressionGates.hasDegree(owner, 5)) {
+            return ReservoirReadout.Link.BELOW_FANE_DEGREE;
+        }
+        return isInOwnerFane(level, link.owner(), sourcePos) ? ReservoirReadout.Link.DRAWING
+                : ReservoirReadout.Link.OUTSIDE_FANE;
     }
 
     public static boolean canUseFaneMode(ServerLevel level, ServerPlayer owner, BlockPos sourcePos) {
@@ -133,7 +165,8 @@ public final class BloodRoutingHelper {
 
         ServerPlayer owner = findOwner(level, link);
         if (owner == null) {
-            return 0;
+            ServerPlayer kin = findStandIn(level, sourcePos, link);
+            return kin == null ? 0 : drawFromStandIn(kin, Math.min(requested, maxAmount));
         }
 
         IBloodVolume ownerVolume = HemoCapabilityAccess.getBloodVolume(owner);
@@ -144,7 +177,7 @@ public final class BloodRoutingHelper {
         double remaining = Math.min(requested, maxAmount);
         double drawn = 0;
 
-        GourdHandle gourd = findOpenEquippedGourd(owner);
+        GourdHandle gourd = findOpenWornGourd(owner);
         if (gourd != null) {
             double gourdDraw = drawFromVolume(gourd.volume(), remaining,
                     Math.min(remaining, gourd.item().getTransferRate() * ROUTE_INTERVAL_TICKS));
@@ -158,11 +191,10 @@ public final class BloodRoutingHelper {
             double playerDraw = Math.min(remaining, DEFAULT_PLAYER_RATE_PER_TICK * ROUTE_INTERVAL_TICKS
                     * BloodRoutingRules.routingRateMultiplier(SkillPointHelper.getFaneSutureLevel(owner)));
             playerDraw = Math.min(Math.min(playerDraw, safeAvailable), ownerVolume.getBloodVolume());
-            if (playerDraw > 0) {
-                BloodAccounting.pay(owner, playerDraw, OWNER_DRAW);
-            } else {
-                playerDraw = 0;
-            }
+            // A sutured machine drinks from its owner as upkeep, every route interval (core-loop Track 3).
+            playerDraw = playerDraw > 0
+                    ? BloodAccounting.payUpkeep(owner, playerDraw, OWNER_DRAW, ROUTE_INTERVAL_TICKS, false).paid()
+                    : 0;
             remaining -= playerDraw;
             drawn += playerDraw;
         }
@@ -179,11 +211,39 @@ public final class BloodRoutingHelper {
         return drawn;
     }
 
-    private static double requestForTarget(BlockEntity be, IBloodVolume targetVolume, double reserve, double maxAmount) {
-        if (be instanceof IBloodRoutingTarget target) {
-            return target.getBloodRoutingRequest(maxAmount);
+    /**
+     * CN-9, NQ-01-16: the member of the offline owner's bloodline who stands in at a sutured machine, nearest first:
+     * within {@link BloodRoutingRules#STAND_IN_RANGE} blocks, alive, at the third Degree or past it, blood awake.
+     */
+    @Nullable
+    private static ServerPlayer findStandIn(ServerLevel level, BlockPos sourcePos, DirectBloodLinkData link) {
+        Bloodline line = BloodlineSavedData.get(level.getServer().overworld()).getBloodlineForPlayer(link.owner());
+        if (line == null) {
+            return null;
         }
-        return BloodRoutingRules.calculateReserveRequest(targetVolume, reserve, maxAmount);
+        ServerPlayer nearest = null;
+        double best = Double.MAX_VALUE;
+        for (ServerPlayer candidate : level.players()) {
+            IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(candidate);
+            double distance = distanceSqr(candidate, sourcePos);
+            if (!candidate.getUUID().equals(link.owner()) && line.hasMember(candidate.getUUID())
+                    && BloodRoutingRules.mayStandIn(candidate.isAlive(), ProgressionGates.hasDegree(candidate, 3),
+                            volume != null && volume.isActive(), distance)
+                    && distance < best) {
+                nearest = candidate;
+                best = distance;
+            }
+        }
+        return nearest;
+    }
+
+    /** A stand-in pays from their own blood, as upkeep, never below the same safety floor an owner keeps. */
+    private static double drawFromStandIn(ServerPlayer kin, double requested) {
+        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(kin);
+        double floor = BloodRoutingRules.calculateSafetyFloor(volume);
+        double draw = Math.min(Math.min(requested, DEFAULT_PLAYER_RATE_PER_TICK * ROUTE_INTERVAL_TICKS),
+                Math.min(BloodRoutingRules.availableAboveFloor(volume, floor), volume.getBloodVolume()));
+        return draw > 0 ? BloodAccounting.payUpkeep(kin, draw, KIN_DRAW, ROUTE_INTERVAL_TICKS, false).paid() : 0;
     }
 
     private static double effectiveWorkingReserve(ServerLevel level, DirectBloodLinkData link) {
@@ -204,9 +264,6 @@ public final class BloodRoutingHelper {
 
     @Nullable
     private static IBloodVolume targetVolume(BlockEntity be) {
-        if (be instanceof IBloodRoutingTarget target) {
-            return target.getRoutingBloodVolume();
-        }
         return HemoCapabilityAccess.getBloodVolume(be).orElse(null);
     }
 
@@ -257,21 +314,9 @@ public final class BloodRoutingHelper {
         return dx * dx + dy * dy + dz * dz;
     }
 
+    /** FX-1, NQ-01-11: a suture draws only from the worn gourd, never from one in the hand. */
     @Nullable
-    private static GourdHandle findOpenEquippedGourd(ServerPlayer owner) {
-        GourdHandle scarGourd = findOpenScarGourd(owner);
-        if (scarGourd != null) {
-            return scarGourd;
-        }
-        GourdHandle mainHand = gourdHandle(owner.getMainHandItem());
-        if (mainHand != null) {
-            return mainHand;
-        }
-        return gourdHandle(owner.getOffhandItem());
-    }
-
-    @Nullable
-    private static GourdHandle findOpenScarGourd(ServerPlayer owner) {
+    private static GourdHandle findOpenWornGourd(ServerPlayer owner) {
         IHarbingerEquipmentItemHandler scars = HemoCapabilityAccess.getEquipment(owner);
         if (scars == null) {
             return null;

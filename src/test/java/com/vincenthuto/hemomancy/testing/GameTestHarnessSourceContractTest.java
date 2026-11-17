@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class GameTestHarnessSourceContractTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -44,6 +46,10 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(ids.contains("sanguine_initiation_recipe_loaded"));
 		assertTrue(ids.contains("sanguine_initiation_degree_mapping"));
 		assertTrue(ids.contains("cardinal_rite_media_loaded"));
+		// Core-loop round two P11: the core loop's fixtures left the catalog for /hemo branches of their own.
+		assertTrue(!catalog.contains("CoreLoopTestScenarios"), "the core-loop fixtures are /hemo subcommands now");
+		String fixtures = read("src/main/java/com/vincenthuto/hemomancy/common/command/CoreLoopFixtures.java");
+		assertTrue(fixtures.contains("public static Outcome placeLitRun("), "the core-loop fixtures live in CoreLoopFixtures");
 		assertTrue(guide.contains("./gradlew.bat alphaCheck"));
 		assertTrue(guide.contains("/hemo test setup"));
 	}
@@ -437,10 +443,6 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(driver.contains("case \"binding\" ->"), "Thelemic replay needs the ordinary mapped use key");
 		assertTrue(driver.contains("KeyMapping.click(key.getKey())"));
 		assertTrue(driver.contains("server.add(\"loadouts\""), "Replay must observe saved patterns, not inject them");
-	}
-
-	private static String read(String relativePath) throws IOException {
-		return Files.readString(ROOT.resolve(relativePath)).replace("\r\n", "\n");
 	}
 
 	private static void assertEveryStageCovered(String enumSource, String automationSource) {

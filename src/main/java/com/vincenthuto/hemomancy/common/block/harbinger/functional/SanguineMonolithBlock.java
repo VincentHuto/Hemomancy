@@ -57,9 +57,10 @@ import javax.annotation.Nullable;
  * that can be "conversed" with to receive hints about what to do next based on
  * the player's current advancement and progression level.
  *
- * After tier 4 the Harbinger Vicar ceases to guide the player directly;
+ * From the fifth Degree the Harbinger Vicar steps back from guiding the player;
  * instead, the player crafts and places one of these monoliths to found their
- * own outpost and receive cryptic counsel from it.
+ * own outpost and receive cryptic counsel from it. Only the player who placed a
+ * stone may break it.
  */
 public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 
@@ -204,6 +205,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 			placeFillers(level, pos, state);
 			if (level.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity be) {
 				be.startRise(level.getGameTime());
+				if (placer instanceof Player player) be.setBuilder(player.getUUID());
 			}
 		}
 	}
@@ -276,7 +278,8 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 		DialogueTree tree = degreeNumber < MIN_DEGREE
 				? SanguineMonolithDialogueTrees.unworthy()
-				: SanguineMonolithDialogueTrees.hub(serverPlayer, degreeNumber);
+				: SanguineMonolithDialogueTrees.hub(serverPlayer, degreeNumber,
+						!(worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity whole) || whole.mayShatter(serverPlayer));
 
 		MonolithDialogueContext.open(serverPlayer, pos, tree);
 		PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -291,6 +294,10 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		if (monolith == null) return false;
 		if (monolith.isBreaking() || monolith.isBroken()) {
 			player.displayClientMessage(Component.translatable("hemomancy.monolith.already_breaking"), true);
+			return false;
+		}
+		if (!monolith.mayShatter(player)) {
+			player.displayClientMessage(Component.translatable("hemomancy.monolith.not_its_builder"), true);
 			return false;
 		}
 		monolith.incrementArchonInteractions();

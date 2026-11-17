@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.creative;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 public final class HemomancyCreativeTabsSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final List<String> WIP_ITEMS = List.of(
 			"CHAMBER_OF_WILL_TELEPORTER",
 			"structure_spawner",
@@ -27,7 +29,8 @@ public final class HemomancyCreativeTabsSourceTest {
 	private HemomancyCreativeTabsSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/common/init/CreativeTabInit.java");
 		String blockInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
 		String structureSpawner = read(
@@ -92,8 +95,10 @@ public final class HemomancyCreativeTabsSourceTest {
 				"**Status:** `WIP — post-alpha`" );
 		assertContains("readiness page should exclude Drudges from alpha core", readiness,
 				"**Drudges are post-alpha WIP.**");
-		assertContains("readiness page should exclude every Saint encounter from the first release", readiness,
-				"**The entire Saints suite is post-release WIP.**");
+		assertContains("readiness page should mark the Saints implemented with overhauls pending (C-1)", readiness,
+				"**The Saints are implemented, overhauls pending.**");
+		assertContains("readiness page should keep Saint encounters out of first-release acceptance", readiness,
+				"Saint encounters are excluded from first-release acceptance.");
 		assertNotContains("core Materials Atlas should not advertise the WIP SSC", materials,
 				"new MaterialEntry(\"semi_sentient_construct\"");
 		assertNotContains("core Covenant skill icon should not expose the WIP electrode", covenantSkills,
@@ -102,27 +107,11 @@ public final class HemomancyCreativeTabsSourceTest {
 				"ItemInit.drudge_submission_device");
 	}
 
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
 	private static void assertAppearsOnce(String message, String text, String expected) {
 		long count = java.util.regex.Pattern.compile(java.util.regex.Pattern.quote(expected) + "(?=[,)])")
 				.matcher(text).results().count();
 		if (count != 1) {
 			throw new AssertionError(message + " (expected exactly one '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
 		}
 	}
 }

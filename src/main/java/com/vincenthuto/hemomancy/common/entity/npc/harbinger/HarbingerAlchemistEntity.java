@@ -115,16 +115,19 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
         } else {
             ItemStack held = serverPlayer.getMainHandItem();
             RedTaxonomySample heldRedTaxonomySample = degree >= 2 ? findHeldRedTaxonomySample(held) : null;
+            var path = HemoCapabilityAccess.getInitiatoryDegree(serverPlayer).getArchonPath();
             tree = HarbingerAlchemistDialogueTrees.forDegree(HarbingerPathPermissions.greetingDegree(degree,
-                    HemoCapabilityAccess.getInitiatoryDegree(serverPlayer).getArchonPath()), this.getId(), canShowRecruitment(player, this),
+                    path), this.getId(), canShowRecruitment(player, this),
                     isNpcInPlayerBloodline(player, this), heldRedTaxonomySample,
                     degree >= 2 ? findHeldSpecimenJar(held) : null, FirstSeparationAssignment.canBrief(serverPlayer),
                     FirstSeparationAssignment.canClaim(serverPlayer), BodyAnswersAssignment.canBrief(serverPlayer),
                     com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(
-                            serverPlayer, BodyAnswersAssignment.ADV_COMPLETE));
+                            serverPlayer, BodyAnswersAssignment.ADV_COMPLETE),
+                    HarbingerPathPermissions.isSilentium(degree, path));
         }
         tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.FirstDrawsDialogue.append(tree, serverPlayer);
         tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.SpecimenJarLessonDialogue.append(tree, serverPlayer);
+        tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.FirstSeparationSpinDialogue.append(tree, serverPlayer);
         if (com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.eligible(serverPlayer)) {
             var survey = com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.progress(serverPlayer);
             tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.OverworldFungalSurveyDialogue
@@ -163,10 +166,11 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
             tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withAlchemist(tree,
                     com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(serverPlayer));
         }
-		return com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.append(
+		tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.append(
 				ClinicalBloodDialogue.append(HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
 				ArtificerProgressSnapshot.from(serverPlayer), ArtificerAssignments.forkResearchRecordedCount(serverPlayer),
 				ArtificerAssignments.isForkResearchRewardClaimed(serverPlayer)), serverPlayer, "alchemist"), serverPlayer);
+		return CoreLoopLessonDialogue.append(tree, CoreLoopLessons.ALCHEMIST, serverPlayer);
     }
 
     @Override

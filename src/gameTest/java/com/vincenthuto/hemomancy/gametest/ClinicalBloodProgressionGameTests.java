@@ -39,6 +39,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWe
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.PhlebotomistsCabinetMenu;
 import com.vincenthuto.hemomancy.common.mission.alchemist.*;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
@@ -133,6 +134,20 @@ public final class ClinicalBloodProgressionGameTests {
         p.setNoGravity(true);
         HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(degree);
         return p;
+    }
+
+    private static List<ItemStack> carriedPatterns(ServerPlayer player) {
+        var found = new java.util.ArrayList<ItemStack>();
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            var stack = player.getInventory().getItem(slot);
+            if (stack.is(ItemInit.scar_pattern.get())) found.add(stack);
+        }
+        return found;
+    }
+
+    private static List<ItemEntity> droppedPatterns(GameTestHelper h, BlockPos pos) {
+        return h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(2),
+                item -> item.getItem().is(ItemInit.scar_pattern.get()));
     }
 
     private static void captureVesperScene(net.minecraft.network.protocol.Packet<?> packet,
@@ -506,15 +521,15 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
                     && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
                     "Actual preparation records only the intermediate milestone");
-            var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(2),
-                    item -> item.getItem().is(ItemInit.scar_pattern.get()));
-            h.assertTrue(outputs.size() == 1, "Actual preparation must eject one pattern");
-            var gifted = outputs.getFirst().getItem().copy();
+            var outputs = carriedPatterns(actor);
+            h.assertTrue(outputs.size() == 1 && droppedPatterns(h, pos).isEmpty(),
+                    "Actual preparation must hand the preparer one pattern (NQ-10-10), none on the ground");
+            var gifted = outputs.getFirst().copy();
             com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), pos, guest, gifted,
                     com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
             h.assertTrue(!HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(guest),
                     "Another practitioner's real Effigy output cannot supply personal practice");
-            var ownPattern = outputs.getFirst().getItem();
+            var ownPattern = outputs.getFirst();
             com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), pos, actor, ownPattern,
                     com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
             h.assertTrue(ownPattern.isEmpty() && HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
@@ -542,33 +557,20 @@ public final class ClinicalBloodProgressionGameTests {
         } finally { actor.discard(); }
     }
 
-    @GameTest(template = "empty") public static void earnedScarLessonBackfillsPracticePageWithoutNewRewards(GameTestHelper h) {
+    /** The login backfill for old saves is gone (no player-data migrations before release); the advancement opens the page. */
+    @GameTest(template = "empty") public static void earnedScarLessonOpensPracticePageWithoutNewRewards(GameTestHelper h) {
         var actor = player(h, 4);
         var newcomer = player(h, 4);
         var entry = Hemomancy.rloc("libersanguinium/the_hematic_order/pages/scar_practice");
         try {
+            h.assertTrue(!LiberKnowledgeHelper.hasEntry(actor, entry), "The fixture must begin without the practice page");
             HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON);
-            var knowledge = HemoCapabilityAccess.getLiberKnowledge(actor);
-            var legacy = new com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge();
-            var other = Hemomancy.rloc("libersanguinium/intro/pages/hemomancy");
-            legacy.unlockEntry(other, com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource.OTHER);
-            knowledge.setFrom(legacy);
-            h.assertTrue(!knowledge.hasEntry(entry), "Legacy fixture must begin with the missing page");
-            com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataMigrations.onLogin(
-                    new PlayerEvent.PlayerLoggedInEvent(actor));
-            com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataMigrations.onLogin(
-                    new PlayerEvent.PlayerLoggedInEvent(newcomer));
-            h.assertTrue(knowledge.hasEntry(entry) && knowledge.hasEntry(other)
-                    && !LiberKnowledgeHelper.hasEntry(newcomer, entry),
-                    "Login must restore only the earned scar lesson page, preserving existing knowledge");
-            int count = knowledge.getUnlockedEntries().size();
-            com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataMigrations.onLogin(
-                    new PlayerEvent.PlayerLoggedInEvent(actor));
-            h.assertTrue(knowledge.getUnlockedEntries().size() == count && actor.getInventory().isEmpty()
-                    && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 4
+            h.assertTrue(LiberKnowledgeHelper.hasEntry(actor, entry) && !LiberKnowledgeHelper.hasEntry(newcomer, entry),
+                    "The earned scar lesson must open only its own practice page");
+            h.assertTrue(actor.getInventory().isEmpty() && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 4
                     && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
                     && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
-                    "Repeat backfill must not supply items, preparation, Main proof or promotion");
+                    "The lesson page must not supply items, preparation, Main proof or promotion");
             h.succeed();
         } finally { actor.discard(); newcomer.discard(); }
     }
@@ -627,15 +629,18 @@ public final class ClinicalBloodProgressionGameTests {
                     && HemoCapabilityAccess.getBloodVolume(guest).getBloodVolume() == 1000 - remaining
                     && HemoCapabilityAccess.getBloodVolume(actor).getBloodVolume() == 800,
                     "Eligible second practitioner may resume shared work without an ownership lock");
+            // NQ-10-10: the pattern and its credit belong to the actor, who set the paper. This fixture's actor
+            // is not on the player list (offline), so the pattern falls at the Effigy and no one is credited.
             var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
                     item -> item.getItem().is(ItemInit.scar_pattern.get()));
             h.assertTrue(outputs.size() == 1
                     && com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern
                             .getScarIds(outputs.getFirst().getItem()).equals(selected)
-                    && HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(guest)
+                    && carriedPatterns(guest).isEmpty()
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(guest)
                     && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
                     && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(guest),
-                    "Eligible completion emits one original pattern and only its practitioner's preparation proof");
+                    "A finisher who did not set the paper gets neither the pattern nor the preparation proof");
             h.succeed();
         } finally {
             h.getLevel().removeBlock(pos, false);
@@ -749,18 +754,17 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(effigy.receiveProjectedBlood(actor, 500, false) == 300
                     && volume.getBloodVolume() == 500,
                     "Resuming must spend only the remaining charge, exactly 500 total");
-            var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
-                    item -> item.getItem().is(ItemInit.scar_pattern.get()));
-            h.assertTrue(outputs.size() == 1
+            var outputs = carriedPatterns(actor);
+            h.assertTrue(outputs.size() == 1 && droppedPatterns(h, pos).isEmpty()
                     && com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern
-                            .getScarIds(outputs.getFirst().getItem()).equals(List.of(heart))
+                            .getScarIds(outputs.getFirst()).equals(List.of(heart))
                     && !effigy.hasPendingMotif() && effigy.getPendingBlood() == 0,
                     "Resumption must eject exactly the original loadout and clear pending work");
             h.assertTrue(HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
                     && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
                     "Completion earns preparation only, not the Main commit proof");
             h.assertTrue(effigy.receiveProjectedBlood(actor, 500, false) == 0
-                    && volume.getBloodVolume() == 500,
+                    && volume.getBloodVolume() == 500 && carriedPatterns(actor).size() == 1,
                     "Completed preparation must not spend blood or eject a duplicate");
             effigy.setSelectedScarIds(List.of(marrow));
             h.assertTrue(effigy.getSelectedScarIds().equals(List.of(marrow)),
@@ -805,11 +809,11 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(effigy.beginMotifRitual(actor, new ItemStack(ItemInit.runic_motif_paper.get())),
                     "Personal Effigy practice must accept the known Heart");
             effigy.receiveProjectedBlood(actor, 500, false);
-            var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(effigyPos).inflate(2),
-                    item -> item.getItem().is(ItemInit.scar_pattern.get()));
-            h.assertTrue(outputs.size() == 1, "Personal practice must produce one actual pattern");
+            var outputs = carriedPatterns(actor);
+            h.assertTrue(outputs.size() == 1 && droppedPatterns(h, effigyPos).isEmpty(),
+                    "Personal practice must hand the preparer one actual pattern");
             com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), effigyPos, actor,
-                    outputs.getFirst().getItem(), com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
+                    outputs.getFirst(), com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
             var started = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
                     .tryStart(actor, origin.above(), trigger);
             var rite = saved.getRite(actor.getUUID());
@@ -829,7 +833,7 @@ public final class ClinicalBloodProgressionGameTests {
         }
     }
 
-    @GameTest(template = "empty") public static void chamberRiteAttunesWithoutGuidedLessonChairOrRecruitedMnemonist(GameTestHelper h) {
+    @GameTest(template = "empty") public static void chamberRiteNeedsNoMnemonistButRefusesWithoutAChamber(GameTestHelper h) {
         var actor = player(h, 5);
         var origin = h.absolutePos(new BlockPos(14, 3, 14));
         var saved = CardinalRiteSavedData.get(h.getLevel());
@@ -858,19 +862,17 @@ public final class ClinicalBloodProgressionGameTests {
             var started = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
                     .tryStart(actor, origin.above(),
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
-            var rite = saved.getRite(actor.getUUID());
-            h.assertTrue(started == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
-                    && rite != null && rite.getAllyRoles().isEmpty(), "Unrecruited D6 must start its own Chamber rite");
-            // Supply the completed ceremony boundary; this server has no Chamber destination.
-            h.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(h.getLevel(), actor, rite),
-                    "Independent Chamber rite completion must succeed without a recruited Mnemonist");
-            h.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(actor)
-                    && HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED),
-                    "Earned rite completion must grant permanent attunement even when transport is unavailable");
+            // PT-67: this server has no Chamber destination, so the D6 rite is refused before anything is escrowed.
+            h.assertTrue(started != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                    && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff,
+                    "With no Chamber to visit the D6 rite must not start or take the Staff");
+            h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(actor)
+                    && !HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED),
+                    "A rite no visit can follow must not attune");
             h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(actor)
                     && !HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED)
                     && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 6,
-                    "Attunement must not fabricate a guided lesson, return, or higher degree");
+                    "The refusal must not fabricate a guided lesson, return, or higher degree");
             h.succeed();
         } finally {
             var rite = saved.getRite(actor.getUUID());
@@ -901,12 +903,12 @@ public final class ClinicalBloodProgressionGameTests {
         player.discard();
     }
 
-    @GameTest(template = "empty") public static void staffAbsorptionFollowsSharedMemorySelection(GameTestHelper h) {
-        verifyStaffUtilitySelection(h, ManipulationInit.blood_absorption.get());
+    @GameTest(template = "empty") public static void staffAbsorptionFollowsTheActiveVerb(GameTestHelper h) {
+        verifyStaffUtilitySelection(h, com.vincenthuto.hemomancy.common.manipulation.verb.Verb.ABSORB);
     }
 
-    @GameTest(template = "empty") public static void staffProjectionFollowsSharedMemorySelection(GameTestHelper h) {
-        verifyStaffUtilitySelection(h, ManipulationInit.blood_projection.get());
+    @GameTest(template = "empty") public static void staffProjectionFollowsTheActiveVerb(GameTestHelper h) {
+        verifyStaffUtilitySelection(h, com.vincenthuto.hemomancy.common.manipulation.verb.Verb.PROJECT);
     }
 
     @GameTest(template = "empty") public static void inactiveStaffCannotStartRootedVeinOrLoseItsEscrow(GameTestHelper h) {
@@ -1793,30 +1795,35 @@ public final class ClinicalBloodProgressionGameTests {
                         "A corked gourd transferred blood");
                 item.use(h.getLevel(), actor, InteractionHand.MAIN_HAND);
                 item.inventoryTick(gourd, h.getLevel(), actor, 0, true);
-                double rate = gourdItem.getTransferRate();
-                h.assertTrue(playerBlood.getBloodVolume() == 1000 + rate && stored.getBloodVolume() == 100 - rate,
-                        "Open gourd ignored its authored withdrawal rate");
-                playerBlood.setActive(false);
-                item.inventoryTick(gourd, h.getLevel(), actor, 0, true);
-                h.assertTrue(stored.getBloodVolume() == 100 - rate, "Dormant blood drained its gourd");
-                playerBlood.setActive(true);
-                playerBlood.setBloodVolume(playerBlood.getMaxBloodVolume() - 0.25);
-                item.inventoryTick(gourd, h.getLevel(), actor, 0, true);
-                h.assertTrue(playerBlood.isFull() && stored.getBloodVolume() == 99.75 - rate,
-                        "Gourd overflow lost fractional blood");
+                h.assertTrue(playerBlood.getBloodVolume() == 1000 && stored.getBloodVolume() == 100,
+                        "An open gourd held in the hand fed the player; only the worn gourd feeds (FX-1)");
                 item.use(h.getLevel(), actor, InteractionHand.MAIN_HAND);
                 var menu = new com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu(
                         1, h.getLevel(), pos, actor.getInventory(), actor, true);
                 menu.quickMoveStack(actor, 35);
                 h.assertTrue(equipment.getStackInSlot(6).is(item) && actor.getMainHandItem().isEmpty(),
                         "Scarlet Vanity shift-click lost or duplicated its gourd");
-                playerBlood.setBloodVolume(1000);
+                var worn = equipment.getStackInSlot(6);
+                var wornStored = HemoCapabilityAccess.getBloodVolume(worn).orElseThrow();
+                gourdItem.onWornTick(actor);
+                h.assertTrue(playerBlood.getBloodVolume() == 1000 && wornStored.getBloodVolume() == 100,
+                        "A corked worn gourd transferred blood");
                 var context = new net.neoforged.neoforge.network.handling.ServerPayloadContext(actor.connection,
                         com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket.TYPE.id());
                 com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket.handle(
                         new com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket(), context);
                 gourdItem.onWornTick(actor);
-                h.assertTrue(playerBlood.getBloodVolume() == 1000 + rate, "Equipped toggle did not open the gourd");
+                double rate = gourdItem.getTransferRate();
+                h.assertTrue(playerBlood.getBloodVolume() == 1000 + rate && wornStored.getBloodVolume() == 100 - rate,
+                        "The opened worn gourd ignored its authored withdrawal rate");
+                playerBlood.setActive(false);
+                gourdItem.onWornTick(actor);
+                h.assertTrue(wornStored.getBloodVolume() == 100 - rate, "Dormant blood drained its gourd");
+                playerBlood.setActive(true);
+                playerBlood.setBloodVolume(playerBlood.getMaxBloodVolume() - 0.25);
+                gourdItem.onWornTick(actor);
+                h.assertTrue(playerBlood.isFull() && wornStored.getBloodVolume() == 99.75 - rate,
+                        "Gourd overflow lost fractional blood");
                 var restored = new com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer();
                 restored.deserializeNBT(actor.registryAccess(), HemoCapabilityAccess.getEquipment(actor)
                         .serializeNBT(actor.registryAccess()));
@@ -2257,30 +2264,34 @@ public final class ClinicalBloodProgressionGameTests {
         }
     }
 
-    private static void verifyStaffUtilitySelection(GameTestHelper h, BloodManipulation utility) {
+    /**
+     * Core-loop Track 1 (CL-2): the Staff channels the player's active verb, and no selection changes that. A
+     * Thelemic memory or another Noetic selected leaves the Staff channelling the same verb.
+     */
+    private static void verifyStaffUtilitySelection(GameTestHelper h, com.vincenthuto.hemomancy.common.manipulation.verb.Verb verb) {
         var p = player(h, 2);
         try {
             var known = HemoCapabilityAccess.getKnownManipulations(p);
-            known.getKnownManips().put(utility, new ManipLevel(0, 0));
-            known.setSelectedManip(utility);
+            known.setActiveVerb(verb);
             var staff = new ItemStack(ItemInit.living_staff.get());
             p.setItemInHand(InteractionHand.MAIN_HAND, staff);
             staff.use(h.getLevel(), p, InteractionHand.MAIN_HAND);
             h.assertTrue(p.isUsingItem(), "D2 Staff did not begin held use");
+            var absorbing = verb == com.vincenthuto.hemomancy.common.manipulation.verb.Verb.ABSORB;
             h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
-                            .isLivingStaffUtilityUse(p, staff), "Selected Staff utility was unavailable at D2");
+                            .isLivingStaffUtilityUse(p, staff), "The Staff did not channel the active verb at D2");
+            h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
+                            .isLivingStaffAbsorptionUse(p, staff) == absorbing, "The Staff channelled the other verb");
 
             known.setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
-            h.assertTrue(known.getSelectedManip() == utility, "Fixture did not retain the legacy utility selection");
-            h.assertTrue(!com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
-                            .isLivingStaffUtilityUse(p, staff), "Thelemic selection retained the hidden Staff utility");
-
-            known.setSelectedMemoryRef(MemorySlotRef.manipulation(utility.getName()));
             h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
-                            .isLivingStaffUtilityUse(p, staff), "Returning to the utility did not restore Staff use");
+                            .isLivingStaffAbsorptionUse(p, staff) == absorbing, "A Thelemic selection changed the verb");
             known.setSelectedMemoryRef(MemorySlotRef.manipulation(ManipulationInit.blood_shot.get().getName()));
-            h.assertTrue(!com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
-                            .isLivingStaffUtilityUse(p, staff), "Another Noetic retained the hidden Staff utility");
+            h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
+                            .isLivingStaffAbsorptionUse(p, staff) == absorbing, "Another Noetic changed the verb");
+            known.setActiveVerb(verb.other());
+            h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
+                            .isLivingStaffAbsorptionUse(p, staff) != absorbing, "Switching the verb did not reach the Staff");
             h.succeed();
         } finally { p.releaseUsingItem(); p.discard(); }
     }
@@ -2465,7 +2476,7 @@ public final class ClinicalBloodProgressionGameTests {
                             + ", claimed=" + FirstBloodcraftAssignment.isClaimed(actor)
                             + ", check=" + HemoJourneyChecks.verify(actor, HemoJourneyStage.VICAR_REWARD, origin));
             h.assertTrue(HemoJourneyFixtures.captureExpectedOutputs(actor, HemoJourneyStage.VICAR_REWARD, origin),
-                    "The Vicar reward kit was not attributable after the scrap pickup");
+                    "The Vicar reward kit was not attributable to the pack");
             HemoJourneyFixtures.cleanupOwnedOutputs(actor, origin);
             h.assertTrue(actor.getInventory().items.stream().anyMatch(stack ->
                             stack.is(ItemInit.hematic_iron_scrap.get()) && stack.getCount() >= 4),
@@ -3738,11 +3749,10 @@ public final class ClinicalBloodProgressionGameTests {
                 "Main-route bloodcraft materials must make Blood Stained Stone without a Remnant expedition");
         var stone = ((CraftingRecipe) stoneRecipe).assemble(stoneInput, h.getLevel().registryAccess());
         h.assertTrue(stone.is(ItemInit.blood_stained_stone.get()), "The bloodcraft recipe did not yield a stained stone");
-        var formation = new ItemStack(ItemInit.sanguine_formation.get());
         var input = CraftingInput.of(3, 3, java.util.List.of(
-                formation, stone, formation,
+                ItemStack.EMPTY, stone, ItemStack.EMPTY,
                 stone, new ItemStack(ItemInit.neurotic_enzyme.get()), stone,
-                formation, stone, formation));
+                ItemStack.EMPTY, stone, ItemStack.EMPTY));
         h.assertTrue(recipe instanceof CraftingRecipe crafting && crafting.matches(input, h.getLevel()),
                 "Accessible D3 ingredients do not match the taught blank recipe");
         var blank = ((CraftingRecipe) recipe).assemble(input, h.getLevel().registryAccess());
@@ -3751,21 +3761,20 @@ public final class ClinicalBloodProgressionGameTests {
         p.getInventory().add(new ItemStack(Items.BOOK));
         p.getInventory().add(new ItemStack(Items.INK_SAC));
         p.getInventory().add(new ItemStack(Items.PAPER, 3));
+        int bulbsBefore = p.getInventory().countItem(ItemInit.bleeding_bulb.get());
+        int enzymesBefore = p.getInventory().countItem(ItemInit.vivacious_enzyme.get());
         DialogueEventRouter.onDialogueOption(new DialogueEvent(p,
                 "mnemonist_woven_vessel_turn_in", mnemonist.getId()));
         h.assertTrue(HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(p)
                         && !HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(p),
                 "Material turn-in either failed or incorrectly counted as the first weave");
-        var rewards = h.getLevel().getEntitiesOfClass(ItemEntity.class,
-                new AABB(mnemonist.blockPosition()).inflate(2));
-        h.assertTrue(rewards.stream().anyMatch(item -> item.getItem().is(ItemInit.bleeding_bulb.get()))
-                        && rewards.stream().anyMatch(item -> item.getItem().is(ItemInit.vivacious_enzyme.get())
-                                && item.getItem().getCount() == 3),
-                "Woven Vessel did not drop its authored Bulb and three enzymes");
-        rewards.forEach(item -> item.playerTouch(p));
-        h.assertTrue(p.getInventory().contains(new ItemStack(ItemInit.bleeding_bulb.get()))
-                        && p.getInventory().contains(new ItemStack(ItemInit.vivacious_enzyme.get())),
-                "Woven Vessel did not supply the first weave's Bulb and enzyme");
+        h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class,
+                        new AABB(mnemonist.blockPosition()).inflate(2)).isEmpty(),
+                "Woven Vessel dropped its kit instead of owing it to the pack (PT-3)");
+        h.assertTrue(p.getInventory().countItem(ItemInit.bleeding_bulb.get()) == bulbsBefore + 1
+                        && p.getInventory().countItem(ItemInit.vivacious_enzyme.get()) == enzymesBefore + 3
+                        && OwedRewards.CLAIM.owed().apply(p).isEmpty(),
+                "Woven Vessel did not place its authored Bulb and three enzymes in the pack");
 
         var pos = h.absolutePos(new BlockPos(4, 2, 4));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.somatic_loom.get().defaultBlockState());

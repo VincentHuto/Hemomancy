@@ -22,6 +22,8 @@ uniform float Front;
 uniform float Beat;
 uniform float FloorLight;
 uniform vec2 FocusOffset;
+// The way the floor faces, as Direction.get2DDataValue(): south 0, west 1, north 2, east 3.
+uniform float FloorFacing;
 uniform vec3 BaseColor;
 uniform vec3 VeinColor;
 uniform vec3 GlowColor;
@@ -282,6 +284,16 @@ vec4 groove(float d, float w) {
     float highlight = exp(-sq(d / max(w * 0.28, 0.004))) * inside;
     float lip = smoothstep(w + 0.07, w + 0.01, d) * (1.0 - inside);
     return vec4(inside, wall, highlight, lip);
+}
+
+// A world offset from the Focus in the floor pattern's own frame, so a motif drawn for the pattern turns with the floor.
+// Inverts CardinalRiteFloorGeometry's placement (right = forwards x up, ahead = forwards) for each facing.
+vec2 patternFrame(vec2 p) {
+    int facing = int(FloorFacing + 0.5);
+    if (facing == 1) return vec2(-p.y, -p.x);
+    if (facing == 2) return vec2(p.x, -p.y);
+    if (facing == 3) return vec2(p.y, p.x);
+    return vec2(-p.x, p.y);
 }
 
 // The distance to the Qliphoth tree's hyphae paths: the trunk, three cross-paths and two outer pillars.
@@ -1467,12 +1479,12 @@ void main() {
         // The tree's paths are cracks in the glass, not drawn lines: they wander, and the blood in them runs in
         // separate beads toward the hole.
         vec2 crackWarp = vec2(noise(p * 2.7 + 3.0), noise(p * 2.7 + 9.0)) - 0.5;
-        float path = line(qliphothPaths(p + crackWarp * 0.16), 0.025);
+        float path = line(qliphothPaths(patternFrame(p + crackWarp * 0.16)), 0.025);
         float pathFlow = pow(0.5 + 0.5 * sin((abs(p.x) + abs(p.y)) * 2.4 + t * 4.0), 10.0)
                 * (0.5 + 0.5 * noise(p * 1.3 + t * 0.4));
         glass = mix(glass, QLIPHOTH_BLOOD * 0.5, path * 0.45);
         glass += QLIPHOTH_ARTERIAL * path * (0.12 + pathFlow * 1.1) * (0.7 + 0.3 * beatLevel);
-        vec4 wells = qliphothHuskWell(p, t, beatLevel);
+        vec4 wells = qliphothHuskWell(patternFrame(p), t, beatLevel);
         glass = mix(glass, wells.rgb, wells.a);
         vec4 hole = qliphothHole(p, r, angle, t, beatLevel);
         color = mix(glass, hole.rgb, hole.a);

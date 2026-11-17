@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+
 class HarbingerArmor3dModelResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -239,21 +242,9 @@ class HarbingerArmor3dModelResourceTest {
 		}
 	}
 
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
 	private static void assertMethodContains(String label, String source, String methodName, String expected) {
 		String method = source.substring(source.indexOf(methodName));
 		method = method.substring(0, method.indexOf("\n\t}\n") + 4);
 		assertContains(label, method, expected);
-	}
-
-	private static void assertNotContains(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": should not contain " + forbidden);
-		}
 	}
 }

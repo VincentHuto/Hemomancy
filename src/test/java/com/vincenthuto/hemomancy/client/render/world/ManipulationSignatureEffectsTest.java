@@ -116,7 +116,7 @@ class ManipulationSignatureEffectsTest {
                 new ManipulationUndulation(Form.WELL,100,20,71,3,Vec3.ZERO));
         VisceralMesh.boundary(new PoseStack(),consumer,3,0xFFFFFF,1,0);
         assertTrue(vertices.points.isEmpty());
-        for(Form form:new Form[]{Form.VERDICT,Form.CROWN,Form.CHOIR,Form.WARD,Form.RETORT,Form.MARK,Form.HOUR})
+        for(Form form:new Form[]{Form.VERDICT,Form.CROWN,Form.CHOIR,Form.WARD,Form.RETORT,Form.MARK})
             assertFalse(ManipulationBloodFormation.retainsDissolvingBody(form),form.name());
     }
 

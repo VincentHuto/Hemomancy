@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -79,7 +80,7 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 		RenderType translucentType = RenderType.entityTranslucentCull(TextureAtlas.LOCATION_BLOCKS);
 		VertexConsumer translucentBuffer = buffer.getBuffer(translucentType);
 
-		float gameTime = (float) (System.currentTimeMillis() % 3000L) / 3000.0F;
+		float gameTime = (float) (AnimationTime.itemMillis() % 3000.0) / 3000.0F;
 		float pulse = (Mth.sin(gameTime * (float) (Math.PI * 2.0)) + 1.0F) / 2.0F;
 		float minAlpha = 0.25F;
 		float maxAlpha = 0.65F;
@@ -109,7 +110,7 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 			float centerY = offset[1] + 0.16F;
 			poseStack.pushPose();
 			// rotation value used to spin the icon itself
-			double rotation = ((System.currentTimeMillis() / 18.0) + i * 42.0) % 360.0;
+			double rotation = ((AnimationTime.itemMillis() / 18.0) + i * 42.0) % 360.0;
 			float depth = (flatOverlayContext ? HELD_OVERLAY_DEPTH : GUI_OVERLAY_DEPTH) + i * 0.01F;
 			poseStack.translate(0.125F, 0.125F, depth);
 

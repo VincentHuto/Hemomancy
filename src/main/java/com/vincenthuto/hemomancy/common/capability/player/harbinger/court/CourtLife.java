@@ -155,7 +155,9 @@ public final class CourtLife {
 			return false;
 		}
 		CourtStandingRules.Standing before = progress.standing(house);
-		CourtStandingRules.Standing after = CourtStandingRules.afterAct(before, kind);
+		CourtStandingRules.Standing after = CourtStandingRules.afterAct(before, kind,
+				progress.anyActCounted(house, CourtStandingRules.ActKind.CUSTOM),
+				progress.anyActCounted(house, CourtStandingRules.ActKind.VISIT));
 		progress.countAct(house, actId);
 		progress.setStanding(house, after);
 		CourtDiscoveryProgress.sync(player);
@@ -246,7 +248,8 @@ public final class CourtLife {
 	/** Whether the Head-tender may offer the usurpation now, or why not. */
 	public static CourtChampionRules.Gate championGate(ServerPlayer player) {
 		CourtProgress progress = progress(player);
-		return CourtChampionRules.challenge(progress.known(), isShunned(player), progress.champion(), hasApexStrain(player),
+		return CourtChampionRules.challenge(progress.known(), isShunned(player), progress.champion(),
+				ProgressionGates.hasDegree(player, CourtChampionRules.MINIMUM_DEGREE), hasApexStrain(player),
 				progress.standing(CourtHouse.KINDLING), player.serverLevel().getGameTime(), progress.usurpRetryAt());
 	}
 
@@ -264,7 +267,7 @@ public final class CourtLife {
 		CourtDiscoveryProgress.sync(player);
 	}
 
-	/** A lost usurpation (the player died) starts the wait; it survives death and relog. */
+	/** A lost usurpation (the player died, logged out or left the fight) starts the wait; it survives death and relog. */
 	public static void recordUsurpLoss(ServerPlayer player) {
 		progress(player).setUsurpRetryAt(CourtChampionRules.retryAfterLoss(player.serverLevel().getGameTime()));
 		CourtDiscoveryProgress.sync(player);

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -7,7 +8,8 @@ public final class ScarletMummerRulesTest {
 	private ScarletMummerRulesTest() {
 	}
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		assertEquals(160, ScarletMummerRules.PERFORMANCE_INTERVAL_TICKS, "performance interval");
 		assertEquals(80, ScarletMummerRules.PERFORMANCE_DURATION_TICKS, "performance duration");
 		assertEquals(4, ScarletMummerRules.MAX_ATTENTION_TARGETS, "attention cap");
@@ -30,9 +32,7 @@ public final class ScarletMummerRulesTest {
 
 		String immuneTag = Files.readString(Path.of(
 				"src/main/resources/data/hemomancy/tags/entity_type/puppet_attention_immune.json"));
-		assertTrue(immuneTag.contains("minecraft:ender_dragon"), "dragon is attention immune");
-		assertTrue(immuneTag.contains("minecraft:wither"), "wither is attention immune");
-		assertTrue(immuneTag.contains("hemomancy:vesper_crowned_refusal"), "Vesper is attention immune");
+		assertTrue(immuneTag.contains("\"#hemomancy:bosses\""), "every boss is attention immune");
 	}
 
 	private static void assertTrue(boolean value, String message) {

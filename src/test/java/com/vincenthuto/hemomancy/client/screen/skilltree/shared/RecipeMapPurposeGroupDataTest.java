@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Pins every shipped Harbinger rite and craft to the purpose group its family sits in on the Liber map. */
 final class RecipeMapPurposeGroupDataTest {
@@ -45,6 +46,24 @@ final class RecipeMapPurposeGroupDataTest {
 				assertEquals("Floorless Crafts", HarbingerRecipeMapDefinitions.craftingFamily(path), path);
 			}
 		}
+	}
+
+	@Test
+	void everyPurposeGroupReadsApartFromTheOthers() {
+		RecipeMapPurposeGroup[] groups = RecipeMapPurposeGroup.values();
+		for (int a = 0; a < groups.length; a++) {
+			for (int b = a + 1; b < groups.length; b++) {
+				double distance = rgbDistance(groups[a].color(), groups[b].color());
+				assertTrue(distance >= 48.0D, groups[a] + " and " + groups[b] + " are only " + (int) distance + " apart");
+			}
+		}
+	}
+
+	private static double rgbDistance(int first, int second) {
+		int red = ((first >> 16) & 0xFF) - ((second >> 16) & 0xFF);
+		int green = ((first >> 8) & 0xFF) - ((second >> 8) & 0xFF);
+		int blue = (first & 0xFF) - (second & 0xFF);
+		return Math.sqrt(red * red + green * green + blue * blue);
 	}
 
 	private static String recipePath(Path file) {

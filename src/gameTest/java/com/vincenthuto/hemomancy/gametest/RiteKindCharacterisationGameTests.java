@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.HarbingerRecipeMapDefinitions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -60,6 +61,7 @@ public final class RiteKindCharacterisationGameTests {
 	private static final ResourceLocation CRAFT = Hemomancy.rloc("cardinal_rite/working/somatic_loom");
 	private static final ResourceLocation TRIAL = Hemomancy.rloc("cardinal_rite/puppeteer_trial_sanguine_hound");
 	private static final ResourceLocation RETIRED = Hemomancy.rloc("cardinal_rite/votary_rite");
+	private static final ResourceLocation DEGREE_FIVE = Hemomancy.rloc("cardinal_rite/sanguine_dominion");
 	private static final BlockPos FOCUS = new BlockPos(16, 3, 12);
 
 	private RiteKindCharacterisationGameTests() {
@@ -383,6 +385,191 @@ public final class RiteKindCharacterisationGameTests {
 					caster.close();
 				})
 				.thenSucceed();
+	}
+
+	/**
+	 * A caster's own running rite claims their plain Projection over its ground: blood that misses an anchor or the
+	 * daemon and strikes a floor block neither infuses it (an infusion lifts the block, which broke the rite: the
+	 * playthrough's d5MasonChainWithVascularMending) nor stains it. Once the rite is gone the same aim infuses.
+	 */
+	@GameTest(template = ROOM, timeoutTicks = 100, batch = "rite_kind_projection_ground")
+	public static void projectionDoesNotInfuseTheCastersOwnRiteGround(GameTestHelper helper) {
+		CapturedPlayer caster = caster(helper, 5);
+		ActiveCardinalRite rite = countdown(helper, caster, 2000);
+		ServerPlayer player = caster.player;
+		ServerLevel level = helper.getLevel();
+		BlockPos floor = rite.getCenterPos().offset(2, 0, 2);
+		level.setBlock(floor, Blocks.STONE_BRICKS.defaultBlockState(), 3);
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES,
+				new Vec3(floor.getX() + 0.5D, floor.getY() + 1.0D, floor.getZ() + 0.5D));
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
+		double before = blood.getBloodVolume();
+		for (int tick = 0; tick < 20; tick++) {
+			com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem.projectFromEntity(level, player,
+					10.0D, 10.0D);
+		}
+		helper.assertTrue(blood.getBloodVolume() == before, "the rite's ground takes no blood; spent "
+				+ (before - blood.getBloodVolume()));
+		helper.assertTrue(level.getBlockState(floor).is(Blocks.STONE_BRICKS), "the rite's floor block stands");
+		helper.assertTrue(level.getBlockState(floor.above()).isAir(), "and is not stained");
+
+		CardinalRiteSavedData.get(level).removeRite(player.getUUID());
+		com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem.projectFromEntity(level, player,
+				10.0D, 10.0D);
+		helper.assertTrue(blood.getBloodVolume() < before, "without a rite the same aim feeds an infusion");
+		caster.close();
+		helper.succeed();
+	}
+
+	/**
+	 * CN-2: a running rite's ground refuses every player's plain Projection, not only its caster's. Another player's
+	 * blood neither infuses nor stains a floor block there; the same aim outside the rite's cube still infuses.
+	 */
+	@GameTest(template = ROOM, timeoutTicks = 100, batch = "rite_kind_projection_ground")
+	public static void projectionDoesNotInfuseAnotherPlayersRiteGround(GameTestHelper helper) {
+		CapturedPlayer caster = caster(helper, 5);
+		ActiveCardinalRite rite = countdown(helper, caster, 2000);
+		CapturedPlayer bystander = caster(helper, 5);
+		ServerPlayer player = bystander.player;
+		ServerLevel level = helper.getLevel();
+		BlockPos floor = rite.getCenterPos().offset(2, 0, 2);
+		level.setBlock(floor, Blocks.STONE_BRICKS.defaultBlockState(), 3);
+		player.setPos(Vec3.atCenterOf(rite.getCenterPos()).add(-1.0D, 1.0D, -1.0D));
+		aimAt(player, floor);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
+		double before = blood.getBloodVolume();
+		for (int tick = 0; tick < 20; tick++) {
+			com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem.projectFromEntity(level, player,
+					10.0D, 10.0D);
+		}
+		helper.assertTrue(blood.getBloodVolume() == before, "another player's rite ground takes no blood; spent "
+				+ (before - blood.getBloodVolume()));
+		helper.assertTrue(level.getBlockState(floor).is(Blocks.STONE_BRICKS), "the rite's floor block stands");
+		helper.assertTrue(level.getBlockState(floor.above()).isAir(), "and is not stained");
+
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+		int reach = (int) Math.ceil(Math.max(
+				com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize()),
+				com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFootprintResolver.radius(rite, recipe)));
+		BlockPos outside = rite.getCenterPos().offset(reach + 2, 0, 0);
+		level.setBlock(outside, Blocks.STONE_BRICKS.defaultBlockState(), 3);
+		player.setPos(Vec3.atCenterOf(outside).add(-2.0D, 1.0D, 0.0D));
+		aimAt(player, outside);
+		com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem.projectFromEntity(level, player,
+				10.0D, 10.0D);
+		helper.assertTrue(blood.getBloodVolume() < before, "outside the rite's ground the same aim feeds an infusion");
+		CardinalRiteSavedData.get(level).removeRite(caster.player.getUUID());
+		bystander.close();
+		caster.close();
+		helper.succeed();
+	}
+
+	/** F-11: a pending Blood Structure craft counts down once per server tick, however many levels tick. */
+	@GameTest(template = ROOM, timeoutTicks = 100, batch = "rite_kind_pending_craft")
+	public static void pendingCraftCountsDownOncePerServerTick(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		BlockPos at = helper.absolutePos(FOCUS);
+		clear(level, at);
+		level.setBlock(at, Blocks.STONE_BRICKS.defaultBlockState(), 3);
+		var pattern = net.minecraft.world.level.block.state.pattern.BlockPatternBuilder.start().aisle("S")
+				.where('S', net.minecraft.world.level.block.state.pattern.BlockInWorld.hasState(
+						state -> state.is(Blocks.STONE_BRICKS)))
+				.build();
+		var match = pattern.find(level, at);
+		helper.assertTrue(match != null, "the one-block pattern must match");
+		CapturedPlayer crafter = CapturedPlayer.create(helper);
+		com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager.schedule(
+				new com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager.PendingCraft(level, match, 1, 1, 1, at,
+						new ItemStack(Items.STONE_BRICKS), 20, crafter.player));
+		helper.startSequence()
+				.thenExecuteAfter(12, () -> helper.assertTrue(level.getBlockState(at).is(Blocks.STONE_BRICKS),
+						"a 20 tick craft is still closing after 12 server ticks"))
+				.thenExecuteAfter(13, () -> {
+					helper.assertTrue(level.getBlockState(at).isAir(), "and has closed by tick 25");
+					crafter.close();
+				})
+				.thenSucceed();
+	}
+
+	/**
+	 * PT-32: a caster below the Degree of the rite their floor names is told the Degree it needs, not that no rite
+	 * matches.
+	 */
+	@GameTest(template = ROOM, timeoutTicks = 100, batch = "rite_kind_degree_line")
+	public static void aCasterBelowTheFloorsRiteIsToldItsDegree(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		BlockPos focus = helper.absolutePos(FOCUS);
+		CapturedPlayer caster = caster(helper, 4);
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, DEGREE_FIVE);
+		helper.assertTrue(recipe != null && recipe.getRequiredDegree() == 5, DEGREE_FIVE + " must load as a D5 rite");
+		clear(level, focus);
+		helper.assertTrue(PlaceStructurePacket.placeLayeredCardinalRite(level, focus, recipe, caster.player) > 0,
+				DEGREE_FIVE + " floor must place");
+		ServerPlayer player = caster.player;
+		player.setPos(Vec3.atCenterOf(focus).add(0.0D, 1.0D, 0.0D));
+		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
+		caster.chat.clear();
+		var start = CardinalRiteActivation.tryStart(player, focus, CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+		helper.assertTrue(start != CardinalRiteActivationRules.ActivationAttempt.STARTED
+				&& CardinalRiteSavedData.get(level).getRite(player.getUUID()) == null, "a D4 caster starts no D5 rite");
+		helper.assertTrue(caster.said().contains("This rite requires"), "the D4 caster is told the Degree: " + caster.said());
+		helper.assertTrue(player.getMainHandItem().is(ItemInit.living_staff.get()), "and keeps the Staff");
+		caster.close();
+		helper.succeed();
+	}
+
+	/**
+	 * PT-88: an anchor that is both dry and damaged by instability takes Projection as fill first; its repair waits
+	 * until it is full.
+	 */
+	@GameTest(template = ROOM, timeoutTicks = 200, batch = "rite_kind_ceremony_fill_first")
+	public static void aDryDamagedAnchorTakesProjectionAsFillFirst(GameTestHelper helper) {
+		Rite rite = startCeremony(helper);
+		ActiveCardinalRite active = rite.active();
+		helper.startSequence()
+				.thenWaitUntil(() -> helper.assertTrue(active.isStaffImpactReached(), "planted"))
+				.thenExecute(() -> {
+					active.addInstability(30);
+					int anchor = -1;
+					for (int index = 0; index < active.getAnchorBloodMl().length && anchor < 0; index++) {
+						if (active.isInstabilityDamagedAnchor(index) && active.bloodNeededForAnchor(index) > 0) anchor = index;
+					}
+					helper.assertTrue(anchor >= 0, "instability must damage a dry anchor");
+					CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(), active.getRecipeId());
+					ServerPlayer player = rite.caster().player;
+					player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES,
+							com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteTargetGeometry.anchorAimPoint(
+									active.getCenterPos(), recipe.getCeremony().anchors().get(anchor).offset()));
+					int fillNeeded = active.bloodNeededForAnchor(anchor);
+					int repairNeeded = active.instabilityRepairBloodNeeded(anchor);
+					var paid = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler.tryProject(
+							helper.getLevel(), player, 50.0D);
+					helper.assertTrue(paid.handled() && paid.bloodSpent() > 0, "the anchor takes the Projection");
+					helper.assertTrue(active.bloodNeededForAnchor(anchor) < fillNeeded,
+							"the blood fills the dry anchor: needed " + fillNeeded + ", now " + active.bloodNeededForAnchor(anchor));
+					helper.assertTrue(active.instabilityRepairBloodNeeded(anchor) == repairNeeded,
+							"and its repair waits: needed " + repairNeeded + ", now " + active.instabilityRepairBloodNeeded(anchor));
+					rite.end(helper);
+				})
+				.thenSucceed();
+	}
+
+	/** FX-12: every Harbinger rite on the Rites &amp; Crafts map shows its own icon item. */
+	@GameTest(template = ROOM, timeoutTicks = 20, batch = "rite_kind_map_icons")
+	public static void noTwoRitesShareAMapIcon(GameTestHelper helper) {
+		java.util.Map<net.minecraft.world.item.Item, String> owners = new java.util.HashMap<>();
+		for (String path : new java.util.TreeSet<>(HarbingerRecipeMapDefinitions.ritePaths())) {
+			ItemStack icon = HarbingerRecipeMapDefinitions.riteIcon(path, ItemStack.EMPTY);
+			helper.assertTrue(!icon.isEmpty(), path + " has no map icon");
+			String other = owners.putIfAbsent(icon.getItem(), path);
+			helper.assertTrue(other == null, path + " shares its map icon with " + other);
+		}
+		helper.succeed();
+	}
+
+	private static void aimAt(ServerPlayer player, BlockPos block) {
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES,
+				new Vec3(block.getX() + 0.5D, block.getY() + 1.0D, block.getZ() + 0.5D));
 	}
 
 	@GameTest(template = ROOM, timeoutTicks = 300, batch = "rite_kind_countdown")

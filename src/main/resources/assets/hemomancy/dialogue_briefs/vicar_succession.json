@@ -212,7 +212,7 @@
   "tone": "plain, informative"
  },
  "hemomancy.dialogue.recruit.vicar.accept": {
-  "about": "the Vicar agreeing, explaining each outpost gives a covenant one voice so the cause spreads without emptying the lodge, and that if accepted he will be this outpost's voice in the player's line",
+  "about": "the Vicar, once the pledge is taken, explaining the one-voice-per-outpost rule and saying he is now this outpost's voice in the line",
   "tone": "formal, measured"
  },
  "hemomancy.dialogue.recruit.vicar.consider": {
@@ -261,6 +261,74 @@
  },
  "hemomancy.dialogue.vicar.option.consecrate_armature": {
   "about": "asking the Vicar who prepares the Armature for consecration",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.craft.answers": {
+  "about": "asking the Vicar what spilled blood brings",
+  "tone": "wary"
+ },
+ "hemomancy.dialogue.vicar.option.craft.answers.count": {
+  "about": "asking the Vicar how to read the land's count of spilled blood",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.vicar.option.craft.answers.moon": {
+  "about": "asking the Vicar when a Blood Moon comes",
+  "tone": "wary"
+ },
+ "hemomancy.dialogue.vicar.option.craft.answers.water": {
+  "about": "asking the Vicar about blood poured into water",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.craft.back": {
+  "about": "going back to the Vicar's lesson with another question",
+  "tone": "plain"
+ },
+ "hemomancy.dialogue.vicar.option.craft.day": {
+  "about": "asking the Vicar what the body needs between workings",
+  "tone": "attentive"
+ },
+ "hemomancy.dialogue.vicar.option.craft.day.food": {
+  "about": "asking the Vicar what to eat",
+  "tone": "plain"
+ },
+ "hemomancy.dialogue.vicar.option.craft.day.meats": {
+  "about": "asking the Vicar whether some meats are better than others",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.craft.day.rest": {
+  "about": "asking the Vicar whether sleep helps the blood",
+  "tone": "plain"
+ },
+ "hemomancy.dialogue.vicar.option.craft.keeping": {
+  "about": "asking the Vicar whether a creature can be kept for its blood",
+  "tone": "interested"
+ },
+ "hemomancy.dialogue.vicar.option.craft.keeping.brood": {
+  "about": "asking the Vicar whether kept creatures can breed",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.craft.keeping.feed": {
+  "about": "asking the Vicar how to keep a kept creature alive",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.vicar.option.craft.keeping.lead": {
+  "about": "asking the Vicar how to bring a creature in",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.vicar.option.craft.verbs": {
+  "about": "asking the Vicar what the two verbs are",
+  "tone": "attentive"
+ },
+ "hemomancy.dialogue.vicar.option.craft.verbs.draw": {
+  "about": "asking the Vicar what drawing blood from a creature does",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.craft.verbs.key": {
+  "about": "asking the Vicar how to turn from one verb to the other",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.vicar.option.craft.verbs.order": {
+  "about": "asking the Vicar what claims held blood first",
   "tone": "curious"
  },
  "hemomancy.dialogue.vicar.option.crafting_hint": {
@@ -955,6 +1023,134 @@
   "about": "the Vicar explaining that the Hematic Covenant is the whole body of rites, customs and learning governing hemomancy since the First Age, and each Degree's rite shows a practitioner what they have become",
   "tone": "formal, expository"
  },
+ "hemomancy.vicar.craft.answers.count.line1": {
+  "about": "the Vicar explaining that a Humoral Barometer reads the count from still to seething, and that a stain taken back by Absorption leaves the count",
+  "tone": "precise"
+ },
+ "hemomancy.vicar.craft.answers.count.line2": {
+  "about": "the Vicar explaining that Suspended Vivianite halves what is counted and speeds its fading, with three in one place the most that helps",
+  "tone": "precise"
+ },
+ "hemomancy.vicar.craft.answers.line1": {
+  "about": "the Vicar asking where the player last worked blood carelessly, and saying the land is still counting it and the record shows what a heavy count brings",
+  "tone": "examining, grave"
+ },
+ "hemomancy.vicar.craft.answers.line2": {
+  "about": "the Vicar explaining that stains, chum and kill bleed-out go onto the land's count, which halves every two days, while blood put to work is not counted",
+  "tone": "formal"
+ },
+ "hemomancy.vicar.craft.answers.moon.line1": {
+  "about": "the Vicar saying a Blood Moon comes most at the full moon, never at the new, and more over bled land, then asking how many nights remain to the full moon",
+  "tone": "examining"
+ },
+ "hemomancy.vicar.craft.answers.moon.line2": {
+  "about": "the Vicar pointing to the Ossuary Clock, whose lunette goes half red when tonight's moon is likely to turn and crimson when it has",
+  "tone": "measured"
+ },
+ "hemomancy.vicar.craft.answers.water.line1": {
+  "about": "the Vicar explaining chum: plain Projection into water spreads a pool that widens with pouring, makes lines bite sooner and brings up herring, leeches or coral",
+  "tone": "formal, instructive"
+ },
+ "hemomancy.vicar.craft.answers.water.line2": {
+  "about": "the Vicar warning that a strong pool after dark or under a high count draws one hunter: a Brined Votary by the reef, a Bog Revenant from a swamp, the drowned elsewhere",
+  "tone": "grave"
+ },
+ "hemomancy.vicar.craft.day.food.line1": {
+  "about": "the Vicar saying meat gives an awake Harbinger blood back, a few millilitres per point of nutrition, more cooked, forty-eight for a steak",
+  "tone": "plain, exact"
+ },
+ "hemomancy.vicar.craft.day.food.line2": {
+  "about": "the Vicar explaining hunger: under three shanks blood returns at half pace, starving at none, and well fed with a hearty meal at half again",
+  "tone": "plain, exact"
+ },
+ "hemomancy.vicar.craft.day.line1": {
+  "about": "the Vicar asking what a working costs the body, then answering that casting never causes hunger and the body only sets how fast blood returns",
+  "tone": "examining"
+ },
+ "hemomancy.vicar.craft.day.line2": {
+  "about": "the Vicar saying blood comes back by itself at about two millilitres a second, and that food and sleep set the pace without refilling",
+  "tone": "measured"
+ },
+ "hemomancy.vicar.craft.day.meats.line1": {
+  "about": "the Vicar naming the Order's meats that give more and carry a little temper (venison Animus, herring Ductilis, gourd stew Animus), and noting fish gives a little less",
+  "tone": "formal"
+ },
+ "hemomancy.vicar.craft.day.meats.line2": {
+  "about": "the Vicar explaining that meat from an animal the player dosed comes off tainted, gives the most, and sickens anyone outside the Order",
+  "tone": "measured"
+ },
+ "hemomancy.vicar.craft.day.rest.line1": {
+  "about": "the Vicar explaining that a full night's sleep gives five minutes of Well Rested, doubling blood return on top of food",
+  "tone": "measured"
+ },
+ "hemomancy.vicar.craft.day.rest.line2": {
+  "about": "the Vicar warning that rest is no refill, so sleep before long work rather than counting on the bed when dry",
+  "tone": "dry, cautionary"
+ },
+ "hemomancy.vicar.craft.keeping.brood.line1": {
+  "about": "the Vicar explaining breeding: two of one kind side by side with one keeper, Let them breed on a screen, both above three quarters Vigor, about two minutes of blood from their buffers",
+  "tone": "formal, exact"
+ },
+ "hemomancy.vicar.craft.keeping.brood.line2": {
+  "about": "the Vicar explaining the young goes into an empty vessel beside them or waits, parting or a fading parent loses the payment, and parents rest five minutes",
+  "tone": "formal"
+ },
+ "hemomancy.vicar.craft.keeping.feed.line1": {
+  "about": "the Vicar explaining Vigor, which falls on its own and with every draw, and that feeding the vessel's buffer by Projection or a suture restores it",
+  "tone": "measured"
+ },
+ "hemomancy.vicar.craft.keeping.feed.line2": {
+  "about": "the Vicar explaining Absorption on the glass draws Temper, neglect leaves a husk, and a Sanguine Vigil with a catalyst stops fading near the keeper",
+  "tone": "measured"
+ },
+ "hemomancy.vicar.craft.keeping.lead.line1": {
+  "about": "the Vicar explaining the leash: Blood Binding's Sculpting held three seconds on a passive or weakened creature, which then follows placid and costs blood each second",
+  "tone": "precise, instructive"
+ },
+ "hemomancy.vicar.craft.keeping.lead.line2": {
+  "about": "the Vicar explaining that the creature goes into an empty Specimen Vat or Jar with an empty-handed use, and that an unpaid leash breaks and a hostile creature turns",
+  "tone": "precise"
+ },
+ "hemomancy.vicar.craft.keeping.line1": {
+  "about": "the Vicar saying a creature's blood is worth more alive than spilled, and asking what the player would keep",
+  "tone": "examining"
+ },
+ "hemomancy.vicar.craft.keeping.line2": {
+  "about": "the Vicar giving the limits (one creature at the third Degree, two at the fifth, three at the seventh) and saying a kept creature gives Temper and a little blood while fed",
+  "tone": "formal"
+ },
+ "hemomancy.vicar.craft.verbs.draw.line1": {
+  "about": "the Vicar explaining that Absorption names the drainer: the creature turns on them and its death is theirs, though a kill by drawing pays nothing extra",
+  "tone": "formal, cautionary"
+ },
+ "hemomancy.vicar.craft.verbs.draw.line2": {
+  "about": "the Vicar listing marks that change a draw (Rime slows, Lodestone strips armor, Illuminated adds range), noting the own brand is drawn first at twice reach, and asking if the player has branded anything",
+  "tone": "examining"
+ },
+ "hemomancy.vicar.craft.verbs.key.line1": {
+  "about": "the Vicar explaining the verb key (Y by default): an empty hand forms the set verb's hand, pressing again turns it, sneaking while pressing lets it go",
+  "tone": "precise, instructive"
+ },
+ "hemomancy.vicar.craft.verbs.key.line2": {
+  "about": "the Vicar adding that the radial's inner ring holds both verbs without changing the chosen memory, and the Living Staff carries the set verb",
+  "tone": "precise"
+ },
+ "hemomancy.vicar.craft.verbs.line1": {
+  "about": "the Vicar saying the Order wants two verbs before anything else, and asking which one the player has used more since their blood woke",
+  "tone": "examining"
+ },
+ "hemomancy.vicar.craft.verbs.line2": {
+  "about": "the Vicar defining Projection as pushing blood out and Absorption as drawing it back, and saying the record counts every working as one of the two",
+  "tone": "formal, measured"
+ },
+ "hemomancy.vicar.craft.verbs.order.line1": {
+  "about": "the Vicar asking who takes held blood, then giving the recorded order: a rite, a Saint's trial or a faltering Will, then a sculpting memory, then the plain verb",
+  "tone": "examining, formal"
+ },
+ "hemomancy.vicar.craft.verbs.order.line2": {
+  "about": "the Vicar drawing the consequence that a rite's Focus takes Projection whatever memory is chosen, and that sculpting memories say so in their entries",
+  "tone": "measured"
+ },
  "hemomancy.vicar.first_bloodcraft_reward.prompt": {
   "about": "a prompt that the ledger bears all four proofs and the Vicar can grant the Second Degree",
   "tone": "plain label"
@@ -1100,11 +1296,11 @@
   "tone": "dry, dismissive"
  },
  "hemomancy.vicar.item_inquiry.earthen_vein.line1": {
-  "about": "the Vicar describing the Earthen Vein as a grown living conduit that, placed in sequence, forms a network carrying blood from source to destination",
+  "about": "the Vicar describing the Earthen Vein as an opening the Order travels by, fed blood to come out at another claimed vein, and asking how many the player has claimed",
   "tone": "instructive, plain"
  },
  "hemomancy.vicar.item_inquiry.earthen_vein.line2": {
-  "about": "the Vicar saying a developed Harbinger workshop runs on veins and, though avoidable early, the player will want what they carry once the Loom is regular work",
+  "about": "the Vicar setting living veins grown from a Vein Node apart: they move a little blood between two tanks only while their keeper is near, carry a traveller cheaply where one joins two openings, and no workshop in the record runs on them",
   "tone": "practical, patient"
  },
  "hemomancy.vicar.item_inquiry.enchanted_book.line1": {
@@ -1404,7 +1600,7 @@
   "tone": "instructive, precise"
  },
  "hemomancy.vicar.votary.rooted_vein.recovery": {
-  "about": "the Vicar explaining the Focus becomes Venous Stone with a permanent Earthen Vein on completion, and that cancelling before then needs Blood Absorption held on the planted Staff, with paid blood and consumed offerings lost but untouched offerings remaining",
+  "about": "the Vicar explaining the Focus becomes Venous Stone with a permanent Earthen Vein on completion (the first living vein the player owns, an opening to travel by), that cancelling before then needs Blood Absorption held on the planted Staff, with paid blood and consumed offerings lost but untouched offerings remaining, and that from the Third Degree tissue grown from a Vein Node joins two openings for a 125 crossing",
   "tone": "instructive, cautionary"
  },
  "hemomancy.vicar.votary.rooted_vein.staff": {
@@ -1412,7 +1608,7 @@
   "tone": "instructive, precise"
  },
  "hemomancy.vicar.votary.temper_lore": {
-  "about": "the Vicar listing the eight blood tempers (Animus, Flammeus, Ductilis, Lux, Mortem, Congeatio, Ferric, Tenebris) and their common enzyme names (Vivacious, Fervent, Neurotic, Incandescent, Ruinous, Frigid, Ferric, Umbral)",
+  "about": "the Vicar naming the eight tempers the Order recognizes and the Alchemist's enzyme names for them, telling the player to know both lists",
   "tone": "scholarly, brisk"
  },
  "hemomancy.vicar.voyager_introduction.bearing": {

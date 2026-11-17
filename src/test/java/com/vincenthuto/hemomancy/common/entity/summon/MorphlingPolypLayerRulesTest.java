@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import org.junit.jupiter.api.Test;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
@@ -8,7 +9,8 @@ public final class MorphlingPolypLayerRulesTest {
 	private MorphlingPolypLayerRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		oceanContextIncludesAquaticLayers();
 		undergroundContextIncludesCaveLayers();
 		desertContextIncludesVentLayer();

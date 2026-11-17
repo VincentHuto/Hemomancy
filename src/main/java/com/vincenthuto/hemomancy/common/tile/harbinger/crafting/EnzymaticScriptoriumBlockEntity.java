@@ -40,7 +40,8 @@ import java.util.List;
 
 public class EnzymaticScriptoriumBlockEntity extends HemoContainerBlockEntity
         implements com.vincenthuto.hemomancy.common.tile.IBloodReservoir, UpgradeableStation {
-    public static final double BLOOD_CAPACITY = 2000;
+    /** A working buffer (core-loop Track 3): two to six inscriptions, topped by a suture or filled and spent. */
+    public static final double BLOOD_CAPACITY = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingRules.DEFAULT_WORKING_RESERVE;
     public static final int ITEM = 8;
     public static final int LAPIS = 9;
     public static final int SHARD = 10;

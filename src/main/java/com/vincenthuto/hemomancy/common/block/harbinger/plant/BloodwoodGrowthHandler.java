@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Bloodwood tree with one hungry core. The plant keeps what it has drunk across casts, for ten minutes of neglect.
  */
 public final class BloodwoodGrowthHandler {
-	private static final BloodAccounting.Source GROWTH = BloodAccounting.Source.of("bloodwood_growth", Category.WORLD, true, false);
+	private static final BloodAccounting.Source GROWTH = BloodAccounting.Source.of("bloodwood_growth", Category.WORLD, false);
 	private static final long PROGRESS_EXPIRY_TICKS = 20L * 60L * 10L;
 	private static final ParticleColor BLOOD = new ParticleColor(190, 18, 34);
 	private static final Map<GrowthKey, GrowthProgress> PROGRESS = new ConcurrentHashMap<>();

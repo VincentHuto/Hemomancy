@@ -230,8 +230,10 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	}
 
 	private void drawTemperamentProfile(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.temperament_profile"), x, y);
+		// Grown alignment, what scars lend (synced apart), and the Temper held against its cap (core loop Track 4).
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.temperament_and_temper"), x, y);
 		var temper = HemoCapabilityAccess.getBloodTemperament(player);
+		var pool = HemoCapabilityAccess.getBloodTemper(player);
 		EnumBloodTemper[] values = EnumBloodTemper.values();
 		for (int i = 0; i < values.length; i++) {
 			EnumBloodTemper value = values[i];
@@ -239,10 +241,22 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 			int row = i % 4;
 			int rowX = x + col * 150;
 			int rowY = y + 14 + row * 14;
-			String label = trimToWidth(BloodManipulation.temperName(value).getString(), 70);
-			String amount = String.format(Locale.ROOT, "%.2f", temper.getAlignmentByTemper(value));
+			String label = trimToWidth(BloodManipulation.temperName(value).getString(), 64);
+			float grown = temper.getBaseAlignment(value);
+			float scar = temper.getAlignmentByTemper(value) - grown;
+			String amount = String.format(Locale.ROOT, "%.0f", grown);
 			graphics.drawString(this.font, label, rowX, rowY, temperColor(value));
-			graphics.drawString(this.font, amount, rowX + 78, rowY, TEXT);
+			graphics.drawString(this.font, amount, rowX + 66, rowY, TEXT);
+			if (Math.abs(scar) >= 0.5F) {
+				graphics.drawString(this.font, String.format(Locale.ROOT, "%+.0f", scar),
+						rowX + 66 + this.font.width(amount) + 1, rowY, MUTED);
+			}
+			float held = pool.get(value);
+			float cap = com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.TemperRules.cap(
+					temper.getAlignmentByTemper(value));
+			graphics.drawString(this.font, Component.translatable("screen.hemomancy.scrying_diagnostics.temper_held",
+					String.format(Locale.ROOT, "%.0f", Math.floor(held)), String.format(Locale.ROOT, "%.0f", cap)),
+					rowX + 108, rowY, held < 1.0F ? WARN : TEXT);
 		}
 	}
 

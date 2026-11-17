@@ -51,10 +51,6 @@
     "about": "Annetta asking whether the draught comes from the waters, saying it smells like the river at dawn",
     "tone": "wary, wistful"
   },
-  "hemomancy.annetta.draught.truth.line1": {
-    "about": "the player telling Annetta that something has been living inside her for a long time",
-    "tone": "gentle but direct"
-  },
   "hemomancy.annetta.draught.truth.line2": {
     "about": "narration of Annetta's hands rising to her neck and then falling",
     "tone": "stricken, quiet"
@@ -344,8 +340,8 @@
     "tone": "plain label"
   },
   "hemomancy.dialogue.annetta.option.what_is_it": {
-    "about": "Player response: explaining to Annetta that the draught will draw out what is inside her",
-    "tone": "calm, reassuring"
+    "about": "Player response: telling Annetta that something is inside her and the draught will draw it out",
+    "tone": "gentle but direct"
   },
   "hemomancy.dialogue.annetta.option.what_now": {
     "about": "Player response: asking Annetta what she will do now",
@@ -595,6 +591,10 @@
     "about": "Player response: asking the Voyager to draw another Relay Chart",
     "tone": "polite, practical"
   },
+  "hemomancy.dialogue.voyager.option.letter_chart": {
+    "about": "Player response, shown on the Brine-Sealed Letter inquiry: asking the Voyager to draw a Relay Chart to the Court the letter was meant for",
+    "tone": "polite, practical"
+  },
   "hemomancy.hermit.adept.hint": {
     "about": "the Hermit naming the Rite of the Crimson Lodge as next, preceded by the Vein-Mason's pattern at the Cerebral Scarring Station and Brazier lesson, and noting more manipulation slots and skill tree are open",
     "tone": "plain instruction"
@@ -750,6 +750,102 @@
   "hemomancy.hermit.votary.line2": {
     "about": "the Hermit recognising a Votary of the Hematic Covenant by sound, noting their pulse has stopped hurrying",
     "tone": "observant"
+  },
+  "hemomancy.dialogue.hermit.option.craft.verbs": {
+    "about": "asking the Hermit what the newly woken blood can do",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.hermit.option.craft.verbs.out": {
+    "about": "asking the Hermit what happens when blood is pushed out of the hand",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.hermit.option.craft.verbs.in": {
+    "about": "asking the Hermit what drawing blood back does",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.hermit.option.craft.verbs.spilled": {
+    "about": "asking the Hermit about blood that is spilled and left",
+    "tone": "uncertain"
+  },
+  "hemomancy.dialogue.hermit.option.craft.answer": {
+    "about": "asking the Hermit whether the land notices spilled blood",
+    "tone": "wary"
+  },
+  "hemomancy.dialogue.hermit.option.craft.answer.ground": {
+    "about": "asking the Hermit what the count does to the ground itself",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.hermit.option.craft.answer.night": {
+    "about": "asking the Hermit whether spilled blood is what turns the moon red",
+    "tone": "wary"
+  },
+  "hemomancy.dialogue.hermit.option.craft.answer.drinkers": {
+    "about": "asking the Hermit whether anything comes to the stains",
+    "tone": "wary"
+  },
+  "hemomancy.dialogue.hermit.option.craft.back": {
+    "about": "going back to the Hermit's lesson to ask another question",
+    "tone": "plain"
+  },
+  "hemomancy.hermit.craft.verbs.line1": {
+    "about": "the Hermit recalling that his woken blood did two things only, out of the hand or back into it, and that everything he learned after was one of those",
+    "tone": "quiet, plain"
+  },
+  "hemomancy.hermit.craft.verbs.line2": {
+    "about": "the Hermit explaining the verb key: with an empty hand it forms the hand of the set verb, pressing again turns it, sneaking and pressing lets it go",
+    "tone": "plain, instructive"
+  },
+  "hemomancy.hermit.craft.verbs.out.line1": {
+    "about": "the Hermit describing Projection at three targets: stone drinks it and stains, an empty cauldron holds it until it sets, open air lets it fall where aimed",
+    "tone": "plain, exact"
+  },
+  "hemomancy.hermit.craft.verbs.out.line2": {
+    "about": "the Hermit warning that the blood comes from his own veins and returns slowly, so he learned to stop before he was empty",
+    "tone": "quiet, cautionary"
+  },
+  "hemomancy.hermit.craft.verbs.in.line1": {
+    "about": "the Hermit describing Absorption on a living creature: its blood crosses the air to you, and it knows who took it and turns on you",
+    "tone": "plain, warning"
+  },
+  "hemomancy.hermit.craft.verbs.in.line2": {
+    "about": "the Hermit explaining that Absorption on a wet stain takes some back, while on an old dry stain it only cleans the stone",
+    "tone": "plain"
+  },
+  "hemomancy.hermit.craft.verbs.spilled.line1": {
+    "about": "the Hermit describing how a stain dries from wet to tacky to brown crust and wears away, and how rain or standing water washes it at once",
+    "tone": "plain, observant"
+  },
+  "hemomancy.hermit.craft.verbs.spilled.line2": {
+    "about": "the Hermit saying stains left lying draw things down in the dark, so he takes his back up before night",
+    "tone": "quiet"
+  },
+  "hemomancy.hermit.craft.answer.line1": {
+    "about": "the Hermit explaining that the land keeps count of stains, kills that bled out and pools in water, and that the count halves every two days",
+    "tone": "grave, plain"
+  },
+  "hemomancy.hermit.craft.answer.line2": {
+    "about": "the Hermit adding that blood put to work in a machine or a rite is not counted, and a stain taken back up comes off the count",
+    "tone": "plain"
+  },
+  "hemomancy.hermit.craft.answer.ground.line1": {
+    "about": "the Hermit saying that where the count is heavy, grass under long-lying stains becomes stained sod until the land quiets",
+    "tone": "plain, observant"
+  },
+  "hemomancy.hermit.craft.answer.night.line1": {
+    "about": "the Hermit explaining that a Blood Moon comes most at the full moon, never at the new, and far more often over bled ground",
+    "tone": "grave"
+  },
+  "hemomancy.hermit.craft.answer.night.line2": {
+    "about": "the Hermit noting that Wills come where work was messy, and that he would bleed a place hard only far from where he sleeps",
+    "tone": "dry, practical"
+  },
+  "hemomancy.hermit.craft.answer.drinkers.line1": {
+    "about": "the Hermit saying wet stains in the dark, at night or under a roof, draw vampire bats down to drink",
+    "tone": "plain"
+  },
+  "hemomancy.hermit.craft.answer.drinkers.line2": {
+    "about": "the Hermit advising to take stains back up before dark or work in the open by day so the bats have nothing to come for",
+    "tone": "practical"
   },
   "hemomancy.lady.absolved.v0.follow": {
     "about": "Our Lady saying purity is the first descent, the current runs on into clarity, and clarity is a second gift if the player wants it",
@@ -1598,9 +1694,5 @@
   "hemomancy.whisper.spine_growth.degree7": {
     "about": "narration of something in the spine straining against the flesh at Degree 7, with a stiff neck and an almost ready growth",
     "tone": "tense, ominous"
-  },
-  "hemomancy.whisper.spine_growth.degree8.canon": {
-    "about": "narration that the return-thread is already gone from the player's back and Apotheosis changes what remains",
-    "tone": "quiet, final"
   }
 }

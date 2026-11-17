@@ -38,9 +38,34 @@ public class FillerBlockEntity extends HemoBlockEntity implements IBloodReservoi
         return mainBlockPos;
     }
 
+    /** The main block's entity, or null when this filler has none (or its chunk is not loaded). */
+    @Nullable
+    public BlockEntity mainBlockEntity() {
+        if (level == null || mainBlockPos == null || mainBlockPos.equals(worldPosition) || !level.isLoaded(mainBlockPos)) return null;
+        return level.getBlockEntity(mainBlockPos);
+    }
+
     private IBloodReservoir mainReservoir() {
-        if (level == null || mainBlockPos == null) return null;
-        return level.getBlockEntity(mainBlockPos) instanceof IBloodReservoir reservoir ? reservoir : null;
+        return mainBlockEntity() instanceof IBloodReservoir reservoir && !(reservoir instanceof FillerBlockEntity) ? reservoir : null;
+    }
+
+    /**
+     * A filler keeps no tank of its own: it holds blood exactly when its main block does, and every read of its blood
+     * ({@code ReservoirBlood.settled}, draw rights, couriers, a spike under it) reaches the main block's tank.
+     */
+    @Override public boolean holdsBlood() {
+        IBloodReservoir reservoir = mainReservoir();
+        return reservoir != null && reservoir.holdsBlood();
+    }
+
+    @Override public boolean isLivingVessel() {
+        IBloodReservoir reservoir = mainReservoir();
+        return reservoir != null && reservoir.isLivingVessel();
+    }
+
+    @Override public boolean isBloodStore() {
+        IBloodReservoir reservoir = mainReservoir();
+        return reservoir != null && reservoir.isBloodStore();
     }
 
     @Override public IBloodVolume getBloodCapability() {

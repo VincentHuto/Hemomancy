@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SeraphaeIntegrityRulesTest {
-    @Test void startsAtThirtyWithPhasesAtFortyAndSeventyFive() {
-        assertEquals(30.0F, SeraphaeIntegrityRules.START);
+    @Test void startsAtTwentyWithPhasesAtFortyAndSeventyFive() {
+        assertEquals(20.0F, SeraphaeIntegrityRules.START);
         assertArrayEquals(new float[]{0.40F, 0.75F, 1.0F}, SeraphaeIntegrityRules.THRESHOLDS);
         assertEquals(1.0F, SeraphaeIntegrityRules.THRESHOLDS[SeraphaeIntegrityRules.CONTAINED_THRESHOLD]);
     }

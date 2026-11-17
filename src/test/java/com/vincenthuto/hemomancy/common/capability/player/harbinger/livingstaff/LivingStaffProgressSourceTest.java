@@ -1,16 +1,18 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LivingStaffProgressSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private LivingStaffProgressSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String iface = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/livingstaff/ILivingStaffProgress.java");
 		String impl = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/livingstaff/LivingStaffProgress.java");
 		String attachments = read("src/main/java/com/vincenthuto/hemomancy/common/capability/HemoAttachmentTypes.java");
@@ -37,15 +39,5 @@ public final class LivingStaffProgressSourceTest {
 		assertContains("capability registered for players", registrar, "HemoCapabilityKeys.LIVING_STAFF_PROGRESS");
 		assertContains("capability access helper present", access, "getLivingStaffProgress(Player player)");
 		assertContains("sync packet registered", packetHandler, "LivingStaffProgressServerPacket");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
 	}
 }

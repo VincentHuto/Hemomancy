@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.*;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.*;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.*;
@@ -41,12 +40,12 @@ public final class DrudgeActions {
 	}
 
 	/**
-	 * The monsters in a Drudge's work area. A Drudge reaches every monster there, its owner's puppets included, as it
-	 * did before step 9 (G-2b would spare them).
+	 * The monsters in a Drudge's work area that it may harm for its owner: its owner's puppets and allies are spared
+	 * (G-2b).
 	 */
 	static List<Monster> monsters(PathfinderMob drudge, Level world, AABB area) {
 		return world.getEntitiesOfClass(Monster.class, area,
-				monster -> ManipulationCombatHelper.canHarm(drudge, monster, Reach.MONSTER_FILTER_ANY_STATE));
+				monster -> ManipulationCombatHelper.canHarmFor(drudge, monster));
 	}
 
 	/** The work area's monster nearest the Drudge, or null. */
@@ -140,7 +139,7 @@ public final class DrudgeActions {
 	/** activation_potential */
 	public static boolean activationPotential(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
 		List<Monster> mobs = world.getEntitiesOfClass(Monster.class, drudge.getBoundingBox().inflate(5.0D),
-				m -> ManipulationCombatHelper.canHarm(drudge, m, Reach.MONSTER_FILTER) && m.distanceTo(drudge) <= 5.0D);
+				m -> ManipulationCombatHelper.canHarmFor(drudge, m) && m.distanceTo(drudge) <= 5.0D);
 		if (mobs.isEmpty()) return false;
 		mobs.forEach(m -> {
 			SchoolStates.apply(drudge, m, SchoolState.DISRUPTED, 10);
@@ -457,32 +456,7 @@ public final class DrudgeActions {
 		if (target == null) return false;
 		SchoolHitHelper.markGraveDebt(target,
 				drudge instanceof DrudgeEntity drudgeEntity ? drudgeEntity.getOwnerUUID() : null,
-				ManipulationStatusRules.GRAVE_DEBT_TICKS);
-		return true;
-	}
-
-	/** unclosing_eye */
-	public static boolean unclosingEye(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		AABB area = new AABB(centre).inflate(radius);
-		world.getEntitiesOfClass(LivingEntity.class, area).forEach(e ->
-				SchoolStates.apply(drudge, e, SchoolState.ILLUMINATED, 1200));
-		return true;
-	}
-
-	/** bloom_of_rot */
-	public static boolean bloomOfRot(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		AABB area = new AABB(centre).inflate(radius);
-		List<Monster> mobs = monsters(drudge, world, area);
-		if (mobs.isEmpty()) return false;
-		mobs.forEach(m -> {
-			SchoolStates.apply(drudge, m, SchoolState.NECROSIS, 100);
-		});
-		return true;
-	}
-
-	/** endless_hour */
-	public static boolean endlessHour(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		drudge.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 0, false, false));
+				ManipulationStatusRules.GRAVE_DEBT_TICKS, 0.0D);
 		return true;
 	}
 }

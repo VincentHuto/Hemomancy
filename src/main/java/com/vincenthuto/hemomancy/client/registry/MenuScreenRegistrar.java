@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.HarbingerEquipmen
 import com.vincenthuto.hemomancy.client.screen.tile.functional.MasonsEffigyScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.MnemonicReliquaryScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.PhlebotomistsCabinetScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.SpecimenVesselScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScreen;
 import com.vincenthuto.hemomancy.common.init.*;
 import net.neoforged.api.distmarker.Dist;
@@ -50,5 +51,6 @@ public final class MenuScreenRegistrar {
         event.register(ContainerInit.clairaudiograph.get(), com.vincenthuto.hemomancy.client.screen.tile.functional.ClairaudiographScreen::new);
         event.register(ContainerInit.phlebotomists_cabinet.get(), PhlebotomistsCabinetScreen::new);
         event.register(ContainerInit.phlebotomists_field_case.get(), PhlebotomistsCabinetScreen::new);
+        event.register(ContainerInit.specimen_vessel.get(), SpecimenVesselScreen::new);
     }
 }

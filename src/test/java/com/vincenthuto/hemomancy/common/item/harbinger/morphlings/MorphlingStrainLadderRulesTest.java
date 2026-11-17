@@ -38,11 +38,8 @@ final class MorphlingStrainLadderRulesTest {
 		assertEquals(1.0D, MermaidsPurseRules.siphon(0), E);
 		assertEquals(0.0D, MermaidsPurseRules.swimBonus(0, true), E);
 		assertEquals(0.25D, MermaidsPurseRules.swimBonus(5, false), E);
-		assertEquals(0.35D, MermaidsPurseRules.swimBonus(5, true), E, "never past the Prismatic ceiling");
+		assertEquals(0.35D, MermaidsPurseRules.swimBonus(5, true), E, "never past the strain's own ceiling");
 		assertEquals(0.15D, MermaidsPurseRules.swimBonus(2, true), E);
-		assertEquals(0.35D, MermaidsPurseRules.swimBonus(5, true, 1.0D), E, "no set: the strain's own ceiling");
-		assertEquals(0.0D, MermaidsPurseRules.swimBonus(5, true, 1.35D), E, "the full set already sits at +35%");
-		assertEquals(0.0D, MermaidsPurseRules.swimBonus(2, false, 1.35D), E);
 		assertEquals(6.0F, MermaidsPurseRules.schoolHeal(3));
 		assertEquals(12.0F, MermaidsPurseRules.schoolHeal(5));
 		assertEquals(60.0D, MermaidsPurseRules.bankDeposit(2, 10.0F, false, false), E);

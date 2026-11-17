@@ -1,12 +1,13 @@
 package com.vincenthuto.hemomancy.common.block.unstained;
 
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -409,7 +410,9 @@ public class ViridSalisTrailBlock extends Block {
 			double d0 = 0.5D + 0.4375F * directionFrom.getStepX() + f2 * directionTo.getStepX();
 			double d1 = 0.5D + 0.4375F * directionFrom.getStepY() + f2 * directionTo.getStepY();
 			double d2 = 0.5D + 0.4375F * directionFrom.getStepZ() + f2 * directionTo.getStepZ();
-			world.addParticle(new DustParticleOptions(new Vector3f(rgbVector.x(), rgbVector.y(), rgbVector.z()), 1.0F),
+			ParticleColor color = new ParticleColor((int) (rgbVector.x() * 255), (int) (rgbVector.y() * 255),
+					(int) (rgbVector.z() * 255));
+			world.addParticle(HemoParticleData.emberSpark(color, 0.031F, 0.9F, 20),
 					pos.getX() + d0, pos.getY() + d1, pos.getZ() + d2, 0.0D, 0.0D, 0.0D);
 		}
 	}

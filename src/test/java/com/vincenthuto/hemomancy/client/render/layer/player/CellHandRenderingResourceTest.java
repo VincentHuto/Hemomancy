@@ -1,16 +1,19 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class CellHandRenderingResourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private CellHandRenderingResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String layer = read("src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandLayer.java");
 		String model = read("src/main/java/com/vincenthuto/hemomancy/client/model/item/BloodArmModel.java");
 		String itemRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/CellHandItemRenderer.java");
@@ -26,7 +29,7 @@ public final class CellHandRenderingResourceTest {
 		String absorptionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
 		String blockBloodInteractions = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BlockBloodInteractions.java");
 
-		assertDoesNotContain("third-person particles do not use a fixed body-yaw approximation", layer,
+		assertNotContains("third-person particles do not use a fixed body-yaw approximation", layer,
 				"double bodyYaw = Math.toRadians(living.yBodyRot)");
 		assertContains("third-person particles use the rendered parent hand transform", layer,
 				"getParentModel().translateToHand(side, poseStack)");
@@ -36,7 +39,7 @@ public final class CellHandRenderingResourceTest {
 				"CellHandParticleEffects.spawnThirdPersonParticlesFromOrigin");
 		assertContains("third-person blood hand presentation includes living staff utility use", layer,
 				"CellHandParticleEffects.isStaffChannel(living, stack)");
-		assertDoesNotContain("third-person particles do not spawn from the camera", layer,
+		assertNotContains("third-person particles do not spawn from the camera", layer,
 				"living.position()");
 		assertContains("third-person blood arm copies the active parent pose", layer,
 				"copyBloodArmPose(this.getParentModel())");
@@ -78,7 +81,7 @@ public final class CellHandRenderingResourceTest {
 				"particle.setFirstPersonTargetAnchor(anchor);");
 		assertContains("projection particles use an explicit source-to-surface path", particleEffects,
 				"particle.setProjectionPath(origin, target,");
-		assertDoesNotContain("projection particles do not compensate above the block surface", particleEffects,
+		assertNotContains("projection particles do not compensate above the block surface", particleEffects,
 				"trace.getLocation().add(0.0D, 1.05D, 0.0D)");
 		assertContains("third-person absorbed cells do not sag below the hand target", particleEffects,
 				"particle.setTargetYOffset(0.0D);");
@@ -142,27 +145,11 @@ public final class CellHandRenderingResourceTest {
 				"camera.getLookVector()");
 		assertContains("hand-targeted absorbed particles stop terminal downward sag", absorbedBloodCellParticle,
 				"this.targetYOffset = 0.0D;");
-		assertDoesNotContain("third-person blood arm does not add extra animation over the parent arm pose", layer,
+		assertNotContains("third-person blood arm does not add extra animation over the parent arm pose", layer,
 				"applyThirdPersonCastingArmMotion");
 		assertContains("third-person blood arm renders the hardened skin texture", layer,
 				"RenderType.entityCutoutNoCull(skinTexture)");
 		assertContains("third-person blood arm keeps texture colors", layer, "OverlayTexture.NO_OVERLAY, -1");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (still contains '" + unexpected + "')");
-		}
 	}
 
 	private static void assertBefore(String label, String text, String first, String second) {

@@ -2,7 +2,11 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.HematicSutureNeedleItem;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.tile.ReservoirBlood;
+import com.vincenthuto.hemomancy.common.tile.ReservoirReadout;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicSutureNodeBlockEntity;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
@@ -59,13 +63,33 @@ public final class BloodRoutingEvents {
             if (be instanceof HematicSutureNodeBlockEntity) {
                 continue;
             }
+            keepLinkStatus(level, entry.getKey(), entry.getValue());
             BloodRoutingHelper.routeLinkedTarget(level, entry.getKey(), entry.getValue());
         }
     }
 
+    /**
+     * Keeps the tank's copy of its suture's state, resending the block only when it changed, so the machine's own
+     * screen can say why it stalled. A filler's tank is its main block's. Returns whether the state changed.
+     */
+    public static boolean keepLinkStatus(ServerLevel level, BlockPos pos, DirectBloodLinkData link) {
+        BlockEntity be = level.getBlockEntity(pos);
+        BlockEntity tank = be == null ? null : ReservoirBlood.tank(be);
+        if (!(tank instanceof IBloodReservoir)) {
+            return false;
+        }
+        if (!ReservoirBlood.settled(tank).setLink(BloodRoutingHelper.linkStatus(level, pos, link))) {
+            return false;
+        }
+        BlockEntitySync.markAndSync(tank);
+        return true;
+    }
+
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (event.getLevel() instanceof ServerLevel level) {
+        // A permission check leaves the block standing, so its links stay.
+        if (event.getLevel() instanceof ServerLevel level
+                && !com.vincenthuto.hemomancy.common.util.PlayerBlockEdits.isCheckingBreak()) {
             BloodRoutingSavedData.get(level).removeLink(event.getPos());
         }
     }

@@ -20,7 +20,8 @@ public final class ManipulationStatusRules {
 	public static final float GRAVE_DEBT_HEALTH_FRACTION = 0.25F;
 	public static final double GRAVE_DEBT_RADIUS = 4.0D;
 	public static final float GRAVE_DEBT_BURST_DAMAGE = 5.0F;
-	public static final double GRAVE_DEBT_DEATH_REFUND = 250.0D;
+	/** Share of the blood paid for the mark that the caster's own kill returns (LP-7). */
+	public static final double GRAVE_DEBT_REFUND_FRACTION = 0.6D;
 
 	public static final int IRON_RETORT_TICKS = 60;
 	public static final float IRON_RETORT_DAMAGE_MULTIPLIER = 0.5F;
@@ -50,6 +51,11 @@ public final class ManipulationStatusRules {
 	public static boolean crossedGraveDebtThreshold(float previousHealth, float currentHealth, float maxHealth) {
 		float threshold = maxHealth * GRAVE_DEBT_HEALTH_FRACTION;
 		return previousHealth > threshold && currentHealth <= threshold;
+	}
+
+	/** What a Grave Debt death returns: 60% of the blood paid for the mark, and only on the caster's own kill. */
+	public static double graveDebtRefund(double paid, boolean casterHasKill) {
+		return casterHasKill && paid > 0.0D ? paid * GRAVE_DEBT_REFUND_FRACTION : 0.0D;
 	}
 
 	public static boolean canMagnetize(boolean hostile, boolean allied, boolean owner) {

@@ -33,8 +33,10 @@ class DialogueLoreFlagTest {
 	 * being lore, 66 to 64; then the Hermit's what_next and the Alchemist's tell_me_about_chisel_station became quests,
 	 * 64 to 62. The Artificer's teach_armature also left, but the sweep never reached it: its workshop tree needs an
 	 * assignment Step, and sampled enums are null). 2026-11-05: the Monolith's ten lore cards joined, 62 to 72.
+	 * 2026-11-14: the Mnemonist's anchorite_counsel became Quest Work (PT-71), 72 to 71.
+	 * 2026-11-15: the Silentium greeting lore cards of the Vicar, Alchemist and Mnemonist joined (PT-83), 71 to 74.
 	 */
-	private static final int MIN_REACHED = 72;
+	private static final int MIN_REACHED = 74;
 
 	static {
 		TREES.put(HarbingerVicarDialogueTrees.class, "vicar");

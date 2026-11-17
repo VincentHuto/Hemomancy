@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.mission.alchemist;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,6 +34,7 @@ public final class BodyAnswersAssignment {
                 new ItemStack(ItemInit.sanguine_formation.get()),
                 new ItemStack(ItemInit.fervent_enzyme.get()),
                 new ItemStack(ItemInit.bloody_flask.get()))) {
+            BloodyFlaskItem.stampBottled(stack, player.level().getGameTime());
             if (!player.getInventory().add(stack)) {
                 player.drop(stack, false);
             }

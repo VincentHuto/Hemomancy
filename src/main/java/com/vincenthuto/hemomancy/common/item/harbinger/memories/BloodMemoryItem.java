@@ -36,6 +36,22 @@ public class BloodMemoryItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (getManip() != null) {
 			tooltip.add(getManip().getDisplayName());
+			var saint = com.vincenthuto.hemomancy.common.manipulation.saint.CanonGifts.saintOf(getManip());
+			if (saint != null) {
+				tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.canon_source."
+						+ saint.name().toLowerCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+				tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.canon_trial", saint.getDisplayName())
+						.withStyle(ChatFormatting.GRAY));
+			}
+			// A memory that sculpts a verb says what it makes of it, on a line of its own the player learns to look for.
+			for (com.vincenthuto.hemomancy.common.manipulation.verb.Verb verb
+					: com.vincenthuto.hemomancy.common.manipulation.verb.Verb.values()) {
+				if (!com.vincenthuto.hemomancy.common.manipulation.verb.SculptingDispatcher.sculpts(getManip(), verb)) continue;
+				tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.sculpting",
+						Component.translatable(verb.langKey()),
+						Component.translatable("hemomancy.manipulation." + getManip().getName() + ".sculpting."
+								+ verb.name().toLowerCase(java.util.Locale.ROOT))).withStyle(ChatFormatting.DARK_AQUA));
+			}
 			getManip().getDrudgeAction().ifPresentOrElse(da -> {
 				if (da == com.vincenthuto.hemomancy.common.manipulation.DrudgeAction.DRUDGE_UNSUPPORTED) {
 					tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.cnot_usable_by_drudges"));
@@ -47,7 +63,7 @@ public class BloodMemoryItem extends Item {
 			tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.burn_in_a_lit_iron_brazier")
 					.withStyle(ChatFormatting.DARK_GRAY));
 			tooltip.add(HemoText.translatable("tooltip.hemomancy.blood_memory.learn_at_degree_cast_at_alignment",
-					com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates.minDegreeForRank(getManip().getRank()),
+					com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates.minDegreeFor(getManip()),
 					(int) getManip().getAlignLevel(),
 					BloodManipulation.temperName(getManip().getTend())).withStyle(ChatFormatting.GRAY));
 			tooltip.add(getManip().getBaseCostLine()

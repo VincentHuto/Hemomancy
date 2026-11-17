@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
+import org.junit.jupiter.api.Test;
+
 final class BloodLanternJellyMovementRulesTest {
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         onlyDriftsWhileAliveInWater();
         verticalImpulseAvoidsSurfaceAndFloor();
         horizontalDriftStaysGentle();

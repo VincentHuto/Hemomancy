@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.manip;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
@@ -17,7 +18,8 @@ public final class KnownManipulationGrantHelperTest {
 	private KnownManipulationGrantHelperTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		autoEquipUsesFreeSlotsOnly();
 		fullSlotsDoNotReplace();
 		duplicateEquipDoesNotAddAgain();
@@ -32,16 +34,13 @@ public final class KnownManipulationGrantHelperTest {
 		boolean changed = ManipulationEquipHelper.equipNameIfPossible(equipped, "blood_shot", 3);
 
 		assertTrue("equip changed state", changed);
-		assertEquals("equipped count includes fixed mechanics", 4, equipped.size());
-		assertEquals("absorption is fixed first", ManipulationEquipHelper.BLOOD_ABSORPTION, equipped.get(0));
-		assertEquals("projection is fixed second", ManipulationEquipHelper.BLOOD_PROJECTION, equipped.get(1));
-		assertEquals("equipped name", "blood_shot", equipped.get(3));
+		assertEquals("equipped count includes the fixed Conjure Staff", 2, equipped.size());
+		assertEquals("Conjure Staff is fixed first", ManipulationEquipHelper.CONJURE_STAFF, equipped.get(0));
+		assertEquals("equipped name", "blood_shot", equipped.get(1));
 	}
 
 	private static void fullSlotsDoNotReplace() {
 		List<String> equipped = new ArrayList<>();
-		equipped.add(ManipulationEquipHelper.BLOOD_ABSORPTION);
-		equipped.add(ManipulationEquipHelper.BLOOD_PROJECTION);
 		equipped.add(ManipulationEquipHelper.CONJURE_STAFF);
 		equipped.add("existing_one");
 		equipped.add("existing_two");
@@ -49,42 +48,43 @@ public final class KnownManipulationGrantHelperTest {
 		boolean changed = ManipulationEquipHelper.equipNameIfPossible(equipped, "deadly_gaze", 2);
 
 		assertFalse("full slots unchanged", changed);
-		assertEquals("equipped count unchanged", 5, equipped.size());
-		assertEquals("first fixed mechanic preserved", ManipulationEquipHelper.BLOOD_ABSORPTION, equipped.get(0));
-		assertEquals("second fixed mechanic preserved", ManipulationEquipHelper.BLOOD_PROJECTION, equipped.get(1));
-		assertEquals("first equipped preserved", "existing_one", equipped.get(3));
-		assertEquals("second equipped preserved", "existing_two", equipped.get(4));
+		assertEquals("equipped count unchanged", 3, equipped.size());
+		assertEquals("fixed Conjure Staff preserved", ManipulationEquipHelper.CONJURE_STAFF, equipped.get(0));
+		assertEquals("first equipped preserved", "existing_one", equipped.get(1));
+		assertEquals("second equipped preserved", "existing_two", equipped.get(2));
 	}
 
 	private static void duplicateEquipDoesNotAddAgain() {
 		List<String> equipped = new ArrayList<>();
-		equipped.add(ManipulationEquipHelper.BLOOD_ABSORPTION);
-		equipped.add(ManipulationEquipHelper.BLOOD_PROJECTION);
 		equipped.add(ManipulationEquipHelper.CONJURE_STAFF);
 		equipped.add("blood_shot");
 
 		boolean changed = ManipulationEquipHelper.equipNameIfPossible(equipped, "blood_shot", 3);
 
 		assertFalse("duplicate unchanged", changed);
-		assertEquals("equipped count unchanged", 4, equipped.size());
+		assertEquals("equipped count unchanged", 2, equipped.size());
 	}
 
+	/** Core-loop Track 1 (CL-2): Projection and Absorption are verbs, never equipped; a saved list naming them drops them. */
 	private static void mechanicalManipulationsAreRestoredAndLocked() {
 		List<String> equipped = new ArrayList<>();
+		equipped.add(ManipulationEquipHelper.BLOOD_ABSORPTION);
+		equipped.add(ManipulationEquipHelper.BLOOD_PROJECTION);
 		equipped.add("blood_shot");
 
 		boolean normalized = ManipulationEquipHelper.normalizeEquippedNames(equipped);
-		boolean removedAbsorption = ManipulationEquipHelper.unequipNameIfAllowed(equipped,
-				ManipulationEquipHelper.BLOOD_ABSORPTION);
-		boolean removedProjection = ManipulationEquipHelper.unequipNameIfAllowed(equipped,
-				ManipulationEquipHelper.BLOOD_PROJECTION);
+		boolean removedStaff = ManipulationEquipHelper.unequipNameIfAllowed(equipped,
+				ManipulationEquipHelper.CONJURE_STAFF);
+		boolean equippedProjection = ManipulationEquipHelper.equipNameIfPossible(equipped,
+				ManipulationEquipHelper.BLOOD_PROJECTION, 3);
 
 		assertTrue("normalization changed state", normalized);
-		assertFalse("absorption cannot be unequipped", removedAbsorption);
-		assertFalse("projection cannot be unequipped", removedProjection);
-		assertEquals("absorption stays first", ManipulationEquipHelper.BLOOD_ABSORPTION, equipped.get(0));
-		assertEquals("projection stays second", ManipulationEquipHelper.BLOOD_PROJECTION, equipped.get(1));
-		assertEquals("normal manip preserved after mechanics", "blood_shot", equipped.get(3));
+		assertFalse("Conjure Staff cannot be unequipped", removedStaff);
+		assertFalse("Projection cannot be equipped", equippedProjection);
+		assertEquals("only Conjure Staff and the normal memory remain", List.of(ManipulationEquipHelper.CONJURE_STAFF,
+				"blood_shot"), equipped);
+		assertTrue("the verbs are verbs", ManipulationEquipHelper.isVerb(ManipulationEquipHelper.BLOOD_ABSORPTION)
+				&& ManipulationEquipHelper.isVerb(ManipulationEquipHelper.BLOOD_PROJECTION));
 	}
 
 	private static void mechanicalManipulationsDoNotConsumeNormalSlots() {
@@ -96,7 +96,7 @@ public final class KnownManipulationGrantHelperTest {
 		assertFalse("fourth normal blocked by normal slot limit",
 				ManipulationEquipHelper.equipNameIfPossible(equipped, "blood_burst", 3));
 
-		assertEquals("total count includes three fixed mechanics", 6, equipped.size());
+		assertEquals("total count includes the fixed Conjure Staff", 4, equipped.size());
 		assertEquals("normal count respects memorized slots", 3,
 				ManipulationEquipHelper.countNormalEquippedNames(equipped));
 	}

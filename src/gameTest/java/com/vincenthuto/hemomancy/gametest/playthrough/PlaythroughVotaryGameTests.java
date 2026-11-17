@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.gametest.playthrough;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
@@ -31,6 +32,7 @@ import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FirstSeparationSpinDialogue;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
@@ -45,10 +47,15 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineConden
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserRules;
 import com.vincenthuto.hemomancy.gametest.PlaythroughFingerprints;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -68,6 +75,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -133,6 +141,7 @@ public final class PlaythroughVotaryGameTests {
 	private static final int[] CHAIN_STONE = {12, 5};
 	private static final int[] CHAIN_IRON = {15, 16};
 	private static final int[] CHAIN_CAULDRON = {6, 15};
+	private static final int[] CHAIN_FONT = {3, 12};
 
 	private static final String BRIEF = HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF;
 	private static final String CLAIM = HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM;
@@ -224,7 +233,23 @@ public final class PlaythroughVotaryGameTests {
 							+ level.getBlockState(iron).getBlock());
 					player.moveTo(cauldron.west(2));
 				})
-				.step(absorbFromOwnCauldron(player, cauldron))
+				.then(() -> {
+					// ARRANGE: an unowned, filled reservoir stands in for the D1 blood font (NQ-10-1, not built yet). The
+					// player's own poured blood does not count toward the proof (PT-1b), so the round trip cannot pay it.
+					fontReservoir(helper, at(helper, CHAIN_FONT));
+					PlaythroughStates.blood(player, 100.0D); // ARRANGE: room to take the font's blood
+					player.moveTo(at(helper, CHAIN_FONT).west(2));
+					player.select(ABSORPTION);
+				})
+				.step(() -> player.holdUntil(ItemInit.blood_absorption.get(), 400,
+						() -> Vec3.atCenterOf(at(helper, CHAIN_FONT)), () -> bloodcraft(player).absorbedMl() >= PROOF_ML))
+				.then(() -> {
+					helper.assertTrue(bloodcraft(player).absorbedMl() >= PROOF_ML, "the font pays the 500 mL proof: "
+							+ bloodcraft(player));
+					PlaythroughStates.blood(player, maxBlood(player)); // ARRANGE: the vessel refilled for the condenser
+					player.select(PROJECTION);
+					player.moveTo(cauldron.west(2));
+				})
 				.step(condenseFormation(player, cauldron))
 				.then(() -> {
 					Outcome dispel = player.castSelected();
@@ -875,9 +900,9 @@ public final class PlaythroughVotaryGameTests {
 	// Pending decisions (not required; each asserts what a player would expect and logs what happens)
 	// =================================================================================================================
 
-	/** A vial stashed in a chest, then asked for again: a player expects one vial per rest, not a second one. */
-	// DECISION: D-19 the Concentrated Blood reissue checks only the carried inventory.
-	@GameTest(template = EMPTY, timeoutTicks = 300, batch = BATCH, required = false)
+	/** A vial stashed in a chest, then asked for again: the Alchemist reissues it, because none is carried. */
+	// RULING PT-19 (2026-11-13): reissues check only the carried inventory, kept as a lost-item safety net.
+	@GameTest(template = EMPTY, timeoutTicks = 300, batch = BATCH)
 	public static void stashedConcentratedVialIsReissued(GameTestHelper helper) {
 		HarbingerAlchemistEntity alchemist = PlaythroughNpcs.alchemist(helper, at(helper, ALCHEMIST));
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, at(helper, HOME));
@@ -913,16 +938,18 @@ public final class PlaythroughVotaryGameTests {
 					PlaythroughLog.note(helper, SCENARIO, "D-19 the extra vial: still carried=" + concentrated(player)
 							+ " (it cannot be injected while the first is pending, nor after D3); last="
 							+ player.last().describe());
-					helper.assertTrue(reissued[0] == 0, "D-19 expected: no second vial while one is stashed; the"
-							+ " Alchemist issued one (" + reissued[0] + " carried)");
+					helper.assertTrue(reissued[0] == 1, "PT-19: a stashed vial is not carried, so the Alchemist reissues"
+							+ " one (" + reissued[0] + " carried)");
 				})
 				.run();
 	}
 
-	/** An Alembic set on plain floor, as at the outpost, with fungus in it: a player expects it to distill. */
-	// DECISION: D-12 the outpost Alembic has no heat source and no line says the base Alembic needs heat.
-	@GameTest(template = EMPTY, timeoutTicks = 400, batch = BATCH, required = false)
-	public static void outpostAlembicHasNoHeat(GameTestHelper helper) {
+	/**
+	 * PT-12: the Alembic stands over the block the outpost's alchemist template puts under it. With fungus in it, it
+	 * distills.
+	 */
+	@GameTest(template = EMPTY, timeoutTicks = 400, batch = BATCH)
+	public static void outpostAlembicDistillsOverItsTemplateHeat(GameTestHelper helper) {
 		ServerLevel level = helper.getLevel();
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, at(helper, HOME));
 		firstSeparationClaimed(player); // ARRANGE
@@ -930,12 +957,14 @@ public final class PlaythroughVotaryGameTests {
 		player.give(new ItemStack(BlockInit.ghastly_alembic.get()));
 		player.give(new ItemStack(BlockInit.infected_fungus.get()));
 		BlockPos alembic = at(helper, ALEMBIC);
+		BlockState underTemplateAlembic = outpostAlembicFooting(level);
 		GhastlyAlembicMenu[] menu = new GhastlyAlembicMenu[1];
 		PlaythroughClock.start(helper)
 				.then(() -> {
 					Outcome placed = player.place(alembic, BlockInit.ghastly_alembic.get());
 					helper.assertTrue(level.getBlockEntity(alembic) instanceof GhastlyAlembicBlockEntity,
 							"the Alembic stands on the floor; " + placed);
+					setBlock(helper, alembic.below(), underTemplateAlembic); // ARRANGE: the template's own footing
 					menu[0] = openStation(player, alembic, GhastlyAlembicMenu.class);
 					putInto(player, menu[0], stack -> stack.is(BlockInit.infected_fungus.get().asItem()),
 							GhastlyAlembicMenu.INGREDIENT_SLOT, "the infected fungus");
@@ -944,13 +973,34 @@ public final class PlaythroughVotaryGameTests {
 				.then(() -> {
 					GhastlyAlembicBlockEntity te = menu[0].getTe();
 					ItemStack result = te.getItem(GhastlyAlembicBlockEntity.SLOT_RESULT);
-					PlaythroughLog.note(helper, SCENARIO, "D-12 unheated Alembic after 250 ticks: status="
-							+ te.getProcessingStatus() + ", menu heated=" + menu[0].isHeated() + ", result=" + result
-							+ ", said=" + player.chat());
-					helper.assertFalse(result.isEmpty(), "D-12 expected: the outpost-style Alembic distills; it reports "
-							+ te.getProcessingStatus());
+					PlaythroughLog.note(helper, SCENARIO, "PT-12 outpost Alembic over " + underTemplateAlembic
+							+ " after 250 ticks: status=" + te.getProcessingStatus() + ", menu heated="
+							+ menu[0].isHeated() + ", result=" + result);
+					helper.assertFalse(result.isEmpty(), "PT-12: the outpost Alembic distills over its template's heat; it"
+							+ " reports " + te.getProcessingStatus());
 				})
 				.run();
+	}
+
+	/** The block the outpost's alchemist template sets directly under its Alembic. */
+	private static BlockState outpostAlembicFooting(ServerLevel level) {
+		CompoundTag saved = level.getStructureManager().get(Hemomancy.rloc("harbinger_outpost/alchemist")).orElseThrow()
+				.save(new CompoundTag());
+		ListTag palette = saved.getList("palette", Tag.TAG_COMPOUND);
+		HolderGetter<Block> blocks = level.holderLookup(Registries.BLOCK);
+		BlockPos alembic = null;
+		Map<BlockPos, Integer> states = new HashMap<>();
+		for (Tag entry : saved.getList("blocks", Tag.TAG_COMPOUND)) {
+			CompoundTag block = (CompoundTag) entry;
+			ListTag pos = block.getList("pos", Tag.TAG_INT);
+			BlockPos at = new BlockPos(pos.getInt(0), pos.getInt(1), pos.getInt(2));
+			states.put(at, block.getInt("state"));
+			if (NbtUtils.readBlockState(blocks, palette.getCompound(block.getInt("state"))).is(BlockInit.ghastly_alembic.get())) {
+				alembic = at;
+			}
+		}
+		if (alembic == null || !states.containsKey(alembic.below())) return Blocks.AIR.defaultBlockState();
+		return NbtUtils.readBlockState(blocks, palette.getCompound(states.get(alembic.below())));
 	}
 
 	/**
@@ -1006,9 +1056,9 @@ public final class PlaythroughVotaryGameTests {
 				.run();
 	}
 
-	/** P2 opens P1's centrifuge and takes P1's tagged output: a player expects P1's proof to be safe. */
-	// DECISION: D-3 rewards and proofs that lie unowned can be taken by another player.
-	@GameTest(template = EMPTY, timeoutTicks = 800, batch = BATCH, required = false)
+	/** P2 opens P1's centrifuge and cannot take P1's tagged output; P1 takes it and has the proof. */
+	// RULING PT-3 (NQ-10-10, 2026-11-14): only its player can take an assigned Centrifuge output.
+	@GameTest(template = EMPTY, timeoutTicks = 800, batch = BATCH)
 	public static void twoPlayersOneCentrifuge(GameTestHelper helper) {
 		HarbingerAlchemistEntity alchemist = PlaythroughNpcs.alchemist(helper, at(helper, ALCHEMIST));
 		PlaythroughPlayer owner = PlaythroughPlayer.create(helper, at(helper, HOME));
@@ -1045,15 +1095,16 @@ public final class PlaythroughVotaryGameTests {
 					PlaythroughLog.note(helper, SCENARIO, "D-3 the other player took " + taken.inventoryDelta()
 							+ " (their proof: " + other.has(HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE.toString())
 							+ "); the owner then took " + left.inventoryDelta() + " and has the proof: " + proof);
-					helper.assertTrue(proof, "D-3 expected: the owner's assigned output stays theirs; the other player"
-							+ " took it and the owner has no First Separation proof");
+					helper.assertTrue(taken.inventoryDelta().values().stream().noneMatch(count -> count > 0),
+							"NQ-10-10: the other player cannot take the owner's assigned output; " + taken);
+					helper.assertTrue(proof, "NQ-10-10: the owner's assigned output stays theirs and proves the step");
 				})
 				.run();
 	}
 
-	/** Two assigned spins on two centrifuges: a player expects the first spin's output to still count. */
-	// DECISION: D-18 a second assigned spin overwrites the First Separation proof.
-	@GameTest(template = EMPTY, timeoutTicks = 800, batch = BATCH, required = false)
+	/** Two assigned spins on two centrifuges: the second is refused, so the first spin's output still counts. */
+	// RULING PT-18 (2026-11-13): no second assigned spin while the first output is unrecovered (NQ-10-6 is the way out).
+	@GameTest(template = EMPTY, timeoutTicks = 800, batch = BATCH)
 	public static void secondSpinOverwritesTheProof(GameTestHelper helper) {
 		ServerLevel level = helper.getLevel();
 		HarbingerAlchemistEntity alchemist = PlaythroughNpcs.alchemist(helper, at(helper, ALCHEMIST));
@@ -1062,8 +1113,9 @@ public final class PlaythroughVotaryGameTests {
 		craftedStation(player, BlockInit.vial_centrifuge.get()); // ARRANGE
 		player.give(new ItemStack(BlockInit.vial_centrifuge.get(), 2));
 		player.give(new ItemStack(ItemInit.bloody_vial.get(), 2)); // ARRANGE: two more empty vials
-		Entity first = mob(helper, EntityType.COW, COW_A);
-		Entity second = mob(helper, EntityType.COW, COW_B);
+		// Four cows: a cow drawn once must recover before it is drawn again.
+		List<Entity> cows = List.of(mob(helper, EntityType.COW, COW_A), mob(helper, EntityType.COW, COW_B),
+				mob(helper, EntityType.COW, new int[] {18, 6}), mob(helper, EntityType.COW, new int[] {20, 3}));
 		BlockPos a = at(helper, CENTRIFUGE);
 		BlockPos b = at(helper, SECOND_CENTRIFUGE);
 		boolean[] firstCounts = new boolean[1];
@@ -1072,12 +1124,14 @@ public final class PlaythroughVotaryGameTests {
 					brief(player, alchemist);
 					player.place(a, BlockInit.vial_centrifuge.get());
 					player.place(b, BlockInit.vial_centrifuge.get());
-					for (int i = 0; i < 2; i++) {
-						sample(player, first);
-						sample(player, second);
-					}
+					for (Entity cow : cows) sample(player, cow);
 					loadAndSpin(player, openStation(player, a, VialCentrifugeMenu.class), EntityType.COW);
-					loadAndSpin(player, openStation(player, b, VialCentrifugeMenu.class), EntityType.COW);
+					VialCentrifugeMenu refused = openStation(player, b, VialCentrifugeMenu.class);
+					putInto(player, refused, stack -> sampleOf(stack, EntityType.COW), VialCentrifugeMenu.VIAL_START, "a sample");
+					putInto(player, refused, stack -> sampleOf(stack, EntityType.COW), VialCentrifugeMenu.VIAL_START + 4,
+							"a second sample");
+					StartCentrifugeButtonPacket.handle(new StartCentrifugeButtonPacket(), PayloadContexts.of(player.player()));
+					helper.assertFalse(refused.getTe().isProcessing(), "PT-18: the second assigned spin is refused");
 					player.closeMenu();
 				})
 				.until(VialCentrifugeBlockEntity.SPIN_TOTAL_TIME + 80, () -> !centrifuge(level, a).isProcessing()
@@ -1091,10 +1145,29 @@ public final class PlaythroughVotaryGameTests {
 					PlaythroughLog.note(helper, SCENARIO, "D-18 the first spin's output " + fromFirst.inventoryDelta()
 							+ " completes the step: " + firstCounts[0] + "; the second's " + fromSecond.inventoryDelta()
 							+ " completes it: " + player.has(HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE.toString()));
-					helper.assertTrue(firstCounts[0], "D-18 expected: the first assigned spin's output still completes"
-							+ " First Separation; the second spin overwrote it");
+					helper.assertTrue(firstCounts[0], "PT-18: the first assigned spin's output still completes"
+							+ " First Separation");
 				})
 				.run();
+	}
+
+	/** NQ-10-6: a pending assigned spin whose output is lost; the Alchemist strikes it and a new spin may start. */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void alchemistClearsALostAssignedSpin(GameTestHelper helper) {
+		HarbingerAlchemistEntity alchemist = PlaythroughNpcs.alchemist(helper, at(helper, ALCHEMIST));
+		PlaythroughPlayer player = PlaythroughPlayer.create(helper, at(helper, HOME));
+		PlaythroughStates.votaryD2(player); // ARRANGE
+		brief(player, alchemist);
+		helper.assertTrue(FirstSeparationAssignment.beginAssignmentSpin(player.player()) != null,
+				"an assigned spin begins"); // ARRANGE: its output is lost
+		DialogueView view = player.approach(alchemist).talkTo(alchemist);
+		helper.assertTrue(view.offers(FirstSeparationSpinDialogue.CLEAR), "the Alchemist offers to strike the spin: "
+				+ view.describe());
+		Outcome cleared = player.choose(alchemist, FirstSeparationSpinDialogue.CLEAR);
+		helper.assertTrue(cleared.rewardDelivered() && !FirstSeparationAssignment.hasPendingAssignmentSpin(player.player()),
+				"the pending spin is struck; " + cleared);
+		helper.assertFalse(player.talkTo(alchemist).offers(FirstSeparationSpinDialogue.CLEAR), "the option is gone");
+		helper.succeed();
 	}
 
 	/**
@@ -1128,15 +1201,14 @@ public final class PlaythroughVotaryGameTests {
 	}
 
 	/**
-	 * Two players, the default sleep percentage, and only the pending player in bed. The harness skips the night only
-	 * when {@code areEnoughSleeping} says the server would, and with one player awake it does not, so the pending
-	 * player stays D2. A player expects either a way to settle the blood or a line saying the night has to pass.
+	 * Two players in the world, the default sleep percentage, and only the pending player in bed: the night does not
+	 * pass, but after 120 ticks in bed (the level ticks the sleeper's counter) the blood settles when they get up.
 	 */
-	// DECISION: D-11 D3 needs a server night skip; one awake player blocks it on multiplayer.
-	@GameTest(template = EMPTY, timeoutTicks = 300, batch = CLOCK + "shared_night", required = false)
+	// RULING PT-11 (2026-11-14): Concentrated Blood settles after 100 ticks in bed, with no night skip needed.
+	@GameTest(template = EMPTY, timeoutTicks = 300, batch = CLOCK + "shared_night")
 	public static void sleepNeedsTheWholeServer(GameTestHelper helper) {
-		PlaythroughPlayer sleeper = PlaythroughPlayer.create(helper, at(helper, HOME));
-		PlaythroughPlayer awake = PlaythroughPlayer.create(helper, at(helper, SECOND_HOME));
+		PlaythroughPlayer sleeper = PlaythroughPlayer.create(helper, at(helper, HOME)).enterWorld();
+		PlaythroughPlayer awake = PlaythroughPlayer.create(helper, at(helper, SECOND_HOME)).enterWorld();
 		readyForConcentrated(sleeper); // ARRANGE
 		helper.assertTrue(ConcentratedBlood.inject(sleeper.player()), "ARRANGE: the vial is injected");
 		BlockPos bed = bed(helper, at(helper, BED_FOOT));
@@ -1155,16 +1227,27 @@ public final class PlaythroughVotaryGameTests {
 				.then(() -> {
 					if (skips[0]) skipNight(helper, sleeper);
 					List<Outcome.ChatLine> said = sleeper.chatSince(mark[0]);
-					PlaythroughLog.note(helper, SCENARIO, "D-11 after 120 ticks in bed: degree=" + sleeper.degree()
-							+ ", pending=" + ConcentratedBlood.pending(sleeper.player()) + ", said=" + said);
+					sleptFor(sleeper, 120); // ARRANGE: the living tick counts time in bed; a harness player has none
+					int timer = sleeper.player().getSleepTimer();
 					sleeper.leaveBed();
-					// Vanilla's "Respawn point set" is not an explanation of why the night will not pass.
-					boolean told = said.stream().anyMatch(line -> line.keys().stream()
-							.anyMatch(key -> !key.equals("block.minecraft.set_spawn")));
-					helper.assertTrue(sleeper.degree() == 3 || told, "D-11 expected: the pending player"
-							+ " settles or is told why the night will not pass; they stay D2 with no line");
+					PlaythroughLog.note(helper, SCENARIO, "PT-11 after 120 ticks in bed (sleep timer " + timer
+							+ "): degree=" + sleeper.degree() + ", pending=" + ConcentratedBlood.pending(sleeper.player())
+							+ ", said=" + said);
+					helper.assertTrue(sleeper.degree() == 3 && !ConcentratedBlood.pending(sleeper.player()),
+							"PT-11: the blood settles after the time in bed though the night did not pass");
 				})
 				.run();
+	}
+
+	/** Sets the sleeper's time in bed, which vanilla counts in the living tick (capped at 100), to {@code ticks}. */
+	private static void sleptFor(PlaythroughPlayer sleeper, int ticks) {
+		try {
+			var field = net.minecraft.world.entity.player.Player.class.getDeclaredField("sleepCounter");
+			field.setAccessible(true);
+			field.setInt(sleeper.player(), Math.min(100, ticks));
+		} catch (ReflectiveOperationException e) {
+			sleeper.helper().fail("cannot set the sleep counter: " + e);
+		}
 	}
 
 	/** Whether the server's sleep rule would pass the night with {@code players} online, as {@code SleepStatus} sees it. */
@@ -1362,9 +1445,9 @@ public final class PlaythroughVotaryGameTests {
 		helper.succeed();
 	}
 
-	/** The vial lying at the player's feet is not reissued while it lies there. */
-	// DECISION: D-19 reissue checks look only at the carried inventory.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	/** The vial lying at the player's feet is not carried, so the Alchemist reissues it. */
+	// RULING PT-19 (2026-11-13): reissues check only the carried inventory, kept as a lost-item safety net.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void droppedConcentratedVialIsReissued(GameTestHelper helper) {
 		HarbingerAlchemistEntity alchemist = PlaythroughNpcs.alchemist(helper, at(helper, ALCHEMIST));
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, at(helper, HOME));
@@ -1376,7 +1459,8 @@ public final class PlaythroughVotaryGameTests {
 		player.talkTo(alchemist);
 		Outcome again = player.choose(alchemist, REPLACE);
 		PlaythroughLog.note(helper, SCENARIO, "D-19 ask again while the vial lies on the ground: " + again.describe());
-		helper.assertTrue(concentrated(player) == 0, "D-19 expected: no second vial while the first lies on the ground");
+		helper.assertTrue(again.rewardDelivered() && concentrated(player) == 1,
+				"PT-19: a vial on the ground is not carried, so the Alchemist reissues one; " + again);
 		helper.succeed();
 	}
 
@@ -1451,8 +1535,8 @@ public final class PlaythroughVotaryGameTests {
 	 * The charm taken off while a Concentrated injection is pending. The topic is hidden and the night's rest refuses
 	 * without the charm. Expected: something tells the player why they did not wake an Initiate.
 	 */
-	// DECISION: D-26 charm removed while Concentrated Blood is pending leaves the player at D2 with no explanation.
-	@GameTest(template = EMPTY, timeoutTicks = 300, batch = CLOCK + "charm_off_pending", required = false)
+	// RULING PT-26 (NQ-10-2, 2026-11-14): waking with the blood pending and the charm off says the charm is needed.
+	@GameTest(template = EMPTY, timeoutTicks = 300, batch = CLOCK + "charm_off_pending")
 	public static void charmRemovedWhilePending(GameTestHelper helper) {
 		HarbingerAlchemistEntity alchemist = PlaythroughNpcs.alchemist(helper, at(helper, ALCHEMIST));
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, at(helper, VICAR));
@@ -1479,18 +1563,18 @@ public final class PlaythroughVotaryGameTests {
 							.anyMatch(key -> key.contains("charm") || key.contains("concentrated")))
 							|| atAlchemist.lineKeys().stream().anyMatch(key -> key.contains("charm"))
 							|| atVicar.lineKeys().stream().anyMatch(key -> key.contains("charm"));
-					helper.assertTrue(player.degree() == 3 || explained,
-							"D-26 expected: the player settles or is told the charm is missing; they stay D2 with no line");
+					helper.assertTrue(player.degree() == 2 && explained,
+							"PT-26: the player stays D2 and is told the charm is missing");
 				})
 				.run();
 	}
 
 	/**
-	 * Blood the player projects into their own cauldron and then absorbs back out counts toward the 500 mL First
-	 * Absorption proof, so a project-then-absorb loop meets it with no creature. Logs the count and the ticks it took.
+	 * Blood the player projects into their own cauldron and then absorbs back out does not count toward the 500 mL
+	 * First Absorption proof, so a project-then-absorb loop cannot meet it. Logs the count and the ticks it took.
 	 */
-	// DECISION: D-1b absorbing the player's own projected blood back out of their condenser counts as First Absorption.
-	@GameTest(template = EMPTY, timeoutTicks = 3000, batch = CLOCK + "round_trip", required = false)
+	// RULING PT-1b (2026-11-13): the player's own projected blood does not count toward the D1 proof.
+	@GameTest(template = EMPTY, timeoutTicks = 3000, batch = CLOCK + "round_trip")
 	public static void condenserRoundTripCountsAsAbsorption(GameTestHelper helper) {
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, at(helper, HOME));
 		PlaythroughStates.neophyteD1(player); // ARRANGE
@@ -1505,14 +1589,13 @@ public final class PlaythroughVotaryGameTests {
 					player.moveTo(cauldron.west(2));
 					start[0] = helper.getTick();
 				})
-				.step(absorbFromOwnCauldron(player, cauldron))
+				.step(absorbFromOwnCauldron(player, cauldron, false))
 				.then(() -> {
 					double absorbed = bloodcraft(player).absorbedMl();
 					PlaythroughLog.note(helper, SCENARIO, "D-1b round trip: absorbedMl=" + absorbed + " after "
 							+ (helper.getTick() - start[0]) + " ticks, with no creature");
 					helper.assertTrue(absorbed < PROOF_ML,
-							"D-1b expected (if own blood should not count): the round trip does not meet the proof; got "
-									+ absorbed);
+							"PT-1b: the round trip does not meet the proof; got " + absorbed);
 				})
 				.run();
 	}
@@ -1973,7 +2056,11 @@ public final class PlaythroughVotaryGameTests {
 	 * Projects into the cauldron until it pools near its brim, switches the cell hand to Blood Absorption by selecting
 	 * it (the selection swaps the held form), and draws the pool back out, until the ledger counts 500 mL.
 	 */
-	private static PlaythroughClock.Step absorbFromOwnCauldron(PlaythroughPlayer player, BlockPos cauldron) {
+	/**
+	 * Projects into the player's own cauldron and absorbs it back out, cycle after cycle, until 500 mL is counted.
+	 * With {@code mustReach} false the step ends after nine cycles instead of failing (PT-1b: it should not reach).
+	 */
+	private static PlaythroughClock.Step absorbFromOwnCauldron(PlaythroughPlayer player, BlockPos cauldron, boolean mustReach) {
 		GameTestHelper helper = player.helper();
 		double brim = SanguineCondenserRules.poolCapacity(0) - 10.0D;
 		return new PlaythroughClock.Step() {
@@ -1991,8 +2078,14 @@ public final class PlaythroughVotaryGameTests {
 							+ " the player's own cauldron in " + (cycles + 1) + " cycles, " + ticks + " ticks");
 					return true;
 				}
-				if (cycles > 8) helper.fail("500 mL was not counted after " + cycles + " project-and-absorb cycles: "
-						+ bloodcraft(player) + ", pool " + pool(level, cauldron));
+				if (cycles > 8) {
+					if (!mustReach) {
+						if (player.player().isUsingItem()) player.releaseHold();
+						return true;
+					}
+					helper.fail("500 mL was not counted after " + cycles + " project-and-absorb cycles: "
+							+ bloodcraft(player) + ", pool " + pool(level, cauldron));
+				}
 				switch (phase) {
 					case 0 -> {
 						player.select(PROJECTION);
@@ -2032,6 +2125,16 @@ public final class PlaythroughVotaryGameTests {
 				return "absorb 500 mL back from the cauldron at " + cauldron.toShortString();
 			}
 		};
+	}
+
+	/** ARRANGE: an unowned Ghastly Alembic holding 2,000 mL of fresh blood, as the D1 font would. */
+	private static void fontReservoir(GameTestHelper helper, BlockPos pos) {
+		setBlock(helper, pos, BlockInit.ghastly_alembic.get().defaultBlockState());
+		BlockEntity reservoir = helper.getLevel().getBlockEntity(pos);
+		helper.assertTrue(reservoir != null && HemoCapabilityAccess.getBloodVolume(reservoir).isPresent(),
+				"the font holds blood: " + reservoir);
+		reservoir.onLoad();
+		HemoCapabilityAccess.getBloodVolume(reservoir).orElseThrow().setBloodVolume(2000.0D);
 	}
 
 	/** Projects one formation's worth into the cauldron and waits for it to condense, refilling after a collapse. */

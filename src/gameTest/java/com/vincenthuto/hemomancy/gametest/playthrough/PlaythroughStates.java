@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeProgression;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -88,7 +87,7 @@ public final class PlaythroughStates {
 	}
 
 	/**
-	 * The D0 claim, done by fixture: the Hermit met (the right-click's {@code markMetHermit}), his blessing, the charm in the vascular slot, blood woken
+	 * The D0 claim, done by fixture: the Hermit's blessing, the charm in the vascular slot, blood woken
 	 * ({@code EarlyInitiation.activate}, which earns {@code the_first_awakening}), the heart claimed from
 	 * {@code hermit} in both the root and the {@code PlayerPersisted} homes ({@code TempleOathRules.recordHeartClaim}),
 	 * and the covenant waybill (the temple's lodestone) given. A null {@code hermit} stands for a temple whose Hermit
@@ -98,8 +97,7 @@ public final class PlaythroughStates {
 		ServerPlayer server = player.player();
 		freshD0(player);
 		UUID hermitId = hermit == null ? UUID.randomUUID() : hermit.getUUID();
-		// A real charm-bearer has right-clicked a Hermit, which is what records the meeting (F-6).
-		DialogueHubFactory.markMetVicar(server);
+		// A charm-bearer has met a Hermit, not yet a Vicar: other speakers still send them to him until they talk to him.
 		TempleOathRules.bless(server, hermitId);
 		HemoCapabilityAccess.getEquipment(server).setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
 		TempleOathRules.recordHeartClaim(server, hermitId);
@@ -224,9 +222,9 @@ public final class PlaythroughStates {
 	// player's own lines, Fanes and Blooms are also cleared by PlaythroughCleanup.worldOwnedBy).
 	// =============================================================================================================
 
-	/** The bloodline name the Founding rite gives (code authoritative; NPC-6 logs that it is English). */
+	/** The founder name the Founding rite stores; the line's name is built from it in the reader's language (PT-87). */
 	public static String lineName(PlaythroughPlayer player) {
-		return player.player().getName().getString() + "'s Blood Line";
+		return player.player().getName().getString();
 	}
 
 	/**
@@ -261,6 +259,13 @@ public final class PlaythroughStates {
 		tag.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
 		tag.put(UnsignedLedgerItem.TAG_BLOODLINE, line.serialize());
 		ledger.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		return ledger;
+	}
+
+	/** A signed ledger for {@code line} written at overworld game time {@code mintedAt}, as Bloodline Recall writes one. */
+	public static ItemStack signedLedger(Bloodline line, long mintedAt) {
+		ItemStack ledger = new ItemStack(ItemInit.unsigned_ancestral_ledger.get());
+		UnsignedLedgerItem.sign(ledger, line, mintedAt);
 		return ledger;
 	}
 
@@ -513,7 +518,7 @@ public final class PlaythroughStates {
 
 	/**
 	 * {@code standing} with {@code house} as acts leave it: the Court known (FOUND) when it is not, then the house's
-	 * {@code visit} act for GUEST, and a custom act ({@code playthrough_custom}) on top for FRIEND, each through
+	 * {@code visit} act for GUEST, and a custom act ({@code custom_playthrough}) on top for FRIEND, each through
 	 * {@code CourtLife.recordAct}. STRANGER changes nothing.
 	 */
 	public static void courtStanding(PlaythroughPlayer player, CourtHouse house, CourtStandingRules.Standing standing) {
@@ -523,7 +528,7 @@ public final class PlaythroughStates {
 			CourtLife.recordAct(server, house, CourtLife.VISIT_ACT, CourtStandingRules.ActKind.VISIT);
 		}
 		if (standing.level() >= CourtStandingRules.Standing.FRIEND.level()) {
-			CourtLife.recordAct(server, house, "playthrough_custom", CourtStandingRules.ActKind.CUSTOM);
+			CourtLife.recordAct(server, house, "custom_playthrough", CourtStandingRules.ActKind.CUSTOM);
 		}
 		player.helper().assertTrue(CourtLife.standing(server, house) == standing,
 				"standing with " + house + " is " + standing + ", not " + CourtLife.standing(server, house));
@@ -543,13 +548,19 @@ public final class PlaythroughStates {
 		if (now < score) CircusPlayerProgress.addAcclimation(player.player(), score - now);
 	}
 
+	/** One school report on record (An Empty Ring), which the D-30 pact gate asks for with Degree 4. */
+	public static void schoolReport(PlaythroughPlayer player) {
+		CircusApprenticeshipProgress.state(player.player()).putBoolean("quest.empty_ring", true);
+	}
+
 	/**
 	 * A chosen pavilion route with the challenges in {@code challengeMask} (bits 0-4) done, each through
-	 * {@code CircusPlayerProgress.completeChallenge} with no acclimation of its own.
+	 * {@code CircusPlayerProgress.completeChallenge} with no acclimation of its own, and the school report the pact asks.
 	 */
 	public static void pavilionRoute(PlaythroughPlayer player, CircusRouteRules.Route route, int challengeMask) {
 		ServerPlayer server = player.player();
 		CircusDiscoveryProgress.markDiscovered(server);
+		schoolReport(player);
 		CircusPlayerProgress.chooseRoute(server, route);
 		for (int challenge = 0; challenge < 5; challenge++) {
 			if ((challengeMask & (1 << challenge)) != 0) CircusPlayerProgress.completeChallenge(server, challenge, 0);

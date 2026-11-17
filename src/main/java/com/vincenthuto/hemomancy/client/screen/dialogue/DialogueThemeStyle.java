@@ -18,6 +18,7 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 			case UNSTAINED -> "unstained";
 			case FUNGAL -> "fungal";
 			case STILL, STILL_MATERIAL -> "still";
+			case CIRCUS -> "circus";
 		};
 		return switch (theme) {
 			case UNSTAINED -> create(name, 0xFFD9E3F4, 0xFFC4C8D4, 0xFFAABBE0, 0xFF687080,
@@ -26,6 +27,8 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 					0x668D5B28, 0xFF2B1A0E, 0xFFD17B32, 0x66472A15, 0xFFFFC66D);
 			case STILL, STILL_MATERIAL -> create(name, 0xFFD7F2F1, 0xFFC7D9DC, 0xFFB9E2E5, 0xFF65777B,
 					0x66758F94, 0xFF101B20, 0xFF75B9C0, 0x6632474C, 0xFFE2FAF8);
+			case CIRCUS -> create(name, 0xFFEADBBE, 0xFFCDBFAA, 0xFFE2565F, 0xFF6F5A55,
+					0x669A2A35, 0xFF1F0A0E, 0xFFC23A45, 0x664D1820, 0xFFEEDFC2);
 			default -> create(name, 0xFFE35A68, 0xFFC8B8B8, 0xFFE7A66F, 0xFF765F62,
 					0x668B2735, 0xFF26090D, 0xFFB93447, 0x6643151D, 0xFFFFC07E);
 		};
@@ -68,6 +71,11 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 
 	public static ResourceLocation statusIcon(String state) {
 		return sprite("dialogue/icons/" + state);
+	}
+
+	/** HN-9: every Crimson Troupe speaker shows the one troupe crest; anyone else their own. */
+	public static ResourceLocation crest(DialogueTheme theme, ResourceLocation styleId) {
+		return theme == DialogueTheme.CIRCUS ? sprite("dialogue/crests/circus") : crest(styleId);
 	}
 
 	public static ResourceLocation crest(ResourceLocation styleId) {

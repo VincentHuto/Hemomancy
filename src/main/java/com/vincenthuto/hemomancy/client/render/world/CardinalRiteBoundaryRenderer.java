@@ -1124,6 +1124,8 @@ public class CardinalRiteBoundaryRenderer {
 		ItemStack staff = plantedStaffStack();
 		// The rite owner's fitting, not the viewer's.
 		BakedModel model = mc.getModelManager().getModel(staffModel(staffVisual(mc, rite.getOwner())));
+		// The owner's growth rings, which the planted model's own overrides never add.
+		model = com.vincenthuto.hemomancy.client.render.item.harbinger.LivingStaffRingModel.withRings(model, rite.getStaffRings());
 		model = ClientHooks.handleCameraTransforms(poseStack, model, ItemDisplayContext.FIXED, false);
 		poseStack.translate(-0.5F, -0.5F, -0.5F);
 		CardinalRitePlantedStaffGeometry.MeltStyle melt = plantedPose.melt();

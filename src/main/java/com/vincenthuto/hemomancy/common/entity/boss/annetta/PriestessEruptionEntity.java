@@ -44,6 +44,12 @@ public class PriestessEruptionEntity extends Entity {
 
     /** Sets an eruption on the floor under {@code at}, bursting after {@code delay} ticks. */
     public static void spawn(ServerLevel level, @Nullable LivingEntity owner, Vec3 at, int delay, boolean major, float damage) {
+        spawn(level, owner, at, delay, major, damage, true);
+    }
+
+    /** As above; a {@code sounded} false thorn bursts without a sound, so a long line does not stack them (UN-17). */
+    public static void spawn(ServerLevel level, @Nullable LivingEntity owner, Vec3 at, int delay, boolean major, float damage,
+            boolean sounded) {
         PriestessEruptionEntity eruption = new PriestessEruptionEntity(EntityInit.priestess_eruption.get(), level);
         Vec3 floor = floor(level, at);
         if (floor == null) return;
@@ -52,6 +58,7 @@ public class PriestessEruptionEntity extends Entity {
         eruption.entityData.set(MAJOR, major);
         eruption.ownerId = owner == null ? null : owner.getUUID();
         eruption.damage = damage;
+        eruption.setSilent(!sounded);
         level.addFreshEntity(eruption);
     }
 
@@ -109,6 +116,7 @@ public class PriestessEruptionEntity extends Entity {
         server.sendParticles(HemoParticleData.bloodCell(BLOOD), getX(), getY() + 0.6D, getZ(), count, 0.35D, 0.9D, 0.35D, 0.16D);
         server.sendParticles(HemoParticleData.bloodCell(ICHOR), getX(), getY() + 0.4D, getZ(), count / 3, 0.3D, 0.6D, 0.3D, 0.08D);
         server.sendParticles(HemoParticleData.hitGlow(BLOOD), getX(), getY() + 0.3D, getZ(), major ? 4 : 1, 0.2D, 0.1D, 0.2D, 0.0D);
+        if (isSilent()) return;
         server.playSound(null, blockPosition(), SoundEvents.EVOKER_FANGS_ATTACK, SoundSource.HOSTILE, major ? 1.4F : 0.9F,
                 0.55F + this.random.nextFloat() * 0.15F);
         server.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH, SoundSource.HOSTILE, 0.8F, 0.5F);

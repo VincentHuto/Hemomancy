@@ -76,9 +76,8 @@ public class GoreboundHulkEntity extends GroundPuppetEntity implements SyncedBou
 		if (BoundSummonBehavior.commonServerTick(this, this)) {
 			Optional<Player> owner = BoundSummonBehavior.ownerFor(this, this);
 			if (getTarget() == null && owner.isPresent()
-					&& BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner.get(), this)
-					&& distanceToSqr(owner.get()) > 25.0) {
-				getNavigation().moveTo(owner.get(), 0.85);
+					&& BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner.get(), this)) {
+				BoundSummonBehavior.followOwnerOnFoot(this, owner.get(), 0.85);
 			}
 		}
 	}

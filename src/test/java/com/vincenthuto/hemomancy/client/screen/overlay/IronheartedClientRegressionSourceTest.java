@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class IronheartedClientRegressionSourceTest {
 	@Test
@@ -140,10 +140,6 @@ class IronheartedClientRegressionSourceTest {
 				.contains("hemomancy:item/memories/memory_ironhearted_overlay"));
 		assertTrue(radial.contains("ManipulationIconResolver.overlay(manipulation.getName())"));
 		assertTrue(loadout.contains("ManipulationIconResolver.overlay(ref.id())"));
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(Path.of(path));
 	}
 
 	private static int occurrences(String source, String needle) {

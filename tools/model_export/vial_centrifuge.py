@@ -116,7 +116,7 @@ class Model:
                 self.box(name, (cx - half, y0, cz + lo), (cx + half, y1, cz + hi), mat, rot, faces=sides)
 
     def disc(self, name, axis, centre, radius, start, end, mat, cap=None):
-        """Stepped round prism; caps share one UV frame so the face reads whole."""
+        """Stepped round prism; caps share one face-sized UV frame at the texture's centre, one texel per unit."""
         cap = cap or mat
         i = 'xyz'.index(axis)
         o = [k for k in range(3) if k != i]
@@ -131,9 +131,10 @@ class Model:
             before = len(self.elements)
             self.box(name, a, b, mat)
             face = []
+            frame = min(2 * radius, 16)
             for k in o:
-                lo = (a[k] - (centre[k] - radius)) / (2 * radius) * 16
-                hi = (b[k] - (centre[k] - radius)) / (2 * radius) * 16
+                lo = 8 - frame / 2 + (a[k] - (centre[k] - radius)) / (2 * radius) * frame
+                hi = 8 - frame / 2 + (b[k] - (centre[k] - radius)) / (2 * radius) * frame
                 face.append((round(lo, 3), round(hi, 3)))
             for side in ends:
                 self.elements[before]['faces'][side] = (cap, [face[0][0], 16 - face[1][1], face[0][1], 16 - face[1][0]])

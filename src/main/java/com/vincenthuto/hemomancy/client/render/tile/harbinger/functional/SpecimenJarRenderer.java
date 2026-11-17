@@ -1,11 +1,14 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.SpecimenJarBlock;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FargoneEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SpecimenJarBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.KeptSpecimen;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -18,19 +21,45 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.WeakHashMap;
 
+/**
+ * Draws the creature kept in a Specimen Jar, and holds the display logic the Specimen Vat shares (core-loop Track 5).
+ * Each vessel keeps its own display entity, rebuilt only when its specimen changes, so many jars of different
+ * creatures do not rebuild each other's every frame. Past {@link #ANIMATE_RANGE} blocks the display stops animating,
+ * and nothing is drawn past {@link #VIEW_DISTANCE}. A husk lies on its side in the dark; a failing creature rattling
+ * its glass shakes.
+ */
 public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlockEntity> {
 	private static final String DISPLAY_ENTITY_TAG = "hemomancy:specimen_display";
 	private static final float INNER_JAR_FIT = 0.52F;
 	private static final float MAX_SPECIMEN_SCALE = 0.75F;
 	private static final float DEFAULT_SPECIMEN_SCALE = 0.45F;
+	public static final int VIEW_DISTANCE = 48;
+	public static final double ANIMATE_RANGE = 16.0D;
+	private static final int HUSK_LIGHT = LightTexture.pack(4, 4);
+	private static final float HUSK_SHRINK = 0.66F;
+	/** Far enough into the death animation that the body lies fully over; the display entity never ticks it on. */
+	private static final int HUSK_DEATH_TIME = 19;
+	/** One display per vessel; weak, so a vessel that goes away takes its display with it. */
+	private static final Map<BlockEntity, Display> DISPLAYS = new WeakHashMap<>();
 
+	/** The item renderer's own display (one jar item at a time). */
 	private Entity cachedEntity;
 	private long cachedAnimationTick = Long.MIN_VALUE;
 	private String cachedKey = "";
+
+	private static final class Display {
+		int revision = Integer.MIN_VALUE;
+		Entity entity;
+		long animationTick = Long.MIN_VALUE;
+	}
 
 	public SpecimenJarRenderer(BlockEntityRendererProvider.Context context) {
 	}
@@ -40,29 +69,114 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 	}
 
 	@Override
+	public int getViewDistance() {
+		return VIEW_DISTANCE;
+	}
+
+	@Override
+	public AABB getRenderBoundingBox(SpecimenJarBlockEntity jar) {
+		return BroodThreadRenderer.bounds(jar, new AABB(jar.getBlockPos()));
+	}
+
+	@Override
 	public void render(SpecimenJarBlockEntity jar, float partialTicks, PoseStack poseStack, MultiBufferSource buffer,
 			int combinedLight, int combinedOverlay) {
-		if (!jar.hasSpecimen()) {
+		KeptSpecimen kept = jar.kept();
+		if (!kept.occupied()) {
 			return;
 		}
-
+		BroodThreadRenderer.draw(jar, partialTicks, poseStack, buffer);
+		Entity entity = display(jar, kept);
+		if (entity == null) {
+			return;
+		}
 		Direction facing = jar.getBlockState().getValue(SpecimenJarBlock.FACING);
 		poseStack.pushPose();
 		poseStack.translate(0.5D, 0.0D, 0.5D);
 		poseStack.mulPose(Vector3.YP.rotationDegrees(180.0F - facing.toYRot()).toMoj());
 		poseStack.translate(-0.5D, 0.0D, -0.5D);
-		renderSpecimen(jar.getLevel(), jar.getSpecimenCopy(), partialTicks, poseStack, buffer, combinedLight);
+		float scale = specimenFitScale(entity);
+		drawKept(jar, kept, entity, scale, 0.12D, partialTicks, poseStack, buffer, combinedLight);
 		poseStack.popPose();
 	}
 
+	/**
+	 * Draws a vessel's creature at {@code scale}, standing {@code floor} blocks above the vessel's base in the current
+	 * pose (already turned to the vessel's facing and centred at x, z 0.5): animated near the camera, still further
+	 * off, lying dark as a husk, shaking while it rattles.
+	 */
+	public static void drawKept(BlockEntity vessel, KeptSpecimen kept, Entity entity, float scale, double floor,
+			float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
+		drawKept(vessel, kept, entity, scale, floor, null, 0.0F, partialTicks, poseStack, buffer, light);
+	}
+
+	/**
+	 * As above, but {@code centring} (in the creature's own units, after the half turn and the pitch) replaces the
+	 * per-creature offset table when the vessel has measured where its creature's model actually lies, and
+	 * {@code pitch} tips a long creature nose-up about its side-to-side axis. A husk ignores both and lies down.
+	 */
+	public static void drawKept(BlockEntity vessel, KeptSpecimen kept, Entity entity, float scale, double floor,
+			Vec3 centring, float pitch, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
+		Level level = vessel.getLevel();
+		if (level == null) return;
+		Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+		boolean near = camera.distanceToSqr(Vec3.atCenterOf(vessel.getBlockPos())) <= ANIMATE_RANGE * ANIMATE_RANGE;
+		Display display = DISPLAYS.get(vessel);
+		if (near && !kept.husk() && display != null) updateRenderAnimation(entity, level, display);
+		poseStack.pushPose();
+		poseStack.translate(0.5D, floor, 0.5D);
+		float shake = kept.shake(level.getGameTime(), partialTicks);
+		if (shake > 0.0F) {
+			float time = AnimationTime.gameTime(level, partialTicks);
+			poseStack.translate(Math.sin(time * 2.7F) * 0.035F * shake, 0.0D, Math.cos(time * 3.1F) * 0.03F * shake);
+		}
+		// What is left of a husk has fallen, shrunk and darkened: the death pose and tint, at most two thirds the size.
+		float shown = kept.husk() ? scale * HUSK_SHRINK : scale;
+		// A young just born quickens: it swells and settles in its glass for a moment and a half (P6).
+		float quickening = kept.quickening(level.getGameTime(), partialTicks);
+		if (quickening > 0.0F) {
+			float time = AnimationTime.gameTime(level, partialTicks);
+			shown *= 1.0F + 0.18F * quickening * Math.abs(net.minecraft.util.Mth.sin(time * 0.55F));
+		}
+		if (entity instanceof LivingEntity living) living.deathTime = kept.husk() ? HUSK_DEATH_TIME : 0;
+		poseStack.scale(shown, shown, shown);
+		if (centring == null || kept.husk()) applySpecimenVisualOffset(entity, poseStack);
+		else {
+			poseStack.translate(centring.x, centring.y, centring.z);
+			if (pitch != 0.0F) poseStack.mulPose(Vector3.XP.rotationDegrees(pitch).toMoj());
+		}
+		poseStack.mulPose(Vector3.YP.rotationDegrees(180.0F).toMoj());
+		// The death pose tips the body over at its feet; shift it back so the fallen body lies over the floor's middle.
+		if (kept.husk()) poseStack.translate(-entity.getBbHeight() * 0.5D, 0.0D, 0.0D);
+		Minecraft.getInstance().getEntityRenderDispatcher().render(entity, 0.0D, 0.0D, 0.0D, 0.0F,
+				near && !kept.husk() ? partialTicks : 0.0F, poseStack, buffer, kept.husk() ? HUSK_LIGHT : light);
+		poseStack.popPose();
+	}
+
+	/** The vessel's display entity, rebuilt only when its specimen changes. */
+	public static Entity display(BlockEntity vessel, KeptSpecimen kept) {
+		Level level = vessel.getLevel();
+		if (level == null) return null;
+		Display display = DISPLAYS.computeIfAbsent(vessel, key -> new Display());
+		if (display.revision != kept.revision() || display.entity == null) {
+			display.revision = kept.revision();
+			display.animationTick = Long.MIN_VALUE;
+			display.entity = createDisplayEntity(level, kept.specimen());
+		}
+		return display.entity;
+	}
+
+	/** For the item renderer: one jar item's creature, cached by its saved data. */
 	public void renderSpecimen(Level level, CompoundTag specimen, float partialTicks, PoseStack poseStack,
 			MultiBufferSource buffer, int combinedLight) {
 		Entity entity = getOrCreateEntity(level, specimen);
 		if (entity == null) {
 			return;
 		}
-		updateRenderAnimation(entity, level);
-
+		if (cachedAnimationTick != level.getGameTime()) {
+			cachedAnimationTick = level.getGameTime();
+			freeze(entity, level);
+		}
 		float scale = specimenFitScale(entity);
 		poseStack.pushPose();
 		poseStack.translate(0.5D, 0.12D, 0.5D);
@@ -74,7 +188,7 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 		poseStack.popPose();
 	}
 
-	private static float specimenFitScale(Entity entity) {
+	public static float specimenFitScale(Entity entity) {
 		float footprint = specimenVisualFootprint(entity);
 		if (footprint <= 0.0F) {
 			return DEFAULT_SPECIMEN_SCALE;
@@ -158,37 +272,52 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 			return cachedEntity;
 		}
 		cachedAnimationTick = Long.MIN_VALUE;
+		cachedEntity = createDisplayEntity(level, specimen);
+		cachedKey = key;
+		return cachedEntity;
+	}
+
+	private static Entity createDisplayEntity(Level level, CompoundTag specimen) {
+		if (specimen == null || specimen.isEmpty()) return null;
 		CompoundTag renderTag = specimen.copy();
 		ListTag pos = new ListTag();
 		pos.add(net.minecraft.nbt.DoubleTag.valueOf(0.0D));
 		pos.add(net.minecraft.nbt.DoubleTag.valueOf(0.0D));
 		pos.add(net.minecraft.nbt.DoubleTag.valueOf(0.0D));
 		renderTag.put("Pos", pos);
-		Optional<Entity> entity = EntityType.create(renderTag, level);
-		cachedEntity = entity.orElse(null);
-		cachedKey = key;
-		if (cachedEntity != null) {
-			// This disposable client copy never updates physical water state or writes back to the jar.
-			cachedEntity.getPersistentData().putBoolean(DISPLAY_ENTITY_TAG, true);
-			cachedEntity.setPos(0.0D, 0.0D, 0.0D);
-			cachedEntity.setYRot(0.0F);
-			cachedEntity.setXRot(0.0F);
+		Optional<Entity> created = EntityType.create(renderTag, level);
+		Entity entity = created.orElse(null);
+		if (entity != null) {
+			// This disposable client copy never updates physical water state or writes back to the vessel.
+			entity.getPersistentData().putBoolean(DISPLAY_ENTITY_TAG, true);
+			entity.setPos(0.0D, 0.0D, 0.0D);
+			entity.setYRot(0.0F);
+			entity.setXRot(0.0F);
+			freeze(entity, level);
 		}
-		return cachedEntity;
+		return entity;
 	}
 
-	private void updateRenderAnimation(Entity entity, Level level) {
+	private static void updateRenderAnimation(Entity entity, Level level, Display display) {
 		long gameTime = level.getGameTime();
-		if (cachedAnimationTick == gameTime) {
+		if (display.animationTick == gameTime) {
 			return;
 		}
-		cachedAnimationTick = gameTime;
-		int visualTick = (int) (gameTime % Integer.MAX_VALUE);
+		display.animationTick = gameTime;
+		freeze(entity, level);
+	}
+
+	private static void freeze(Entity entity, Level level) {
+		int visualTick = (int) (level.getGameTime() % Integer.MAX_VALUE);
 		entity.tickCount = visualTick;
 		entity.setPos(0.0D, 0.0D, 0.0D);
+		entity.setOldPosAndRot();
 		entity.setYRot(0.0F);
 		entity.setXRot(0.0F);
-
+		// Loading the save set the previous-tick rotation to the creature's last look; left there, every frame lerps
+		// from that look back to rest and snaps again at the next tick, so the head twitches.
+		entity.yRotO = 0.0F;
+		entity.xRotO = 0.0F;
 		if (entity instanceof LivingEntity living) {
 			freezeCapturedSpecimen(living);
 		}
@@ -202,6 +331,10 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 		living.yBodyRotO = 0.0F;
 		living.yHeadRot = 0.0F;
 		living.yHeadRotO = 0.0F;
+		living.hurtTime = 0;
+		living.attackAnim = 0.0F;
+		living.oAttackAnim = 0.0F;
+		living.swinging = false;
 		living.walkAnimation.setSpeed(0.0F);
 		living.walkAnimation.update(0.0F, 1.0F);
 	}

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.structure;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.rite.structure.BloodCraftingPatternSearchRules;
 
 import java.util.ArrayList;
@@ -9,7 +10,8 @@ public final class BloodCraftingPatternSearchRulesTest {
 	private BloodCraftingPatternSearchRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		estimatesLargeRitesAsMuchMoreExpensiveThanSmallRites();
 		sortsSmallPatternsBeforeLargePatterns();
 		skipsPatternsThatDoNotContainTheClickedSymbol();

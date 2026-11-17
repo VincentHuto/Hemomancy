@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class BloodCrystalGrowthResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,14 +16,15 @@ public final class BloodCrystalGrowthResourceTest {
 	private BloodCrystalGrowthResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String blockInit = readSource("com/vincenthuto/hemomancy/common/init/BlockInit.java");
 		String crystalBlock = readSource("com/vincenthuto/hemomancy/common/block/harbinger/rite/BloodCrystalBlock.java");
 		String alembic = readSource("com/vincenthuto/hemomancy/common/tile/harbinger/crafting/GhastlyAlembicBlockEntity.java");
 		String crystalBlockstate = readResource("assets/hemomancy/blockstates/blood_crystal.json");
 		String crystalLoot = readResource("data/hemomancy/loot_table/blocks/blood_crystal.json");
 
-		assertDoesNotContain("blood crystal bud block should no longer be registered", blockInit,
+		assertNotContains("blood crystal bud block should no longer be registered", blockInit,
 				"blood_crystal_bud");
 		assertDoesNotExist("blood crystal bud source should be removed",
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/block/harbinger/BloodCrystalBudBlock.java"));
@@ -38,8 +44,8 @@ public final class BloodCrystalGrowthResourceTest {
 				"public boolean tryGrow(Level level, BlockPos pos, BlockState state, RandomSource rand)");
 
 		assertContains("alembic leak should place blood crystals", alembic, "BlockInit.blood_crystal.get()");
-		assertDoesNotContain("alembic leak should not reference bud block", alembic, "blood_crystal_bud");
-		assertDoesNotContain("alembic leak should not import bud block", alembic, "BloodCrystalBudBlock");
+		assertNotContains("alembic leak should not reference bud block", alembic, "blood_crystal_bud");
+		assertNotContains("alembic leak should not import bud block", alembic, "BloodCrystalBudBlock");
 
 		for (int age = 0; age <= 3; age++) {
 			assertContains("blood crystal blockstate should include age " + age, crystalBlockstate,
@@ -54,7 +60,7 @@ public final class BloodCrystalGrowthResourceTest {
 				"\"age\": \"2\"");
 		assertContains("blood crystal loot should condition mature shard drops on age 3", crystalLoot,
 				"\"age\": \"3\"");
-		assertDoesNotContain("blood crystal loot should not mention bud ids", crystalLoot,
+		assertNotContains("blood crystal loot should not mention bud ids", crystalLoot,
 				"blood_crystal_bud");
 	}
 
@@ -66,13 +72,6 @@ public final class BloodCrystalGrowthResourceTest {
 		return read(RESOURCE_ROOT.resolve(path));
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
@@ -82,18 +81,6 @@ public final class BloodCrystalGrowthResourceTest {
 	private static void assertDoesNotExist(String label, Path path) {
 		if (Files.exists(path)) {
 			throw new AssertionError(label + ": found " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
 		}
 	}
 }

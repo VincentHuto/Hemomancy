@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -81,7 +82,7 @@ public class SanguineMonolithItemRenderer extends BlockEntityWithoutLevelRendere
 			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 		}
 
-		float timeSeconds = (System.currentTimeMillis() % 240000L) / 1000.0f;
+		float timeSeconds = (float) (AnimationTime.itemMillis() % 240000.0) / 1000.0f;
 		float shaderSeed = Math.floorMod(System.identityHashCode(stack), 10007) / 10007.0f + stack.getCount() * 0.011f;
 		VertexConsumer vertexConsumer = buffer.getBuffer(
 				HemoRenderTypes.monolithEntitySurface(timeSeconds, shaderSeed, 0.45f, 0.88f, isGui ? 6.5f : 7.5f));

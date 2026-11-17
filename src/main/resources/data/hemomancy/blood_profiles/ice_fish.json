@@ -1,5 +1,7 @@
 {
-  "tempers": [],
+  "tempers": [
+    "congeatio"
+  ],
   "properties": [
     "hemomancy:blood_properties/aquatic"
   ],

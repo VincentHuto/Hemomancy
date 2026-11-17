@@ -1,17 +1,21 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+
 public final class VirtualFieldNotesSourceTest {
 	private static final Path JAVA_ROOT = Path.of("src/main/java");
-	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
 	private VirtualFieldNotesSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		liberKnowledgePersistsPendingMemos();
 		packetSyncCarriesPendingMemos();
 		memoHelperCapturesIntoPlayerKnowledge();
@@ -41,8 +45,8 @@ public final class VirtualFieldNotesSourceTest {
 		assertContains("capture records pending memo", source, "knowledge.recordPendingMemo(memoId)");
 		assertContains("dictation filter helper exists", source, "getDictatableMemosForPath(");
 		assertContains("dictation removes written pending memos", source, "knowledge.removePendingMemos(dictatedMemos)");
-		assertDoesNotContain("capture does not require field notes", captureMethod(source), "findFieldNotes(player)");
-		assertDoesNotContain("capture does not require ink", captureMethod(source), "getInkPath(notes)");
+		assertNotContains("capture does not require field notes", captureMethod(source), "findFieldNotes(player)");
+		assertNotContains("capture does not require ink", captureMethod(source), "getInkPath(notes)");
 	}
 
     private static void dictationTableDictatesPlacedLiberOnNormalClick() throws IOException {
@@ -67,17 +71,4 @@ public final class VirtualFieldNotesSourceTest {
 	private static String read(String relativePath) throws IOException {
 		return Files.readString(JAVA_ROOT.resolve(relativePath)).replace("\r\n", "\n");
 	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": still contains " + forbidden);
-		}
-	}
-
 }

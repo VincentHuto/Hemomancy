@@ -67,9 +67,9 @@
   "about": "a discovery message that the rough pavilion comes into focus and the player has found the Circus",
   "tone": "hushed, uncanny"
  },
- "hemomancy.circus.finale.claimed": {
-  "about": "a message that another performer has already claimed this pavilion and it will not answer the player",
-  "tone": "cold, closed"
+ "hemomancy.circus.finale.busy": {
+  "about": "a message that another player is performing in this pavilion's ring now, and the player should come back when that act ends",
+  "tone": "plain, closed"
  },
  "hemomancy.circus.finale.complete.liberation": {
   "about": "narration of the Liberation finale ending: the Ringmaster falls, the three captives and their anchors are gone, and the carousel is ruined for good",
@@ -83,6 +83,10 @@
   "about": "narration that no troupe members are left to fall, so the ring stands empty and the Ringmaster comes down to face the player himself",
   "tone": "ominous, theatrical"
  },
+ "hemomancy.circus.finale.no_route": {
+  "about": "a message to a visitor who has not chosen a route: accept or refuse the Ringmaster's bargain before asking for the finale",
+  "tone": "clipped, plain"
+ },
  "hemomancy.circus.finale.not_ready": {
   "about": "a message that the player is not ready for Succession and must finish every controlled act and complete their attunement first",
   "tone": "clipped, firm"
@@ -90,6 +94,10 @@
  "hemomancy.circus.finale.ringmaster_lost": {
   "about": "a message that the Ringmaster vanished before the finale ended, so the pavilion releases the player and the act closes unfinished",
   "tone": "hollow, anticlimactic"
+ },
+ "hemomancy.circus.finale.settled": {
+  "about": "a message that this pavilion's ending has already been decided and its finale will not play again",
+  "tone": "flat, final"
  },
  "hemomancy.circus.option.accept": {
   "about": "accepting the Ringmaster's bargain by saying they will succeed him",
@@ -155,26 +163,6 @@
   "about": "a warning that choosing Succession keeps the pavilion standing but binds its trials to the player, with one chance to change their mind before either ending completes",
   "tone": "blunt, grave"
  },
- "hemomancy.circus.school.aftermath.liberation": {
-  "about": "a professor noting that the player chose Liberation, and that cutting the captive strings kills the people bound to them, so no living prisoners will walk free",
-  "tone": "blunt, sober"
- },
- "hemomancy.circus.school.aftermath.liberation_complete": {
-  "about": "a professor saying the captives and Ringmaster are dead and the carousel ruined, that teaching continues from the surviving camps, and that no victory brings those people back",
-  "tone": "somber, plain"
- },
- "hemomancy.circus.school.aftermath.neutral": {
-  "about": "a professor saying nobody has settled the Ringmaster's bargain yet and the player may take lessons without agreeing to either ending",
-  "tone": "even, reassuring"
- },
- "hemomancy.circus.school.aftermath.succession": {
-  "about": "a professor noting the player chose Succession, that its final act is the Ringmaster's usual challenges, and that the apprenticeship adds nothing to it",
-  "tone": "even, matter-of-fact"
- },
- "hemomancy.circus.school.aftermath.succession_complete": {
-  "about": "a professor noting that Succession left the pavilion standing and gave the player its Pattern, and that professors keep teaching even those who distrust the bargain",
-  "tone": "measured, wary"
- },
  "hemomancy.circus.school.ask_aftermath": {
   "about": "asking a professor what happens to the school after the final act",
   "tone": "curious"
@@ -182,6 +170,10 @@
  "hemomancy.circus.school.ask_colleagues": {
   "about": "asking a professor what they think of the other professors",
   "tone": "curious, casual"
+ },
+ "hemomancy.circus.school.ask_empty_ring": {
+  "about": "asking the Threadkeeper what the first entry on the player's school account is",
+  "tone": "curious, plain"
  },
  "hemomancy.circus.school.ask_history": {
   "about": "asking a professor how they joined the Troupe",
@@ -199,6 +191,26 @@
   "about": "the Acrobat promising the ropes will stay sound for the next pupil, and saying whoever conducts next does not get to tell the wings how to remember flight",
   "tone": "light, wry, resolved"
  },
+ "hemomancy.circus.school.circus_acrobat.aftermath.liberation": {
+  "about": "the acrobat warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.aftermath.liberation_complete": {
+  "about": "the acrobat saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.aftermath.neutral": {
+  "about": "the acrobat saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.aftermath.succession": {
+  "about": "the acrobat saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.aftermath.succession_complete": {
+  "about": "the acrobat saying Succession left the pavilion standing and gave the player its Pattern, and the professor still teaches whatever they think of the bargain",
+  "tone": "in the professor's own voice"
+ },
  "hemomancy.circus.school.circus_acrobat.colleagues": {
   "about": "the Acrobat describing their act as up, strike, back down, noting pupils forget the down while the Fire Breather does not since an act needs a recovery as much as an entrance, and that the Strongman calls it a wasted lift, which they dismiss",
   "tone": "light, wry, teasing"
@@ -210,6 +222,30 @@
  "hemomancy.circus.school.circus_acrobat.lesson": {
   "about": "the Acrobat pointing out the Veinwing Vulture's wing spars and scarlet tendons, explaining it is built never hatched as an aerial striker, requiring Degree 3, preparing its frame and its Cardinal Ordeal, then a practical where it chases a rehearsal threat from the air, hits it, and swings back when recalled",
   "tone": "light, wry, instructive"
+ },
+ "hemomancy.circus.school.circus_acrobat.preparation": {
+  "about": "the acrobat listing the preparation: attune and charge a Crossbar, spare Filaments, the lesson gives the ordeal recipe, the ordeal wants Degree, blood, frame and Crossbar (returned), the practical with known bodies against two live threats within twenty blocks and five minutes, and how to retry",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.status.degree": {
+  "about": "the acrobat saying the player lacks the Degree for their shape yet, and inviting them to look on and ask how they came to the Troupe",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.status.lesson": {
+  "about": "the acrobat saying the player is ready to be taught their shape and should ask",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.status.mastered": {
+  "about": "the acrobat saying the practical is passed and the school books one paid guest act a day",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.status.ordeal": {
+  "about": "the acrobat saying their teaching is done and recorded, and the player prepares the frame and beats the Cardinal Ordeal next",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_acrobat.status.practical": {
+  "about": "the acrobat saying the player knows the shape and should call it on their own Crossbar for the practical in this professor's ring",
+  "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_acrobat.testimony": {
   "about": "the Acrobat testifying from the rigging that an understudy climbed down from the loft and then had no name in the next program, and that the wrong audience watched the performers' hands the whole time, never the act",
@@ -223,6 +259,26 @@
   "about": "the Beast Tamer saying that, like geese, the pack finds its way without a pavilion, and that when this site is done the other camps go on teaching",
   "tone": "gentle, patient, resolved"
  },
+ "hemomancy.circus.school.circus_beast_tamer.aftermath.liberation": {
+  "about": "the beast tamer warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.aftermath.liberation_complete": {
+  "about": "the beast tamer saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.aftermath.neutral": {
+  "about": "the beast tamer saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.aftermath.succession": {
+  "about": "the beast tamer saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.aftermath.succession_complete": {
+  "about": "the beast tamer saying Succession left the pavilion standing and gave the player its Pattern, and the professor still teaches whatever they think of the bargain",
+  "tone": "in the professor's own voice"
+ },
  "hemomancy.circus.school.circus_beast_tamer.colleagues": {
   "about": "the Beast Tamer comparing a startled flock scattering to their pack, noting the Stilt Walker's opposite trick of pinning every eye to one spot, and saying the Fire Breather's worry about singeing a Cur is exactly why they trust that professor's lessons",
   "tone": "gentle, patient, teasing"
@@ -234,6 +290,30 @@
  "hemomancy.circus.school.circus_beast_tamer.lesson": {
   "about": "the Beast Tamer teaching that a Hound is a pack waiting to happen: at Degree 4 prepare the Sanguine Hound bridle and take its Cardinal Ordeal, then in the practical let rehearsal threats wound the Hound until it ruptures and get one temporary Blood Cur to land a hit, with the warning that a Cur cannot be learned, called separately or kept as another permanent shape",
   "tone": "gentle, patient, instructive"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.preparation": {
+  "about": "the beast tamer listing the preparation: attune and charge a Crossbar, spare Filaments, the lesson gives the ordeal recipe, the ordeal wants Degree, blood, frame and Crossbar (returned), the practical with known bodies against two live threats within twenty blocks and five minutes, and how to retry",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.status.degree": {
+  "about": "the beast tamer saying the player lacks the Degree for their shape yet, and inviting them to look on and ask how they came to the Troupe",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.status.lesson": {
+  "about": "the beast tamer saying the player is ready to be taught their shape and should ask",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.status.mastered": {
+  "about": "the beast tamer saying the practical is passed and the school books one paid guest act a day",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.status.ordeal": {
+  "about": "the beast tamer saying their teaching is done and recorded, and the player prepares the frame and beats the Cardinal Ordeal next",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.status.practical": {
+  "about": "the beast tamer saying the player knows the shape and should call it on their own Crossbar for the practical in this professor's ring",
+  "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_beast_tamer.testimony": {
   "about": "the Beast Tamer testifying that as someone who counts mouths they noticed three names dropped from the traveling roster while their rations kept appearing on the pavilion account, and telling the player to read the tally copied in the loft as more honest than any stage farewell",
@@ -247,6 +327,26 @@
   "about": "the Fire Breather giving two outcomes after the final act: the troupe can perform among ruins without setting them alight, and the surviving camps can be where pupils learn control again",
   "tone": "measured, counting, resolved"
  },
+ "hemomancy.circus.school.circus_fire_eater.aftermath.liberation": {
+  "about": "the fire eater warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.aftermath.liberation_complete": {
+  "about": "the fire eater saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.aftermath.neutral": {
+  "about": "the fire eater saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.aftermath.succession": {
+  "about": "the fire eater saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.aftermath.succession_complete": {
+  "about": "the fire eater saying Succession left the pavilion standing and gave the player its Pattern, and the professor still teaches whatever they think of the bargain",
+  "tone": "in the professor's own voice"
+ },
  "hemomancy.circus.school.circus_fire_eater.colleagues": {
   "about": "the Fire Breather naming two colleagues and two rules, the Beast Tamer's account for every allied body in the ring and the Strongman's wind-up the back row can see, and saying both hold because a dangerous act ought to announce itself",
   "tone": "measured, counting, teasing"
@@ -258,6 +358,30 @@
  "hemomancy.circus.school.circus_fire_eater.lesson": {
   "about": "the Fire Breather teaching at Degree 4: build a Cinder Bellows Frame from hematic iron scraps, leather, Filaments and blaze powder; the ordeal is a Dominion Lesser at 900 mL that consumes the frame only once the Bellows manifests, so the Crossbar survives; then count one second inhale, two seconds a five-block sixty-degree cone, two seconds recover; the practical is hitting both rehearsal threats in one breath, and it never breathes through walls or onto allies or sets terrain alight",
   "tone": "measured, counting, instructive"
+ },
+ "hemomancy.circus.school.circus_fire_eater.preparation": {
+  "about": "the fire eater listing the preparation: attune and charge a Crossbar, spare Filaments, the lesson gives the ordeal recipe, the ordeal wants Degree, blood, frame and Crossbar (returned), the practical with known bodies against two live threats within twenty blocks and five minutes, and how to retry",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.status.degree": {
+  "about": "the fire eater saying the player lacks the Degree for their shape yet, and inviting them to look on and ask how they came to the Troupe",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.status.lesson": {
+  "about": "the fire eater saying the player is ready to be taught their shape and should ask",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.status.mastered": {
+  "about": "the fire eater saying the practical is passed and the school books one paid guest act a day",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.status.ordeal": {
+  "about": "the fire eater saying their teaching is done and recorded, and the player prepares the frame and beats the Cardinal Ordeal next",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_fire_eater.status.practical": {
+  "about": "the fire eater saying the player knows the shape and should call it on their own Crossbar for the practical in this professor's ring",
+  "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_fire_eater.testimony": {
   "about": "the Fire Breather giving an ordered account: first the three understudies rehearsing ordinary entrances, later the Ringmaster calling their absence a change in casting, and between the two they never saw the understudies leave the grounds",
@@ -271,6 +395,26 @@
   "about": "the Dagger Thrower saying that if the pavilion stands they teach in its blade ring, if it falls a wagon floor will do, and either way the Ringmaster will not own the next generation of hands",
   "tone": "sardonic, dry, resolved"
  },
+ "hemomancy.circus.school.circus_knife_thrower.aftermath.liberation": {
+  "about": "the knife thrower warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.aftermath.liberation_complete": {
+  "about": "the knife thrower saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.aftermath.neutral": {
+  "about": "the knife thrower saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.aftermath.succession": {
+  "about": "the knife thrower saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.aftermath.succession_complete": {
+  "about": "the knife thrower saying Succession left the pavilion standing and gave the player its Pattern, and the professor still teaches whatever they think of the bargain",
+  "tone": "in the professor's own voice"
+ },
  "hemomancy.circus.school.circus_knife_thrower.colleagues": {
   "about": "the Dagger Thrower dismissing the Stilt Walker's claim that a distracted enemy is beaten, arguing distraction only buys time for a deliberate throw, and admitting neither will win the argument because both have seen a careless pupil hurt the audience",
   "tone": "sardonic, dry, teasing"
@@ -282,6 +426,30 @@
  "hemomancy.circus.school.circus_knife_thrower.lesson": {
   "about": "the Dagger Thrower explaining the Marrow Juggler is the old Marrow Spitter renamed with the same ordeal and Crossbar, requiring Degree 3, preparing its offering and unlocking it, then commanding a full three-dagger volley into one rehearsal threat, and correcting that the three throws split one attack's strength rather than tripling damage",
   "tone": "sardonic, dry, instructive"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.preparation": {
+  "about": "the knife thrower listing the preparation: attune and charge a Crossbar, spare Filaments, the lesson gives the ordeal recipe, the ordeal wants Degree, blood, frame and Crossbar (returned), the practical with known bodies against two live threats within twenty blocks and five minutes, and how to retry",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.status.degree": {
+  "about": "the knife thrower saying the player lacks the Degree for their shape yet, and inviting them to look on and ask how they came to the Troupe",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.status.lesson": {
+  "about": "the knife thrower saying the player is ready to be taught their shape and should ask",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.status.mastered": {
+  "about": "the knife thrower saying the practical is passed and the school books one paid guest act a day",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.status.ordeal": {
+  "about": "the knife thrower saying their teaching is done and recorded, and the player prepares the frame and beats the Cardinal Ordeal next",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.status.practical": {
+  "about": "the knife thrower saying the player knows the shape and should call it on their own Crossbar for the practical in this professor's ring",
+  "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_knife_thrower.testimony": {
   "about": "the Dagger Thrower testifying that the wrong audience applauded a puppet's bow but ignored a performer because they wanted obedience not craft, then telling the player to get the Stilt Walker's side too and prove they can focus without giving up control",
@@ -295,6 +463,26 @@
   "about": "the Stilt Walker saying a mask can go on looking after a pupil even when the conductor has lost their stage, but refusing to call a dead captive a liberated student",
   "tone": "calm, watchful, resolved"
  },
+ "hemomancy.circus.school.circus_stilt_walker.aftermath.liberation": {
+  "about": "the stilt walker warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.aftermath.liberation_complete": {
+  "about": "the stilt walker saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.aftermath.neutral": {
+  "about": "the stilt walker saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.aftermath.succession": {
+  "about": "the stilt walker saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.aftermath.succession_complete": {
+  "about": "the stilt walker saying Succession left the pavilion standing and gave the player its Pattern, and the professor still teaches whatever they think of the bargain",
+  "tone": "in the professor's own voice"
+ },
  "hemomancy.circus.school.circus_stilt_walker.colleagues": {
   "about": "the Stilt Walker arguing that several imperfect targets all looking away from a pupil protect better than one perfect target, noting the Dagger Thrower will dispute it and the Beast Tamer would split the pack, while they prefer every eye in the ring turned the same way",
   "tone": "calm, watchful, teasing"
@@ -306,6 +494,30 @@
  "hemomancy.circus.school.circus_stilt_walker.lesson": {
   "about": "the Stilt Walker teaching at the fourth Degree: learn the Scarlet Mummer, complete its Cardinal Ordeal, bring your own known body, then in the practical two rehearsal threats chase the player or an allied puppet and the Mummer must draw both away using only its pulse and one evasive step",
   "tone": "calm, watchful, instructive"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.preparation": {
+  "about": "the stilt walker listing the preparation: attune and charge a Crossbar, spare Filaments, the lesson gives the ordeal recipe, the ordeal wants Degree, blood, frame and Crossbar (returned), the practical with known bodies against two live threats within twenty blocks and five minutes, and how to retry",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.status.degree": {
+  "about": "the stilt walker saying the player lacks the Degree for their shape yet, and inviting them to look on and ask how they came to the Troupe",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.status.lesson": {
+  "about": "the stilt walker saying the player is ready to be taught their shape and should ask",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.status.mastered": {
+  "about": "the stilt walker saying the practical is passed and the school books one paid guest act a day",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.status.ordeal": {
+  "about": "the stilt walker saying their teaching is done and recorded, and the player prepares the frame and beats the Cardinal Ordeal next",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.status.practical": {
+  "about": "the stilt walker saying the player knows the shape and should call it on their own Crossbar for the practical in this professor's ring",
+  "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_stilt_walker.testimony": {
   "about": "the Stilt Walker testifying that the wrong audience could not tell an act from a command and the understudies had stopped choosing their own entrances well before they vanished, pointing the player to the Dagger Thrower who was down among them, then asking the player to show attention spent protecting somebody",
@@ -319,6 +531,26 @@
   "about": "the Strongman saying they can rebuild a practice ring but not the people under that carousel, and that forgetting them leaves the player practicing alone",
   "tone": "gruff, blunt, resolved"
  },
+ "hemomancy.circus.school.circus_strongman.aftermath.liberation": {
+  "about": "the strongman warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.aftermath.liberation_complete": {
+  "about": "the strongman saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.aftermath.neutral": {
+  "about": "the strongman saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.aftermath.succession": {
+  "about": "the strongman saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.aftermath.succession_complete": {
+  "about": "the strongman saying Succession left the pavilion standing and gave the player its Pattern, and the professor still teaches whatever they think of the bargain",
+  "tone": "in the professor's own voice"
+ },
  "hemomancy.circus.school.circus_strongman.colleagues": {
   "about": "the Strongman contrasting the Acrobat who knows when to leave with themselves who know where to stay, and saying a conductor who cannot value both breaks every string they own",
   "tone": "gruff, blunt, teasing"
@@ -330,6 +562,30 @@
  "hemomancy.circus.school.circus_strongman.lesson": {
   "about": "the Strongman teaching at Fourth Degree: prepare the Gorebound Hulk offering and beat its Cardinal Ordeal, then in the practical Anchor Guard inside the ring, keep the Hulk guarding for five seconds and make it hit a rehearsal threat while still guarding, describing its small head, lifting belt and heavy forearms as built like a strongman",
   "tone": "gruff, blunt, instructive"
+ },
+ "hemomancy.circus.school.circus_strongman.preparation": {
+  "about": "the strongman listing the preparation: attune and charge a Crossbar, spare Filaments, the lesson gives the ordeal recipe, the ordeal wants Degree, blood, frame and Crossbar (returned), the practical with known bodies against two live threats within twenty blocks and five minutes, and how to retry",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.status.degree": {
+  "about": "the strongman saying the player lacks the Degree for their shape yet, and inviting them to look on and ask how they came to the Troupe",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.status.lesson": {
+  "about": "the strongman saying the player is ready to be taught their shape and should ask",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.status.mastered": {
+  "about": "the strongman saying the practical is passed and the school books one paid guest act a day",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.status.ordeal": {
+  "about": "the strongman saying their teaching is done and recorded, and the player prepares the frame and beats the Cardinal Ordeal next",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_strongman.status.practical": {
+  "about": "the strongman saying the player knows the shape and should call it on their own Crossbar for the practical in this professor's ring",
+  "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_strongman.testimony": {
   "about": "the Strongman recalling being told the understudies were on a traveling engagement while their luggage stayed under the beds, challenging the player to repeat that lie and telling them to go look at those rooms",
@@ -343,6 +599,26 @@
   "about": "the Threadkeeper saying the scattered camps teach as much as the pavilion, and that the player's finished work and any guest pay still owed stay on their account, not the building's",
   "tone": "dry, exact, resolved"
  },
+ "hemomancy.circus.school.circus_threadkeeper.aftermath.liberation": {
+  "about": "the threadkeeper warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.aftermath.liberation_complete": {
+  "about": "the threadkeeper saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.aftermath.neutral": {
+  "about": "the threadkeeper saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.aftermath.succession": {
+  "about": "the threadkeeper saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.aftermath.succession_complete": {
+  "about": "the threadkeeper saying Succession left the pavilion standing and gave the player its Pattern, and the professor still teaches whatever they think of the bargain",
+  "tone": "in the professor's own voice"
+ },
  "hemomancy.circus.school.circus_threadkeeper.colleagues": {
   "about": "the Threadkeeper explaining two promises are on the books, the Ringmaster's grand final act and the faculty's promise of a pupil who can call one body, control it and dismiss it safely, and that they can inspect only the second so they start there",
   "tone": "dry, exact, teasing"
@@ -354,6 +630,14 @@
  "hemomancy.circus.school.circus_threadkeeper.lesson": {
   "about": "the Threadkeeper opening the account entry An Empty Ring: hold up an attuned, charged Crossbar for inspection, learn any shape and complete its ordeal, call, command and recall with that same Crossbar and report back, noting each professor records their own practical and story investigations and paid guest performances go in the Side ledger",
   "tone": "dry, exact, instructive"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.preparation": {
+  "about": "the threadkeeper listing the preparation: attune and charge a Crossbar, spare Filaments, the lesson gives the ordeal recipe, the ordeal wants Degree, blood, frame and Crossbar (returned), the practical with known bodies against two live threats within twenty blocks and five minutes, and how to retry",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.status.preparation": {
+  "about": "the threadkeeper saying Crossbars, Filaments, inspections and reports are entered at the Threadhouse and the final act is the Ringmaster's",
+  "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_threadkeeper.testimony": {
   "about": "the Threadkeeper listing two open items: the wrong audience closes on the Stilt Walker's and Dagger Thrower's accounts with both practicals passed, and the missing understudy closes on the abandoned stage record, loft account, quarters letter, carousel tally and the Retired Understudy's testimony, promising to close both when given the facts",
@@ -367,6 +651,26 @@
   "about": "the Retired Understudy insisting the missing performers were people and that whatever is left of the school keeps their names on the bill, whether a successor takes the Pattern or the carousel ends in blood",
   "tone": "wistful, gentle, resolved"
  },
+ "hemomancy.circus.school.circus_understudy.aftermath.liberation": {
+  "about": "the understudy warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.aftermath.liberation_complete": {
+  "about": "the understudy saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.aftermath.neutral": {
+  "about": "the understudy saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.aftermath.succession": {
+  "about": "the understudy saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.aftermath.succession_complete": {
+  "about": "the understudy saying Succession left the pavilion standing and gave the player its Pattern, and the professor still teaches whatever they think of the bargain",
+  "tone": "in the professor's own voice"
+ },
  "hemomancy.circus.school.circus_understudy.colleagues": {
   "about": "the Retired Understudy saying memory bends easily so they are glad the Threadkeeper keeps accounts, that they do not much mind a blank face on the Juggler, but are troubled by a conductor who claims every remembered face as their own like a lead taking the whole company's bows",
   "tone": "wistful, gentle, teasing"
@@ -378,6 +682,30 @@
  "hemomancy.circus.school.circus_understudy.lesson": {
   "about": "the Retired Understudy teaching that the player needs the fifth Degree and the Mnemonist Puppet's ordeal done first, then in the practical must strike a rehearsal threat while the known puppet watches, keeping the threat in its range until it replays the recorded attack, and apologizing that ordinary puppet melee will not count as an echo",
   "tone": "wistful, gentle, instructive"
+ },
+ "hemomancy.circus.school.circus_understudy.preparation": {
+  "about": "the understudy listing the preparation: attune and charge a Crossbar, spare Filaments, the lesson gives the ordeal recipe, the ordeal wants Degree, blood, frame and Crossbar (returned), the practical with known bodies against two live threats within twenty blocks and five minutes, and how to retry",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.status.degree": {
+  "about": "the understudy saying the player lacks the Degree for their shape yet, and inviting them to look on and ask how they came to the Troupe",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.status.lesson": {
+  "about": "the understudy saying the player is ready to be taught their shape and should ask",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.status.mastered": {
+  "about": "the understudy saying the practical is passed and the school books one paid guest act a day",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.status.ordeal": {
+  "about": "the understudy saying their teaching is done and recorded, and the player prepares the frame and beats the Cardinal Ordeal next",
+  "tone": "in the professor's own voice"
+ },
+ "hemomancy.circus.school.circus_understudy.status.practical": {
+  "about": "the understudy saying the player knows the shape and should call it on their own Crossbar for the practical in this professor's ring",
+  "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_understudy.testimony": {
   "about": "the Retired Understudy identifying the three entries as the missing understudies whose cues they knew, insisting nobody left those beds to tour, saying the stage program, loft account and quarters tell one story and the carousel tally tells the ending: they are what the Ringmaster made of them",
@@ -532,7 +860,7 @@
   "tone": "plain label"
  },
  "hemomancy.circus.school.ledger.guest.available": {
-  "about": "a ledger note that after passing a practical the player can repeat that professor's exercise for four Filaments, once per Minecraft day",
+  "about": "a ledger note that after passing a practical the player can repeat one professor's exercise for four Filaments, and the school pays one guest act a day across all professors",
   "tone": "plain ledger note"
  },
  "hemomancy.circus.school.ledger.guest.pending": {
@@ -707,10 +1035,6 @@
   "about": "asking to begin their practical examination",
   "tone": "plain"
  },
- "hemomancy.circus.school.preparation": {
-  "about": "a professor telling the player to attune a Marionette Crossbar and charge it at a Puppeteer's Spindle with spare Filaments, that a lesson shows only the ordeal recipe and the shape stays locked until the Cardinal Ordeal is beaten with its Degree, blood, frame and reusable Crossbar, and that a practical uses the player's own known bodies against two live rehearsal threats within twenty blocks and five minutes, retrying by recalling or walking off",
-  "tone": "practical, instructive"
- },
  "hemomancy.circus.school.report": {
   "about": "asking the Threadkeeper to review their apprenticeship and investigation",
   "tone": "plain"
@@ -739,6 +1063,26 @@
   "about": "a message that the practice space is blocked or wet and the player should clear it before returning for the exercise",
   "tone": "flat, practical"
  },
+ "hemomancy.circus.school.ringmaster.aftermath.liberation": {
+  "about": "the Ringmaster warning, coldly, that cutting a captive's string kills the person bound to it, and telling the player to count the horses",
+  "tone": "barker, frank, cold about the captives"
+ },
+ "hemomancy.circus.school.ringmaster.aftermath.liberation_complete": {
+  "about": "the Ringmaster saying the captives are dead, the carousel wrecked, the professors teach from the camps, and he has nothing left to sell",
+  "tone": "barker, frank, cold about the captives"
+ },
+ "hemomancy.circus.school.ringmaster.aftermath.neutral": {
+  "about": "the Ringmaster saying no deal is struck, so every lesson is open without promising an ending",
+  "tone": "barker, frank, cold about the captives"
+ },
+ "hemomancy.circus.school.ringmaster.aftermath.succession": {
+  "about": "the Ringmaster saying the Succession finale is the usual run of challenges and the lessons do not change it",
+  "tone": "barker, frank, cold about the captives"
+ },
+ "hemomancy.circus.school.ringmaster.aftermath.succession_complete": {
+  "about": "the Ringmaster saying the pavilion stands, the Pattern is the player's, and the professors still teach, the hostile ones too",
+  "tone": "barker, frank, cold about the captives"
+ },
  "hemomancy.circus.school.ringmaster.curriculum": {
   "about": "the Ringmaster saying the Troupe is a school as well as a show, listing the Acrobat's pursuit, Dagger Thrower's focus, Stilt Walker's attention, Strongman's protection, Beast Tamer's rupture, Fire Breather's restraint and Retired Understudy's memory, and that a lesson readies you for the ordeal, winning the ordeal gives the shape, and trust is earned in a practical",
   "tone": "showman's, proud"
@@ -746,30 +1090,6 @@
  "hemomancy.circus.school.ringmaster.faculty": {
   "about": "the Ringmaster saying the Threadkeeper prepares the player's instrument while he teaches coordination in the final act as it has always run, that the player may finish every lesson and refuse his offer or step into his act without every professor's approval, that the Brined Court is only a neighbor, and the Crossbar's strings are not theirs to give",
   "tone": "showman's, sly"
- },
- "hemomancy.circus.school.status.degree": {
-  "about": "a professor saying the player has not reached the Degree their shape needs yet, and inviting them to study how it is built and the Troupe's history meanwhile",
-  "tone": "patient, even"
- },
- "hemomancy.circus.school.status.lesson": {
-  "about": "a professor saying the player is ready for personal instruction and offering to teach the shape",
-  "tone": "warm, brisk"
- },
- "hemomancy.circus.school.status.mastered": {
-  "about": "a professor saying the player has passed the practical and may rerun the exercise once per Minecraft day as a paid guest act",
-  "tone": "approving, brisk"
- },
- "hemomancy.circus.school.status.ordeal": {
-  "about": "a professor saying instruction is on record and the player must now prepare the frame and beat the shape's Cardinal Ordeal",
-  "tone": "brisk, instructive"
- },
- "hemomancy.circus.school.status.practical": {
-  "about": "a professor saying the player knows the shape and should call it on their own Crossbar and show its purpose in the rehearsal ring",
-  "tone": "brisk, expectant"
- },
- "hemomancy.circus.school.status.preparation": {
-  "about": "the Threadkeeper explaining that Crossbars, Filaments, inspections and reports all go through the Threadhouse while the final act belongs to the Ringmaster",
-  "tone": "dry, exact"
  },
  "hemomancy.circus.school.take_lesson": {
   "about": "asking a professor to teach them their puppet shape",
@@ -787,42 +1107,6 @@
   "about": "a message that the shape must be unlocked through its Cardinal Ordeal first, and that a guest act also needs a passed practical and an available daily payment",
   "tone": "flat system"
  },
- "hemomancy.dialogue.circus_acrobat.line1": {
-  "about": "the Acrobat boasting that by the time anyone works out where they landed, they have already left",
-  "tone": "playful, quick"
- },
- "hemomancy.dialogue.circus_acrobat.line2": {
-  "about": "the Acrobat joking that people say they vanish when really the player guessed the landing too early",
-  "tone": "teasing"
- },
- "hemomancy.dialogue.circus_acrobat.line3": {
-  "about": "the Acrobat explaining that the Mummer draws the eye away and they strike a moment after the player turns",
-  "tone": "wry, matter-of-fact"
- },
- "hemomancy.dialogue.circus_fire_eater.line1": {
-  "about": "the Fire Breather explaining that swallowing fire really means teaching the body which burns to keep and which to breathe back out",
-  "tone": "measured, proud"
- },
- "hemomancy.dialogue.circus_fire_eater.line2": {
-  "about": "the Fire Breather saying the torch is only a staff-form and the real work is making the breath carry farther",
-  "tone": "measured, plain"
- },
- "hemomancy.dialogue.circus_fire_eater.line3": {
-  "about": "the Fire Breather admitting that without a watching crowd to hold the shape, they would only be burning their own throat",
-  "tone": "candid, dry"
- },
- "hemomancy.dialogue.circus_knife_thrower.line1": {
-  "about": "the Dagger Thrower claiming the blade goes where it's thrown and it is the hand pointing out the landing that lies",
-  "tone": "sardonic"
- },
- "hemomancy.dialogue.circus_knife_thrower.line2": {
-  "about": "the Dagger Thrower quipping that knives fly straight and it's the people who bend",
-  "tone": "dry, aphoristic"
- },
- "hemomancy.dialogue.circus_knife_thrower.line3": {
-  "about": "the Dagger Thrower saying the first nine marks teach distance and the tenth teaches when to hold the knife",
-  "tone": "sardonic, wise"
- },
  "hemomancy.dialogue.circus_performer.leave": {
   "about": "a player response ending the conversation with a performer",
   "tone": "curt"
@@ -830,18 +1114,6 @@
  "hemomancy.dialogue.circus_performer.welcome": {
   "about": "a performer telling the stranger to stand in place and let every eye find them, since strangers do better when the whole pavilion looks at one person",
   "tone": "theatrical, coaxing"
- },
- "hemomancy.dialogue.circus_stilt_walker.line1": {
-  "about": "the Stilt Walker saying that from up high they decide where the crowd looks for danger",
-  "tone": "calm, watchful"
- },
- "hemomancy.dialogue.circus_stilt_walker.line2": {
-  "about": "the Stilt Walker explaining the stilts are braces and that to understand their walk the player should watch the cords, not the feet",
-  "tone": "calm, dry"
- },
- "hemomancy.dialogue.circus_stilt_walker.line3": {
-  "about": "the Stilt Walker saying that once every eye rises to meet them, somebody else owns the floor",
-  "tone": "calm, quietly proud"
  },
  "hemomancy.dialogue.event.monolith_cornerstone_granted": {
   "about": "narration of the Lodestone pressing a Monolithic Cornerstone into the player's hand, small, cold and far heavier than it should be",

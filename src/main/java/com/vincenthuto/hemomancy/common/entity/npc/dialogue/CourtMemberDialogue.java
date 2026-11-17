@@ -12,15 +12,19 @@ import com.vincenthuto.hemomancy.common.entity.npc.court.CourtMemberEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.Offer;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.CourtHouse;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrain;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * What a Court member says, by role and by who the player is to the Court: a stranger, referred, known, a member of
@@ -49,6 +53,19 @@ public final class CourtMemberDialogue {
 	private static final String OPTION = "hemomancy.dialogue.court.option.";
 	private static final DialogueOption LEAVE = new DialogueOption(OPTION + "leave", null, null);
 	private static final DialogueOption BACK = new DialogueOption(OPTION + "back", "root", null);
+	/** The warning the hub shows before a member spends their one move between houses. */
+	public static final String SWITCH_PROMPT = "hemomancy.dialogue.court.confirm.switch";
+	/** From this Degree on, the speakers who mark the player's road add a line to their greeting (PT-54). */
+	public static final int LATE_DEGREE = 6;
+	/** Who greets a sixth-Degree player with a {@code degree.late} line. */
+	static final Set<CourtRole> LATE_GREETERS = EnumSet.of(CourtRole.GARDENER, CourtRole.LIGHTKEEPER,
+			CourtRole.HEAD_TENDER);
+	/** Who answers a worn Primal strain with a {@code strain.primal} line: the three above and the six other house leads. */
+	static final Set<CourtRole> PRIMAL_GREETERS = EnumSet.of(CourtRole.GARDENER, CourtRole.LIGHTKEEPER,
+			CourtRole.HEAD_TENDER, CourtRole.BRACED_ELDER, CourtRole.NURSERY_TENDER, CourtRole.LAMP_COLONY,
+			CourtRole.VEILED_RESIDENT, CourtRole.BELLWARDEN, CourtRole.ROOTED_ELDER);
+	/** Who speaks about the Primal step when the player wears an Apex or Primal strain (NQ-14-6). */
+	static final Set<CourtRole> PRIMAL_SPEAKERS = EnumSet.of(CourtRole.LIGHTKEEPER, CourtRole.HEAD_TENDER);
 
 	/** Who the player is to the speaker, most telling first. */
 	public enum Standing {
@@ -59,9 +76,12 @@ public final class CourtMemberDialogue {
 		}
 	}
 
-	/** Everything a member's tree depends on, read once from the player; holdsOffering is the house's own custom in hand. */
+	/**
+	 * Everything a member's tree depends on, read once from the player; holdsOffering is the house's own custom in hand,
+	 * late is the sixth Degree or higher, ripeness the worn strain's stage.
+	 */
 	public record View(Standing standing, boolean teachable, boolean hungry, boolean giftTaken, boolean holdsOffering,
-			boolean lessonTaught, CourtMembershipRules.Outcome join, StrainMatch strain) {
+			boolean lessonTaught, CourtMembershipRules.Outcome join, StrainMatch strain, boolean late, Ripeness ripeness) {
 		public static View of(ServerPlayer player, CourtHouse house) {
 			CourtProgress progress = CourtLife.progress(player);
 			boolean teachable = ProgressionGates.hasDegree(player, CourtLessonRules.MINIMUM_DEGREE);
@@ -71,7 +91,27 @@ public final class CourtMemberDialogue {
 					CourtLife.isShunned(player), CourtLife.turnsAway(player, house));
 			return new View(CourtMemberDialogue.standing(player, house, progress), teachable, player.getFoodData().needsFood(),
 					progress.actCounted(house, CourtHospitality.GIFT_ACT), CourtHospitality.holdsCustom(player, house),
-					progress.lessonTaught(), join, StrainMatch.of(player, house));
+					progress.lessonTaught(), join, StrainMatch.of(player, house), ProgressionGates.hasDegree(player, LATE_DEGREE),
+					Ripeness.of(player));
+		}
+
+		/** The view before the sixth Degree with a young strain or none. */
+		public View(Standing standing, boolean teachable, boolean hungry, boolean giftTaken, boolean holdsOffering,
+				boolean lessonTaught, CourtMembershipRules.Outcome join, StrainMatch strain) {
+			this(standing, teachable, hungry, giftTaken, holdsOffering, lessonTaught, join, strain, false, Ripeness.YOUNG);
+		}
+	}
+
+	/** How far the worn strain has grown: below Apex, Apex, or Primal. */
+	public enum Ripeness {
+		YOUNG, APEX, PRIMAL;
+
+		static Ripeness of(ServerPlayer player) {
+			var worn = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
+			if (MorphlingStrains.of(worn).isEmpty()) return YOUNG;
+			int stage = MorphlingItem.getMaturityLevel(worn);
+			if (stage >= PrimalMorphlingRules.PRIMAL_LEVEL) return PRIMAL;
+			return stage >= PrimalMorphlingRules.APEX_LEVEL ? APEX : YOUNG;
 		}
 	}
 
@@ -120,9 +160,13 @@ public final class CourtMemberDialogue {
 			return tree.addNode(new DialogueNode("root", List.of(base + "shunned.line1", base + "shunned.line2"), List.of(LEAVE)))
 					.build();
 		}
-		List<String> greeting = new ArrayList<>(List.of(base + "greet." + view.standing().key()));
-		if (view.strain() != StrainMatch.NONE) greeting.add(base + "strain." + view.strain().name().toLowerCase(java.util.Locale.ROOT));
 		boolean welcome = view.standing() != Standing.TRANSGRESSOR;
+		List<String> greeting = new ArrayList<>(List.of(base + "greet." + view.standing().key()));
+		if (welcome && view.late() && LATE_GREETERS.contains(role)) greeting.add(base + "degree.late");
+		if (view.strain() != StrainMatch.NONE) {
+			boolean primal = view.ripeness() == Ripeness.PRIMAL && PRIMAL_GREETERS.contains(role);
+			greeting.add(base + "strain." + (primal ? "primal" : view.strain().name().toLowerCase(java.util.Locale.ROOT)));
+		}
 		List<DialogueOption> options = new ArrayList<>();
 		options.add(new DialogueOption(OPTION + "house", "house", null));
 		tree.addNode(reply("house", base + "house.line1", base + "house.line2"));
@@ -162,7 +206,9 @@ public final class CourtMemberDialogue {
 		}
 		if (role.offers(Offer.JOIN) && welcome && view.join() != CourtMembershipRules.Outcome.ALREADY_MEMBER) {
 			if (view.join().changed()) {
-				options.add(new DialogueOption(OPTION + "join", "join", JOIN));
+				options.add(view.join() == CourtMembershipRules.Outcome.SWITCHED
+						? new DialogueOption(OPTION + "join", "join", JOIN, DialogueOptionPresentation.prompt(SWITCH_PROMPT))
+						: new DialogueOption(OPTION + "join", "join", JOIN));
 				tree.addNode(reply("join", base + "join.line1"));
 			} else {
 				String refusal = switch (view.join()) {
@@ -176,13 +222,19 @@ public final class CourtMemberDialogue {
 		}
 		if (challenge != null && welcome && challenge != CourtChampionRules.Gate.REFUSED_CHAMPION) {
 			if (challenge.open()) {
-				options.add(new DialogueOption(OPTION + "challenge", "challenge", CHALLENGE));
-				tree.addNode(reply("challenge", base + "challenge.line1", base + "challenge.line2"));
+				// The warning comes before the Champion is called: the hub shows it as the confirm step.
+				options.add(new DialogueOption(OPTION + "challenge", "challenge", CHALLENGE,
+						DialogueOptionPresentation.prompt(base + "challenge.line2")));
+				tree.addNode(reply("challenge", base + "challenge.line1"));
 			} else {
 				String refusal = challenge.name().toLowerCase(java.util.Locale.ROOT);
 				options.add(new DialogueOption(OPTION + "challenge", "challenge_" + refusal, null));
 				tree.addNode(reply("challenge_" + refusal, base + "challenge." + refusal));
 			}
+		}
+		if (welcome && view.ripeness() != Ripeness.YOUNG && PRIMAL_SPEAKERS.contains(role)) {
+			options.add(new DialogueOption(OPTION + "primal", "primal", null));
+			tree.addNode(reply("primal", base + "primal.line1", base + "primal.line2"));
 		}
 		if (role.offers(Offer.DIRECTIONS) && welcome) {
 			options.add(new DialogueOption(OPTION + "directions", "directions", null));

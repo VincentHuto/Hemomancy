@@ -398,6 +398,7 @@ public final class HarbingerPilotGameTests {
 			known.getKnownManips().putIfAbsent(projection, new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(1, 0));
 			known.setEquippedManipNames(new java.util.ArrayList<>());
 			known.setSelectedManip(com.vincenthuto.hemomancy.common.manipulation.BloodManipulation.BLANK);
+			known.setActiveVerb(com.vincenthuto.hemomancy.common.manipulation.verb.Verb.ABSORB);
 			player.getInventory().selected = 0;
 			player.getInventory().setItem(0, new ItemStack(ItemInit.living_staff.get()));
 
@@ -409,8 +410,8 @@ public final class HarbingerPilotGameTests {
 
 			helper.assertTrue(player.getMainHandItem().is(ItemInit.blood_projection.get()),
 					"Planting the staff must leave a Blood Projection hand in its place");
-			helper.assertTrue("blood_projection".equals(known.getSelectedManip().getName()),
-					"Blood Projection must become the selected manipulation");
+			helper.assertTrue(known.getActiveVerb() == com.vincenthuto.hemomancy.common.manipulation.verb.Verb.PROJECT,
+					"Projection must become the active verb");
 
 			CardinalRiteStaffEscrow.restore(player, rite);
 			helper.assertTrue(player.getMainHandItem().is(ItemInit.living_staff.get()),
@@ -441,8 +442,8 @@ public final class HarbingerPilotGameTests {
 
 			helper.assertTrue(player.getMainHandItem().is(Items.IRON_SWORD),
 					"An item the caster is holding must not be replaced");
-			helper.assertTrue("blood_projection".equals(known.getSelectedManip().getName()),
-					"Blood Projection is still selected for the rite");
+			helper.assertTrue(known.getActiveVerb() == com.vincenthuto.hemomancy.common.manipulation.verb.Verb.PROJECT,
+					"Projection is still the active verb for the rite");
 			helper.succeed();
 		} finally {
 			player.discard();

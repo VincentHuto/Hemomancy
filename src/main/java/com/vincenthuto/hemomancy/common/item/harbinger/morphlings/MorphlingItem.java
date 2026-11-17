@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -22,25 +20,21 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 public class MorphlingItem extends Item implements IMorphling {
-	private static final BloodAccounting.Source PRIMAL_ABILITY = BloodAccounting.Source.of("primal_morphling", Category.MORPHLING, false, false);
-	private static final BloodAccounting.Source STARVATION = BloodAccounting.Source.of("morphling_starvation", Category.MORPHLING, false, true);
+	private static final BloodAccounting.Source PRIMAL_ABILITY = BloodAccounting.Source.of("primal_morphling", Category.MORPHLING, false);
+	private static final BloodAccounting.Source STARVATION = BloodAccounting.Source.of("morphling_starvation", Category.MORPHLING, true);
 
 	public int bloodCost;
 	public static final String PRIMALIZED_KEY = "Primalized";
@@ -393,7 +387,7 @@ public class MorphlingItem extends Item implements IMorphling {
 
 	/** Names a Primal's own blood source, so the diagnostics show which power paid. */
 	public static BloodAccounting.Source primalSource(String id) {
-		return BloodAccounting.Source.of(id, Category.MORPHLING, false, false);
+		return BloodAccounting.Source.of(id, Category.MORPHLING, false);
 	}
 
 	public static boolean tryBeginPrimalAbility(Player player, ItemStack stack, String abilityKey,
@@ -427,19 +421,6 @@ public class MorphlingItem extends Item implements IMorphling {
 		int cappedAmplifier = Math.max(0, Math.min(amplifier, 2));
 		player.addEffect(new MobEffectInstance(EffectInit.morphic_strain,
 				durationTicks, cappedAmplifier, true, false, true));
-	}
-
-	public static LivingEntity findLookTarget(Player player, double range) {
-		Vec3 look = player.getLookAngle().normalize();
-		Vec3 eye = player.getEyePosition();
-		AABB area = player.getBoundingBox().inflate(range);
-		return player.level().getEntitiesOfClass(LivingEntity.class, area,
-						target -> ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED)
-								&& target.distanceToSqr(player) <= range * range
-								&& target.getBoundingBox().getCenter().subtract(eye).normalize().dot(look) > 0.85D)
-				.stream()
-				.min(Comparator.comparingDouble(target -> target.distanceToSqr(player)))
-				.orElse(null);
 	}
 
 	/**
@@ -495,7 +476,8 @@ public class MorphlingItem extends Item implements IMorphling {
 	/**
 	 * Applies a strain's passive effect without letting its status icon expire between upkeep ticks,
 	 * clearing every other strain's passive. The effect hides its particles but keeps its icon and
-	 * current amplifier.
+	 * current amplifier; the client leaves the icon off the on-screen effect row while the HUD's jar shows the
+	 * Morphling.
 	 */
 	public static void applyPassiveEffect(Player player, ItemStack stack, Holder<MobEffect> effect,
 			int amplifier) {

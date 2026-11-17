@@ -41,7 +41,8 @@ public final class OutpouringRules {
 
     public static boolean woundOnly(String id) {
         if (id == null) return false;
-        return id.equals("hematic_riposte") || id.equals("crimson_coronation") || id.startsWith("summon_avatar")
+        return id.equals("hematic_riposte") || id.equals("crimson_coronation") || id.equals("crimson_tithe")
+                || id.startsWith("summon_avatar")
                 || LivingStaffWeaponFormRules.isStaffWeaponFormManip(id);
     }
 

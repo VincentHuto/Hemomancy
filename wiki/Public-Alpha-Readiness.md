@@ -35,7 +35,7 @@ These are the rough edges to expect in the public alpha:
 - **Founding Fane is mechanically present but still being tuned.** The bloodwell/stake footprint system, relation-aware boundary rendering, and blood routing hooks exist; final balance and art polish are still pending.
 - **Chamber of Will V1 is caster-only.** The Degree 6 rite, personal chamber, radius growth, and dynamic sky themes exist; the later rite that pulls nearby players and mobs into the caster's chamber is not part of V1.
 - **Drudges are post-alpha WIP.** Their implementation remains available for development, but the Electrode, Submission Device, and Semi-Sentient Construct have been moved to the WIP creative tab and the system is not part of the first-release progression promise.
-- **The entire Saints suite is post-release WIP.** Hemorath now remains behind the same WIP boundary as Seraphae, Putriciel, and Velorum. Saint chambers do not generate naturally, and their encounter components, rewards, and Canon memories are development-facing content for the first major post-release update, not launch blockers or first-release progression.
+- **The Saints are implemented, overhauls pending.** The four mausoleum complexes generate naturally and all four Saint fights run on the shared Saint combat kit. Each fight's balance and presentation wait on a played session per Saint, and the Saint fights stay out of first-release acceptance until each has been played (step 7 below).
 - **Fungal Dimension is partial.** Access, safe return, dimension mob population, and the Archon choice fork exist; deeper terrain and broader dimension content remain WIP.
 - **Endgame bosses are split.** Vesper's two-phase encounter is integrated into the Silent path through Pruning and the Severed Qliphoth; absorbing his memory afterwards makes a Degree-8 Silentium. The Mycophant (the Spawn Mother) is integrated into the Apotheos path through the Fungal Gardens hunt: a generated model, the waking opening, a two-phase claim and joining fight, the yielding and the heir succession. Native multiplayer and balance passes remain open.
 - **Annetta is playable but not final.** The Broken Church encounter and two-route structure are wired; animation polish, fuller biological combat identity, and unique thrown-projectile rendering remain WIP.
@@ -47,7 +47,7 @@ These are the rough edges to expect in the public alpha:
 
 - **JEI: alpha-ready.** Hemomancy currently uses a local NeoForge JEI jar and exposes custom recipe categories for major crafting systems.
 - **Mana and Artifice: removed.** No compatibility ships; a future integration would be written fresh.
-- **Curios: dormant.** Curios compatibility source is preserved, but it is excluded/unregistered until a compatible NeoForge 1.21.1 Curios dependency is available.
+- **Curios: removed.** No compatibility ships; a future integration would be written fresh.
 
 ---
 

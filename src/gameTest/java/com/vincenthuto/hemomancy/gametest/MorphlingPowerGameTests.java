@@ -98,13 +98,17 @@ public final class MorphlingPowerGameTests {
 		ItemStack plumeAway = equip(away, MorphlingStrains.MARROWPLUME, 0);
 		ItemStack plumeHome = equip(home, MorphlingStrains.MARROWPLUME, 0);
 		h.setBlock(new BlockPos(4, 2, 4), Blocks.BONE_BLOCK);
-		away.moveTo(h.absoluteVec(new Vec3(2.5D, 2.0D, 2.5D)).add(40.0D, 0.0D, 0.0D));
+		// Away stays inside this test's own room, past the bone search (8 blocks), where no other test can lay bone.
+		away.moveTo(h.absoluteVec(new Vec3(20.5D, 2.0D, 18.5D)));
 		home.moveTo(h.absoluteVec(new Vec3(3.5D, 2.0D, 3.5D)));
 		away.setHealth(10.0F);
 		home.setHealth(10.0F);
 		h.assertTrue(MorphlingHomeConditions.isHome(home, MorphlingStrains.MARROWPLUME), "bone blocks are Marrowplume's home");
 		boolean awayHome = MorphlingHomeConditions.isHome(away, MorphlingStrains.MARROWPLUME);
-		drive(h, List.of(away, home), List.of(plumeAway, plumeHome), MarrowplumeRules.PROC_TICKS + 1, () -> {
+		h.assertTrue(!awayHome, "the away host is out of the bone's reach");
+		// Feeding procs on game time % PROC_TICKS, so exactly PROC_TICKS driven ticks hold exactly one proc; one tick
+		// more fed twice whenever the first driven tick fell on the period (the 1-in-40 "heals 0.5: 1.0" flake).
+		drive(h, List.of(away, home), List.of(plumeAway, plumeHome), MarrowplumeRules.PROC_TICKS, () -> {
 			float awayGain = away.getHealth() - 10.0F;
 			float homeGain = home.getHealth() - 10.0F;
 			h.assertTrue(Math.abs(awayGain - MarrowplumeRules.feeding(0, awayHome)) < 0.01F,

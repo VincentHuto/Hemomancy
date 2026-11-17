@@ -18,6 +18,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -25,8 +27,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.EventHooks;
 
 public final class LivingFlailImpactEffects {
 	private static final ParticleColor ICE_BLUE = new ParticleColor(95, 205, 255);
@@ -81,8 +81,14 @@ public final class LivingFlailImpactEffects {
 		}
 	}
 
+	/**
+	 * Freezes still water and lays snow round the impact, as edits for the player who threw the flail
+	 * ({@link PlayerBlockEdits}: game mode, spawn protection and a claim's break and place events). Only a player
+	 * throws a Living Flail, so a head with any other owner changes no terrain.
+	 */
 	private static void mutateTerrain(ServerLevel level, LivingEntity owner, Vec3 center, float charge,
 			float impactScale) {
+		if (!(owner instanceof ServerPlayer player) || player.level() != level) return;
 		int waterRadius = Math.max(1, Math.round(LivingFlailRules.impactRadius(charge) * impactScale));
 		int snowRadius = Math.max(1, Math.round(LivingFlailRules.snowRadius(charge) * impactScale));
 		BlockPos origin = BlockPos.containing(center);
@@ -92,8 +98,8 @@ public final class LivingFlailImpactEffects {
 			BlockState state = level.getBlockState(pos);
 			boolean sourceWater = state.getFluidState().is(Fluids.WATER) && state.getFluidState().isSource();
 			if (sourceWater && state.is(Blocks.WATER) && LivingFlailTerrainRules.mayFreezeWater(true, true,
-					level.getBlockEntity(pos) != null, protectionAllows(level, owner, pos))) {
-				level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
+					level.getBlockEntity(pos) != null, true)) {
+				PlayerBlockEdits.replace(player, pos.immutable(), Blocks.ICE.defaultBlockState());
 			}
 		}
 		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-snowRadius, -2, -snowRadius),
@@ -106,17 +112,14 @@ public final class LivingFlailImpactEffects {
 			boolean air = target.isAir();
 			boolean sturdy = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
 			if (!sturdy || !(air || snow) || snow && layers >= 8 || level.getBlockEntity(pos) != null) continue;
-			if (!LivingFlailTerrainRules.mayPlaceSnow(sturdy, air, snow, layers,
-					false, protectionAllows(level, owner, pos))) continue;
+			if (!LivingFlailTerrainRules.mayPlaceSnow(sturdy, air, snow, layers, false, true)) continue;
 			BlockState placed = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS,
 					LivingFlailTerrainRules.nextSnowLayers(layers));
-			if (placed.canSurvive(level, pos)) level.setBlock(pos, placed, 3);
+			if (!placed.canSurvive(level, pos)) continue;
+			// Fresh snow is placed; a deeper layer replaces the snow already there.
+			if (air) PlayerBlockEdits.place(player, pos.immutable(), placed);
+			else PlayerBlockEdits.replace(player, pos.immutable(), placed);
 		}
-	}
-
-	private static boolean protectionAllows(ServerLevel level, LivingEntity owner, BlockPos pos) {
-		BlockSnapshot snapshot = BlockSnapshot.create(level.dimension(), level, pos, 3);
-		return !EventHooks.onBlockPlace(owner, snapshot, Direction.UP);
 	}
 
 	private static void emitImpact(ServerLevel level, Vec3 center, float charge, float impactScale, long seed) {

@@ -9,11 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class LuminalCicadaRulesTest {
 	@Test
-	void rulesHold() {
-		main(new String[0]);
-	}
-
-	@Test
 	void naturalSpawnsRequireTheRequestedBiomesAndTheirHabitat() {
 		assertTrue(LuminalCicadaRules.canNaturalSpawn(true, false, true, true));
 		assertTrue(!LuminalCicadaRules.canNaturalSpawn(true, false, false, true));
@@ -62,7 +57,8 @@ public final class LuminalCicadaRulesTest {
 		assert LuminalCicadaRules.abdomenPitch(true, 0.0F) == 0.0F;
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void rulesHold() {
 		assert LuminalCicadaRules.canCling(true, true);
 		assert !LuminalCicadaRules.canCling(false, true);
 		assert !LuminalCicadaRules.canCling(true, false);

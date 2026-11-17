@@ -77,10 +77,9 @@ public class SporiticThuribleItem extends Item {
 					.withStyle(ChatFormatting.RED), true);
 			return InteractionResultHolder.fail(stack);
 		}
-		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		if (degree < SporiticThuribleRules.REQUIRED_DEGREE) {
-			player.displayClientMessage(Component.translatable("item.hemomancy.sporitic_thurible.message.degree",
-							SporiticThuribleRules.REQUIRED_DEGREE)
+		if (!SporiticThuribleRules.mayBurn(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+				HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath())) {
+			player.displayClientMessage(Component.translatable("item.hemomancy.sporitic_thurible.message.apotheos")
 					.withStyle(ChatFormatting.RED), true);
 			return InteractionResultHolder.fail(stack);
 		}

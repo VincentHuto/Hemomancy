@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJ
 import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.RedTaxonomyRewardRules;
+import com.vincenthuto.hemomancy.common.mission.alchemist.TitrationBandolierGift;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.shared.MnemonicRecipeKnowledge;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
@@ -33,6 +34,10 @@ final class AlchemistDialogueEvents {
 
 	/** Handles the event when it is one of this NPC's; false lets the next route try. */
 	public static boolean handle(DialogueEvent event) {
+		if (CoreLoopLessonRoutes.teach(event, CoreLoopLessons.ALCHEMIST, HarbingerAlchemistEntity.class,
+				(player, lesson) -> {
+					if (lesson.id().equals(TitrationBandolierGift.LESSON)) TitrationBandolierGift.give(player);
+				})) return true;
 		ServerPlayer player = event.getPlayer();
 		HarbingerAlchemistDialogueTrees.RedTaxonomySample redTaxonomySample =
 				HarbingerAlchemistDialogueTrees.RedTaxonomySample.fromEventId(event.getEventId());
@@ -99,6 +104,9 @@ final class AlchemistDialogueEvents {
 		case FirstDrawsDialogue.ACCEPT -> event.setRewardDelivered(
 				com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment.brief(
 					player, player.level().getEntity(event.getEntityId())));
+		case FirstSeparationSpinDialogue.CLEAR -> event.setRewardDelivered(
+				player.level().getEntity(event.getEntityId()) instanceof HarbingerAlchemistEntity
+						&& FirstSeparationAssignment.clearPendingAssignmentSpin(player));
 		case SpecimenJarLessonDialogue.TEACH -> event.setRewardDelivered(
 				com.vincenthuto.hemomancy.common.mission.alchemist.SpecimenJarLesson.teach(
 					player, player.level().getEntity(event.getEntityId())));
@@ -111,15 +119,23 @@ final class AlchemistDialogueEvents {
 	}
 
 	private static void handleAlchemistFirstSeparationBrief(ServerPlayer player) {
-		if (!FirstSeparationAssignment.canBrief(player)) return;
-		if (!FirstSeparationAssignment.markBriefed(player)) return;
+		if (!FirstSeparationAssignment.canBrief(player) || !FirstSeparationAssignment.markBriefed(player)) {
+			DialogueRewards.refuse(player, DialogueRewards.NOT_NOW);
+			return;
+		}
 		FirstSeparationAssignment.giveBriefingSupplies(player);
 	}
 
 	private static boolean handleAlchemistFirstSeparationReward(ServerPlayer player, int entityId) {
         if (!(player.level().getEntity(entityId) instanceof HarbingerAlchemistEntity alchemist)
-                || !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, alchemist)) return false;
-		if (!FirstSeparationAssignment.claimRewards(player)) return false;
+                || !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, alchemist)) {
+			DialogueRewards.refuse(player, DialogueRewards.TOO_FAR);
+			return false;
+		}
+		if (!FirstSeparationAssignment.claimRewards(player)) {
+			DialogueRewards.refuse(player, DialogueRewards.NOT_NOW);
+			return false;
+		}
 		player.displayClientMessage(Component.translatable("hemomancy.alchemist.first_separation.next_distillation"), false);
 		return true;
 	}
@@ -307,8 +323,10 @@ final class AlchemistDialogueEvents {
 	}
 
 	private static void handleAlchemistBodyAnswersBrief(ServerPlayer player) {
-		if (!BodyAnswersAssignment.canBrief(player)) return;
-		if (!BodyAnswersAssignment.markBriefed(player)) return;
+		if (!BodyAnswersAssignment.canBrief(player) || !BodyAnswersAssignment.markBriefed(player)) {
+			DialogueRewards.refuse(player, DialogueRewards.NOT_NOW);
+			return;
+		}
 		BodyAnswersAssignment.giveBriefingSupplies(player);
 		MnemonicRecipeKnowledge.awardStarter(player);
 	}

@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class MorphlingStage4To8SourceTest {
 	private static final Path SRC = Path.of("src/main/java");
@@ -11,7 +15,8 @@ public final class MorphlingStage4To8SourceTest {
 	private MorphlingStage4To8SourceTest() {
 	}
 
-	public static void main(String[] args) throws Exception {
+	@Test
+	void allChecksPass() throws Exception {
 		hungerConfigAndStackStateAreActiveByDefault();
 		wildCradleStaffAndClientPipelinesAreRetargeted();
 		puppetInterferenceUsesExistingUpkeepAndHudPipelines();
@@ -47,17 +52,5 @@ public final class MorphlingStage4To8SourceTest {
 
 	private static String read(String relative) throws IOException {
 		return Files.readString(SRC.resolve(relative));
-	}
-
-	private static void assertContains(String label, String haystack, String needle) {
-		if (!haystack.contains(needle)) {
-			throw new AssertionError(label + ": missing " + needle);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String haystack, String needle) {
-		if (haystack.contains(needle)) {
-			throw new AssertionError(label + ": still contains " + needle);
-		}
 	}
 }

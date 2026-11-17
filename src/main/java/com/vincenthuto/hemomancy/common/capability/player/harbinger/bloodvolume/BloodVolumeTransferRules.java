@@ -14,14 +14,15 @@ public final class BloodVolumeTransferRules {
 	}
 
 	/**
-	 * How much of a client-requested donation the donor can actually give. Non-finite and non-positive requests give
-	 * nothing: {@code Math.min(NaN, x)} is NaN, which would pass a {@code <= 0} check and drain the donor to NaN.
+	 * How much of a client-requested donation the donor can actually give and the pool can take. Non-finite and
+	 * non-positive requests give nothing: {@code Math.min(NaN, x)} is NaN, which would pass a {@code <= 0} check and
+	 * drain the donor to NaN.
 	 */
-	public static double donationAmount(double requestedAmount, double donorBlood) {
+	public static double donationAmount(double requestedAmount, double donorBlood, double poolRoom) {
 		if (!Double.isFinite(requestedAmount) || requestedAmount <= 0.0D) {
 			return 0.0D;
 		}
-		double amount = Math.min(requestedAmount, donorBlood);
+		double amount = Math.min(requestedAmount, Math.min(donorBlood, poolRoom));
 		return amount > 0.0D ? amount : 0.0D;
 	}
 }

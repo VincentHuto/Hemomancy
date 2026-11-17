@@ -21,8 +21,17 @@ public final class BloodFlowVisuals {
         send(level,caster.getId(),key,style,source,end,style==Style.COMMUNION?24:18,false);
     }
     public static void lignum(LivingEntity caster,Vec3 target,long seed) {
-        if(caster.level() instanceof ServerLevel level)send(level,caster.getId(),seed,Style.LIGNUM,anchor(caster),
+        toward(caster,target,seed,Style.LIGNUM);
+    }
+    /** A short-lived tendril from the caster to a point in the world, in {@code style}. */
+    public static void toward(LivingEntity caster,Vec3 target,long seed,Style style) {
+        if(caster.level() instanceof ServerLevel level)send(level,caster.getId(),seed,style,anchor(caster),
                 new TendrilAnchor.Point(target),10,false);
+    }
+    /** A short-lived tendril drawn from a point in the world back into the caster, in {@code style}. */
+    public static void from(LivingEntity caster,Vec3 source,long seed,Style style) {
+        if(caster.level() instanceof ServerLevel level)send(level,caster.getId(),seed,style,new TendrilAnchor.Point(source),
+                anchor(caster),style==Style.COMMUNION?16:10,false);
     }
     public static void stop(LivingEntity caster,Style style) {
         if(caster.level() instanceof ServerLevel level)send(level,caster.getId(),0,style,anchor(caster),anchor(caster),1,true);

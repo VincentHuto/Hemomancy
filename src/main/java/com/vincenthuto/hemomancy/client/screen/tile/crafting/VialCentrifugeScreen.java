@@ -76,7 +76,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		this.renderTooltip(graphics, mouseX, mouseY);
 
 		BloodVolumeBarWidget.renderTooltip(graphics, font, bloodBarBounds,
-				te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
+				com.vincenthuto.hemomancy.common.tile.ReservoirReading.of(te), mouseX, mouseY);
 
 		// Start button hover tooltip
 		if (!this.menu.isSpinning() && mouseX >= btnX1 && mouseX < btnX2 && mouseY >= btnY1 && mouseY < btnY2) {
@@ -288,7 +288,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		int barX = gx + 8 + (16 - barW) / 2;
 		int barY = gy + 90 - barH - 4;
 		bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
-				te.getBloodVolume(), te.getMaxBloodVolume(), animTime, BORDER_OUTER, BORDER_INNER);
+				com.vincenthuto.hemomancy.common.tile.ReservoirReading.of(te), animTime, BORDER_OUTER, BORDER_INNER);
 	}
 
 

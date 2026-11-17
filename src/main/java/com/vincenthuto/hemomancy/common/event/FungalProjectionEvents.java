@@ -42,12 +42,8 @@ public final class FungalProjectionEvents {
 		}
 	}
 
-	@SubscribeEvent
-	public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player && active(player)) {
-			FungalGardenTravelHelper.performForcedProjectionReturn(player);
-		}
-	}
+	// A logout pauses the first projection (PT-75): its two keys are saved with the player, the timer counts only while
+	// they are in the Gardens, and the PlayerStateSync table resends the time left at login.
 
 	@SubscribeEvent
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {

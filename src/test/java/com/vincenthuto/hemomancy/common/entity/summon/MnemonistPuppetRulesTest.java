@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -8,7 +9,8 @@ public final class MnemonistPuppetRulesTest {
     private MnemonistPuppetRulesTest() {
     }
 
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         dropsOldestMemoryWhenBufferIsFull();
         expiresOldMemories();
         rejectsReplayDamageAndTargetMismatch();

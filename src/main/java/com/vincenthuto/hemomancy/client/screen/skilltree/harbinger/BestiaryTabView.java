@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtK
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 
 public final class BestiaryTabView {
 	private static final int TAB_COLOR = 0xFF77AA66;
@@ -25,7 +26,9 @@ public final class BestiaryTabView {
 	private static final int DETAIL_PAD = 10;
 	private static final int PREVIEW_GAP = 10;
 	private static final int PREVIEW_MIN_W = 96;
-	private static final int TEXT_MIN_W = 120;
+	private static final int TEXT_MIN_W = 108;
+	/** The list narrows to this when its usual width leaves the detail panel no room for the preview (FX-20). */
+	private static final int NARROW_LIST_W = 130;
 
 	private BestiaryTabView() {
 	}
@@ -35,13 +38,27 @@ public final class BestiaryTabView {
 		int y = ctx.guiTop() + PANEL_TOP;
 		int w = ctx.guiWidth() - PAD * 2;
 		int h = bodyHeight(ctx);
-		int listW = Math.min(220, Math.max(160, w / 3));
+		int listW = listWidth(ctx.guiWidth());
 		int detailX = x + listW + PAD;
-		int detailW = w - listW - PAD;
+		int detailW = detailWidth(ctx.guiWidth());
 
 		drawHeader(gfx, ctx, x, y, w, state);
 		drawList(gfx, ctx, state, x, y + TOP_H, listW, h - TOP_H, mouseX, mouseY);
 		drawDetail(gfx, ctx, state, detailX, y + TOP_H, detailW, h - TOP_H, mouseX, mouseY);
+	}
+
+	/** The list keeps a third of the body, 160 to 220 px, or narrows so the detail panel can hold the preview. */
+	static int listWidth(int guiWidth) {
+		int listW = Math.min(220, Math.max(160, (guiWidth - PAD * 2) / 3));
+		return detailHoldsPreview(guiWidth - PAD * 3 - listW) ? listW : Math.min(listW, NARROW_LIST_W);
+	}
+
+	static int detailWidth(int guiWidth) {
+		return guiWidth - PAD * 3 - listWidth(guiWidth);
+	}
+
+	static boolean detailHoldsPreview(int detailW) {
+		return detailW - DETAIL_PAD * 2 - PREVIEW_GAP - TEXT_MIN_W >= PREVIEW_MIN_W;
 	}
 
 	/** Height from the header down to just above the bottom-right tabs. */
@@ -69,7 +86,7 @@ public final class BestiaryTabView {
 	static boolean isOverList(ProgressScreenContext ctx, double mx, double my) {
 		int x = ctx.guiLeft() + PAD;
 		int y = ctx.guiTop() + PANEL_TOP + TOP_H;
-		int listW = Math.min(220, Math.max(160, (ctx.guiWidth() - PAD * 2) / 3));
+		int listW = listWidth(ctx.guiWidth());
 		int listH = listHeight(ctx);
 		return mx >= x && mx <= x + listW && my >= y && my <= y + listH;
 	}
@@ -77,7 +94,7 @@ public final class BestiaryTabView {
 	static BestiaryTabState.Entry entryUnder(ProgressScreenContext ctx, BestiaryTabState state, double mx, double my) {
 		int x = ctx.guiLeft() + PAD;
 		int y = ctx.guiTop() + PANEL_TOP + TOP_H;
-		int listW = Math.min(220, Math.max(160, (ctx.guiWidth() - PAD * 2) / 3));
+		int listW = listWidth(ctx.guiWidth());
 		int listH = listHeight(ctx);
 		if (mx < x || mx > x + listW || my < y || my > y + listH) {
 			return null;
@@ -115,6 +132,10 @@ public final class BestiaryTabView {
 				state.recordedSpecimenCount, SpecimenBestiaryDefinitions.totalResearchSpecimens(),
 				state.recordedMorphlingLayerCount, SpecimenBestiaryDefinitions.orderedMorphlingEntries().size());
 		gfx.drawString(ctx.font(), counts, x, y + 14, 0xFF9DAA9D, false);
+		// What the player knows of the kinds they have met (P6), on the right of the title.
+		Component creatures = Component.translatable("screen.hemomancy.bestiary_tab_view.creature_counts",
+				state.metCount, state.readCount, state.studiedCount);
+		gfx.drawString(ctx.font(), creatures, x + w - ctx.font().width(creatures), y, 0xFF9DAA9D, false);
 		gfx.fill(x, y + 30, x + w, y + 31, 0xFF24442D);
 	}
 
@@ -133,9 +154,11 @@ public final class BestiaryTabView {
 			for (BestiaryTabState.Entry entry : state.entries) {
 				if (entry.kind() != last) {
 					if (rowY + GROUP_H >= y && rowY <= y + h) {
-						Component label = entry.kind() == BestiaryTabState.Kind.SPECIMEN
-								? Component.translatable("bestiary.hemomancy.section.specimens")
-								: Component.translatable("bestiary.hemomancy.section.morphlings");
+						Component label = switch (entry.kind()) {
+							case CREATURE -> Component.translatable("bestiary.hemomancy.section.creatures");
+							case SPECIMEN -> Component.translatable("bestiary.hemomancy.section.specimens");
+							case MORPHLING -> Component.translatable("bestiary.hemomancy.section.morphlings");
+						};
 						int textW = maxScroll > 0 ? w - LIST_SCROLLBAR_W - 15 : w - 12;
 						String drawnLabel = ScreenDrawUtils.truncateText(ctx.font(), label.getString(), textW);
 						gfx.drawString(ctx.font(), drawnLabel, x + 6, rowY + 2, 0xFF8CA88C, false);
@@ -268,23 +291,22 @@ public final class BestiaryTabView {
 		Component title = entry.discovered()
 				? Component.translatable(entry.titleKey())
 				: Component.translatable("bestiary.hemomancy.locked.title");
-		gfx.drawString(ctx.font(), title.copy().withStyle(s -> s.withColor(TAB_COLOR).withBold(true)),
-				x, cy, 0, false);
-		cy += 16;
+		cy = drawWrapped(gfx, ctx, title.copy().withStyle(s -> s.withColor(TAB_COLOR).withBold(true)), x, cy, w) + 5;
 		String statusKey = statusKey(entry);
-		gfx.drawString(ctx.font(), Component.translatable(statusKey).withStyle(s -> s.withColor(0xFF9DB09D)),
-				x, cy, 0, false);
-		cy += 16;
+		cy = drawWrapped(gfx, ctx, Component.translatable(statusKey).withStyle(s -> s.withColor(0xFF9DB09D)),
+				x, cy, w) + 5;
 		if (entry.discovered() && entry.kind() == BestiaryTabState.Kind.MORPHLING
 				&& !entry.classificationKey().isBlank()) {
 			Component classification = Component.translatable("bestiary.hemomancy.morphling.classification",
 					Component.translatable(entry.classificationKey()))
 					.withStyle(s -> s.withColor(0xFF8FA68F));
-			gfx.drawString(ctx.font(), classification, x, cy, 0, false);
-			cy += 14;
+			cy = drawWrapped(gfx, ctx, classification, x, cy, w) + 3;
 		}
 		gfx.fill(x, cy, x + w, cy + 1, 0xFF24442D);
 		cy += 9;
+		if (entry.kind() == BestiaryTabState.Kind.CREATURE) {
+			return BestiaryBloodBlock.draw(gfx, ctx, entry.previewId(), x, cy, w);
+		}
 
 		String description = entry.discovered()
 				? Component.translatable(entry.descriptionKey()).getString()
@@ -301,6 +323,12 @@ public final class BestiaryTabView {
 			String court = Component.translatable(SpecimenBestiaryDefinitions.morphlingCourtKey(entry.key())).getString();
 			cy = drawWrapped(gfx, ctx, court, x, cy, w, 0xFF7FB8B0);
 		}
+		// A roster specimen with a blood profile carries the same blood block as any met kind (P6).
+		if (entry.discovered() && entry.kind() == BestiaryTabState.Kind.SPECIMEN && BestiaryBloodBlock.profiled(entry.previewId())) {
+			cy += 10;
+			gfx.fill(x, cy, x + w, cy + 1, 0xFF24442D);
+			cy = BestiaryBloodBlock.draw(gfx, ctx, entry.previewId(), x, cy + 6, w);
+		}
 		return cy;
 	}
 
@@ -310,20 +338,17 @@ public final class BestiaryTabView {
 		}
 		int x = ctx.guiLeft() + PAD;
 		int y = ctx.guiTop() + PANEL_TOP;
-		int w = ctx.guiWidth() - PAD * 2;
 		int h = bodyHeight(ctx);
-		int listW = Math.min(220, Math.max(160, w / 3));
-		int detailX = x + listW + PAD;
-		int detailW = w - listW - PAD;
-		return previewBounds(detailX, y + TOP_H, detailW, h - TOP_H);
+		int detailX = x + listWidth(ctx.guiWidth()) + PAD;
+		return previewBounds(detailX, y + TOP_H, detailWidth(ctx.guiWidth()), h - TOP_H);
 	}
 
 	private static PreviewBounds previewBounds(int x, int y, int w, int h) {
-		int availableW = w - DETAIL_PAD * 2;
-		int maxPreviewW = availableW - PREVIEW_GAP - TEXT_MIN_W;
-		if (maxPreviewW < PREVIEW_MIN_W) {
+		if (!detailHoldsPreview(w)) {
 			return null;
 		}
+		int availableW = w - DETAIL_PAD * 2;
+		int maxPreviewW = availableW - PREVIEW_GAP - TEXT_MIN_W;
 		int preferred = w >= 360 ? Math.round(availableW * 0.45F) : Math.round(availableW * 0.38F);
 		int previewW = Math.max(PREVIEW_MIN_W, Math.min(preferred, maxPreviewW));
 		return new PreviewBounds(x + DETAIL_PAD, y + DETAIL_PAD, previewW, h - DETAIL_PAD * 2);
@@ -368,6 +393,9 @@ public final class BestiaryTabView {
 		if (!entry.discovered()) {
 			return "bestiary.hemomancy.status.unknown";
 		}
+		if (entry.kind() == BestiaryTabState.Kind.CREATURE) {
+			return BestiaryBloodBlock.statusKey(entry.previewId());
+		}
 		if (entry.kind() == BestiaryTabState.Kind.MORPHLING) {
 			return "bestiary.hemomancy.status.wild_morphling";
 		}
@@ -380,6 +408,14 @@ public final class BestiaryTabView {
 			int color) {
 		for (String line : ScreenDrawUtils.wrapText(ctx.font(), text, w)) {
 			gfx.drawString(ctx.font(), line, x, y, color, false);
+			y += 11;
+		}
+		return y;
+	}
+
+	private static int drawWrapped(GuiGraphics gfx, ProgressScreenContext ctx, Component text, int x, int y, int w) {
+		for (FormattedCharSequence line : ctx.font().split(text, w)) {
+			gfx.drawString(ctx.font(), line, x, y, 0, false);
 			y += 11;
 		}
 		return y;

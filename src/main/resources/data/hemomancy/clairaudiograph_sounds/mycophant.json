@@ -39,7 +39,7 @@
     },
     {
       "kind": "special",
-      "sound": "hemomancy:entity.mycophant.teleport",
+      "sound": "hemomancy:entity.mycophant.split",
       "pitch": 1,
       "replay_interval_ticks": 120
     }

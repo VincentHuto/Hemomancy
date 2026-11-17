@@ -25,9 +25,12 @@ public final class ChamberVisitEvents {
 	@SubscribeEvent
 	public static void onWake(PlayerWakeUpEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			// Leaving bed also uses the slow wake animation; only the server's night skip completes rest.
+			// Leaving bed also uses the slow wake animation; only the server's night skip completes a Chamber dream.
 			boolean completed = !event.wakeImmediately() && !event.updateLevel();
-			if (!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, completed))
+			// PT-11: Concentrated Blood settles after a minimum time in bed, night skip or not.
+			boolean rested = completed || player.getSleepTimer()
+					>= com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.SETTLE_TICKS;
+			if (!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, rested))
 				ChamberVisitService.onCompletedSleep(player, completed);
 		}
 	}

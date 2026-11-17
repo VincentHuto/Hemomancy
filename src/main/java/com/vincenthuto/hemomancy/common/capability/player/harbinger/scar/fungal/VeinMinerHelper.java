@@ -1,130 +1,34 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.OreVeins;
+import com.vincenthuto.hemomancy.common.manipulation.verb.CrawlSession;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
+/**
+ * The Talaromyces Minus scar's vein mine and the break-permission checks {@code PlayerBlockEdits} shares. A sneaking
+ * break of an ore with the scar crawls the rest of its lode through {@link OreVeins}, the same crawl Lode Draw uses
+ * (core-loop Track 8): one vein miner with one set of rules and guards, breaking each block through
+ * {@code PlayerBlockEdits.breakBlock} with the player's own tool. Each extra ore costs {@link #BLOOD_PER_EXTRA_ORE}.
+ */
 public class VeinMinerHelper {
-
-	public static final Comparator<ItemStack> ITEMSTACK_ASCENDING = (o1, o2) -> {
-		if (o1.isEmpty() && o2.isEmpty()) {
-			return 0;
-		}
-		if (o1.isEmpty()) {
-			return 1;
-		}
-		if (o2.isEmpty()) {
-			return -1;
-		}
-		if (o1.getItem() != o2.getItem()) {
-			// Same item id
-			return o1.getCount() - o2.getCount();
-		}
-		// Different id
-		return Item.getId(o1.getItem()) - Item.getId(o2.getItem());
-	};
-
-	public static void compactItemListNoStacksize(List<ItemStack> list) {
-		for (int i = 0; i < list.size(); i++) {
-			ItemStack s = list.get(i);
-			if (!s.isEmpty()) {
-				for (int j = i + 1; j < list.size(); j++) {
-					ItemStack s1 = list.get(j);
-					if (ItemStack.isSameItemSameComponents(s, s1)) {
-						s.grow(s1.getCount());
-						list.set(j, ItemStack.EMPTY);
-					}
-				}
-			}
-		}
-		list.removeIf(ItemStack::isEmpty);
-		list.sort(ITEMSTACK_ASCENDING);
-	}
-
-	public static void createLootDrop(List<ItemStack> drops, Level world, BlockPos pos) {
-		createLootDrop(drops, world, pos.getX(), pos.getY(), pos.getZ());
-	}
-
-	public static void createLootDrop(List<ItemStack> drops, Level world, double x, double y, double z) {
-		if (!drops.isEmpty()) {
-			compactItemListNoStacksize(drops);
-			for (ItemStack drop : drops) {
-				ItemEntity ent = new ItemEntity(world, x, y, z, drop);
-				world.addFreshEntity(ent);
-			}
-		}
-	}
-	public static AABB getBroadDeepBox(BlockPos pos, int offset) {
-		return new AABB(pos.getX() - offset, pos.getY(), pos.getZ() - offset, pos.getX() + offset, pos.getY() + offset,
-				pos.getZ() + offset);
-	}
-	public static Iterable<BlockPos> getPositionsFromBox(AABB box) {
-		return getPositionsFromBox(BlockPos.containing(box.minX, box.minY, box.minZ),
-				BlockPos.containing(box.maxX, box.maxY, box.maxZ));
-	}
-
-	public static Iterable<BlockPos> getPositionsFromBox(BlockPos corner1, BlockPos corner2) {
-		return () -> BlockPos.betweenClosedStream(corner1, corner2).iterator();
-	}
-	public static int harvestVein(Level world, Player player, ItemStack stack, BlockPos pos, Block target,
-			List<ItemStack> currentDrops, int numMined) {
-
-		if (numMined >= 250) {
-			return numMined;
-		}
-		AABB b = new AABB(pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1, pos.getX() + 1, pos.getY() + 1,
-				pos.getZ() + 1);
-		for (BlockPos currentPos : getPositionsFromBox(b)) {
-			BlockState currentState = world.getBlockState(currentPos);
-			if (currentState.getBlock() == target) {
-				// Ensure we are immutable so that changing blocks doesn't act weird
-				currentPos = currentPos.immutable();
-				if (hasBreakPermission((ServerPlayer) player, currentPos)) {
-					numMined++;
-					currentDrops.addAll(Block.getDrops(currentState, (ServerLevel) world, currentPos,
-							world.getBlockEntity(currentPos), player, stack));
-					world.removeBlock(currentPos, false);
-					numMined = harvestVein(world, player, stack, currentPos, target, currentDrops, numMined);
-					if (numMined >= 250) {
-						var manips = HemoCapabilityAccess.getKnownManipulations(player);
-						if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
-							manips.setLastVeinMineStart(BlockPos.ZERO);
-						}
-
-						break;
-					}
-				}
-			}
-		}
-		var manips = HemoCapabilityAccess.getKnownManipulations(player);
-		if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
-			manips.setLastVeinMineStart(BlockPos.ZERO);
-		}
-		return numMined;
-	}
+	/** Each ore past the one the player broke costs this, the Lode Draw price (NQ-04-5, CQ-8). */
+	public static final double BLOOD_PER_EXTRA_ORE = 12.0D;
+	static final BloodAccounting.Source VEIN = BloodAccounting.Source.of("talaromyces_vein", Category.SCAR, false);
 
 	public static boolean hasBreakPermission(ServerPlayer player, BlockPos pos) {
 		if (!hasEditPermission(player, pos)) {
@@ -137,63 +41,42 @@ public class VeinMinerHelper {
 
 	public static boolean hasEditPermission(ServerPlayer player, BlockPos pos) {
 		if (ServerLifecycleHooks.getCurrentServer().isUnderSpawnProtection((ServerLevel) player.getCommandSenderWorld(),
-				pos, player)) {
+				pos, player) || !player.level().mayInteract(player, pos)) {
 			return false;
 		}
 		return Arrays.stream(Direction.values()).allMatch(e -> player.mayUseItemAt(pos, e, ItemStack.EMPTY));
 	}
 
-	public static boolean isOre(Block b) {
-		return b.defaultBlockState().is(BlockTags.STONE_ORE_REPLACEABLES)
-				|| b.defaultBlockState().is(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
-	}
-
-	public static boolean isOre(BlockState state) {
-		return state.is(Tags.Blocks.ORES);
-	}
-
-	public static boolean isOre(Item i) {
-		return isOre(Block.byItem(i));
+	/** Whether {@code tool} gets drops from {@code state}: the vein never mines past the tool's tier. */
+	public static boolean canHarvest(BlockState state, ItemStack tool) {
+		return !state.requiresCorrectToolForDrops() || tool.isCorrectToolForDrops(state);
 	}
 
 	/**
-	 * Scans and harvests an ore vein.
+	 * Crawls the lode the player just broke into and breaks the rest of it with the tool in hand. The block the
+	 * player broke is left to that ordinary break. Never mines past the tool's tier.
 	 */
-	public static InteractionResult tryVeinMine(ItemStack itemStack, Player player, BlockPos pos ) {
-
-		Level world = player.getCommandSenderWorld();
-		BlockState target = world.getBlockState(pos);
-		boolean hasAction = false;
-		List<ItemStack> drops = new ArrayList<>();
-		
-		var manips = HemoCapabilityAccess.getKnownManipulations(player);
-		if(manips.getLastVeinMineStart() == BlockPos.ZERO) {
-			manips.setLastVeinMineStart(pos);
+	public static InteractionResult tryVeinMine(ItemStack tool, Player player, BlockPos pos) {
+		if (!(player instanceof ServerPlayer server) || !(server.level() instanceof ServerLevel level)) {
+			return InteractionResult.PASS;
 		}
-
-		
-		
-		for (BlockPos newPos : getPositionsFromBox(getBroadDeepBox(pos, 8))) {
-			if (!world.isEmptyBlock(newPos)) {
-				BlockState state = world.getBlockState(newPos);
-				if (target.getBlock() == state.getBlock()) {
-					if (world.isClientSide) {
-						return InteractionResult.SUCCESS;
-					}
-					// Ensure we are immutable so that changing blocks doesn't act weird
-					if (harvestVein(world, player,itemStack, newPos.immutable(), state.getBlock(), drops, 0) > 0) {
-						hasAction = true;
-					}
-				}
-			}
+		BlockState target = level.getBlockState(pos);
+		// The player's own break must harvest the ore (the HarvestCheck event included): a dry Living pickaxe, which
+		// digs like a bare hand, opens no vein.
+		if (!OreVeins.isOre(target) || !canHarvest(target, tool) || !target.canHarvestBlock(level, pos, server)) {
+			return InteractionResult.PASS;
 		}
-		if (hasAction) {
-			createLootDrop(drops, world, pos);
-			world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.STONE_BREAK,
-					SoundSource.PLAYERS, 1.0F, 1.0F);
-			return InteractionResult.SUCCESS;
+		CrawlSession crawl = OreVeins.crawl(level, pos, state -> canHarvest(state, tool));
+		crawl.advance(level, OreVeins.MAX_BLOCKS);
+		// The vein is paid ore by ore and stops where the blood stops.
+		int broken = OreVeins.mine(level, server, crawl, tool, pos,
+				(minedPos, state) -> BloodAccounting.pay(server, BLOOD_PER_EXTRA_ORE, VEIN),
+				next -> BloodAccounting.canPayInFull(server, BLOOD_PER_EXTRA_ORE, VEIN));
+		if (broken <= 0) {
+			return InteractionResult.PASS;
 		}
-		return InteractionResult.PASS;
+		level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.STONE_BREAK,
+				SoundSource.PLAYERS, 1.0F, 1.0F);
+		return InteractionResult.SUCCESS;
 	}
-
 }

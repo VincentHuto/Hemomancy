@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class DesiccantStingSourceTest {
 	private static final Path ENTITY_SOURCE = Path.of(
@@ -14,7 +17,8 @@ public final class DesiccantStingSourceTest {
 	private DesiccantStingSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String entity = read(ENTITY_SOURCE);
 		String model = read(MODEL_SOURCE);
 		String reference = read(HEMOMANCY_REFERENCE);
@@ -37,18 +41,5 @@ public final class DesiccantStingSourceTest {
 
 		assertContains("reference documents blood loss", reference, "Blood Loss");
 		assertContains("reference documents blood sap", reference, "250 ml");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

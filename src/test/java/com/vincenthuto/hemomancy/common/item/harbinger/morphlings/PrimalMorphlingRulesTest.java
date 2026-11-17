@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import org.junit.jupiter.api.Test;
+
 public final class PrimalMorphlingRulesTest {
 	private PrimalMorphlingRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertFalse("raw enzyme power alone never grants primal",
 				PrimalMorphlingRules.isPrimalMaturity(250.0f, false));
 		assertTrue("primal marker grants primal maturity",

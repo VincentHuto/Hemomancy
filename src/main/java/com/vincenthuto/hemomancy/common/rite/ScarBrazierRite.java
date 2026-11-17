@@ -37,7 +37,7 @@ import java.util.List;
  * ScarBrazierInteractionRules.Burn)}; the rite branches act on that result instead of validating again.
  */
 public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPlan> {
-	private static final BloodAccounting.Source SCAR_RITE = BloodAccounting.Source.of("scar_brazier_rite", Category.RITE, true, false);
+	private static final BloodAccounting.Source SCAR_RITE = BloodAccounting.Source.of("scar_brazier_rite", Category.RITE, false);
 	public static final int REQUIRED_DEGREE = 4;
 	public static final double LEARN_BLOOD_COST = 100.0D;
 	public static final double LOADOUT_BLOOD_COST = 50.0D;

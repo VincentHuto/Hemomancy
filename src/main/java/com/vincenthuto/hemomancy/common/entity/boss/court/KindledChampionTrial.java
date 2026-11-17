@@ -11,10 +11,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -23,8 +25,9 @@ import java.util.List;
 /**
  * The usurpation (Brined Court Track 10, Tier 2): a worthy challenger asks the Head-tender to let them challenge the
  * Kindled Champion. The Head-tender checks {@link CourtLife#championGate} again; when it is open, the Champion steps out
- * of the nearest Kindled elder's place to fight ({@link KindledChampionEntity#callOut}). A challenger who dies has lost,
- * and the wait is recorded here as well as by the Champion, so a death the Champion doesn't see still counts.
+ * of the nearest Kindled elder's place to fight ({@link KindledChampionEntity#callOut}). A challenger who dies or logs
+ * out has lost, and the wait is recorded here as well as by the Champion, so a death or a logout the Champion doesn't
+ * see still counts.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class KindledChampionTrial {
@@ -46,7 +49,7 @@ public final class KindledChampionTrial {
 			return null;
 		}
 		ServerLevel level = player.serverLevel();
-		if (facing(level, player) != null) return null;
+		if (facing(player) != null) return null;
 		CourtMemberEntity elder = level.getEntitiesOfClass(CourtMemberEntity.class, new AABB(tender.blockPosition()).inflate(ELDER_RANGE),
 						member -> member.role() == CourtRole.KINDLED_ELDER && !(member instanceof KindledChampionEntity) && member.isAlive())
 				.stream().min(Comparator.comparingDouble(member -> member.distanceToSqr(tender))).orElse(null);
@@ -68,19 +71,33 @@ public final class KindledChampionTrial {
 		return KindledChampionEntity.callOut(level, home, yaw, mark, player);
 	}
 
-	/** The Champion currently facing {@code player} near them, if any. */
+	/**
+	 * The Champion currently facing {@code player}, if any: searched in every loaded level at any distance, so a
+	 * challenger who swam off or changed dimension inside the grace is still found.
+	 */
 	@Nullable
-	public static KindledChampionEntity facing(ServerLevel level, ServerPlayer player) {
-		List<KindledChampionEntity> champions = level.getEntitiesOfClass(KindledChampionEntity.class,
-				player.getBoundingBox().inflate(KindledChampionRules.LEASH * 2), champion -> champion.isFacing(player));
-		return champions.isEmpty() ? null : champions.get(0);
+	public static KindledChampionEntity facing(ServerPlayer player) {
+		for (ServerLevel level : player.server.getAllLevels()) {
+			List<? extends KindledChampionEntity> champions = level.getEntities(EntityTypeTest.forClass(KindledChampionEntity.class),
+					champion -> champion.isFacing(player));
+			if (!champions.isEmpty()) return champions.get(0);
+		}
+		return null;
 	}
 
 	/** A challenger who dies has lost: the Champion keeps the title and the wait starts. */
 	@SubscribeEvent
 	public static void onDeath(LivingDeathEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		KindledChampionEntity champion = facing(player.serverLevel(), player);
+		KindledChampionEntity champion = facing(player);
 		if (champion != null) champion.end(KindledChampionRules.Outcome.CHALLENGER_DIED, player);
+	}
+
+	/** A challenger who logs out mid-fight has left it: the same wait as a death, recorded while they still exist. */
+	@SubscribeEvent
+	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		KindledChampionEntity champion = facing(player);
+		if (champion != null) champion.end(KindledChampionRules.Outcome.GONE, player);
 	}
 }

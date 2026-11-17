@@ -15,13 +15,25 @@ The Alchemist teaches blood as specimen: collection, observation, injection, and
 | 2 | The Laboratory Abroad | Craft a Cabinet, personally deposit and withdraw a full vial, obtain Hematic Iron Scraps, and meet the Artificer. Return to the Alchemist for the referral, then ask the Artificer for the Field Case lesson. |
 | 2–3 | What Blood Remembers Saying | After three personal sample identifications, obtain the Alchemist's echo referral at D2 or later. Meet the Mnemonist and learn the Clairaudiograph and cylinder recipes at D3. |
 
-First Separation and the first ordinary Ghastly Alembic distillation begin at Degree 2. Both are required before the Alchemist issues Concentrated Blood for the direct injection and sleep that grant Degree 3. Broader temper work and Body Answers remain Degree 2 side work; the clinical lessons add no separate rank gate.
+First Separation and the first ordinary Ghastly Alembic distillation begin at Degree 2. Both are required before the Alchemist issues Concentrated Blood for the direct injection and the short rest in bed (100 ticks, no night skip needed) that grant Degree 3. Broader temper work and Body Answers remain Degree 2 side work; the clinical lessons add no separate rank gate.
 
 ## Observation and injection
 
 Each successfully examined entity ID counts once per player. Repeated vials from the same creature type do not advance the three-source requirement. A traded identified vial preserves its identification, but you must personally examine it for two seconds to record that source. Interrupted examination, unknown entity IDs, and ordinary item pickup grant no examination proof. Examination consumes no blood and does not alter potency.
 
 After learning Borrowed Physiology, hold Use with a filled vial for 0.8 seconds. The injection leaves its empty vessel and causes 20 seconds of Transfusion Saturation. Both identified and unidentified usable blood can be injected once the player knows the technique. Read the identified tooltip for temporary benefits and drawbacks.
+
+## Sampling costs and unread humours
+
+Since core-loop Track 5 a draw costs the creature: a vial takes 2 health, a Living Syringe 1, and the creature cannot be
+drawn again for 30 seconds. A kept creature in a Specimen Jar or Vat pays 5 Vigor for a vial instead (3 for a Living
+Syringe), and only its keeper or their bloodline may sample it; a preserved specimen in a jar you did not place gives
+none. A kind that needs the Living Syringe in the wild needs it in glass too. Until you have
+examined a sample of a kind under the Hematic Microscope, its blood is an unread humour to you, whoever drew it; a traded
+sample stays unread to its new owner. A draw from an unread kind, wild or kept, gives you only half its Temper (the
+blood is unchanged); the action bar says so, and an injected sample is not affected. Examine three individuals of a kind (or one kept creature at three levels of
+Vigor) and a vessel's screen also tells you what a draw gives and how the kind behaves. The Living Bestiary lists
+every kind you have met with a blood profile, its blood unread until you examine it.
 
 ## Storage and travel
 

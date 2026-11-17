@@ -6,7 +6,6 @@ import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -32,6 +31,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class EngramBlock extends WaterloggableBlock {
+	private static final ParticleColor CLOT = new ParticleColor(70, 6, 14);
 
 	protected static final VoxelShape FLOOR_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 0.05, 16.0);
 	protected static final VoxelShape WALL_NORTH_SHAPE = Block.box(0.0, 0.0, 14.0, 16.0, 16.0, 16.0);
@@ -84,8 +84,10 @@ public class EngramBlock extends WaterloggableBlock {
 				worldIn.setBlock(pos, newState, 10);
 				player.hurt(player.damageSources().generic(), 1f);
 				if (!worldIn.isClientSide) {
-					HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos, ParticleTypes.SMOKE);
-					
+					ServerLevel server = (ServerLevel) worldIn;
+					HLParticleUtils.spawnPoof(server, pos, HemoParticleData.bloodCell(ParticleColor.BLOOD));
+					server.sendParticles(HemoParticleData.darkGlow(CLOT), pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5,
+							4, 0.15, 0.1, 0.15, 0.01);
 				}
 			}
 		}

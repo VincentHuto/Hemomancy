@@ -12,7 +12,8 @@ class WeaponConjureRulesTest {
         String[] forms = { LivingStaffWeaponFormRules.CONJURE_BLADE, LivingStaffWeaponFormRules.CONJURE_AXE,
                 LivingStaffWeaponFormRules.CONJURE_SPEAR, LivingStaffWeaponFormRules.CONJURE_CLAWS,
                 LivingStaffWeaponFormRules.CONJURE_CROSSBOW, LivingStaffWeaponFormRules.CONJURE_TORCH,
-                LivingStaffWeaponFormRules.CONJURE_FLAIL, LivingStaffWeaponFormRules.CONJURE_SICKLE };
+                LivingStaffWeaponFormRules.CONJURE_FLAIL, LivingStaffWeaponFormRules.CONJURE_SICKLE,
+                LivingStaffWeaponFormRules.CONJURE_PICKAXE };
         Set<Integer> seen = new HashSet<>();
         for (String form : forms) {
             assertTrue(LivingStaffWeaponFormRules.isStaffWeaponFormManip(form));
@@ -34,6 +35,8 @@ class WeaponConjureRulesTest {
         assertEquals(WeaponConjureRules.School.CRUOR, WeaponConjureRules.school(WeaponConjureRules.FLAIL));
         assertEquals(WeaponConjureRules.School.MORTEM, WeaponConjureRules.school(WeaponConjureRules.SICKLE));
         assertEquals(WeaponConjureRules.School.FERRIC, WeaponConjureRules.school(WeaponConjureRules.STAFF));
+        assertEquals(WeaponConjureRules.School.FERRIC, WeaponConjureRules.school(WeaponConjureRules.PICKAXE),
+                "the pickaxe hardens into hematic iron, like the axe");
     }
 
     @Test void encodingRoundTripsAndStaysPositive() {

@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.tile;
 
+import org.junit.jupiter.api.Test;
+
 public final class BloodContainerTransferTest {
 
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         assertFalse(BloodContainerTransfer.canAcceptFilledContainer(3900, 4000, 2500),
                 "filled containers require their full amount of free capacity");
         assertTrue(BloodContainerTransfer.canAcceptFilledContainer(1500, 4000, 2500),

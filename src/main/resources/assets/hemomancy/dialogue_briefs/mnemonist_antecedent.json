@@ -503,6 +503,62 @@
   "about": "asking the Mnemonist to teach them a first crude memory",
   "tone": "eager"
  },
+ "hemomancy.dialogue.mnemonist.option.craft.back": {
+  "about": "going back to the Mnemonist's lesson for something else",
+  "tone": "plain"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.land": {
+  "about": "asking the Mnemonist whether a memory can move the ground",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.land.dark": {
+  "about": "asking the Mnemonist what Blood Eclipse takes under Absorption",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.land.light": {
+  "about": "asking the Mnemonist about Hematic Beacon's held Projection",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.land.strike": {
+  "about": "asking the Mnemonist what Living Land does",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.sculptings": {
+  "about": "asking the Mnemonist what a selected memory does to a held verb",
+  "tone": "attentive"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.sculptings.draw": {
+  "about": "asking the Mnemonist whether any Sculptings use Absorption",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.sculptings.first": {
+  "about": "asking the Mnemonist what happens when a memory has more than one Sculpting",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.sculptings.mend": {
+  "about": "asking the Mnemonist which Sculptings mend or burn",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.sculptings.work": {
+  "about": "asking the Mnemonist which Sculptings work wood and ore",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.strands": {
+  "about": "asking the Mnemonist what a strand is",
+  "tone": "attentive"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.strands.brand": {
+  "about": "asking the Mnemonist what a brand is for",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.strands.forms": {
+  "about": "asking the Mnemonist what forms a strand can take",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.craft.strands.stain": {
+  "about": "asking the Mnemonist what a planted strand does in a stain",
+  "tone": "curious"
+ },
  "hemomancy.dialogue.mnemonist.option.guided_chamber": {
   "about": "asking the Mnemonist to guide them through the Chamber",
   "tone": "hopeful"
@@ -651,6 +707,14 @@
   "about": "the Mnemonist advising the player to watch who begins an act and who answers, since manifestations take shape in that exchange",
   "tone": "quiet, instructive"
  },
+ "hemomancy.mnemonist.circus.teaser.line1": {
+  "about": "the Mnemonist, to a third-Degree player, naming the Circus as a Harbinger company that teaches puppetry through performance, and the open country its camps keep to: plains, forests, taiga, savanna and badlands",
+  "tone": "measured, plain"
+ },
+ "hemomancy.mnemonist.circus.teaser.line2": {
+  "about": "the Mnemonist saying they write no waybill before the fourth Degree, but that if the player finds a camp first the Acrobat and the Dagger Thrower teach their bodies at the third",
+  "tone": "measured, exact"
+ },
  "hemomancy.mnemonist.circus.undiscovered.line1": {
   "about": "the Mnemonist describing a Harbinger company called the Circus that works through performance, where every body under the pavilion practices something different",
   "tone": "measured, wary"
@@ -666,6 +730,110 @@
  "hemomancy.mnemonist.clarity.line2": {
   "about": "the Mnemonist allowing questions from a player who left the Harbinger path, noting the old path is still on file but they will not return its living lessons",
   "tone": "gentle, firm"
+ },
+ "hemomancy.mnemonist.craft.land.dark.line1": {
+  "about": "the Mnemonist explaining Blood Eclipse under Absorption draws in and puts out candles, campfires, Lux traces and lit gouge runs, leaving a field of dark",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.land.dark.line2": {
+  "about": "the Mnemonist stating that creatures inside a field of dark lose their sight, that it hides only its caster from creatures beyond four blocks, and that a torch or glowstone is beyond it",
+  "tone": "clipped"
+ },
+ "hemomancy.mnemonist.craft.land.light.line1": {
+  "about": "the Mnemonist explaining Hematic Beacon's held Projection spreads forking lines of real light from the aim a few cells a pulse",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.land.light.line2": {
+  "about": "the Mnemonist noting the lines dim over four minutes and that a cave lit this way needs blood and Lux, not torches",
+  "tone": "clipped"
+ },
+ "hemomancy.mnemonist.craft.land.line1": {
+  "about": "the Mnemonist stating three memories work the ground under a held verb: Living Land, which has no cast, and Blood Eclipse and Hematic Beacon, which still cast on R",
+  "tone": "formal"
+ },
+ "hemomancy.mnemonist.craft.land.line2": {
+  "about": "the Mnemonist noting Living Land loses or gains nothing it moves and will not wake ground under a Saint's ward, in a rite space or a Saint's chamber",
+  "tone": "clipped"
+ },
+ "hemomancy.mnemonist.craft.land.strike.line1": {
+  "about": "the Mnemonist explaining Living Land: held Projection wakes a floor, wall or ceiling, which after a second drives a stone column into the nearest enemy in front",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.land.strike.line2": {
+  "about": "the Mnemonist explaining with no enemy the patch rises into steps, settles on release, costs 30 mL a second, and allows two columns from the third mastery rank",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.sculptings.draw.line1": {
+  "about": "the Mnemonist explaining Carrion Communion draws Mortem Temper and a little health from remains, never blood, because the dead hold none",
+  "tone": "flat, exact"
+ },
+ "hemomancy.mnemonist.craft.sculptings.draw.line2": {
+  "about": "the Mnemonist explaining Glacial Grasp under Absorption thaws cruor and ice, and Sanguine Magnetism pulls dropped items in, faster over wet blood",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.sculptings.first.line1": {
+  "about": "the Mnemonist explaining narrow Sculptings are tried before a memory's main Sculpting, in the order the memory holds them",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.sculptings.first.line2": {
+  "about": "the Mnemonist explaining an open channel keeps its claim until released, so release and re-aim if the wrong Sculpting took it",
+  "tone": "procedural"
+ },
+ "hemomancy.mnemonist.craft.sculptings.line1": {
+  "about": "the Mnemonist stating that many memories now have two uses, cast on R or held under a verb to sculpt it, with Lignum Mortis turning Projection on a log into rot as the example",
+  "tone": "formal, exact"
+ },
+ "hemomancy.mnemonist.craft.sculptings.line2": {
+  "about": "the Mnemonist stating the claim order: a rite, Saint's trial or faltering Will before any Sculpting, a Sculpting before the plain verb",
+  "tone": "clipped"
+ },
+ "hemomancy.mnemonist.craft.sculptings.mend.line1": {
+  "about": "the Mnemonist explaining Sanguine Mending restores a dropped tool or armor and beats a worn anvil back a stage after eight pulses",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.sculptings.mend.line2": {
+  "about": "the Mnemonist explaining Crimson Flame Conjuration kindles campfires and candles two a pulse, and Furnace Veins fuels a bank of furnaces with blood, storing none",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.sculptings.work.line1": {
+  "about": "the Mnemonist explaining Lignum Mortis crawls rot through a log or stem at about sixteen millilitres a second and fells everything reached on release",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.sculptings.work.line2": {
+  "about": "the Mnemonist explaining Pyretic Forge smelts dropped items and fires blocks in place, and that a lit Iron Brazier transmutes offerings under Absorption with three named memories",
+  "tone": "procedural"
+ },
+ "hemomancy.mnemonist.craft.strands.brand.line1": {
+  "about": "the Mnemonist explaining Absorption takes the player's own brand first and from twice their reach, so brand at range and draw from where you stand",
+  "tone": "procedural"
+ },
+ "hemomancy.mnemonist.craft.strands.brand.line2": {
+  "about": "the Mnemonist listing brand sources: Blood Binding brands what it holds, Conductive Mark Disrupted, Insatiable Hunger and Grave Debt with Necrosis",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.strands.forms.line1": {
+  "about": "the Mnemonist listing three of the five strand forms: a lash that hurts only moving and cracks on reversal, a jet that pierces, a spray in a cone",
+  "tone": "clipped, exact"
+ },
+ "hemomancy.mnemonist.craft.strands.forms.line2": {
+  "about": "the Mnemonist finishing the forms (a plant that erupts on release, a brand that marks) and naming the five first holders, with eleven more memories holding strands",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.strands.line1": {
+  "about": "the Mnemonist stating some combat memories put out a strand under held Projection, which stays out until released or the blood runs short and acts by how it is moved",
+  "tone": "formal"
+ },
+ "hemomancy.mnemonist.craft.strands.line2": {
+  "about": "the Mnemonist stating that a click with nothing held taps, a click on a gathered or swinging lash cracks it at the first body in sight, and a strand never takes blood a machine, rite or Will could take",
+  "tone": "procedural"
+ },
+ "hemomancy.mnemonist.craft.strands.stain.line1": {
+  "about": "the Mnemonist explaining a plant sunk in a wet stain runs along it in small eruptions instead of ringing, drying the blood it passes",
+  "tone": "exact"
+ },
+ "hemomancy.mnemonist.craft.strands.stain.line2": {
+  "about": "the Mnemonist explaining more sunk pulses make the run longer and a creature is struck once per run",
+  "tone": "clipped"
  },
  "hemomancy.mnemonist.crude_memories.line1": {
   "about": "the Mnemonist explaining crude memories are rough early echoes: use one, pay its blood cost, and the manipulation joins the known lessons",
@@ -688,7 +856,7 @@
   "tone": "clipped instructional"
  },
  "hemomancy.mnemonist.distributor.line4": {
-  "about": "the Mnemonist giving the build recipe for the Distributor as a Working on a greater Working floor: frame Infested Venous Stone with four Iron Bars, hold a Sanguine Formation, offer a Tendon Line and Ferric Binder, feed it 500 mL of blood",
+  "about": "the Mnemonist giving the build recipe for the Distributor as a Working on a greater Working floor: frame Infested Venous Stone with four Iron Bars, hold a Sanguine Formation, offer a Sinew Cord and Ferric Binder, feed it 500 mL of blood",
   "tone": "clipped instructional"
  },
  "hemomancy.mnemonist.item_hint": {
@@ -791,6 +959,22 @@
   "about": "the Mnemonist telling the player to do the matching deed: craft the graft and burn it in the Brazier while the staff drinks the memory",
   "tone": "clipped instructional"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_absolute_stillness.line1": {
+  "about": "the Mnemonist describing Absolute Stillness: a channelled freezing field that slows projectiles, smothers fire and drives Rime",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_absolute_stillness.line2": {
+  "about": "the Mnemonist explaining pulses freeze the blood of enemies at three Rime for extra damage, Perfectus rank",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_activation_potential.line1": {
+  "about": "the Mnemonist describing Activation Potential: a charged radial discharge that grows stronger with charge",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_activation_potential.line2": {
+  "about": "the Mnemonist explaining hits interrupt actions for half a second without slowing movement, and water, iron and copper carry current",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_axonal_transduction.line1": {
   "about": "the Mnemonist explaining Axonal Transduction, carried by the Naeglerophaeon's ganglion: absorb it in the Iron Brazier at the sixth Degree, recall and enable it with usual controls, and it needs sixty-five Ductilis alignment",
   "tone": "clipped instructional"
@@ -815,6 +999,14 @@
   "about": "the Mnemonist warning of the limit: once the vessel saturates, the debt breaks inward and the lesson goes silent",
   "tone": "grave, cautionary"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_aneurysm.line1": {
+  "about": "the Mnemonist filing Blood Aneurysm: it bursts a vessel in the nearest visible hostile, Animus with Mortem behind it",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_aneurysm.line2": {
+  "about": "the Mnemonist explaining that charge spends the target's Sanguine Pressure for extra damage, and that it fails without cost when no hostile is in reach",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_blood_binding.line1": {
   "about": "the Mnemonist calling Blood Binding simple restraint, if another body is only blood taught to stay",
   "tone": "dry, appraising"
@@ -822,6 +1014,54 @@
  "hemomancy.mnemonist.item_inquiry.memory_blood_binding.line2": {
   "about": "the Mnemonist noting the tendrils start at the caster's feet, so the caster should keep footing, and they hold the target just as still",
   "tone": "dry, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_cloud.line1": {
+  "about": "the Mnemonist describing Blood Cloud: thrown, it settles and wounds creatures beneath it",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_cloud.line2": {
+  "about": "the Mnemonist noting the first touch builds Sanguine Pressure and later touches only wound, so a pressure-spending cast should follow",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_eclipse.line1": {
+  "about": "the Mnemonist describing Blood Eclipse: concealment beyond four blocks, close defence still possible, pierced by Illumination",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_eclipse.line2": {
+  "about": "the Mnemonist explaining held Projection grows a dark dome a click ends in a flash, and held Absorption snuffs lights",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_lattice.line1": {
+  "about": "the Mnemonist describing Blood Lattice as an aimed binding that spreads through a packed group",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_lattice.line2": {
+  "about": "the Mnemonist explaining held Projection on a creature spreads the binding to everything close around it while blood flows",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_needle.line1": {
+  "about": "the Mnemonist describing Blood Needle: blood hardened into iron barbs and loosed in a volley, Ferric with Animus",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_needle.line2": {
+  "about": "the Mnemonist warning that a release below half charge fizzles before payment, and pointing to the Fan and Lance memories",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_needle_fan.line1": {
+  "about": "the Mnemonist describing Blood Needle Fan as a broad fan of needles over a wider area",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_needle_fan.line2": {
+  "about": "the Mnemonist stating the fan is a charged cast only, with nothing held",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_needle_lance.line1": {
+  "about": "the Mnemonist describing Blood Needle Lance: a full charge forged into three piercing needles that briefly pin",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_needle_lance.line2": {
+  "about": "the Mnemonist explaining held Projection gathers up to six hovering needles, free to keep at a full set, loosed on release",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.memory_blood_rush.line1": {
   "about": "the Mnemonist identifying a refined Blood Rush memory with fewer burrs than the crude shard that spends its lesson more cleanly",
@@ -839,6 +1079,30 @@
   "about": "the Mnemonist noting full memories keep their rank gates, so the crystal can be ready before the player is",
   "tone": "dry, factual"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_bloom_of_rot.line1": {
+  "about": "the Mnemonist identifying Bloom of Rot as Putriciel's Canon Memory, woven from his Residuum and Recollection, gated to the eighth Degree and the player's own ending of his trial",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_bloom_of_rot.line2": {
+  "about": "the Mnemonist explaining the sown field colonises everything including the caster, and must be lit before the rot reclaims them",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_canopy_mortis.line1": {
+  "about": "the Mnemonist describing Canopy Mortis: Lignum Mortis carried between trees through touching leaves without harvesting them",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_canopy_mortis.line2": {
+  "about": "the Mnemonist explaining held Projection on a trunk crawls rot through wood and canopy, and it falls on release",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_carrion_communion.line1": {
+  "about": "the Mnemonist describing Carrion Communion: a channel draining up to four afflicted enemies and returning half the health drained",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_carrion_communion.line2": {
+  "about": "the Mnemonist explaining held Absorption on rotten flesh, bones or skulls draws Mortem Temper and a little health, but no blood",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_cauterizing_rebuke.line1": {
   "about": "the Mnemonist identifying Cauterizing Rebuke as Flammeus used as medicine, if the player can stand the smell of burning",
   "tone": "dry, appraising"
@@ -846,6 +1110,14 @@
  "hemomancy.mnemonist.item_inquiry.memory_cauterizing_rebuke.line2": {
   "about": "the Mnemonist explaining it burns venom and rot out of the caster and then treats nearby enemies the same way",
   "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_chain_blood_binding.line1": {
+  "about": "the Mnemonist describing Chain Blood Binding: a shorter binding chained from the first victim into nearby creatures",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_chain_blood_binding.line2": {
+  "about": "the Mnemonist explaining held Projection runs the binding into up to three more nearby creatures while blood flows",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.memory_conductive_mark.line1": {
   "about": "the Mnemonist identifying Conductive Mark as a patient sign, bright enough for allied blood-work to find",
@@ -855,6 +1127,30 @@
   "about": "the Mnemonist explaining that Ductilis, Lux and Ferric blows can catch the mark and leap from it into nearby enemies",
   "tone": "clear, factual"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_crimson_coronation.line1": {
+  "about": "the Mnemonist describing Crimson Coronation: up to eight retaliatory blood lances held for twenty seconds",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_crimson_coronation.line2": {
+  "about": "the Mnemonist explaining full charge strengthens the lances and adds a pierce, and the crown cannot be recast while it holds lances",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_crimson_flame_conjuration.line1": {
+  "about": "the Mnemonist describing Crimson Flame Conjuration and its held Projection kindling of unlit campfires and candles",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_crimson_flame_conjuration.line2": {
+  "about": "the Mnemonist explaining held Projection paints five-second flame cells along the aim, and a click flares and spends them all",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_crimson_tithe.line1": {
+  "about": "the Mnemonist identifying Crimson Tithe as Hemorath's Canon Memory, woven from his Residuum and Recollection, gated to the eighth Degree and the player's own ending of his trial",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_crimson_tithe.line2": {
+  "about": "the Mnemonist explaining the held tithe chains up to five bodies into a leaking chest vessel that empties on release and bursts if overfilled",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_cruor_javelin.line1": {
   "about": "the Mnemonist identifying Cruor Javelin as Congeatio that brings its own cold and throws it rather than waiting for the river",
   "tone": "quiet, appraising"
@@ -863,6 +1159,14 @@
   "about": "the Mnemonist explaining that what it strikes stiffens and iron finishes what the frost started",
   "tone": "dry, factual"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_cryogenic_pulse.line1": {
+  "about": "the Mnemonist describing Cryogenic Pulse: a cold pulse that deals freeze damage and builds Rime",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_cryogenic_pulse.line2": {
+  "about": "the Mnemonist noting Rime slows movement only and later Congeatio lessons use it",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_deadly_gaze.line1": {
   "about": "the Mnemonist identifying a refined Deadly Gaze as shaped on purpose, unlike the crude one scraped from old panic",
   "tone": "quiet, appraising"
@@ -870,6 +1174,46 @@
  "hemomancy.mnemonist.item_inquiry.memory_deadly_gaze.line2": {
   "about": "the Mnemonist saying refining steadies a memory but the lesson stays as ugly as it was",
   "tone": "grave, dry"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_eclipse_well.line1": {
+  "about": "the Mnemonist describing Eclipse Well: a charged well that pulls enemies in, keeps them Obscured and bites each second",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_eclipse_well.line2": {
+  "about": "the Mnemonist explaining a full charge collapses the well and throws non-boss enemies elsewhere like a chorus fruit",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_endless_hour.line1": {
+  "about": "the Mnemonist identifying Endless Hour as Velorum's Canon Memory, woven from his Residuum and Recollection, gated to the eighth Degree and the player's own ending of his trial",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_endless_hour.line2": {
+  "about": "the Mnemonist explaining the planted ten-second Hour fills still things with stillness and then sets the caster in their own cruor",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_expansive_blood_cloud.line1": {
+  "about": "the Mnemonist identifying Expansive Blood Cloud as the blood cloud at a four-block radius",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_expansive_blood_cloud.line2": {
+  "about": "the Mnemonist noting the wider cloud lasts briefly and filing it for crowds",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_expulsive_updraft.line1": {
+  "about": "the Mnemonist describing Expulsive Updraft as a short launch that bursts outward",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_expulsive_updraft.line2": {
+  "about": "the Mnemonist explaining nearby enemies are scorched with Searing and thrown aside, and it needs footing",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_exsanguinate.line1": {
+  "about": "the Mnemonist describing Exsanguinate: an execution of a badly wounded visible enemy that refunds sixty percent only on a kill",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_exsanguinate.line2": {
+  "about": "the Mnemonist noting bosses cannot be executed and the drain against them is capped at twelve health, scaled by Crimson Mastery",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.memory_ferric_rampart.line1": {
   "about": "the Mnemonist identifying Ferric Rampart as blood gathered into overlapping iron plates",
@@ -895,13 +1239,29 @@
   "about": "the Mnemonist clarifying it cannot start rot, only hurry it, so something must already be dying",
   "tone": "dry, factual"
  },
- "hemomancy.mnemonist.item_inquiry.memory_general.line1": {
-  "about": "the Mnemonist identifying a full memory crystal as stable, made on purpose, and fit for proper loadout work",
-  "tone": "quiet, appraising"
+ "hemomancy.mnemonist.item_inquiry.memory_funeral_bell.line1": {
+  "about": "the Mnemonist describing Funeral Bell: a charged pulse that releases stored Necrosis damage early",
+  "tone": "clipped, appraising"
  },
- "hemomancy.mnemonist.item_inquiry.memory_general.line2": {
-  "about": "the Mnemonist advising the player to carry one only if they mean to use it, since refined memories hold their shape longer than crude shards",
-  "tone": "dry, advising"
+ "hemomancy.mnemonist.item_inquiry.memory_funeral_bell.line2": {
+  "about": "the Mnemonist listing the afflictions that deepen the toll, that all but Grave Debt are spent, and that partial charge releases a share",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_furnace_veins.line1": {
+  "about": "the Mnemonist describing Furnace Veins: a close heat field that burns enemies, thaws allies and gives them fire resistance",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_furnace_veins.line2": {
+  "about": "the Mnemonist explaining held Projection fuels a furnace and its cooking neighbours with blood, each costing its own",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_glacial_grasp.line1": {
+  "about": "the Mnemonist identifying the refined Glacial Grasp: water frozen along the aim, two Rime on wet targets",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_glacial_grasp.line2": {
+  "about": "the Mnemonist explaining held Projection grips a creature in an ice hand that a click squeezes, and held Absorption thaws ice and Frozen Cruor",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.memory_glacial_rampart.line1": {
   "about": "the Mnemonist identifying Glacial Rampart as Congeatio cold stood upright on a spine of blood, frost settling",
@@ -927,6 +1287,14 @@
   "about": "the Mnemonist explaining that when the vessel falls low it bursts, and death may return a measure of blood to the creditor",
   "tone": "grave, factual"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_guided_blood_shot.line1": {
+  "about": "the Mnemonist describing Guided Blood Shot as a blood shot that steers toward the creature nearest the aim",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_guided_blood_shot.line2": {
+  "about": "the Mnemonist warning that it picks the creature nearest the aim, so a nearer body can take the shot",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_hematic_beacon.line1": {
   "about": "the Mnemonist identifying Hematic Beacon as a signal fire carried under the skin",
   "tone": "quiet, appraising"
@@ -951,6 +1319,14 @@
   "about": "the Mnemonist explaining only one vessel can bear the caster's command at a time and stronger blood sheds it sooner",
   "tone": "dry, factual"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_mortar.line1": {
+  "about": "the Mnemonist describing Hematic Mortar: one heavy blood shot lobbed in an arc",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_mortar.line2": {
+  "about": "the Mnemonist explaining it needs a full charge and bursts across a small area where it lands",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_hematic_rebuke.line1": {
   "about": "the Mnemonist identifying Hematic Rebuke as a command sent down another body's nerves so it feels fear before any blade is drawn",
   "tone": "somber, appraising"
@@ -967,6 +1343,22 @@
   "about": "the Mnemonist warning it guards only what the caster faces and only for a heartbeat, so a mistimed use spends blood on air",
   "tone": "dry, cautionary"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_hemolymphal_pulse.line1": {
+  "about": "the Mnemonist describing Hemolymphal Pulse: a sensory impulse that reveals nearby harmable bodies and marks the wounded",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hemolymphal_pulse.line2": {
+  "about": "the Mnemonist noting the player, allies and pets are not revealed and it does not electrify terrain",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hemorrhage.line1": {
+  "about": "the Mnemonist identifying the refined Hemorrhage: twelve seconds of Blood Loss on the nearest visible enemy",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hemorrhage.line2": {
+  "about": "the Mnemonist noting it seeds Necrosis and filing it as the Mortem opener",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_insatiable_hunger.line1": {
   "about": "the Mnemonist identifying Insatiable Hunger as Mortem work that turns appetite against its own remedy",
   "tone": "somber, appraising"
@@ -974,6 +1366,14 @@
  "hemomancy.mnemonist.item_inquiry.memory_insatiable_hunger.line2": {
   "about": "the Mnemonist explaining healing thins under it and food deepens the ache where it should comfort",
   "tone": "grave, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_iron_choir.line1": {
+  "about": "the Mnemonist describing Iron Choir: each paid pulse gives Resistance and three intercepting iron plates that strike back",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_iron_choir.line2": {
+  "about": "the Mnemonist noting each pulse looses a blood needle at the nearest visible hostile within ten blocks",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.memory_iron_retort.line1": {
   "about": "the Mnemonist identifying Iron Retort as Ferric patience folded into a single answer",
@@ -991,6 +1391,30 @@
   "about": "the Mnemonist advising the player to hold the memory steady until the metal closes and noting the borrowed heart is spent before their own",
   "tone": "clear, factual"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_lignum_mortis.line1": {
+  "about": "the Mnemonist describing Lignum Mortis: rot threaded through joined wood and fungus, by cast or held Projection alike",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_lignum_mortis.line2": {
+  "about": "the Mnemonist explaining the rot crawls through what is joined while held, and it falls on release",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_lingering_blood_binding.line1": {
+  "about": "the Mnemonist describing Lingering Blood Binding as a longer-lived binding on one creature",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_lingering_blood_binding.line2": {
+  "about": "the Mnemonist explaining held Projection pins the creature while blood flows, and it crawls for a long while after",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_living_circuit.line1": {
+  "about": "the Mnemonist describing Living Circuit: up to three teammates linked for speed and haste, their next hostile strike armed with Conductive Mark",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_living_circuit.line2": {
+  "about": "the Mnemonist explaining each pulse arcs to the nearest hostile within four blocks, and with no teammate the circuit runs through the player",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_lodestone_collapse.line1": {
   "about": "the Mnemonist identifying Lodestone Collapse as a point ahead of the caster becoming a lodestone that calls every nearby enemy home",
   "tone": "quiet, appraising"
@@ -1007,6 +1431,38 @@
   "about": "the Mnemonist explaining a pale thread closes the pain and cuts blindness from the wound",
   "tone": "gentle, factual"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_of_vesper.line1": {
+  "about": "the Mnemonist identifying the Memory of Vesper as his final refusal, earned once by defeating both faces of Vesper through the player's own Qliphoth wound",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_of_vesper.line2": {
+  "about": "the Mnemonist giving the Brazier steps and refusing to record the memory's outcome before it happens",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_osseous_bloom.line1": {
+  "about": "the Mnemonist describing Crystalline Bloom: a quarter of current health as freeze damage and Rime to every enemy within six blocks",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_osseous_bloom.line2": {
+  "about": "the Mnemonist advising it as an opener, noting caps on bosses and heavy bodies and that it fails without cost when no enemy is near",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_penumbral_drift.line1": {
+  "about": "the Mnemonist describing Penumbral Drift: a channelled Veil that sheds ordinary enemy attention, not a boss's",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_penumbral_drift.line2": {
+  "about": "the Mnemonist explaining the first attack ends the drift and lands as an ambush for half again its damage, leaving the victim Obscured",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_phoenix_debt.line1": {
+  "about": "the Mnemonist describing Phoenix Debt as a passive Last Rite armed with active blood and Flammeus alignment",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_phoenix_debt.line2": {
+  "about": "the Mnemonist explaining it pays blood to survive lethal harm with a burst of cleansing flame, ready only while the player holds its price",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_prismatic_reproof.line1": {
   "about": "the Mnemonist identifying Prismatic Reproof as judging a threat by splitting it into every color it tried to hide",
   "tone": "quiet, appraising"
@@ -1014,6 +1470,22 @@
  "hemomancy.mnemonist.item_inquiry.memory_prismatic_reproof.line2": {
   "about": "the Mnemonist explaining it hits harder on prey already exposed by Illumination and the judgment uses up that light",
   "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_pursuing_blood_cloud.line1": {
+  "about": "the Mnemonist describing Pursuing Blood Cloud as a compact cloud that moves",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_pursuing_blood_cloud.line2": {
+  "about": "the Mnemonist explaining the cloud slowly follows nearby enemies",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_pyretic_forge.line1": {
+  "about": "the Mnemonist describing Pyretic Forge: a cast smelts the held item",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_pyretic_forge.line2": {
+  "about": "the Mnemonist explaining held Projection smelts ground items and fires sand, stone, clay and raw ore blocks in place",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.memory_radiant_wake.line1": {
   "about": "the Mnemonist identifying Radiant Wake as Lux thin enough to bear the caster's weight, which will not lift them but will not let them fall",
@@ -1023,6 +1495,30 @@
   "about": "the Mnemonist explaining people near the caster stay mended, hostile things stay exposed, and the sky is paid for by being seen",
   "tone": "dry, factual"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_rimebound_sentence.line1": {
+  "about": "the Mnemonist describing Rimebound Sentence as charged frost damage up to 12",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_rimebound_sentence.line2": {
+  "about": "the Mnemonist explaining a full charge sets three Rime and briefly encloses the target",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_halo.line1": {
+  "about": "the Mnemonist describing Sanguine Halo: five suspended blood shots that seek nearby hostiles one at a time",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_halo.line2": {
+  "about": "the Mnemonist noting passive animals, pets and villagers are ignored and the shots seek on their own",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_ignition.line1": {
+  "about": "the Mnemonist identifying the refined Sanguine Ignition: a five-block scorch that sets bodies alight for two seconds",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_ignition.line2": {
+  "about": "the Mnemonist noting wet, rimed and fire-resistant bodies do not catch",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_sanguine_magnetism.line1": {
   "about": "the Mnemonist identifying Sanguine Magnetism as Ferric blood knowing where iron wants to gather",
   "tone": "quiet, appraising"
@@ -1030,6 +1526,38 @@
  "hemomancy.mnemonist.item_inquiry.memory_sanguine_magnetism.line2": {
   "about": "the Mnemonist explaining a pillar rises and hostile bodies are dragged close enough to hold still",
   "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_marionette.line1": {
+  "about": "the Mnemonist describing Sanguine Marionette: a channelled tether on one mob of at most 80 maximum health, up to eight seconds",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_marionette.line2": {
+  "about": "the Mnemonist explaining aiming at an enemy attacks and at reachable ground moves, and a Blood-Bound creature is released and taken",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_mending.line1": {
+  "about": "the Mnemonist identifying the refined Sanguine Mending, which cheaply repairs held gear",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_mending.line2": {
+  "about": "the Mnemonist explaining held Projection mends dropped gear, heals iron and snow golems and restores a worn anvil a stage",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_tempest.line1": {
+  "about": "the Mnemonist filing Sanguine Tempest: a broad stationary storm cloud, Magister rank, Animus with Ductilis",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_tempest.line2": {
+  "about": "the Mnemonist explaining the lightning strikes the nearest creature beneath it each second and ignites nothing",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_ward.line1": {
+  "about": "the Mnemonist describing Sanguine Ward: a channelled sheath whose pool absorbs damage and jolts direct attackers",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_ward.line2": {
+  "about": "the Mnemonist explaining paid pulses slowly refill the pool, and a recast within five seconds resumes the depleted pool",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.memory_scalding_updraft.line1": {
   "about": "the Mnemonist identifying Scalding Updraft as hot air rising from under the caster's own feet, kept in the blood",
@@ -1047,6 +1575,70 @@
   "about": "the Mnemonist explaining what it strikes is marked for greater burning and warning not to lash anything the player is unwilling to finish",
   "tone": "grave, cautionary"
  },
+ "hemomancy.mnemonist.item_inquiry.memory_soaring_updraft.line1": {
+  "about": "the Mnemonist describing Soaring Updraft: a faster, higher launch that keeps some forward momentum",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_soaring_updraft.line2": {
+  "about": "the Mnemonist noting it needs footing and advising the player to plan the landing",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sovereign_instinct.line1": {
+  "about": "the Mnemonist describing Sovereign Instinct as a passive that triggers when struck while four blood-bearing enemies target the player",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sovereign_instinct.line2": {
+  "about": "the Mnemonist explaining commandable attackers of 80 maximum health or less turn on each other for five seconds, and bosses only feel pressure",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar.line1": {
+  "about": "the Mnemonist describing Summon Avatar: the Blood Avatar manifested around the player's body while sustained",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar.line2": {
+  "about": "the Mnemonist explaining it turns aside a quarter of incoming harm, while the void and starvation pass through",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar_armor.line1": {
+  "about": "the Mnemonist describing Blood Avatar: Armor, an armoured torso with the avatar's striking arms",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar_armor.line2": {
+  "about": "the Mnemonist noting Armor gives greater protection than Arms, is Summa rank and costs more blood",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar_arms.line1": {
+  "about": "the Mnemonist describing Blood Avatar: Arms, which strengthens the player's blows while it shelters them",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar_arms.line2": {
+  "about": "the Mnemonist placing Arms second of the five avatar memories, the later three costing more blood",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar_complete.line1": {
+  "about": "the Mnemonist describing Blood Avatar: Complete at its greatest protection, strength and speed",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar_complete.line2": {
+  "about": "the Mnemonist noting Complete is Magister rank and the most expensive of the five avatar memories",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar_legs.line1": {
+  "about": "the Mnemonist describing Blood Avatar: Legs, which raises movement speed and step height",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_summon_avatar_legs.line2": {
+  "about": "the Mnemonist placing Legs between Armor and Complete in blood cost",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_suspended_updraft.line1": {
+  "about": "the Mnemonist describing Suspended Updraft: a launch into a brief levitating pause, then slow falling",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_suspended_updraft.line2": {
+  "about": "the Mnemonist noting it needs footing and the pause is time to look around",
+  "tone": "plain instructional"
+ },
  "hemomancy.mnemonist.item_inquiry.memory_synaptic_jolt.line1": {
   "about": "the Mnemonist identifying Synaptic Jolt as the stopping side of Ductilis, which moves the body and can halt a nerve as readily",
   "tone": "quiet, appraising"
@@ -1054,6 +1646,30 @@
  "hemomancy.mnemonist.item_inquiry.memory_synaptic_jolt.line2": {
   "about": "the Mnemonist explaining it is a short bolt that interrupts and staggers the struck vessel so it cannot answer cleanly for a moment",
   "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_synaptic_storm.line1": {
+  "about": "the Mnemonist describing Synaptic Storm: charged electricity chained between up to eight enemies, conductive targets first",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_synaptic_storm.line2": {
+  "about": "the Mnemonist giving the hop reaches, the one-second cap on players and that bosses are slowed",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_tendon_line.line1": {
+  "about": "the Mnemonist explaining Tendon Line has no cast: held Projection throws a line of living sinew and roots it in a solid face",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_tendon_line.line2": {
+  "about": "the Mnemonist explaining held Absorption hauls the player along the line, or reels in a placid or weakened creature it was rooted in",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_thread_ripper.line1": {
+  "about": "the Mnemonist identifying Thread Ripper as Liberation's reward, a Summa memory usually kept until it can be absorbed at a lit Iron Brazier",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_thread_ripper.line2": {
+  "about": "the Mnemonist explaining a full charge cuts an aimed tether, freeing captives or unravelling weakened puppets, sparing tamed animals, mounts, bosses and Vesper's puppets",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.memory_umbral_rend.line1": {
   "about": "the Mnemonist identifying Umbral Rend as a hand closing on what is already held, with Tenebris needing to lay the dark on first",
@@ -1070,6 +1686,70 @@
  "hemomancy.mnemonist.item_inquiry.memory_umbral_reversal.line2": {
   "about": "the Mnemonist explaining it needs darkness to land the caster, or a Veil pretending the world has none, and leaves anyone close obscured",
   "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_umbral_step.line1": {
+  "about": "the Mnemonist describing Umbral Step: a step to a safe shadow beside or above the targeted block",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_umbral_step.line2": {
+  "about": "the Mnemonist noting it needs supported ground and advising the player to target where they will stand",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_unclosing_eye.line1": {
+  "about": "the Mnemonist identifying Unclosing Eye as Seraphae's Canon Memory, woven from her Residuum and Recollection, gated to the eighth Degree and the player's own ending of her trial",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_unclosing_eye.line2": {
+  "about": "the Mnemonist explaining the two-second sweeping beam and the lapse after it: a bow, no Lux casting, and staying lit",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_vascular_dowsing.line1": {
+  "about": "the Mnemonist describing Vascular Dowsing: a scan that reports nearby ore count and the nearest ore's position",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_vascular_dowsing.line2": {
+  "about": "the Mnemonist explaining held Projection cuts lasting gouges that wake when blood is projected into them",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_vital_effusion.line1": {
+  "about": "the Mnemonist describing Vital Effusion: blood spent to stir growth in nearby plants",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_vital_effusion.line2": {
+  "about": "the Mnemonist explaining held Projection on a plant soaks its soil and grows it a step a second like bone meal",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_vitric_combustion.line1": {
+  "about": "the Mnemonist describing Vitric Combustion: a Summa Flammeus detonation",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_vitric_combustion.line2": {
+  "about": "the Mnemonist explaining it consumes remaining Searing for up to four extra damage",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_void_shroud.line1": {
+  "about": "the Mnemonist identifying the refined Void Shroud: a five-second Veil with speed and night vision",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_void_shroud.line2": {
+  "about": "the Mnemonist noting attacking breaks the Veil and Illumination exposes it",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_white_verdict.line1": {
+  "about": "the Mnemonist describing White Verdict: a piercing beam whose reach, width and damage grow with charge up to 12",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_white_verdict.line2": {
+  "about": "the Mnemonist explaining the one-time 50 percent bonus against Illuminated or concealed targets, and that it consumes Illumination",
+  "tone": "plain instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_worked_lignum.line1": {
+  "about": "the Mnemonist describing Worked Lignum as Lignum Mortis extended into worked wood",
+  "tone": "clipped, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_worked_lignum.line2": {
+  "about": "the Mnemonist explaining held Projection crawls rot through joined worked wood, which comes apart on release",
+  "tone": "plain instructional"
  },
  "hemomancy.mnemonist.item_inquiry.minecraft_archive.line1": {
   "about": "the Mnemonist identifying ordinary book pages as the start of every archive, a mundane store of knowledge that is still useful",
@@ -1376,11 +2056,11 @@
   "tone": "clear, instructive"
  },
  "hemomancy.mnemonist.woven_vessel.recipe.line1": {
-  "about": "the Mnemonist giving the recipe for one blank Hematic Memory from four Sanguine Formations, four Blood Stained Stones and one Neurotic Enzyme",
+  "about": "the Mnemonist giving the recipe for one blank Hematic Memory from four Blood Stained Stones and one Neurotic Enzyme",
   "tone": "clipped instructional"
  },
  "hemomancy.mnemonist.woven_vessel.recipe.line2": {
-  "about": "the Mnemonist explaining where to get Blood Stained Stone, in a Hermitage Remnant or crafted from Venous Stone, a Sanguine Formation and redstone, bringing the blank to eight formations, and that Chicken blood can yield Neurotic Enzyme though some spins yield Vivacious",
+  "about": "the Mnemonist explaining where to get Blood Stained Stone, in a Hermitage Remnant or crafted from Venous Stone, a Sanguine Formation and redstone, each crafted stone holding one formation, four in a blank, and that Chicken blood can yield Neurotic Enzyme though some spins yield Vivacious",
   "tone": "clipped instructional"
  },
  "hemomancy.succession.fracture.mnemonist": {

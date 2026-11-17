@@ -512,6 +512,7 @@ public final class CourtNpcGameTests {
 	@GameTest(template = EMPTY, timeoutTicks = 200)
 	public static void theEdgeSwimmerDefendsTheSchool(GameTestHelper h) {
 		CourtMemberEntity swimmer = spawn(h, CourtRole.EDGE_SWIMMER, "school_test");
+		h.assertFalse(swimmer.isSchooling(), "a lone swimmer carries no school flag");
 		Mob husk = EntityType.HUSK.create(h.getLevel());
 		husk.moveTo(h.absoluteVec(STAND.getCenter()));
 		h.getLevel().addFreshEntity(husk);
@@ -532,13 +533,16 @@ public final class CourtNpcGameTests {
 			h.setBlock(new BlockPos(x, y, z), Blocks.WATER);
 		}
 		BlockPos centre = h.absolutePos(new BlockPos(15, 6, 11));
-		List<CourtMemberEntity> school = CourtSchools.launch(h.getLevel(), centre, 8, h.getLevel().getRandom(),
+		// A fixed roll, and the first one that makes a full school, so the widest station (slot 5) is tested every run.
+		long seed = 0L;
+		while (CourtSchoolRules.size(net.minecraft.util.RandomSource.create(seed).nextDouble()) != CourtSchoolRules.MAX_SIZE) seed++;
+		List<CourtMemberEntity> school = CourtSchools.launch(h.getLevel(), centre, 8, net.minecraft.util.RandomSource.create(seed),
 				net.minecraft.world.entity.MobSpawnType.MOB_SUMMONED);
-		h.assertTrue(school.size() >= CourtSchoolRules.MIN_SIZE && school.size() <= CourtSchoolRules.MAX_SIZE,
-				"four to six members: " + school.size());
+		h.assertTrue(school.size() == CourtSchoolRules.MAX_SIZE, "a full school of six: " + school.size());
 		h.assertTrue(school.stream().filter(CourtMemberEntity::isSchoolLeader).count() == 1, "one leader");
 		h.assertTrue(school.stream().allMatch(m -> m.school() != null && m.school().equals(school.getFirst().school())),
 				"one school");
+		h.assertTrue(school.stream().allMatch(CourtMemberEntity::isSchooling), "every member carries the synced school flag");
 		CourtMemberEntity leader = school.stream().filter(CourtMemberEntity::isSchoolLeader).findFirst().orElseThrow();
 		var start = leader.position();
 		h.runAfterDelay(300, () -> {

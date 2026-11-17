@@ -1,7 +1,9 @@
 {
   "tempers": [
-    "ductilis"
+    "congeatio"
   ],
-  "properties": [],
+  "properties": [
+    "hemomancy:blood_properties/cold_native"
+  ],
   "requires_living_syringe": false
 }

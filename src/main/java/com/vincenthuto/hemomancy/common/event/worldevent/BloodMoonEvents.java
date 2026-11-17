@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
+import com.vincenthuto.hemomancy.common.world.answer.WorldAnswer;
+import com.vincenthuto.hemomancy.common.world.answer.WorldAnswerRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -31,8 +33,9 @@ import java.util.List;
 /**
  * Handles the Blood Moon weather event.
  *
- * <p>A Blood Moon rarely triggers when a new night begins in the Overworld
- * (roughly a 1-in-7 chance each night). While active it:
+ * <p>A Blood Moon may rise when a new night begins in the Overworld. The chance follows the moon (highest at the
+ * full moon, none at the new) and rises with the blood spilled where players stand (core-loop Track 10,
+ * {@link WorldAnswer#moonChanceTonight}). While active it:
  * <ul>
  *   <li>Spawns Thirsters and Fargones near players in the Overworld</li>
  *   <li>Grants Harbingers (degree &gt; 0) Strength II + Night Vision; non-Harbingers receive Weakness I</li>
@@ -45,7 +48,7 @@ import java.util.List;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodMoonEvents {
-	private static final BloodAccounting.Source BLOOD_MOON = BloodAccounting.Source.of("blood_moon", Category.WORLD, false, false);
+	private static final BloodAccounting.Source BLOOD_MOON = BloodAccounting.Source.of("blood_moon", Category.WORLD, false);
 
 	/** Ticks per in-game day. */
 	private static final long DAY_LENGTH = 24000L;
@@ -55,12 +58,6 @@ public class BloodMoonEvents {
 
 	/** Duration (ticks) of a blood moon roughly one in-game night. */
 	private static final long BLOOD_MOON_DURATION = 11900L;
-
-	/**
-	 * Chance a blood moon triggers each night: 1 in BLOOD_MOON_CHANCE.
-	 * Lower values = more frequent. Default: 1-in-7  weekly at normal play speed.
-	 */
-	private static final int BLOOD_MOON_CHANCE = 7;
 
 	/** How often (ticks) to attempt a mob spawn during a blood moon. */
 	private static final int SPAWN_INTERVAL_TICKS = 120;
@@ -104,6 +101,15 @@ public class BloodMoonEvents {
 		if (!(level instanceof ServerLevel sl)) return false;
 		ServerLevel overworld = sl.getServer().overworld();
 		return BloodMoonSavedData.get(overworld).isActive();
+	}
+
+	/**
+	 * The moon's cast discount reaches a caster at D1 or higher standing in the Overworld, the only sky it rises over
+	 * (NQ-04-13).
+	 */
+	public static boolean grantsCastDiscount(net.minecraft.world.entity.player.Player player) {
+		return player.level().dimension() == Level.OVERWORLD && ProgressionGates.hasDegree(player, 1)
+				&& isBloodMoonActive(player.level());
 	}
 
 	// ---------------------------------------------------------------------------
@@ -157,8 +163,13 @@ public class BloodMoonEvents {
 
 		// Roll for blood moon at the start of each night (once per day)
 		if (!data.isActive() && dayTime == NIGHT_START_TICK) {
-			if (sLevel.random.nextInt(BLOOD_MOON_CHANCE) == 0) {
+			// One roll a night decides the moon; the same roll says whether spilled blood is what raised it.
+			double roll = sLevel.random.nextDouble();
+			if (roll < WorldAnswer.moonChanceTonight(sLevel)) {
 				startBloodMoon(sLevel, data, gameTime);
+				if (WorldAnswerRules.broughtOn(sLevel.getMoonPhase(), WorldAnswer.pressureUnderPlayers(sLevel), roll)) {
+					WorldAnswer.creditMoonBroughtOn(sLevel);
+				}
 			}
 		}
 

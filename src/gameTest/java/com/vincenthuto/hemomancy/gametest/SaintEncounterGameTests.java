@@ -120,6 +120,85 @@ public final class SaintEncounterGameTests {
 		});
 	}
 
+	/**
+	 * A slain body may leave a blood stain on the floor where it fell (the ground network's kill stain, 35%), and a
+	 * /kill'd Saint falls in its own tomb cell. The stain is a mark, not a building, so the tomb still closes over it
+	 * (the playthrough's saintTombWake failed whenever the roll left one).
+	 */
+	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 120)
+	public static void aBloodStainInTheTombCellDoesNotKeepTheSaintOut(GameTestHelper helper) {
+		ServerPlayer player = player(helper);
+		BlockPos tomb = helper.absolutePos(TOMB);
+		BlockState state = placeTomb(helper, tomb);
+		state.useItemOn(new ItemStack(ItemInit.saint_relic_velorum.get()), helper.getLevel(), player,
+				InteractionHand.MAIN_HAND, hit(tomb));
+		VelorumEntity boss = velorumAt(helper, tomb);
+		helper.assertTrue(boss != null, "The relic did not wake Velorum");
+		boss.kill();
+		helper.getLevel().setBlock(tomb, BlockInit.blood_stain.get().defaultBlockState()
+				.setValue(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.DOWN), true), 2);
+		helper.succeedWhen(() -> {
+			helper.assertTrue(boss.isRemoved() && boss.hasTrialEnded(), "/kill did not end the trial");
+			assertDormantTomb(helper, tomb, EnumSaintType.VELORUM);
+			player.discard();
+		});
+	}
+
+	/** SM-1, NQ-08-18: an unopened tomb woken by anyone while an Apotheos stands in the chamber wakes enraged. */
+	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 40)
+	public static void anApotheosInTheChamberMakesAnUnopenedTombWakeForced(GameTestHelper helper) {
+		ServerPlayer waker = player(helper);
+		ServerPlayer apotheos = player(helper);
+		BlockPos tomb = helper.absolutePos(TOMB);
+		VelorumEntity boss = null;
+		try {
+			var degree = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(apotheos);
+			degree.setDegreeNumber(8);
+			degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS);
+			apotheos.setPos(helper.absolutePos(TOMB.offset(-2, 0, 0)).getCenter());
+			helper.getLevel().addNewPlayer(apotheos);
+			BlockState state = placeTomb(helper, tomb);
+			state.useItemOn(new ItemStack(ItemInit.saint_relic_velorum.get()), helper.getLevel(), waker,
+					InteractionHand.MAIN_HAND, hit(tomb));
+			boss = velorumAt(helper, tomb);
+			helper.assertTrue(boss != null, "The relic did not wake Velorum");
+			helper.assertTrue("FORCED".equals(boss.awakening()),
+					"A non-Apotheos woke an unopened tomb beside an Apotheos and the Saint rose " + boss.awakening());
+			helper.succeed();
+		} finally {
+			if (boss != null) boss.discard();
+			waker.discard();
+			apotheos.discard();
+		}
+	}
+
+	/** SM-1, NQ-08-19 A: a tomb gives one peaceful sample in its life, and a Saint's return does not refill it. */
+	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 120)
+	public static void aReturnedTombRefusesASecondPeacefulDraw(GameTestHelper helper) {
+		ServerPlayer player = player(helper);
+		BlockPos tomb = helper.absolutePos(TOMB);
+		BlockState state = placeTomb(helper, tomb);
+		tile(helper, tomb).setSampleYielded(true);
+		state.useItemOn(new ItemStack(ItemInit.saint_relic_velorum.get()), helper.getLevel(), player,
+				InteractionHand.MAIN_HAND, hit(tomb));
+		VelorumEntity boss = velorumAt(helper, tomb);
+		helper.assertTrue(boss != null, "The relic did not wake Velorum");
+		boss.kill();
+		helper.succeedWhen(() -> {
+			helper.assertTrue(boss.isRemoved() && boss.hasTrialEnded(), "/kill did not send Velorum back to the tomb");
+			helper.assertTrue(helper.getLevel().getBlockState(tomb).is(BlockInit.saint_sarcophagus.get()),
+					"The sarcophagus was not restored");
+			SaintSarcophagusBlockEntity returned = tile(helper, tomb);
+			helper.assertTrue(returned.hasSampleYielded(), "The Saint's return gave the tomb a second peaceful sample");
+			ItemStack vial = new ItemStack(ItemInit.bloody_vial.get());
+			helper.getLevel().getBlockState(tomb).useItemOn(vial, helper.getLevel(), player, InteractionHand.MAIN_HAND,
+					hit(tomb));
+			helper.assertTrue(vial.getCount() == 1 && vial.is(ItemInit.bloody_vial.get())
+					&& returned.getCorpusState() == EnumCorpusState.DORMANT, "A returned tomb gave a second draw");
+			player.discard();
+		});
+	}
+
 	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 40)
 	public static void velorumEndingClosesTheTombOnceAndRewardsOnce(GameTestHelper helper) {
 		ServerPlayer player = player(helper);

@@ -1,9 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LivingWeaponGraftRecipeResourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -32,7 +36,8 @@ public final class LivingWeaponGraftRecipeResourceTest {
 	private LivingWeaponGraftRecipeResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		for (String form : CATALYSTS.keySet()) {
 			assertDirectGraftRecipe(form);
 			assertRecipeUnlockAdvancement(form);
@@ -79,19 +84,6 @@ public final class LivingWeaponGraftRecipeResourceTest {
 		Path path = RECIPE_ADVANCEMENTS.resolve("vesper.json");
 		if (Files.exists(path)) {
 			throw new AssertionError("memory_of_vesper should not unlock a Vesper graft recipe: " + path);
-		}
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + ROOT.relativize(path));
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
 		}
 	}
 }

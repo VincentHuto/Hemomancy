@@ -32,19 +32,8 @@ class CircusProgressRulesTest {
 	void presentationStartsAfterUnawareAndSettlesTowardAttunement() {
 		assertFalse(CircusProgressRules.Stage.UNAWARE.hasPresentation());
 		assertEquals(0, CircusProgressRules.Stage.UNAWARE.particleIntervalTicks());
-		assertEquals(0, CircusProgressRules.Stage.UNAWARE.silhouetteCount());
-		assertEquals(2, CircusProgressRules.Stage.DISTURBED.silhouetteCount());
-		assertEquals(3, CircusProgressRules.Stage.ACCLIMATING.silhouetteCount());
-		assertEquals(4, CircusProgressRules.Stage.ATTUNED.silhouetteCount());
-		assertTrue(CircusProgressRules.Stage.DISTURBED.clothCount()
-				< CircusProgressRules.Stage.ATTUNED.clothCount());
-		assertTrue(CircusProgressRules.Stage.ACCLIMATING.lightCount()
-				< CircusProgressRules.Stage.ATTUNED.lightCount());
-		assertTrue(CircusProgressRules.Stage.DISTURBED.motionJitter()
-				> CircusProgressRules.Stage.ACCLIMATING.motionJitter());
-		assertTrue(CircusProgressRules.Stage.DISTURBED.motionEchoAlpha()
-				> CircusProgressRules.Stage.ACCLIMATING.motionEchoAlpha());
-		assertEquals(0.0F, CircusProgressRules.Stage.ATTUNED.motionJitter());
+		assertTrue(CircusProgressRules.Stage.DISTURBED.motionEchoAlpha() > 0);
+		assertEquals(0, CircusProgressRules.Stage.ACCLIMATING.motionEchoAlpha());
 		assertEquals(0, CircusProgressRules.Stage.ATTUNED.motionEchoAlpha());
 		assertTrue(CircusProgressRules.Stage.ATTUNED.hasPresentation());
 	}

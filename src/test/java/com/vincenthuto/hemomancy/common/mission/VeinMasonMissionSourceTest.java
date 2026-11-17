@@ -9,6 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPInputStream;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 class VeinMasonMissionSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -40,7 +44,7 @@ class VeinMasonMissionSourceTest {
 		assertContains("anchorite renderer uses existing texture", renderer,
 				"textures/entity/npc/harbinger/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite.png");
 		assertContains("anchorite is not recruitable", entity, "HarbingerCicatrixAnchoriteDialogueTrees.forState");
-		assertDoesNotContain("anchorite does not use recruitment rules", entity, "HarbingerRecruitmentRules");
+		assertNotContains("anchorite does not use recruitment rules", entity, "HarbingerRecruitmentRules");
 		assertContains("anchorite language exists", lang,
 				"\"entity.hemomancy.harbinger_cicatrix_anchorite\": \"Cicatrix Anchorite\"");
 	}
@@ -179,8 +183,8 @@ class VeinMasonMissionSourceTest {
 		assertContains("ledger part two is learned scar after carve and burn", screen, "if (veinMasonFirstScarLearned) completed++");
 		assertContains("ledger part three is prepared effigy pattern", screen, "if (veinMasonFirstEffigyPattern) completed++");
 		assertContains("ledger part four is committed loadout", screen, "if (veinMasonFirstEffigyLoadout) completed++");
-		assertDoesNotContain("ledger does not count map directive as a visible part", screen, "if (vicarMasonsRespiteDirective) completed++");
-		assertDoesNotContain("ledger does not count carved scar as a separate visible part", screen, "if (veinMasonFirstScarCarved) completed++");
+		assertNotContains("ledger does not count map directive as a visible part", screen, "if (vicarMasonsRespiteDirective) completed++");
+		assertNotContains("ledger does not count carved scar as a separate visible part", screen, "if (veinMasonFirstScarCarved) completed++");
 		assertContains("ledger language title exists", lang,
 				"screen.hemomancy.harbinger_assignment_ledger.vein_mason.title");
 		assertContains("ledger language names reward", lang,
@@ -189,31 +193,12 @@ class VeinMasonMissionSourceTest {
 		assertContains("docs mention Vein-Mason", docs, "Vein-Mason");
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static String readCompressedTemplate(Path path) throws IOException {
 		if (!Files.exists(path)) {
 			throw new AssertionError("missing " + path);
 		}
 		try (GZIPInputStream input = new GZIPInputStream(new ByteArrayInputStream(Files.readAllBytes(path)))) {
 			return new String(input.readAllBytes(), StandardCharsets.ISO_8859_1);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": unexpected " + unexpected);
 		}
 	}
 }

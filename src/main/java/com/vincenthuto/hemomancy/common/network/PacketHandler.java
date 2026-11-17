@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PossessionActionP
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PossessionScenePacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PossessionSkipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSporeLoad;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncTendonAnchor;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.bestiary.PacketRequestSpecimenBestiary;
@@ -35,6 +36,7 @@ import com.vincenthuto.hemomancy.common.network.particle.*;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSpawnVeinSpiderCourier;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
 import com.vincenthuto.hemomancy.common.network.summon.PacketCrossbarRadialAction;
+import com.vincenthuto.hemomancy.common.network.summon.PacketPuppetAct;
 import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
 import com.vincenthuto.hemomancy.common.network.will.WillPresenceCuePacket;
 import com.vincenthuto.hemomancy.common.network.vein.*;
@@ -67,7 +69,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "41";
+    public static final String PROTOCOL_VERSION = "56";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -99,6 +101,19 @@ public class PacketHandler {
         net.playToClient(PacketSyncStationUpgrades.TYPE, PacketSyncStationUpgrades.STREAM_CODEC,
                 PacketSyncStationUpgrades::handle);
         net.playToClient(PacketSyncSporeLoad.TYPE, PacketSyncSporeLoad.STREAM_CODEC, PacketSyncSporeLoad::handle);
+        net.playToClient(PacketSyncTendonAnchor.TYPE, PacketSyncTendonAnchor.STREAM_CODEC, PacketSyncTendonAnchor::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVerbPresence.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVerbPresence.STREAM_CODEC,
+                ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.VerbRefusalPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.VerbRefusalPacket.STREAM_CODEC,
+                ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCling.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCling.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCling::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodTemper.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodTemper.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodTemper::handle);
         net.playToClient(PacketSyncPossession.TYPE, PacketSyncPossession.STREAM_CODEC, PacketSyncPossession::handle);
         net.playToServer(PossessionActionPacket.TYPE, PossessionActionPacket.STREAM_CODEC, PossessionActionPacket::handle);
         net.playToServer(PossessionSkipPacket.TYPE, PossessionSkipPacket.STREAM_CODEC, PossessionSkipPacket::handle);
@@ -169,6 +184,9 @@ public class PacketHandler {
         net.playToServer(com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket.STREAM_CODEC,
                 com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket::handle);
+        net.playToServer(com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeLeavePacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeLeavePacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeLeavePacket::handle);
         net.playToServer(com.vincenthuto.hemomancy.common.network.heartnode.MoltRequestPacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.heartnode.MoltRequestPacket.STREAM_CODEC,
                 com.vincenthuto.hemomancy.common.network.heartnode.MoltRequestPacket::handle);
@@ -220,6 +238,19 @@ public class PacketHandler {
         net.playToClient(PacketSyncManipulationSlotDiagnostics.TYPE,
                 PacketSyncManipulationSlotDiagnostics.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(ChangeSelectedManipPacket.TYPE, ChangeSelectedManipPacket.STREAM_CODEC, ChangeSelectedManipPacket::handle);
+        net.playToServer(BloodVerbKeyPacket.TYPE, BloodVerbKeyPacket.STREAM_CODEC, BloodVerbKeyPacket::handle);
+        net.playToServer(BloodVerbChoicePacket.TYPE, BloodVerbChoicePacket.STREAM_CODEC, BloodVerbChoicePacket::handle);
+        net.playToServer(com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.StrandSnapPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.StrandSnapPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.StrandSnapPacket::handle);
+        net.playToServer(com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashTapPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashTapPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashTapPacket::handle);
+        net.playToServer(com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashAimPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashAimPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashAimPacket::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashAimSyncPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashAimSyncPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(UseManipKeyPacket.TYPE, UseManipKeyPacket.STREAM_CODEC, UseManipKeyPacket::handle);
         net.playToClient(ManipCooldownPacket.TYPE, ManipCooldownPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(UpdateCurrentManipPacket.TYPE, UpdateCurrentManipPacket.STREAM_CODEC, UpdateCurrentManipPacket::handle);
@@ -248,6 +279,7 @@ public class PacketHandler {
         net.playToClient(PacketSyncSpecimenBestiary.TYPE, PacketSyncSpecimenBestiary.STREAM_CODEC, PacketSyncSpecimenBestiary::handle);
         net.playToServer(PacketPuppeteersSpindleAction.TYPE, PacketPuppeteersSpindleAction.STREAM_CODEC, PacketPuppeteersSpindleAction::handle);
         net.playToServer(PacketCrossbarRadialAction.TYPE, PacketCrossbarRadialAction.STREAM_CODEC, PacketCrossbarRadialAction::handle);
+        net.playToServer(PacketPuppetAct.TYPE, PacketPuppetAct.STREAM_CODEC, PacketPuppetAct::handle);
         net.playToClient(PacketSyncLastDeathMemory.TYPE, PacketSyncLastDeathMemory.STREAM_CODEC, PacketSyncLastDeathMemory::handle);
         net.playToClient(PacketSyncSutureLinks.TYPE, PacketSyncSutureLinks.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSpawnVeinSpiderCourier.TYPE,
@@ -258,6 +290,7 @@ public class PacketHandler {
         net.playToServer(BloodCraftingKeyPressPacket.TYPE, BloodCraftingKeyPressPacket.STREAM_CODEC, BloodCraftingKeyPressPacket::handle);
         net.playToServer(ActivateArmorSetAbilityC2SPacket.TYPE, ActivateArmorSetAbilityC2SPacket.STREAM_CODEC,
                 ActivateArmorSetAbilityC2SPacket::handle);
+        net.playToServer(ToggleCleatsPacket.TYPE, ToggleCleatsPacket.STREAM_CODEC, ToggleCleatsPacket::handle);
         net.playToClient(SyncArmorSetAbilityCooldownS2CPacket.TYPE,
                 SyncArmorSetAbilityCooldownS2CPacket.STREAM_CODEC,
                 SyncArmorSetAbilityCooldownS2CPacket::handle);
@@ -285,7 +318,6 @@ public class PacketHandler {
         // ── Particles ─────────────────────────────────────────────────────────
         net.playToClient(ParticleBurstPacket.TYPE, ParticleBurstPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(EntityVisualPacket.TYPE, EntityVisualPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
-        net.playToServer(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);
         net.playToClient(SpawnClawSlashPacket.TYPE, SpawnClawSlashPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(SpawnBrazierItemAbsorptionParticlesPacket.TYPE,
                 SpawnBrazierItemAbsorptionParticlesPacket.STREAM_CODEC,
@@ -315,6 +347,8 @@ public class PacketHandler {
         net.playToClient(PacketOpenBloodlinePoolScreen.TYPE, PacketOpenBloodlinePoolScreen.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(PacketRequestPoolData.TYPE, PacketRequestPoolData.STREAM_CODEC, PacketRequestPoolData::handle);
         net.playToServer(PacketKickBloodlinePlayer.TYPE, PacketKickBloodlinePlayer.STREAM_CODEC, PacketKickBloodlinePlayer::handle);
+        net.playToClient(PacketSyncBloodlinePetitions.TYPE, PacketSyncBloodlinePetitions.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToServer(PacketAnswerBloodlinePetition.TYPE, PacketAnswerBloodlinePetition.STREAM_CODEC, PacketAnswerBloodlinePetition::handle);
         net.playToServer(PacketBloodlineMessage.TYPE, PacketBloodlineMessage.STREAM_CODEC, PacketBloodlineMessage::handle);
 
         // ── Cardinal rites ────────────────────────────────────────────────────
@@ -530,6 +564,11 @@ public class PacketHandler {
     /** Server to every player tracking {@code entity}, and to the entity itself when it is a player. */
     public static <P extends CustomPacketPayload> void sendTracking(Entity entity, P payload) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, payload);
+    }
+
+    /** Server to every player tracking {@code entity}, never to the entity itself. */
+    public static <P extends CustomPacketPayload> void sendToTrackers(Entity entity, P payload) {
+        PacketDistributor.sendToPlayersTrackingEntity(entity, payload);
     }
 
     /**

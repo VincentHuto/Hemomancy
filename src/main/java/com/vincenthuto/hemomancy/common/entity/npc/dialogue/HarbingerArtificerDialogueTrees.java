@@ -121,11 +121,18 @@ public final class HarbingerArtificerDialogueTrees {
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.monolithic_armature",
 					"monolithic_armature", null));
 		}
+		if (progress.silentium()) {
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.silent_vestments",
+					"silent_vestments", null));
+		}
 		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.ask_about_item", "item_hint", null));
 		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null));
 
 		DialogueTree.Builder builder = DialogueTree.builder(SPEAKER, ARTIFICER_ICON, entityId)
-				.addNode(new DialogueNode("greeting", List.of(
+				.addNode(new DialogueNode("greeting", progress.silentium() ? List.of(
+						"hemomancy.artificer.silentium.line1",
+						"hemomancy.artificer.silentium.line2"
+				) : List.of(
 						"hemomancy.artificer.workshop.line1",
 						"hemomancy.artificer.workshop.line2"
 				), options))
@@ -154,6 +161,14 @@ public final class HarbingerArtificerDialogueTrees {
 		}
 		if (degree >= 7) {
 			builder.addNode(monolithicArmatureNode());
+		}
+		if (progress.silentium()) {
+			// PT-83 and CD-10: the Silent Archon vestments are offered here, to a Silentium only.
+			builder.addNode(new DialogueNode("silent_vestments", List.of(
+					"hemomancy.artificer.silent_vestments.line1",
+					"hemomancy.artificer.silent_vestments.line2",
+					"hemomancy.artificer.silent_vestments.line3"
+			), List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null))));
 		}
 		builder.addNode(itemHintNode());
 		return builder.build();
@@ -193,7 +208,9 @@ public final class HarbingerArtificerDialogueTrees {
 		return new DialogueNode("living_grafts", List.of(
 				"hemomancy.artificer.grafts.line1",
 				"hemomancy.artificer.grafts.line2",
-				"hemomancy.artificer.grafts.line3"
+				"hemomancy.artificer.grafts.line3",
+				"hemomancy.artificer.grafts.rings",
+				"hemomancy.artificer.grafts.pickaxe"
 		), List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null)));
 	}
 

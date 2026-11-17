@@ -1,16 +1,19 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class DendriticDistributorSynapticLoadoutSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private DendriticDistributorSynapticLoadoutSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/DendriticDistributorBlock.java");
 		String recipe = read("src/main/resources/data/hemomancy/recipe/cardinal_rite/working/dendritic_distributor.json");
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SynapticLoadoutScreen.java");
@@ -23,7 +26,7 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 		assertContains("Distributor asks the client bridge for the synaptic screen", block, "ClientBridge.get().openSynapticLoadout(pos)");
 		assertContains("Distributor opens synaptic loadout screen",
 				read("src/main/java/com/vincenthuto/hemomancy/client/ClientBridgeImpl.java"), "SynapticLoadoutScreen.openScreen(pos)");
-		assertDoesNotContain("Distributor no longer opens old progress screen", block, "HarbingerProgressScreen.openScreen()");
+		assertNotContains("Distributor no longer opens old progress screen", block, "HarbingerProgressScreen.openScreen()");
 		assertContains("Distributor recipe is Degree 5", recipe, "\"required_degree\": 5");
 		assertContains("skill init declares synaptic memory", skillInit, "skill_synaptic_memory");
 		assertContains("core branch registers synaptic memory", coreBranch, "\"skill_synaptic_memory\"");
@@ -38,7 +41,7 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 		assertContains("Synaptic control rail has compact height", screen, "CONTROL_RAIL_H");
 		assertContains("Synaptic rail is raised near top", screen, "controlY = frameY + 38");
 		assertContains("Synaptic carousel avoids rail overlap when cramped", screen, "return min");
-		assertDoesNotContain("Synaptic carousel keeps side cards visible", screen, "showSidePanels");
+		assertNotContains("Synaptic carousel keeps side cards visible", screen, "showSidePanels");
 		assertContains("Synaptic carousel uses a rail gutter", screen, "CONTROL_CAROUSEL_GUTTER");
 		assertContains("Synaptic side cards shrink responsively", screen, "sidePanelSize(frameW)");
 		assertContains("Synaptic side gaps shrink responsively", screen, "sideGap(frameW)");
@@ -54,10 +57,10 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 		assertContains("Synaptic screen has neuronal yellow border accents", screen, "NEURAL_BORDER_OUTER");
 		assertContains("Synaptic neural arcs are jagged lightning-like segments", screen, "drawJaggedNeuralArc");
 		assertContains("Synaptic neural arcs use straight line segments", screen, "drawNeuralLine");
-		assertDoesNotContain("Synaptic neural arcs avoid organic sine tendrils", screen, "microSquiggle");
+		assertNotContains("Synaptic neural arcs avoid organic sine tendrils", screen, "microSquiggle");
 		assertContains("Synaptic controls use custom yellow buttons", screen, "SynapticButton");
-		assertDoesNotContain("Synaptic screen does not use vanilla button builders", screen, "Button.builder");
-		assertDoesNotContain("Synaptic radial icons do not have individual amber backing boxes", screen, "ix - 2, iy - 2");
+		assertNotContains("Synaptic screen does not use vanilla button builders", screen, "Button.builder");
+		assertNotContains("Synaptic radial icons do not have individual amber backing boxes", screen, "ix - 2, iy - 2");
 		assertContains("Synaptic name field is placed in rail", screen, "controlX + 8");
 		assertContains("Synaptic action buttons stack vertically", screen, "controlY + 74");
 		assertContains("Synaptic screen reads client skill sync cache for slot count", screen, "getClientUnlockedSlots");
@@ -69,24 +72,8 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 		assertContains("Synaptic screen open refreshes skill sync", clientSync, "PacketSyncSkills");
 		assertContains("Synaptic skill sync is sent with manipulation sync", clientSync, "HemoCapabilityAccess.getSkillProgress(sender).toSyncTag()");
 		assertContains("Synaptic save captures memorized wheel entries", action, "memorizedEquippedNames");
-		assertDoesNotContain("Synaptic save is not selected-only or normal-only", action, "normalEquippedNames");
+		assertNotContains("Synaptic save is not selected-only or normal-only", action, "normalEquippedNames");
 		assertContains("Synaptic apply counts only normal entries against capacity", action,
 				"countNormalEquippedNames(loadout.manipNames())");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
-		}
 	}
 }

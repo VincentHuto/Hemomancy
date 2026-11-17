@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.TemperCharge;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonSync;
 import com.vincenthuto.hemomancy.common.entity.summon.SyncedBoundSummon;
@@ -19,7 +20,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Harbi
 import com.vincenthuto.hemomancy.config.HemoConfigValues;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -57,8 +57,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class WillEntity extends Monster implements SyncedBoundSummon {
-	private static final BloodAccounting.Source REDIRECT = BloodAccounting.Source.of("will_redirect", Category.SKILL, false, false);
+	private static final BloodAccounting.Source REDIRECT = BloodAccounting.Source.of("will_redirect", Category.SKILL, false);
 	private static final int NORMAL_DISSOLVE_TICKS = 40;
+	private static final ParticleColor BANISHED_BLOOD = new ParticleColor(150, 14, 26);
 	private static final EntityDataAccessor<Byte> DATA_ORIGIN =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Byte> DATA_SCHOOL =
@@ -287,7 +288,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		}
 		if (distanceSqr < 5.0D * 5.0D) {
 			ResourceLocation pressure = firstInKit(kit, "sanguine_ignition", "cryogenic_pulse", "activation_potential",
-					"gloam_laceration", "blood_eclipse", "blood_aneurysm", "bloom_of_rot");
+					"gloam_laceration", "blood_eclipse", "blood_aneurysm", "grave_debt");
 			if (pressure != null) return pressure;
 		}
 		if (target.getHealth() <= target.getMaxHealth() * 0.35F) {
@@ -537,23 +538,35 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		if (!canBloodUtilityBend()) {
 			return false;
 		}
-		HemoCapabilityAccess.getBloodTemperament(player).addTemperAlignment(getSchool(), -3.0F);
+		shiftTemperament(player, -3.0F);
 		spawnProjectedBanishmentBurst();
 		startDissolving(false);
 		return true;
 	}
 
+	/** Moves the player's Temperament toward (or away from) this Will's school and sends the new profile. */
+	private void shiftTemperament(ServerPlayer player, float amount) {
+		var temperament = HemoCapabilityAccess.getBloodTemperament(player);
+		temperament.addTemperAlignment(getSchool(), amount);
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents
+				.syncTemperament(player, temperament);
+	}
+
 	private void spawnProjectedBanishmentBurst() {
 		if (level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.POOF, getX(), getY() + getBbHeight() * 0.55D, getZ(),
+			serverLevel.sendParticles(HemoParticleData.willAbsorptionGlowPulse(BANISHED_BLOOD),
+					getX(), getY() + getBbHeight() * 0.55D, getZ(),
 					24, getBbWidth() * 0.55D, getBbHeight() * 0.35D, getBbWidth() * 0.55D, 0.04D);
-			serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE, getX(), getY() + getBbHeight() * 0.55D, getZ(),
-					18, getBbWidth() * 0.65D, getBbHeight() * 0.4D, getBbWidth() * 0.65D, 0.02D);
+			serverLevel.sendParticles(HemoParticleData.bloodCell(BANISHED_BLOOD),
+					getX(), getY() + getBbHeight() * 0.55D, getZ(),
+					18, getBbWidth() * 0.65D, getBbHeight() * 0.4D, getBbWidth() * 0.65D, 0.01D);
 		}
 	}
 
 	private void completeAbsorption(ServerPlayer player) {
-		HemoCapabilityAccess.getBloodTemperament(player).addTemperAlignment(getSchool(), 3.0F);
+		shiftTemperament(player, 3.0F);
+		// A Will taken whole fills its school's Temper as well as moving Temperament (core-loop Track 11).
+		TemperCharge.fillFromWill(player, getSchool(), getTier());
 		clearFalterBurst();
 		clearAbsorptionStruggle();
 		dropAbsorptionCompletionLoot();

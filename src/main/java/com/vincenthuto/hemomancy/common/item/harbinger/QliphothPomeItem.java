@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
@@ -12,6 +13,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomePro
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
@@ -99,6 +101,8 @@ public class QliphothPomeItem extends Item {
 	private static final int DARKNESS_DURATION_TICKS = 140;
 	private static final int DARKNESS_TAINTED_DURATION_TICKS = 300;
 	private static final String POME_MESSAGE_KEY_BASE = "message.hemomancy.qliphoth_pome.consume.";
+	/** Said when the eighth counted pome is eaten, and shown on the owner's pomes after it (PT-72). */
+	public static final String LOCK_WARNING_KEY = "message.hemomancy.qliphoth_pome_item.the_ninth_husk_will_lock";
 
 	/** The nine Qliphoth husk ids in consumption order (indices 0–8); their names are lang keys. */
 	public static final String[] HUSK_IDS = {
@@ -200,6 +204,13 @@ public class QliphothPomeItem extends Item {
 			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.manipulation_cost_25_3_min").withStyle(ChatFormatting.GOLD));
 			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.darkness_7s")
 					.withStyle(ChatFormatting.DARK_GRAY));
+			Player viewer = ClientBridge.get().localPlayer();
+			if (viewer != null && tag.hasUUID(OWNER_KEY) && tag.getUUID(OWNER_KEY).equals(viewer.getUUID())) {
+				var degree = HemoCapabilityAccess.getInitiatoryDegree(viewer);
+				if (HarbingerPathPermissions.nextPomeLocks(degree.getTotalPomesConsumed(), degree.getArchonPath())) {
+					tooltip.add(Component.translatable(LOCK_WARNING_KEY).withStyle(ChatFormatting.DARK_RED));
+				}
+			}
 		}
 	}
 
@@ -343,8 +354,12 @@ public class QliphothPomeItem extends Item {
 			return;
 		}
 
-		// ── Total pome counter (drives the HUD tracker) ──
-		HemoCapabilityAccess.getInitiatoryDegree(player).incrementTotalPomesConsumed();
+		// ── Total pome counter (drives the HUD tracker and the ninth-pome power lock) ──
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		degree.incrementTotalPomesConsumed();
+		if (HarbingerPathPermissions.nextPomeLocks(degree.getTotalPomesConsumed(), degree.getArchonPath())) {
+			player.displayClientMessage(Component.translatable(LOCK_WARNING_KEY).withStyle(ChatFormatting.DARK_RED), false);
+		}
 
 		// ── Per-bloom communion tracking (Apotheos gate) ──
 		long bloomOrigin = itemTag.getLong(BLOOM_ORIGIN_KEY);

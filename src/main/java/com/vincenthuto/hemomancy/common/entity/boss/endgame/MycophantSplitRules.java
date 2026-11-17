@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 /**
- * The split at half health, beat by beat: she hunches and strains while the skull cracks, the halves snap apart at
+ * The split at 60% health, beat by beat: she hunches and strains while the skull cracks, the halves snap apart at
  * {@link #snapTick()} and swing out to hang off the sides, the pulp face swells through the gap and blooms at the push,
  * the hyphae wings bud from the shoulders and unfurl, and she settles back into her stance for phase 2.
  * Curves take fractional ticks so the client can animate between server ticks.

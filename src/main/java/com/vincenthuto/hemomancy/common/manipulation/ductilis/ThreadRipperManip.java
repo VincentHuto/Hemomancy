@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
-import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -27,7 +26,8 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.Vex;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperEncounterPuppetEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -81,7 +81,8 @@ public final class ThreadRipperManip extends BloodManipulation {
 			if (target instanceof DrudgeEntity drudge) drudge.dropEquippedMemory();
 			target.discard();
 		} else {
-			player.displayClientMessage(Component.translatable("message.hemomancy.thread_ripper.no_tether")
+			player.displayClientMessage(Component.translatable(VesperEncounterPuppetEvents.isEncounterPuppet(target)
+					? "message.hemomancy.thread_ripper.vesper_strings" : "message.hemomancy.thread_ripper.no_tether")
 					.withStyle(ChatFormatting.DARK_GRAY), true);
 			return;
 		}
@@ -125,16 +126,16 @@ public final class ThreadRipperManip extends BloodManipulation {
 		return caster.getServer() == null || caster.getServer().isPvpAllowed();
 	}
 
-	private static boolean protectedBody(Player caster, LivingEntity target) {
+	public static boolean protectedBody(Player caster, LivingEntity target) {
 		if (caster.isAlliedTo(target) || target.isAlliedTo(caster)
-				|| target instanceof CircusPerformerEntity || target instanceof CircusRingmasterEntity
-				|| ManipulationReactiveEvents.isBoss(target)) return true;
+				|| target instanceof CircusPerformerEntity
+				|| HemoEntityPredicates.isBoss(target) || VesperEncounterPuppetEvents.isEncounterPuppet(target)) return true;
 		if (target instanceof BoundPuppeteerSummon summon) {
 			if (summon.hemomancy$isTrialSummon()
 					|| caster.getUUID().equals(summon.hemomancy$getOwnerUUID())) return true;
 			Player owner = caster.level().getPlayerByUUID(summon.hemomancy$getOwnerUUID());
 			if (owner != null && (caster.isAlliedTo(owner) || owner.isAlliedTo(caster))) return true;
 		}
-		return target.getClass().getPackageName().contains(".entity.boss.");
+		return false;
 	}
 }

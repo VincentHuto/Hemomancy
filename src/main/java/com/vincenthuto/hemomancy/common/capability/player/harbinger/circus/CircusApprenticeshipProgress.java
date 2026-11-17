@@ -39,8 +39,13 @@ public final class CircusApprenticeshipProgress {
         return state(player).getBoolean("practical." + summon);
     }
 
+    /** Whether {@link #completePractical} would record {@code summon}'s practical now. */
+    public static boolean canCompletePractical(Player player, String summon) {
+        return knows(player, summon) && CircusCurriculum.lesson(summon).isPresent() && !practicalComplete(player, summon);
+    }
+
     public static boolean completePractical(ServerPlayer player, String summon) {
-        if (!knows(player, summon) || CircusCurriculum.lesson(summon).isEmpty() || practicalComplete(player, summon)) return false;
+        if (!canCompletePractical(player, summon)) return false;
         state(player).putBoolean("practical." + summon, true);
         CircusPlayerProgress.awardMilestone(player, "practical." + summon, 100);
         return true;

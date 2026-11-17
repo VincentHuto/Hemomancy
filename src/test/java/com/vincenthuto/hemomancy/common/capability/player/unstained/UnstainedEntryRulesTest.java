@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import org.junit.jupiter.api.Test;
+
 public final class UnstainedEntryRulesTest {
 	private UnstainedEntryRulesTest() {}
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertTrue("non-founder remains curable", UnstainedEntryRules.canBeginCure(false, false));
 		assertFalse("founder crosses the ordinary cutoff", UnstainedEntryRules.canBeginCure(true, false));
 		assertTrue("Annetta severance restores the exceptional route", UnstainedEntryRules.canBeginCure(true, true));

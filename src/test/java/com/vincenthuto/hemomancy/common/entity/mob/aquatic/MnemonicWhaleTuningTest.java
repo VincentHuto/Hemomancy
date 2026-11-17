@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
+import org.junit.jupiter.api.Test;
+
 final class MnemonicWhaleTuningTest {
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		usesLargerSpermWhaleScale();
 		usesThreePartBodyProfile();
 		glidesSlowerThanADolphinButFastEnoughToCruise();

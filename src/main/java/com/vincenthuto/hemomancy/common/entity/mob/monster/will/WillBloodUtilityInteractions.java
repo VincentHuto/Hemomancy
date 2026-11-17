@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 public final class WillBloodUtilityInteractions {
-	private static final BloodAccounting.Source BANISHMENT = BloodAccounting.Source.of("will_banishment", Category.SKILL, false, false);
+	private static final BloodAccounting.Source BANISHMENT = BloodAccounting.Source.of("will_banishment", Category.SKILL, false);
 	private static final double PROJECTION_RANGE = 5.5D;
 
 	private WillBloodUtilityInteractions() {

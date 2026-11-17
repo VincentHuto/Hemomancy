@@ -124,7 +124,8 @@ public class AbhorrentThoughtEntity extends Monster {
 		for (ServerPlayer player : level().getEntitiesOfClass(ServerPlayer.class,
 				getBoundingBox().inflate(AbhorrentGazeRules.GAZE_RANGE), Entity::isAlive)) {
 			boolean possessed = HemoCapabilityAccess.isPossessing(player);
-			if (!AbhorrentGazeRules.gazes(possessed, distanceToSqr(player), possessed && hasLineOfSight(player))) continue;
+			if (!AbhorrentGazeRules.gazes(possessed, player.isCreative() || player.isSpectator(), distanceToSqr(player),
+					possessed && hasLineOfSight(player))) continue;
 			player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, AbhorrentGazeRules.GAZE_DARKNESS_TICKS, 0,
 					false, false, false));
 			level().playSound(null, player.blockPosition(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.8F, 0.6F);

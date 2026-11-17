@@ -20,7 +20,8 @@ public final class AbhorrentGazeRules {
 		return totem ? Grab.TOTEM : Grab.EJECT;
 	}
 
-	public static boolean gazes(boolean possessed, double distanceSqr, boolean sight) {
-		return possessed && sight && distanceSqr <= GAZE_RANGE * GAZE_RANGE;
+	/** {@code exempt}: a creative or spectator possessor, whom the gaze never drains (FX-17). */
+	public static boolean gazes(boolean possessed, boolean exempt, double distanceSqr, boolean sight) {
+		return possessed && !exempt && sight && distanceSqr <= GAZE_RANGE * GAZE_RANGE;
 	}
 }

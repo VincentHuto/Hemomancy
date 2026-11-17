@@ -10,13 +10,28 @@ public final class EarthenVeinTravelRules {
 	public static final int READY_TIMEOUT_TICKS = 600;
 	public static final int SWALLOW_TICKS = 24;
 	public static final int EJECTION_TICKS = 20;
+	/**
+	 * The flat price of a crossing between two openings that one living vein joins (core-loop round two P8): the
+	 * tissue carries the traveller, so distance no longer counts.
+	 */
+	public static final int LIVING_VEIN_COST = 125;
 
 	private EarthenVeinTravelRules() {
 	}
 
 	public static int cost(BlockPos origin, ResourceLocation originDimension,
 			BlockPos destination, ResourceLocation destinationDimension) {
+		return cost(origin, originDimension, destination, destinationDimension, false);
+	}
+
+	/**
+	 * The blood a crossing costs. {@code carried}: a living vein joins the two openings, so a crossing within one
+	 * dimension costs {@link #LIVING_VEIN_COST}; across dimensions it never helps.
+	 */
+	public static int cost(BlockPos origin, ResourceLocation originDimension,
+			BlockPos destination, ResourceLocation destinationDimension, boolean carried) {
 		if (!originDimension.equals(destinationDimension)) return 4_000;
+		if (carried) return LIVING_VEIN_COST;
 		long dx = (long) destination.getX() - origin.getX();
 		long dz = (long) destination.getZ() - origin.getZ();
 		long distanceSquared = dx * dx + dz * dz;

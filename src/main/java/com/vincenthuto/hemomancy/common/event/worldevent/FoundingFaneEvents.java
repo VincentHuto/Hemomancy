@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFaneBoundaries;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteThreatRules;
+import com.vincenthuto.hemomancy.common.util.LastSent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,6 +31,8 @@ public class FoundingFaneEvents {
 	private static final int EFFECT_DURATION = 60;
 	private static final double FANE_SYNC_DISTANCE = 256.0D;
 	private static final Map<UUID, FaneBoundaryRelation> FANE_BOUNDARY_PREVIEWS = new HashMap<>();
+	/** The boundaries each player last had, so the 40-tick pass sends only a change (FX-14). */
+	private static final LastSent<List<PacketSyncFaneBoundaries.Entry>> SENT = new LastSent<>();
 
 	/** Damage dealt to non-Harbinger mobs that breach a fane boundary during a Blood Moon. */
 	private static final float FANE_BARRIER_DAMAGE = 4.0f;
@@ -43,7 +46,7 @@ public class FoundingFaneEvents {
 		Map<UUID, FaneFootprint> fanes = data.getAllFootprints();
 		if (fanes.isEmpty()) {
 			for (ServerPlayer player : sLevel.getPlayers(p -> p.isAlive())) {
-				PacketHandler.sendToPlayer(player, new PacketSyncFaneBoundaries(List.of()));
+				if (SENT.changed(player, List.of())) PacketHandler.sendToPlayer(player, new PacketSyncFaneBoundaries(List.of()));
 			}
 			return;
 		}
@@ -125,7 +128,7 @@ public class FoundingFaneEvents {
 					(float) FaneFootprint.STAKE_RADIUS, fane.getKey(), relation));
 		}
 
-		PacketHandler.sendToPlayer(viewer, new PacketSyncFaneBoundaries(entries));
+		if (SENT.changed(viewer, entries)) PacketHandler.sendToPlayer(viewer, new PacketSyncFaneBoundaries(entries));
 	}
 
 	private static boolean hasBegunUnstainedPath(ServerPlayer viewer) {
@@ -148,9 +151,16 @@ public class FoundingFaneEvents {
 		FANE_BOUNDARY_PREVIEWS.remove(viewer.getUUID());
 	}
 
+	/** Called by {@code TransientServerStateEvents} on logout. */
+	public static void logout(ServerPlayer viewer) {
+		clearPreviewRelation(viewer);
+		SENT.forget(viewer);
+	}
+
 	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
 	public static void clearSessionState() {
 		FANE_BOUNDARY_PREVIEWS.clear();
+		SENT.clear();
 	}
 
 	public static Optional<FaneBoundaryRelation> previewRelation(ServerPlayer viewer) {

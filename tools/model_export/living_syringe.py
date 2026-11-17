@@ -48,11 +48,21 @@ def atlas(filled=False):
             + png_chunk(b"IEND", b""))
 
 
+FACE_AXES = {"north": (0, 1), "south": (0, 1), "east": (2, 1), "west": (2, 1), "up": (0, 2), "down": (0, 2)}
+
+
+def face_uv(u, v, start, end, face):
+    """One texel per model unit: the face takes a face-sized window of its 4x4 patch."""
+    a, b = FACE_AXES[face]
+    width, height = (min(4, round(abs(end[axis] - start[axis]), 4)) for axis in (a, b))
+    return [u, v, u + width, v + height]
+
+
 def cube(name, start, end, material, texture="#material", angle=0, pivot=None):
     index = list(MATERIALS).index(material)
     u, v = index % 4 * 4, index // 4 * 4
     element = {"name": name, "from": start, "to": end,
-               "faces": {face: {"uv": [u, v, u + 4, v + 4], "texture": texture}
+               "faces": {face: {"uv": face_uv(u, v, start, end, face), "texture": texture}
                          for face in SIDES}}
     if angle:
         element["rotation"] = {"angle": angle, "axis": "z", "origin": pivot}
@@ -279,8 +289,10 @@ def export():
         x, y, z = ROTOR_SEAT
         x1, y1, z1 = element["from"]
         x2, y2, z2 = element["to"]
-        mounted.append({**element, "from": [x + x1 - 8, y - z2 + 8, z + y1 - 8],
-                        "to": [x + x2 - 8, y - z1 + 8, z + y2 - 8]})
+        start, end = [x + x1 - 8, y - z2 + 8, z + y1 - 8], [x + x2 - 8, y - z1 + 8, z + y2 - 8]
+        faces = {side: {**face, "uv": face_uv(face["uv"][0], face["uv"][1], start, end, side)}
+                 for side, face in element["faces"].items()}
+        mounted.append({**element, "from": start, "to": end, "faces": faces})
 
     body = {**WRIST, **CHAMBER}
     blockbench("vial_rack", standalone, 4, images, RACK_DISPLAY)

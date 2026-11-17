@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
  * through {@link BloodAccounting} and returns the blood it took. {@link IBloodReservoir} supplies the default.
  */
 public interface ProjectedBloodSink {
-	BloodAccounting.Source PROJECTION = BloodAccounting.Source.of("blood_projection", Category.STATION, false, false);
+	BloodAccounting.Source PROJECTION = BloodAccounting.Source.of("blood_projection", Category.STATION, false);
 
 	/** {@code hitPos} is the block the player aimed at, which may be another part of a multiblock. */
 	double takeProjectedBlood(Player player, BlockPos hitPos, double rate, boolean livingStaff);

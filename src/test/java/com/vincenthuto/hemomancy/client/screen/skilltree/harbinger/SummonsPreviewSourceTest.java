@@ -1,16 +1,19 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class SummonsPreviewSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private SummonsPreviewSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String view = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabView.java");
 		String bodies = read("src/main/java/com/vincenthuto/hemomancy/common/entity/summon/puppeteer/PuppeteerSummonBodies.java");
 		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabController.java");
@@ -53,21 +56,5 @@ public final class SummonsPreviewSourceTest {
 				controller, "state.previewRotationAngle += partial * PREVIEW_AUTO_ROTATION_SPEED");
 		assertContains("summons drag spin should use the named sensitivity",
 				controller, "* PREVIEW_DRAG_ROTATION_SPEED");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
-		}
 	}
 }

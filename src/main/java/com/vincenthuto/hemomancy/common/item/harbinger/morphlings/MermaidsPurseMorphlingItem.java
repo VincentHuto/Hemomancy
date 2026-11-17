@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.armor.ArmorSetBonusRules;
-import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -38,7 +36,7 @@ import java.util.List;
 public class MermaidsPurseMorphlingItem extends HouseMorphlingItem {
 	public static final ResourceLocation SWIM_SPEED = Hemomancy.rloc("purse_swim_speed");
 	private static final BloodAccounting.Source SCHOOLS_SHARE = BloodAccounting.Source.of("schools_share",
-			Category.MORPHLING, false, false);
+			Category.MORPHLING, false);
 	private static final BloodAccounting.Source SHARED_WAKE = MorphlingItem.primalSource("shared_wake");
 	private static final String SCHOOL_COOLDOWN = "SchoolsShare";
 	private static final String LAST_SPRINT_SWIM = "purse.last_sprint_swim";
@@ -64,8 +62,7 @@ public class MermaidsPurseMorphlingItem extends HouseMorphlingItem {
 	public void onEquippedServerTick(Player player, ItemStack stack) {
 		int stage = stage(stack);
 		boolean home = home(player);
-		double swim = MermaidsPurseRules.swimBonus(stage, home, ArmorSetBonusRules.pelagicSwimMultiplier(
-				ArmorSetHelper.hasFullPrismaticSet(player), ArmorSetHelper.hasFullPhantasmalBloodlust(player)));
+		double swim = MermaidsPurseRules.swimBonus(stage, home);
 		AttributeModifiers.sync(player.getAttribute(NeoForgeMod.SWIM_SPEED), SWIM_SPEED, swim,
 				AttributeModifier.Operation.ADD_MULTIPLIED_BASE, player.isInWater() && swim > 0.0D);
 		if (isSprintSwimming(player)) MorphlingSession.put(player, LAST_SPRINT_SWIM, player.level().getGameTime());

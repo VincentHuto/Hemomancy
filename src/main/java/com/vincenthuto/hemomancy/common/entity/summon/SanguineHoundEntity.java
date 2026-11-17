@@ -77,8 +77,8 @@ public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
 		if (BoundSummonBehavior.commonServerTick(this, this)) {
 			BoundSummonBehavior.ownerFor(this, this).ifPresent(owner -> {
 				if (getTarget() == null && owner instanceof net.minecraft.server.level.ServerPlayer serverOwner
-						&& BoundSummonBehavior.shouldFollowOwner(serverOwner, this) && distanceToSqr(owner) > 20.0D) {
-					getNavigation().moveTo(owner, 1.15D);
+						&& BoundSummonBehavior.shouldFollowOwner(serverOwner, this)) {
+					BoundSummonBehavior.followOwnerOnFoot(this, owner, 1.15D);
 				}
 			});
 		}

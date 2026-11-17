@@ -275,7 +275,11 @@ public final class HematicMicroscopeGameTests {
             var capture = animationPlayer(h);
             var player = capture.player();
             var sample = vial(known ? "minecraft:pig" : "missing:creature");
-            if (known) BloodSampleData.identify(sample);
+            // Known means the viewer has read this kind before (core-loop Track 5: knowledge is the player's, not the vial's).
+            if (known) {
+                BloodSampleData.identify(sample);
+                com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(player).recordExamination("minecraft:pig");
+            }
             var before = sample.copy();
             player.setItemInHand(InteractionHand.OFF_HAND, sample);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.hematic_microscope.get()));

@@ -1,12 +1,17 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
+
 public final class LivingStaffWeaponFormRulesTest {
 	private LivingStaffWeaponFormRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		hotSwapCostStartsAtTwoHundredFiftyAndDropsByFiftyPerLevel();
+		theFifthRingCutsTheSwapAndLowersItsFloor();
 		livingWeaponFormNamesAreRecognized();
+		onlyTheAxeAndPickaxeDig();
 		matchingSelectedFormCanToggleOff();
 	}
 
@@ -23,7 +28,24 @@ public final class LivingStaffWeaponFormRulesTest {
 				LivingStaffWeaponFormRules.hotSwapCostForWeaponsMasterLevel(5));
 	}
 
+	private static void theFifthRingCutsTheSwapAndLowersItsFloor() {
+		assertEquals("rings below five change nothing", 200.0D, LivingStaffWeaponFormRules.hotSwapCost(1, 4));
+		assertEquals("ring five takes 25 mL off", 175.0D, LivingStaffWeaponFormRules.hotSwapCost(1, 5));
+		assertEquals("ring five lowers the floor to 25 mL", 25.0D, LivingStaffWeaponFormRules.hotSwapCost(4, 5));
+		assertEquals("without ring five the floor stays 50 mL", 50.0D, LivingStaffWeaponFormRules.hotSwapCost(4, 0));
+	}
+
+	private static void onlyTheAxeAndPickaxeDig() {
+		assertTrue("axe digs", LivingStaffWeaponFormRules.isDiggingForm("conjure_axe"));
+		assertTrue("pickaxe digs", LivingStaffWeaponFormRules.isDiggingForm("conjure_pickaxe"));
+		assertFalse("blade does not dig", LivingStaffWeaponFormRules.isDiggingForm("conjure_blade"));
+	}
+
 	private static void livingWeaponFormNamesAreRecognized() {
+		assertTrue("pickaxe form recognized (Track 8, the ninth form)",
+				LivingStaffWeaponFormRules.isStaffWeaponFormManip("conjure_pickaxe"));
+		assertTrue("sickle form recognized",
+				LivingStaffWeaponFormRules.isStaffWeaponFormManip("conjure_sickle"));
 		assertTrue("blade form recognized",
 				LivingStaffWeaponFormRules.isStaffWeaponFormManip("conjure_blade"));
 		assertTrue("axe form recognized",

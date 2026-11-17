@@ -204,19 +204,20 @@ public final class SuccessionGameTests {
         SuccessionTestFixtures.resident(f.player,npc,work); return npc;
     }
 
+    /** The Vacant Effigy is a Working craft now: a hand projection into its frame is a hint, not a manufacture. */
     @GameTest(template = "empty")
-    public static void manufactureConsumesPatternAndTwoHundredFiftyBlood(GameTestHelper h) {
+    public static void effigyPatternIsAWorkingCraftNotHandFed(GameTestHelper h) {
         var f=fixture(h); var center=f.center; var volume=HemoCapabilityAccess.getBloodVolume(f.player);volume.setBloodVolume(1000);
         for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++) {
             var block=x==0&&z==0?BlockInit.venous_stone.get():x!=0&&z!=0?BlockInit.conscious_mass.get():BlockInit.hematic_iron_block.get();
             h.getLevel().setBlock(center.offset(x,0,z),block.defaultBlockState(),3);
         }
         var formation=new ItemStack(ItemInit.sanguine_formation.get());
-        h.assertTrue(com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager.feedStructure(f.player,h.getLevel(),center,formation,250),"Effigy pattern did not accept blood projection");
-        for(int tick=0;tick<30;tick++)com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager.tick();
-        h.assertTrue(volume.getBloodVolume()==750 && formation.isEmpty(),"Effigy manufacture charged wrong blood or retained catalyst");
-        h.assertTrue(h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(center).inflate(2),e->e.getItem().is(BlockInit.vacant_effigy.get().asItem())).size()==1,"Manufacture did not produce exactly one portable effigy");
-        h.assertTrue(h.getLevel().getBlockState(center).isAir(),"Manufacture retained structure ingredients");cleanup(f);h.succeed();
+        com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager.feedStructure(f.player,h.getLevel(),center,formation,250);
+        for(int tick=0;tick<30;tick++)com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager.tick(h.getLevel());
+        h.assertTrue(volume.getBloodVolume()==1000 && !formation.isEmpty(),"A hand projection into the Working frame charged blood or took the Formation");
+        h.assertTrue(h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(center).inflate(2),e->e.getItem().is(BlockInit.vacant_effigy.get().asItem())).isEmpty(),"A hand projection manufactured an effigy outside its Working");
+        h.assertTrue(h.getLevel().getBlockState(center).is(BlockInit.venous_stone.get()),"A hand projection consumed the Working frame");cleanup(f);h.succeed();
     }
 
     @GameTest(template = "empty")
@@ -394,7 +395,8 @@ public final class SuccessionGameTests {
     public static void legacyVialsAreRejectedBeforeConsumption(GameTestHelper h) {
         var f = fixture(h); var rite = setup(h, f, false, null, false);
         SuccessionRites.cleanup(h.getLevel(), rite);
-        var source = (IronBrazierBlockEntity) h.getLevel().getBlockEntity(f.center.offset(5,1,0));
+        var socket = CardinalRiteFloorRegistry.get(Hemomancy.rloc("dominion_greater")).orElseThrow().brazierSockets().get(0);
+        var source = (IronBrazierBlockEntity) h.getLevel().getBlockEntity(f.center.offset(socket.getX(),socket.getY(),-socket.getZ()));
         var sample = source.extractOffering();
         var tag = sample.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
         tag.remove(SuccessionSamples.KEY); sample.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));

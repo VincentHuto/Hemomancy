@@ -11,6 +11,8 @@ import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintMoves;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintRoot;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -107,6 +109,8 @@ public final class VelorumStillness implements SaintMeter.Rule {
 		boolean still = VelorumStillnessRules.still(inputs(velorum, player, track, travel, time));
 		if (still) recordStill(track, player.blockPosition());
 		float drift = VelorumStillnessRules.drift(inputs(velorum, player, track, travel, time));
+		// his own gift answered: it is his hour, and a challenger holding one stills faster (NQ-08-11)
+		if (drift > 0.0F && EndlessHourManip.holding(player)) drift *= EndlessHourRules.VELORUM_STILLNESS;
 		float ceiling = VelorumStillnessRules.ceiling(time < track.capUntil);
 		return Math.min(drift, ceiling - state.value());
 	}

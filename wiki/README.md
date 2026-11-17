@@ -146,8 +146,7 @@ Narrative and worldbuilding:
 Integration guide:
 - Required dependencies
 - JEI recipe viewing
-- Dormant Mana and Artifice integration target
-- Dormant Curios integration target
+- The removed Mana and Artifice and Curios integrations (old design, kept as a record)
 - Modpack creation tips
 - Config recommendations
 - Planned future integrations
@@ -179,7 +178,7 @@ Pages still to add:
 - **GitHub Repository:** https://github.com/VincentHuto/Hemomancy
 - **Issues:** https://github.com/VincentHuto/Hemomancy/issues
 - **Discussions:** https://github.com/VincentHuto/Hemomancy/discussions
-- **Full Reference Docs:** https://github.com/VincentHuto/Hemomancy/tree/main/docs
+- **Full Reference Docs:** https://github.com/VincentHuto/Hemomancy/tree/neo-1.21.1/docs
 
 ---
 

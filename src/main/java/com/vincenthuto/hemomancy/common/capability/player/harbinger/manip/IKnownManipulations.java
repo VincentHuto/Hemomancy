@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
 import net.minecraft.core.BlockPos;
 
 import java.util.LinkedHashMap;
@@ -60,6 +61,11 @@ public interface IKnownManipulations {
 	default void setAvatarActive(boolean avatarActive) {
 		setActiveAvatarForm(avatarActive ? "summon_avatar" : "");
 	}
+
+	/** The verb the Living Staff channels and the verb key conjures; its own state, never a selection (CL-2). */
+	public Verb getActiveVerb();
+
+	public void setActiveVerb(Verb verb);
 
 	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips);
 

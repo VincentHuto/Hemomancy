@@ -8,9 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -37,25 +35,5 @@ public abstract class AbstractSpecialBloodLustArmorItem extends ArmorItem implem
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		tooltip.add(Component.translatable("tooltip.hemomancy.bloodlust_set_bonus").withStyle(ChatFormatting.DARK_RED));
-	}
-
-	@Override
-	public void inventoryTick(ItemStack stack, Level world, Entity entity, int slotId, boolean isSelected) {
-		super.inventoryTick(stack, world, entity, slotId, isSelected);
-//		if (world.isClientSide && entity instanceof Player player && isEquipped(player, stack)) {
-//			world.addParticle(DustParticleOptions.REDSTONE, player.getRandomX(0.5D), player.getY(),
-//					player.getRandomZ(0.5D), (world.random.nextDouble() - 0.5D) * 2.0D,
-//					-world.random.nextDouble(), (world.random.nextDouble() - 0.5D) * 2.0D);
-//		}
-	}
-
-	private static boolean isEquipped(Player player, ItemStack stack) {
-		for (EquipmentSlot slot : new EquipmentSlot[] { EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS,
-				EquipmentSlot.FEET }) {
-			if (ItemStack.isSameItemSameComponents(player.getItemBySlot(slot), stack)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

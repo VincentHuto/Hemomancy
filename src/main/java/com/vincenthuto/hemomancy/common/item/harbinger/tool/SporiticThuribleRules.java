@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
+
 import net.minecraft.util.Mth;
 
 public final class SporiticThuribleRules {
-	public static final int REQUIRED_DEGREE = 4;
 	public static final int DEFAULT_BURN_TICKS = 20 * 60 * 5;
 	public static final int UPKEEP_INTERVAL_TICKS = 20;
 	public static final int AMBIENT_PARTICLE_INTERVAL_TICKS = 4;
@@ -17,6 +19,11 @@ public final class SporiticThuribleRules {
 	private static final double SWING_AURA_RADIUS = 2.5;
 
 	private SporiticThuribleRules() {
+	}
+
+	/** An Apotheos relic (NQ-10-3): only an eighth-Degree Apotheos may burn it. */
+	public static boolean mayBurn(int degree, EnumArchonPath path) {
+		return HarbingerPathPermissions.isApotheos(degree, path);
 	}
 
 	public static double bloodDrainPerSecond(double swingIntensity) {

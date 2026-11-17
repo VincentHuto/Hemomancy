@@ -13,7 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 public class HemolysisEffect extends MobEffect {
-	private static final BloodAccounting.Source SOURCE = BloodAccounting.Source.of("hemolysis", Category.EFFECT, false, false);
+	private static final BloodAccounting.Source SOURCE = BloodAccounting.Source.of("hemolysis", Category.EFFECT, false);
 
 	public HemolysisEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);

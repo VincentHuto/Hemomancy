@@ -3,19 +3,14 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.annetta;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class AnnettaModelSourceTest {
     private static final String ENTITY = "src/main/java/com/vincenthuto/hemomancy/common/entity/boss/annetta/";
     private static final String MODEL = "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/annetta/";
-
-    private static String read(String path) throws IOException {
-        return Files.readString(Path.of(path)).replace("\r\n", "\n");
-    }
 
     private static String method(String source, String signature) {
         int start = source.indexOf(signature);

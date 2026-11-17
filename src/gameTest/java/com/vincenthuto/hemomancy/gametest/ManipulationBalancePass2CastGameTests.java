@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
@@ -51,7 +50,7 @@ public final class ManipulationBalancePass2CastGameTests {
     private static final String BATCH = "manipulation_balance_pass_2_cast";
 
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = BATCH + "_floor")
-    public static void chargedCastsBelowAQuarterAreRefusedBeforePayment(GameTestHelper h) {
+    public static void chargedCastsBelowHalfAreRefusedBeforePayment(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
             var storm = ManipulationInit.synaptic_storm.get();
@@ -61,9 +60,12 @@ public final class ManipulationBalancePass2CastGameTests {
                     "A 0.1-charge Storm was accepted");
             near(h, 2000, blood(p), "A refused 0.1-charge Storm spent blood");
             h.assertTrue(storm.getRemainingCooldownTicks(p) == 0L, "A refused 0.1-charge Storm started its cooldown");
-            h.assertTrue(storm.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 15),
-                    "A quarter-charge Storm was refused");
-            near(h, 2000 - cost * 0.25, blood(p), "A quarter-charge Storm pays a quarter of its cost");
+            h.assertTrue(!storm.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 29),
+                    "A Storm just under half charge was accepted");
+            near(h, 2000, blood(p), "A refused Storm just under half charge spent blood");
+            h.assertTrue(storm.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 30),
+                    "A half-charge Storm was refused");
+            near(h, 2000 - cost * 0.5, blood(p), "A half-charge Storm pays half of its cost");
             h.succeed();
         } finally { p.discard(); }
     }
@@ -97,17 +99,17 @@ public final class ManipulationBalancePass2CastGameTests {
             var storm = ManipulationInit.synaptic_storm.get();
             float amount = HemoServerConfig.TEMPER_SHIFT_ON_CAST_ENABLED.get()
                     ? HemoServerConfig.TEMPER_SHIFT_ON_MANIP_USE.get().floatValue() : 0;
-            Reward low = cast(h, partial, storm, 18);
+            Reward low = cast(h, partial, storm, 36);
             Reward high = cast(h, full, storm, 60);
-            near(h, amount * 0.3, low.alignment, "A 0.3-charge Storm's Ductilis alignment gain");
+            near(h, amount * 0.6, low.alignment, "A 0.6-charge Storm's Ductilis alignment gain");
             near(h, amount, high.alignment, "A full Storm's Ductilis alignment gain");
-            near(h, 0, low.masteryUses, "A 0.3-charge Storm earned a mastery use");
+            near(h, 1, low.masteryUses, "A 0.6-charge Storm's mastery use");
             near(h, 1, high.masteryUses, "A full Storm's mastery use");
-            // PERFECTUS pays 5 points; 0.3 of that rounds to 2. A cast below half charge is not a manipulation use,
-            // so only the full caster advances the use milestones (First Manipulation pays its own points).
-            h.assertTrue(low.uses == 0, "A 0.3-charge Storm counted toward the manipulation-use milestones");
+            // PERFECTUS pays 5 points; 0.6 of that is 3. Every cast that clears the half-charge floor is a
+            // manipulation use, so both casters earn First Manipulation and only the scaled points differ.
+            h.assertTrue(low.uses == 1, "A 0.6-charge Storm did not count toward the manipulation-use milestones");
             h.assertTrue(high.uses == 1, "A full Storm did not count toward the manipulation-use milestones");
-            h.assertTrue(high.skillPoints - low.skillPoints == 3 + HemoMilestone.FIRST_MANIPULATION.getSkillPointReward(),
+            h.assertTrue(high.skillPoints - low.skillPoints == 2,
                     "Skill points did not scale with charge: partial " + low.skillPoints + ", full " + high.skillPoints);
             h.succeed();
         } finally { partial.discard(); full.discard(); }
@@ -128,7 +130,7 @@ public final class ManipulationBalancePass2CastGameTests {
             long start = h.getLevel().getGameTime();
             UseManipKeyPacket.handle(new UseManipKeyPacket(60), context);
             near(h, 2000, blood(p), "A full-charge claim in the key-down's own tick was credited");
-            h.runAfterDelay(20, () -> {
+            h.runAfterDelay(35, () -> {
                 try {
                     long elapsed = h.getLevel().getGameTime() - start;
                     long allowed = ManipulationCastingRules.allowedChargeTicks(elapsed);

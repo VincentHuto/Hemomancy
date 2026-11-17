@@ -32,7 +32,8 @@ public final class PhlegethonticCommissionDialogue {
         nodes.put("phlegethontic_commission", new DialogueNode("phlegethontic_commission", List.of(
                 sampleProof ? "hemomancy.alchemist.phlegethontic_commission.sample_ready"
                         : "hemomancy.alchemist.phlegethontic_commission.lead",
-                "hemomancy.alchemist.phlegethontic_commission.task"), reportOptions));
+                "hemomancy.alchemist.phlegethontic_commission.task",
+                "hemomancy.alchemist.phlegethontic_commission.phlegethosoma"), reportOptions));
         return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
                 tree.entityId(), tree.theme(), tree.presentation());
     }

@@ -1,16 +1,20 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import org.junit.jupiter.api.Test;
+
 public final class LastRiteRulesTest {
 	private LastRiteRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		armedRiteMayFireWhenNoCooldownIsActive();
 		unarmedRiteNeverFires();
 		armedMismatchNeverFires();
 		sharedCooldownBlocksEverySource();
 		cooldownExpiryFreesTheArmedSourceOnly();
 		emptySourceIdsNeverFire();
+		theCurvedHornYieldsTheSlot();
 	}
 
 	private static void armedRiteMayFireWhenNoCooldownIsActive() {
@@ -48,6 +52,17 @@ public final class LastRiteRulesTest {
 	private static void emptySourceIdsNeverFire() {
 		assertFalse("empty request id is invalid", LastRiteRules.canFire("", "", 1_000L, 0L));
 		assertFalse("null request id is invalid", LastRiteRules.canFire("", null, 1_000L, 0L));
+	}
+
+	private static void theCurvedHornYieldsTheSlot() {
+		assertTrue("an empty slot is open", LastRiteRules.isOpenToArm(""));
+		assertTrue("an armed Curved Horn yields to any other Last Rite", LastRiteRules.isOpenToArm(LastRiteRules.CURVED_HORN_ID));
+		assertFalse("Phoenix Debt holds the slot", LastRiteRules.isOpenToArm("hemomancy:phoenix_debt"));
+		assertFalse("the Horn fires only while armed",
+				LastRiteRules.canFire("hemomancy:phoenix_debt", LastRiteRules.CURVED_HORN_ID, 1_000L, 0L));
+		assertFalse("the Horn shares the cooldown", LastRiteRules.canFire(LastRiteRules.CURVED_HORN_ID,
+				LastRiteRules.CURVED_HORN_ID, 5_000L, LastRiteRules.nextSharedCooldownUntil(1_000L,
+						LastRiteRules.DEFAULT_SHARED_COOLDOWN_TICKS)));
 	}
 
 	private static void assertTrue(String label, boolean value) {

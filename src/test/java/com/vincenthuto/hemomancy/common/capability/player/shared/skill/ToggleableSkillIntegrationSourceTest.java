@@ -3,13 +3,11 @@ package com.vincenthuto.hemomancy.common.capability.player.shared.skill;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 final class ToggleableSkillIntegrationSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final String[] SKILLS = {
 			"persistent_arsenal", "distributed_siphon", "selective_hunger", "sanguine_reserve", "sanguine_spinning",
 			"automatic_coagulation", "guarded_feeding", "shared_siphon", "autonomous_retaliation",
@@ -45,9 +43,5 @@ final class ToggleableSkillIntegrationSourceTest {
 		assertTrue(screen.contains("isEnabled(sp)"));
 		assertTrue(screen.contains("EnumNodeShape.HEXAGON"));
 		assertTrue(shapes.contains("DECAGON"));
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
 	}
 }

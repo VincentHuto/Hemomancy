@@ -26,7 +26,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
 public class LanternTickEntity extends PathfinderMob {
-	private static final BloodAccounting.Source BITE = BloodAccounting.Source.of("lantern_tick_bite", Category.HAZARD, false, false);
+	private static final BloodAccounting.Source BITE = BloodAccounting.Source.of("lantern_tick_bite", Category.HAZARD, false);
 	public static final int ANIMATION_LURE = 0;
 	public static final int ANIMATION_STALKING = 1;
 	public static final int ANIMATION_LEAPING = 2;

@@ -46,6 +46,15 @@ public final class FerricPlacement {
         return new Placement(facing, List.copyOf(origins));
     }
 
+    /**
+     * Where one segment of a swept rampart stands over {@code column}: on the first sturdy floor at or a little below
+     * it, clear of blocks and of anything solid, by the same rules as a cast wall. Null when it cannot stand there.
+     */
+    public static Vec3 segment(Player caster, BlockPos column, Direction facing) {
+        Vec3 center = supportedCenter(caster.level(), column);
+        return center != null && valid(caster, Kind.SEGMENT, facing, center) ? center : null;
+    }
+
     private static Vec3 supportedCenter(Level level, BlockPos column) {
         for (int offset = 1; offset >= -4; offset--) {
             BlockPos at = column.above(offset), floor = at.below();

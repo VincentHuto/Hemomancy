@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -18,7 +19,8 @@ public final class ActiveManipulationMemorySourceTest {
 	private ActiveManipulationMemorySourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		for (Map.Entry<String, String> entry : REQUIRED_SOURCES.entrySet()) {
 			assertReachableMemory(entry.getKey(), entry.getValue());
 		}

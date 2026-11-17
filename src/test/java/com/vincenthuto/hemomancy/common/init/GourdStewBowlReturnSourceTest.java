@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class GourdStewBowlReturnSourceTest {
 	private static final Path ITEM_INIT = Path.of(
@@ -11,7 +14,8 @@ public final class GourdStewBowlReturnSourceTest {
 	private GourdStewBowlReturnSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String itemInit = read(ITEM_INIT);
 		String gourdStewRegistration = itemInit.substring(itemInit.indexOf("gourd_stew = BASEITEMS.register"),
 				itemInit.indexOf("sanguine_formation = BASEITEMS.register"));
@@ -20,18 +24,5 @@ public final class GourdStewBowlReturnSourceTest {
 				"craftRemainder(Items.BOWL)");
 		assertContains("gourd stew should return a bowl after being eaten", gourdStewRegistration,
 				"usingConvertsTo(Items.BOWL)");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 }

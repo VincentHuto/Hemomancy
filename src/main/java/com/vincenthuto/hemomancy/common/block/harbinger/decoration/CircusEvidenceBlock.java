@@ -8,15 +8,17 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 
-/** Structure-only evidence has no survival recipe or drops. */
-public final class CircusEvidenceBlock extends Block {
+/**
+ * Structure-only evidence has no survival recipe or drops. Each record is its own object (a stage bill, a loft rigging
+ * log, a quarters ledger, a carousel maker's plate), modelled in tools/model_export/circus_set_pieces.py.
+ */
+public final class CircusEvidenceBlock extends TroupePropBlock {
     private final String clue;
-    public CircusEvidenceBlock(Properties properties, String clue) { super(properties); this.clue = clue; }
+    public CircusEvidenceBlock(Properties properties, String clue, double[]... outline) { super(properties, outline); this.clue = clue; }
     @Override protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                         Player player, BlockHitResult hit) {
         if (player instanceof ServerPlayer serverPlayer && player.isAlive() && !player.isSpectator()) {

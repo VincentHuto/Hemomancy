@@ -370,10 +370,16 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
     @Override
     public DialogueTree progressionDialogue(ServerPlayer player) {
         IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
-        return HarbingerHermitDialogueTrees.forDegree(HarbingerPathPermissions.greetingDegree(
-                HemoCapabilityAccess.getPlayerDegreeNumber(player), HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath()),
-                volume != null && volume.isActive(), TempleOathRules.hasClaimedHeartFrom(player, this.getUUID()),
-                this.getId());
+        boolean claimedThis = TempleOathRules.hasClaimedHeartFrom(player, this.getUUID());
+        var display = com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity.of(this);
+        int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+        var path = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
+        DialogueTree tree = HarbingerHermitDialogueTrees.forState(HarbingerPathPermissions.greetingDegree(degree, path),
+                volume != null && volume.isActive(), claimedThis,
+                display != null && display.isClaimed() && !claimedThis,
+                HarbingerPathPermissions.isSilentium(degree, path), this.getId());
+        // Blood awake and no higher than the fourth Degree: past that he knows less than the player.
+        return CoreLoopLessonDialogue.append(tree, CoreLoopLessons.HERMIT, player);
     }
 
     @Override

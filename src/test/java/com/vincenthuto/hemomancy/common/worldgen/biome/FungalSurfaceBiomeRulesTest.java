@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.worldgen.biome;
 
+import org.junit.jupiter.api.Test;
+
 final class FungalSurfaceBiomeRulesTest {
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		usesFungalSurfaceForFungalGardens();
 		usesFungalSurfaceForErythrocoralReef();
 		rejectsOrdinaryVanillaBiomes();

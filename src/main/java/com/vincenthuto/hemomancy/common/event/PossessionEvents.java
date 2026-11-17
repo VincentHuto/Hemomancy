@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateLedger;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -25,7 +26,8 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.AbhorrentGazeRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.AbhorrentThoughtEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPossession;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -50,6 +52,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class PossessionEvents {
+	private static final ParticleColor TOTEM_GOLD = new ParticleColor(232, 196, 92);
+
 	private PossessionEvents() {}
 
 	private static boolean possessed(Player player) {
@@ -112,8 +116,7 @@ public final class PossessionEvents {
 		possession.setConcentration(hit.concentration());
 		if (!hit.broken()) return;
 		if (possession.spendTotem()) {
-			player.serverLevel().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, player.getX(), player.getY() + 1.0,
-					player.getZ(), 30, 0.4, 0.6, 0.4, 0.2);
+			totemBurst(player);
 			player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS,
 					1f, 1f);
 			return;
@@ -121,12 +124,17 @@ public final class PossessionEvents {
 		PossessionService.eject(player, PossessionRules.MIND_BROKEN_TICKS);
 	}
 
+	/** The totem offering spent to save the visit: a burst of its gold around the will. */
+	private static void totemBurst(ServerPlayer player) {
+		player.serverLevel().sendParticles(HemoParticleData.glow(TOTEM_GOLD), player.getX(), player.getY() + 1.0,
+				player.getZ(), 30, 0.4, 0.6, 0.4, 0.2);
+	}
+
 	/** An Abhorrent Thought's grab breaks the will outright; an unspent totem saves the visit once. */
 	private static void grab(ServerPlayer player) {
 		Possession possession = HemoCapabilityAccess.getPossession(player);
 		if (AbhorrentGazeRules.grab(possession.totem()) == AbhorrentGazeRules.Grab.TOTEM && possession.spendTotem()) {
-			player.serverLevel().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, player.getX(), player.getY() + 1.0,
-					player.getZ(), 30, 0.4, 0.6, 0.4, 0.2);
+			totemBurst(player);
 			return;
 		}
 		PossessionService.eject(player, AbhorrentGazeRules.GRAB_MIND_BROKEN_TICKS);
@@ -173,6 +181,16 @@ public final class PossessionEvents {
 	@SubscribeEvent
 	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) PossessionService.returnNow(player);
+	}
+
+	/** Mind Broken has no cure, and a death is not one (V-12-5): the respawned body keeps the time left. */
+	@SubscribeEvent
+	public static void onClone(PlayerEvent.Clone event) {
+		if (!event.isWasDeath()) return;
+		MobEffectInstance broken = event.getOriginal().getEffect(EffectInit.mind_broken);
+		if (broken != null && !event.getEntity().hasEffect(EffectInit.mind_broken)) {
+			event.getEntity().addEffect(new MobEffectInstance(broken));
+		}
 	}
 
 	@SubscribeEvent

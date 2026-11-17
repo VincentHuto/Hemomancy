@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class BlackVeilRendererSourceTest {
 	private static final Path RENDERER = Path.of(
@@ -10,7 +14,8 @@ public final class BlackVeilRendererSourceTest {
 	private BlackVeilRendererSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String renderer = Files.readString(RENDERER).replace("\r\n", "\n");
 		assertContains("black veil should render its authored synthetic-darkness ground",
 				renderer, "LuxUmbraGeometry.ground");
@@ -28,17 +33,5 @@ public final class BlackVeilRendererSourceTest {
 				renderer, "drawRing");
 		assertNotContains("black veil should not render the old hanging vein lattice",
 				renderer, "drawVein");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
-		}
 	}
 }

@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFocusProfile;
 
 public final class WillAbsorptionRulesTest {
 	private WillAbsorptionRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		defaultsMatchStagedStrugglePlan();
 		stageThresholdsTrackProgress();
 		progressRatesScaleAndClamp();

@@ -27,8 +27,8 @@ import java.util.UUID;
 public final class HeartNodeSavedData extends SavedData {
 	private static final String NAME = "hemomancy_heart_nodes";
 	private final Map<UUID, HeartNodeEntry> nodes = new HashMap<>();
-	/** The last node each owner lost, so their next login clears the spawn it held and nothing else. */
-	private final Map<UUID, BlockPos> removed = new HashMap<>();
+	/** The last node each owner lost, so their next login gives back the spawn it held and nothing else. */
+	private final Map<UUID, RemovedSpawn> removed = new HashMap<>();
 	/** Each owner's unopened fruiting-body caches, oldest first. They outlive the node: a cache is the owner's gear. */
 	private final Map<UUID, List<BlockPos>> caches = new HashMap<>();
 
@@ -71,7 +71,27 @@ public final class HeartNodeSavedData extends SavedData {
 	 * The replaced node's synapse records go with it.
 	 */
 	public Optional<HeartNodeEntry> plant(UUID owner, BlockPos pos, long gameTime) {
-		HeartNodeEntry previous = nodes.put(owner, HeartNodeEntry.planted(owner, pos, gameTime));
+		return plant(owner, pos, gameTime, null);
+	}
+
+	/**
+	 * As {@link #plant(UUID, BlockPos, long)}, remembering the respawn the node takes over: the replaced node's
+	 * remembered one when there is a node, the lost node's when {@code current} is still that node's spawn, else
+	 * {@code current} (PT-80).
+	 */
+	public Optional<HeartNodeEntry> plant(UUID owner, BlockPos pos, long gameTime, @Nullable PriorRespawn current) {
+		HeartNodeEntry existing = nodes.get(owner);
+		PriorRespawn prior = current;
+		if (existing != null) {
+			prior = existing.priorRespawn();
+		} else {
+			RemovedSpawn lost = removed.get(owner);
+			if (lost != null && current != null && lost.node().above().equals(current.pos())) {
+				prior = lost.prior();
+				removed.remove(owner);
+			}
+		}
+		HeartNodeEntry previous = nodes.put(owner, HeartNodeEntry.planted(owner, pos, gameTime, prior));
 		setDirty();
 		return Optional.ofNullable(previous).filter(old -> !old.heart().equals(pos));
 	}
@@ -81,7 +101,7 @@ public final class HeartNodeSavedData extends SavedData {
 		HeartNodeEntry entry = nodes.get(owner);
 		if (entry == null || !entry.heart().equals(pos)) return Optional.empty();
 		nodes.remove(owner);
-		removed.put(owner, pos.immutable());
+		removed.put(owner, new RemovedSpawn(pos.immutable(), entry.priorRespawn()));
 		setDirty();
 		return Optional.of(entry);
 	}
@@ -125,10 +145,19 @@ public final class HeartNodeSavedData extends SavedData {
 		return true;
 	}
 
+	/**
+	 * Forgets one synapse, and with it every synapse of the owner's that no longer chains back to the heart (DS-2):
+	 * those leave the envelope and free their place in the budget.
+	 */
 	public boolean removeSynapse(UUID owner, BlockPos pos) {
 		HeartNodeEntry entry = nodes.get(owner);
 		if (entry == null || !entry.synapses().contains(pos)) return false;
-		nodes.put(owner, entry.withoutSynapse(pos));
+		HeartNodeEntry next = entry.withoutSynapse(pos);
+		List<BlockPos> connected = next.footprint().connectedSynapses();
+		for (BlockPos synapse : entry.synapses()) {
+			if (!connected.contains(synapse)) next = next.withoutSynapse(synapse);
+		}
+		nodes.put(owner, next);
 		setDirty();
 		return true;
 	}
@@ -165,12 +194,20 @@ public final class HeartNodeSavedData extends SavedData {
 
 	/** True once when {@code respawn} is the spawn of the node {@code owner} last lost; that record is then spent. */
 	public boolean takeRemovedSpawn(UUID owner, BlockPos respawn) {
-		BlockPos lost = removed.get(owner);
-		if (lost == null || !lost.above().equals(respawn)) return false;
+		return takeRemovedSpawnRecord(owner, respawn).isPresent();
+	}
+
+	/** The lost node's record, once, when {@code respawn} is its spawn: what the respawn was before that node. */
+	public Optional<RemovedSpawn> takeRemovedSpawnRecord(UUID owner, BlockPos respawn) {
+		RemovedSpawn lost = removed.get(owner);
+		if (lost == null || !lost.node().above().equals(respawn)) return Optional.empty();
 		removed.remove(owner);
 		setDirty();
-		return true;
+		return Optional.of(lost);
 	}
+
+	/** A node its owner lost, and the respawn they had before planting it (null when they had none). */
+	public record RemovedSpawn(BlockPos node, @Nullable PriorRespawn prior) {}
 
 	static HeartNodeSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
 		HeartNodeSavedData data = new HeartNodeSavedData();
@@ -181,12 +218,14 @@ public final class HeartNodeSavedData extends SavedData {
 				List<BlockPos> synapses = new ArrayList<>();
 				for (long packed : node.getLongArray("Synapses")) synapses.add(BlockPos.of(packed));
 				data.nodes.put(owner, new HeartNodeEntry(owner, pos, synapses,
-						HeartNodeSettings.load(node.getCompound("Settings")), node.contains("PlantedAt") ? node.getLong("PlantedAt") : HeartNodeRules.LONG_GROWN));
+						HeartNodeSettings.load(node.getCompound("Settings")), node.contains("PlantedAt") ? node.getLong("PlantedAt") : HeartNodeRules.LONG_GROWN,
+						PriorRespawn.load(node.getCompound("Prior"))));
 			});
 		}
 		for (Tag element : tag.getList("Removed", Tag.TAG_COMPOUND)) {
 			CompoundTag node = (CompoundTag) element;
-			NbtUtils.readBlockPos(node, "Pos").ifPresent(pos -> data.removed.put(node.getUUID("Owner"), pos));
+			NbtUtils.readBlockPos(node, "Pos").ifPresent(pos -> data.removed.put(node.getUUID("Owner"),
+					new RemovedSpawn(pos, PriorRespawn.load(node.getCompound("Prior")))));
 		}
 		for (Tag element : tag.getList("Caches", Tag.TAG_COMPOUND)) {
 			CompoundTag owner = (CompoundTag) element;
@@ -207,14 +246,16 @@ public final class HeartNodeSavedData extends SavedData {
 			node.putLongArray("Synapses", entry.synapses().stream().mapToLong(BlockPos::asLong).toArray());
 			node.put("Settings", entry.settings().save());
 			node.putLong("PlantedAt", entry.plantedAt());
+			if (entry.priorRespawn() != null) node.put("Prior", entry.priorRespawn().save());
 			list.add(node);
 		});
 		tag.put("Nodes", list);
 		ListTag lost = new ListTag();
-		removed.forEach((owner, pos) -> {
+		removed.forEach((owner, spawn) -> {
 			CompoundTag node = new CompoundTag();
 			node.putUUID("Owner", owner);
-			node.put("Pos", NbtUtils.writeBlockPos(pos));
+			node.put("Pos", NbtUtils.writeBlockPos(spawn.node()));
+			if (spawn.prior() != null) node.put("Prior", spawn.prior().save());
 			lost.add(node);
 		});
 		tag.put("Removed", lost);

@@ -13,7 +13,6 @@ import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -34,6 +33,7 @@ import java.util.List;
 public class HemolyticVialEntity extends ThrowableItemProjectile {
 
     private static final float BURST_RADIUS = 4.0f;
+    private static final ParticleColor FROST_FINE = new ParticleColor(236, 246, 255);
     private static final float HARBINGER_DAMAGE = 10.0f;
     private static final float BLOOD_MOB_DAMAGE = 8.0f;
     private static final float CONSTRUCT_DAMAGE = 14.0f;
@@ -102,8 +102,9 @@ public class HemolyticVialEntity extends ThrowableItemProjectile {
     private void spawnBurstParticles(ServerLevel sLevel, Vec3 impactPos) {
         var glowData = HemoParticleData.glow(new ParticleColor(200, 235, 255));
         emitSphericalBurst(sLevel, impactPos, glowData, 140, 1.0f, 0.12f);
-        emitSphericalBurst(sLevel, impactPos, ParticleTypes.SPLASH, 70, 0.9f, 0.085f);
-        emitSphericalBurst(sLevel, impactPos, ParticleTypes.SNOWFLAKE, 40, 0.85f, 0.06f);
+        emitSphericalBurst(sLevel, impactPos, HemoParticleData.letheanDrip(), 70, 0.9f, 0.085f);
+        emitSphericalBurst(sLevel, impactPos, HemoParticleData.emberSpark(FROST_FINE, 0.031F, 1.0F, 20),
+                40, 0.85f, 0.03f);
     }
 
     private void emitSphericalBurst(ServerLevel sLevel, Vec3 center, ParticleOptions particle,

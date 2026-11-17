@@ -47,4 +47,18 @@ public enum EnumBloodTemper {
 		return color;
 	}
 
+	/** The school this one opposes, in pairs: Animus and Mortem, Ductilis and Ferric, Lux and Tenebris, Flammeus and Congeatio. */
+	public EnumBloodTemper opposite() {
+		return switch (this) {
+			case ANIMUS -> MORTEM;
+			case MORTEM -> ANIMUS;
+			case DUCTILIS -> FERRIC;
+			case FERRIC -> DUCTILIS;
+			case LUX -> TENEBRIS;
+			case TENEBRIS -> LUX;
+			case FLAMMEUS -> CONGEATIO;
+			case CONGEATIO -> FLAMMEUS;
+		};
+	}
+
 }

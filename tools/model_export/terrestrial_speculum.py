@@ -47,11 +47,21 @@ elements = []
 groups = {name: [] for name in ['spike', 'haft', 'lens', 'jaws', 'tendrils']}
 
 
+FACE_AXES = {'north': (0, 1), 'south': (0, 1), 'east': (2, 1), 'west': (2, 1), 'up': (0, 2), 'down': (0, 2)}
+
+
+def face_uv(u, v, start, end, side):
+    """One texel per model unit: half a UV unit per model unit on the 8px atlas, inside the quadrant's inset."""
+    a, b = FACE_AXES[side]
+    width, height = (min(7.5, round(2 * abs(end[k] - start[k]), 4)) for k in (a, b))
+    return [u + .25, v + .25, u + .25 + width, v + .25 + height]
+
+
 def cube(group, name, start, end, material=0, angle=0, pivot=None, uv=None):
     u, v = (material % 2) * 8, (material // 2) * 8
-    face = {'uv': uv or [u + .25, v + .25, u + 7.75, v + 7.75], 'texture': '#0'}
     element = {'name': name, 'from': start, 'to': end,
-               'faces': {side: copy.deepcopy(face) for side in ['north', 'east', 'south', 'west', 'up', 'down']}}
+               'faces': {side: {'uv': list(uv) if uv else face_uv(u, v, start, end, side), 'texture': '#0'}
+                         for side in ['north', 'east', 'south', 'west', 'up', 'down']}}
     if angle:
         element['rotation'] = {'angle': angle, 'axis': 'z', 'origin': pivot}
     elements.append(element)

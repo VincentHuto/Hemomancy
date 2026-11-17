@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import org.junit.jupiter.api.Test;
+
 public final class QliphothPomeRulesTest {
 	private QliphothPomeRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertEquals("base empowerment duration", 3600L, QliphothPomeRules.empowermentDurationTicks(0));
 		assertEquals("gestation extends empowerment duration", 4680L, QliphothPomeRules.empowermentDurationTicks(3));
 		assertDouble("gestation deepens empowerment discount", 0.66, QliphothPomeRules.empowermentCostMultiplier(3));

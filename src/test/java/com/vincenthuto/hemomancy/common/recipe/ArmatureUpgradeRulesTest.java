@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
+import org.junit.jupiter.api.Test;
 import java.util.List;
 
 public final class ArmatureUpgradeRulesTest {
 	private ArmatureUpgradeRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		slotMappingMatchesArmorOrder();
 		localBowlHitMappingMatchesArmorOrder();
 		bowlInsertionAndWithdrawalOrdersMatchLifoUse();

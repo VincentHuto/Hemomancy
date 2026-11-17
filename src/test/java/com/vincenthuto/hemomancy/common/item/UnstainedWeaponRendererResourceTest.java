@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 class UnstainedWeaponRendererResourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final String WEAPON_TEXTURES = "textures/entity/unstained_weapons/";
@@ -192,10 +194,6 @@ class UnstainedWeaponRendererResourceTest {
 
 	private static void assertNotContains(String path, String unexpected, String message) throws IOException {
 		assertTrue(!read(path).contains(unexpected), message + " (still contains '" + unexpected + "')");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
 	}
 
 	private static void assertTrue(boolean condition, String message) {

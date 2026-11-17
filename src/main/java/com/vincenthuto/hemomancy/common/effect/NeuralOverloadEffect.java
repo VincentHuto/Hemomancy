@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
  * Each tick spawns electric spark particles around the victim.
  */
 public class NeuralOverloadEffect extends MobEffect {
+	private static final ParticleColor OVERLOAD_SPARK = new ParticleColor(236, 214, 255);
 
 	public NeuralOverloadEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
@@ -48,7 +50,7 @@ public class NeuralOverloadEffect extends MobEffect {
 			double y = entity.getY() + entity.getBbHeight() * 0.5;
 			double z = entity.getZ();
 			int particleCount = 1 + amplifier;
-			serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, x, y, z,
+			serverLevel.sendParticles(HemoParticleData.hermitEdgeGlow(OVERLOAD_SPARK), x, y, z,
 					particleCount, 0.3, 0.4, 0.3, 0.02);
 		}
 		return true;

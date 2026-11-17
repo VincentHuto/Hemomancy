@@ -6,7 +6,8 @@ import com.vincenthuto.hemomancy.common.entity.summon.*;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonBodies;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusEffects;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
@@ -57,6 +58,6 @@ public final class CircusDemonstrations {
         if (body instanceof ScarletMummerEntity mummer) mummer.setDemonstrationPerformance(cycle >= 20 && cycle <= 60);
         if (cycle % 20 == 0) body.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
         if (body instanceof CinderBellowsEntity && cycle > 20 && cycle <= 60 && cycle % 4 == 0)
-            level.sendParticles(ParticleTypes.FLAME, body.getX() + 1, body.getY() + 1.8, body.getZ(), 4, .2, .15, .2, .01);
+            level.sendParticles(HemoParticleData.emberSpark(CircusEffects.FLAME, 0.3F, 0.9F, 12), body.getX() + 1, body.getY() + 1.8, body.getZ(), 4, .2, .15, .2, .01);
     }
 }

@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.mission.shared.MnemonicRecipeKnowledge;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -18,6 +19,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
+
+import java.util.List;
 
 /**
  * The Mnemonist's dialogue events: starter memories, the Vagrant Mind and Chamber errands, the Woven Vessel,
@@ -29,6 +32,7 @@ final class MnemonistDialogueEvents {
 
 	/** Handles the event when it is one of this NPC's; false lets the next route try. */
 	public static boolean handle(DialogueEvent event) {
+		if (CoreLoopLessonRoutes.teach(event, CoreLoopLessons.MNEMONIST, HarbingerMnemonistEntity.class)) return true;
 		ServerPlayer player = event.getPlayer();
 		var mnemonistChoice = MnemonistStarterMemoryChoice.fromEventId(event.getEventId());
 		if (mnemonistChoice.isPresent()) {
@@ -96,11 +100,22 @@ final class MnemonistDialogueEvents {
 
 	private static void handleMnemonistCircusWaybill(ServerPlayer player, int entityId) {
 		// The purifying tree offers no waybill.
-		if (!(player.level().getEntity(entityId) instanceof HarbingerMnemonistEntity)
-				|| HemoCapabilityAccess.hasBegunPurification(player)
-				|| HemoCapabilityAccess.getPlayerDegreeNumber(player) < CircusIntroductionRules.MINIMUM_DEGREE
-				|| player.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get()))) return;
-		DialogueRewards.giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.circus_waybill.get()));
+		if (!(player.level().getEntity(entityId) instanceof HarbingerMnemonistEntity)) {
+			DialogueRewards.refuse(player, DialogueRewards.NOT_NOW);
+			return;
+		}
+		if (HemoCapabilityAccess.hasBegunPurification(player)
+				|| HemoCapabilityAccess.getPlayerDegreeNumber(player) < CircusIntroductionRules.MINIMUM_DEGREE) {
+			player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.mnemonist_circus_waybill_unready")
+					.withStyle(ChatFormatting.GRAY), false);
+			return;
+		}
+		if (OwedRewards.carriesOrOwed(player, ItemInit.circus_waybill.get())) {
+			player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.mnemonist_circus_waybill_carried")
+					.withStyle(ChatFormatting.GRAY), false);
+			return;
+		}
+		OwedRewards.give(player, List.of(new ItemStack(ItemInit.circus_waybill.get())));
 		player.displayClientMessage(Component.translatable(
 				"hemomancy.dialogue.event.mnemonist_circus_waybill").withStyle(ChatFormatting.DARK_RED), false);
 	}
@@ -130,12 +145,13 @@ final class MnemonistDialogueEvents {
 		if (stack.isEmpty()) {
 			return false;
 		}
-		DialogueRewards.giveOrDropAtEntity(player, entityId, stack);
+		OwedRewards.owe(player, List.of(stack));
 		MnemonistStarterMemoryChoice.markClaimed(player);
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.mnemonist_starter_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		OwedRewards.deliver(player);
 		return true;
 	}
 
@@ -194,8 +210,8 @@ final class MnemonistDialogueEvents {
 			DialogueRewards.consumeItemCount(player, Items.INK_SAC, 1);
 			DialogueRewards.consumeItemCount(player, Items.PAPER, 3);
 		}
-		DialogueRewards.giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.bleeding_bulb.get()));
-		DialogueRewards.giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vivacious_enzyme.get(), 3));
+		OwedRewards.owe(player, List.of(new ItemStack(ItemInit.bleeding_bulb.get()),
+				new ItemStack(ItemInit.vivacious_enzyme.get(), 3)));
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
 		MnemonicReliquaryProgression.teach(player);
@@ -208,6 +224,7 @@ final class MnemonistDialogueEvents {
 				Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_complete")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		OwedRewards.deliver(player);
 		return true;
 	}
 }

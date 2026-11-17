@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.render;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class MonolithicDislocationShellRenderSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,7 +15,8 @@ public final class MonolithicDislocationShellRenderSourceTest {
 	private MonolithicDislocationShellRenderSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String renderTypes = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java"));
 		String layer = read(SOURCE_ROOT.resolve(
@@ -44,7 +49,7 @@ public final class MonolithicDislocationShellRenderSourceTest {
 		assertContains("layer suppresses fallback double render", layer, "LAYER_RENDERED_ENTITIES");
 		assertContains("layer scales shell thinly", layer, "SHELL_SCALE");
 		assertContains("layer uses translucent color", layer, "SHELL_COLOR");
-		assertDoesNotContain("layer no longer uses post-render fallback event", layer, "RenderLivingEvent");
+		assertNotContains("layer no longer uses post-render fallback event", layer, "RenderLivingEvent");
 
 		assertContains("client visual state class exists", clientState,
 				"class MonolithicDislocationClientState");
@@ -65,9 +70,9 @@ public final class MonolithicDislocationShellRenderSourceTest {
 		assertContains("layer events adds shell layer", layerEvents, "new MonolithicDislocationShellLayer");
 		assertContains("layer events calls global shell registration", layerEvents,
 				"addMonolithicDislocationShellLayers(event)");
-		assertDoesNotContain("layer events no longer handles post-render fallback", layerEvents,
+		assertNotContains("layer events no longer handles post-render fallback", layerEvents,
 				"RenderLivingEvent.Post");
-		assertDoesNotContain("layer events no longer delegates post-render fallback", layerEvents,
+		assertNotContains("layer events no longer delegates post-render fallback", layerEvents,
 				"MonolithicDislocationShellLayer.renderFallback");
 
 		assertContains("mixin owns in-render shell fallback", mixin, "MonolithicDislocationShellLayer");
@@ -76,29 +81,10 @@ public final class MonolithicDislocationShellRenderSourceTest {
 				"target = \"Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V\"");
 		assertContains("mixin renders shell fallback before pop", mixin,
 				"MonolithicDislocationShellLayer.renderMixinFallback");
-		assertDoesNotContain("mixin no longer injects renderer constructor", mixin, "method = \"<init>\"");
+		assertNotContains("mixin no longer injects renderer constructor", mixin, "method = \"<init>\"");
 
 		assertContains("docs mention visual shell", docs, "thin translucent monolith shell");
 		assertContains("docs mention charged creeper", docs, "charged-creeper-style");
 		assertContains("docs mention in-render fallback", docs, "in-render fallback");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": still contains " + forbidden);
-		}
 	}
 }

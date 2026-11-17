@@ -116,6 +116,9 @@ public final class LivingStaffMorphRenderer {
 		if (stack.getItem() instanceof LivingSickleItem) {
 			return Hemomancy.rloc("textures/entity/model_living_sickle.png");
 		}
+		if (stack.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingPickaxeItem) {
+			return Hemomancy.rloc("textures/entity/model_living_pickaxe.png");
+		}
 		return TextureAtlas.LOCATION_BLOCKS;
 	}
 

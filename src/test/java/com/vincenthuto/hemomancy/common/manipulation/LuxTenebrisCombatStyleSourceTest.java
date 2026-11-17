@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LuxTenebrisCombatStyleSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -10,7 +14,8 @@ public final class LuxTenebrisCombatStyleSourceTest {
 	private LuxTenebrisCombatStyleSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		manipulationsAreRegistered();
 		memoryItemsAndResourcesExist();
 		playerImplementationsCarryTrueOffense();
@@ -104,10 +109,6 @@ public final class LuxTenebrisCombatStyleSourceTest {
 		assertContains("blood eclipse true offense damage", eclipse, "SHADOW_DAMAGE = 3.0f");
 	}
 
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
 	private static String compact(String text) {
 		return text.replaceAll("\\s+", "");
 	}
@@ -115,12 +116,6 @@ public final class LuxTenebrisCombatStyleSourceTest {
 	private static void assertResource(String label, String path) {
 		if (!Files.exists(ROOT.resolve(path))) {
 			throw new AssertionError(label + " missing at " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing `" + expected + "`");
 		}
 	}
 }

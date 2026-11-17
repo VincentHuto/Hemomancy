@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.item.harbinger.MonolithFragmentBurdenRules;
 
@@ -8,7 +9,8 @@ public final class MonolithFragmentBurdenRulesTest {
 	private MonolithFragmentBurdenRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertFalse("ordinary archon does not suffer the fragment burden",
 				MonolithFragmentBurdenRules.shouldBurdenCarrier(EnumArchonPath.NONE));
 		assertTrue("the Apotheos carries the rejected-self burden",

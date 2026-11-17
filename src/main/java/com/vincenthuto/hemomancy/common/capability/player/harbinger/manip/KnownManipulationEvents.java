@@ -42,7 +42,7 @@ public class KnownManipulationEvents {
 		event.getEntity().refreshDimensions();
 	}
 
-	@SubscribeEvent
+	/** Defender stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
 	public static void onPlayerDamage(LivingDamageEvent.Pre e) {
 
 		// Radiant Protection. The void, /kill and hunger are not blows the avatar can turn.

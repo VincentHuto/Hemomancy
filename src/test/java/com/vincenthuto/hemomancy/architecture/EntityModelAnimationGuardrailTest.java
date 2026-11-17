@@ -26,8 +26,6 @@ class EntityModelAnimationGuardrailTest {
 	private static final Map<String, String> ALLOWED = Map.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/model/entity/npc/CircusCarouselModel.java",
 			"The carousel is a ride, not a creature; its renderer turns it",
-			"src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/BloodBulletModel.java",
-			"A projectile: its renderer spins it along its flight",
 			"src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/IronPillarModel.java",
 			"A raised construct that stands still by design",
 			"src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/IronSpikeModel.java",

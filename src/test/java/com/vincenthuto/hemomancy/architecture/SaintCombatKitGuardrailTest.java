@@ -74,8 +74,13 @@ class SaintCombatKitGuardrailTest {
 		int early = projection.indexOf("EarlyInitiation.tryProject(");
 		int router = projection.indexOf("SaintChannelRouter.tryProject(");
 		int will = projection.indexOf("WillBloodUtilityInteractions.tryProjectBanishFalteringWill(");
-		assertTrue(early >= 0 && early < router && router < will,
-				"the projection router runs after EarlyInitiation and before the Will, rite and block paths");
+		int rite = projection.indexOf("CardinalRiteInteractionHandler.tryProject(");
+		int sculpting = projection.indexOf("SculptingDispatcher.trySculpt(");
+		assertTrue(early >= 0 && early < router && router < will && will < rite && rite < sculpting,
+				"the projection router runs after EarlyInitiation and before the Will, rite, Sculpting and block paths");
+		String absorbing = SourceAssertions.readMainJava("common/item/harbinger/tool/living/BloodAbsorptionItem.java");
+		assertTrue(absorbing.indexOf("SaintChannelRouter.tryAbsorb(") < absorbing.indexOf("SculptingDispatcher.trySculpt("),
+				"a Saint claims Absorption before any Sculpting");
 	}
 
 	@Test

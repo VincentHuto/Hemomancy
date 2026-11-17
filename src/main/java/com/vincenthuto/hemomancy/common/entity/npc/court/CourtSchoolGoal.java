@@ -111,12 +111,24 @@ public final class CourtSchoolGoal extends Goal {
 		lostFor = 0;
 		double[] station = CourtSchoolRules.stationAt(leader.getX(), leader.getZ(), leader.getYRot(), member.schoolSlot());
 		double y = leader.getY() + station[1];
+		if (!openWater(station[0], y, station[2])) {
+			// The leader is turning along a shelf or a seamount and this station lies in rock: fall in behind it.
+			double[] trail = CourtSchoolRules.trailAt(leader.getX(), leader.getZ(), leader.getYRot(), member.schoolSlot());
+			y = leader.getY();
+			station = openWater(trail[0], y, trail[1]) ? new double[] {trail[0], 0.0D, trail[1]}
+					: new double[] {leader.getX(), 0.0D, leader.getZ()};
+		}
 		double dx = station[0] - member.getX(), dy = y - member.getY(), dz = station[2] - member.getZ();
 		double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 		double speed = distance > 10.0D ? 1.7D : distance > 4.0D ? 1.25D : 0.95D;
 		if (++repath % 8 == 0 || member.getNavigation().isDone()) {
 			member.getNavigation().moveTo(station[0], y, station[2], speed);
 		}
+	}
+
+	private boolean openWater(double x, double y, double z) {
+		BlockPos at = BlockPos.containing(x, y, z);
+		return member.level().isLoaded(at) && member.level().getFluidState(at).is(FluidTags.WATER);
 	}
 
 	@Nullable

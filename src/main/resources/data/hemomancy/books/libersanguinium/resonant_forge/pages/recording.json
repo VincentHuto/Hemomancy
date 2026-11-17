@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Recording a Pattern",
   "subtitle": "The wheel hears what steel remembers",
-  "text": "The Artificer introduces the Forge at the third Degree. Load enchanted equipment and a blank cylinder on the grinding side. The wheel cuts the enchantments and any Scriptorium curse into the cylinder and returns the equipment clean. The hammer applies the pattern to compatible equipment and keeps the higher level. It spends ordinary wax and ambergris. Corpse wax comes out blank for recutting. A Masterwork Forge can stabilize ambergris and corpse wax patterns for repeated application. The basin holds 5,000 mL.",
+  "text": "The Artificer introduces the Forge at the third Degree. Load enchanted equipment and a blank cylinder on the grinding side. The wheel cuts the enchantments and any Scriptorium curse into the cylinder and returns the equipment clean. The hammer applies the pattern to compatible equipment and keeps the higher level. It spends ordinary wax and ambergris. Corpse wax comes out blank for recutting. A Masterwork Forge can stabilize ambergris and corpse wax patterns for repeated application. The basin holds 5,000 mL. Like any machine's tank it stays fresh for about five minutes after you last fed it and then begins to clot, so feed it when you mean to work; see Living Blood.",
   "icon": "hemomancy:wax_cylinder"
 }

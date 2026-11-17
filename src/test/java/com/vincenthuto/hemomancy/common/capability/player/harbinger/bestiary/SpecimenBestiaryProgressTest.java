@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 
 public final class SpecimenBestiaryProgressTest {
 	private SpecimenBestiaryProgressTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		recordingSpecimensIsUnique();
 		surrenderProgressIsTrackedSeparately();
 		recordingPolypLayersIsUnique();

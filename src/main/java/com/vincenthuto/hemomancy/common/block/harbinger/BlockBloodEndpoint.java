@@ -22,4 +22,12 @@ public interface BlockBloodEndpoint {
 
 	double projectBloodIntoBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount);
+
+	/**
+	 * Whether blood projected in stays here to be drawn back out, as in a tank. Blood cycled through a tank grows no
+	 * Staff rings (CQ-8). False for an endpoint that uses the blood up.
+	 */
+	default boolean holdsProjectedBlood() {
+		return true;
+	}
 }

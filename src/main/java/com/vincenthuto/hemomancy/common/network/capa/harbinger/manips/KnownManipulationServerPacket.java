@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -41,6 +42,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	private List<String> equippedManipNames = new ArrayList<>();
 	private List<ManipulationLoadout> loadouts = new ArrayList<>();
 	private Set<String> grandfatheredFamilyForms = new LinkedHashSet<>();
+	private Verb activeVerb = Verb.PROJECT;
 
 	public KnownManipulationServerPacket(IKnownManipulations known) {
 		KnownManipulationUpkeep.sanitizeKnownManipulations(known);
@@ -54,6 +56,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		this.equippedManipNames = new ArrayList<>(known.getEquippedManipNames());
 		this.loadouts = new ArrayList<>(known.getLoadouts());
 		this.grandfatheredFamilyForms = new LinkedHashSet<>(known.getGrandfatheredFamilyForms());
+		this.activeVerb = known.getActiveVerb();
 	}
 
 	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
@@ -97,7 +100,9 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
     // Capture on the server thread before asynchronous network encoding.
     private static LinkedHashMap<BloodManipulation,ManipLevel> snapshot(LinkedHashMap<BloodManipulation,ManipLevel> source) {
         var snapshot=new LinkedHashMap<BloodManipulation,ManipLevel>();
-        source.forEach((manip,level)->snapshot.put(manip,level==null?null:new ManipLevel(level.getCurrentLevel(),level.getXp())));
+        source.forEach((manip,level)->{
+            if(manip!=null&&level!=null) snapshot.put(manip,new ManipLevel(level.getCurrentLevel(),level.getXp()));
+        });
         return snapshot;
     }
 
@@ -108,7 +113,8 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		LinkedHashMap<BloodManipulation, ManipLevel> manips = new LinkedHashMap<>();
 		for (int i = 0; i < count; ++i) {
 			BloodManipulation currManip = BloodManipulation.deserialize(buf.readNbt());
-			manips.put(currManip, ManipLevel.deserialize(buf.readNbt()));
+			ManipLevel currLevel = ManipLevel.deserialize(buf.readNbt());
+			if (currManip != null && currLevel != null) manips.put(currManip, currLevel);
 		}
 		int veincount = buf.readInt();
 		List<VeinLocation> veinList = new ArrayList<>();
@@ -132,15 +138,13 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 				avatarForm, lastveinstart, equippedManipNames, loadouts, selectedMemoryKey);
 		int grandfatheredCount = buf.readInt();
 		for (int i = 0; i < grandfatheredCount; i++) packet.grandfatheredFamilyForms.add(buf.readUtf());
+		packet.activeVerb = Verb.byId(buf.readUnsignedByte());
 		return packet;
 	}
 	public static void encode(final FriendlyByteBuf buf, final KnownManipulationServerPacket msg) {
-		if (msg.selected != null) {
-			buf.writeNbt(msg.selected.serialize());
-		}
-		if (msg.selectedVein != null) {
-			buf.writeNbt(msg.selectedVein.serializeNBT());
-		}
+		// Both are always written: decode reads them unconditionally.
+		buf.writeNbt((msg.selected != null ? msg.selected : BloodManipulation.BLANK).serialize());
+		buf.writeNbt((msg.selectedVein != null ? msg.selectedVein : VeinLocation.BLANK).serializeNBT());
 
 		buf.writeInt(msg.known.size());
         for(var entry:msg.known.entrySet()) {
@@ -149,11 +153,10 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
                 buf.writeNbt(entry.getValue().serialize());
             }
         }
-		buf.writeInt(msg.veinList.size());
-		for (VeinLocation element : msg.veinList) {
-			if (element != null) {
-				element.serializeToBuf(buf);
-			}
+		List<VeinLocation> veins = msg.veinList.stream().filter(java.util.Objects::nonNull).toList();
+		buf.writeInt(veins.size());
+		for (VeinLocation element : veins) {
+			element.serializeToBuf(buf);
 		}
 		buf.writeUtf(msg.avatarForm);
 		buf.writeBlockPos(msg.lastVeinMineStart);
@@ -168,6 +171,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		buf.writeUtf(msg.selectedMemoryKey);
 		buf.writeInt(msg.grandfatheredFamilyForms.size());
 		for (String id : msg.grandfatheredFamilyForms) buf.writeUtf(id);
+		buf.writeByte(msg.activeVerb.ordinal());
 
 	}
 	public static void handle(final KnownManipulationServerPacket msg, final IPayloadContext ctx) {
@@ -179,10 +183,14 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 			known.setKnownManips(msg.known);
 			known.setGrandfatheredFamilyForms(msg.grandfatheredFamilyForms);
-			known.setSelectedManip(msg.selected);
+			// A saved copy of BLANK is a new object with BLANK's name: keep it BLANK, or the client's sanitize would select
+			// the first equipped memory the server never selected (and show its Sculpting on the verb HUD).
+			known.setSelectedManip(msg.selected != null && BloodManipulation.BLANK.getName().equals(msg.selected.getName())
+					? BloodManipulation.BLANK : msg.selected);
 			known.setVeinList(msg.veinList);
 			known.setSelectedVein(msg.selectedVein);
 			known.setActiveAvatarForm(msg.avatarForm);
+			known.setActiveVerb(msg.activeVerb);
 			known.setLastVeinMineStart(msg.lastVeinMineStart);
 			known.setEquippedManipNames(msg.equippedManipNames);
 			known.setLoadouts(msg.loadouts);

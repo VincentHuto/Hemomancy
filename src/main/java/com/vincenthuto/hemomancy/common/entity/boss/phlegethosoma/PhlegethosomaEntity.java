@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.*;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.*;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.PhlegethosomaSuctionPacket;
 import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.*;
@@ -43,6 +44,8 @@ public final class PhlegethosomaEntity extends Monster {
     private final Set<UUID> contacts = new HashSet<>();
     private BlockPos home;
     private boolean introduced;
+    private UUID summoner;
+    private int departing=-1;
     private int suctionCooldown, clotCooldown, sprayCooldown, lungeCooldown, breachCooldown, missingTarget;
     private float interruptDamage;
 
@@ -64,6 +67,32 @@ public final class PhlegethosomaEntity extends Monster {
     public int introTime() {return entityData.get(INTRO);}
     public boolean swollen() { return phase()>=2 || entityData.get(CROP)>0; }
     public boolean isIchorSwimming() { return entityData.get(SWIMMING); }
+    /** CR-7: called up by {@code player}'s blood, homed at the pour and turned on them. */
+    public void answerSummons(ServerPlayer player,BlockPos pour) {
+        summoner=player.getUUID();home=pour.immutable();setPersistenceRequired();setTarget(player);
+        com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper.unlockForEncounter(player,
+                com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions.PHLEGETHOSOMA);
+    }
+    public UUID summoner() { return summoner; }
+    public boolean departing() { return departing>=0; }
+    /** A summoned one with nothing to fight dives and is gone, leaving no loot (NQ-06-8). */
+    private void depart(ServerLevel server) {
+        if(departing<0) {
+            departing=0;clearHazards();if(isBreachAttack())breach.returnToPool();change(Action.DORMANT);setTarget(null);bar.setVisible(false);
+            Vec3 at=position();
+            ManipulationVisuals.burst(server,ManipulationVisuals.Form.CHUM_BLOOM,at,at,3,PhlegethosomaSummonRules.DEPART_TICKS,60);
+            playSound(SoundEvents.BUBBLE_COLUMN_WHIRLPOOL_AMBIENT,1,.4F);
+        }
+        setDeltaMovement(0,-.06,0);
+        if(departing%3==0) {
+            var particle=com.vincenthuto.hemomancy.common.particle.HemoParticleData.glow(new com.vincenthuto.hutoslib.client.particle.util.ParticleColor(155,25,23));
+            for(int i=0;i<8;i++) {
+                double angle=i*Math.PI/4+departing*.08,radius=1.2+departing*.04;
+                server.sendParticles(particle,getX()+Math.cos(angle)*radius,getY()+getBbHeight(),getZ()+Math.sin(angle)*radius,0,0,.025,0,1);
+            }
+        }
+        if(++departing>=PhlegethosomaSummonRules.DEPART_TICKS)discard();
+    }
     public boolean isBreachAttack() { return action()==Action.DIVE || action()==Action.BREACH || action()==Action.RETURN_TO_ICHOR; }
     void faceBreach(Vec3 movement) {
         setYRot((float)Math.toDegrees(Math.atan2(-movement.x,movement.z)));
@@ -83,6 +112,7 @@ public final class PhlegethosomaEntity extends Monster {
     @Override protected void customServerAiStep() {
         super.customServerAiStep();if(!(level() instanceof ServerLevel server))return;
         if(home==null)home=blockPosition();
+        if(summoner!=null && (departing() || !PhlegethosomaSummons.get(server).isCurrent(summoner,getUUID()))) { depart(server);return; }
         entityData.set(SWIMMING, getFluidTypeHeight(FluidInit.PHLEGETHONTIC_ICHOR_TYPE.get()) > .1);
         entityData.set(SWIM_AMOUNT, isIchorSwimming() || isBreachAttack() ? (float)Math.min(1, getDeltaMovement().length() / .4) : 0F);
         Vec3 motion = getDeltaMovement();
@@ -112,6 +142,7 @@ public final class PhlegethosomaEntity extends Monster {
         if(target==null) {
             if(action()!=Action.DORMANT && action()!=Action.RECOVERY)change(Action.RECOVERY);
             if(++missingTarget>=40 && action()!=Action.DORMANT) { clearHazards();change(Action.DORMANT);bar.setVisible(false); }
+            if(summoner!=null && PhlegethosomaSummonRules.shouldDive(missingTarget)) { depart(server);return; }
             if(isIchorSwimming()) {
                 double angle=server.getGameTime()*.035;
                 swimToward(Vec3.atCenterOf(home).add(Math.sin(angle)*5,0,Math.cos(angle)*5),.18);
@@ -291,7 +322,7 @@ public final class PhlegethosomaEntity extends Monster {
         for(var c:s.getEntitiesOfClass(CoagulumProjectileEntity.class,getBoundingBox().inflate(64),c->c.getOwner()==this))c.discard();
     }
     @Override public boolean hurt(DamageSource source,float amount) {
-        if(intro.active())return false;
+        if(intro.active() || departing())return false;
         boolean exposed=action()==Action.SUCTION_WINDUP || action()==Action.SUCTION_ACTIVE || action()==Action.LATCH_ATTACK || action()==Action.ICHOR_SPRAY;
         boolean direct=source.getDirectEntity() instanceof LivingEntity || source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile;
         boolean result=super.hurt(source,exposed && direct?amount*1.25F:amount);
@@ -308,16 +339,22 @@ public final class PhlegethosomaEntity extends Monster {
     @Override protected net.minecraft.sounds.SoundEvent getHurtSound(DamageSource source) {return SoundEvents.SLIME_HURT;}
     @Override protected net.minecraft.sounds.SoundEvent getDeathSound() {return SoundEvents.SLIME_DEATH;}
     @Override public void die(DamageSource source) {clearHazards();bar.hideAll();super.die(source);}
-    @Override public void remove(RemovalReason reason) {clearHazards();bar.hideAll();super.remove(reason);}
+    @Override public void remove(RemovalReason reason) {
+        clearHazards();bar.hideAll();
+        if(reason.shouldDestroy() && summoner!=null && level() instanceof ServerLevel s)PhlegethosomaSummons.get(s).release(summoner,getUUID());
+        super.remove(reason);
+    }
     @Override public void startSeenByPlayer(ServerPlayer p) {super.startSeenByPlayer(p);bar.show(p);if(intro.active())BossScenes.playTo(p,this,BossPresentationIds.SCENE_PHLEGETHOSOMA,intro.elapsed());}
     @Override public void stopSeenByPlayer(ServerPlayer p) {super.stopSeenByPlayer(p);bar.hide(p);}
     @Override public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);tag.putInt("FlukePhase",phase());tag.putBoolean("FlukeIntroduced",introduced);
         if(home!=null)tag.putLong("FlukeHome",home.asLong());intro.save(tag,"FlukeIntro");
+        if(summoner!=null)tag.putUUID("FlukeSummoner",summoner);
     }
     @Override public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);entityData.set(PHASE,Math.clamp(tag.getInt("FlukePhase"),1,3));bar.setColor(PhlegethosomaCombatRules.barColor(phase()));introduced=tag.getBoolean("FlukeIntroduced");
         if(tag.contains("FlukeHome"))home=BlockPos.of(tag.getLong("FlukeHome"));intro.load(tag,"FlukeIntro");
+        summoner=tag.hasUUID("FlukeSummoner")?tag.getUUID("FlukeSummoner"):null;
         getAttribute(Attributes.ARMOR).setBaseValue(phase()==3?0:phase()==2?3:6);change(Action.RECOVERY);
     }
 }

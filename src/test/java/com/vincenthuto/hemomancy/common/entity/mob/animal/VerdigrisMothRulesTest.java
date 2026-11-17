@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import org.junit.jupiter.api.Test;
+
 final class VerdigrisMothRulesTest {
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		onlySpawnsAtNightOnSolidGround();
 		shedsOnlyWhileLivingAirborneAndOffCooldown();
 		brushHarvestIsLimitedAndNonLethal();

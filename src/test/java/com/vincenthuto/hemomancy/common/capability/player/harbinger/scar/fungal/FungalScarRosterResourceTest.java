@@ -1,11 +1,16 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class FungalScarRosterResourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -34,7 +39,8 @@ public final class FungalScarRosterResourceTest {
 	private FungalScarRosterResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		registriesAndCultivationRecipesExposeExactlyEightFungalScars();
 		activeScarsHaveAssetsAndLang();
 		removedScarsDoNotRemainInRegistriesResourcesOrCatalogues();
@@ -84,25 +90,18 @@ public final class FungalScarRosterResourceTest {
 		String lang = read(LANG);
 
 		for (String id : REMOVED_SCARS) {
-			assertDoesNotContain("item registry retired " + id, itemInit, "BASEITEMS.register(\"" + id + "\"");
-			assertDoesNotContain("scar definition retired " + id, scarInit, "reg(\"" + id + "\"");
-			assertDoesNotContain("behavior hook retired " + id, events, id);
-			assertDoesNotContain("materials data retired " + id, materialsData, id);
-			assertDoesNotContain("materials atlas retired " + id, materialsSpec, id);
-			assertDoesNotContain("scar lore retired " + id, lore, id);
-			assertDoesNotContain("scar unlock retired " + id, unlocks, id);
-			assertDoesNotContain("lang retired " + id, lang, "\"item.hemomancy." + id + "\"");
-			assertDoesNotContain("immature lang retired " + id, lang, "\"item.hemomancy.immature_scar." + id + "\"");
+			assertNotContains("item registry retired " + id, itemInit, "BASEITEMS.register(\"" + id + "\"");
+			assertNotContains("scar definition retired " + id, scarInit, "reg(\"" + id + "\"");
+			assertNotContains("behavior hook retired " + id, events, id);
+			assertNotContains("materials data retired " + id, materialsData, id);
+			assertNotContains("materials atlas retired " + id, materialsSpec, id);
+			assertNotContains("scar lore retired " + id, lore, id);
+			assertNotContains("scar unlock retired " + id, unlocks, id);
+			assertNotContains("lang retired " + id, lang, "\"item.hemomancy." + id + "\"");
+			assertNotContains("immature lang retired " + id, lang, "\"item.hemomancy.immature_scar." + id + "\"");
 			assertMissing("retired recipe " + id, RECIPES.resolve(id + ".json"));
 			assertMissing("retired model " + id, MODELS.resolve(id + ".json"));
 		}
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
 	}
 
 	private static void assertExists(String label, Path path) {
@@ -114,18 +113,6 @@ public final class FungalScarRosterResourceTest {
 	private static void assertMissing(String label, Path path) {
 		if (Files.exists(path)) {
 			throw new AssertionError(label + ": still exists " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": found " + unexpected);
 		}
 	}
 

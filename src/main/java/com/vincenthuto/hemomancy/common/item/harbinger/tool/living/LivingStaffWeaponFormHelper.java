@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.TemperCharge;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.TemperRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -31,7 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
 public final class LivingStaffWeaponFormHelper {
-	private static final BloodAccounting.Source HOT_SWAP = BloodAccounting.Source.of("living_staff_hot_swap", Category.TOOL, true, false);
+	private static final BloodAccounting.Source HOT_SWAP = BloodAccounting.Source.of("living_staff_hot_swap", Category.TOOL, false);
 	public static final String STORED_STAFF_KEY = "HemomancyStoredLivingStaff";
 	public static final String FORM_KEY = "HemomancyStaffWeaponForm";
 	public static final String SECONDARY_TEMPER_KEY = "HemomancyStaffWeaponSecondaryTemper";
@@ -186,7 +188,7 @@ public final class LivingStaffWeaponFormHelper {
 			player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_weapon_form_helper.the_living_staff_must_be_in").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
-		if (!chargeHotSwapCost(player)) {
+		if (!chargeHotSwapCost(player, formName)) {
 			return false;
 		}
 		ItemStack sourceStaff = isTransformedStaffWeapon(held)
@@ -194,6 +196,8 @@ public final class LivingStaffWeaponFormHelper {
 				: held.copy();
 		sourceStaff.setCount(1);
 		ItemStack weapon = createWeaponFormStack(formName, sourceStaff, player.registryAccess());
+		// A form carries the Staff's growth rings: the digging forms mine at the tier they earned (Track 8).
+		LivingStaffGrowth.refreshStamp(player, weapon);
 		player.setItemInHand(InteractionHand.MAIN_HAND, weapon);
 		if (LivingStaffWeaponFormRules.shouldEquipPairedOffhandClaw(formName, player.getOffhandItem().isEmpty())) {
 			player.setItemInHand(InteractionHand.OFF_HAND,
@@ -203,18 +207,23 @@ public final class LivingStaffWeaponFormHelper {
 		return true;
 	}
 
-	private static boolean chargeHotSwapCost(Player player) {
+	/** The swap's blood, and one Temper in the form's primary school under the shared Temper rule (CB-25). */
+	private static boolean chargeHotSwapCost(Player player, String formName) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_weapon_form_helper.the_staff_finds_no_active_blood").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
-		double cost = SkillPointHelper.getLivingStaffHotSwapCost(player);
+		BloodManipulation form = ManipulationInit.getByName(formName);
+		TemperCharge.Charge temper = form == null || form.getTend() == null ? null
+				: TemperCharge.plan(player, form.getTend(), TemperRules.Kind.CAST, LivingStaffWeaponFormRules.HOT_SWAP_TEMPER);
+		double cost = SkillPointHelper.getLivingStaffHotSwapCost(player) * (temper == null ? 1.0D : temper.costMultiplier());
 		if (volume.getBloodVolume() < cost) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_weapon_form_helper.not_enough_blood_to_reshape_the").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		BloodAccounting.pay(player, cost, HOT_SWAP);
+		if (player instanceof ServerPlayer serverPlayer) TemperCharge.commit(serverPlayer, temper);
 		return true;
 	}
 
@@ -254,6 +263,7 @@ public final class LivingStaffWeaponFormHelper {
 			case LivingStaffWeaponFormRules.CONJURE_FLAIL -> ItemInit.living_flail.get();
 			case LivingStaffWeaponFormRules.CONJURE_SICKLE -> ItemInit.living_sickle.get();
 			case LivingStaffWeaponFormRules.CONJURE_BLADE -> ItemInit.living_blade.get();
+			case LivingStaffWeaponFormRules.CONJURE_PICKAXE -> ItemInit.living_pickaxe.get();
 			default -> ItemInit.living_staff.get();
 		};
 	}

@@ -95,9 +95,25 @@ public final class SchoolCombatEvents {
                     bonus = SchoolStateRules.ruptureDamage(pressure)
                             * (ability.equals("blood_aneurysm") ? hit.charge() : 1);
                     consumed = SchoolState.PRESSURE;
+                } else if (ability.equals("crimson_tithe") && hit.role() == SchoolHitContext.Role.EXPLOIT_STATE && pressure > 0) {
+                    // The Vessel Empties consumes every Pressure level the chains laid: the gift's own payoff.
+                    bonus = (float) com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheRules.pressureBonus(pressure);
+                    consumed = SchoolState.PRESSURE;
+                } else if (ability.equals("unclosing_eye") && hit.role() == SchoolHitContext.Role.EXPLOIT_STATE
+                        && SchoolStates.has(target, SchoolState.ILLUMINATED)) {
+                    // The Eye's Burst consumes Illumination as White Verdict does.
+                    damage *= (float) com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeRules.ILLUMINATED_BURST;
+                    consumed = SchoolState.ILLUMINATED;
                 } else if (ability.equals("funeral_bell") && SchoolStates.has(target, SchoolState.NECROSIS)) {
                     var debt = data.get(SchoolState.NECROSIS);
                     bonus = debt == null ? 0 : debt.stored * hit.charge();
+                    spent = bonus;
+                    consumed = SchoolState.NECROSIS;
+                } else if (ability.equals("bloom_of_rot") && hit.primary() == EnumBloodTemper.FLAMMEUS
+                        && SchoolStates.has(target, SchoolState.NECROSIS)) {
+                    // The Bloom's Ignition releases a body's banked wounds early, as the Funeral Bell does.
+                    var debt = data.get(SchoolState.NECROSIS);
+                    bonus = debt == null ? 0 : debt.stored;
                     spent = bonus;
                     consumed = SchoolState.NECROSIS;
                 } else if (ability.equals("vitric_combustion") && SchoolStates.has(target, SchoolState.SEARING)) {
@@ -135,11 +151,13 @@ public final class SchoolCombatEvents {
             if (!fixedPayoff && owner instanceof Player player) {
                 damage *= TemperAffinityRules.damageMultiplier(player, target, hit.primary(), hit.secondary());
             }
+            // A cast that ran dry of Temper lands softer (core loop Track 4); a state's payoff bonus is not scaled.
+            damage *= hit.strength();
             damage += stateBonus;
-            if (hit.ability().getPath().equals("osseous_bloom")
-                    && com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(target)) damage = Math.min(12, damage);
+            if (hit.ability().getPath().equals("osseous_bloom"))
+                damage = Math.min(com.vincenthuto.hemomancy.common.manipulation.congeatio.OsseousBloomManip.damageCap(target), damage);
             if (hit.ability().getPath().equals("exsanguinate")
-                    && com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(target)) {
+                    && com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates.isBoss(target)) {
                 float mastery = owner instanceof Player caster
                         ? (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(caster) : 1.0F;
                 damage = Math.min(com.vincenthuto.hemomancy.common.manipulation.mortem.ExsanguinateManip.BOSS_DAMAGE_CAP * mastery, damage);

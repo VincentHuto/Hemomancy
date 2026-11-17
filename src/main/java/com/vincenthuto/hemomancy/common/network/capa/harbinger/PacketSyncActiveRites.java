@@ -116,6 +116,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			for (BlockPos pos : entry.getSubjectPositions()) buf.writeBlockPos(pos);
 			buf.writeVarIntArray(entry.getSubjectStateIds());
 			buf.writeFloat(entry.getSubjectFill());
+			buf.writeVarInt(entry.getStaffRings());
 		}
 	}
 
@@ -195,7 +196,8 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 					.withEscalation(buf.readVarInt(), buf.readVarInt())
 					.withGuidance(readProblems(buf), readSocketMarkers(buf))
 					.withRings(buf.readVarInt(), buf.readVarIntArray())
-					.withSubject(readPositions(buf), buf.readVarIntArray(), buf.readFloat()));
+					.withSubject(readPositions(buf), buf.readVarIntArray(), buf.readFloat())
+					.withStaffRings(buf.readVarInt()));
 		}
 		return new PacketSyncActiveRites(entries);
 	}

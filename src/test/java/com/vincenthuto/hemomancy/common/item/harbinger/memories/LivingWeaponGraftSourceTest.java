@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.support.EnglishText;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class LivingWeaponGraftSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -12,7 +16,8 @@ public final class LivingWeaponGraftSourceTest {
 	private LivingWeaponGraftSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String dataComponentInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/DataComponentInit.java");
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		String form = read("src/main/java/com/vincenthuto/hemomancy/common/item/component/LivingWeaponForm.java");
@@ -72,18 +77,6 @@ public final class LivingWeaponGraftSourceTest {
 			throw new AssertionError("missing " + path);
 		}
 		return Files.readString(absolute).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (found '" + unexpected + "')");
-		}
 	}
 
 	private static void assertNoPath(String path) {

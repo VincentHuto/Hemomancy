@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.degree;
 
+import org.junit.jupiter.api.Test;
 import net.minecraft.nbt.CompoundTag;
 
 public final class InitiatoryDegreeLoreStateTest {
 	private InitiatoryDegreeLoreStateTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		InitiatoryDegree degree = new InitiatoryDegree();
 		degree.setHasFoundedBloodline(true);
 		degree.setFounderIntegrationSevered(true);

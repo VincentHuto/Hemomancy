@@ -240,15 +240,20 @@ public final class RegistrationGameTests {
         var expectedCustom = new java.util.TreeSet<>(java.util.Set.of("mortal_display", "suspended_blood_crystal",
                 "suspended_cleansed_blood_crystal", "suspended_vivianite", "fungal_implantation_pylon",
                 "phlebotomists_field_case", "earthen_vein", "vial_centrifuge", "hematic_armature", "mycelial_crucible",
-                "specimen_jar", "sanguine_monolith", "hematic_stake", "mycelial_synapse", "puppeteers_spindle", "mason_effigy",
+                "specimen_jar", "specimen_vat", "sanguine_monolith", "hematic_stake", "mycelial_synapse", "puppeteers_spindle", "mason_effigy",
                 "covenant_throne", "sunburst_bloom", "house_marker", "saint_sarcophagus"));
         var expectedManual = new java.util.TreeSet<>(java.util.Set.of("gourd_stem", "active_befouling_ash_trail",
-                "active_smouldering_ash_trail", "placed_blood_stained_stone", "lethean_poppy_wreath", "sanguine_conduit"));
+                "active_smouldering_ash_trail", "placed_blood_stained_stone", "lethean_poppy_wreath", "sanguine_conduit",
+                "glowroot", "emberpod"));
+        // The fungal strains are each planted by their spore (core-loop round two, P7).
+        for (var strain : com.vincenthuto.hemomancy.common.block.harbinger.plant.FungalStrains.values()) expectedManual.add(strain.blockId());
         var expectedItemless = new java.util.TreeSet<>(java.util.Set.of("attached_gourd_stem", "chamber_gate", "filler_block",
                 "somnolent_seat_filler", "abocipher_emitter", "qliphoth_bloom", "escharian_overgrowth",
                 "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
                 "witness_devotee", "warden_bloom", "blood_wood_wall_sign", "blood_wood_wall_hanging_sign",
-                "heartwood_wall_sign", "heartwood_wall_hanging_sign"));
+                "heartwood_wall_sign", "heartwood_wall_hanging_sign",
+                // The ground network's marks (core-loop Track 6): laid by the verbs, never placed from a stack.
+                "blood_stain", "blood_gouge", "living_vein", "lux_trace", "stained_sod"));
         helper.assertTrue(custom.equals(expectedCustom) && manual.equals(expectedManual) && itemless.equals(expectedItemless),
                 "Block item exceptions changed without an explicit decision: custom=" + custom + " manual=" + manual
                         + " itemless=" + itemless);
@@ -541,6 +546,58 @@ public final class RegistrationGameTests {
             helper.succeed();
     }
 
+    /** FX-16: a Creative owner with a full pack gets what does not fit at their feet; nothing is discarded. */
+    @GameTest(template = "empty", timeoutTicks = 20)
+    public static void fruitingBodyCacheOpenedWithAFullCreativePackDropsTheRest(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 1, 2);
+        helper.setBlock(pos, BlockInit.fruiting_body_cache.get());
+        var cache = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.FruitingBodyCacheBlockEntity)
+                helper.getBlockEntity(pos);
+        net.minecraft.world.entity.player.Player owner = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
+        owner.getAbilities().instabuild = true; // what makes Inventory.add report success and discard
+        BlockPos absolute = helper.absolutePos(pos);
+        owner.moveTo(absolute.getX() + 0.5D, absolute.getY(), absolute.getZ() + 1.5D);
+        for (int slot = 0; slot < owner.getInventory().items.size(); slot++) {
+            owner.getInventory().items.set(slot, new ItemStack(Items.COBBLESTONE, 64));
+        }
+        cache.store(owner.getUUID(), new java.util.ArrayList<>(java.util.List.of(new ItemStack(Items.DIAMOND, 3))));
+        helper.getBlockState(pos).useWithoutItem(helper.getLevel(), owner,
+                new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(absolute),
+                        net.minecraft.core.Direction.UP, absolute, false));
+        int dropped = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                new net.minecraft.world.phys.AABB(absolute).inflate(4), item -> item.getItem().is(Items.DIAMOND))
+                .stream().mapToInt(item -> item.getItem().getCount()).sum();
+        helper.assertTrue(dropped == 3, "The three diamonds that do not fit drop at the owner's feet, found " + dropped);
+        helper.assertBlockNotPresent(BlockInit.fruiting_body_cache.get(), pos);
+        clearTestArea(helper);
+        helper.succeed();
+    }
+
+    /** FX-16: a death in water (or lava, or tall grass) still finds the spot itself for the cache. */
+    @GameTest(template = "empty", timeoutTicks = 20)
+    public static void fruitingBodyCacheSpotTakesAReplaceableBlock(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 2, 2);
+        helper.setBlock(pos, net.minecraft.world.level.block.Blocks.WATER);
+        BlockPos absolute = helper.absolutePos(pos);
+        BlockPos spot = com.vincenthuto.hemomancy.common.event.HeartNodeEvents.cacheSpot(helper.getLevel(), absolute);
+        helper.assertTrue(absolute.equals(spot), "The water the player died in takes the cache, found " + spot);
+        clearTestArea(helper);
+        helper.succeed();
+    }
+
+    /** FX-16, V-12-3: a heart-node no player planted (a command, a structure) withers at its first tick and drops nothing. */
+    @GameTest(template = "empty", timeoutTicks = 20)
+    public static void anUnplantedHeartNodeWithersAtOnce(GameTestHelper helper) {
+        BlockPos nodePos = new BlockPos(3, 1, 3);
+        helper.setBlock(nodePos, BlockInit.heart_node.get());
+        helper.runAfterDelay(2, () -> {
+            helper.assertBlockNotPresent(BlockInit.heart_node.get(), nodePos);
+            helper.assertItemEntityNotPresent(BlockInit.heart_node.get().asItem(), nodePos, 3.0D);
+            clearTestArea(helper);
+            helper.succeed();
+        });
+    }
+
     /** A heart-node matures through its stages on the level clock and grows nothing into the world. */
     @GameTest(template = "empty", timeoutTicks = 20)
     public static void heartNodeMaturesWithoutPlacingBlocks(GameTestHelper helper) {
@@ -583,6 +640,9 @@ public final class RegistrationGameTests {
         BlockPos nodePos = new BlockPos(3, 1, 3);
         BlockPos synapsePos = new BlockPos(6, 1, 3);
         helper.setBlock(nodePos, BlockInit.heart_node.get());
+        // A planted node: one with no owner withers at its first tick (FX-16).
+        ((com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity) helper.getBlockEntity(nodePos))
+                .plant(UUID.randomUUID(), helper.getLevel().getGameTime());
         helper.setBlock(synapsePos, BlockInit.mycelial_synapse.get());
         helper.setBlock(nodePos.west(), net.minecraft.world.level.block.Blocks.WATER);
         helper.setBlock(synapsePos.east(), net.minecraft.world.level.block.Blocks.WATER);

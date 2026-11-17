@@ -3,9 +3,11 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -48,7 +50,9 @@ import java.util.UUID;
 public final class CardinalRiteActivation {
 	private static final ResourceLocation FOUNDING_FANE_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_fane");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
+	private static final ResourceLocation HEMATIC_UNBINDING_RITE_ID = Hemomancy.rloc("cardinal_rite/hematic_unbinding");
 	private static final ResourceLocation ANCESTRAL_COMMUNION_RITE_ID = Hemomancy.rloc("cardinal_rite/ancestral_communion");
+	private static final ResourceLocation SPORITIC_THURIBLE_RITE_ID = Hemomancy.rloc("cardinal_rite/working/sporitic_thurible");
 
 	private CardinalRiteActivation() {
 	}
@@ -150,15 +154,7 @@ public final class CardinalRiteActivation {
 					if (recipe.isRankup()) {
 						Integer targetDegree = RecipeDegreeGates.getRankupTargetDegree(recipe);
 						if (targetDegree != null && playerDegree >= targetDegree) {
-							EnumInitiatoryDegree current = EnumInitiatoryDegree.byNumber(playerDegree);
-							Component currentName = current != null ? current.displayName()
-									: Component.translatable("message.hemomancy.recipe_degree_gates.degree", playerDegree);
-							player.displayClientMessage(
-									Component.translatable("message.hemomancy.cardinal_rite_activation.you_have_already_attained",
-											currentName.copy()
-													.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
-											Component.translatable("message.hemomancy.cardinal_rite_activation.this_rank_rite_has_no_further").withStyle(ChatFormatting.DARK_RED)).withStyle(ChatFormatting.DARK_RED),
-									false);
+							sayAlreadyAttained(player, playerDegree);
 							return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 						}
 						if (targetDegree != null) {
@@ -221,6 +217,16 @@ public final class CardinalRiteActivation {
 								HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath())) {
 					player.displayClientMessage(
 							Component.translatable("message.hemomancy.cardinal_rite_activation.ancestral_communion_silentium").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+							false);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
+
+				//  The Sporitic Thurible is an Apotheos relic (NQ-10-3)
+				if (SPORITIC_THURIBLE_RITE_ID.equals(recipe.getId())
+						&& !SporiticThuribleRules.mayBurn(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+								HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath())) {
+					player.displayClientMessage(
+							Component.translatable("message.hemomancy.cardinal_rite_activation.sporitic_thurible_apotheos").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 							false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
@@ -295,6 +301,10 @@ public final class CardinalRiteActivation {
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
+				}
+				// The first Hematic Unbinding only warns, before any offering is taken.
+				if (HEMATIC_UNBINDING_RITE_ID.equals(recipe.getId()) && !canStartHematicUnbinding(serverPlayer)) {
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
 				// Start the rite
@@ -408,6 +418,21 @@ public final class CardinalRiteActivation {
 			}
 		}
 		if (hitState.is(BlockInit.cardinal_focus.get())) {
+			if (layeredResolution.status() == CardinalRiteStationMatcher.Status.NO_RITE) {
+				Integer degreeNeeded = degreeOfAHigherRite(sLevel, hitPos, player, trigger, allRites);
+				if (degreeNeeded != null) {
+					player.displayClientMessage(
+							Component.translatable("message.hemomancy.cardinal_rite_activation.this_rite_requires",
+									RecipeDegreeGates.degreeLabel(degreeNeeded)
+											.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD)).withStyle(ChatFormatting.RED),
+							false);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
+				if (answersAFinishedRankRite(sLevel, hitPos, player, trigger, allRites)) {
+					sayAlreadyAttained(player, HemoCapabilityAccess.getPlayerDegreeNumber(player));
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
+			}
 			player.displayClientMessage(Component.translatable(switch (layeredResolution.status()) {
 						case NO_FLOOR -> "message.hemomancy.cardinal_rite_activation.the_cardinal_focus_cannot_find_a";
 						case NO_SUBJECT -> "message.hemomancy.cardinal_rite_activation.the_working_floor_cannot_find_its";
@@ -417,6 +442,51 @@ public final class CardinalRiteActivation {
 			return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 		}
 		return CardinalRiteActivationRules.ActivationAttempt.NOT_HANDLED;
+	}
+
+	/**
+	 * The lowest Degree of the Harbinger rites this floor answers to that the player is still too low for, or null. The
+	 * first resolution leaves those rites out, so without this the player hears only that no rite matches.
+	 */
+	private static Integer degreeOfAHigherRite(ServerLevel level, BlockPos focus, Player player,
+			CardinalRiteActivationRules.Trigger trigger, List<CardinalRiteRecipe> allRites) {
+		int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		CardinalRiteStationMatcher.Resolution higher = CardinalRiteStationMatcher.resolve(level, focus,
+				allRites.stream().filter(recipe -> !recipe.isUnstained()
+						&& CardinalRiteActivationRules.mayInitiate(trigger, false,
+								RecipeDegreeGates.getRequiredDegree(recipe), focusMode(recipe))
+						&& RecipeDegreeGates.getRequiredDegree(recipe) > playerDegree).toList());
+		return higher.matches().stream().map(match -> RecipeDegreeGates.getRequiredDegree(match.recipe()))
+				.min(Integer::compare).orElse(null);
+	}
+
+	/**
+	 * Whether this floor answers to a Harbinger rank rite the player has already passed. The first resolution leaves
+	 * a closed rank rite out, so without this the player hears only that no rite matches (PT-32).
+	 */
+	private static boolean answersAFinishedRankRite(ServerLevel level, BlockPos focus, Player player,
+			CardinalRiteActivationRules.Trigger trigger, List<CardinalRiteRecipe> allRites) {
+		int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		CardinalRiteStationMatcher.Resolution finished = CardinalRiteStationMatcher.resolve(level, focus,
+				allRites.stream().filter(recipe -> !recipe.isUnstained() && recipe.isRankup()
+						&& CardinalRiteActivationRules.mayInitiate(trigger, false,
+								RecipeDegreeGates.getRequiredDegree(recipe), focusMode(recipe))
+						&& RecipeDegreeGates.getRequiredDegree(recipe) <= playerDegree
+						&& RecipeDegreeGates.getRankupTargetDegree(recipe) != null
+						&& playerDegree >= RecipeDegreeGates.getRankupTargetDegree(recipe)).toList());
+		return !finished.matches().isEmpty();
+	}
+
+	private static void sayAlreadyAttained(Player player, int playerDegree) {
+		EnumInitiatoryDegree current = EnumInitiatoryDegree.byNumber(playerDegree);
+		Component currentName = current != null ? current.displayName()
+				: Component.translatable("message.hemomancy.recipe_degree_gates.degree", playerDegree);
+		player.displayClientMessage(
+				Component.translatable("message.hemomancy.cardinal_rite_activation.you_have_already_attained",
+						currentName.copy().withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+						Component.translatable("message.hemomancy.cardinal_rite_activation.this_rank_rite_has_no_further")
+								.withStyle(ChatFormatting.DARK_RED)).withStyle(ChatFormatting.DARK_RED),
+				false);
 	}
 
 	private static String focusMode(CardinalRiteRecipe recipe) {
@@ -464,6 +534,20 @@ public final class CardinalRiteActivation {
 			return false;
 		}
 		return true;
+	}
+
+	private static boolean canStartHematicUnbinding(ServerPlayer player) {
+		Bloodline bloodline = BloodlineSavedData.get(player.server.overworld()).getBloodlineForPlayer(player.getUUID());
+		if (bloodline == null || !bloodline.isValid()) return true;
+		if (HematicUnbindingRules.activate(player.getUUID(), bloodline.getBloodlineUUID(),
+				player.level().getGameTime()) == HematicUnbindingRules.Decision.CONFIRM) {
+			return true;
+		}
+		player.displayClientMessage(
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_loosens_but_holds_performing",
+						bloodline.displayName()).withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+				false);
+		return false;
 	}
 
 	private static boolean hasActiveFane(ServerPlayer player, UUID owner) {

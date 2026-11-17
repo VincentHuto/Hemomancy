@@ -1,13 +1,14 @@
 package com.vincenthuto.hemomancy.client.screen.manips;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class ThelemicMemoryUiIntegrationSourceTest {
-    private static final Path ROOT = Path.of("").toAbsolutePath();
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    void allChecksPass() throws IOException {
         String hand = read("src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/ThelemicMemoryHandRenderer.java");
         String radial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java");
         String radialItem = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/ThelemicMemoryRadialMenuItem.java");
@@ -42,10 +43,6 @@ public final class ThelemicMemoryUiIntegrationSourceTest {
                 "equipped Noetic memories must use the larger outer ring");
         require(reliquary.contains("(2.0 * Math.PI) / EnumVeinSections.values().length"),
                 "vascular sections must use the smaller inner ring");
-    }
-
-    private static String read(String path) throws IOException {
-        return Files.readString(ROOT.resolve(path));
     }
 
     private static void require(boolean condition, String message) {

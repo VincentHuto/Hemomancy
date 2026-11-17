@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialAtlasPath;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialAtlasSpec;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialEntry;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialVisibility;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsData;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
@@ -36,6 +37,7 @@ import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ActivateArmorSetAbilityC2SPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFungalProjection;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RiteDiscoveryRules;
@@ -272,11 +274,22 @@ public final class PlaythroughArchonGameTests {
 			helper.assertTrue(stone.offers(SanguineMonolithDialogueTrees.EVENT_SHATTER), "the D7 Monolith lets the player press further: " + stone);
 			Outcome shatter = p.chooseAtBlock(monolith, SanguineMonolithDialogueTrees.EVENT_SHATTER);
 			helper.assertTrue(shatter.rewardDelivered(), "the second choice shatters the stone; " + shatter);
-		}).idle(SEED_ENTITY_TICKS).then(() -> {
-			helper.assertTrue(seedsNear(helper, monolith.above()) == 1, "the shatter drops the Seed");
-			p.pickUpNear(monolith.above(), ItemInit.qliphoth_seed.get());
+			// Since the Monolith Walk (2026-11-04) the stone cracks open and the Seed waits inside for its owner's walk;
+			// nothing drops at the press (see shatterBeforeCornerstone).
+			SanguineMonolithBlockEntity breaking = (SanguineMonolithBlockEntity) helper.getLevel().getBlockEntity(monolith);
+			for (int i = 0; i <= SanguineMonolithBlock.BREAK_TICKS; i++) breaking.tick();
+			helper.assertTrue(breaking.seedInside(), "the Seed waits in the void");
 			p.pickUpNear(monolith.above(), ItemInit.monolith_fragment.get());
-			helper.assertTrue(p.count(ItemInit.qliphoth_seed.get()) == 1, "the Seed is picked up");
+			p.player().setPos(Vec3.atBottomCenterOf(monolith).add(0.0D, 0.0D, 0.6D));
+			LidlessPassageService.offer(p.player(), breaking.portal());
+			LidlessPassageService.tick(p.player());
+			for (int i = 0; i < 400 && LidlessPassageService.isCrossing(p.player()); i++) {
+				LidlessPassageService.input(p.player(), LidlessPassageService.token(p.player()), 1, false, false);
+				LidlessPassageService.tick(p.player());
+			}
+			helper.assertTrue(p.count(ItemInit.qliphoth_seed.get()) == 1, "the walk ends with the Seed in hand (crossing "
+					+ LidlessPassageService.isCrossing(p.player()) + ", Seed inside " + breaking.seedInside() + ", admitted "
+					+ breaking.admits(p.player()) + ")");
 		});
 		// On the ground beside the template (its floor layer is 5 above the flat world): a floating floor lets the
 		// ordeal's threats fall out of reach.
@@ -299,13 +312,10 @@ public final class PlaythroughArchonGameTests {
 			}
 			vicar.teleportTo(bloomStation.getX() + 0.5D, bloomStation.getY(), bloomStation.getZ() + 0.5D); // ARRANGE: the recruit walks over
 			PlaythroughRites.prepare(c, p, bloomFloor[0]);
-			int[] rescues = new int[1];
 			c.then(() -> p.wield(ItemInit.living_staff.get()))
 					.step(() -> PlaythroughClock.rite(p, bloomFloor[0].focus(), ritePlan(p, assignNpc(p, vicar), null)
-							.extraAim(PlaythroughRites.stabilizeWhenDeadlocked(p, sigilsAndTraces(p), rescues)).traceFirst()))
+							.extraAim(sigilsAndTraces(p)).traceFirst()))
 					.then(() -> {
-						PlaythroughLog.note(helper, "the chain's Bloom rite ended; CHAIN-1 rescues " + rescues[0]
-								+ (rescues[0] > 0 ? " (DEGRADED: the dry anchors were filled by ARRANGE)" : ""));
 						BlockPos root = bloomFloor[0].focus().above(2);
 						QliphothBloomSavedData.BloomEntry bloom = blooms(helper).getBloomAt(root, dimension(helper));
 						helper.assertTrue(bloom != null && bloom.ownerUUID().equals(p.uuid()) && bloom.center().equals(root),
@@ -336,10 +346,13 @@ public final class PlaythroughArchonGameTests {
 		PlaythroughStates.sanctifiedD6(p); // ARRANGE: D6, the Living Covenant not yet done
 		readyForRites(p);
 		PlaythroughSites.RiteFloor floor = PlaythroughSites.riteFloor(p, helper.absolutePos(RITE_ORIGIN), "archon_rite");
-		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, station(floor));
 		PlaythroughClock clock = PlaythroughClock.start(helper);
 		PlaythroughRites.prepare(clock, p, floor);
+		// P13 flake: a Vicar spawned before the braziers wandered onto a socket, so the brazier was set inside him by
+		// hand and the rite stalled at INSCRIPTION. He arrives once the floor is built.
+		HarbingerVicarEntity[] vicarHolder = new HarbingerVicarEntity[1];
 		clock.then(() -> {
+			vicarHolder[0] = PlaythroughNpcs.vicar(helper, station(floor));
 			p.wield(ItemInit.living_staff.get());
 			Outcome sealed = p.useOn(floor.focus());
 			PlaythroughLog.note(helper, "archon rite before the Living Covenant: " + sealed.describe() + " keys=" + sealed.saidKeys());
@@ -347,9 +360,9 @@ public final class PlaythroughArchonGameTests {
 			helper.assertTrue(sealed.saidKeys().contains(LIVING_COVENANT), "the sealed line names the Living Covenant; " + sealed);
 			helper.assertTrue(rite(p) == null, "no rite starts before the Living Covenant");
 			PlaythroughStates.livingCovenantD6(p); // ARRANGE: chamber_returned cannot be earned here (Chamber not loaded)
-			PlaythroughStates.recruited(p, vicar); // ARRANGE: recruited at D5
+			PlaythroughStates.recruited(p, vicarHolder[0]); // ARRANGE: recruited at D5
 			p.wield(ItemInit.living_staff.get());
-		}).step(() -> PlaythroughClock.rite(p, floor.focus(), ritePlan(p, assignNpc(p, vicar), null)))
+		}).step(() -> PlaythroughClock.rite(p, floor.focus(), ritePlan(p, assignNpc(p, vicarHolder[0]), null)))
 				.then(() -> {
 					Outcome rite = p.last();
 					PlaythroughLog.note(helper, "archon rite with a Vicar at his station: " + rite.describe());
@@ -509,9 +522,10 @@ public final class PlaythroughArchonGameTests {
 		p.fillInventory();
 		p.talkTo(vicar);
 		Outcome full = p.choose(vicar, VICAR_MAP_EVENT);
-		int landed = full.delta(ItemInit.stained_church_map.get()) + full.dropped(ItemInit.stained_church_map.get(), Outcome.Near.ANY);
-		PlaythroughLog.note(helper, "D-3 (late): the map with a full pack: " + full.describe());
-		helper.assertTrue(landed == 1, "with a full pack the map is not lost: it lands at the Vicar's feet; " + full);
+		PlaythroughLog.note(helper, "PT-3 (late): the map with a full pack: " + full.describe());
+		// PT-3: a full pack leaves the map owed, never dropped; it lands once there is room.
+		helper.assertTrue(full.dropped(ItemInit.stained_church_map.get(), Outcome.Near.ANY) == 0
+				&& owed(p, ItemInit.stained_church_map.get()) == 1, "with a full pack the map is owed, not dropped; " + full);
 
 		p.player().getInventory().clearContent();
 		p.give(new ItemStack(ItemInit.qliphoth_pome.get())); // ARRANGE: an unbound pome (food, not Communion)
@@ -629,7 +643,7 @@ public final class PlaythroughArchonGameTests {
 
 	/**
 	 * Pressing further twice (the press_again node, then the event) shatters the Monolith: the block and its filler
-	 * go, one Qliphoth Seed and 5-8 fragments pop at {@code pos.above()}, the post-shatter whisper is queued while its
+	 * go, one Qliphoth Seed and 8 fragments pop at {@code pos.above()}, the post-shatter whisper is queued while its
 	 * memo is unknown, and picking up the Seed makes the Bloom rite discoverable. Refusals: from 9 blocks away, at a
 	 * replaced block, and a second player whose conversation the first shatter ended. The refusals are silent (logged
 	 * under D-28, not re-decided).
@@ -675,7 +689,8 @@ public final class PlaythroughArchonGameTests {
 		helper.assertTrue(breaking != null && breaking.isBreaking() && atPress == 0 && seedsNear(helper, stone) == 0,
 				"the stone cracks instead of exploding; nothing drops at the press");
 
-		Outcome late = second.chooseAtBlock(stone, SanguineMonolithDialogueTrees.EVENT_SHATTER);
+		// PT-73: a second player is not this stone's builder and is never offered the press; forge it instead.
+		Outcome late = second.forgeOption(SanguineMonolithDialogueTrees.EVENT_SHATTER, SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID);
 		helper.assertTrue(!late.rewardDelivered() && late.droppedNear(stone.above(), ItemInit.monolith_fragment.get()) == 0,
 				"a second player's open conversation does not break the breaking stone again; " + late);
 		PlaythroughLog.note(helper, "D-28 (late): the second player's press further during the break: said " + late.chat());
@@ -685,8 +700,8 @@ public final class PlaythroughArchonGameTests {
 		helper.assertTrue(helper.getLevel().getBlockState(stone).getValue(SanguineMonolithBlock.BROKEN)
 				&& helper.getLevel().getBlockState(stone.above()).is(BlockInit.filler_block.get()),
 				"the halves have fallen and the husk stands");
-		helper.assertTrue(fragments >= MonolithFragmentDropRules.MIN_FRAGMENTS && fragments <= MonolithFragmentDropRules.MAX_FRAGMENTS,
-				"5-8 Monolith Fragments spill into the rubble (" + fragments + ")");
+		helper.assertTrue(fragments == MonolithFragmentDropRules.FRAGMENTS,
+				"8 Monolith Fragments spill into the rubble (" + fragments + ")");
 		helper.assertTrue(seedsNear(helper, stone) == 0 && breaking.seedInside(), "the Seed waits in the void");
 
 		// The walk: the owner steps into the gap and is pulled through to the Seed.
@@ -758,10 +773,9 @@ public final class PlaythroughArchonGameTests {
 	 * their own elsewhere can press further and break it. And when the owner shatters their own, a stranger can walk
 	 * off with the Seed.
 	 */
-	// DECISION D7-2: Monoliths have no owner, so any D7 player who raised one can shatter another's and take its
-	// unowned Seed and fragments (6000-tick item lifespan, unlike the owner-bound pomes). Options: bind the Monolith to
-	// its builder / give the Seed and fragments to the presser's inventory / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
+	// FIX: PT-73 (D7-2) the Monolith is bound to its builder: setPlacedBy records the placer, the Archon tree offers
+	// Press further only to them, and pressFurther refuses anyone else. The Seed is bound to the breaker.
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void strangerShattersYourMonolith(GameTestHelper helper) {
 		PlaythroughPlayer owner = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 3, 3));
 		PlaythroughStates.archonD7(owner); // ARRANGE
@@ -776,18 +790,23 @@ public final class PlaythroughArchonGameTests {
 				+ stranger.last().saidKeys());
 		MachineAccessEvents.awardMachineCrafted(stranger.player(), BlockInit.sanguine_monolith.get()); // ARRANGE: raised their own elsewhere
 		DialogueView view = stranger.talkToBlock(first);
-		Outcome broke = view.offers(SanguineMonolithDialogueTrees.EVENT_SHATTER)
-				? stranger.chooseAtBlock(first, SanguineMonolithDialogueTrees.EVENT_SHATTER) : null;
-		boolean strangerBroke = !monolithAt(owner, first);
+		helper.assertTrue(!view.offers(SanguineMonolithDialogueTrees.EVENT_SHATTER) && !view.hasNode("press_again"),
+				"PT-73: the stone offers a non-builder no Press further; " + view.describe());
+		Outcome broke = stranger.forgeOption(SanguineMonolithDialogueTrees.EVENT_SHATTER,
+				SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID); // a forged press
+		boolean strangerBroke = !(helper.getLevel().getBlockEntity(first) instanceof SanguineMonolithBlockEntity stone)
+				|| stone.isBreaking() || stone.isBroken();
 		Outcome[] taken = new Outcome[1];
 		PlaythroughClock.start(helper).idle(SEED_ENTITY_TICKS).then(() -> { // the Seed's entity lands a tick later
 			if (strangerBroke) stranger.pickUpNear(first.above(), ItemInit.qliphoth_seed.get());
 			PlaythroughLog.note(helper, "D7-2: a credited stranger at the owner's Monolith: offered shatter="
 					+ view.offers(SanguineMonolithDialogueTrees.EVENT_SHATTER) + " broke=" + strangerBroke + " stranger seeds="
-					+ stranger.count(ItemInit.qliphoth_seed.get()) + (broke == null ? "" : " " + broke.describe()));
+					+ stranger.count(ItemInit.qliphoth_seed.get()) + " " + broke.describe());
 			owner.moveTo(second.south(2));
 			owner.talkToBlock(second);
 			owner.chooseAtBlock(second, SanguineMonolithDialogueTrees.EVENT_SHATTER);
+			helper.assertTrue(helper.getLevel().getBlockEntity(second) instanceof SanguineMonolithBlockEntity own && own.isBreaking(),
+					"PT-73: the builder can still break their own stone");
 		}).idle(SEED_ENTITY_TICKS).then(() -> {
 			stranger.moveTo(second.east(2));
 			taken[0] = stranger.pickUpNear(second.above(), ItemInit.qliphoth_seed.get());
@@ -799,14 +818,11 @@ public final class PlaythroughArchonGameTests {
 
 	/**
 	 * The fragment budget: shattering before claiming the free cornerstone leaves only the crafted cornerstone, which
-	 * needs fragments of its own besides the two the Monolithic Armature rite takes. On a low roll that is more than
-	 * one shatter gives, and only another Monolith recovers it. A player would expect a warning or enough fragments.
+	 * needs fragments of its own besides the ones the Monolithic Armature rite takes. Every shatter gives enough.
 	 */
-	// DECISION D7-3: MonolithFragmentDropRules rolls 5-8; recipe/monolithic_cornerstone needs 4 fragments + 2 cloth
-	// (1 fragment each) and the Monolithic Armature rite 1 fragment + 1 cloth. Shattering first on a 5 roll leaves the
-	// Weight of the Frame short, and no line warns. Options: a warning line in the press_again node / raise the minimum
-	// roll / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
+	// FIX: NQ-12-1 A (2026-11-14) every shatter gives 8 fragments, which covers the crafted cornerstone and the frame
+	// rite. The D-23 warning that an unclaimed cornerstone is lost stays.
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void shatterBeforeCornerstone(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.archonD7(p); // ARRANGE
@@ -828,15 +844,13 @@ public final class PlaythroughArchonGameTests {
 			if (offering.is(ItemInit.monolith_imbued_cloth.get())) riteFragments += perCloth;
 		}
 		int needed = craftedCornerstone + riteFragments;
-		String warning = english(MONOLITH_PRESS_AGAIN) + " | " + english("hemomancy.artificer.assignment.weight_of_frame.cornerstone");
-		boolean warned = warning.toLowerCase(Locale.ROOT).contains("cornerstone") && warning.toLowerCase(Locale.ROOT).contains("fragment");
-		PlaythroughLog.note(helper, "D7-3: rolled " + rolled + " fragments (min " + MonolithFragmentDropRules.MIN_FRAGMENTS
-				+ "); a crafted cornerstone takes " + craftedCornerstone + " and the frame rite " + riteFragments + " (total "
-				+ needed + "); the Monolith can no longer give its cornerstone (broken=" + breaking.isBroken()
-				+ "); warning text: " + warning + "; tree " + view.describe());
-		helper.assertTrue(warned || MonolithFragmentDropRules.MIN_FRAGMENTS >= needed,
-				"D7-3 expected: a shatter before the cornerstone either warns or always leaves enough fragments ("
-						+ MonolithFragmentDropRules.MIN_FRAGMENTS + " < " + needed + ")");
+		helper.assertTrue(view.node("press_again").map(node -> node.lines().contains(MONOLITH_PRESS_AGAIN + ".cornerstone"))
+				.orElse(false), "D-23: the shatter warning says the unclaimed Cornerstone is lost; " + view.describe());
+		PlaythroughLog.note(helper, "D7-3: the shatter gave " + rolled + " fragments; a crafted cornerstone takes "
+				+ craftedCornerstone + " and the frame rite " + riteFragments + " (total " + needed
+				+ "); the Monolith can no longer give its cornerstone (broken=" + breaking.isBroken() + "); tree " + view.describe());
+		helper.assertTrue(rolled == MonolithFragmentDropRules.FRAGMENTS && rolled >= needed,
+				"NQ-12-1: a shatter before the cornerstone always leaves enough fragments (" + rolled + " of " + needed + ")");
 		helper.succeed();
 	}
 
@@ -972,8 +986,10 @@ public final class PlaythroughArchonGameTests {
 					helper.assertTrue(replace.offers(HarbingerArtificerDialogueTrees.EVENT_CLAIM_D7_FITTING), "a lost fitting can be replaced: " + replace);
 					Outcome reissued = p.choose(artificer, HarbingerArtificerDialogueTrees.EVENT_CLAIM_D7_FITTING);
 					PlaythroughLog.note(helper, "D-3 (late): the fitting reissued with a full pack: " + reissued.describe());
-					helper.assertTrue(reissued.dropped(ItemInit.monolithic_frame_fitting.get(), Outcome.Near.ANY) == 1,
-							"with a full pack the reissued fitting is not lost; " + reissued);
+					// PT-3: a full pack leaves the fitting owed, never dropped.
+					helper.assertTrue(reissued.dropped(ItemInit.monolithic_frame_fitting.get(), Outcome.Near.ANY) == 0
+							&& owed(p, ItemInit.monolithic_frame_fitting.get()) == 1,
+							"with a full pack the reissued fitting is owed, not lost; " + reissued);
 				})
 				.run();
 	}
@@ -1295,6 +1311,31 @@ public final class PlaythroughArchonGameTests {
 		helper.succeed();
 	}
 
+	/**
+	 * S-5b: the reclaim counts the Spine that really landed. With a full pack bar the empty hand, in Survival and in
+	 * Creative, exactly one Spine reaches the hand and nothing drops.
+	 */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BLOOM_RECLAIM)
+	public static void spineReclaimCountsTheSpineThatLanded(GameTestHelper helper) {
+		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 3, 3));
+		BlockPos root = PlaythroughSites.stand(helper, 16, 12);
+		PlaythroughStates.communedD7(p, root);
+		p.moveTo(root.south(2));
+		removeMatching(p, s -> s.is(ItemInit.fungal_spine.get()));
+		PlaythroughRites.emptyHand(p);
+		p.fillInventory(p.player().getInventory().selected);
+		p.sneakUseOn(root).said(SPINE_RETURNED).gave(ItemInit.fungal_spine.get(), 1);
+		helper.assertTrue(p.player().getMainHandItem().is(ItemInit.fungal_spine.get()), "the reclaimed Spine is not in the free hand");
+
+		p.player().getInventory().clearContent();
+		p.creative().fillInventory(p.player().getInventory().selected);
+		p.player().getInventory().setItem(p.player().getInventory().selected, ItemStack.EMPTY);
+		p.sneakUseOn(root).said(SPINE_RETURNED).gave(ItemInit.fungal_spine.get(), 1);
+		helper.assertTrue(p.player().getMainHandItem().is(ItemInit.fungal_spine.get()), "the Creative reclaim did not land in the free hand");
+		p.survival();
+		helper.succeed();
+	}
+
 	// =================================================================================================================
 	// The Spine, the projection and the revelation choice
 	// =================================================================================================================
@@ -1366,11 +1407,9 @@ public final class PlaythroughArchonGameTests {
 	 * the forced return ticked; then the player takes up "Listen when ready" once. The whisper that opens should be
 	 * the revelation choice, the one decision waiting for them. The inbox in order is logged.
 	 */
-	// DECISION CHAIN-2: after the forced return the revelation-choice whisper can wait behind memo whispers that
-	// repeat (in the late run: the Qliphoth Communion memo four times, the whisper-truth memo twice), and "Listen when
-	// ready" opens the oldest, so the player clicks through them first. Options: open decision whispers first / fold
-	// repeated memo whispers into one / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = "playthrough_d7_whisper_order", required = false)
+	// FIX: PT-89 (CHAIN-2) decision whispers open first: PendingWhispers.open takes the oldest entry flagged as a
+	// decision, ahead of older memo whispers, and the oldest entry when none is.
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = "playthrough_d7_whisper_order")
 	public static void revelationWhisperOpensFirst(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 3, 3));
 		PlaythroughStates.archonD7(p); // ARRANGE
@@ -1388,7 +1427,7 @@ public final class PlaythroughArchonGameTests {
 		PlaythroughLog.note(helper, "CHAIN-2: the inbox after the forced return holds " + inbox.size() + " whisper(s) "
 				+ order + "; the first opened: " + listened.describe() + " showing "
 				+ first.map(DialogueView::describe).orElse("nothing"));
-		helper.assertTrue(choice, "DECISION CHAIN-2: the first whisper the player opens after the forced return is the "
+		helper.assertTrue(choice, "PT-89: the first whisper the player opens after the forced return is the "
 				+ "revelation choice; the inbox held " + inbox.size() + " whisper(s) and the first showed "
 				+ first.map(DialogueView::describe).orElse("nothing"));
 		helper.succeed();
@@ -1509,11 +1548,10 @@ public final class PlaythroughArchonGameTests {
 	 * Vesper fight and for a player whose nine pomes came from two Blooms with no Communion; a player with the choice
 	 * still pending is logged, and conjure_staff (the documented exception) is logged when known.
 	 */
-	// DECISION D7-1: HarbingerPathPermissions.isChoiceUnresolved locks every cast but conjure_staff and every rite but
-	// the Apotheos from the ninth pome to D8, undocumented, reading a total that adds up across Blooms while Communion
-	// is per Bloom. Options: document and warn before the ninth pome / lock only before the revelation / gate on
-	// Communion instead of the total.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	// FIX: PT-72 (D7-1) the lock stays as built (the total over all Blooms, through both Vesper phases) and is
+	// documented; eating the eighth counted pome says the warning (QliphothPomeItem.LOCK_WARNING_KEY), which the
+	// owner's pomes also show in their tooltip until the ninth.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void powerLockAfterTheNinthPome(GameTestHelper helper) {
 		PlaythroughPlayer silent = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 3, 3));
 		PlaythroughStates.silentPendingD7(silent); // ARRANGE
@@ -1522,14 +1560,26 @@ public final class PlaythroughArchonGameTests {
 		PlaythroughPlayer split = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 3, 11));
 		PlaythroughStates.archonD7(split); // ARRANGE
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(split.player());
-		UUID first = UUID.randomUUID();
-		UUID second = UUID.randomUUID();
-		for (int husk = 0; husk < 9; husk++) { // ARRANGE: five pomes from one Bloom, four from another
-			if (husk < 5) degree.recordPomeConsumed(first);
-			else degree.recordPomeConsumed(second);
+		var first = new QliphothBloomSavedData.BloomEntry(split.uuid(), split.home().east(40), dimension(helper), 3,
+				helper.getLevel().getGameTime());
+		var second = new QliphothBloomSavedData.BloomEntry(split.uuid(), split.home().east(60), dimension(helper), 3,
+				helper.getLevel().getGameTime());
+		for (int husk = 0; husk < 7; husk++) { // ARRANGE: five pomes from one Bloom, two from another
+			if (husk < 5) degree.recordPomeConsumed(first.bloomId());
+			else degree.recordPomeConsumed(second.bloomId());
 			degree.incrementTotalPomesConsumed();
 		}
 		InitiatoryDegreeEvents.syncDegree(split.player(), degree);
+		split.give(QliphothPomeItem.createPickedPomeStack(second, 2)); // ARRANGE: the second Bloom's third husk
+		Outcome eighth = split.consume(ItemInit.qliphoth_pome.get());
+		split.give(QliphothPomeItem.createPickedPomeStack(second, 3)); // ARRANGE: its fourth
+		Outcome ninth = split.consume(ItemInit.qliphoth_pome.get());
+		PlaythroughLog.note(helper, "PT-72: the eighth pome over two Blooms: " + eighth.describe() + "; the ninth: "
+				+ ninth.describe() + "; total " + degree.getTotalPomesConsumed());
+		eighth.said(QliphothPomeItem.LOCK_WARNING_KEY);
+		ninth.didNotSay(QliphothPomeItem.LOCK_WARNING_KEY);
+		helper.assertTrue(degree.getTotalPomesConsumed() == 9 && !degree.isQliphothCommunionDone(),
+				"nine pomes over two Blooms count nine toward the lock and complete no Communion");
 		Outcome splitCast = castAbsorption(split);
 
 		PlaythroughPlayer pending = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 3, 19));
@@ -1545,29 +1595,40 @@ public final class PlaythroughArchonGameTests {
 		PlaythroughLog.note(helper, "D7-1: SILENT_PENDING cast " + silentCast.describe() + "; nine split pomes (communion="
 				+ degree.isQliphothCommunionDone() + ") cast " + splitCast.describe() + "; choice pending cast "
 				+ pendingCast.describe() + "; conjure_staff " + staffCast);
-		helper.assertTrue(!silentCast.saidKeys().contains(POWER_LOCKED), "D7-1 expected: a SILENT_PENDING Archon can still cast");
-		helper.assertTrue(!splitCast.saidKeys().contains(POWER_LOCKED), "D7-1 expected: nine pomes without Communion do not lock casting");
+		helper.assertTrue(silentCast.saidKeys().contains(POWER_LOCKED), "PT-72: the lock holds a SILENT_PENDING Archon; " + silentCast);
+		helper.assertTrue(splitCast.saidKeys().contains(POWER_LOCKED), "PT-72: nine pomes over two Blooms lock casting; " + splitCast);
+		helper.assertTrue(pendingCast.saidKeys().contains(POWER_LOCKED), "PT-72: the lock holds while the choice is pending; " + pendingCast);
 		helper.succeed();
 	}
 
-	/** Logging out mid-projection: a player would expect the ordeal to wait, not to be counted as witnessed. */
-	// DECISION D7-4: FungalProjectionEvents.onPlayerLogout runs performForcedProjectionReturn, so a relog completes the
-	// first projection and grants the revelation without the two minutes (the D-24 analogue); with no Gardens the
-	// 500 mL is also spent for a projection that never happens. Options: pause and resume the projection / refuse
-	// before spending when the Gardens are missing / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void logoutCompletesProjection(GameTestHelper helper) {
+	/** Logging out mid-projection: the ordeal waits, and is not counted as witnessed. */
+	// FIX: PT-75 (D7-4) a logout pauses the first projection: no forced return at logout, the two root keys survive,
+	// and the PlayerStateSync table resends the time left at login. The revelation comes only when the timer runs out.
+	// Not covered: with no Gardens loaded (this server) the 500 mL is still spent.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void logoutPausesProjection(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.communedD7(p); // ARRANGE
 		PlaythroughStates.blood(p, 2000.0D); // ARRANGE
 		useSpine(p).said(PROJECTION_STARTS);
+		int before = FungalGardenTravelHelper.getProjectionRemainingTicks(p.player());
+		int sentBefore = p.sent(PacketSyncFungalProjection.class).size();
 		p.relog();
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(p.player());
-		PlaythroughLog.note(helper, "D7-4: relog mid-projection: witnessed=" + degree.hasWitnessedFungalRevelation()
-				+ " projection=" + FungalGardenTravelHelper.isProjectionActive(p.player()) + " choicePending="
-				+ p.player().getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING));
+		var all = p.sent(PacketSyncFungalProjection.class);
+		var resent = all.subList(sentBefore, all.size());
+		PlaythroughLog.note(helper, "PT-75: relog mid-projection: witnessed=" + degree.hasWitnessedFungalRevelation()
+				+ " projection=" + FungalGardenTravelHelper.isProjectionActive(p.player()) + " remaining "
+				+ FungalGardenTravelHelper.getProjectionRemainingTicks(p.player()) + " of " + before + " choicePending="
+				+ p.player().getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)
+				+ " resent " + resent);
 		helper.assertTrue(!degree.hasWitnessedFungalRevelation(),
-				"D7-4 expected: a logout mid-projection does not count as witnessing the revelation");
+				"PT-75: a logout mid-projection does not count as witnessing the revelation");
+		helper.assertTrue(FungalGardenTravelHelper.isProjectionActive(p.player())
+				&& FungalGardenTravelHelper.getProjectionRemainingTicks(p.player()) == before,
+				"PT-75: the projection waits through the logout with its time left");
+		helper.assertTrue(resent.stream().anyMatch(sync -> sync.active() && sync.remainingTicks() == before),
+				"PT-75: the login resends the time left; sent " + resent);
 		helper.succeed();
 	}
 
@@ -1613,38 +1674,42 @@ public final class PlaythroughArchonGameTests {
 	}
 
 	/**
-	 * The atlas rules for the Monolith fragments, the imbued cloth and the four hallowed residua, read for a D5 player
-	 * and against each degree's gate. Fragments exist only after the D7 shatter and residuum only from the D8 Saints,
-	 * so a player would expect them hidden at D5.
+	 * The atlas rules for the Monolith fragments, the imbued cloth, the Cornerstone and the four hallowed residua, read
+	 * for a D5 player and against each degree's gate. Fragments exist only after the D7 shatter and residuum only from
+	 * the D8 Saints.
 	 */
-	// DECISION D7-6: MaterialsData unlocks monolith_fragment, monolith_imbued_cloth and the four hallowed_residuum
-	// entries at D5 (MaterialAtlasSpec traces them from blood_trial_altar), against the D7 shatter and the 2026-10-27
-	// Saint ruling (Saints D8). Options: move them to D7/D8 with Monolith/Saint traces / keep as previews.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	// FIX: NQ-12-2 A (2026-11-14) the three Monolith items open at D7 and the residua at D8, each a veiled preview one
+	// Degree early, as the Seed is. V-12-1 moves the Silent Archon chestplate (D8) and the three lineage chests (D7).
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void atlasFragmentsAndResiduum(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.illuminatusD5(p); // ARRANGE
 		Map<String, Integer> expected = new LinkedHashMap<>();
 		expected.put("monolith_fragment", 7);
 		expected.put("monolith_imbued_cloth", 7);
+		expected.put("monolithic_cornerstone", 7);
 		for (String saint : List.of("hemorath", "putriciel", "seraphae", "velorum")) expected.put("hallowed_residuum_" + saint, 8);
 		expected.put("qliphoth_seed", 7);
-		List<String> early = new ArrayList<>();
+		expected.put("silent_archon_chestplate", 8);
+		for (String lineage : List.of("edacious", "phantasmal", "sheolic")) expected.put(lineage + "_blood_lust_chest", 7);
+		List<String> wrong = new ArrayList<>();
 		for (var want : expected.entrySet()) {
 			MaterialEntry entry = MaterialsData.getBloodEntries().stream().filter(e -> e.name().equals(want.getKey())).findFirst().orElse(null);
 			if (entry == null) {
-				PlaythroughLog.note(helper, "D7-6: no atlas entry " + want.getKey());
+				wrong.add(want.getKey() + " (no entry)");
 				continue;
 			}
+			int degree = want.getValue();
 			var gate = MaterialAtlasSpec.entryFor(MaterialAtlasPath.HARBINGER, entry).gate();
-			List<String> byDegree = new ArrayList<>();
-			for (int d = 4; d <= 8; d++) byDegree.add(d + "=" + gate.visibilityFor(MaterialAtlasPath.HARBINGER, d, 0.0F, 0.0F));
+			boolean gated = gate.visibilityFor(MaterialAtlasPath.HARBINGER, degree, 0.0F, 0.0F) == MaterialVisibility.UNLOCKED
+					&& gate.visibilityFor(MaterialAtlasPath.HARBINGER, degree - 1, 0.0F, 0.0F) == MaterialVisibility.NEXT_PREVIEW
+					&& gate.visibilityFor(MaterialAtlasPath.HARBINGER, degree - 2, 0.0F, 0.0F) == MaterialVisibility.HIDDEN;
 			boolean unlockedAtD5 = entry.unlockPredicate().isUnlocked(p.player());
-			PlaythroughLog.note(helper, "D7-6: " + want.getKey() + " unlocked for a D5 player=" + unlockedAtD5 + " gate " + byDegree
-					+ " (obtainable from D" + want.getValue() + ")");
-			if (unlockedAtD5 && want.getValue() > 5) early.add(want.getKey());
+			PlaythroughLog.note(helper, "NQ-12-2: " + want.getKey() + " unlocked for a D5 player=" + unlockedAtD5
+					+ " gate at D" + degree + " veiled one early=" + gated);
+			if (unlockedAtD5 || !gated) wrong.add(want.getKey());
 		}
-		helper.assertTrue(early.isEmpty(), "D7-6 expected: nothing a D5 player cannot yet obtain is unlocked in the atlas: " + early);
+		helper.assertTrue(wrong.isEmpty(), "NQ-12-2: each entry opens at the Degree it is earned, veiled one Degree early: " + wrong);
 		helper.succeed();
 	}
 
@@ -2020,6 +2085,12 @@ public final class PlaythroughArchonGameTests {
 	}
 
 	/** Qliphoth Seeds lying within three blocks of {@code pos}. */
+	/** How many of {@code item} the player is still owed through {@code OwedRewards}. */
+	private static int owed(PlaythroughPlayer p, net.minecraft.world.item.Item item) {
+		return HemoCapabilityAccess.owedRewards(p.player()).owed().stream().filter(stack -> stack.is(item))
+				.mapToInt(ItemStack::getCount).sum();
+	}
+
 	private static int seedsNear(GameTestHelper helper, BlockPos pos) {
 		int seeds = 0;
 		for (net.minecraft.world.entity.item.ItemEntity drop : helper.getLevel().getEntitiesOfClass(

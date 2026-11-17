@@ -22,17 +22,17 @@ import net.minecraft.world.phys.Vec3;
  */
 public final class VelorumMoves {
 	/** Held Projection into him in the Guttering Lantern. */
-	public static final BloodAccounting.Source WARMING = BloodAccounting.Source.of("velorum_warming", Category.WORLD, true, false);
+	public static final BloodAccounting.Source WARMING = BloodAccounting.Source.of("velorum_warming", Category.WORLD, false);
 	/** Held Projection into a frozen figure until it wakes (proper fights). */
-	public static final BloodAccounting.Source WAKING = BloodAccounting.Source.of("velorum_waking", Category.WORLD, true, false);
+	public static final BloodAccounting.Source WAKING = BloodAccounting.Source.of("velorum_waking", Category.WORLD, false);
 	/** Held Projection into a frozen figure until hyphae pin it (forced fights). */
-	public static final BloodAccounting.Source PINNING = BloodAccounting.Source.of("velorum_pinning", Category.WORLD, true, false);
+	public static final BloodAccounting.Source PINNING = BloodAccounting.Source.of("velorum_pinning", Category.WORLD, false);
 	/** Held Projection into a preserved challenger, warming them out of the ice. */
-	public static final BloodAccounting.Source THAWING = BloodAccounting.Source.of("velorum_thawing", Category.WORLD, true, false);
+	public static final BloodAccounting.Source THAWING = BloodAccounting.Source.of("velorum_thawing", Category.WORLD, false);
 	/** The Draw of Silence (the Litany deed): blood drawn through the crooked hand. */
-	public static final BloodAccounting.Source SILENCE = BloodAccounting.Source.of("velorum_silence", Category.HAZARD, false, false);
+	public static final BloodAccounting.Source SILENCE = BloodAccounting.Source.of("velorum_silence", Category.HAZARD, false);
 	/** Held Projection into his closed claw in the Eclipse, relighting the lantern (revision 2026-11-06, R.7). */
-	public static final BloodAccounting.Source KINDLING = BloodAccounting.Source.of("velorum_kindling", Category.WORLD, true, false);
+	public static final BloodAccounting.Source KINDLING = BloodAccounting.Source.of("velorum_kindling", Category.WORLD, false);
 
 	/** Slowness levels as vanilla amplifiers. */
 	public static final int SLOWNESS_I = 0;

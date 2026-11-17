@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleBursts;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -38,6 +41,7 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 	private static final EntityDataAccessor<Integer> DATA_LIFETIME_TICKS =
 			SynchedEntityData.defineId(PhantasmalEchoEntity.class, EntityDataSerializers.INT);
 	private static final double SMOKE_RADIUS = 3.5D;
+	private static final ParticleColor TENEBRIS = EnumBloodTemper.TENEBRIS.getColor();
 	private static final int BLINDNESS_TICKS = 100;
 	private static final int CONFUSION_TICKS = 100;
 	private static final int SLOWNESS_TICKS = 60;
@@ -117,7 +121,7 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 
 	private void tickClientParticles() {
 		if (random.nextInt(4) == 0) {
-			level().addParticle(ParticleTypes.REVERSE_PORTAL,
+			level().addParticle(HemoParticleData.darkGlow(TENEBRIS),
 					getX() + (random.nextDouble() - 0.5D) * 0.6D,
 					getY() + random.nextDouble() * getBbHeight(),
 					getZ() + (random.nextDouble() - 0.5D) * 0.6D,
@@ -126,7 +130,7 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 					(random.nextDouble() - 0.5D) * 0.02D);
 		}
 		if (random.nextInt(10) == 0) {
-			level().addParticle(ParticleTypes.SMOKE,
+			level().addParticle(HemoParticleData.daemonDiffuseGlow(0.12F),
 					getX(), getY() + 0.35D + random.nextDouble(), getZ(),
 					0.0D, 0.01D, 0.0D);
 		}
@@ -257,10 +261,12 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 		if (!(level() instanceof ServerLevel serverLevel)) {
 			return;
 		}
-		serverLevel.sendParticles(ParticleTypes.SMOKE, getX(), getY() + 0.8D, getZ(),
-				80, 0.85D, 0.45D, 0.85D, 0.04D);
-		serverLevel.sendParticles(ParticleTypes.REVERSE_PORTAL, getX(), getY() + 0.8D, getZ(),
-				48, 0.7D, 0.55D, 0.7D, 0.06D);
+		serverLevel.sendParticles(HemoParticleData.daemonDiffuseGlow(0.6F), getX(), getY() + 0.8D, getZ(),
+				40, 0.85D, 0.45D, 0.85D, 0.04D);
+		HemoParticleBursts.outward(serverLevel, HemoParticleData.darkGlow(TENEBRIS), getX(), getY() + 0.8D, getZ(),
+				30, 0.08D, 0.6D);
+		serverLevel.sendParticles(HemoParticleData.willAbsorptionGlowPulse(TENEBRIS), getX(), getY() + 0.8D, getZ(),
+				24, 0.7D, 0.55D, 0.7D, 0.06D);
 		serverLevel.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(),
 				SoundSource.HOSTILE, 0.45F, 1.45F);
 		for (Monster monster : serverLevel.getEntitiesOfClass(Monster.class,
@@ -275,7 +281,7 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 
 	public void dissolveQuietly() {
 		if (level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.REVERSE_PORTAL, getX(), getY() + 0.8D, getZ(),
+			serverLevel.sendParticles(HemoParticleData.willAbsorptionGlow(TENEBRIS), getX(), getY() + 0.8D, getZ(),
 					24, 0.45D, 0.35D, 0.45D, 0.03D);
 			serverLevel.playSound(null, blockPosition(), SoundEvents.SOUL_ESCAPE.value(),
 					SoundSource.HOSTILE, 0.35F, 1.25F);

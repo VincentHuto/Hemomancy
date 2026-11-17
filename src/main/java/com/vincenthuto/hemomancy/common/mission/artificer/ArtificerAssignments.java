@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -173,9 +174,11 @@ public final class ArtificerAssignments {
 				|| !HarbingerAdvancementGranter.isArtificerArmaturePlaced(player)
 				|| !HarbingerAdvancementGranter.isArtificerFirstHematicUpgrade(player)
 				|| isArtificerLessonRewardClaimed(player, WORN_VOW_REWARD_CLAIM_KEY)) return ItemStack.EMPTY;
+		ItemStack reward = new ItemStack(ItemInit.hematic_iron_scrap.get(), 4);
+		OwedRewards.owe(player, List.of(reward.copy()));
 		markArtificerLessonRewardClaimed(player, WORN_VOW_REWARD_CLAIM_KEY);
 		syncReadyToClaimAdvancements(player);
-		return new ItemStack(ItemInit.hematic_iron_scrap.get(), 4);
+		return reward;
 	}
 
 	public static ItemStack claimAssumedLimbInspection(ServerPlayer player) {

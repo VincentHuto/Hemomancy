@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "#c:is_swamp",
-    "#c:is_spooky"
+    "#c:is_spooky",
+    "hemomancy:fungal_gardens"
   ]
 }

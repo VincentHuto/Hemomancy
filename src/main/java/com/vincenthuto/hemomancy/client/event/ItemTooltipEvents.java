@@ -1,11 +1,14 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.harbinger.plant.FungalStrains;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.CleatsFitting;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.shared.StructureScannerItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +39,31 @@ public final class ItemTooltipEvents {
 
         appendMorphicNectarMutationTooltip(event);
         appendFirstHourTooltip(event);
+        appendSporeSubstrateTooltip(event);
+        appendCleatsTooltip(event);
+    }
+
+    /** Boots the Armature fitted with Hematic Cleats say so, and whether the radial has them off (CN-10). */
+    private static void appendCleatsTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (!CleatsFitting.isFitted(stack)) {
+            return;
+        }
+        event.getToolTip().add(Component.translatable(CleatsFitting.isOn(stack)
+                ? "tooltip.hemomancy.cleats_fitted.on" : "tooltip.hemomancy.cleats_fitted.off")
+                .withStyle(ChatFormatting.DARK_RED));
+    }
+
+    /** A spore names the ground its strain stands on when planted (core-loop round two, P7). */
+    private static void appendSporeSubstrateTooltip(ItemTooltipEvent event) {
+        var id = BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem());
+        if (!Hemomancy.MOD_ID.equals(id.getNamespace())) {
+            return;
+        }
+        FungalStrains strain = FungalStrains.bySpore(id.getPath());
+        if (strain != null) {
+            event.getToolTip().add(Component.translatable(strain.substrate().tooltipKey()).withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 
     private static void appendMorphicNectarMutationTooltip(ItemTooltipEvent event) {
@@ -74,6 +102,8 @@ public final class ItemTooltipEvents {
             event.getToolTip().add(Component.translatable("item.hemomancy.salt_stained_voyager_log.tooltip")
                     .withStyle(ChatFormatting.GRAY));
             event.getToolTip().add(Component.translatable("item.hemomancy.salt_stained_voyager_log.tooltip.inquiry")
+                    .withStyle(ChatFormatting.DARK_GRAY));
+            event.getToolTip().add(Component.translatable("item.hemomancy.salt_stained_voyager_log.tooltip.culture")
                     .withStyle(ChatFormatting.DARK_GRAY));
         } else if (item == ItemInit.charm_of_vascularium.get()) {
             event.getToolTip().add(Component.translatable("item.hemomancy.charm_of_vascularium.tooltip.first_hour")

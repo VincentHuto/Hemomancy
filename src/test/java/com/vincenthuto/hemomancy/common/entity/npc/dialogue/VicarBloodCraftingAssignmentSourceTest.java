@@ -1,16 +1,18 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class VicarBloodCraftingAssignmentSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private VicarBloodCraftingAssignmentSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String vicar = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java");
 		String vicarEntity = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerVicarEntity.java");
 		String ledger = read("src/main/java/com/vincenthuto/hemomancy/client/screen/item/HarbingerAssignmentLedgerScreen.java");
@@ -50,15 +52,5 @@ public final class VicarBloodCraftingAssignmentSourceTest {
 		assertContains("Fill vessel step has lang", lang, "screen.hemomancy.harbinger_assignment_ledger.step.fill_vessel");
 		assertContains("Formation step has lang", lang, "screen.hemomancy.harbinger_assignment_ledger.step.project_formation");
 		assertContains("Venous Stone step has lang", lang, "screen.hemomancy.harbinger_assignment_ledger.step.project_venous_stone");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
 	}
 }

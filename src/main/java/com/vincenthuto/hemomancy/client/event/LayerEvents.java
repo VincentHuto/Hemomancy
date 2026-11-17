@@ -50,7 +50,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -64,6 +65,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public class LayerEvents {
+	private static final ParticleColor HORN_BLOOD = new ParticleColor(150, 14, 26);
 
 	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -80,6 +82,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(LivingFlailModel.LAYER_LOCATION, LivingFlailModel::createBodyLayer);
 		event.registerLayerDefinition(MarionetteCrossbarModel.LAYER_LOCATION, MarionetteCrossbarModel::createBodyLayer);
 		event.registerLayerDefinition(LivingSickleModel.LAYER_LOCATION, LivingSickleModel::createBodyLayer);
+		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.item.LivingPickaxeModel.LAYER_LOCATION,
+				com.vincenthuto.hemomancy.client.model.item.LivingPickaxeModel::createBodyLayer);
 		event.registerLayerDefinition(HemoBookLayers.LIBER_SANGUINUM, HemoBookLayers::createLiberSanguinumLayer);
 		event.registerLayerDefinition(HemoBookLayers.LIBER_IMMACULATUS, HemoBookLayers::createLiberImmaculatusLayer);
 		event.registerLayerDefinition(HemoBookLayers.BOOK_OF_OBSERVANCES, HemoBookLayers::createBookOfObservancesLayer);
@@ -107,7 +111,6 @@ public class LayerEvents {
 		event.registerLayerDefinition(IronWallModel.ferric_rampart, IronWallModel::createBodyLayer);
 		event.registerLayerDefinition(IronSpikeModel.iron_spike, IronSpikeModel::createBodyLayer);
 		event.registerLayerDefinition(IronPillarModel.iron_pillar, IronPillarModel::createBodyLayer);
-		event.registerLayerDefinition(BloodBulletModel.blood_bullet, BloodBulletModel::createBodyLayer);
 		event.registerLayerDefinition(PhlegethosomaModel.LAYER_LOCATION, PhlegethosomaModel::createBodyLayer);
 		event.registerLayerDefinition(ExcoriatedModel.LAYER_LOCATION, ExcoriatedModel::createBodyLayer);
 		event.registerLayerDefinition(PhlegethonticBombardierModel.LAYER_LOCATION, PhlegethonticBombardierModel::createBodyLayer);
@@ -272,6 +275,8 @@ public class LayerEvents {
 				SilentArchonArmorModel::createBodyLayer);
 		event.registerLayerDefinition(ChalybeateFortressArmorModel.CHALYBEATE_FORTRESS_BOOTS_LAYER,
 				ChalybeateFortressArmorModel::createBodyLayer);
+		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.armor.HematicCleatsModel.LAYER,
+				com.vincenthuto.hemomancy.client.model.armor.HematicCleatsModel::createBodyLayer);
 		event.registerLayerDefinition(CovenantLeaderArmorModel.COVENANT_LEADER_CHEST_LAYER,
 				CovenantLeaderArmorModel::createBodyLayer);
 		event.registerLayerDefinition(VestmentOfTheFinalMoltArmorModel.VESTMENT_OF_THE_FINAL_MOLT_CHEST_LAYER,
@@ -351,6 +356,7 @@ public class LayerEvents {
 			renderer.addLayer(new LanternTickHelmetLayer(renderer));
 			renderer.addLayer(new SilentArchonArmorOverlayLayer(renderer));
 			renderer.addLayer(new EdaciousBloodLustWingLayer(renderer));
+			renderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.player.HematicCleatsLayer(renderer));
 		}
 	}
 
@@ -400,6 +406,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));
 			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));
 			livingRenderer.addLayer(new LanternTickHelmetLayer(livingRenderer));
+			livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.player.HematicCleatsLayer(livingRenderer));
 			livingRenderer.addLayer(new MorphlingJarLayer<>(livingRenderer));
 			livingRenderer.addLayer(new SporiticThuribleLayer<>(livingRenderer));
 			livingRenderer.addLayer(new LivingFlailLayer<>(livingRenderer));
@@ -436,7 +443,7 @@ public class LayerEvents {
 	// For when the horn breaks it shows the custom animation
 	public static void playHornAnimation() {
 		LocalPlayer ent = Minecraft.getInstance().player;
-		Minecraft.getInstance().particleEngine.createTrackingEmitter(ent, ParticleTypes.SOUL, 30);
+		Minecraft.getInstance().particleEngine.createTrackingEmitter(ent, HemoParticleData.bloodCell(HORN_BLOOD), 30);
 		Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(ItemInit.curved_horn.get()));
 		Minecraft.getInstance().level.playLocalSound(ent.getX(), ent.getY(), ent.getZ(), SoundEvents.TOTEM_USE,
 				ent.getSoundSource(), 1F, 0.6F, false);

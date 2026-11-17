@@ -25,8 +25,8 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class LivingBladeItem extends LivingToolItem {
-	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
-	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_blade", Category.TOOL, false, false);
+	/** Reserve-protected (F-15): a dormant volume pays nothing, and a short one loses the weapon without paying. */
+	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_blade", Category.TOOL, true);
 
 	public static String TAG_STATE = "state";
 
@@ -63,12 +63,14 @@ public class LivingBladeItem extends LivingToolItem {
 				IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 						;
 				float damageMod = this.getLivingAttackDamage() * 75f;
-				if (playerVolume.getBloodVolume() > damageMod) {
+				if (!playerVolume.isActive()) {
+					return true;
+				}
+				if (BloodAccounting.canPayInFull(playerIn, damageMod, BLOOD_PRICE)) {
 					BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 				} else {
-					BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 					if (!LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(stack, attacker)) {
-						stack.hurtAndBreak(stack.getMaxDamage() + 10, attacker, EquipmentSlot.MAINHAND);
+						crumble(stack, attacker, EquipmentSlot.MAINHAND);
 					}
 				}
 

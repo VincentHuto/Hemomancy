@@ -5,7 +5,9 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,12 +15,16 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public final class VeinMasonScarLesson {
 	private static final Map<EnumBloodTemper, Lesson> TIER_ONE = new EnumMap<>(EnumBloodTemper.class);
 	private static final Map<EnumBloodTemper, Lesson> TIER_TWO = new EnumMap<>(EnumBloodTemper.class);
 	private static final Map<EnumBloodTemper, Lesson> TIER_THREE = new EnumMap<>(EnumBloodTemper.class);
+	private static final Map<ResourceLocation, Lesson> BY_PATTERN = new HashMap<>();
 
 	static {
 		put(EnumBloodTemper.ANIMUS, Items.GOLDEN_APPLE, Items.BONE, "heart", ItemInit.scar_heart, "marrow", ItemInit.scar_marrow, "phoenix", ItemInit.scar_phoenix);
@@ -44,6 +50,19 @@ public final class VeinMasonScarLesson {
 
 	public static Lesson strongestForPlayer(Player player, int tier) {
 		return rankedForPlayer(player, 0, tier);
+	}
+
+	/** PT-14: the lesson the Mason gave for {@code slot}, as stored then; before he gives it, the live lesson. */
+	public static Lesson issued(ServerPlayer player, Slot slot) {
+		return VeinMasonAssignments.issuedLesson(player, slot.key).map(BY_PATTERN::get)
+				.orElseGet(() -> slot.live.apply(player));
+	}
+
+	/** Picks the lesson for {@code slot} from the player's temper now and stores it as the one given. */
+	public static Lesson issue(ServerPlayer player, Slot slot) {
+		Lesson lesson = slot.live.apply(player);
+		VeinMasonAssignments.recordIssuedLesson(player, slot.key, lesson.patternScarId());
+		return lesson;
 	}
 
 	public static boolean needsReplacement(Player player, Lesson lesson) {
@@ -86,11 +105,30 @@ public final class VeinMasonScarLesson {
 		TIER_ONE.put(temper, lesson("scar_" + one, catalyst, oneItem));
 		TIER_TWO.put(temper, lesson("scar_" + two, tierTwoCatalyst, twoItem));
 		TIER_THREE.put(temper, lesson("scar_" + three, catalyst, threeItem));
+		for (Lesson lesson : List.of(TIER_ONE.get(temper), TIER_TWO.get(temper), TIER_THREE.get(temper))) {
+			BY_PATTERN.put(lesson.patternScarId(), lesson);
+		}
 	}
 
 	private static Lesson lesson(String patternScarId, Item catalyst,
 			DeferredHolder<Item, Item> scar) {
 		return new Lesson(Hemomancy.rloc(patternScarId), catalyst, scar);
+	}
+
+	/** The four lessons the Mason gives: the first, the continuation, and the D5 and D6 rewards. */
+	public enum Slot {
+		FIRST("first", VeinMasonScarLesson::forPlayer),
+		CONTINUATION("continuation", VeinMasonScarLesson::continuationForPlayer),
+		D5("d5", player -> strongestForPlayer(player, 2)),
+		D6("d6", player -> strongestForPlayer(player, 3));
+
+		private final String key;
+		private final Function<Player, Lesson> live;
+
+		Slot(String key, Function<Player, Lesson> live) {
+			this.key = key;
+			this.live = live;
+		}
 	}
 
 	public record Lesson(ResourceLocation patternScarId, Item catalyst, DeferredHolder<Item, Item> scar) {

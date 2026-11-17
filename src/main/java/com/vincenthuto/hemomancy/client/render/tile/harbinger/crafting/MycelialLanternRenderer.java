@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -20,8 +22,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Draws the Lantern's culture (or finished enzyme) turning inside the cloche and the stored blood
- * standing in the crock's sight glass. Positions mirror tools/model_export/mycelial_lantern.py.
+ * Draws the Lantern's culture (or finished enzyme) turning inside the cloche, or the crop planted under its bell, and
+ * the stored blood standing in the crock's sight glass. Positions mirror tools/model_export/mycelial_lantern.py.
  */
 public class MycelialLanternRenderer implements BlockEntityRenderer<MycelialLanternBlockEntity> {
     private static final int DISPLAY_ITEM_MAX_LIGHT = 11;
@@ -31,6 +33,10 @@ public class MycelialLanternRenderer implements BlockEntityRenderer<MycelialLant
     /** Gauge blood model: one pixel tall from the sight glass floor, stretched to the stored level. */
     private static final float GAUGE_FLOOR = 1.95F / 16F;
     private static final float GAUGE_DEPTH = 3.2F;
+    /** The bed's surface inside the crock (mycelial_lantern.py BED_Y), where a planted crop stands. */
+    private static final float PLANT_BED_Y = 6.75F / 16F;
+    /** A crop scaled to stand inside the bell (radius 5 px, 20 px tall). */
+    private static final float PLANT_SCALE = 0.62F;
 
     private final ItemRenderer itemRenderer;
 
@@ -47,6 +53,12 @@ public class MycelialLanternRenderer implements BlockEntityRenderer<MycelialLant
     public void render(MycelialLanternBlockEntity te, float partialTick, PoseStack poseStack,
             MultiBufferSource buffers, int light, int overlay) {
         renderGaugeBlood(te, poseStack, buffers, light, overlay);
+        BlockState planted = te.plantedState();
+        if (planted != null) {
+            // The cloche (core-loop Track 7): the crop grows on the bed under the bell.
+            renderPlant(te, planted, poseStack, buffers, displayItemLight(te, light), overlay);
+            return;
+        }
         ItemStack display = !te.getCultureStack().isEmpty() ? te.getCultureStack() : te.getOutputStack();
         if (!display.isEmpty()) {
             int itemLight = displayItemLight(te, light);
@@ -74,6 +86,18 @@ public class MycelialLanternRenderer implements BlockEntityRenderer<MycelialLant
         mc.getBlockRenderer().getModelRenderer().renderModel(poseStack.last(),
                 buffers.getBuffer(RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS)), null,
                 mc.getModelManager().getModel(GAUGE_BLOOD), 1, 1, 1, light, overlay);
+        poseStack.popPose();
+    }
+
+    /** The planted crop standing on the bed inside the bell, at its stage, scaled to the bell's width. */
+    private static void renderPlant(MycelialLanternBlockEntity te, BlockState planted, PoseStack poseStack,
+            MultiBufferSource buffers, int light, int overlay) {
+        poseStack.pushPose();
+        poseStack.translate(0.5D, PLANT_BED_Y, 0.5D);
+        poseStack.scale(PLANT_SCALE, PLANT_SCALE, PLANT_SCALE);
+        poseStack.translate(-0.5D, 0.0D, -0.5D);
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(planted, poseStack, buffers, light, overlay,
+                ModelData.EMPTY, null);
         poseStack.popPose();
     }
 

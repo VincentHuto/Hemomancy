@@ -18,8 +18,30 @@ import java.util.WeakHashMap;
 /** Sends the impact cue for a landed school hit. Presentation only: it never touches damage, states or cooldowns. */
 public final class CastImpacts {
     private static final Map<LivingEntity, Long> LAST = new WeakHashMap<>();
+    /** A delivery the hit in progress lands as, whatever its cast's purpose says: a strand's stroke. */
+    private record Forced(Delivery delivery, @javax.annotation.Nullable Vec3 travel) {}
+    private static final ThreadLocal<Forced> OVERRIDE = new ThreadLocal<>();
 
     private CastImpacts() {}
+
+    /** A delivery override's scope; closing it never throws. */
+    public interface Scope extends AutoCloseable {
+        @Override
+        void close();
+    }
+
+    /**
+     * Inside the returned scope, a landed hit shows as {@code delivery} along {@code travel} (the way the strand was
+     * moving; null for the caster's line). Presentation only, like everything here. Close it after the hit.
+     */
+    public static Scope deliveredAs(Delivery delivery, @javax.annotation.Nullable Vec3 travel) {
+        Forced previous = OVERRIDE.get();
+        OVERRIDE.set(new Forced(delivery, travel));
+        return () -> {
+            if (previous == null) OVERRIDE.remove();
+            else OVERRIDE.set(previous);
+        };
+    }
 
     public static void landed(LivingEntity target, DamageSource source, SchoolHitContext hit, float damage) {
         if (!(target.level() instanceof ServerLevel level) || hit.kind() != SchoolHitContext.Kind.DIRECT) return;
@@ -32,7 +54,8 @@ public final class CastImpacts {
         // Only real shots are projectiles: clouds, pillars and constructs hit through their own sources but land as their cast does.
         boolean projectile = direct instanceof Projectile && direct != attacker;
         boolean weapon = !ManipulationInit.MANIPS_TYPE_REGISTRY.containsKey(Hemomancy.rloc(hit.ability().getPath()));
-        Delivery delivery = CastImpactRules.delivery(projectile, weapon,
+        Forced override = OVERRIDE.get();
+        Delivery delivery = override != null ? override.delivery() : CastImpactRules.delivery(projectile, weapon,
                 weapon ? null : CastPresentation.forId(hit.ability().getPath()).purpose());
         Vec3 origin = projectile ? direct.position() : attacker != null ? attacker.getEyePosition() : null;
         AABB box = target.getBoundingBox();
@@ -40,7 +63,8 @@ public final class CastImpacts {
         Vec3 contact = origin == null || box.contains(origin) || delivery == Delivery.AREA ? centre
                 : new Vec3(Math.clamp(origin.x, box.minX, box.maxX), Math.clamp(origin.y, box.minY + box.getYsize() * .25, box.minY + box.getYsize() * .8),
                         Math.clamp(origin.z, box.minZ, box.maxZ));
-        Vec3 toward = origin == null ? target.getLookAngle().scale(-1) : contact.subtract(origin);
+        Vec3 toward = override != null && override.travel() != null && override.travel().lengthSqr() > 1e-6 ? override.travel()
+                : origin == null ? target.getLookAngle().scale(-1) : contact.subtract(origin);
         if (delivery == Delivery.AREA) toward = new Vec3(toward.x, 0, toward.z);
         if (toward.lengthSqr() < 1e-6) toward = new Vec3(0, 0, 1);
         // Sit just outside the surface the blow struck, so the wound's spray is not buried in the body.

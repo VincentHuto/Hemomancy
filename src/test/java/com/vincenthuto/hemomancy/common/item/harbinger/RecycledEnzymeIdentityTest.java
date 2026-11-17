@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import org.junit.jupiter.api.Test;
+
 public final class RecycledEnzymeIdentityTest {
 	private RecycledEnzymeIdentityTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		var first = RecycledEnzymeIdentity.fromSeed(918273645L);
 		var again = RecycledEnzymeIdentity.fromSeed(918273645L);
 		assertEquals("same seed keeps temper", first.temperIndex(), again.temperIndex());

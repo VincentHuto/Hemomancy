@@ -23,6 +23,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * spout faces it, standing on the floor beside it (one up) or set level with it. {@link #FILL} is how wet the channel
  * is (0 dry, 1 stained, 2 half, 3 full); structures set it, and a brimming basin pouring into the run raises it
  * ({@link VenousBasinBlock#flow}). A full block to walk on. Model from tools/model_export/blood_gutter.py.
+ * <p>
+ * A gutter a player sets down is {@link #WORKED} (core-loop Track 6): only a worked basin's stream runs down it, and it
+ * dries again when that basin does. A structure's gutters are not worked, so a player's basin never wets a Saint's
+ * arena and the arena's fill is never carried off to a player's machine.
  */
 public class BloodGutterBlock extends Block {
 	public static final BooleanProperty NORTH = PipeBlock.NORTH;
@@ -31,23 +35,25 @@ public class BloodGutterBlock extends Block {
 	public static final BooleanProperty WEST = PipeBlock.WEST;
 	/** How much blood stands in a gutter or basin: 0 dry, 1 stained, 2 half, 3 full. */
 	public static final IntegerProperty FILL = IntegerProperty.create("fill", 0, 3);
+	/** Set down by a player, so a player's basin may run blood down it; structures leave it false. */
+	public static final BooleanProperty WORKED = BooleanProperty.create("worked");
 	/** Below the channel's sump the block is solid; light and sight pass over it through the channel. */
 	private static final VoxelShape OCCLUSION = Block.box(0, 0, 0, 16, 8, 16);
 
 	public BloodGutterBlock(Properties properties) {
 		super(properties);
 		registerDefaultState(stateDefinition.any().setValue(NORTH, false).setValue(EAST, false)
-				.setValue(SOUTH, false).setValue(WEST, false).setValue(FILL, 0));
+				.setValue(SOUTH, false).setValue(WEST, false).setValue(FILL, 0).setValue(WORKED, false));
 	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(NORTH, EAST, SOUTH, WEST, FILL);
+		builder.add(NORTH, EAST, SOUTH, WEST, FILL, WORKED);
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		BlockState state = defaultBlockState();
+		BlockState state = defaultBlockState().setValue(WORKED, true);
 		for (Direction side : Direction.Plane.HORIZONTAL) {
 			state = state.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(side),
 					connectsTo(context.getLevel(), context.getClickedPos(), side));

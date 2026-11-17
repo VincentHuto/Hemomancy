@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 class EndgameBossRewardResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -43,7 +47,6 @@ class EndgameBossRewardResourceTest {
 		String memoryModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/memory_of_vesper.json"));
 		String tendrilModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/mycophant_tendril.json"));
 		Path tendrilTexture = RESOURCE_ROOT.resolve("assets/hemomancy/textures/item/mycophant_tendril.png");
-		String vesperLoot = read(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/vesper_evening_star.json"));
 		String mycophantLoot = read(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/mycophant.json"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
 
@@ -73,7 +76,7 @@ class EndgameBossRewardResourceTest {
 				"mycophant_tendril");
 		assertBefore("managed Mycophant rewards are delivered after leaving the disposable arena",
 				mycophantEncounter,
-				"ChamberOfWillManager.get(level.getServer()).exitChamber(owner);",
+				"ChamberOfWillManager.get(owner.getServer()).exitChamber(owner);",
 				"givePendingTendril(owner);");
 		assertContains("first Mycophant reward waits under death-persistent player data", mycophantEncounter,
 				"persisted.putBoolean(TENDRIL_PENDING_KEY, true);");
@@ -82,11 +85,15 @@ class EndgameBossRewardResourceTest {
 		assertBefore("Mycophant victory clears the active encounter before dimension-change callbacks",
 				mycophantEncounter,
 				"clear(owner);",
-				"ChamberOfWillManager.get(level.getServer()).exitChamber(owner);");
+				"ChamberOfWillManager.get(owner.getServer()).exitChamber(owner);");
 		assertContains("Mycophant rewards use player drop fallback", mycophantEncounter,
 				"if (!player.addItem(stack)) player.drop(stack, false);");
-		assertGuaranteedEntityDrop("Evening Star loot table documents Memory of Vesper", vesperLoot,
-				"hemomancy:memory_of_vesper");
+		assertContains("every completed ordeal gives its experience through the victory", vesperOrdeal,
+				"owner.giveExperiencePoints(VICTORY_XP);");
+		assertContains("the Evening Star gives no death experience of its own", vesper, "this.xpReward = 0;");
+		if (Files.exists(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/vesper_evening_star.json"))) {
+			throw new AssertionError("the Evening Star has no loot table: its Memory comes through the ordeal");
+		}
 		assertGuaranteedEntityDrop("Mycophant loot table guarantees Tendril", mycophantLoot,
 				"hemomancy:mycophant_tendril");
 		assertContains("Tendril layer checks charm slot", tendrilLayer,
@@ -120,13 +127,6 @@ class EndgameBossRewardResourceTest {
 				"\"item.hemomancy.mycophant_tendril\": \"Mycophant Tendril\"");
 	}
 
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertPngDimensions(String label, Path path, int expectedWidth, int expectedHeight)
 			throws IOException {
 		if (!Files.exists(path)) {
@@ -144,18 +144,6 @@ class EndgameBossRewardResourceTest {
 		if (width != expectedWidth || height != expectedHeight) {
 			throw new AssertionError(
 					label + ": expected " + expectedWidth + "x" + expectedHeight + " but was " + width + "x" + height);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": found " + unexpected);
 		}
 	}
 

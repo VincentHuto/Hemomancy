@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+
 class QliphothSeedItemRendererSourceTest {
 	private static final Path ENTITY_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/QliphothSeedItemEntityRenderer.java");
@@ -42,7 +45,7 @@ class QliphothSeedItemRendererSourceTest {
 				itemRenderer, "LENGTH_SCALE = 1.7f");
 		assertContains("seed body should close to a point at its tips",
 				itemRenderer, "TIP_SHARPNESS");
-		assertDoesNotContain("seed body should no longer lie on its side",
+		assertNotContains("seed body should no longer lie on its side",
 				itemRenderer, "HORIZONTAL_SCALE");
 		assertContains("seed body should keep a smaller seed scale than the pome",
 				itemRenderer, "SEED_RADIUS");
@@ -92,30 +95,17 @@ class QliphothSeedItemRendererSourceTest {
 				tendrilEffects, "withWrithe(0.1F * scale, 0.2F");
 		assertContains("dropped seed renderer should include pulse in root endpoint angles",
 				tendrilEffects, "animatedAngle(gameTime, index, pulse)");
-		assertDoesNotContain("seed renderer should not use a tiny fixed root angle table",
+		assertNotContains("seed renderer should not use a tiny fixed root angle table",
 				tendrilEffects, "ROOT_ANGLES");
-		assertDoesNotContain("seed renderer should not keep its old local quad tendril count",
+		assertNotContains("seed renderer should not keep its old local quad tendril count",
 				entityRenderer, "TENDRIL_COUNT");
-		assertDoesNotContain("seed renderer should not keep old local tendril drawing",
+		assertNotContains("seed renderer should not keep old local tendril drawing",
 				entityRenderer, "drawTendril");
-		assertDoesNotContain("seed renderer should not keep old cross-quad drawing",
+		assertNotContains("seed renderer should not keep old cross-quad drawing",
 				entityRenderer, "drawCrossQuad");
-		assertDoesNotContain("seed renderer should not use Hemomancy's local Qliphoth render type for roots",
+		assertNotContains("seed renderer should not use Hemomancy's local Qliphoth render type for roots",
 				entityRenderer, "HemoRenderTypes.QLIPHOTH_CORE");
-		assertDoesNotContain("seed item model should not be the old flat sprite",
+		assertNotContains("seed item model should not be the old flat sprite",
 				itemModel, "\"parent\": \"item/generated\"");
 	}
-
-	private static void assertContains(String label, String haystack, String needle) {
-		if (!haystack.contains(needle)) {
-			throw new AssertionError(label + " (missing '" + needle + "')");
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String haystack, String needle) {
-		if (haystack.contains(needle)) {
-			throw new AssertionError(label + " (still contains '" + needle + "')");
-		}
-	}
-
 }

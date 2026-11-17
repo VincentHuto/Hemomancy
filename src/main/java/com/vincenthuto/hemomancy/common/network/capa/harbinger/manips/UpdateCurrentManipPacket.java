@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import net.minecraft.network.FriendlyByteBuf;
@@ -45,8 +44,7 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 						return;
 					}
 					known.setSelectedManip(target);
-					boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
-							&& CellHandFormHelper.applySelection(player, target);
+					boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target);
 					if (applied) player.displayClientMessage(Component.translatable("message.hemomancy.update_current_manip_packet.selected", target.getDisplayName()), true);
 					KnownManipulationEvents.syncPlayerEvent(player);
 					ManipulationDiagnosticsSync.sync((ServerPlayer) player);

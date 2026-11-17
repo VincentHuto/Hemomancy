@@ -56,6 +56,7 @@ public final class ClientExtensionsRegistrar {
         };
 
         FluidClientExtensions.register(event);
+        MorphlingEffectClientExtensions.register(event);
 
         for (Item item : BuiltInRegistries.ITEM) {
             if (!BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(Hemomancy.MOD_ID)) {

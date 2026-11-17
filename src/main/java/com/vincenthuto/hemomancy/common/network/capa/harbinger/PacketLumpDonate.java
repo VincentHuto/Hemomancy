@@ -23,7 +23,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * Client → Server: Player requests a one-time lump donation to the shared bloodline pool.
  */
 public class PacketLumpDonate implements CustomPacketPayload {
-	private static final BloodAccounting.Source DONATION = BloodAccounting.Source.of("bloodline_donation", Category.BLOODLINE, false, false);
+	private static final BloodAccounting.Source DONATION = BloodAccounting.Source.of("bloodline_donation", Category.BLOODLINE, false);
 
 	public static final Type<PacketLumpDonate> TYPE = new Type<>(Hemomancy.rloc("packet_lump_donate"));
 	public static final StreamCodec<FriendlyByteBuf, PacketLumpDonate> STREAM_CODEC = StreamCodec.of(PacketLumpDonate::encode, PacketLumpDonate::decode);
@@ -57,17 +57,22 @@ public class PacketLumpDonate implements CustomPacketPayload {
 				return;
 			}
 
-			double donateAmount = BloodVolumeTransferRules.donationAmount(msg.amount, volume.getBloodVolume());
+			ServerLevel overworld = player.server.overworld();
+			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+			Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+			if (globalLine == null) return;
+			// A full pool takes nothing; the client greys the control, so nothing is said.
+			double poolRoom = globalLine.getMaxBloodVolume() - globalLine.getBloodVolume();
+			if (poolRoom <= 0) return;
+
+			double donateAmount = BloodVolumeTransferRules.donationAmount(msg.amount, volume.getBloodVolume(), poolRoom);
 			if (donateAmount <= 0) {
 				player.displayClientMessage(
 						Component.translatable("message.hemomancy.packet_lump_donate.not_enough_blood_to_donate").withStyle(ChatFormatting.RED), true);
 				return;
 			}
 
-			ServerLevel overworld = player.server.overworld();
-			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-			Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
-			if (globalLine != null && BloodAccounting.pay(player, donateAmount, DONATION).satisfied()) {
+			if (BloodAccounting.pay(player, donateAmount, DONATION).satisfied()) {
 					globalLine.contributeBlood((float) donateAmount);
 					savedData.setDirty();
 

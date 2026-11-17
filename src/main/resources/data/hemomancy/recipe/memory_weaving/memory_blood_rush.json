@@ -8,14 +8,14 @@
     "enzymes":  {
                     "animus":  1,
                     "flammeus":  1,
-                    "ductilis":  1,
+                    "ductilis":  0,
                     "lux":  0,
-                    "mortem":  1,
-                    "congeatio":  1,
-                    "ferric":  1,
-                    "tenebris":  1
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  0,
+                    "tenebris":  0
                 },
-    "blood":  350,
+    "blood":  100,
     "result":  "hemomancy:memory_blood_rush",
     "count":  1
 }

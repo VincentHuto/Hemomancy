@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.util.FlightArbiter;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -11,6 +12,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class ElytraEffect extends MobEffect {
+	private static final ParticleColor PALE_SPORE = new ParticleColor(214, 196, 150);
+
 	public ElytraEffect() {
 		super(MobEffectCategory.BENEFICIAL, 0);
 	}
@@ -78,7 +81,8 @@ public class ElytraEffect extends MobEffect {
 				if (player.level().isClientSide) {
 					pos = player.position().add(look.scale(3.0D));
 					for (int i = 0; i < 5; ++i) {
-						player.level().addParticle(ParticleTypes.MYCELIUM, pos.x - 0.5D + Math.random(),
+						player.level().addParticle(HemoParticleData.emberSpark(PALE_SPORE, 0.031F, 0.6F, 14),
+								pos.x - 0.5D + Math.random(),
 								pos.y - 0.5D + Math.random(), pos.z - 0.5D + Math.random(), -look.x, -look.y, -look.z);
 					}
 				}

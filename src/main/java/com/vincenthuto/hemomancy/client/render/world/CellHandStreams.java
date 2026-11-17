@@ -85,6 +85,19 @@ public final class CellHandStreams {
     }
 
     /**
+     * Where a cord or strand leaves {@code caster}'s body this frame: the drawn palm ({@link #livePalm}), else the shared
+     * rules' hand on the {@code leftArm} side. The first-person palm is only used when this view is the caster's own eyes.
+     */
+    public static Vec3 palm(net.minecraft.world.entity.LivingEntity caster, boolean leftArm, float partial) {
+        var mc = Minecraft.getInstance();
+        boolean borrowedView = caster == mc.player && mc.getCameraEntity() != caster;
+        Vec3 live = borrowedView ? null : livePalm(caster);
+        if (live != null) return live;
+        return com.vincenthuto.hemomancy.common.manipulation.verb.strand.StrandCue.hand(caster.getEyePosition(partial),
+                caster.getViewVector(partial), caster.getViewYRot(partial), leftArm);
+    }
+
+    /**
      * A Living Staff channels the cell hands' utilities through its head: where that head is drawn this frame while
      * {@code player} holds the staff in use, or null when they are not or that hand was not drawn just now.
      */

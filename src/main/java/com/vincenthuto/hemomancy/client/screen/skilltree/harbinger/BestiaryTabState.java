@@ -9,11 +9,14 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 public class BestiaryTabState {
+	/** Creatures met (P6) list first, then the Alchemist's specimen roster, then morphling strains. */
 	enum Kind {
+		CREATURE,
 		SPECIMEN,
 		MORPHLING
 	}
@@ -34,6 +37,10 @@ public class BestiaryTabState {
 	int recordedSpecimenCount;
 	int surrenderedSpecimenCount;
 	int recordedMorphlingLayerCount;
+	/** Kinds the player has met, read and studied (P6): every profiled kind, the roster's included. */
+	int metCount;
+	int readCount;
+	int studiedCount;
 	float previewPanX;
 	float previewPanY;
 	float previewZoom = 1.0F;
@@ -53,8 +60,18 @@ public class BestiaryTabState {
 
 	void rebuild(Set<String> recordedSpecimens, Set<String> surrenderedSpecimens, Set<String> recordedMorphlingLayers,
 			Function<String, String> titleOf) {
+		rebuild(recordedSpecimens, surrenderedSpecimens, recordedMorphlingLayers, Map.of(), titleOf);
+	}
+
+	/**
+	 * As above, with {@code metCreatures}: each met kind outside the specimen roster, by its id, with its name's lang
+	 * key. Each gets a generated dossier (P6); unmet kinds are never listed, so nothing spoils a boss or a person.
+	 */
+	void rebuild(Set<String> recordedSpecimens, Set<String> surrenderedSpecimens, Set<String> recordedMorphlingLayers,
+			Map<String, String> metCreatures, Function<String, String> titleOf) {
 		String selectedKey = selectedEntry() == null ? "" : selectedEntry().key();
 		entries.clear();
+		metCreatures.forEach((id, titleKey) -> entries.add(new Entry(Kind.CREATURE, id, titleKey, "", "", "", true, false)));
 		for (SpecimenBestiaryDefinitions.ResearchEntry entry : SpecimenBestiaryDefinitions.orderedResearchEntries()) {
 			String id = entry.id().toString();
 			entries.add(new Entry(Kind.SPECIMEN, id, entry.titleKey(), entry.descriptionKey(), entry.sourceKey(),
@@ -149,7 +166,7 @@ public class BestiaryTabState {
 	record Entry(Kind kind, String key, String titleKey, String descriptionKey, String sourceKey, String classificationKey,
 			boolean discovered, boolean surrendered) {
 		ResourceLocation previewId() {
-			if (kind != Kind.SPECIMEN) {
+			if (kind == Kind.MORPHLING) {
 				return null;
 			}
 			return ResourceLocation.tryParse(key);

@@ -113,17 +113,13 @@ public final class ThermalCastReview {
                 com.vincenthuto.hemomancy.common.event.LastRiteHelper.arm(player,com.vincenthuto.hemomancy.common.event.LastRiteHelper.PHOENIX_DEBT_ID);
                 var damage=new net.neoforged.neoforge.event.entity.living.LivingDamageEvent.Pre(player,
                         new net.neoforged.neoforge.common.damagesource.DamageContainer(player.damageSources().generic(),40));
-                ManipulationReactiveEvents.onFinalDamage(damage);cast=player.getHealth()==1;
+                cast=ManipulationReactiveEvents.tryPhoenixDebt(player,damage);
             } else cast=spell.tryPerformAction(player,player.level(),player.getMainHandItem(),player.blockPosition(),spell.getRequiredChargeTicks());
             if(!cast)throw new IllegalStateException("Thermal review cast rejected: "+name);
             org.slf4j.LoggerFactory.getLogger(ThermalCastReview.class).info("THERMAL CAST {} blood {} -> {}",name,before,HemoCapabilityAccess.getBloodVolume(player).getBloodVolume());
         });
         if(phase==60)mc.getSingleplayerServer().execute(()->{
             var player=mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());if(player==null)return;
-            if(name.equals("endless_hour")) {
-                com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip.accumulateDeferredDamage(player,8);
-                com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip.settleDebt(player);
-            }
             if(name.equals("furnace_veins") || name.equals("absolute_stillness"))ManipulationChannelManager.stop(player);
             var target=player.level().getEntity(targetId);if(target!=null)target.setDeltaMovement(.06,0,0);
             if(!npcOnly && EntityManipulationEffects.isSupported(ManipulationInit.getByName(name)))castNpc(player,name);

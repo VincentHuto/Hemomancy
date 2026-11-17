@@ -3,14 +3,12 @@ package com.vincenthuto.hemomancy.client.render.world;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 /** Wiring for the Blood Shot flight body and splash. */
 class BloodShotVisualSourceTest {
-    private static final Path ROOT = Path.of("").toAbsolutePath();
     private static final String WORLD = "src/main/java/com/vincenthuto/hemomancy/client/render/world/";
 
     @Test void splashFormIsAppendedAndDrawnBeforeTheSharedBloodTier() throws IOException {
@@ -85,9 +83,5 @@ class BloodShotVisualSourceTest {
             assertTrue(entity.contains("super.shoot(x, y, z, velocity, inaccuracy);\n        syncLaunchVelocity();"), name);
             assertTrue(entity.contains("if (velocity.lengthSquared() > 0) setDeltaMovement(velocity.x, velocity.y, velocity.z);"), name);
         }
-    }
-
-    private static String read(String path) throws IOException {
-        return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
     }
 }

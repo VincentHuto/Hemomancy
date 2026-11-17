@@ -2,9 +2,10 @@ package com.vincenthuto.hemomancy.common.entity.boss.saint;
 
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SaintSarcophagusBlock;
+import com.vincenthuto.hemomancy.common.event.ApotheosBodyEvents;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -12,6 +13,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.List;
 
 public final class HarbingerSaintEncounterHooks {
 
@@ -37,10 +40,12 @@ public final class HarbingerSaintEncounterHooks {
 				? tomb.getValue(SaintSarcophagusBlock.FACING).toYRot() : level.random.nextFloat() * 360.0F;
 		boss.moveTo(pos.getX() + centre[0], pos.getY(), pos.getZ() + centre[2], facing, 0.0F);
 		boss.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null);
-		if (level.getBlockEntity(pos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity record) {
-			boss.setAwakening(SaintEnrageRules.effectiveMode(record.doorMode().name(),
-					com.vincenthuto.hemomancy.common.event.ApotheosBodyEvents.isApotheos(sourcePlayer)), record.skippedChapels(),
+		if (level.getBlockEntity(pos) instanceof SaintSarcophagusBlockEntity record) {
+			List<Boolean> chamber = SaintArena.resolve(boss).challengers().stream().map(ApotheosBodyEvents::isApotheos).toList();
+			boolean apotheos = SaintEnrageRules.apotheosPresent(ApotheosBodyEvents.isApotheos(sourcePlayer), chamber);
+			boss.setAwakening(SaintEnrageRules.effectiveMode(record.doorMode().name(), apotheos), record.skippedChapels(),
 					record.doorMode().name());
+			boss.rememberTombSampled(record.hasSampleYielded());
 		}
 		boss.setPersistenceRequired();
 		boss.setCustomName(Component.translatable("message.hemomancy.saint.saint_s", saintType.getDisplayName()));
@@ -52,8 +57,6 @@ public final class HarbingerSaintEncounterHooks {
 		boss.beginRise();
 		if (!level.addFreshEntity(boss)) return false;
 		BossScenes.play(boss, BossPresentationIds.SCENE_SAINT_RISE);
-		// Reset blood debt only after the encounter exists so a failed spawn cannot erase player state.
-		HemoCapabilityAccess.getBloodVolume(sourcePlayer).resetBloodDebt();
 		return true;
 	}
 

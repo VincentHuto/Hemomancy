@@ -76,7 +76,8 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 		}
 		if (!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.hasPersonalAccess(player, station.getBlockState().getBlock())
 				&& recipe != null && !recipe.getResultItem().is(
-						com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson.forPlayer(player).scar().get())) {
+						com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson.issued(player,
+								com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson.Slot.FIRST).scar().get())) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.packet_scar_crafting_event.supervised_access_is_for_your_first"), false);
 			return;
 		}

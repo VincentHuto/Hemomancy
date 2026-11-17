@@ -38,4 +38,21 @@ class DialogueHubLayoutTest {
 				hub.leave().x());
 		assertTrue(hub.leave().width() < shell.footer().width() / 2);
 	}
+
+	@Test
+	void cardsGrowToTheLongestSummaryAndTheImportantTabFollowsThem() {
+		DialogueLayout shell = DialogueLayout.calculate(854, 480);
+		DialogueHubLayout plain = DialogueHubLayout.calculate(shell);
+		DialogueHubLayout grown = DialogueHubLayout.calculate(shell, 8);
+
+		int summaryBottom = DialogueHubLayout.SUMMARY_Y + 7 * DialogueHubLayout.SUMMARY_LINE + 8;
+		for (DialogueLayout.Rect card : grown.cards()) {
+			assertTrue(card.height() >= summaryBottom, "eight summary lines fit in a card");
+		}
+		assertTrue(grown.cards().getFirst().height() > plain.cards().getFirst().height());
+		assertTrue(grown.important().y() >= grown.cards().getLast().bottom() + DialogueActionGlow.HALO,
+				"the Important tab moves below the grown cards");
+		assertEquals(plain.cards().getFirst().height(), DialogueHubLayout.calculate(shell, 1).cards().getFirst().height(),
+				"one line needs no growth");
+	}
 }

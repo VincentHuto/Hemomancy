@@ -17,6 +17,16 @@ class HarbingerPathPermissionsTest {
 	}
 
 	@Test
+	void theWarningComesAtTheEighthPomeOfTheSameTotalTheLockReads() {
+		assertTrue(HarbingerPathPermissions.nextPomeLocks(8, EnumArchonPath.NONE));
+		assertTrue(HarbingerPathPermissions.nextPomeLocks(8, EnumArchonPath.SILENT_PENDING));
+		assertFalse(HarbingerPathPermissions.nextPomeLocks(7, EnumArchonPath.NONE));
+		assertFalse(HarbingerPathPermissions.nextPomeLocks(9, EnumArchonPath.NONE), "already locked");
+		assertFalse(HarbingerPathPermissions.nextPomeLocks(8, EnumArchonPath.APOTHEOS), "a finished path is never locked");
+		assertFalse(HarbingerPathPermissions.nextPomeLocks(8, EnumArchonPath.SILENTIUM));
+	}
+
+	@Test
 	void eachEighthDegreePathIsNamedOnlyByItsOwnFlag() {
 		assertTrue(HarbingerPathPermissions.isApotheos(8, EnumArchonPath.APOTHEOS));
 		assertFalse(HarbingerPathPermissions.isApotheos(7, EnumArchonPath.APOTHEOS));
@@ -24,8 +34,9 @@ class HarbingerPathPermissionsTest {
 	}
 
 	@Test
-	void teachersGreetASilentiumWithTheArchonTreeNotTheApotheosOne() {
-		assertEquals(7, HarbingerPathPermissions.greetingDegree(8, EnumArchonPath.SILENTIUM));
+	void aSilentiumKeepsTheEighthDegreeAtTheTeachersAndOnlyAnUnfinishedEighthHearsTheArchon() {
+		assertEquals(8, HarbingerPathPermissions.greetingDegree(8, EnumArchonPath.SILENTIUM), "PT-83: a tree of their own");
+		assertEquals(7, HarbingerPathPermissions.greetingDegree(8, EnumArchonPath.NONE));
 		assertEquals(8, HarbingerPathPermissions.greetingDegree(8, EnumArchonPath.APOTHEOS));
 		assertEquals(7, HarbingerPathPermissions.greetingDegree(7, EnumArchonPath.SILENT_PENDING));
 		assertEquals(3, HarbingerPathPermissions.greetingDegree(3, EnumArchonPath.NONE));

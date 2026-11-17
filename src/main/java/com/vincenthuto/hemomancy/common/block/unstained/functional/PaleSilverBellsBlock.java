@@ -1,12 +1,13 @@
 package com.vincenthuto.hemomancy.common.block.unstained.functional;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPacingRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -230,12 +231,12 @@ public class PaleSilverBellsBlock extends Block implements SimpleWaterloggedBloc
 		level.playSound(null, pos, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0f, 0.9f);
 		level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.3f);
 		if (level instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.END_ROD,
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_SILVER),
 					pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-					32, 0.35, 0.6, 0.35, 0.03);
-			serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+					32, 0.35, 0.6, 0.35, 0.015);
+			serverLevel.sendParticles(HemoParticleData.emberSpark(HemoPalette.STILL_WHITE, 0.031F, 1F, 24),
 					pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
-					16, 0.45, 0.45, 0.45, 0.06);
+					16, 0.45, 0.45, 0.45, 0.03);
 		}
 		player.displayClientMessage(Component.translatable("hemomancy.silver_bells.chimed"), false);
 

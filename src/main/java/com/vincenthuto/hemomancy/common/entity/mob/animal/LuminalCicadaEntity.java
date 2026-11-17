@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -33,6 +34,7 @@ import java.util.EnumSet;
 
 public class LuminalCicadaEntity extends PathfinderMob {
 	private static final byte FLASH_EVENT = 62;
+	private static final ParticleColor FLASH_LIGHT = new ParticleColor(255, 240, 210);
 	private static final EntityDataAccessor<Byte> DATA_CLING_FACE = SynchedEntityData.defineId(
 			LuminalCicadaEntity.class, EntityDataSerializers.BYTE);
 	private BlockPos clingLog;
@@ -124,10 +126,10 @@ public class LuminalCicadaEntity extends PathfinderMob {
 		this.level().broadcastEntityEvent(this, FLASH_EVENT);
 		this.playSound(SoundEvents.FIREWORK_ROCKET_BLAST, 0.65F, 1.8F);
 		if (this.level() instanceof ServerLevel server) {
-			server.sendParticles(ParticleTypes.FLASH, this.getX(), this.getY() + 0.2D, this.getZ(),
+			server.sendParticles(HemoParticleData.hitGlow(FLASH_LIGHT), this.getX(), this.getY() + 0.2D, this.getZ(),
 					1, 0.0D, 0.0D, 0.0D, 0.0D);
-			server.sendParticles(ParticleTypes.END_ROD, this.getX(), this.getY() + 0.2D, this.getZ(),
-					18, 0.45D, 0.35D, 0.45D, 0.08D);
+			server.sendParticles(HemoParticleData.emberSpark(FLASH_LIGHT, 0.031F, 1.0F, 24),
+					this.getX(), this.getY() + 0.2D, this.getZ(), 18, 0.45D, 0.35D, 0.45D, 0.04D);
 		}
 	}
 

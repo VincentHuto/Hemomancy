@@ -8,7 +8,7 @@ Buried ichor veins also occur outside the Basin. Their cores and scab shells rem
 
 At Degree 5, the Alchemist requests a blood sample from either an Excoriated or a Phlegethontic Bombardier and five carried Escharian Scyphus items. This optional Side assignment does not grant permission to enter the Nether or gate promotion. Ask the Alchemist for a Basin bearing from your current Nether position or its Overworld-aligned coordinates.
 
-Use the Living Syringe to collect the sample. Sneak-use it to eject the rack, use the rack on an idle Vial Centrifuge you have personally crafted, then open the machine and remove the vial without spinning. Hold that vial in your main hand when reporting. Microscope identification is optional. The Alchemist retains neither the sample nor the five plants; completed reports remain recorded without carrying the proof afterward.
+Use the Living Syringe to collect the sample. Sneak-use it to eject the rack, use the rack on an idle Vial Centrifuge you have personally crafted, then open the machine and remove the vial without spinning. Hold that vial in either hand when reporting. Microscope identification is optional. The Alchemist retains neither the sample nor the five plants; completed reports remain recorded without carrying the proof afterward.
 
 ## Escharian Overgrowth
 
@@ -50,7 +50,7 @@ Initial loot uses bones and existing sanguine formations. There is no new progre
 
 ## Phlegethosoma — The Arterial Fluke
 
-Phlegethosoma is a long, narrow blood fluke that swims rapidly through ichor. A small sucker head leads a flexible, frilled body and tapering ribbon tail; waves of muscular contraction drive its movement. It is much slower on land. It is a rare, solitary encounter that can return through natural spawning in explored Basins. Fighting it requires no faction, degree, or active blood magic. Its emergence displays a brief title while it remains passive; player movement stays available.
+Phlegethosoma is a long, narrow blood fluke that swims rapidly through ichor. A small sucker head leads a flexible, frilled body and tapering ribbon tail; waves of muscular contraction drive its movement. It is much slower on land. It never appears on its own. A player with awake blood calls it by holding Blood Projection on a broad pool of Basin ichor (7 by 7) until 500 mL has gone in, about 14 seconds; a short pause is forgiven, because the count only fades by half in 45 seconds. It rises at the pour and turns on its caller. One lives in a Basin at a time, and each player can have one out at a time. Left with nothing to fight for a minute, it dives and is gone, with no loot. Nothing answers in Peaceful. The Alchemist's D5 Basin commission and a Liber Sanguinium page (Cosmic Forces) say how. Its emergence displays a brief title while it remains passive; player movement stays available.
 
 The animal braces before drawing prey toward its mouth. Retreat, circle outside its frontal reach, or shelter behind stone or its own coagulum clots. Deal six direct attack damage while it braces or pulls to interrupt it and gain a stagger window. Suction preserves jumping and is suppressed at unsafe drops and lava. The close feeding bite briefly slows rather than mounting or immobilizing its victim.
 

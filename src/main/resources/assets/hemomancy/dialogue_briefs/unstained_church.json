@@ -159,6 +159,18 @@
   "about": "the name of the Vigilant clarity stage of the Unstained path, shown as a stage label",
   "tone": "plain label"
  },
+ "hemomancy.dialogue.acolyte.observance.active": {
+  "about": "the Acolyte telling the player they already carry this observance, the book shows what remains, and to return with the offering",
+  "tone": "warm, hedged"
+ },
+ "hemomancy.dialogue.acolyte.observance.available": {
+  "about": "the Acolyte offering to enter an observance in the player's book with its offering and reward, only if they mean to finish it",
+  "tone": "warm, hedged"
+ },
+ "hemomancy.dialogue.acolyte.observance.ready": {
+  "about": "the Acolyte seeing the work is done and asking for the offering so the observance can be marked fulfilled",
+  "tone": "warm, hedged"
+ },
  "hemomancy.dialogue.acolyte.option.about_clarity": {
   "about": "asking the Acolyte what comes after purity",
   "tone": "curious, quiet"
@@ -254,6 +266,18 @@
  "hemomancy.dialogue.event.unstained_starter_granted": {
   "about": "a system message that the Zealot supplies the missing entry kit: two Hemolytic Solutions and the Liber Immaculatus, one solution for the Podium and one for making Cleansed Stone",
   "tone": "plain, instructive"
+ },
+ "hemomancy.dialogue.guardian.observance.active": {
+  "about": "the Guardian telling the player they already carry this observance, the book shows what remains, and to return with the offering",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.dialogue.guardian.observance.available": {
+  "about": "the Guardian offering to enter an observance in the player's book with its offering and reward, only if they mean to finish it",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.dialogue.guardian.observance.ready": {
+  "about": "the Guardian seeing the work is done and asking for the offering so the observance can be marked fulfilled",
+  "tone": "clipped, imperative"
  },
  "hemomancy.dialogue.guardian.option.ask_about_item": {
   "about": "telling the Guardian the player has a question about something they found",
@@ -423,17 +447,17 @@
   "about": "asking the Scout what happened to her",
   "tone": "gentle, concerned"
  },
- "hemomancy.dialogue.unstained.observance.active": {
-  "about": "an Unstained speaker telling the player they already carry this observance, that their book shows what remains, and to return when the offering is ready",
-  "tone": "calm, practical"
+ "hemomancy.dialogue.zealot.observance.active": {
+  "about": "the Zealot telling the player they already carry this observance, the book shows what remains, and to return with the offering",
+  "tone": "probing, plain"
  },
- "hemomancy.dialogue.unstained.observance.available": {
-  "about": "an Unstained speaker offering to enter an observance in the player's book with its offering and reward, only if the player means to finish it",
-  "tone": "solemn, measured"
+ "hemomancy.dialogue.zealot.observance.available": {
+  "about": "the Zealot offering to enter an observance in the player's book with its offering and reward, only if they mean to finish it",
+  "tone": "probing, plain"
  },
- "hemomancy.dialogue.unstained.observance.ready": {
-  "about": "an Unstained speaker saying the work is done and asking for the offering so the observance can be marked fulfilled",
-  "tone": "warm, formal"
+ "hemomancy.dialogue.zealot.observance.ready": {
+  "about": "the Zealot seeing the work is done and asking for the offering so the observance can be marked fulfilled",
+  "tone": "probing, plain"
  },
  "hemomancy.dialogue.zealot.option.about_altar": {
   "about": "asking the Zealot about the Altar of Cleansing",

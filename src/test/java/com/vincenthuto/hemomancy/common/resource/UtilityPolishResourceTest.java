@@ -1,11 +1,16 @@
 package com.vincenthuto.hemomancy.common.resource;
 
+import org.junit.jupiter.api.Test;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class UtilityPolishResourceTest {
 	private static final Path ROOT = Path.of("src/main/resources");
@@ -16,7 +21,8 @@ public final class UtilityPolishResourceTest {
 	private UtilityPolishResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertObjectModel("ossuary clock", ASSETS.resolve("models/block/ossuary_clock.json"), 8);
 		assertObjectModel("humoral barometer", ASSETS.resolve("models/block/humoral_barometer.json"), 5);
 		assertObjectModel("mnemonic candle bowl", ASSETS.resolve("models/block/mnemonic_candle.json"), 3);
@@ -56,7 +62,9 @@ public final class UtilityPolishResourceTest {
 				"WEST_SHAPE = Block.box(0.0D, 0.0D, 3.0D, 2.5D, 16.0D, 13.0D)");
 		assertContains("east-facing barometer shape hugs east wall", block,
 				"EAST_SHAPE = Block.box(13.5D, 0.0D, 3.0D, 16.0D, 16.0D, 13.0D)");
-		assertContains("barometer blockstate has north variant", blockstate, "facing=north");
+		// A multipart since core-loop Track 10: the body by facing, the needle by facing and pressure band.
+		assertContains("barometer blockstate has north variant", blockstate, "\"facing\": \"north\"");
+		assertContains("barometer needle reads the pressure band", blockstate, "humoral_barometer_needle_4");
 		assertContains("barometer blockstate has rotation", blockstate, "\"y\": 180");
 	}
 
@@ -199,12 +207,14 @@ public final class UtilityPolishResourceTest {
 		assertContains("ossuary clock rotates facing", block, "rotation.rotate(state.getValue(FACING))");
 		assertContains("ossuary clock places upper filler half", block, "pos.above()");
 		assertContains("ossuary clock avoids floor face culling voids", block, "getOcclusionShape");
-		assertContains("ossuary clock blockstate has lower half model", blockstate, "half=lower");
-		assertContains("ossuary clock blockstate has upper half model", blockstate, "half=upper");
-		assertContains("ossuary clock blockstate rotates north facing", blockstate, "facing=north");
-		assertContains("ossuary clock blockstate rotates east facing", blockstate, "facing=east");
-		assertContains("ossuary clock blockstate rotates south facing", blockstate, "facing=south");
-		assertContains("ossuary clock blockstate rotates west facing", blockstate, "facing=west");
+		// A multipart since core-loop Track 10: each storey by facing, and the lunette by facing and omen.
+		assertContains("ossuary clock blockstate has lower half model", blockstate, "\"half\": \"lower\"");
+		assertContains("ossuary clock blockstate has upper half model", blockstate, "\"half\": \"upper\"");
+		assertContains("ossuary clock blockstate rotates north facing", blockstate, "\"facing\": \"north\"");
+		assertContains("ossuary clock blockstate rotates east facing", blockstate, "\"facing\": \"east\"");
+		assertContains("ossuary clock blockstate rotates south facing", blockstate, "\"facing\": \"south\"");
+		assertContains("ossuary clock blockstate rotates west facing", blockstate, "\"facing\": \"west\"");
+		assertContains("ossuary clock lunette shows the omen", blockstate, "ossuary_clock_lunette_risen");
 		assertNotContains("ossuary clock lower model must not render through upper filler space", lowerModel, "32");
 		assertNotContains("ossuary clock lower model must stay inside lower block light volume", lowerModel, "29");
 		assertContains("ossuary clock upper half renders its own geometry", upperModel, "\"from\"");
@@ -260,22 +270,6 @@ public final class UtilityPolishResourceTest {
 					throw new AssertionError("non-legacy dicentra sap data reference remains: " + path);
 				}
 			}
-		}
-	}
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
 		}
 	}
 }

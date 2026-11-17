@@ -100,6 +100,8 @@ import java.util.UUID;
 public final class HarbingerJourneyFixtureGameTests {
 	private static final String EMPTY_TEMPLATE = "bastion/mobs/empty";
 	private static final String CLEAN_TEMPLATE = "empty";
+	/** An all-air 32 x 18 x 32 room that holds a journey fixture at (14, 3, 14) and its whole volume. */
+	private static final String OPEN_ROOM = "open_room";
 	private static final net.minecraft.server.level.TicketType<UUID> JOURNEY_FIXTURE_TICKET =
 			net.minecraft.server.level.TicketType.create("hemomancy_journey_fixture", UUID::compareTo);
 	private static final String FIXTURES_CLASS =
@@ -232,7 +234,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 40)
 	public static void firstRemnantJourneyUsesRealInscriptionAndRestoresKnowledge(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
@@ -309,7 +311,7 @@ public final class HarbingerJourneyFixtureGameTests {
 							+ helper.getLevel().getBlockState(origin.above(2)));
 			helper.assertTrue(BloodStructureFeedManager.feedStructure(player, helper.getLevel(), origin.above(2),
 					player.getOffhandItem(), 150.0D), "The real Living Staff structure must accept projection");
-			for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick();
+			for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick(helper.getLevel());
 			HemoJourneyResult crafted = HemoJourneyChecks.verify(player,
 					HemoJourneyStage.LIVING_STAFF_CRAFTED, origin);
 			helper.assertTrue(crafted.passed(),
@@ -353,7 +355,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 60)
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 60)
 	public static void assumedLimbJourneyUsesRealGraftRitesAndRestoresState(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
@@ -400,7 +402,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		player.stopUsingItem();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 80)
 	public static void bodyAnswersJourneyUsesRealRecipeAndRestoresState(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
@@ -466,7 +468,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 80)
 	public static void redTaxonomyJourneyUsesFourRealTurnIns(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
@@ -506,7 +508,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 80)
 	public static void livingBestiaryJourneyUsesRealCaptureRecordAndSurrender(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
@@ -563,7 +565,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 40)
 	public static void hyphaeDiscoveryJourneyUsesRealItemPickup(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
@@ -686,7 +688,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 180,
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 180,
 			batch = "journeyThreeAnswers")
 	public static void threeAnswersJourneyUsesRealForkAndDialogue(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
@@ -824,7 +826,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		throw new AssertionError("No supplied empty Specimen Jar remains");
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 180,
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 180,
 			batch = "journeyCrimsonVestment")
 	public static void crimsonVestmentJourneyUsesRealConsecrationUpgradeAndDialogue(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
@@ -938,7 +940,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 40)
 	public static void enzymeMasteryJourneyUsesRealInventoryTick(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
@@ -956,7 +958,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = OPEN_ROOM, timeoutTicks = 40)
 	public static void noeticRecognitionJourneyUsesRealMnemonistInteraction(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));

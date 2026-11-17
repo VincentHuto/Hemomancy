@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 
 public class HematicMemoryToolItem extends Item {
-    private static final BloodAccounting.Source MEMORY_TOOL = BloodAccounting.Source.of("hematic_memory_tool", Category.TOOL, false, false);
+    private static final BloodAccounting.Source MEMORY_TOOL = BloodAccounting.Source.of("hematic_memory_tool", Category.TOOL, false);
     private final int requiredDegree;
 
     public HematicMemoryToolItem(Properties properties, int requiredDegree) {

@@ -7,7 +7,7 @@
     {
       "id": "hemomancy:neurotic_enzyme",
       "count": 1,
-      "chance": 0.5
+      "chance": 0.25
     }
   ],
   "render_time": 100

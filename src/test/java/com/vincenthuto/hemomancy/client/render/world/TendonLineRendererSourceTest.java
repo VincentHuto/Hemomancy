@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class TendonLineRendererSourceTest {
 	private static final Path CLIENT_EVENTS = Path.of(
@@ -13,7 +17,8 @@ public final class TendonLineRendererSourceTest {
 	private TendonLineRendererSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String events = Files.readString(CLIENT_EVENTS);
 		assertContains("tendon line renderer is called during translucent world render", events,
 				"TendonLineRenderer.render(event.getPoseStack(), partialTick);");
@@ -22,29 +27,18 @@ public final class TendonLineRendererSourceTest {
 			throw new AssertionError("missing " + RENDERER);
 		}
 		String renderer = Files.readString(RENDERER);
-		assertContains("renderer reads tendon line anchor from held item", renderer, "TendonLineItem.readAnchor");
-		assertContains("renderer draws a world line strip", renderer, "RenderType.lineStrip()");
-		assertContains("renderer flushes line strip", renderer, "buffer.endBatch(RenderType.lineStrip())");
-		assertContains("renderer moves tendon origin toward held item", renderer, "HAND_FORWARD_OFFSET");
-		assertContains("renderer lowers tendon origin from shoulder height", renderer, "HAND_DOWN_OFFSET");
-		assertContains("renderer lowers third-person tendon origin separately", renderer,
-				"THIRD_PERSON_HAND_EXTRA_DROP");
-		assertContains("renderer preserves first-person tendon origin", renderer,
-				"mc.options.getCameraType().isFirstPerson()");
-		assertContains("renderer offsets tendon origin to the active hand", renderer, "HAND_SIDE_OFFSET");
-		assertNotContains("renderer should not anchor near the player's shoulder", renderer,
-				"player.getEyeHeight() * 0.78D");
-	}
-
-	private static void assertContains(String label, String source, String expected) {
-		if (!source.contains(expected)) {
-			throw new AssertionError(label + " missing: " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String source, String unexpected) {
-		if (source.contains(unexpected)) {
-			throw new AssertionError(label + " still contains: " + unexpected);
-		}
+		assertContains("renderer reads the tendon anchor from the player", renderer, "HemoCapabilityAccess.getTendonAnchor");
+		assertNotContains("the Tendon Line is no longer an item", renderer, "TendonLineItem");
+		assertContains("renderer opens the toolkit batch", renderer, "OutpouringBrushes.begin(time)");
+		assertContains("renderer flushes the toolkit batch", renderer, "OutpouringBrushes.flush(");
+		assertNotContains("no hairline strip for a focal tool", renderer, "RenderType.lineStrip()");
+		// Round two P11: every rooted line in the dimension is drawn (anchors reach trackers), from the drawn palm, as a
+		// sheathed body with one wound sinew, not from a guessed hand point.
+		assertContains("renderer draws every player's line", renderer, "mc.level.players()");
+		assertContains("renderer starts the cord at the drawn palm", renderer, "CellHandStreams.palm(");
+		assertNotContains("no guessed hand point", renderer, "HAND_FORWARD_OFFSET");
+		assertContains("the cord has a soft sheath", renderer, "OutpouringBrushes.WISP");
+		assertContains("one sinew wound along the whole cord", renderer, "sinew(path, time, pulseSpeed)");
+		assertContains("a haul pulls the cord taut", renderer, "VerbChannel.isChannelling(player, Verb.ABSORB)");
 	}
 }

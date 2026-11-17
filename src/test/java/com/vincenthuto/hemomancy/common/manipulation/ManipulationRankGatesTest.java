@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import org.junit.jupiter.api.Test;
+
 public final class ManipulationRankGatesTest {
 	private ManipulationRankGatesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertEquals("humilis degree", 0, ManipulationRankGates.minDegreeForRank(EnumManipulationRank.HUMILIS));
 		assertEquals("mediocritas degree", 1, ManipulationRankGates.minDegreeForRank(EnumManipulationRank.MEDIOCRITAS));
 		assertEquals("summa degree", 3, ManipulationRankGates.minDegreeForRank(EnumManipulationRank.SUMMA));

@@ -136,6 +136,12 @@ public class CourtProgress implements INBTSerializable<CompoundTag> {
 		return acts != null && acts.contains(actId);
 	}
 
+	/** Whether any act of {@code kind} has been counted toward standing with {@code house}. */
+	public boolean anyActCounted(CourtHouse house, CourtStandingRules.ActKind kind) {
+		Set<String> acts = standingActs.get(house);
+		return acts != null && acts.stream().anyMatch(act -> CourtStandingRules.kindOf(act) == kind);
+	}
+
 	public boolean lessonTaught() {
 		return lessonTaught;
 	}

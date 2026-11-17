@@ -1,16 +1,18 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.skill;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LivingStaffSkillSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private LivingStaffSkillSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String skillInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/SkillPointInit.java");
 		String staffBranch = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/LivingStaffSkillBranch.java");
 		String skillHelper = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/skill/SkillPointHelper.java");
@@ -102,16 +104,6 @@ public final class LivingStaffSkillSourceTest {
 		assertContains("quickened draw docs", docs, "Quickened Draw");
 		assertContains("hungry pulse docs", docs, "Hungry Pulse");
 		assertContains("arterial cadence docs", docs, "Arterial Cadence");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
 	}
 
 	private static void assertBefore(String label, String text, String first, String second) {

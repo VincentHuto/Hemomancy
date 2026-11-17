@@ -8,6 +8,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 final class DaemonDiffuseGlowParticleResourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
@@ -32,9 +33,5 @@ final class DaemonDiffuseGlowParticleResourceTest {
 		assertFalse(daemon.contains("case SMOKE -> ParticleTypes.SMOKE"));
 		assertTrue(Files.isRegularFile(ROOT.resolve(
 				"src/main/resources/assets/hemomancy/particles/daemon_diffuse_glow.json")));
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
 	}
 }

@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.decoration;
 
+import org.junit.jupiter.api.Test;
+
 public final class HouseholdReadoutRulesTest {
 	private HouseholdReadoutRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertEquals("dawn time band", "dawn", OssuaryClockReadout.timeBand(0));
 		assertEquals("day time band", "day", OssuaryClockReadout.timeBand(6000));
 		assertEquals("dusk time band", "dusk", OssuaryClockReadout.timeBand(12542));

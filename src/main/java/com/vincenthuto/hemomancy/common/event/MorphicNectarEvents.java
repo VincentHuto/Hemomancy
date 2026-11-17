@@ -9,10 +9,12 @@ import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleBursts;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
 import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,6 +44,10 @@ import java.util.List;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class MorphicNectarEvents {
 
+	private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
+	private static final ParticleColor CRIMSON_BRIGHT = new ParticleColor(214, 30, 46);
+	private static final ParticleColor CRIMSON_SPORE = new ParticleColor(150, 40, 58);
+	private static final ParticleColor PALE_SPORE = new ParticleColor(214, 196, 150);
 	private static final String TICKS_KEY = "hemomancy:morphic_nectar_ticks";
 	private static final String PRIMAL_TICKS_KEY = "hemomancy:primal_nectar_ticks";
 	private static final int PRIMAL_TRANSFORM_TIME = 200;
@@ -100,9 +106,9 @@ public class MorphicNectarEvents {
 
 		// Ambient particle pulse every 10 ticks
 		if (level instanceof ServerLevel serverLevel && ticks % 10 == 0) {
-			serverLevel.sendParticles(ParticleTypes.WITCH,
+			serverLevel.sendParticles(HemoParticleData.sporiticSpore(CRIMSON_SPORE),
 					itemEntity.getX(), itemEntity.getY() + 0.3, itemEntity.getZ(),
-					3, 0.15, 0.1, 0.15, 0.01);
+					3, 0.15, 0.1, 0.15, 0.005);
 		}
 
 		if (ticks < match.getTransformTime()) return;
@@ -113,9 +119,7 @@ public class MorphicNectarEvents {
 		MorphicNectarMutationRules.markMutated(result);
 
 		if (level instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.TOTEM_OF_UNDYING,
-					itemEntity.getX(), itemEntity.getY() + 0.5, itemEntity.getZ(),
-					20, 0.3, 0.3, 0.3, 0.1);
+			spawnMutationBurst(serverLevel, itemEntity, 0.05);
 			serverLevel.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME,
 					SoundSource.BLOCKS, 1.0f, 0.8f + level.random.nextFloat() * 0.4f);
 		}
@@ -125,6 +129,13 @@ public class MorphicNectarEvents {
 		resultEntity.setDefaultPickUpDelay();
 		level.addFreshEntity(resultEntity);
 		itemEntity.discard();
+	}
+
+	private static void spawnMutationBurst(ServerLevel level, ItemEntity itemEntity, double speed) {
+		level.sendParticles(HemoParticleData.hitGlow(CRIMSON_BRIGHT),
+				itemEntity.getX(), itemEntity.getY() + 0.5, itemEntity.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
+		HemoParticleBursts.outward(level, HemoParticleData.serpent(CRIMSON_SPORE),
+				itemEntity.getX(), itemEntity.getY() + 0.5, itemEntity.getZ(), 16, speed, 0.7);
 	}
 
 	private static boolean trySoakFruitingLure(ItemEntity itemEntity) {
@@ -157,18 +168,19 @@ public class MorphicNectarEvents {
 		data.putInt(PRIMAL_TICKS_KEY, ticks);
 
 		if (ticks % 10 == 0) {
-			serverLevel.sendParticles(ParticleTypes.MYCELIUM,
+			serverLevel.sendParticles(HemoParticleData.sporiticSpore(PALE_SPORE),
 					itemEntity.getX(), itemEntity.getY() + 0.3, itemEntity.getZ(),
-					5, 0.2, 0.12, 0.2, 0.02);
+					5, 0.2, 0.12, 0.2, 0.01);
 		}
 		if (ticks < PRIMAL_TRANSFORM_TIME) return true;
 
 		ItemStack result = stack.copy();
 		MorphlingItem.setPrimalized(result);
 		MorphicNectarMutationRules.markMutated(result);
-		serverLevel.sendParticles(ParticleTypes.TOTEM_OF_UNDYING,
+		spawnMutationBurst(serverLevel, itemEntity, 0.06);
+		serverLevel.sendParticles(HemoParticleData.bloodCell(BLOOD),
 				itemEntity.getX(), itemEntity.getY() + 0.5, itemEntity.getZ(),
-				28, 0.35, 0.35, 0.35, 0.12);
+				12, 0.35, 0.35, 0.35, 0.06);
 		serverLevel.playSound(null, pos, SoundEvents.SCULK_CATALYST_BLOOM,
 				SoundSource.BLOCKS, 1.0f, 0.8f + serverLevel.random.nextFloat() * 0.25f);
 

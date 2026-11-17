@@ -1,34 +1,211 @@
 {
-  "variants": {
-    "facing=north,half=lower": {
-      "model": "hemomancy:block/ossuary_clock"
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "half": "lower"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock"
+      }
     },
-    "facing=east,half=lower": {
-      "model": "hemomancy:block/ossuary_clock",
-      "y": 90
+    {
+      "when": {
+        "facing": "north",
+        "half": "upper"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_upper"
+      }
     },
-    "facing=south,half=lower": {
-      "model": "hemomancy:block/ossuary_clock",
-      "y": 180
+    {
+      "when": {
+        "facing": "north",
+        "half": "upper",
+        "omen": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_quiet"
+      }
     },
-    "facing=west,half=lower": {
-      "model": "hemomancy:block/ossuary_clock",
-      "y": 270
+    {
+      "when": {
+        "facing": "north",
+        "half": "upper",
+        "omen": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_omen"
+      }
     },
-    "facing=north,half=upper": {
-      "model": "hemomancy:block/ossuary_clock_upper"
+    {
+      "when": {
+        "facing": "north",
+        "half": "upper",
+        "omen": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_risen"
+      }
     },
-    "facing=east,half=upper": {
-      "model": "hemomancy:block/ossuary_clock_upper",
-      "y": 90
+    {
+      "when": {
+        "facing": "east",
+        "half": "lower"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock",
+        "y": 90
+      }
     },
-    "facing=south,half=upper": {
-      "model": "hemomancy:block/ossuary_clock_upper",
-      "y": 180
+    {
+      "when": {
+        "facing": "east",
+        "half": "upper"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_upper",
+        "y": 90
+      }
     },
-    "facing=west,half=upper": {
-      "model": "hemomancy:block/ossuary_clock_upper",
-      "y": 270
+    {
+      "when": {
+        "facing": "east",
+        "half": "upper",
+        "omen": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_quiet",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "upper",
+        "omen": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_omen",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "upper",
+        "omen": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_risen",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "lower"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "upper"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_upper",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "upper",
+        "omen": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_quiet",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "upper",
+        "omen": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_omen",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "upper",
+        "omen": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_risen",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "lower"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "upper"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_upper",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "upper",
+        "omen": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_quiet",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "upper",
+        "omen": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_omen",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "upper",
+        "omen": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/ossuary_clock_lunette_risen",
+        "y": 270
+      }
     }
-  }
+  ]
 }

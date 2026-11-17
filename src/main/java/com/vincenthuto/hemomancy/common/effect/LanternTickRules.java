@@ -8,7 +8,7 @@ public final class LanternTickRules {
 	public static final double LATCH_DISTANCE = 3.0D;
 	public static final double ATTACH_DISTANCE = 1.25D;
 	public static final double LATCH_LEAP_STRENGTH = 1.4D;
-	public static final double BLOOD_DRAIN_PER_TICK_BITE = 8.0D;
+	public static final double BLOOD_DRAIN_PER_TICK_BITE = 25.0D;
 	public static final float FALLBACK_DAMAGE_PER_BITE = 1.0F;
 
 	private LanternTickRules() {

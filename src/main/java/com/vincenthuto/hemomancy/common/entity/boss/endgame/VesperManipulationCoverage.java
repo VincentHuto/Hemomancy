@@ -40,6 +40,10 @@ public final class VesperManipulationCoverage {
 		variant("blood_binding", ANIMUS, Kind.DEBUFF, Form.THREAD, 0.0F);
 		variant("lingering_blood_binding", ANIMUS, Kind.DEBUFF, Form.THREAD, 0.0F);
 		variant("chain_blood_binding", ANIMUS, Kind.PULL, Form.THREAD, 4.0F);
+		excluded("tendon_line", "a traversal line worked through the verbs; nothing to cast in a duel");
+		excluded("blood_lash", "a strand swung through held Projection; nothing to cast in a duel");
+		excluded("living_land", "a patch of ground woken by held Projection; nothing to cast in a duel");
+		excluded("venous_cling", "a root to a wall through held Projection; nothing to cast in a duel");
 		excluded("sanguine_marionette", "needs a player's sustained aim to steer its victim");
 		variant("blood_lattice", ANIMUS, Kind.DEBUFF, Form.THREAD, 0.0F);
 		castable("deadly_gaze", DUCTILIS);
@@ -66,7 +70,7 @@ public final class VesperManipulationCoverage {
 		variant("sanguine_ward", DUCTILIS, Kind.SELF_BUFF, Form.WARD, 0.0F);
 		castable("hemolymphal_pulse", DUCTILIS);
 		for (String conjure : List.of("conjure_blade", "conjure_axe", "conjure_spear", "conjure_claws",
-				"conjure_crossbow", "conjure_torch", "conjure_flail", "conjure_sickle", "conjure_staff")) {
+				"conjure_crossbow", "conjure_torch", "conjure_flail", "conjure_sickle", "conjure_pickaxe", "conjure_staff")) {
 			excluded(conjure, "a weapon form; his own weapons already morph between these");
 		}
 		excluded("blood_absorption", "the player's channel; his wounds and defeat answer it instead");
@@ -76,6 +80,8 @@ public final class VesperManipulationCoverage {
 		castable("hematic_flare", LUX);
 		castable("glacial_grasp", CONGEATIO);
 		excluded("vascular_dowsing", "a detection utility");
+		excluded("lode_draw", "player-only mining: a held crawl through an ore lode");
+		excluded("hematic_hewing", "player-only mining: a held cut through stone");
 		castable("iron_retort", FERRIC);
 		excluded("ironhearted", "grants extra Iron Hearts; would pad his health bar");
 		castable("sanguine_magnetism", FERRIC);
@@ -132,10 +138,10 @@ public final class VesperManipulationCoverage {
 		variant("radiant_wake", LUX, Kind.LINE, Form.RADIANT_WAKE, 8.0F);
 		variant("lodestone_collapse", FERRIC, Kind.PULL, Form.LODESTONE_COLLAPSE, 8.0F);
 		variant("thread_ripper", DUCTILIS, Kind.UNRAVEL, Form.THREAD, 0.0F);
-		variant("crimson_tithe", ANIMUS, Kind.DRAIN, Form.TITHE_COLLECT, 6.0F);
-		castable("unclosing_eye", LUX);
-		castable("bloom_of_rot", MORTEM);
-		variant("endless_hour", CONGEATIO, Kind.DEBUFF, Form.HOUR, 0.0F);
+		excluded("crimson_tithe", "a Saint's gift, player only (D-1, NQ-08-5)");
+		excluded("unclosing_eye", "a Saint's gift, player only (D-1, NQ-08-5)");
+		excluded("bloom_of_rot", "a Saint's gift, player only (D-1, NQ-08-5)");
+		excluded("endless_hour", "a Saint's gift, player only (D-1, NQ-08-5)");
 	}
 
 	private VesperManipulationCoverage() {

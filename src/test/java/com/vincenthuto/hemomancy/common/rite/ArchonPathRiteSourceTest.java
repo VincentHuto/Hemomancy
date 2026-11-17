@@ -1,13 +1,15 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class ArchonPathRiteSourceTest {
 	private ArchonPathRiteSourceTest() {}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String dialogue = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java")
 				+ read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java");
@@ -29,8 +31,6 @@ public final class ArchonPathRiteSourceTest {
 		assertContains(rites, "getInitiatoryDegree(caster).getArchonPath() != EnumArchonPath.APOTHEOS_PENDING");
 		assertNotContains(rites, "popFungalSpineFromBack(level, player)");
 	}
-
-	private static String read(String path) throws IOException { return Files.readString(Path.of(path)); }
 	private static void assertContains(String source, String expected) {
 		if (!source.contains(expected)) throw new AssertionError("missing " + expected);
 	}

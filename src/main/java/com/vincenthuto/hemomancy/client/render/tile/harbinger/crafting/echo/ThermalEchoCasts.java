@@ -155,13 +155,14 @@ final class ThermalEchoCasts {
 		});
 	}
 
-	/** Harm deferred into the hour gathers around the echo, then breaks all at once. */
+	/** The echo plants its feet, the seams fill with frozen cruor round it, and at the close it sets in its own. */
 	private static void endlessHour(EchoCast.EchoContext ctx) {
 		EchoFx.activate(ctx);
-		EchoFx.cue(Form.HOUR, ctx.feet(), ctx.feet(), ctx.scaled(2.0), 40, 1);
-		EchoScheduler.later(36, () -> {
-			EchoFx.burst(Form.HOUR_BREAK, ctx.feet(), ctx.scaled(2.0), 24);
-			EchoFx.accent(EnumBloodTemper.CONGEATIO, null, ctx.chest(), Vec3.ZERO, true);
+		EchoFx.cue(Form.HOUR_FIELD, ctx.feet(), ctx.feet(), ctx.scaled(3.0), 40, 1);
+		EchoScheduler.later(38, () -> {
+			EchoFx.cue(Form.HOUR_FIELD, ctx.feet(), ctx.feet(), ctx.scaled(3.0),
+					com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourRules.SET_END, 2);
+			EchoFx.burst(Form.HOUR_PRESERVE, ctx.feet(), ctx.scaled(1.8), 24);
 		});
 	}
 }

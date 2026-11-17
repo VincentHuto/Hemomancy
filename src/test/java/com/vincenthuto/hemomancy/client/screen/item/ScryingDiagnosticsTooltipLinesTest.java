@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.support.EnglishText;
@@ -11,7 +12,8 @@ public final class ScryingDiagnosticsTooltipLinesTest {
 	private ScryingDiagnosticsTooltipLinesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		maxBloodTooltipListsPositiveAndNegativeSources();
 		bloodFlowTooltipShowsAppliedAndRequestedRates();
 		manipulationCostTooltipShowsMultiplierSources();

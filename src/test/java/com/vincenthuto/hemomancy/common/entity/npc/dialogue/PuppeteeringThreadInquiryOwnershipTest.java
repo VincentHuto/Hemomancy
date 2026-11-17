@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class PuppeteeringThreadInquiryOwnershipTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -10,7 +13,8 @@ public final class PuppeteeringThreadInquiryOwnershipTest {
 	private PuppeteeringThreadInquiryOwnershipTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		Path alchemistInquiry = RESOURCE_ROOT.resolve(
 				"data/hemomancy/dialogue_inquiry/alchemist/hemomancy/enthralling_filament.json");
 		Path mnemonistInquiry = RESOURCE_ROOT.resolve(
@@ -31,12 +35,6 @@ public final class PuppeteeringThreadInquiryOwnershipTest {
 				"hemomancy.mnemonist.item_inquiry.enthralling_filament.line2");
 		assertFalse("Alchemist puppeteering thread lines should be removed", language.contains(
 				"hemomancy.alchemist.item_inquiry.enthralling_filament"));
-	}
-
-	private static void assertContains(String label, String text, String needle) {
-		if (!text.contains(needle)) {
-			throw new AssertionError(label + " missing: " + needle);
-		}
 	}
 
 	private static void assertTrue(String label, boolean value) {

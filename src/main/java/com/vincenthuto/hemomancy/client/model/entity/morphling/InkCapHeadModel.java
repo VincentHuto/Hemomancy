@@ -20,8 +20,8 @@ public final class InkCapHeadModel extends MorphlingStrainModel {
     public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/models/morphling/ink_cap_head.png");
     public static final ResourceLocation GLOW_TEXTURE = null;
     public static final List<MorphlingPartSpec> PARTS = List.of(
-            new MorphlingPartSpec("crown_scales", "root", 2, MorphlingPartSpec.Limb.NONE, MorphlingPartSpec.Motion.NONE, 0.000F, 0.000F, 0.000F, 0, 0, true),
-            new MorphlingPartSpec("cap", "root", 3, MorphlingPartSpec.Limb.NONE, MorphlingPartSpec.Motion.SWAY, 0.015F, 0.040F, 0.000F, 0, 0, true),
+            new MorphlingPartSpec("crown_scales", "root", 2, MorphlingPartSpec.Limb.NONE, MorphlingPartSpec.Motion.NONE, 0.000F, 0.000F, 0.000F, 0, 0, true, 4),
+            new MorphlingPartSpec("cap", "root", 3, MorphlingPartSpec.Limb.NONE, MorphlingPartSpec.Motion.SWAY, 0.015F, 0.040F, 0.000F, 0, 0, true, 4),
             new MorphlingPartSpec("drip_0", "cap", 3, MorphlingPartSpec.Limb.NONE, MorphlingPartSpec.Motion.DRIP, 0.000F, 0.018F, 0.000F, 0, 0, false),
             new MorphlingPartSpec("drip_1", "cap", 3, MorphlingPartSpec.Limb.NONE, MorphlingPartSpec.Motion.DRIP, 0.000F, 0.022F, 0.370F, 0, 0, false),
             new MorphlingPartSpec("drip_2", "cap", 3, MorphlingPartSpec.Limb.NONE, MorphlingPartSpec.Motion.DRIP, 0.000F, 0.026F, 0.740F, 0, 0, false),

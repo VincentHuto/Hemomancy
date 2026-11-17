@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
 import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -103,7 +104,8 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.e
 				com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
 						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_COUNSEL),
 				CircusDiscoveryProgress.hasDiscovered(serverPlayer),
-				serverPlayer.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get())));
+				serverPlayer.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get())),
+				HarbingerPathPermissions.isSilentium(degree, HemoCapabilityAccess.getInitiatoryDegree(serverPlayer).getArchonPath()));
 		tree = HarbingerMnemonistDialogueTrees.withGuidedChamber(tree, degree,
 				com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(serverPlayer),
 				com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasSeenDream(serverPlayer)
@@ -115,7 +117,8 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.e
 				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.SCRIPTORIUM, "hemomancy.dialogue.mnemonist.option.leave");
 		tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue.append(tree, serverPlayer,
 				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.LOOM, "hemomancy.dialogue.mnemonist.option.leave");
-		return ClinicalBloodDialogue.append(tree, serverPlayer, "mnemonist");
+		return CoreLoopLessonDialogue.append(ClinicalBloodDialogue.append(tree, serverPlayer, "mnemonist"), CoreLoopLessons.MNEMONIST,
+				serverPlayer);
 	}
 
 	@Override

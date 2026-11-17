@@ -29,7 +29,7 @@ The **Liber Immaculatus** uses a paginated book with chapter tabs along its righ
 
 ## The Path to Purity
 
-Unlike Harbingers with their seven discrete degrees, the Unstained pursue a gradual purification measured in **Clarity** and **Purity** levels.
+Unlike the Harbingers' eight Degrees, the Unstained climb two meters in turn: **Purity** (0 to 100), then **Clarity** (0 to 100).
 
 ### Start here
 
@@ -54,115 +54,31 @@ Unlike Harbingers with their seven discrete degrees, the Unstained pursue a grad
 
 ## Purification Stages
 
-The Unstained path progresses through increasing **Purity** levels, measured by accumulated **Clarity** points.
+Purity starts at the Rite of Lethean Baptism: 50, minus 10 for each Harbinger Degree you held (0 from Degree 5 up; a founder who completed the Severed Covenant starts at 0). Blood magic costs more as Purity rises.
 
-### Stage 1: Initiate (0-25% Purity)
-**"First Steps Toward the Still Waters"**
+| Stage | Purity | Blood magic |
+|---|---|---|
+| Begun | under 25 | normal cost |
+| Tainted | 25 | 1.10x cost |
+| Cleansing | 50 | 1.25x cost |
+| Absolved | 75 | 1.50x cost |
+| Purified | 100 | blocked |
 
-**Process:**
-- Perform White Humor Purification repeatedly
-- Use Hemolytic Solution in rituals
-- Begin incorporating copper into your equipment
-- Study the writings of Our Lady
+**How Purity rises** (`PurityGainEvents`):
+- Killing a Hemomancy mob +0.75, an undead +0.25, another monster +0.10, and +0.25 more if you took no damage in the last 5 seconds.
+- The Tears of Silthmere on the Altar of Cleansing +25 once; a Lethean Poppy Wreath on the Altar +5, repeatable.
+- Any advancement +1.5.
+- With Hemolysis active: picking up experience +0.1, sleeping through the night +5.
+- Breeding animals +0.75, planting crops, saplings or flowers +0.10, healing a tamed animal +1.0.
+- Five minutes without a blood manipulation +1.0; a minute with your blood empty or dormant +0.30.
 
-**What You Gain:**
-- Minor resistance to fungal corruption
-- Reduced effectiveness of blood manipulations on you
-- Ability to craft basic Unstained items
-- First whispers from Our Lady of Still Waters
+Verdigris Aura is the early defence; it grows with Purity.
 
-**What Changes:**
-- Blood manipulations you know become weaker
-- Fungal whispers (if you had them) start to fade
-- A sense of cold clarity replaces warm vitality
-- NPCs react differently: some with relief, others with concern
+**The cure.** The first Rite of the Closed Vein at Purified strips blood magic for good: your Degree goes, your blood is emptied and made dormant, and your loadout and summons are cleared. Your bloodline is left alone.
 
-**Physical Changes:**
-- Blood-magic signs begin to fade; no unrelated bodily or cosmetic change occurs during Purity
+### Clarity
 
----
-
-### Stage 2: Purified (25-50% Purity)
-**"The Infection Loosens Its Grip"**
-
-**Process:**
-- Advanced purification rituals
-- Copper armor integration
-- Lethean water usage (sacred water from Still Waters)
-- Meditation in copper-lined spaces
-
-**What You Gain:**
-- Stronger resistance to corruption
-- Enhanced healing when using Lethean Dew
-- Guardian basic combat stance
-- Ability to sense nearby blood magic
-- Blunt weapon damage bonuses
-
-**What Changes:**
-- Blood manipulations you knew are now severely weakened or lost
-- Fungal whispers completely cease
-- You can feel the Pale Lady's presence
-- Your blood no longer "remembers" as easily
-- Common folk sense your purity (reactions vary)
-
-**Physical Changes:**
-- Bleeding diminishes as the infection loosens; skin, eyes, hair, hunger, poison, and ordinary healing remain unchanged
-
----
-
-### Stage 3: Guardian (50-75% Purity)
-**"Sworn to the Still Waters"**
-
-**Process:**
-- Take oaths to Our Lady of Still Waters
-- Complete Guardian trials
-- Forge a sacred copper weapon
-- Consecrate your body fully
-
-**What You Gain:**
-- **Guardian Status**: Official role in Unstained hierarchy
-- All blood manipulations lost (cannot learn new ones)
-- Enhanced anti-corruption aura (protects others nearby)
-- Guardian combat abilities
-  - Crushing Strike (bonus damage with blunt weapons)
-  - Pallid Shield (temporary invulnerability)
-  - Purging Touch (cleanse corruption from others)
-- Ability to destroy Harbinger corrupted items
-- Copper armor set bonuses
-
-**What Changes:**
-- You are now a warrior for purity
-- Harbingers see you as enemy or traitor
-- Unstained NPCs see you as hero
-- You cannot be infected or corrupted (immune)
-- Your presence disrupts blood magic
-- Physical appearance clearly marks you as Unstained
-
-**Physical Changes:**
-- Blood-themed signs and bleeding continue to diminish; there are no additional progressive bodily changes during Purity
-
----
-
-### Stage 4: Absolved (75-100% Purity)
-**"Prepared for the Stillness"**
-
-**Process:**
-- Final purification rituals
-- Complete the rejection of blood magic
-- Prepare Consecrated Copper at the Podium after reaching full Purity
-- Perform Clarity Ascension to begin preserved biology
-
-**What You Gain:**
-- Preparation for the Clarity path toward biological immortality
-- Enhanced Guardian abilities
-- Aura of Stillness (massive anti-corruption field)
-- Ability to consecrate areas with copper
-- Access to Paragon-tier equipment
-- The Pale Lady's direct attention
-
-**What Changes:**
-- Blood magic has been fully rejected, but broader preserved physiology does not begin until Clarity is unlocked
-- No new cosmetic transformation occurs during the Purity phase
+At full Purity, offer Consecrated Copper at the Unstained Podium, then perform the Rite of Clarity Ascension. Clarity has five stages: Awakened (0), Discerning (25), Vigilant (50), Resolute (75) and Enlightened (100). Silver Ward is the advanced defence; it grows with Clarity.
 
 ### Clarity and Preserved Biology
 
@@ -172,173 +88,40 @@ After Clarity Ascension, bodily processes diminish gradually with Clarity rather
 - Poison deals progressively less damage, reaching 25% damage at 100 Clarity.
 - Hunger drains progressively more slowly, reaching 35% of normal exhaustion at 100 Clarity.
 - Purity alone provides none of these effects, and unrelated healing, drowning, and ordinary damage remain unchanged.
-- You exist in a state of perfect preservation
-- Fungal Entity cannot touch you
 
-**Physical Changes:**
-- Skin appears almost translucent
-- Eyes are fully glassy, silver-reflective
-- Hair is white or very pale
-- Wounds weep clear fluid instead of blood
-- No body odor (chemical preservation)
+The lore's other Fully Purified traits (a bloodless coma and waking, halted aging, sensing illness, a healing touch, plants growing near you) are not in the game.
 
----
+**Warning:** Late-stage whispers from Our Lady suggest that she is becoming **autoimmune** and attacking clean tissue.
 
-### Stage 5: Ascended (95-100% Purity)
-**"Beyond Human, Beyond Infection"**
+### Still Arts
 
-**Process:**
-- Final communion with Our Lady of Still Waters
-- Ultimate purification (extremely painful)
-- Transcendence of biological limitations
+The Unstained counter-arts. No rite grants one; each comes with a clarity-stage advancement (and a login catch-up):
 
-**What You Gain:**
-- Absolute immunity to all corruption
-- Reality-warping purification abilities
-- Can cleanse entire areas of fungal taint
-- Our Lady's Champion status
-- Ultimate Guardian powers
-- Access to Unstained endgame content
+| Clarity stage | Arts |
+|---|---|
+| Awakened | Silver Rebuke, Lethean Mute |
+| Discerning | Still Pulse, Pale Diagnosis |
+| Vigilant | Memory Shear, Absolving Step |
+| Resolute | Quietus Bell, Pale Intercession |
+| Enlightened | Autoimmune Edge |
 
-**What Changes:**
-The intended result is preserved perfection, a living shrine to purity.
-
-**Warning:** Late-stage whispers from Our Lady suggest that she is becoming **autoimmune** and attacking clean tissue. Ascended Unstained may discover that extreme purity creates another form of corruption.
-
-**Physical Changes:**
-- Appear as living statue
-- Eyes like mirrors
-- No bleeding ever
-- Radiate cold aura
-- Perfectly preserved forever
+Use Still Art (default R) casts the selected art; Select Still Art (default Z) picks one.
 
 ---
 
 ## Core Mechanics
 
 ### Hemolytic Solution
-The cornerstone of Unstained purification, Hemolytic Solution is a formaldehyde-equivalent antiseptic that destroys fungal tissue.
 
-**Crafting:**
-- Specific alchemical recipe (check JEI)
-- Requires common but careful ingredient combination
-- Can be brewed in batches
-- Store in glass vials
-
-**Uses:**
-- Primary component in purification rituals
-- Applied directly to scarred skin (painful)
-- Used to cleanse corrupted items
-- Environmental purification
-- Combat applications (damages infected creatures)
-
-**Danger:**
-- Toxic if consumed incorrectly
-- Painful application process
-- Overuse can damage healthy tissue
-- Must be handled carefully
+The Unstained antiseptic. Used at an Unstained Podium it suppresses the infection, the step before the Rite of Lethean Baptism. The recipe is in JEI.
 
 ### White Humor Purification
-The basic purification ritual, performed at a Copper Altar.
 
-**Process:**
-1. Construct Copper Altar (copper blocks + ritual components)
-2. Prepare Hemolytic Solution
-3. Place Solution and other components on altar
-4. Activate ritual (right-click with empty hand)
-5. Endure the pain (screen effects, damage taken)
-6. Gain Clarity points
+Pour a Pale Humor Flask (bottled White Humor from the Pallid Retort) on the ground to make a White Humor pool with 32 charges. Items dropped in it are purified one charge each: Blood Crystal Shards into Cleansed Blood Crystal Shards, Consecrated Copper Ingots into Pale Silver Ingots, Venous Stone into Cleansed Stone, Sanguine Glass and Panes into their cleansed forms. Clean witnesses within 4 blocks (bloomed Lethean Poppies, pale candles, unwaxed copper) speed it up and slowly take on the shed taint.
 
-**Cost:**
-- Hemolytic Solution (primary)
-- Copper dust or nuggets
-- Lethean Dew (higher stages)
-- Health (ritual damages you)
+### Weapons and armour
 
-**Rewards:**
-- Clarity points toward next purity stage
-- Temporary purification buffs
-- Corruption resistance boost
-- Step closer to immortality
-
-**Tips:**
-- Perform in safe location
-- Have healing items ready
-- Can be done repeatedly (diminishing returns)
-- More painful at higher purity levels
-
-### Copper Equipment
-
-Copper is sacred to the Unstained, representing conductivity of purity and resistance to corruption.
-
-**Copper Armor**
-- Craftable full set
-- Bonuses against infected creatures
-- Corruption resistance
-- Enhanced when purified yourself
-- Can be oxidized for different bonuses
-
-**Copper Weapons**
-- Maces, hammers, and clubs are preferred
-- The Silthmere Glaive is sanctioned for defensive reach
-- Every initiated Unstained carries an inherently hemolytic Absolution Dagger
-- Extra damage to corrupted entities
-- No bleed effects (by design)
-- Can be blessed at Copper Altar for enhancement
-
-**Copper Tools**
-- Picks, shovels, hoes
-- Can cleanse corrupted blocks
-- Slower than iron but purifying
-
-**Copper Structures**
-- Copper Altars for rituals
-- Copper-lined sanctuaries (corruption-free zones)
-- Copper stakes for marking purified territory
-
-### Guardian Combat Style
-
-Unstained Guardians minimize bloodshed and specialize in blunt combat, but their doctrine explicitly permits the defensive Silthmere Glaive and universal Absolution Dagger.
-
-**Allowed Weapons:**
-- Maces
-- Hammers
-- Clubs
-- Fists
-- Copper implements
-- Staves
-- Silthmere Glaive
-- Absolution Dagger
-
-**Discouraged Weapons:**
-- Ordinary swords and axes used to spill blood
-- Close-range blades without an antiseptic or reach-based purpose
-
-**Combat Abilities:**
-
-**Crushing Strike**
-- Massive damage with blunt weapons
-- Bonus against infected/corrupted
-- Chance to stun
-- Costs Clarity temporarily
-
-**Pallid Shield**
-- Temporary invulnerability bubble
-- Reflects blood magic
-- Short duration
-- Long cooldown
-
-**Purging Touch**
-- Touch enemy to inflict purification damage
-- Removes buffs from infected creatures
-- Can cleanse corruption from items/blocks
-- Medium cooldown
-
-**Aura of Stillness** (High Purity)
-- Passive aura around you
-- Reduces corruption in area
-- Weakens blood magic within radius
-- Calms aggressive infected creatures
+See **Unstained Equipment** below. The Unstained fight with the warhammer, the Silthmere Glaive and the Absolution Dagger; they shun ordinary blades.
 
 ---
 
@@ -410,49 +193,29 @@ At highest purity levels, some Unstained realize: Our Lady may be becoming **aut
 
 ## Unstained NPCs and Structures
 
-### Pallid Sanctuaries
-Small structures in overworld where Unstained gather.
+### Unstained Churches
 
-**Features:**
-- Copper architecture
-- Lethean water pools
-- Guardian NPCs
-- Purification altars
-- Unstained merchant
+The Unstained gather in Unstained Churches. A church holds one Zealot, two Guardians and three to five Acolytes, an Altar of Cleansing and an Unstained Podium.
 
-**NPCs:**
-- **Guardian Captains**: Combat trainers
-- **Purifiers**: Ritual guides
-- **Lore Keepers**: Teach about Our Lady
-- **Merchants**: Trade copper items and Hemolytic Solution
+- **Zealot**: begins the cure and gives Observances.
+- **Guardians**: protect the church, answer item questions and give Observances.
+- **Acolytes**: lore about Our Lady and Observances.
 
 ### Interaction
 - If you're Unstained, welcomed as family
-- If you're Harbinger, hostility or rejection
+- If you're a Harbinger, hostility or rejection; the Unstained will not trade with a Harbinger of the first Degree or above
 - If neutral, cautious acceptance
 
 ---
 
 ## The Pallid Icon
 
-A sacred item representing Our Lady of Still Waters.
-
-**Creation:**
-- Craft at Copper Altar with rare materials
-- Requires high purity level
-- Painful consecration ritual
+The **Icon of Our Lady** (the Pallid Icon), crafted from a Pale Silver Ingot, a Pale Distillate and a Cleansed Blood Crystal Shard; the Lethean Font also gives one. A consecrated copy of a river relic.
 
 **Effects:**
-- Portable purification source
-- Protects against corruption
-- Enhances Guardian abilities
-- Visual symbol of devotion
-
-**Uses:**
-- Carry for constant benefits
-- Place in base for area protection
-- Use in advanced rituals
-- Show to other Unstained for recognition
+- Calls a brief apparition of Our Lady you can ask lore questions
+- Raises Clarity once Clarity is unlocked (an offering at the Altar of Cleansing)
+- Obtaining one grants *Our Lady of Still Waters*
 
 ---
 
@@ -460,18 +223,13 @@ A sacred item representing Our Lady of Still Waters.
 
 ### Armor
 
-**Copper Guardian Plate**
-- Full set available
-- High defense
-- Corruption resistance
-- Blunt weapon bonuses
-- Distinctive white/copper aesthetic
+**Unstained armour** (helm, chestplate, leggings, boots)
+- White lacquered plate over white robes with pale silver trim
+- Set bonus: immunity to Blood Loss and Hemolysis
+- Repaired with a Consecrated Copper Ingot
 
-**Purifier's Vestments**
-- Lighter than plate
-- Focus on purification abilities
-- Ritual bonuses
-- Clarity regeneration
+**Vestment of the Final Molt**
+- The Enlightened reward chestpiece from the Rite of the Lethean Font; counts toward the Unstained set
 
 ### Weapons
 
@@ -484,22 +242,13 @@ A sacred item representing Our Lady of Still Waters.
 - Broad horizontal sweep across the wielder's front
 - Extended reach and cleaves up to two additional enemies
 
-**Consecrated Copper Mace**
-- High damage against infected
-- No bleed effects
-- Can be upgraded
-- Glows faintly white
-
 **Unstained Warhammer**
 - Heavy overhead windup and downward blow, with the Living Axe's timing and a visible first-person lift before impact
 - Slow attack speed with strong knockback
 - Cripples enemies with Slowness and Weakness
 
-**Purifier's Staff**
-- Range weapon (projectiles)
-- Shoots purification bolts
-- Low damage but cleansing effect
-- Good for support
+**Unstained Shield**
+- The Unstained's shield
 
 ---
 
@@ -509,9 +258,9 @@ A sacred item representing Our Lady of Still Waters.
 
 2. **Stock Hemolytic Solution**: You'll need lots. Brew in batches.
 
-3. **Copper Everywhere**: Build with copper blocks. They provide passive benefits.
+3. **Copper and candles**: unwaxed copper and pale candles near a White Humor pool speed purification.
 
-4. **Accept the Pain**: Purification hurts. That's the point. Have healing ready.
+4. **Keep your hands clean**: five minutes without a blood manipulation is worth a full point of Purity.
 
 5. **Carry the Right Tool**: The polearm is the battlefield standard; every initiated Unstained also carries an Absolution Dagger for close infection work.
 
@@ -521,7 +270,7 @@ A sacred item representing Our Lady of Still Waters.
 
 8. **Don't Rush Purity**: Each stage changes what you can do. Read the stage details before committing.
 
-9. **Guardian Trials**: Practice before taking Guardian oaths. You will need the combat skill.
+9. **Observances**: the Zealot, the Guardians and the Acolytes give fourteen of them; the Book of Observances keeps the list.
 
 10. **Question Everything**: Late-game whispers hint at problems. Stay aware.
 

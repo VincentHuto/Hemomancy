@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memory;
 
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +11,9 @@ public final class HematicMemoryToolRulesTest {
     private HematicMemoryToolRulesTest() {
     }
 
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         lastDeathMemoryRoundTripsDimensionAndPosition();
-        memoryThreadCapsAndThinsRoutePoints();
         veinSpiderRejectsInvalidLinks();
         huskEffigyProfilesAreBoundedProtoPuppets();
     }
@@ -31,20 +32,6 @@ public final class HematicMemoryToolRulesTest {
         assertEquals(12345L, restored.gameTime(), "game time");
         assertTrue(restored.isSameDimension(OVERWORLD), "same dimension");
         assertFalse(restored.isSameDimension(NETHER), "cross dimension");
-    }
-
-    private static void memoryThreadCapsAndThinsRoutePoints() {
-        List<Long> points = new ArrayList<>();
-        for (int i = 0; i < MemoryThreadRules.MAX_POINTS + 20; i++) {
-            MemoryThreadRules.appendRoutePoint(points, MemoryThreadRules.packPosition(i * 3, 64, 0));
-        }
-
-        assertEquals(MemoryThreadRules.MAX_POINTS, points.size(), "route cap");
-        assertEquals(MemoryThreadRules.packPosition(60, 64, 0), points.get(0).longValue(), "oldest points trimmed");
-        assertFalse(MemoryThreadRules.shouldRecord(MemoryThreadRules.packPosition(346, 64, 0), points.get(points.size() - 1)),
-                "nearby point rejected");
-        assertTrue(MemoryThreadRules.shouldRecord(MemoryThreadRules.packPosition(348, 64, 0), points.get(points.size() - 1)),
-                "distant point accepted");
     }
 
     private static void veinSpiderRejectsInvalidLinks() {

@@ -11,9 +11,11 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Minecraft-facing adapter for {@link LastRiteRules}: the shared death-save
  * gate. Every death-prevention source (Ink Cap's Ink Reprieve, Hushbell's
- * Cryptobiosis, Silent Archon refusal) checks {@link #canFire} before firing
- * and calls {@link #consume} on success. Which Morphling arms which source,
- * and at what stage, is a column of {@link MorphlingStrains}.
+ * Cryptobiosis, Silent Archon refusal, Phoenix Debt, the Curved Horn) checks
+ * {@link #canFire} before firing and calls {@link #consume} on success. Which
+ * Morphling arms which source, and at what stage, is a column of
+ * {@link MorphlingStrains}. The Curved Horn yields: it arms only while nothing
+ * else is armed, and every other source arms over it ({@link #isOpenToArm}).
  */
 public final class LastRiteHelper {
 
@@ -21,6 +23,7 @@ public final class LastRiteHelper {
 	public static final String SILENT_REFUSAL_ID = "hemomancy:silent_refusal";
 	public static final String CRYPTOBIOSIS_ID = "hemomancy:cryptobiosis";
 	public static final String PHOENIX_DEBT_ID = "hemomancy:phoenix_debt";
+	public static final String CURVED_HORN_ID = LastRiteRules.CURVED_HORN_ID;
 
 	private LastRiteHelper() {
 	}
@@ -73,6 +76,11 @@ public final class LastRiteHelper {
 		return !HemoCapabilityAccess.getPowerGuardrails(player).getLastRiteArmedSource().isEmpty();
 	}
 
+	/** Nothing is armed, or only the Curved Horn, which gives way to any other source. */
+	public static boolean isOpenToArm(Player player) {
+		return player != null && LastRiteRules.isOpenToArm(getArmedSource(player));
+	}
+
 	public static String getArmedSource(Player player) {
 		return player == null ? "" : HemoCapabilityAccess.getPowerGuardrails(player).getLastRiteArmedSource();
 	}
@@ -90,7 +98,7 @@ public final class LastRiteHelper {
 	}
 
 	public static void armForMorphlingIfUnarmed(Player player, ItemStack stack) {
-		if (!hasArmedSource(player)) {
+		if (isOpenToArm(player)) {
 			armForMorphling(player, stack);
 		}
 	}

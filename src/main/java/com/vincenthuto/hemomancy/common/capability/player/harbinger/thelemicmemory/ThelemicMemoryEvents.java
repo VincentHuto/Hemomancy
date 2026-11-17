@@ -41,7 +41,7 @@ public final class ThelemicMemoryEvents {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    /** Attacker stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}. */
     public static void applySanguineFists(LivingDamageEvent.Pre event) {
         if (event.getEntity().level().isClientSide) {
             return;
@@ -73,7 +73,7 @@ public final class ThelemicMemoryEvents {
                 .put(event.getEntity().getId(), gameTime);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    /** Defender stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}: a flat reduction, so it goes first. */
     public static void applySecondPulse(LivingDamageEvent.Pre event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || player.level().isClientSide) return;
         float reduction = ThelemicMemoryPowerRules.secondPulseReduction(player.getHealth(), player.getMaxHealth(), event.getNewDamage());

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
@@ -41,7 +42,7 @@ public class QliphothSeedItemRenderer extends BlockEntityWithoutLevelRenderer {
 	public static void renderSeedBody(ItemDisplayContext displayContext, PoseStack poseStack,
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 		Matrix4f mat = poseStack.last().pose();
-		float time = (System.currentTimeMillis() % 120000L) / 50.0f;
+		float time = (float) (AnimationTime.itemMillis() % 120000.0) / 50.0f;
 		float pulse = (float) (Math.sin(time * 0.055f) + 1.0f) * 0.5f;
 
 		double hotAz = time * 0.061 + Math.sin(time * 0.027) * 0.9;

@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.block.shared;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionVisuals;
 
 public final class DiscoveryInscriptionVisualsTest {
 	private DiscoveryInscriptionVisualsTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertClose("floor x", 0.03125,
 				DiscoveryInscriptionVisuals.pixelCenter(DiscoveryInscriptionVisuals.Face.UP, 0, 0).x());
 		assertClose("floor y stays on reveal plane", DiscoveryInscriptionVisuals.FLOOR_FACE,

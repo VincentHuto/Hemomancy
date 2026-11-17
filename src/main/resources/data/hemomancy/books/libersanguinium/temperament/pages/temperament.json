@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Blood Temperament",
   "subtitle": "What the blood remembers killing",
-  "text": "Blood Temperament is the elemental alignment of your blood, shaped by what you have killed and consumed over time. Practitioners usually name these tempers by their enzyme signs: Vivacious, Fervent, Frigid, Ruinous, Incandescent, Umbral, Neurotic, and Ferric. Older Harbinger records use the alchemical names Animus, Flammeus, Congeatio, Mortem, Lux, Tenebris, Ductilis, and Ferric. Both vocabularies point to the same truth: the blood remembers what formed it.",
+  "text": "Blood Temperament is the elemental alignment of your blood, shaped by what you have killed and consumed over time. It moves slowly and is never spent. Practitioners usually name these tempers by their enzyme signs: Vivacious, Fervent, Frigid, Ruinous, Incandescent, Umbral, Neurotic, and Ferric. Older Harbinger records use the alchemical names Animus, Flammeus, Congeatio, Mortem, Lux, Tenebris, Ductilis, and Ferric. Both vocabularies point to the same truth: the blood remembers what formed it. Temperament is not Temper. Temper is the small store of each school your blood carries right now, burned by every casting and filled again from what you draw; see Temper.",
   "icon": "hemomancy:blood_stained_stone"
 }

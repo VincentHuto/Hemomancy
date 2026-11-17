@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
 
 public final class HemomancyTendrilEffectsTest {
 	private HemomancyTendrilEffectsTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		suturePresetUsesSoftLightColors();
 		voidPresetKeepsCoreAndGlowSeparated();
 		surfacePresetUsesSurfaceMode();

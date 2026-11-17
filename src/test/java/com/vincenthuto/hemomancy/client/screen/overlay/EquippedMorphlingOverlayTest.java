@@ -11,43 +11,19 @@ public final class EquippedMorphlingOverlayTest {
 
 	@Test
 	void existingHudContractsRemainValid() throws Exception {
-		main(new String[0]);
-	}
-
-	public static void main(String[] args) throws Exception {
-		legacyIconPlacementRemainsAvailable();
-		stableRenderClockAdvancesWithPartialTicks();
-		bloodOverlayUsesStableRenderClock();
+		theMorphlingFitsInsideTheJarWindow();
 		everyStrainHasItsHudIdentity();
 	}
 
-	private static void legacyIconPlacementRemainsAvailable() {
-		assertEquals("left-side blood bar places morphling icon to the right", 58,
-				EquippedMorphlingOverlayPlacement.iconXForBloodBar(true, 4, 46));
-		assertEquals("right-side blood bar places morphling icon to the left", 176,
-				EquippedMorphlingOverlayPlacement.iconXForBloodBar(false, 200, 46));
-		assertEquals("morphling icon is vertically centered on blood bar", 33,
-				EquippedMorphlingOverlayPlacement.iconYForBloodBar(4, 75));
-	}
-
-	private static void stableRenderClockAdvancesWithPartialTicks() {
-		assertFloatEquals("clock starts at game tick", 5.0f,
-				EquippedMorphlingOverlayPlacement.animationTimeSeconds(100L, 0.0f));
-		assertFloatEquals("clock includes partial tick", 5.025f,
-				EquippedMorphlingOverlayPlacement.animationTimeSeconds(100L, 0.5f));
-		assertFloatEquals("clock advances one tick", 5.05f,
-				EquippedMorphlingOverlayPlacement.animationTimeSeconds(101L, 0.0f));
-	}
-
-	private static void bloodOverlayUsesStableRenderClock() throws Exception {
-		Path sourcePath = Path.of("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/BloodVolumeOverlay.java");
-		String source = Files.readString(sourcePath);
-		if (source.contains("animTime += 0.016f")) {
-			throw new AssertionError("Blood HUD animation must not advance from a render-call counter");
+	private static void theMorphlingFitsInsideTheJarWindow() {
+		float window = BloodHudLayout.JAR_WINDOW.w();
+		float scale = EquippedMorphlingOverlayPlacement.jarScale(window);
+		for (int i = 0; i <= 200; i++) {
+			float size = EquippedMorphlingOverlayPlacement.ATTACHED_SIZE
+					* EquippedMorphlingOverlayPlacement.morphlingRenderScale(scale, i / 100.0f);
+			assertTrue("the feeding pulse never pushes the Morphling through the glass", size <= window + 0.001f);
 		}
-		if (!source.contains("EquippedMorphlingOverlayPlacement.animationTimeSeconds")) {
-			throw new AssertionError("Blood HUD animation must use the shared tick/partial-tick render clock");
-		}
+		assertTrue("it still fills most of the jar", EquippedMorphlingOverlayPlacement.ATTACHED_SIZE * scale > window * 0.85f);
 	}
 
 	private static void everyStrainHasItsHudIdentity() {

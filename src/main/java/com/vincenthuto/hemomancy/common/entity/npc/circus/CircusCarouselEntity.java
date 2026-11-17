@@ -25,6 +25,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.UUID;
 
 public final class CircusCarouselEntity extends Entity {
 	private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(
@@ -132,16 +133,22 @@ public final class CircusCarouselEntity extends Entity {
 		CircusPavilionSavedData.Site site = data.site(level, encounterOrigin);
 		entityData.set(SEVERED, site.severedMask());
 		entityData.set(BROKEN, site.brokenMask());
-		if (site.activeOwner() == null) {
+		// The closing beat has been earned: a relog or a death during it waits for the beat to settle the site.
+		if (site.activeOwner() == null || site.phase() == CircusPavilionStateRules.Phase.CURTAIN) {
 			missingOwnerTicks = 0;
 			return;
 		}
+		CircusArena arena = CircusArena.of(encounterOrigin);
 		Player owner = level.getPlayerByUUID(site.activeOwner());
-		if (owner != null && owner.isAlive() && owner.level() == level && owner.distanceToSqr(this) <= 64.0D * 64.0D) {
+		if (owner != null && owner.isAlive() && owner.level() == level && arena.holds(owner.position())) {
 			missingOwnerTicks = 0;
-		} else if (++missingOwnerTicks >= 200) {
+		} else if (++missingOwnerTicks >= arena.graceTicks()) {
 			data.reset(level, encounterOrigin, site.activeOwner());
 			resetEncounterVisuals();
+		} else if (missingOwnerTicks == 1 && owner instanceof net.minecraft.server.level.ServerPlayer straying
+				&& owner.isAlive() && site.phase() != CircusPavilionStateRules.Phase.PERFORMANCE) {
+			straying.displayClientMessage(net.minecraft.network.chat.Component.translatable("hemomancy.circus.finale.leash")
+					.withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
 		}
 	}
 
@@ -169,7 +176,8 @@ public final class CircusCarouselEntity extends Entity {
 	private void spawnHorseParticles(ServerLevel level) {
 		for (int horse = 0; horse < 3; horse++) {
 			CircusCarouselRules.HorsePose pose = CircusCarouselRules.horsePose(getYRot(), horse);
-			level.sendParticles(HemoParticleData.sporiticSpore(CircusEffects.CRIMSON), getX() + pose.x(),
+			// Audit E: the spore sprite read as large pink crystals at this size; fine crimson glow motes instead.
+			level.sendParticles(HemoParticleData.glow(CircusEffects.CRIMSON), getX() + pose.x(),
 					getY() + 2.0D + pose.bob(), getZ() + pose.z(), 2, 0.35D, 0.5D, 0.35D, 0.01D);
 		}
 	}
@@ -204,7 +212,8 @@ public final class CircusCarouselEntity extends Entity {
 		CircusPavilionSavedData data = CircusPavilionSavedData.get(server);
 		CircusPavilionSavedData.Site site = data.site(server, encounterOrigin());
 		if (!CircusPavilionStateRules.canAct(site.activeOwner(), player.getUUID())
-				|| site.route() != CircusRouteRules.Route.LIBERATION) return false;
+				|| site.route() != CircusRouteRules.Route.LIBERATION
+				|| site.phase() != CircusPavilionStateRules.Phase.CAROUSEL) return false;
 		int severed = CircusCarouselEncounterRules.sever(site.severedMask(), rider);
 		data.setCarouselProgress(server, encounterOrigin(), severed, site.brokenMask());
 		entityData.set(SEVERED, severed);
@@ -220,13 +229,13 @@ public final class CircusCarouselEntity extends Entity {
 				CircusEffects.THREAD_GLOW_ARGB, getId() * 31L + rider);
 		BossTelegraphs.bloodCells(server, riderPoint, CircusEffects.CRIMSON, 30, 0.35D, 0.1D);
 		BossTelegraphs.glow(server, riderPoint, CircusEffects.BONE, 8, 0.3D);
-		server.playSound(null, blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.PLAYERS, 1.0F, 0.8F);
+		server.playSound(null, blockPosition(), SoundInit.ENTITY_IMPALED_PROCESSION_THREAD_SEVER.get(), SoundSource.PLAYERS, 1.0F, 0.9F);
 		serverPlayer.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-				"hemomancy.circus.captive.severed", rider + 1), false);
+				"hemomancy.circus.captive.severed", rider + 1), true);
 		return true;
 	}
 
-	private int nearestHorse(Player player, int mask, boolean requireSevered) {
+	private int nearestHorse(Entity player, int mask, boolean requireSevered) {
 		int best = -1;
 		double bestScore = 0.82D;
 		for (int horse = 0; horse < 3; horse++) {
@@ -282,21 +291,24 @@ public final class CircusCarouselEntity extends Entity {
 
 	@Override
 	public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
-		if (!(source.getEntity() instanceof Player player) || !(level() instanceof ServerLevel server)) return false;
+		UUID actor = CircusPavilionStateRules.actingFor(source);
+		Entity striker = source.getEntity() != null ? source.getEntity() : source.getDirectEntity();
+		if (actor == null || striker == null || !(level() instanceof ServerLevel server)) return false;
 		CircusPavilionSavedData data = CircusPavilionSavedData.get(server);
 		CircusPavilionSavedData.Site site = data.site(server, encounterOrigin());
-		if (!CircusPavilionStateRules.canAct(site.activeOwner(), player.getUUID())
-				|| site.route() != CircusRouteRules.Route.LIBERATION) return false;
-		int anchor = nearestHorse(player, site.severedMask(), true);
+		if (site.activeOwner() != null && !site.activeOwner().equals(actor))
+			CircusPavilionStateRules.refuseBystander(this, actor, site.activeOwner());
+		if (!CircusPavilionStateRules.canAct(site.activeOwner(), actor)
+				|| site.route() != CircusRouteRules.Route.LIBERATION
+				|| site.phase() != CircusPavilionStateRules.Phase.CAROUSEL) return false;
+		int anchor = nearestHorse(striker, site.severedMask(), true);
 		if (anchor < 0 || !CircusCarouselEncounterRules.canBreakAnchor(site.severedMask(), anchor)) return false;
 		int broken = CircusCarouselEncounterRules.breakAnchor(site.brokenMask(), site.severedMask(), anchor);
 		data.setCarouselProgress(server, encounterOrigin(), site.severedMask(), broken);
 		entityData.set(BROKEN, broken);
-		server.playSound(null, blockPosition(), SoundEvents.ANVIL_DESTROY, SoundSource.PLAYERS, 1.1F, 0.65F);
-		if (CircusCarouselEncounterRules.allAnchorsBroken(broken)) {
-			data.setPhase(server, encounterOrigin(), CircusPavilionStateRules.Phase.DESCENT);
-			CircusEffects.collapse(server, position());
-		}
+		server.playSound(null, blockPosition(), SoundInit.ENTITY_IMPALED_PROCESSION_ANCHOR_BREAK.get(), SoundSource.PLAYERS, 1.1F, 0.9F);
+		// The carousel reports itself destroyed; the Ringmaster is the one writer of the phase and moves to DESCENT.
+		if (CircusCarouselEncounterRules.allAnchorsBroken(broken)) CircusEffects.collapse(server, position());
 		return true;
 	}
 }

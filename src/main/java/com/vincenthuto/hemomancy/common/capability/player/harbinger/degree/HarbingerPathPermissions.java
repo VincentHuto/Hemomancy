@@ -27,13 +27,22 @@ public final class HarbingerPathPermissions {
 		return isApotheos(degree, path) ? ".apotheos" : "";
 	}
 
-	/** The degree a teacher's greeting tree answers: their eighth-degree tree is the Apotheos's; a Silentium hears the Archon's. */
+	/**
+	 * The degree a teacher's greeting tree answers: their eighth-degree tree is the Apotheos's, and a Silentium keeps
+	 * the eighth Degree, where each teacher has a Silentium tree of their own (PT-83). Any other eighth Degree hears
+	 * the Archon's.
+	 */
 	public static int greetingDegree(int degree, EnumArchonPath path) {
-		return degree >= 8 && path != EnumArchonPath.APOTHEOS ? 7 : degree;
+		return degree >= 8 && path != EnumArchonPath.APOTHEOS && path != EnumArchonPath.SILENTIUM ? 7 : degree;
 	}
 
 	public static boolean isChoiceUnresolved(int pomes, EnumArchonPath path) {
 		return pomes >= 9 && path != EnumArchonPath.APOTHEOS && path != EnumArchonPath.SILENTIUM;
+	}
+
+	/** The next pome counted toward the total starts the lock: the player is warned at eight (PT-72). */
+	public static boolean nextPomeLocks(int pomes, EnumArchonPath path) {
+		return !isChoiceUnresolved(pomes, path) && isChoiceUnresolved(pomes + 1, path);
 	}
 
 	public static boolean canUsePower(int pomes, EnumArchonPath path, boolean staffRecovery) {

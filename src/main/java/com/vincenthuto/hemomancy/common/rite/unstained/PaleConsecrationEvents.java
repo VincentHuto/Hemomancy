@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.rite.unstained;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZone;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -33,7 +33,6 @@ public class PaleConsecrationEvents {
 	/** Slowness I duration in ticks (3 seconds). */
 	private static final int SLOWNESS_DURATION = 60;
 
-	private static final ParticleColor PALE_GLOW = new ParticleColor(214, 232, 236);
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
@@ -55,7 +54,7 @@ public class PaleConsecrationEvents {
 						SLOWNESS_DURATION, 0, false, true, true));
 			}
 
-			sLevel.sendParticles(HemoParticleData.glow(PALE_GLOW),
+			sLevel.sendParticles(HemoParticleData.glow(HemoPalette.PALE_GLOW),
 					center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
 					3, r * 0.4, 0.5, r * 0.4, 0.01);
 		}

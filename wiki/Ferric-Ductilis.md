@@ -54,13 +54,10 @@ Visual forms append to the existing ordinal list. Existing visual and Lux/Umbra 
 The disposable review runs real paid player casts, supported NPC casts, reactive defenses, moving allies, daylight/night, first/third person, Minimal particles, dense targets and resource reload. Its player-control scene holds movement, jump, attack and use inputs during paralysis, rotates the camera, then verifies movement resumes. It requires the existing `VisceralReview` save under `build/visceral-review-client`. It edits only that disposable world and its settings.
 
 ```powershell
-python tools/validate_ferric_ductilis_shaders.py
-.\gradlew.bat -I tools/ferric-ductilis-review.init.gradle runGameTestServer
-.\gradlew.bat -I tools/ferric-ductilis-review.init.gradle -PferricReviewLabel=final -PferricMultiplayer -PferricReviewModes=3 runClient
+.\gradlew.bat -I tools/review/ferric-ductilis-review.init.gradle runGameTestServer
+.\gradlew.bat -I tools/review/ferric-ductilis-review.init.gradle -PferricReviewLabel=final -PferricMultiplayer -PferricReviewModes=3 runClient
 # Once the first client reports FERRIC OBSERVER READY, in another shell:
-.\tools\review-ferric-observer.ps1 -Label final
-# After both clients exit:
-python tools/assemble_ferric_review.py --label final
+.\tools\review\review-ferric-observer.ps1 -Label final
 ```
 
 The observer launcher prepares arguments without rebuilding dependency JARs under a running client. Do not run a build concurrently with the review. Captures go to each disposable client's screenshots directory. Frame intervals are recorded in `ferric-final-frame-times.csv`; screenshot capture and a second client affect those timings, so they are not isolated shader costs. The assembly script writes MP4 clips and timing summaries under `build/ferric-ductilis-review`.

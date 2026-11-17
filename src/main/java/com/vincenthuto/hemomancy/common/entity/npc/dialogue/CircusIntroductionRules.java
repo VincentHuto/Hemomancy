@@ -6,7 +6,11 @@ public final class CircusIntroductionRules {
 	private CircusIntroductionRules() {
 	}
 
+	/** One Degree before the Waybill: the Mnemonist names the Circus and its country, and writes nothing yet. */
+	public static final int TEASER_DEGREE = MINIMUM_DEGREE - 1;
+
 	static Introduction introductionFor(int degree, boolean discovered) {
+		if (degree == TEASER_DEGREE) return Introduction.TEASER;
 		if (degree < MINIMUM_DEGREE) return Introduction.HIDDEN;
 		return discovered ? Introduction.DISCOVERED : Introduction.UNDISCOVERED;
 	}
@@ -17,6 +21,7 @@ public final class CircusIntroductionRules {
 
 	enum Introduction {
 		HIDDEN,
+		TEASER,
 		UNDISCOVERED,
 		DISCOVERED
 	}

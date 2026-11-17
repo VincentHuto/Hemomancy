@@ -1,5 +1,6 @@
 {
   "type": "hutoslib:page",
+  "decal": false,
   "ordinality": 9,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "The First Clotting",

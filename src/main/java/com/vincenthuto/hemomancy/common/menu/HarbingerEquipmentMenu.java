@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.TitrationBandolierItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingItem;
 import com.vincenthuto.hemomancy.common.menu.slot.EquipmentArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
@@ -31,10 +32,13 @@ public class HarbingerEquipmentMenu extends HemoContainerMenu {
     public final static int CHARM_SLOT_INDEX = 5;
     public final static int JAR_SLOT_INDEX = 7;
     public final static int FITTING_SLOT_INDEX = 8;
+    public final static int BANDOLIER_SLOT_INDEX = 9;
     public final static int JAR_MENU_SLOT = 4;
     public final static int CHARM_MENU_SLOT = 5;
     public final static int GOURD_MENU_SLOT = 6;
     public final static int FITTING_MENU_SLOT = 7;
+    /** After the inventory, offhand and talisman socket, so their menu indices stay put. */
+    public final static int BANDOLIER_MENU_SLOT = 46;
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD,
             EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private final Player player;
@@ -83,6 +87,8 @@ public class HarbingerEquipmentMenu extends HemoContainerMenu {
             @Override public boolean mayPlace(ItemStack stack) { return openedFromScarletVanity && super.mayPlace(stack); }
             @Override public boolean mayPickup(Player player) { return openedFromScarletVanity; }
         });
+        this.addSlot(new SelectiveEquipmentTypeSlot(player, TitrationBandolierItem.class, equipment,
+                BANDOLIER_SLOT_INDEX, 198, 62));
     }
 
     @Override
@@ -97,6 +103,15 @@ public class HarbingerEquipmentMenu extends HemoContainerMenu {
         if(index==45) {
             if(!slot.mayPickup(playerIn) || !moveItemStackTo(stackInSlot,8,44,true)) return ItemStack.EMPTY;
             slot.set(ItemStack.EMPTY); slot.onTake(playerIn,stackInSlot); return originalStack;
+        }
+        if(index==BANDOLIER_MENU_SLOT) {
+            if(!slot.mayPickup(playerIn) || !moveItemStackTo(stackInSlot,8,44,true)) return ItemStack.EMPTY;
+            slot.set(ItemStack.EMPTY); slot.onTake(playerIn,stackInSlot); return originalStack;
+        }
+        if(index>=8 && index<=44 && stackInSlot.getItem() instanceof TitrationBandolierItem) {
+            if(!moveItemStackTo(stackInSlot,BANDOLIER_MENU_SLOT,BANDOLIER_MENU_SLOT+1,false)) return ItemStack.EMPTY;
+            if(stackInSlot.isEmpty()) slot.set(ItemStack.EMPTY); else slot.setChanged();
+            return originalStack;
         }
         if(index>=8 && index<44 && com.vincenthuto.hemomancy.common.item.harbinger.ListeningScarItem.awake(stackInSlot)) {
             if(!moveItemStackTo(stackInSlot,45,46,false)) return ItemStack.EMPTY;

@@ -537,37 +537,33 @@ public final class PuppeteeringGameTests {
 				feathers.add(feather);
 				helper.assertTrue(helper.getLevel().addFreshEntity(feather), "Shot feather must enter the level");
 			}
-
-			helper.runAfterDelay(4, () -> {
-				int embedded = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
-						target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
-				helper.assertTrue(embedded == 2, "Both hit feathers must remain visibly embedded; found " + embedded);
-				helper.assertTrue(Math.abs(target.getMaxHealth() - 18.0F) < 0.001F,
-						"Two embedded feathers must remove two max health; found " + target.getMaxHealth()
-								+ ", targetTicks=" + target.tickCount + ", targetAlive=" + target.isAlive()
-								+ ", targetIndexed=" + (helper.getLevel().getEntity(target.getUUID()) == target)
-								+ ", feathers=" + feathers.stream().map(feather -> "ticks=" + feather.tickCount
-										+ ", embedded=" + feather.isEmbedded() + ", pos=" + feather.position()
-										+ ", indexed=" + (helper.getLevel().getEntity(feather.getUUID()) == feather)
-										+ ", entitiesLoaded=" + helper.getLevel().areEntitiesLoaded(
-												net.minecraft.world.level.ChunkPos.asLong(feather.blockPosition())))
-							.collect(java.util.stream.Collectors.joining("; ")));
-				helper.assertTrue(feathers.stream().allMatch(feather -> feather.tickCount > 0 && feather.isEmbedded()),
-						"Both shot feathers must embed through their natural projectile ticks");
-				target.setPos(target.getX() + 2.0D, target.getY(), target.getZ());
-			});
-			helper.runAfterDelay(6, () -> {
-				int attached = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
-						target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
-				helper.assertTrue(attached == 2, "Embedded feathers must follow the struck mob");
-			});
-			helper.runAfterDelay(110, () -> {
-				helper.assertTrue(feathers.stream().noneMatch(Entity::isAlive), "Embedded feathers must naturally expire");
-				helper.assertTrue(Math.abs(target.getMaxHealth() - 20.0F) < 0.001F,
-						"Expired feathers must restore the mob's original max health");
-				helper.succeed();
-			});
-		});
+		}).thenWaitUntil(() -> {
+			int embedded = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
+					target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
+			helper.assertTrue(embedded == 2, "Both hit feathers must remain visibly embedded; found " + embedded);
+			helper.assertTrue(Math.abs(target.getMaxHealth() - 18.0F) < 0.001F,
+					"Two embedded feathers must remove two max health; found " + target.getMaxHealth()
+							+ ", targetTicks=" + target.tickCount + ", targetAlive=" + target.isAlive()
+							+ ", targetIndexed=" + (helper.getLevel().getEntity(target.getUUID()) == target)
+							+ ", feathers=" + feathers.stream().map(feather -> "ticks=" + feather.tickCount
+									+ ", embedded=" + feather.isEmbedded() + ", pos=" + feather.position()
+									+ ", indexed=" + (helper.getLevel().getEntity(feather.getUUID()) == feather)
+									+ ", entitiesLoaded=" + helper.getLevel().areEntitiesLoaded(
+											net.minecraft.world.level.ChunkPos.asLong(feather.blockPosition())))
+						.collect(java.util.stream.Collectors.joining("; ")));
+			helper.assertTrue(feathers.stream().allMatch(feather -> feather.tickCount > 0 && feather.isEmbedded()),
+					"Both shot feathers must embed through their natural projectile ticks");
+		}).thenExecute(() -> target.setPos(target.getX() + 2.0D, target.getY(), target.getZ()))
+		.thenWaitUntil(() -> {
+			// Embedded feathers sit on the mob, so after it moves they are back within half a block of its box.
+			int attached = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
+					target.getBoundingBox().inflate(0.5D), Entity::isAlive).size();
+			helper.assertTrue(attached == 2, "Embedded feathers must follow the struck mob; " + attached + " are on it");
+		}).thenWaitUntil(() -> helper.assertTrue(feathers.stream().noneMatch(Entity::isAlive),
+				"Embedded feathers must naturally expire"))
+		.thenExecute(() -> helper.assertTrue(Math.abs(target.getMaxHealth() - 20.0F) < 0.001F,
+				"Expired feathers must restore the mob's original max health; found " + target.getMaxHealth()))
+		.thenSucceed();
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)

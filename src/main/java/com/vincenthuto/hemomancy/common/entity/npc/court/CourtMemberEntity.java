@@ -78,6 +78,7 @@ public class CourtMemberEntity extends PathfinderMob implements ProgressionDialo
 	private static final EntityDataAccessor<Integer> TALK = SynchedEntityData.defineId(CourtMemberEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Boolean> WITHDRAWN = SynchedEntityData.defineId(CourtMemberEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> WARY = SynchedEntityData.defineId(CourtMemberEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> SCHOOLING = SynchedEntityData.defineId(CourtMemberEntity.class, EntityDataSerializers.BOOLEAN);
 
 	private final CourtRole role;
 	@Nullable
@@ -134,6 +135,7 @@ public class CourtMemberEntity extends PathfinderMob implements ProgressionDialo
 		builder.define(TALK, 0);
 		builder.define(WITHDRAWN, false);
 		builder.define(WARY, false);
+		builder.define(SCHOOLING, false);
 	}
 
 	/** Mob's constructor registers goals before the role is set, so the role's goals are added after it. */
@@ -181,6 +183,12 @@ public class CourtMemberEntity extends PathfinderMob implements ProgressionDialo
 	@Override
 	protected PathNavigation createNavigation(Level level) {
 		return new AmphibiousPathNavigation(this, level);
+	}
+
+	/** Court members can't be tied up and led off their marks, as villagers can't. */
+	@Override
+	public boolean canBeLeashed() {
+		return false;
 	}
 
 	/** Swimmers stroke through water without sinking (as the axolotl does); everyone else walks the floor. */
@@ -360,11 +368,17 @@ public class CourtMemberEntity extends PathfinderMob implements ProgressionDialo
 		this.schoolCentre = centre.immutable();
 		this.schoolRadius = radius;
 		this.schoolWaypoint = 0;
+		entityData.set(SCHOOLING, true);
 	}
 
 	@Nullable
 	public UUID school() {
 		return school;
+	}
+
+	/** Whether this member swims with a school; synced, so the client can show the Shared Wake on a school's swimmers. */
+	public boolean isSchooling() {
+		return entityData.get(SCHOOLING);
 	}
 
 	public boolean isSchoolLeader() {

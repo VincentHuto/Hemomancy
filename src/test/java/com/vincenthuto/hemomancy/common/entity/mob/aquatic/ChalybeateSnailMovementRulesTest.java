@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
+import org.junit.jupiter.api.Test;
+
 public final class ChalybeateSnailMovementRulesTest {
 	private ChalybeateSnailMovementRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertTrue("extended underwater snails can climb vent blocks",
 				ChalybeateSnailMovementRules.canUseVentClimb(true, false, true));
 		assertFalse("retracted snails cannot climb vent blocks",

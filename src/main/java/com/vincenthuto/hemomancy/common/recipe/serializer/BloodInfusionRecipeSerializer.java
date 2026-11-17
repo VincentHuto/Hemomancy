@@ -26,7 +26,9 @@ public final class BloodInfusionRecipeSerializer implements RecipeSerializer<Blo
 	private static final MapCodec<BloodInfusionRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			INPUT_BLOCK_CODEC.fieldOf("input").forGetter(BloodInfusionRecipe::input),
 			BLOOD_COST_CODEC.fieldOf("blood_cost").forGetter(BloodInfusionRecipe::bloodCost),
-			RESULT_BLOCK_CODEC.fieldOf("result").forGetter(BloodInfusionRecipe::result)
+			RESULT_BLOCK_CODEC.fieldOf("result").forGetter(BloodInfusionRecipe::result),
+			ResourceLocation.CODEC.optionalFieldOf("sculpting").forGetter(BloodInfusionRecipe::sculpting),
+			Codec.BOOL.optionalFieldOf("in_place", false).forGetter(BloodInfusionRecipe::inPlace)
 	).apply(instance, BloodInfusionRecipe::new));
 
 	private static final StreamCodec<RegistryFriendlyByteBuf, BloodInfusionRecipe> STREAM_CODEC = StreamCodec.of(
@@ -50,13 +52,17 @@ public final class BloodInfusionRecipeSerializer implements RecipeSerializer<Blo
 		buffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(recipe.input()));
 		buffer.writeDouble(recipe.bloodCost());
 		buffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(recipe.result()));
+		buffer.writeOptional(recipe.sculpting(), (out, id) -> out.writeResourceLocation(id));
+		buffer.writeBoolean(recipe.inPlace());
 	}
 
 	private static BloodInfusionRecipe decode(RegistryFriendlyByteBuf buffer) {
 		return new BloodInfusionRecipe(
 				BuiltInRegistries.BLOCK.get(buffer.readResourceLocation()),
 				buffer.readDouble(),
-				BuiltInRegistries.BLOCK.get(buffer.readResourceLocation()));
+				BuiltInRegistries.BLOCK.get(buffer.readResourceLocation()),
+				buffer.readOptional(in -> in.readResourceLocation()),
+				buffer.readBoolean());
 	}
 
 	@Override

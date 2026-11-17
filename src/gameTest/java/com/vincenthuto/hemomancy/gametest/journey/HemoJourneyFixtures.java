@@ -293,7 +293,10 @@ public final class HemoJourneyFixtures {
 				case VEIN_MASON_D6_SCAR_LEARNED -> prepareContinuationScarBrazier(player, origin, false);
 				case VEIN_MASON_D6_LOADOUT -> prepareContinuationScarBrazier(player, origin, true);
 				case CHAMBER_RETURNED -> HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
-				case COVENANT_THRONE_BOUND -> set(player, origin.above(), BlockInit.covenant_throne.get());
+				case COVENANT_THRONE_BOUND -> {
+					set(player, origin.above(), BlockInit.covenant_throne.get());
+					prepareThroneFane(player, level, origin);
+				}
 				case COVENANT_VIGIL -> prepareCovenantVigil(player, level, origin);
 				case ADEPT_RITE, ILLUMINATUS_RITE, SANCTIFIED_RITE ->
 					buildRankupRite(player, origin, rankupRecipe(stage));
@@ -554,7 +557,7 @@ public final class HemoJourneyFixtures {
 			case LIVING_STAFF_CRAFTED -> List.of(new ItemStack(ItemInit.living_staff.get()));
 			case VICAR_HERMIT_ROAD_REPORT -> List.of(new ItemStack(BlockInit.befouling_ash_trail.get(), 4));
 			case VICAR_REWARD -> FirstBloodcraftAssignment.rewardStacks();
-			case FIRST_DISTILLATION -> List.of(new ItemStack(ItemInit.hematic_iron_powder.get(), 3));
+			case FIRST_DISTILLATION -> List.of(new ItemStack(ItemInit.hematic_iron_powder.get()));
 			case LIVING_BESTIARY_SURRENDER -> List.of(new ItemStack(ItemInit.enzyme_primer.get()));
 			case VICAR_CONSECRATION_KIT -> List.of(new ItemStack(ItemInit.vicars_consecration_kit.get()));
 			case ARTIFICER_WORN_VOW_REWARD -> List.of(new ItemStack(ItemInit.hematic_iron_scrap.get(), 4));
@@ -1563,6 +1566,14 @@ public final class HemoJourneyFixtures {
 		player.getInventory().add(new ItemStack(ItemInit.blood_projection.get()));
 	}
 
+	/** A Throne binds only inside the Fane of the binder's line (PT-65): give the line one here if it has none. */
+	private static void prepareThroneFane(ServerPlayer player, ServerLevel level, BlockPos origin) {
+		var line = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
+		if (!line.isValid()) return;
+		var fanes = com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData.get(level);
+		if (!fanes.isWithinFane(line.getLeaderUUID(), origin.above())) fanes.consecrateHeart(line.getLeaderUUID(), origin);
+	}
+
 	private static void prepareCovenantVigil(ServerPlayer player, ServerLevel level, BlockPos origin) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(
 				level, Hemomancy.rloc("cardinal_rite/covenant_vigil"));
@@ -1722,7 +1733,8 @@ public final class HemoJourneyFixtures {
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		known.getKnownManips().putIfAbsent(ManipulationInit.blood_absorption.get(), new ManipLevel(0, 0));
-		known.setSelectedManip(ManipulationInit.blood_absorption.get());
+		// The Staff channels the active verb (core-loop Track 1, CL-2), not the selection.
+		known.setActiveVerb(com.vincenthuto.hemomancy.common.manipulation.verb.Verb.ABSORB);
 		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), 1000.0D));

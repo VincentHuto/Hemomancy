@@ -35,4 +35,29 @@ class CircusRouteRulesTest {
 		assertFalse(CircusRouteRules.canRepair(CircusRouteRules.Route.SUCCESSION, true));
 		assertFalse(CircusRouteRules.canRepair(CircusRouteRules.Route.LIBERATION_COMPLETE, false));
 	}
+
+	/** D-30, NQ-15-5: Degree 4 and any one school report open the pact for everyone but the Unstained. */
+	@Test
+	void thePactNeedsTheFourthDegreeAndAnyOneReport() {
+		for (CircusRouteRules.Route route : new CircusRouteRules.Route[]{CircusRouteRules.Route.SUCCESSION,
+				CircusRouteRules.Route.LIBERATION}) {
+			assertEquals(CircusRouteRules.PactGate.OPEN, CircusRouteRules.pactGate(route, true, true, false, false));
+			assertEquals(CircusRouteRules.PactGate.NEEDS_DEGREE, CircusRouteRules.pactGate(route, false, true, true, false));
+			assertEquals(CircusRouteRules.PactGate.NEEDS_REPORT, CircusRouteRules.pactGate(route, true, false, false, false));
+			assertEquals(CircusRouteRules.PactGate.NEEDS_DEGREE_AND_REPORT,
+					CircusRouteRules.pactGate(route, false, false, false, false));
+		}
+		assertEquals(4, CircusRouteRules.PACT_DEGREE);
+	}
+
+	/** D-31, NQ-15-6 B: the Unstained run Liberation only, on The Missing Understudy report and no Degree. */
+	@Test
+	void anUnstainedLiberatorNeedsTheUnderstudyReportAndNoDegree() {
+		assertEquals(CircusRouteRules.PactGate.OPEN,
+				CircusRouteRules.pactGate(CircusRouteRules.Route.LIBERATION, false, true, true, true));
+		assertEquals(CircusRouteRules.PactGate.NEEDS_UNDERSTUDY,
+				CircusRouteRules.pactGate(CircusRouteRules.Route.LIBERATION, true, true, false, true));
+		assertEquals(CircusRouteRules.PactGate.UNSTAINED,
+				CircusRouteRules.pactGate(CircusRouteRules.Route.SUCCESSION, true, true, true, true));
+	}
 }

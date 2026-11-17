@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class TemperMobSpawnRulesSourceTest {
 	private static final String[] DORMANT_ENTITY_IDS = {
@@ -29,13 +34,14 @@ public final class TemperMobSpawnRulesSourceTest {
 	private TemperMobSpawnRulesSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertDesiccantActive();
 		assertMyelinBorerActive();
 		String entityInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		for (String id : DORMANT_ENTITY_IDS) {
-			assertDoesNotContain("dormant mob should not be actively registered: " + id,
+			assertNotContains("dormant mob should not be actively registered: " + id,
 					stripLineComments(entityInit), "register(\"" + id + "\"");
 			assertPathMissing("dormant mob should not have a biome modifier: " + id,
 					Path.of("src/main/resources/data/hemomancy/neoforge/biome_modifier/add_" + id + ".json"));
@@ -43,9 +49,9 @@ public final class TemperMobSpawnRulesSourceTest {
 					Path.of("src/main/resources/data/hemomancy/loot_table/entities/" + id + ".json"));
 		}
 		for (String id : DORMANT_DROP_IDS) {
-			assertDoesNotContain("dormant drop should not be actively registered: " + id,
+			assertNotContains("dormant drop should not be actively registered: " + id,
 					stripLineComments(itemInit), "register(\"" + id + "\"");
-			assertDoesNotContain("recipes should not consume dormant drop: " + id,
+			assertNotContains("recipes should not consume dormant drop: " + id,
 					readTree(Path.of("src/main/resources/data/hemomancy/recipe")), "hemomancy:" + id);
 		}
 	}
@@ -96,10 +102,6 @@ public final class TemperMobSpawnRulesSourceTest {
 				Path.of("src/main/resources/data/hemomancy/loot_table/entities/desiccant.json"));
 	}
 
-	private static String read(String path) throws IOException {
-		return Files.readString(Path.of(path)).replace("\r\n", "\n");
-	}
-
 	private static String readTree(Path root) throws IOException {
 		StringBuilder content = new StringBuilder();
 		try (var paths = Files.walk(root)) {
@@ -130,18 +132,6 @@ public final class TemperMobSpawnRulesSourceTest {
 	private static void assertPathExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": found " + unexpected);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
 		}
 	}
 }

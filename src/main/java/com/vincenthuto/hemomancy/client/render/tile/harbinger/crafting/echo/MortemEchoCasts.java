@@ -14,6 +14,7 @@ final class MortemEchoCasts {
 	static void registerAll() {
 		EchoCasts.register("conjure_axe", ctx -> AnimusEchoCasts.conjure(ctx, Form.MORTEM_CONJURE));
 		EchoCasts.register("conjure_sickle", ctx -> AnimusEchoCasts.conjure(ctx, Form.MORTEM_CONJURE));
+		EchoCasts.register("conjure_pickaxe", ctx -> AnimusEchoCasts.conjure(ctx, Form.MORTEM_CONJURE));
 		EchoCasts.register("hemorrhage", MortemEchoCasts::hemorrhage);
 		EchoCasts.register("lignum_mortis", ctx -> lignum(ctx, 3, 0.0));
 		EchoCasts.register("canopy_mortis", ctx -> lignum(ctx, 4, 1.4));
@@ -119,15 +120,18 @@ final class MortemEchoCasts {
 	}
 
 	/** Blood borrowed against the body, then the debt collected. */
+	/** The Vessel Empties out of the echo: a six-lane star of blood and iron, the first lane toward the loom's front. */
 	private static void tithe(EchoCast.EchoContext ctx) {
 		EchoFx.activate(ctx);
-		EchoFx.cue(Form.DEBT, ctx.feet(), ctx.feet(), ctx.scaled(2.0), 30, 3);
-		EchoScheduler.later(24, () -> EchoFx.burst(Form.TITHE_COLLECT, ctx.feet(), ctx.scaled(1.0), 24));
+		EchoFx.cue(Form.TITHE_RELEASE, ctx.feet(), ctx.feet().add(ctx.forward()), ctx.scaled(4.0),
+				com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheRules.CLOSE_END, 6);
 	}
 
+	/** The rot sown round the echo's feet, then the purifier's fire run out across it and the char left behind. */
 	private static void bloomOfRot(EchoCast.EchoContext ctx) {
 		EchoFx.activate(ctx);
-		EchoFx.burst(Form.BLOOM, ctx.feet(), ctx.scaled(3.0), 36);
-		EchoFx.burst(Form.ROT_INFECTION, ctx.feet(), ctx.scaled(1.0), 30);
+		EchoFx.cue(Form.BLOOM_FIELD, ctx.feet(), ctx.feet(), 0.6, 40, 1);
+		EchoScheduler.later(30, () -> EchoFx.cue(Form.BLOOM_IGNITION, ctx.feet(), ctx.feet().add(ctx.forward()), ctx.scaled(3.0),
+				com.vincenthuto.hemomancy.common.manipulation.saint.BloomOfRotRules.ASH_END, 1));
 	}
 }

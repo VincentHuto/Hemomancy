@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.MorphlingCradleBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MorphlingCradleBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
-import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -32,8 +32,7 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 
 		AttachFace face = te.getBlockState().getValue(MorphlingCradleBlock.FACE);
 		Direction facing = te.getBlockState().getValue(MorphlingCradleBlock.FACING);
-		long gameTime = te.getLevel() != null ? te.getLevel().getGameTime() : (Util.getMillis() / 50L);
-		float time = gameTime + partialTicks;
+		float time = (float) AnimationTime.ticksOrWallClock(te.getLevel(), partialTicks);
 		float bob = Mth.sin(time * 0.1F) * 0.04F;
 
 		poseStack.pushPose();

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.gametest.playthrough;
 
+import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusSiteStateService;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PlayerStateSync;
@@ -31,6 +33,7 @@ import com.vincenthuto.hemomancy.common.entity.summon.MnemonistPuppetEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.CircusWaybillItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.CovenantWaybillItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
@@ -54,7 +57,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -62,6 +68,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -143,7 +150,9 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	private static final String PASSED = SCHOOL + "passed";
 	private static final String RETRY = SCHOOL + "retry";
 	private static final String SILENT = "hemomancy.circus.ringmaster.silent";
-	private static final String CLAIMED = "hemomancy.circus.finale.claimed";
+	private static final String BUSY = "hemomancy.circus.finale.busy";
+	private static final String SETTLED = "hemomancy.circus.finale.settled";
+	private static final String NO_ROUTE = "hemomancy.circus.finale.no_route";
 	private static final String NOT_READY = "hemomancy.circus.finale.not_ready";
 	private static final String SEVERED = "hemomancy.circus.captive.severed";
 	private static final String PATH_GATE = "message.hemomancy.cardinal_rite_activation.this_rite_cannot_answer_your_current";
@@ -156,18 +165,20 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	private static final ResourceLocation LEDGER_PAPER = Hemomancy.rloc("circus_threadkeeper/ledger_paper");
 	private static final ResourceLocation RIGGING_LINE = Hemomancy.rloc("circus_acrobat/rigging_line");
 
+	/** The big top's core sits this far east in the template, between the side rings (2026-11-16). */
+	private static final int PAVILION_MARGIN = 8;
 	/** The actors' marks in {@code crimson_troupe_pavilion} (template-relative). */
 	private static final Map<PlaythroughNpcs.CircusRole, BlockPos> PAVILION_MARKS = Map.of(
-			PlaythroughNpcs.CircusRole.RINGMASTER, new BlockPos(32, 8, 37),
-			PlaythroughNpcs.CircusRole.CAROUSEL, new BlockPos(32, 1, 32),
-			PlaythroughNpcs.CircusRole.FIRE_EATER, new BlockPos(28, 1, 28),
-			PlaythroughNpcs.CircusRole.ACROBAT, new BlockPos(36, 1, 28),
-			PlaythroughNpcs.CircusRole.STILT_WALKER, new BlockPos(28, 1, 36),
-			PlaythroughNpcs.CircusRole.KNIFE_THROWER, new BlockPos(36, 1, 36),
-			PlaythroughNpcs.CircusRole.THREADKEEPER, new BlockPos(8, 1, 7),
-			PlaythroughNpcs.CircusRole.UNDERSTUDY, new BlockPos(56, 1, 55),
-			PlaythroughNpcs.CircusRole.STRONGMAN, new BlockPos(8, 1, 26),
-			PlaythroughNpcs.CircusRole.BEAST_TAMER, new BlockPos(57, 1, 26));
+			PlaythroughNpcs.CircusRole.RINGMASTER, new BlockPos(40, 8, 45),
+			PlaythroughNpcs.CircusRole.CAROUSEL, new BlockPos(40, 1, 32),
+			PlaythroughNpcs.CircusRole.FIRE_EATER, new BlockPos(36, 1, 28),
+			PlaythroughNpcs.CircusRole.ACROBAT, new BlockPos(44, 1, 28),
+			PlaythroughNpcs.CircusRole.STILT_WALKER, new BlockPos(36, 1, 36),
+			PlaythroughNpcs.CircusRole.KNIFE_THROWER, new BlockPos(44, 1, 36),
+			PlaythroughNpcs.CircusRole.THREADKEEPER, new BlockPos(16, 1, 7),
+			PlaythroughNpcs.CircusRole.UNDERSTUDY, new BlockPos(64, 1, 53),
+			PlaythroughNpcs.CircusRole.STRONGMAN, new BlockPos(9, 1, 32),
+			PlaythroughNpcs.CircusRole.BEAST_TAMER, new BlockPos(71, 1, 32));
 
 	/** Passive acclimation one act's ticks can add inside the pavilion (one point per 80 living ticks). */
 	private static final int PASSIVE_SLACK = 6;
@@ -242,7 +253,12 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		ItemStack waybill = p.wield(ItemInit.circus_waybill.get());
 		java.util.UUID id = p.player().getUUID();
 		Thread server = helper.getLevel().getServer().getRunningThread();
-		String notFound = net.minecraft.network.chat.Component.translatable(NOT_FOUND).getString();
+		// PT-58: the not-found line names what the Waybill sought.
+		String notFound = net.minecraft.network.chat.Component.translatable(NOT_FOUND,
+				com.vincenthuto.hemomancy.common.item.harbinger.CircusWaybillItem.seeking(
+						com.vincenthuto.hemomancy.common.item.harbinger.CircusWaybillItem.targets(p.player()))).getString();
+		String notFoundPavilion = net.minecraft.network.chat.Component.translatable(NOT_FOUND,
+				com.vincenthuto.hemomancy.common.item.harbinger.CircusWaybillItem.seeking(CircusWaybillSearch.PAVILIONS)).getString();
 		String attuned = net.minecraft.network.chat.Component.translatable(ATTUNED).getString();
 		CircusWaybillSearch.clearSessionState();
 		Outcome normal = p.use(InteractionHand.MAIN_HAND);
@@ -268,14 +284,37 @@ public final class PlaythroughCrimsonTroupeGameTests {
 				})
 				.thenWaitUntil(() -> {
 					helper.assertFalse(CircusWaybillSearch.pending(id), "the sneaking search finished");
-					helper.assertTrue(p.captured().chat.stream().filter(notFound::equals).count() == 2,
-							"sneaking use found nothing too: " + p.captured().said());
+					helper.assertTrue(p.captured().chat.stream().filter(line -> line.equals(notFound) || line.equals(notFoundPavilion)).count() == 2
+							&& p.captured().chat.contains(notFoundPavilion),
+							"sneaking use found no pavilion, and says so: " + p.captured().said());
 				})
 				.thenExecute(() -> {
 					helper.assertFalse(p.captured().chat.contains(attuned), "nothing attuned: " + p.captured().said());
 					helper.assertTrue(CovenantWaybillItem.target(waybill, helper.getLevel()) == null, "no target recorded");
 				})
 				.thenSucceed();
+	}
+
+	/**
+	 * PT-58: the Waybill seeks an abandoned stage once the Understudy's testimony is given and until the stage record
+	 * is read; sneaking still seeks the pavilions, and with the record read it goes back to the next professor's camp.
+	 */
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
+	public static void waybillSeeksTheStageWhileTheLeadIsOpen(GameTestHelper helper) {
+		PlaythroughPlayer p = d5(helper, 8, 12);
+		ServerPlayer player = p.player();
+		var school = CircusApprenticeshipProgress.state(player);
+		helper.assertTrue(!CircusWaybillItem.targets(player).equals(CircusWaybillSearch.STAGES), "no stage before the testimony");
+		school.putBoolean("testimony.circus_understudy", true); // ARRANGE: the Understudy's testimony is given
+		helper.assertTrue(CircusWaybillItem.targets(player).equals(CircusWaybillSearch.STAGES), "the stage while the lead is open");
+		player.setShiftKeyDown(true);
+		helper.assertTrue(CircusWaybillItem.targets(player).equals(CircusWaybillSearch.PAVILIONS), "sneaking seeks the pavilions");
+		player.setShiftKeyDown(false);
+		school.putBoolean("clue.stage", true); // ARRANGE: the stage record is read
+		helper.assertTrue(TagKey.create(Registries.STRUCTURE, Hemomancy.rloc("troupe_teacher_air"))
+				.equals(CircusWaybillItem.targets(player)), "with the record read, the next professor's camp: "
+				+ CircusWaybillItem.targets(player).location());
+		helper.succeed();
 	}
 
 	/** NOT RUN (not a decision): the waybill finding a real camp or pavilion needs a seeded world. */
@@ -299,9 +338,9 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	@GameTest(template = EMPTY, timeoutTicks = 1200, batch = PAVILION + "_discovery")
 	public static void pavilionDiscoveryAndAcclimation(GameTestHelper helper) {
 		PlaythroughSites.TemplateSite pavilion = PlaythroughSites.pavilion(helper, PlaythroughSites.farOrigin(helper, 64));
-		PlaythroughSites.TemplateSite camp = PlaythroughSites.camp(helper, "air", PlaythroughSites.farOrigin(helper, 140));
-		PlaythroughSites.TemplateSite stage = PlaythroughSites.abandonedStage(helper, PlaythroughSites.farOrigin(helper, 176));
-		BlockPos inside = pavilion.at(20, 1, 20);
+		PlaythroughSites.TemplateSite camp = PlaythroughSites.camp(helper, "air", PlaythroughSites.farOrigin(helper, 150));
+		PlaythroughSites.TemplateSite stage = PlaythroughSites.abandonedStage(helper, PlaythroughSites.farOrigin(helper, 186));
+		BlockPos inside = pavilion.at(28, 1, 20);
 		PlaythroughPlayer p = d5(helper, 8, 12);
 		PlaythroughPlayer visitor = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 10, 12));
 		PlaythroughStates.freshD0(visitor); // ARRANGE: a D0 visitor with inactive blood
@@ -562,14 +601,14 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					p.moveTo(helper.absolutePos(new BlockPos(7, Y, 12)));
 					DialogueView ready = p.talkTo(understudy);
 					ready.assertLangKeys(helper, "the Understudy at D5").assertNoDeadEnds(helper, "the Understudy at D5");
-					helper.assertTrue(allLineKeys(ready).contains(SCHOOL + "status.lesson") && ready.offers(TEACH),
+					helper.assertTrue(allLineKeys(ready).contains(SCHOOL + "circus_understudy.status.lesson") && ready.offers(TEACH),
 							"a D5 player is offered the Understudy's lesson; " + ready.describe());
 					Outcome taught = p.choose(understudy, TEACH);
 					PlaythroughLog.note(helper, "understudyMnemonistPuppet", "lesson: " + taught.describe());
 					helper.assertTrue(p.player().getRecipeBook().contains(Hemomancy.rloc("cardinal_rite/" + TRIAL_RECIPE)),
 							"the lesson unlocks the ordeal's recipe; " + taught);
 					DialogueView after = p.talkTo(understudy);
-					helper.assertTrue(allLineKeys(after).contains(SCHOOL + "status.ordeal")
+					helper.assertTrue(allLineKeys(after).contains(SCHOOL + "circus_understudy.status.ordeal")
 							&& !CircusApprenticeshipProgress.knows(p.player(), MNEMONIST),
 							"after the lesson the Understudy points to the ordeal and the shape is not yet known");
 				})
@@ -879,14 +918,14 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	 * Audience and The Missing Understudy (+150 each), once; a D3 player with the same testimonies is refused The Wrong
 	 * Audience.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 400, batch = PAVILION + "_evidence")
+	@GameTest(template = EMPTY, timeoutTicks = 1400, batch = PAVILION + "_evidence")
 	public static void wrongAudienceAndMissingUnderstudy(GameTestHelper helper) {
 		Pavilion pv = pavilion(helper);
-		PlaythroughSites.TemplateSite stage = PlaythroughSites.abandonedStage(helper, PlaythroughSites.farOrigin(helper, 140));
+		PlaythroughSites.TemplateSite stage = PlaythroughSites.abandonedStage(helper, PlaythroughSites.farOrigin(helper, 150));
 		PlaythroughPlayer p = d5(helper, 8, 12);
 		PlaythroughPlayer low = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 10, 12));
 		PlaythroughStates.initiateD3(low); // ARRANGE
-		PlaythroughClock.start(helper).until(200, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
+		PlaythroughClock.start(helper).until(PlaythroughSites.SITE_READY_TICKS, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
 				.idle(2)
 				.then(() -> {
 					Entity stilt = pv.actor(PlaythroughNpcs.CircusRole.STILT_WALKER);
@@ -902,10 +941,10 @@ public final class PlaythroughCrimsonTroupeGameTests {
 						CircusApprenticeshipProgress.completePractical(who.player(), JUGGLER); // ARRANGE
 					}
 					testimony(p, understudy);
-					clue(p, stage.at(12, 1, 15), "stage");
-					clue(p, pv.at(56, 4, 7), "loft");
-					clue(p, pv.at(56, 1, 54), "quarters");
-					clue(p, pv.at(15, 1, 32), "carousel");
+					clue(p, stage.at(5, 5, 5), stage.at(4, 5, 5), "stage");
+					clue(p, pv.at(40, 6, 14), pv.at(40, 6, 15), "loft");
+					clue(p, pv.at(57, 1, 54), pv.at(56, 1, 54), "quarters");
+					clue(p, pv.at(28, 1, 24), pv.at(28, 1, 25), "carousel");
 
 					low.approach(keeper);
 					low.talkTo(keeper);
@@ -932,13 +971,13 @@ public final class PlaythroughCrimsonTroupeGameTests {
 				.run();
 	}
 
-	/** DECISION CT-2: the abandoned stage holds the only stage record, and nothing points a player to it. */
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void abandonedStageHasNoPointer(GameTestHelper helper) {
+	/** PT-58 (CT-2): the abandoned stage holds the only stage record, and the Waybill's stage mode points to it. */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void abandonedStageHasAPointer(GameTestHelper helper) {
 		ResourceLocation stage = Hemomancy.rloc("troupe_abandoned_stage");
 		Map<String, Boolean> tags = new LinkedHashMap<>();
-		for (String tag : List.of("circus_waybill_targets", "troupe_teacher_air", "troupe_teacher_blades",
-				"troupe_teacher_embers", "troupe_teacher_memory", "troupe_teacher_pageantry")) {
+		for (String tag : List.of("circus_waybill_targets", "troupe_abandoned_stage_targets", "troupe_teacher_air",
+				"troupe_teacher_blades", "troupe_teacher_embers", "troupe_teacher_memory", "troupe_teacher_pageantry")) {
 			tags.put(tag, structureTagHas(helper, tag, stage));
 		}
 		Entity keeper = PlaythroughNpcs.circus(helper, PlaythroughNpcs.CircusRole.THREADKEEPER, helper.absolutePos(new BlockPos(6, Y, 6)));
@@ -949,12 +988,9 @@ public final class PlaythroughCrimsonTroupeGameTests {
 			p.approach(speaker);
 			for (String key : allLineKeys(p.talkTo(speaker))) if (key.contains("stage") || key.contains("abandoned")) mentions.add(key);
 		}
-		PlaythroughLog.note(helper, "abandonedStageHasNoPointer", "waybill tags holding the stage " + tags
+		PlaythroughLog.note(helper, "abandonedStageHasAPointer", "waybill tags holding the stage " + tags
 				+ "; lines naming it " + mentions);
-		// DECISION CT-2: The Missing Understudy's stage record exists only in troupe_abandoned_stage, but no waybill
-		// mode or NPC says where one is (the ledger and testimony only name it). Options: a waybill mode or target for
-		// the stage, an NPC direction, or exploration only.
-		helper.assertTrue(tags.containsValue(true), "DECISION CT-2: no waybill mode can point to an abandoned stage: " + tags);
+		helper.assertTrue(tags.get("troupe_abandoned_stage_targets"), "PT-58: the Waybill's stage tag holds the abandoned stage: " + tags);
 		helper.succeed();
 	}
 
@@ -963,39 +999,36 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	// =============================================================================================================
 
 	/**
-	 * DECISION CT-1: from every standable floor cell of the real pavilion, can a survival player's reach (as the server's
-	 * interact check measures it) touch the idle Ringmaster on his perch?
+	 * D-29, PT-57 (chunk 15 T8): the idle Ringmaster's box is on the upper gallery, and a survival player reaches it on
+	 * foot from the floor. A player-sized walker at the main door finds a path up the gallery stairs and along the deck to
+	 * his side, and a player standing where that path ends is in the server's interact reach of him.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = PAVILION + "_reach", required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 1100, batch = PAVILION + "_reach")
 	public static void ringmasterReachFromTheFloor(GameTestHelper helper) {
 		Pavilion pv = pavilion(helper);
 		PlaythroughPlayer p = d5(helper, 8, 12);
-		PlaythroughClock.start(helper).until(200, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
+		PlaythroughClock.start(helper).until(PlaythroughSites.SITE_READY_TICKS, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
 				.idle(3)
 				.then(() -> {
 					ServerLevel level = helper.getLevel();
-					AABB ringmaster = pv.ringmaster().getBoundingBox();
-					int cells = 0;
-					List<String> reachable = new ArrayList<>();
-					for (int x = 0; x < 65; x++) {
-						for (int z = 0; z < 65; z++) {
-							BlockPos floor = pv.at(x, 0, z);
-							if (level.getBlockState(floor).getCollisionShape(level, floor).isEmpty()
-									|| !level.getBlockState(floor.above()).getCollisionShape(level, floor.above()).isEmpty()
-									|| !level.getBlockState(floor.above(2)).getCollisionShape(level, floor.above(2)).isEmpty()) continue;
-							cells++;
-							p.moveTo(floor.above());
-							if (p.player().canInteractWithEntity(ringmaster, 1.0D)) reachable.add(x + "," + z);
-						}
-					}
-					PlaythroughLog.note(helper, "ringmasterReachFromTheFloor", "Ringmaster at " + pv.ringmaster().position()
-							+ "; " + cells + " standable floor cells, reachable from " + reachable);
-					// DECISION CT-1: the idle Ringmaster perches on a y7 beam with no stairs; his pact, acts, finale and
-					// trade box need a click a floor-standing player cannot make (CIRCUS.md calls the private
-					// galleries implemented; no server code exists). Options: build the private geometry, add real
-					// stairs or a reachable perch, lower the perch when idle, or accept building up.
-					helper.assertTrue(!reachable.isEmpty(), "DECISION CT-1: no floor cell of " + cells
-							+ " reaches the idle Ringmaster");
+					CircusRingmasterEntity ringmaster = pv.ringmaster();
+					BlockPos door = pv.at(32, 1, 14);
+					Zombie walker = EntityType.ZOMBIE.create(level);
+					walker.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(96.0D);
+					walker.moveTo(door.getX() + 0.5D, door.getY(), door.getZ() + 0.5D);
+					walker.setOnGround(true);
+					walker.getNavigation().setMaxVisitedNodesMultiplier(8.0F);
+					Path path = walker.getNavigation().createPath(ringmaster.blockPosition(), 1);
+					helper.assertTrue(path != null && path.canReach(), "no walking path from the main door to the Ringmaster at "
+							+ ringmaster.blockPosition() + ": " + (path == null ? "none" : "ends at " + path.getTarget()));
+					BlockPos end = path.getEndNode().asBlockPos();
+					helper.assertTrue(end.getY() == ringmaster.blockPosition().getY(), "the path ends beside him on his deck, not below: " + end);
+					p.moveTo(end);
+					PlaythroughLog.note(helper, "ringmasterReachFromTheFloor", "Ringmaster at " + ringmaster.position()
+							+ "; walked " + path.getNodeCount() + " nodes from the door to " + end);
+					helper.assertTrue(p.player().canInteractWithEntity(ringmaster.getBoundingBox(), 1.0D),
+							"a player where the path ends cannot reach the Ringmaster: " + end);
+					walker.discard();
 				})
 				.run();
 	}
@@ -1006,17 +1039,18 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	 * then the warning nodes, a confirmed Succession (bit 1, +50, his line changes) and the one repair to Liberation,
 	 * after which the repair is gone.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 900, batch = PAVILION + "_attention")
+	@GameTest(template = EMPTY, timeoutTicks = 1900, batch = PAVILION + "_attention")
 	public static void attentionActAndRoute(GameTestHelper helper) {
 		Pavilion pv = pavilion(helper);
 		PlaythroughPlayer p = d5(helper, 8, 12);
 		p.joinLevel();
 		PlaythroughStates.acclimated(p, 499); // ARRANGE
+		PlaythroughStates.schoolReport(p); // ARRANGE: the D-30 pact gate's school report (pactGateNamesWhatIsMissing)
 		int[] score = new int[1];
-		PlaythroughClock.start(helper).until(200, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
+		PlaythroughClock.start(helper).until(PlaythroughSites.SITE_READY_TICKS, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
 				.idle(2)
 				.then(() -> {
-					p.moveTo(pv.underPerch());
+					p.moveTo(pv.box());
 					int mark = p.mark();
 					helper.assertTrue(p.tryTalkTo(pv.ringmaster()).isEmpty()
 									&& p.chatSince(mark).stream().anyMatch(line -> line.has(SILENT)),
@@ -1030,10 +1064,12 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					Outcome begun = p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_TRIAL);
 					begun.said("hemomancy.circus.challenge.begin.0");
 					helper.assertTrue(spider(p).isPresent(), "the trained peacock spider appears; " + begun);
+					p.moveTo(pv.ringside()); // ARRANGE: walked down to the ring to watch the act
 				})
 				.step(() -> act(p, "hemomancy.circus.challenge.complete.0", 320,
 						() -> spider(p).map(spider -> spider.getBoundingBox().getCenter()).orElse(null)))
 				.then(() -> {
+					p.moveTo(pv.box()); // ARRANGE: back up to his box
 					helper.assertTrue(p.chat().stream().anyMatch(line -> line.has("hemomancy.circus.challenge.hold.0")),
 							"halfway the act says to keep watching");
 						helper.assertTrue((CircusPlayerProgress.challenges(p.player()) & 1) != 0, "the attention act sets bit 0");
@@ -1142,7 +1178,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	 * then the finale: the rafters, the troupe downed, the Ringmaster beaten in the descent; the Ringmaster Pattern,
 	 * the Topper, the route complete and the site settled as SUCCESSION.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 4000, batch = PAVILION + "_succession")
+	@GameTest(template = EMPTY, timeoutTicks = 5000, batch = PAVILION + "_succession")
 	public static void successionFinale(GameTestHelper helper) {
 		successionFinale(helper, true);
 	}
@@ -1160,14 +1196,15 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		// ARRANGE: attentionActAndRoute plays bits 0 and 1; the compact run also arranges acts 2 to 4
 		PlaythroughStates.pavilionRoute(p, CircusRouteRules.Route.SUCCESSION, playActs ? 0b11 : 0b11111);
 		int[] topper = new int[1];
-		PlaythroughClock clock = PlaythroughClock.start(helper).until(200, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast).idle(2);
+		PlaythroughClock clock = PlaythroughClock.start(helper).until(PlaythroughSites.SITE_READY_TICKS, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast).idle(2);
 		int[][] acts = playActs ? new int[][]{{2, 200}, {3, 240}, {4, 300}} : new int[0][];
 		for (int[] act : acts) {
 			int challenge = act[0];
 			clock.then(() -> {
-						p.moveTo(pv.underPerch());
+						p.moveTo(pv.box());
 						p.talkTo(pv.ringmaster());
 						p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_TRIAL).said("hemomancy.circus.challenge.begin." + challenge);
+						p.moveTo(pv.ringside()); // ARRANGE: down to the ring for the act
 					})
 					.step(() -> act(p, "hemomancy.circus.challenge.complete." + challenge, act[1] + 100, null))
 					.then(() -> helper.assertTrue((CircusPlayerProgress.challenges(p.player()) & (1 << challenge)) != 0,
@@ -1180,7 +1217,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 						helper.assertTrue(afterActs >= 800 && afterActs <= 800 + 3 * PASSIVE_SLACK,
 								"three acts add 300 (plus passive exposure): " + afterActs);
 					}
-					p.moveTo(pv.underPerch());
+					p.moveTo(pv.box());
 					p.talkTo(pv.ringmaster());
 					Outcome early = p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_FINALE);
 					early.said(NOT_READY);
@@ -1192,6 +1229,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					var site = site(pv.carousel());
 					helper.assertTrue(p.uuid().equals(site.activeOwner()) && site.phase() == CircusPavilionStateRules.Phase.RAFTERS,
 							"the finale begins in the rafters; phase " + site.phase());
+					p.moveTo(pv.ringside()); // ARRANGE: down to the ring for the finale
 					p.wield(Items.NETHERITE_SWORD);
 				})
 				.step(() -> finale(p, pv, true, 2400))
@@ -1206,6 +1244,14 @@ public final class PlaythroughCrimsonTroupeGameTests {
 							"the route is complete");
 					helper.assertTrue(site.outcome() == CircusPavilionStateRules.Outcome.SUCCESSION && pv.ringmaster().isAlive(),
 							"the site settles as SUCCESSION and the Ringmaster lives");
+					// NQ-15-10 tenancy: the successor's banner hangs behind the podium, named for them.
+					BlockPos banner = pv.carousel().encounterOrigin().offset(0, 9, 14);
+					helper.assertTrue(helper.getLevel().getBlockState(banner).is(Blocks.RED_WALL_BANNER)
+									&& helper.getLevel().getBlockEntity(banner) instanceof BannerBlockEntity flag
+									&& flag.getCustomName() != null
+									&& flag.getCustomName().getString().contains(p.player().getGameProfile().getName()),
+							"the successor's banner hangs behind the podium: " + helper.getLevel().getBlockState(banner));
+					helper.assertTrue(p.player().getGameProfile().getName().equals(site.holderName()), "the site names its holder");
 				});
 		clock.run();
 	}
@@ -1214,7 +1260,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	 * Liberation, on the real pavilion: the Liberation finale; the three captives severed by right-click, the three anchors
 	 * struck, the descent, the Ringmaster killed; Thread Ripper, the Topper, the route complete, the site a ruin.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 2400, batch = PAVILION + "_liberation")
+	@GameTest(template = EMPTY, timeoutTicks = 3400, batch = PAVILION + "_liberation")
 	public static void liberationFinale(GameTestHelper helper) {
 		Pavilion pv = pavilion(helper);
 		PlaythroughPlayer p = d5(helper, 8, 12);
@@ -1223,10 +1269,10 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		PlaythroughStates.acclimated(p, 500); // ARRANGE
 		PlaythroughStates.pavilionRoute(p, CircusRouteRules.Route.LIBERATION, 0b11); // ARRANGE
 		int[] topper = new int[1];
-		PlaythroughClock.start(helper).until(200, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
+		PlaythroughClock.start(helper).until(PlaythroughSites.SITE_READY_TICKS, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
 				.idle(5)
 				.then(() -> {
-					p.moveTo(pv.underPerch());
+					p.moveTo(pv.box());
 					DialogueView view = p.talkTo(pv.ringmaster());
 					helper.assertTrue(view.offers(CircusRingmasterEntity.EVENT_FINALE), "Liberation can begin its finale; " + view.describe());
 					topper[0] = p.count(ItemInit.ringmaster_topper.get());
@@ -1234,8 +1280,14 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					var site = site(pv.carousel());
 					helper.assertTrue(p.uuid().equals(site.activeOwner()) && site.route() == CircusRouteRules.Route.LIBERATION,
 							"the Liberation finale begins; " + site.phase());
+					p.moveTo(pv.ringside()); // ARRANGE: down to the ring for the finale
 				})
-				.everyTick(5, tick -> live(p))
+				// Chunk 15 T13: threads and anchors answer only in CAROUSEL, after the opening and the rafters.
+				.step(() -> ticks -> {
+					live(p);
+					if (ticks > 400) helper.fail("the finale did not reach CAROUSEL; phase " + site(pv.carousel()).phase());
+					return site(pv.carousel()).phase() == CircusPavilionStateRules.Phase.CAROUSEL;
+				})
 				.then(() -> {
 					List<BloodDrunkPuppeteerEntity> captives = pv.carousel().getPassengers().stream()
 							.filter(BloodDrunkPuppeteerEntity.class::isInstance).map(BloodDrunkPuppeteerEntity.class::cast).toList();
@@ -1248,10 +1300,11 @@ public final class PlaythroughCrimsonTroupeGameTests {
 						Vec3 anchor = new Vec3(pv.carousel().getX() + pose.x(), pv.carousel().getY() + 1.1D + pose.bob(), pv.carousel().getZ() + pose.z());
 						strikeAt(p, pv.carousel(), anchor);
 					}
-					var site = site(pv.carousel());
-					helper.assertTrue(site.brokenMask() == 0b111 && site.phase() == CircusPavilionStateRules.Phase.DESCENT,
-							"three anchors break and the Ringmaster descends; broken " + site.brokenMask() + ", phase " + site.phase());
+					helper.assertTrue(site(pv.carousel()).brokenMask() == 0b111, "three anchors break; broken "
+							+ site(pv.carousel()).brokenMask());
 				})
+				// B-7: the carousel only reports itself destroyed; the Ringmaster writes DESCENT on his next tick.
+				.until(5, () -> site(pv.carousel()).phase() == CircusPavilionStateRules.Phase.DESCENT, "the Ringmaster descends")
 				.step(() -> finale(p, pv, false, 1200))
 				.then(() -> {
 					var site = site(pv.carousel());
@@ -1263,13 +1316,18 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.LIBERATION_COMPLETE,
 							"the route is complete");
 					helper.assertTrue(site.outcome() == CircusPavilionStateRules.Outcome.RUIN, "the site is a ruin");
+					// D-44 (chunk 15 T11): the ruin overlay is laid over the loaded pavilion: the plinth splintered, the
+					// roof torn open over the west seating. NQ-15-10 survivors A: the finale performers leave, the faculty stay.
 					BlockPos origin = pv.carousel().encounterOrigin();
-					boolean webs = false;
-					for (BlockPos offset : List.of(new BlockPos(3, 1, 0), new BlockPos(-3, 1, 0), new BlockPos(0, 1, 3),
-							new BlockPos(0, 1, -3), new BlockPos(2, 2, 2), new BlockPos(-2, 2, -2))) {
-						webs |= helper.getLevel().getBlockState(origin.offset(offset)).is(Blocks.COBWEB);
-					}
-					helper.assertTrue(webs, "the ruin leaves its cobwebs at the carousel");
+					helper.assertTrue(helper.getLevel().getBlockState(origin.below()).is(BlockInit.circus_wrecked_panel.get()),
+							"the carousel's plinth is splintered: " + helper.getLevel().getBlockState(origin.below()));
+					helper.assertTrue(site.pendingChunks().isEmpty() && site.afterState() == CircusSiteStateService.State.RUIN,
+							"every loaded chunk of the ruin is laid: " + site.pendingChunks().size() + " left");
+					helper.assertTrue(helper.getLevel().getEntitiesOfClass(CircusPerformerEntity.class, new AABB(origin).inflate(20.0D),
+							performer -> performer.isAlive() && performer.participatesInFinale()).isEmpty(),
+							"the finale performers have left the ruin");
+					for (var role : List.of(PlaythroughNpcs.CircusRole.STRONGMAN, PlaythroughNpcs.CircusRole.THREADKEEPER))
+						helper.assertTrue(pv.actor(role) != null && pv.actor(role).isAlive(), "the faculty stay: " + role);
 				})
 				.run();
 	}
@@ -1466,9 +1524,9 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	// Decision probes
 	// =============================================================================================================
 
-	/** DECISION CT-8: one rehearsal threat killed during the Mummer practical, which needs two. */
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
-	public static void practicalTargetKilledStalls(GameTestHelper helper) {
+	/** PT-63 (CT-8): one rehearsal threat killed during the Mummer practical, which needs two, ends it with the retry line. */
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
+	public static void practicalTargetKilledEndsIt(GameTestHelper helper) {
 		Entity stilt = PlaythroughNpcs.circus(helper, PlaythroughNpcs.CircusRole.STILT_WALKER, helper.absolutePos(new BlockPos(5, Y, 12)));
 		PlaythroughPlayer p = d5(helper, 8, 12);
 		p.joinLevel();
@@ -1493,19 +1551,15 @@ public final class PlaythroughCrimsonTroupeGameTests {
 				.then(() -> {
 					List<Mob> left = rehearsalTargets(p);
 					boolean told = p.chatSince(mark[0]).stream().anyMatch(line -> line.has(RETRY));
-					PlaythroughLog.note(helper, "practicalTargetKilledStalls", left.size() + " threats left, retry said " + told
-							+ "; " + p.chatSince(mark[0]));
-					// DECISION CT-8: a killed rehearsal threat is discarded, and the Mummer (and Bellows) practical needs
-					// two, so it cannot pass until its five-minute expiry or a walk-away. Options: replace the lost
-					// threat, end the practical with the retry line, or accept.
-					helper.assertTrue(left.size() >= 2 || told, "DECISION CT-8: one threat killed leaves the practical "
-							+ "unpassable with no word: " + left.size() + " left");
+					PlaythroughLog.note(helper, "practicalTargetKilledEndsIt", left.size() + " threats left, retry said " + told);
+					helper.assertTrue(told, "PT-63: a killed threat ends the practical with the retry line");
+					helper.assertTrue(left.isEmpty(), "PT-63: the ended practical takes its other threat away: " + left.size() + " left");
 				})
 				.run();
 	}
 
-	/** DECISION CT-3: in Peaceful the rehearsal threats (Husks) are removed on their first tick. */
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = CLOCK, required = false)
+	/** PT-59 (CT-3): a practical is refused in Peaceful with its own line, and one running ends if Peaceful is set. */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = CLOCK)
 	public static void practicalsInPeaceful(GameTestHelper helper) {
 		Entity acrobat = PlaythroughNpcs.circus(helper, PlaythroughNpcs.CircusRole.ACROBAT, helper.absolutePos(new BlockPos(5, Y, 12)));
 		PlaythroughPlayer p = d5(helper, 8, 12);
@@ -1517,42 +1571,47 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		holdCrossbar(p, crossbar);
 		p.approach(acrobat);
 		p.talkTo(acrobat);
+		p.choose(acrobat, PRACTICAL).said(SYSTEM_LINE + "school.peaceful");
+		helper.assertTrue(rehearsalTargets(p).isEmpty(), "PT-59: nothing is spawned in Peaceful");
+		var server = helper.getLevel().getServer();
+		server.setDifficulty(Difficulty.EASY, true); // ARRANGE: the cleanup above puts the first difficulty back
+		p.talkTo(acrobat);
 		p.choose(acrobat, PRACTICAL).said(SCHOOL + "exercise." + VULTURE);
+		helper.assertTrue(rehearsalTargets(p).size() == 2, "the Vulture practical brings two threats outside Peaceful");
+		int mark = p.mark();
+		server.setDifficulty(Difficulty.PEACEFUL, true);
 		PlaythroughClock.start(helper)
-				.everyTick(5, tick -> live(p))
+				.everyTick(2, tick -> live(p))
 				.then(() -> {
-					List<Mob> left = rehearsalTargets(p);
-					PlaythroughLog.note(helper, "practicalsInPeaceful", left.size() + " threats left after 5 Peaceful ticks");
-					// DECISION CT-3: rehearsal threats are Husks, which despawn in Peaceful, so no practical or guest act
-					// can finish there. Options: non-monster targets, refuse with a line in Peaceful, or accept.
-					helper.assertTrue(left.size() == 2, "DECISION CT-3: Peaceful removes the rehearsal threats: " + left.size() + " left");
+					PlaythroughLog.note(helper, "practicalsInPeaceful", rehearsalTargets(p).size() + " threats left after Peaceful was set");
+					helper.assertTrue(p.chatSince(mark).stream().anyMatch(line -> line.has(RETRY)),
+							"PT-59: Peaceful ends a running practical with the retry line");
+					helper.assertTrue(rehearsalTargets(p).isEmpty(), "PT-59: the ended practical's threats are gone");
 				})
 				.run();
 	}
 
-	/** DECISION CT-5: the Threadkeeper's lesson node (the full An Empty Ring briefing) has no option leading to it. */
-	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH, required = false)
-	public static void threadkeeperLessonUnreachable(GameTestHelper helper) {
+	/** PT-60 (CT-5): the Threadkeeper's own option opens the lesson node, the full An Empty Ring briefing. */
+	@GameTest(template = EMPTY, timeoutTicks = 60, batch = BATCH)
+	public static void threadkeeperLessonReachable(GameTestHelper helper) {
 		Entity keeper = PlaythroughNpcs.circus(helper, PlaythroughNpcs.CircusRole.THREADKEEPER, helper.absolutePos(new BlockPos(6, Y, 12)));
 		PlaythroughPlayer p = d5(helper, 8, 12);
 		DialogueView view = p.talkTo(keeper);
 		List<String> unreachable = view.unreachableNodes();
-		PlaythroughLog.note(helper, "threadkeeperLessonUnreachable", "unreachable " + unreachable + ", lesson lines "
+		PlaythroughLog.note(helper, "threadkeeperLessonReachable", "unreachable " + unreachable + ", lesson lines "
 				+ (view.tree().getNode("lesson") == null ? "none" : view.tree().getNode("lesson").lines()));
-		// DECISION CT-5: CircusSchoolDialogue builds a lesson node for every role, but only professors with a lesson get
-		// the option to it, so the Threadkeeper's An Empty Ring briefing can never be read. Options: a Threadkeeper
-		// option to it (Conversation), move the briefing into the inspect or report lines, or drop the node.
-		helper.assertTrue(!unreachable.contains("lesson"), "DECISION CT-5: the Threadkeeper's lesson node is unreachable: " + unreachable);
+		helper.assertTrue(!unreachable.contains("lesson"), "PT-60: the Threadkeeper's lesson node is unreachable: " + unreachable);
+		helper.assertTrue(view.tree().getNode("lesson").lines().contains(SCHOOL + "circus_threadkeeper.lesson"),
+				"PT-60: the lesson node reads the An Empty Ring briefing");
 		helper.succeed();
 	}
 
 	/**
-	 * DECISION CT-7 (D-10 family): a Ringmaster lost mid-finale is released (round 1, B-4) but never settles the site
-	 * and never returns, so a sneak-used waybill keeps treating it as unfinished. Also logs the DECISION CT-6 lines: "claimed" for a temporary owner
-	 * and "not ready for Succession" for a neutral visitor.
+	 * PT-61 (CT-6): a refused claim says why. B's act while A holds the ring is told it is busy, B's forged finale on the
+	 * neutral route is told to take a route (not that Succession is unready), and once the site is settled B is told so.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 300, batch = RING, required = false)
-	public static void ringmasterLostLeavesSiteOpen(GameTestHelper helper) {
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = RING)
+	public static void refusedClaimsSayWhy(GameTestHelper helper) {
 		Ring ring = miniRing(helper);
 		PlaythroughPlayer a = d5(helper, 16, 14);
 		PlaythroughPlayer b = d5(helper, 17, 14);
@@ -1563,7 +1622,6 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		PlaythroughStates.pavilionRoute(a, CircusRouteRules.Route.LIBERATION, 0b11); // ARRANGE
 		PlaythroughStates.acclimated(b, 500); // ARRANGE
 		CircusRingmasterEntity rm = ring.ringmaster();
-		int[] mark = new int[1];
 		PlaythroughClock.start(helper)
 				.idle(2)
 				.then(() -> {
@@ -1573,34 +1631,59 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					a.choose(rm, CircusRingmasterEntity.EVENT_FINALE);
 					helper.assertTrue(a.uuid().equals(site(ring.carousel()).activeOwner()), "A holds the site in the finale");
 					b.talkTo(rm);
-					Outcome shut = b.choose(rm, CircusRingmasterEntity.EVENT_TRIAL);
+					b.choose(rm, CircusRingmasterEntity.EVENT_TRIAL).said(BUSY);
 					Outcome forged = b.forge(CircusRingmasterEntity.EVENT_FINALE, rm.getId());
-					PlaythroughLog.note(helper, "ringmasterLostLeavesSiteOpen", "DECISION CT-6: B's act while A holds the site said "
-							+ shut.saidKeys() + " (" + (shut.saidKeys().contains(CLAIMED) ? "claimed reads as permanent" : "no claimed line")
-							+ "); B's forged neutral finale said " + forged.saidKeys() + " (" + (forged.saidKeys().contains(NOT_READY)
-							? "names Succession to a neutral visitor" : "no not_ready line") + ")");
+					forged.said(NO_ROUTE);
+					helper.assertTrue(!forged.saidKeys().contains(NOT_READY), "a neutral visitor is not told about Succession: "
+							+ forged.saidKeys());
+					ServerLevel level = helper.getLevel();
+					// ARRANGE: A's Liberation settles the site
+					CircusPavilionSavedData.get(level).complete(level, ring.carousel().encounterOrigin(), a.uuid(),
+							CircusPavilionStateRules.Outcome.RUIN);
+					b.talkTo(rm);
+					b.choose(rm, CircusRingmasterEntity.EVENT_TRIAL).said(SETTLED);
+				})
+				.run();
+	}
+
+	/**
+	 * PT-62, D-36 (CT-7): a Ringmaster lost mid-finale releases the site (round 1, B-4), does not return, and leaves the
+	 * site vacant, so the Waybill passes it by. Dead performers do not come back either.
+	 */
+	@GameTest(template = EMPTY, timeoutTicks = 300, batch = RING)
+	public static void ringmasterLostLeavesTheWaybill(GameTestHelper helper) {
+		Ring ring = miniRing(helper);
+		PlaythroughPlayer a = d5(helper, 16, 14);
+		a.joinLevel();
+		armUp(a, false); // ARRANGE
+		PlaythroughStates.acclimated(a, 500); // ARRANGE
+		PlaythroughStates.pavilionRoute(a, CircusRouteRules.Route.LIBERATION, 0b11); // ARRANGE
+		CircusRingmasterEntity rm = ring.ringmaster();
+		int[] mark = new int[1];
+		PlaythroughClock.start(helper)
+				.idle(2)
+				.then(() -> {
+					a.moveTo(ring.stand());
+					a.talkTo(rm);
+					a.choose(rm, CircusRingmasterEntity.EVENT_FINALE);
+					helper.assertTrue(a.uuid().equals(site(ring.carousel()).activeOwner()), "A holds the site in the finale");
 					mark[0] = a.mark();
 					PlaythroughNpcs.kill(rm); // ARRANGE: the Ringmaster is lost (an admin kill)
 				})
-				.everyTick(100, tick -> {
-					live(a);
-					live(b);
-				})
+				.everyTick(100, tick -> live(a))
 				.then(() -> {
 					var site = site(ring.carousel());
 					ServerLevel level = helper.getLevel();
-					boolean settled = site.outcome() != CircusPavilionStateRules.Outcome.NEUTRAL;
 					boolean returned = !level.getEntitiesOfClass(CircusRingmasterEntity.class,
 							new AABB(ring.carousel().blockPosition()).inflate(20.0D), Entity::isAlive).isEmpty();
 					boolean completedNear = CircusPavilionSavedData.get(level).isCompletedNear(level, ring.carousel().blockPosition());
-					PlaythroughLog.note(helper, "ringmasterLostLeavesSiteOpen", "after the loss: owner " + site.activeOwner()
-							+ ", phase " + site.phase() + ", outcome " + site.outcome() + ", a Ringmaster back " + returned
-							+ ", waybill treats it as completed " + completedNear + ", A was told " + a.chatSince(mark[0]));
-					// DECISION CT-7 (D-10 family): with the Ringmaster gone the site stays owned and never settles, the
-					// finale can never end and the sneak waybill keeps pointing at it. Options: a respawn rule for the
-					// Ringmaster, settle or release the site with a line when he is lost, skip such sites in the
-					// waybill, or accept.
-					helper.assertTrue(settled || returned, "DECISION CT-7: a lost Ringmaster leaves the site open for good");
+					PlaythroughLog.note(helper, "ringmasterLostLeavesTheWaybill", "after the loss: owner " + site.activeOwner()
+							+ ", phase " + site.phase() + ", outcome " + site.outcome() + ", vacant " + site.vacant()
+							+ ", a Ringmaster back " + returned + ", waybill treats it as done " + completedNear
+							+ ", A was told " + a.chatSince(mark[0]));
+					helper.assertTrue(site.activeOwner() == null, "the lost Ringmaster releases the site");
+					helper.assertTrue(!returned, "no Ringmaster returns");
+					helper.assertTrue(site.vacant() && completedNear, "PT-62: the site is vacant and the Waybill passes it by");
 				})
 				.run();
 	}
@@ -1747,7 +1830,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	}
 
 	/** ARRANGE: {@code summon} known, as its Cardinal Ordeal binds it (understudyMnemonistPuppet plays one). */
-	private static void knowShape(PlaythroughPlayer p, String summon) {
+	static void knowShape(PlaythroughPlayer p, String summon) {
 		var definition = PuppeteerSummonDefinitions.byName(summon).orElseThrow();
 		KnownSummonEvents.grantSummon(p.player(), definition);
 		p.helper().assertTrue(CircusApprenticeshipProgress.knows(p.player(), summon), summon + " is known");
@@ -1834,8 +1917,14 @@ public final class PlaythroughCrimsonTroupeGameTests {
 			Mob puppet = MarionetteCrossbarItem.activeSummonsForOwner(p.player()).stream()
 					.filter(MnemonistPuppetEntity.class::isInstance).findFirst().orElse(null);
 			if (ticks >= maxTicks) {
+				// Diagnostic for the not-reproduced flake (P2): a threat killed by the player's own blows before a replay
+				// lands leaves the puppet with no target, so the threats' health and the puppet's reach are named.
 				p.helper().fail("the practical is not passed after " + maxTicks + " ticks; puppet " + (puppet == null ? "gone"
-						: "targeting " + puppet.getTarget() + ", memories " + memoriesOf(puppet)) + "; " + p.chatSince(mark));
+						: "targeting " + puppet.getTarget() + ", memories " + memoriesOf(puppet) + ", "
+								+ String.format("%.1f", puppet.distanceTo(p.player())) + " blocks from its owner")
+						+ "; rehearsal threats " + rehearsalTargets(p).stream().map(mob -> String.format("%.1f/%.1f at %.1f blocks",
+								mob.getHealth(), mob.getMaxHealth(), mob.distanceTo(p.player()))).toList()
+						+ "; " + p.chatSince(mark));
 			}
 			if (ticks % 30 == 0) {
 				List<Mob> targets = rehearsalTargets(p);
@@ -1918,8 +2007,8 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	}
 
 	/** Reads an evidence record with an empty hand and checks its clue line. */
-	private static void clue(PlaythroughPlayer p, BlockPos record, String clue) {
-		p.moveTo(record.north(2)); // ARRANGE: walked up to it
+	private static void clue(PlaythroughPlayer p, BlockPos record, BlockPos stand, String clue) {
+		p.moveTo(stand); // ARRANGE: walked up to it
 		PlaythroughRites.emptyHand(p);
 		Outcome read = p.useOn(record);
 		read.said(SCHOOL + "clue." + clue);
@@ -2036,8 +2125,9 @@ public final class PlaythroughCrimsonTroupeGameTests {
 			return site;
 		}
 
+		/** A cell of the big top's 65-block core: the template has grown a side ring either side of it. */
 		BlockPos at(int x, int y, int z) {
-			return site.at(x, y, z);
+			return site.at(x + PAVILION_MARGIN, y, z);
 		}
 
 		/** Whether every chunk under the pavilion is entity-ticking, so the template's actors can be found. */
@@ -2062,9 +2152,14 @@ public final class PlaythroughCrimsonTroupeGameTests {
 			return (CircusCarouselEntity) actor(PlaythroughNpcs.CircusRole.CAROUSEL);
 		}
 
-		/** The floor cell under the Ringmaster's perch: within 8 blocks of him and 5 of the carousel. */
-		BlockPos underPerch() {
-			return site.at(32, 1, 37);
+		/** Where a player stands in the Ringmaster's box, at his side, to speak with him (his options need 8 blocks). */
+		BlockPos box() {
+			return at(31, 8, 46);
+		}
+
+		/** The ring cell 5 blocks south of the carousel, below the box: where a player plays his acts and his finale. */
+		BlockPos ringside() {
+			return at(32, 1, 37);
 		}
 	}
 

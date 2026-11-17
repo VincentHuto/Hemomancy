@@ -1,17 +1,20 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
+
 public final class BloodAbsorptionChannelRulesTest {
 	private BloodAbsorptionChannelRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		fullBloodStillAllowsNonDrainAbsorptionRites();
 		defaultChannelLocksMovementUntilSkillUnlocksSlowMovement();
 		advancedMovementSkillsReduceAndRemoveTheSlowdown();
 		clientInputMultiplierCompensatesForVanillaUseItemSlowdown();
-		livingTargetPulseFrequencyImprovesAtDegreeThreeFourAndFive();
+		livingTargetPulseStaysAtTheHurtCooldownAndCadenceRaisesTheDrain();
 		strainTierThresholdsDelayWithToleranceSkill();
-		strainDecaysWhenNoLivingTargetWasDrained();
+		strainCountsOnePerTickOfDrinkingAndEasesTwoPerTickOtherwise();
 	}
 
 	private static void fullBloodStillAllowsNonDrainAbsorptionRites() {
@@ -19,12 +22,10 @@ public final class BloodAbsorptionChannelRulesTest {
 				BloodAbsorptionChannelRules.canStartChannel(true));
 		assertEquals("inactive blood cannot channel", false,
 				BloodAbsorptionChannelRules.canStartChannel(false));
-		assertEquals("a full reservoir blocks ordinary living-target drain", false,
-				BloodAbsorptionChannelRules.canDrainLivingTarget(true, true, false));
-		assertEquals("sated siphon permits living-target drain while full", true,
-				BloodAbsorptionChannelRules.canDrainLivingTarget(true, true, true));
-		assertEquals("available capacity permits ordinary living-target drain", true,
-				BloodAbsorptionChannelRules.canDrainLivingTarget(true, false, false));
+		assertEquals("CQ-9: a full body still draws a living target (for its Temper)", true,
+				BloodAbsorptionChannelRules.canDrainLivingTarget(true));
+		assertEquals("inactive blood draws nothing", false,
+				BloodAbsorptionChannelRules.canDrainLivingTarget(false));
 	}
 
 	private static void defaultChannelLocksMovementUntilSkillUnlocksSlowMovement() {
@@ -56,17 +57,18 @@ public final class BloodAbsorptionChannelRulesTest {
 				5.0D, BloodAbsorptionChannelRules.clientInputMultiplier(1.0D));
 	}
 
-	private static void livingTargetPulseFrequencyImprovesAtDegreeThreeFourAndFive() {
-		assertEquals("base bare pulse interval", 10,
-				BloodAbsorptionChannelRules.livingTargetPulseInterval(false, 0));
-		assertEquals("base staff pulse interval", 10,
-				BloodAbsorptionChannelRules.livingTargetPulseInterval(true, 0));
-		assertEquals("first cadence skill", 8,
-				BloodAbsorptionChannelRules.livingTargetPulseInterval(true, 1));
-		assertEquals("second cadence skill", 6,
-				BloodAbsorptionChannelRules.livingTargetPulseInterval(true, 2));
-		assertEquals("third cadence skill", 4,
-				BloodAbsorptionChannelRules.livingTargetPulseInterval(true, 3));
+	private static void livingTargetPulseStaysAtTheHurtCooldownAndCadenceRaisesTheDrain() {
+		assertEquals("pulse interval matches the 10-tick hurt cooldown", 10,
+				BloodAbsorptionChannelRules.livingTargetPulseInterval());
+		assertDouble("untrained drain", 1.0D, BloodAbsorptionChannelRules.cadenceDrainMultiplier(0));
+		assertDouble("first cadence skill drains as the old 8-tick pulse promised", 1.25D,
+				BloodAbsorptionChannelRules.cadenceDrainMultiplier(1));
+		assertDouble("second cadence skill drains as the old 6-tick pulse promised", 10.0D / 6.0D,
+				BloodAbsorptionChannelRules.cadenceDrainMultiplier(2));
+		assertDouble("third cadence skill drains as the old 4-tick pulse promised", 2.5D,
+				BloodAbsorptionChannelRules.cadenceDrainMultiplier(3));
+		assertDouble("levels past the last skill change nothing", 2.5D,
+				BloodAbsorptionChannelRules.cadenceDrainMultiplier(7));
 	}
 
 	private static void strainTierThresholdsDelayWithToleranceSkill() {
@@ -86,13 +88,27 @@ public final class BloodAbsorptionChannelRulesTest {
 				BloodAbsorptionChannelRules.strainTier(140, 2));
 	}
 
-	private static void strainDecaysWhenNoLivingTargetWasDrained() {
-		assertEquals("living drain increases strain", 51,
-				BloodAbsorptionChannelRules.nextStrainTicks(50, true));
-		assertEquals("nonliving channel decays strain", 48,
-				BloodAbsorptionChannelRules.nextStrainTicks(50, false));
-		assertEquals("strain never decays below zero", 0,
-				BloodAbsorptionChannelRules.nextStrainTicks(1, false));
+	private static void strainCountsOnePerTickOfDrinkingAndEasesTwoPerTickOtherwise() {
+		// Five seconds of drinking reaches Weakness; the old arithmetic sat at 0 or 1 forever.
+		BloodAbsorptionChannelRules.Strain strain = BloodAbsorptionChannelRules.Strain.NONE;
+		for (long tick = 1000; tick < 1100; tick++) {
+			strain = BloodAbsorptionChannelRules.nextStrain(strain, tick, (tick - 1000) % 10 == 0);
+		}
+		assertEquals("one strain per tick of continuous drinking", 100, strain.ticks());
+		assertEquals("five seconds of drinking reaches weakness", BloodAbsorptionChannelRules.StrainTier.WEAKNESS,
+				BloodAbsorptionChannelRules.strainTier(strain.ticks(), 0));
+
+		BloodAbsorptionChannelRules.Strain paused = BloodAbsorptionChannelRules.nextStrain(strain, 1109, false);
+		assertEquals("ticks after the last pulse's cover ease two each", 80, paused.ticks());
+
+		BloodAbsorptionChannelRules.Strain away = BloodAbsorptionChannelRules.nextStrain(strain, 1200, false);
+		assertEquals("time out of the channel eases strain too", 0, away.ticks());
+
+		BloodAbsorptionChannelRules.Strain blocks = strain;
+		for (long tick = 1100; tick < 1105; tick++) {
+			blocks = BloodAbsorptionChannelRules.nextStrain(blocks, tick, false);
+		}
+		assertEquals("draining blocks or Wills is not drinking from a creature", 90, blocks.ticks());
 	}
 
 	private static void assertEquals(String label, int expected, int actual) {

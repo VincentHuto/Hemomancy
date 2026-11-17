@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.block;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class HematicIronDoorWaterloggingTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,7 +15,8 @@ public final class HematicIronDoorWaterloggingTest {
 	private HematicIronDoorWaterloggingTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String blockInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/BlockInit.java"));
 		String waterloggedDoor = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/block/shared/WaterloggedDoorBlock.java"));
 		assertContains("hematic iron door should use explicit waterlogged door behavior",
@@ -28,26 +33,7 @@ public final class HematicIronDoorWaterloggingTest {
 		String blockstate = read(RESOURCE_ROOT.resolve("assets/hemomancy/blockstates/hematic_iron_door.json"));
 		assertContains("hematic iron door blockstate should ignore waterlogged states",
 				blockstate, "\"multipart\"");
-		assertDoesNotContain("hematic iron door blockstate should not enumerate waterlogged variants",
+		assertNotContains("hematic iron door blockstate should not enumerate waterlogged variants",
 				blockstate, "waterlogged=");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 }

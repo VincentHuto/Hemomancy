@@ -22,7 +22,6 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleSilentSlipp
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
-import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
@@ -49,14 +48,25 @@ public final class ClientInputEvents {
     private static long lastSilentArchonJumpTapTick = -1000L;
     private static boolean crossbarRadialOpened;
 
+    /** Venous Cling moves the local player along the face it holds (core-loop Track 9). */
+    @SubscribeEvent
+    public static void onClingMovementInput(MovementInputUpdateEvent event) {
+        com.vincenthuto.hemomancy.client.player.ClingClientMotion.apply(event.getEntity(), event.getInput());
+    }
+
     @SubscribeEvent
     public static void onBloodAbsorptionMovementInput(MovementInputUpdateEvent event) {
         Player player = event.getEntity();
-        if (!BloodAbsorptionItem.isChannelingBloodAbsorption(player)) {
+        if (com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel.channelling(player).isEmpty()) {
             return;
         }
-        double movementMultiplier = BloodAbsorptionItem.getChannelMovementMultiplier(player);
-        double inputMultiplier = BloodAbsorptionItem.getClientChannelMovementInputMultiplier(player);
+        double movementMultiplier = com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel.movementMultiplier(player);
+        // A strand sets its own pace (core-loop Track 12), which replaces vanilla's use-item slowdown even at full speed.
+        if (movementMultiplier >= 1.0D
+                && !com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel.declaresMovement(player)) {
+            return;
+        }
+        double inputMultiplier = com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel.clientInputMultiplier(player);
         var input = event.getInput();
         input.forwardImpulse *= inputMultiplier;
         input.leftImpulse *= inputMultiplier;
@@ -100,9 +110,6 @@ public final class ClientInputEvents {
             PacketHandler.sendToServer(new BloodCraftingKeyPressPacket());
         }
 
-        if (KeyMappings.bloodDraw.isDown()) {
-            PacketHandler.sendToServer(new GroundBloodDrawPacket(HLClientUtils.getPartialTicks()));
-        }
         if (KeyMappings.toggleGourd.consumeClick()) {
             PacketHandler.sendToServer(new ToggleGourdKeyPacket());
         }
@@ -118,7 +125,11 @@ public final class ClientInputEvents {
         if (KeyMappings.cycleSelectedManip.consumeClick()) {
             PacketHandler.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));
         }
+        if (KeyMappings.bloodVerb.consumeClick()) {
+            PacketHandler.sendToServer(com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.BloodVerbKeyPacket.INSTANCE);
+        }
         ManipulationChargeInput.tick();
+        handleStrandSnap();
         if (KeyMappings.useStillArt.consumeClick()) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null && HemoCapabilityAccess.getUnstainedProgress(mc.player).hasClarityUnlocked()) {
@@ -126,6 +137,59 @@ public final class ClientInputEvents {
             }
         }
         handleSilentArchonDoubleTapJump();
+    }
+
+    /**
+     * The tap: left click with a lash selected on a held Projection tool, nothing being channelled, and the crosshair
+     * on open air or a creature. The click is the lash's, so vanilla's swing and attack are cancelled. A click on a
+     * block, on a body that is no creature, or on a creature while the tool is in the off hand and the main hand holds
+     * something is left to vanilla ({@code LashRules.clickStaysVanilla}). One empty payload per click; the server decides.
+     */
+    @SubscribeEvent
+    public static void onLashTap(InputEvent.InteractionKeyMappingTriggered event) {
+        if (!event.isAttack()) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.screen != null) return;
+        if (com.vincenthuto.hemomancy.common.manipulation.verb.strand.StrandService.tapLash(mc.player) == null) return;
+        // The hand that holds the tool throws the lash: it swings, as it would for any strike.
+        boolean main = com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel.verbOf(mc.player, mc.player.getMainHandItem())
+                .orElse(null) == com.vincenthuto.hemomancy.common.manipulation.verb.Verb.PROJECT;
+        net.minecraft.world.phys.HitResult aimed = mc.hitResult;
+        boolean onEntity = aimed instanceof net.minecraft.world.phys.EntityHitResult;
+        if (com.vincenthuto.hemomancy.common.manipulation.verb.strand.LashRules.clickStaysVanilla(
+                aimed != null && aimed.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK, onEntity,
+                onEntity && ((net.minecraft.world.phys.EntityHitResult) aimed).getEntity() instanceof net.minecraft.world.entity.LivingEntity,
+                main, mc.player.getMainHandItem().isEmpty())) return;
+        event.setSwingHand(false);
+        event.setCanceled(true);
+        mc.player.swing(main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+        PacketHandler.sendToServer(com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.LashTapPacket.INSTANCE);
+    }
+
+    /** Whether the Sculpting the local player is channelling answers the attack button (a strand, a dome, an ice hand). */
+    private static boolean channelTakesAccent(Player player) {
+        return com.vincenthuto.hemomancy.common.manipulation.verb.VerbChannel.channelling(player)
+                .flatMap(verb -> com.vincenthuto.hemomancy.common.manipulation.verb.SculptingDispatcher.selected(player, verb))
+                .map(selected -> selected.sculpting().takesAccent()).orElse(false);
+    }
+
+    private static boolean attackWasDown;
+
+    /**
+     * Left click while a strand is out snaps it (core-loop Track 12, CL-22): vanilla drains attack clicks and skips
+     * block breaking while an item is in use, so the button is free. One empty payload per press; the server decides.
+     * A held lash answers here at once as well (its orb lets go, or its whip comes back to the crosshair), so the
+     * click is not felt a round trip late.
+     */
+    private static void handleStrandSnap() {
+        Minecraft mc = Minecraft.getInstance();
+        boolean down = mc.screen == null && mc.player != null && mc.options.keyAttack.isDown();
+        boolean pressed = down && !attackWasDown;
+        attackWasDown = down;
+        if (pressed && mc.player.isUsingItem() && channelTakesAccent(mc.player)) {
+            com.vincenthuto.hemomancy.client.data.StrandClientState.localSnap(mc.player);
+            PacketHandler.sendToServer(com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.StrandSnapPacket.INSTANCE);
+        }
     }
 
     private static void handleSilentArchonDoubleTapJump() {

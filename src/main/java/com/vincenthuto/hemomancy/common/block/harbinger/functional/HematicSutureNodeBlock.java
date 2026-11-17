@@ -2,9 +2,10 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicSutureNodeBlockEntity;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -14,12 +15,12 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
 public class HematicSutureNodeBlock extends BaseEntityBlock {
     public static final MapCodec<HematicSutureNodeBlock> CODEC = simpleCodec(HematicSutureNodeBlock::new);
+    private static final ParticleColor SEEP = new ParticleColor(150, 14, 26);
 
     public HematicSutureNodeBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -58,7 +59,7 @@ public class HematicSutureNodeBlock extends BaseEntityBlock {
         if (random.nextInt(5) != 0) {
             return;
         }
-        level.addParticle(new DustParticleOptions(new Vector3f(0.55f, 0.02f, 0.02f), 0.55f),
+        level.addParticle(HemoParticleData.emberSpark(SEEP, 0.031F, 0.8F, 30),
                 pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.4,
                 pos.getY() + 0.55 + random.nextDouble() * 0.25,
                 pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.4,

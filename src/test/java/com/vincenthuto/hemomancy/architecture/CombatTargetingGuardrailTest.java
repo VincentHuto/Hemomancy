@@ -91,21 +91,55 @@ class CombatTargetingGuardrailTest {
 	}
 
 	@Test
-	void areaAndLookTargetsAskCanHarm() {
+	void areaEffectsAskCanHarm() {
 		String severance = SourceAssertions.methodBody(SourceAssertions.readMainJava(
 				"common/armor/ability/SilentArchonArmorAbilityHandler.java"), "public static void activateSilentArchonSeverance(");
-		SourceAssertions.assertContains("Silent Severance", severance, "ManipulationCombatHelper.canHarm(player, entity, Reach.UNGATED_SURVIVAL)");
+		SourceAssertions.assertContains("Silent Severance", severance, "ManipulationCombatHelper.canHarm(player, entity))");
+		SourceAssertions.assertContains("Silent Severance names its wearer", severance, "damageSources().indirectMagic(player, player)");
 		String stillArts = SourceAssertions.readMainJava("common/init/StillArtInit.java");
 		SourceAssertions.assertContains("Silver Rebuke", SourceAssertions.section(stillArts,
-				"register(\"silver_rebuke\"", "register(\"lethean_mute\""), "ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED)");
+				"register(\"silver_rebuke\"", "register(\"lethean_mute\""), "ManipulationCombatHelper.canHarm(player, target) && isInFront(");
 		SourceAssertions.assertContains("Autoimmune Edge", SourceAssertions.section(stillArts,
-				"register(\"autoimmune_edge\"", "register(\"pale_intercession\""), "ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED)");
-		SourceAssertions.assertContains("morphling look target", SourceAssertions.methodBody(SourceAssertions.readMainJava(
-				"common/item/harbinger/morphlings/MorphlingItem.java"), "public static LivingEntity findLookTarget("),
-				"ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED)");
+				"register(\"autoimmune_edge\"", "register(\"pale_intercession\""), "ManipulationCombatHelper.canHarm(player, target))");
+		SourceAssertions.assertContains("Autoimmune Edge names its caster", SourceAssertions.section(stillArts,
+				"register(\"autoimmune_edge\"", "register(\"pale_intercession\""), "damageSources().indirectMagic(player, player)");
+		String retribution = SourceAssertions.methodBody(SourceAssertions.readMainJava(
+				"common/armor/ability/SheolicBastionBloodlustArmorAbilityHandler.java"), "private static void triggerCrimsonRetribution(");
+		SourceAssertions.assertContains("Sheolic retribution", retribution, "ManipulationCombatHelper.canHarm(player, attacker)");
+		SourceAssertions.assertContains("Sheolic retribution names its wearer", retribution, "damageSources().indirectMagic(player, player)");
+		SourceAssertions.assertContains("Sheolic retribution places its flames as its wearer", retribution, "PlayerBlockEdits.place(player, pos,");
+		SourceAssertions.assertNotContains("Sheolic retribution has no raw setBlock", retribution, ".setBlock(");
+		String trail = SourceAssertions.methodBody(SourceAssertions.readMainJava(
+				"common/capability/player/harbinger/scar/ScarsEntityEventHandler.java"), "public static void playerTickScars(");
+		SourceAssertions.assertContains("Saprovitta trail", trail, "ManipulationCombatHelper.canHarm(player, candidate))");
+		SourceAssertions.assertContains("Saprovitta trail names its wearer", trail, "damageSources().indirectMagic(player, player)");
+		SourceAssertions.assertContains("Verdigris Aura", SourceAssertions.methodBody(SourceAssertions.readMainJava(
+				"common/effect/VerdigrisAuraEffect.java"), "public boolean applyEffectTick("),
+				"ManipulationCombatHelper.canHarmFor(entity, target)");
+		SourceAssertions.assertNotContains("no look target or UNGATED preset", SourceAssertions.readMainJava(
+				"common/manipulation/ManipulationCombatHelper.java"), "UNGATED");
 		SourceAssertions.assertContains("Prismatic flash", SourceAssertions.methodBody(SourceAssertions.readMainJava(
 				"common/event/ArmorSetBonusHandler.java"), "private static void triggerPrismaticFlash("),
 				"ManipulationCombatHelper.canHarm(player, target, Reach.MONSTER_FILTER)");
+	}
+
+	/**
+	 * Core-loop Track 12: a strand chooses its targets through the two shared gathers, each filtered by the strict
+	 * {@code canHarm} in its own arguments, and every strand hit asks it again.
+	 */
+	@Test
+	void strandGathersAskCanHarm() {
+		String helper = SourceAssertions.readMainJava("common/manipulation/ManipulationCombatHelper.java");
+		SourceAssertions.assertContains("the swept gather", SourceAssertions.methodBody(helper,
+				"public static List<LivingEntity> swept("), "target -> canHarm(player, target) && crossed(");
+		SourceAssertions.assertContains("the cone gather", SourceAssertions.methodBody(helper,
+				"public static List<LivingEntity> cone("), "target -> canHarm(player, target) && inCone(");
+		String hits = SourceAssertions.readMainJava("common/manipulation/verb/strand/StrandHits.java");
+		SourceAssertions.assertContains("every strand hit", SourceAssertions.methodBody(hits, "static boolean strike("),
+				"ManipulationCombatHelper.canHarm(player, target)");
+		String service = SourceAssertions.readMainJava("common/manipulation/verb/strand/StrandService.java");
+		SourceAssertions.assertContains("the lash sweeps through the shared gather", service, "ManipulationCombatHelper.swept(");
+		SourceAssertions.assertContains("the spray fans through the shared gather", service, "ManipulationCombatHelper.cone(");
 	}
 
 	@Test
@@ -114,8 +148,8 @@ class CombatTargetingGuardrailTest {
 		SourceAssertions.assertNotContains("ManipulationInit registers Drudge work by reference", init, "setDrudgeAction((");
 		String actions = SourceAssertions.readMainJava("common/manipulation/DrudgeActions.java");
 		SourceAssertions.assertContains("one nearest-monster lookup", actions, "static Monster nearestMonster(");
-		SourceAssertions.assertContains("one work-area lookup", actions,
-				"ManipulationCombatHelper.canHarm(drudge, monster, Reach.MONSTER_FILTER_ANY_STATE)");
+		SourceAssertions.assertContains("one work-area lookup that spares the owner's allies (G-2b)", actions,
+				"ManipulationCombatHelper.canHarmFor(drudge, monster)");
 	}
 
 	/** The text of a call's argument list, from its opening parenthesis to the matching close. */

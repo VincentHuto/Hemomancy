@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
+import org.junit.jupiter.api.Test;
+
 public final class BloodVolumeTransferRulesTest {
 	private BloodVolumeTransferRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		requestCanTakeAllTheSourceHolds();
 		requestClampsToRemainingTargetCapacity();
 		emptyOrFullVolumesMoveNothing();
@@ -150,28 +153,6 @@ public final class BloodVolumeTransferRulesTest {
 		@Override
 		public boolean wouldOverstrain(double points) {
 			return blood - points < 0;
-		}
-
-		@Override
-		public void addDamage(double amount) {
-		}
-
-		@Override
-		public void addBloodSpend(double amount) {
-		}
-
-		@Override
-		public double consumeDebt() {
-			return 0;
-		}
-
-		@Override
-		public double getBloodDebt() {
-			return 0;
-		}
-
-		@Override
-		public void resetBloodDebt() {
 		}
 
 		@Override

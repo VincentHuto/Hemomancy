@@ -7,7 +7,7 @@
     {
       "id": "hemomancy:vivacious_enzyme",
       "count": 1,
-      "chance": 0.25
+      "chance": 0.1
     }
   ],
   "render_time": 100

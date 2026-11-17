@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.TemperCharge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
@@ -24,10 +25,15 @@ import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.effect.MnemonicPotionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.event.BorrowedBloodRules;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
+import com.vincenthuto.hemomancy.common.manipulation.verb.SculptingPulse;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbSculpting;
+import com.vincenthuto.hemomancy.common.manipulation.verb.VerbTarget;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipCooldownPacket;
 import com.vincenthuto.hemomancy.common.util.HemoText;
@@ -45,39 +51,46 @@ import net.neoforged.fml.ModList;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class BloodManipulation implements EntityCastableManipulation {
-	private static final BloodAccounting.Source CAST = BloodAccounting.Source.of("manipulation_cast", Category.CAST, true, false);
+	private static final BloodAccounting.Source CAST = BloodAccounting.Source.of("manipulation_cast", Category.CAST, false);
+	/** A Sculpting pulse: the selected manipulation working through Projection or Absorption. */
+	public static final BloodAccounting.Source SCULPTING = BloodAccounting.Source.of("sculpting", Category.CAST, false);
     public com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation getCastPresentation() {
         return com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation.forId(getName());
     }
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
 			EnumManipulationRank.HUMILIS, EnumBloodTemper.ANIMUS, EnumVeinSections.HEAD);
-	/*
-	 * Reads a NBT tag and converts it to a manipulation
+	/**
+	 * Reads a NBT tag and converts it to a manipulation. Returns null for a tag this build cannot read: a missing key
+	 * (saves from before the Temper rename) or an enum name that no longer exists.
 	 */
+	@Nullable
 	public static BloodManipulation deserialize(CompoundTag nbt) {
-		if (nbt != null && !nbt.isEmpty()) {
-			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("type")
-					&& nbt.contains("temper") && nbt.contains("rank") && nbt.contains("section")) {
-				BloodManipulation manip = new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"),
-						nbt.getDouble("level"), nbt.getDouble("xpcost"),
-						EnumManipulationType.valueOf(nbt.getString("type")),
-						EnumManipulationRank.valueOf(nbt.getString("rank")),
-						EnumBloodTemper.valueOf(nbt.getString("temper")),
-						EnumVeinSections.valueOf(nbt.getString("section")));
-				if (nbt.contains("cooldown")) {
-					manip.cooldownTicks = nbt.getInt("cooldown");
-				}
-				if (nbt.contains("secondary_temper")) {
-					manip.secondaryTend = EnumBloodTemper.valueOf(nbt.getString("secondary_temper"));
-				}
-
-				return manip;
-			}
+		if (nbt == null || nbt.isEmpty() || !(nbt.contains("name") && nbt.contains("cost") && nbt.contains("level")
+				&& nbt.contains("type") && nbt.contains("temper") && nbt.contains("rank") && nbt.contains("section"))) {
+			return null;
 		}
-		return null;
+		try {
+			BloodManipulation manip = new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"),
+					nbt.getDouble("level"), nbt.getDouble("xpcost"),
+					EnumManipulationType.valueOf(nbt.getString("type")),
+					EnumManipulationRank.valueOf(nbt.getString("rank")),
+					EnumBloodTemper.valueOf(nbt.getString("temper")),
+					EnumVeinSections.valueOf(nbt.getString("section")));
+			if (nbt.contains("cooldown")) {
+				manip.cooldownTicks = nbt.getInt("cooldown");
+			}
+			if (nbt.contains("secondary_temper")) {
+				manip.secondaryTend = EnumBloodTemper.valueOf(nbt.getString("secondary_temper"));
+			}
+			return manip;
+		} catch (IllegalArgumentException unknownEnumName) {
+			return null;
+		}
 	}
 	String name;
 	double cost, alignLevel, xpCost;
@@ -93,6 +106,17 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	private static final ManipulationCooldownState COOLDOWNS = new ManipulationCooldownState();
 
+	private static final ThreadLocal<Double> CAST_PAID = new ThreadLocal<>();
+
+	/**
+	 * The blood the player paid for the cast whose {@code getAction} is running now. Zero for every action nobody paid
+	 * for: an echo, a direct {@code getAction}, a Drudge or an entity cast. Refunds are a share of this.
+	 */
+	public static double paidForCurrentCast() {
+		Double paid = CAST_PAID.get();
+		return paid == null ? 0.0D : paid;
+	}
+
 	public static void clearSessionState() {
 		COOLDOWNS.clear();
 		ManipulationChannelManager.clearSessionState();
@@ -101,6 +125,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 	}
 
 	int cooldownTicks;
+	int requiredDegree;
 
 	/**
 	 * Transient — set at registration time via {@link #setDrudgeAction(DrudgeAction, Component)}.
@@ -110,6 +135,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 	private transient Component drudgeDescription = null;
 	/** What this does when an entity casts it, set at registration; transient like the Drudge action. */
 	private transient EntityCast entityCast = null;
+	/** What this makes of Projection and of Absorption while selected, set at registration; see {@link VerbSculpting}. */
+	private transient VerbSculpting projectionSculpting = null;
+	private transient VerbSculpting absorptionSculpting = null;
+	/** Narrow Sculptings tried ahead of the main one, in the order attached (core-loop round two P4). */
+	private final transient java.util.List<VerbSculpting> narrowProjection = new java.util.ArrayList<>();
+	private final transient java.util.List<VerbSculpting> narrowAbsorption = new java.util.ArrayList<>();
 
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
@@ -130,6 +161,14 @@ public class BloodManipulation implements EntityCastableManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
 		getAction(player, world, heldItemMainhand, position);
+	}
+
+	/**
+	 * Whether a cast or Sculpting pulse of this manipulation burns Temper in its school (core loop Track 4). False for
+	 * the hands and forms that only conjure a tool: the verbs' cell hands, the Staff and its weapon forms.
+	 */
+	public boolean chargesTemper() {
+		return true;
 	}
 
 	public boolean usesDefaultActivationParticles() {
@@ -246,6 +285,16 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return this;
 	}
 
+	/** The lowest degree this is learned at, over its rank's gate; read through {@code ManipulationRankGates}. */
+	public int getRequiredDegree() {
+		return requiredDegree;
+	}
+
+	public BloodManipulation setRequiredDegree(int requiredDegree) {
+		this.requiredDegree = requiredDegree;
+		return this;
+	}
+
 	public BloodManipulation setSecondaryTend(@Nullable EnumBloodTemper secondaryTend) {
 		this.secondaryTend = secondaryTend != tend ? secondaryTend : null;
 		return this;
@@ -290,6 +339,49 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return Optional.ofNullable(entityCast);
 	}
 
+	/** Attaches what this manipulation makes of Projection while it is selected. */
+	public BloodManipulation setProjectionSculpting(Supplier<? extends VerbSculpting> factory) {
+		this.projectionSculpting = factory == null ? null : factory.get();
+		return this;
+	}
+
+	/** Attaches what this manipulation makes of Absorption while it is selected. */
+	public BloodManipulation setAbsorptionSculpting(Supplier<? extends VerbSculpting> factory) {
+		this.absorptionSculpting = factory == null ? null : factory.get();
+		return this;
+	}
+
+	/**
+	 * Attaches a narrow Sculpting of Projection, tried ahead of the main one ({@link #setProjectionSculpting}) in the order
+	 * attached: it takes a few targets the main one would otherwise take (Glacial Grasp freezes water ahead of its
+	 * plant strand).
+	 */
+	public BloodManipulation addProjectionSculpting(Supplier<? extends VerbSculpting> factory) {
+		if (factory != null) narrowProjection.add(factory.get());
+		return this;
+	}
+
+	/** Attaches a narrow Sculpting of Absorption, tried ahead of the main one in the order attached. */
+	public BloodManipulation addAbsorptionSculpting(Supplier<? extends VerbSculpting> factory) {
+		if (factory != null) narrowAbsorption.add(factory.get());
+		return this;
+	}
+
+	/** This manipulation's main Sculpting of {@code verb}; read through {@code SculptingDispatcher} only. */
+	public Optional<VerbSculpting> getSculpting(Verb verb) {
+		return Optional.ofNullable(verb == Verb.ABSORB ? absorptionSculpting : projectionSculpting);
+	}
+
+	/**
+	 * Every Sculpting of {@code verb} in the order they claim: the narrow ones first, then the main one. Read through
+	 * {@code SculptingDispatcher} only.
+	 */
+	public java.util.List<VerbSculpting> getSculptings(Verb verb) {
+		return com.vincenthuto.hemomancy.common.manipulation.verb.SculptingRules.claimOrder(
+				verb == Verb.ABSORB ? narrowAbsorption : narrowProjection,
+				verb == Verb.ABSORB ? absorptionSculpting : projectionSculpting);
+	}
+
 	/**
 	 * Returns the short drudge-behavior description, or empty if none was
 	 * set.
@@ -310,6 +402,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 	public final void capCooldown(ServerPlayer player, long maxRemainingTicks) {
 		long left = COOLDOWNS.capRemaining(player.getUUID(), name, player.level().getGameTime(), maxRemainingTicks);
 		PacketHandler.sendToPlayer(player, new ManipCooldownPacket(name, (int) left));
+	}
+
+	/** Starts this manipulation's own cooldown again from now, with the usual reductions, and resyncs the client. */
+	public final void restartCooldown(ServerPlayer player) {
+		if (ignoresCooldown(player)) return;
+		PacketHandler.sendToPlayer(player, new ManipCooldownPacket(name, (int) startCooldown(player)));
 	}
 
 	/** Holds this manipulation on cooldown for at least {@code minTicks} (never shortening one) and resyncs the client. */
@@ -475,11 +573,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 		if (!player.level().isClientSide) {
 			if (!canPerformAction(player, heldItemMainhand, chargeTicks)) return false;
-			if (ManipulationFamilyRegistry.form(getName()).isPresent()
-					&& (!HemoCapabilityAccess.getKnownManipulations(player).isManipulationAvailable(this))) {
-				player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.you_have_not_absorbed_this_form").withStyle(ChatFormatting.DARK_RED), true);
-				return false;
-			}
+			if (!passesFormGate(player)) return false;
 			if (enforceCooldown && isOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
 				double seconds = remaining / TICKS_PER_SECOND;
@@ -488,36 +582,18 @@ public class BloodManipulation implements EntityCastableManipulation {
 						true);
 				return false;
 			}
-			if (com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents
-					.isSectionDead(player, section)) {
-				player.displayClientMessage(HemoText.translatable("message.hemomancy.blood_manipulation.your_veins_are_dead_nothing_flows",
-						section.name().toLowerCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.RED), true);
-				return false;
-			}
-
-			// Check Unstained purity penalty — must happen before isActive check
-			// so that purified players are fully blocked even if volume is still active
-			double costMultiplier = getPurityCostMultiplier(player);
+			double costMultiplier = passBodyGates(player);
 			if (costMultiplier < 0) {
 				return false;
 			}
 
-			// Unresolved ninth-pome choices restrict powers, but retain Staff recovery.
-			// for 1–8 pomes the variable is reused below inside volume.isActive() to scale cost.
-			var degreeData = HemoCapabilityAccess.getInitiatoryDegree(player);
-			int pomesConsumed = degreeData.getTotalPomesConsumed();
-			boolean permitted = HarbingerPathPermissions.canUsePower(
-					degreeData.getTotalPomesConsumed(), degreeData.getArchonPath(), "conjure_staff".equals(getName()));
-			if (!permitted) {
-				player.displayClientMessage(
-						Component.translatable("message.hemomancy.blood_manipulation.your_blood_no_longer_answers_to").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
-						true);
-				return false;
-			}
-
 			if (volume.isActive()) {
-				// Unified manipulation cost ledger covers skill, rites, effects, world, and tool modifiers.
-				ManipulationCostSnapshot costSnapshot = ManipulationCostLedger.collect(player, this, costMultiplier);
+				// Temper: worked out before pricing (a dry cast costs more), settled only once the blood is paid.
+				TemperCharge.Charge temperCharge = TemperCharge.forCast(player, this,
+						ManipulationCastingRules.rewardScale(type, chargeTicks, getRequiredChargeTicks()), !creditUse);
+				// Unified manipulation cost ledger covers skill, rites, effects, world, tool and Temper modifiers.
+				ManipulationCostSnapshot costSnapshot = ManipulationCostLedger.collect(player, this, costMultiplier,
+						temperCharge);
 				double effectiveCost = costSnapshot.effectiveCost();
 				if (type == EnumManipulationType.CHARGED) {
 					var charged = ManipulationCastingRules.chargedCost(effectiveCost, chargeTicks,
@@ -547,14 +623,20 @@ public class BloodManipulation implements EntityCastableManipulation {
 				}
 				if (volume.getBloodVolume() >= effectiveCost) {
 					BloodAccounting.pay(player, effectiveCost, CAST);
+					TemperCharge.commit((ServerPlayer) player, temperCharge);
 					HemorathEntity
 							.onPlayerBloodSpend(player, effectiveCost);
 					RootedStateHelper.refundManipulationCost(player, effectiveCost);
 					ConserveStateHelper.markManipulationCast(player);
+					Double outerPaid = CAST_PAID.get();
+					CAST_PAID.set(effectiveCost);
 					try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player,
-                            getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
+                            getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks(),
+							temperCharge == null ? 1.0F : temperCharge.strength())) {
 					    getAction(player, world, heldItemMainhand, position, chargeTicks);
-                    }
+                    } finally {
+						CAST_PAID.set(outerPaid);
+					}
 					if (creditUse && type != EnumManipulationType.CONTINUOUS) {
 						if (type != EnumManipulationType.PASSIVE) {
                             com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.release((ServerPlayer) player, this);
@@ -587,6 +669,129 @@ public class BloodManipulation implements EntityCastableManipulation {
 			}
 		}
 		return false;
+	}
+
+	/** A family form must have been absorbed before it can be cast or sculpt a verb. Shows the refusal. */
+	private boolean passesFormGate(Player player) {
+		if (ManipulationFamilyRegistry.form(getName()).isPresent()
+				&& (!HemoCapabilityAccess.getKnownManipulations(player).isManipulationAvailable(this))) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.you_have_not_absorbed_this_form").withStyle(ChatFormatting.DARK_RED), true);
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * The body's gates every cast and Sculpting pulse shares, in order: a dead vein section, Unstained purity, and the
+	 * ninth-pome power lock. Shows the refusal. Returns the purity cost multiplier, or -1 when refused.
+	 */
+	private double passBodyGates(Player player) {
+		if (com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents
+				.isSectionDead(player, section)) {
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.blood_manipulation.your_veins_are_dead_nothing_flows",
+					section.name().toLowerCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.RED), true);
+			return -1.0D;
+		}
+
+		if (tend == EnumBloodTemper.LUX && com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeManip.inLapse(player)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.unclosing_eye.lapse_no_lux")
+					.withStyle(ChatFormatting.YELLOW), true);
+			return -1.0D;
+		}
+
+		if (com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip.bowing(player)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.endless_hour.bowing")
+					.withStyle(ChatFormatting.DARK_AQUA), true);
+			return -1.0D;
+		}
+
+		// Check Unstained purity penalty — must happen before isActive check
+		// so that purified players are fully blocked even if volume is still active
+		double costMultiplier = getPurityCostMultiplier(player);
+		if (costMultiplier < 0) {
+			return -1.0D;
+		}
+
+		// Unresolved ninth-pome choices restrict powers, but retain Staff recovery.
+		var degreeData = HemoCapabilityAccess.getInitiatoryDegree(player);
+		boolean permitted = HarbingerPathPermissions.canUsePower(
+				degreeData.getTotalPomesConsumed(), degreeData.getArchonPath(), "conjure_staff".equals(getName()));
+		if (!permitted) {
+			player.displayClientMessage(
+					Component.translatable("message.hemomancy.blood_manipulation.your_blood_no_longer_answers_to").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+					true);
+			return -1.0D;
+		}
+		return costMultiplier;
+	}
+
+	/**
+	 * One pulse of this manipulation's {@code sculpting}: the front half of {@link #tryPerformAction} (paralysis, an
+	 * absorbed family form, a dead vein section, purity, the power lock, an active volume, the temper alignment gate,
+	 * the cost ledger), then payment through {@link BloodAccounting#payUpkeep} as {@link #SCULPTING}, then the pulse
+	 * itself under this manipulation's school. A pulse starts no cooldown and sends no cooldown packet. Every
+	 * {@code creditedUses} counts as one ordinary use (mastery, temper shift, vascular strain, skill points); the
+	 * dispatcher hands out one per {@link com.vincenthuto.hemomancy.common.manipulation.verb.SculptingRules#TICKS_PER_CREDITED_USE}
+	 * ticks of paid work.
+	 *
+	 * The same possession and Unstained refusals as the cast key ({@code UseManipKeyPacket}) come first, so a held verb
+	 * is never a way round them. {@code onPaid} runs once the blood is paid and before the pulse (the dispatcher opens
+	 * the session there, so a Sculpting's {@code begin} always precedes its first pulse).
+	 *
+	 * @return the blood paid, or empty when a gate refused (and said why)
+	 */
+	public OptionalDouble tryPerformVerbPulse(ServerPlayer player, VerbSculpting sculpting, VerbTarget target,
+			SculptingPulse pulse, int creditedUses, Runnable onPaid) {
+		if (com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionWheelRules
+				.refusesManipulation(HemoCapabilityAccess.isPossessing(player), false)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.possession.cannot_cast")
+					.withStyle(ChatFormatting.DARK_GRAY), true);
+			return OptionalDouble.empty();
+		}
+		if (com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules
+				.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player))) return OptionalDouble.empty();
+		if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)) return OptionalDouble.empty();
+		if (!passesFormGate(player)) return OptionalDouble.empty();
+		double costMultiplier = passBodyGates(player);
+		if (costMultiplier < 0) return OptionalDouble.empty();
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
+		if (!volume.isActive()) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.you_strain_your_body_but_nothing_happens")
+					.withStyle(ChatFormatting.RED), true);
+			return OptionalDouble.empty();
+		}
+		IBloodTemperament temper = HemoCapabilityAccess.getBloodTemperament(player);
+		if (temper.getAlignmentByTemper(tend) < alignLevel) {
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.blood_manipulation.requires_alignment_current",
+					(int) alignLevel, tend.name(), (int) temper.getAlignmentByTemper(tend)).withStyle(ChatFormatting.RED), true);
+			return OptionalDouble.empty();
+		}
+		// The Sculpting's own refusal comes before any price, so a refused pulse costs nothing.
+		if (!sculpting.admits(player, target)) return OptionalDouble.empty();
+		double basePrice = sculpting.bloodPerPulse(player, target);
+		TemperCharge.Charge temperCharge = TemperCharge.forPulse(player, this, sculpting.cadence(), basePrice);
+		double price = basePrice
+				* ManipulationCostLedger.collect(player, this, costMultiplier, temperCharge).totalMultiplier();
+		double paid = 0.0D;
+		if (price > 0.0D) {
+			BloodAccounting.Payment payment = BloodAccounting.payUpkeep(player, price, SCULPTING, sculpting.cadence(), true);
+			if (!payment.satisfied()) {
+				player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.not_enough_blood_to_be_shed")
+						.withStyle(ChatFormatting.RED), true);
+				return OptionalDouble.empty();
+			}
+			paid = payment.paid();
+			HemorathEntity.onPlayerBloodSpend(player, paid);
+		}
+		TemperCharge.commit(player, temperCharge);
+		float strength = temperCharge == null ? 1.0F : temperCharge.strength();
+		HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_SCULPTED);
+		if (onPaid != null) onPaid.run();
+		try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1, strength)) {
+			sculpting.pulse(player, target, new SculptingPulse(pulse.verb(), paid, pulse.workScale() * strength, pulse.index()));
+		}
+		for (int use = 0; use < creditedUses; use++) recordSuccessfulUse(player);
+		return OptionalDouble.of(paid);
 	}
 
 	public void recordSuccessfulUse(ServerPlayer player) {
@@ -657,7 +862,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 		boolean changed = tend != registered.tend || secondaryTend != registered.secondaryTend
 				|| rank != registered.rank || type != registered.type || section != registered.section
 				|| cost != registered.cost || alignLevel != registered.alignLevel || xpCost != registered.xpCost
-				|| cooldownTicks != registered.cooldownTicks;
+				|| cooldownTicks != registered.cooldownTicks || requiredDegree != registered.requiredDegree;
 		tend = registered.tend;
 		secondaryTend = registered.secondaryTend;
 		rank = registered.rank;
@@ -667,6 +872,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 		alignLevel = registered.alignLevel;
 		xpCost = registered.xpCost;
 		cooldownTicks = registered.cooldownTicks;
+		requiredDegree = registered.requiredDegree;
 		return changed;
 	}
 

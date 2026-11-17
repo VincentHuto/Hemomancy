@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomFram
 
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry;
 
+import com.vincenthuto.hemomancy.common.capability.OfflineCredits;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
@@ -104,6 +106,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 
 import com.vincenthuto.hemomancy.common.util.HemoText;
 
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
+
 import net.minecraft.network.chat.Component;
 
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -156,13 +160,12 @@ import java.util.UUID;
 
 public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodReservoir, IMultiBlockEntity, UpgradeableStation {
 
-	private static final BloodAccounting.Source RITUAL_CHARGE = BloodAccounting.Source.of("somatic_loom", Category.STATION, false, false);
+	private static final BloodAccounting.Source RITUAL_CHARGE = BloodAccounting.Source.of("somatic_loom", Category.STATION, false);
 
-	private static final BloodAccounting.Source BURNT_SPANS = BloodAccounting.Source.of("loom_burnt_spans", Category.STATION, false, false);
+	private static final BloodAccounting.Source BURNT_SPANS = BloodAccounting.Source.of("loom_burnt_spans", Category.STATION, false);
 
 	private static final String TAG_CONTENT_SIZE = "contentSize";
 
-	private static final String TAG_BLOOD_LEVEL = "bloodLevel";
 
 	private static final String TAG_RECIPE = "recipe";
 
@@ -215,8 +218,6 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 	private static final ParticleColor STRAND_SOOT = new ParticleColor(22, 2, 6);
 
 	public NonNullList<ItemStack> contents = createMutableContents(1);
-
-	IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(this).orElseThrow(IllegalStateException::new);
 
 	IBloodTemperament temper = HemoCapabilityAccess.getBloodTemperament(this).orElseThrow(IllegalStateException::new);
 
@@ -858,15 +859,13 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	}
 
-	public double getBloodVolume() {
+	/** The loom never spends blood: projection charges a memory, so it keeps no tank (core-loop Track 3). */
 
-		return volume.getBloodVolume();
+	@Override
 
-	}
+	public boolean holdsBlood() {
 
-	public double getMaxBloodVolume() {
-
-		return volume.getMaxBloodVolume();
+		return false;
 
 	}
 
@@ -972,6 +971,30 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		if (!level.isClientSide) {
 
+			if (!ProgressionGates.hasDegree(player, curRecipe.getRequiredDegree())) {
+
+				msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.requires_degree",
+
+						curRecipe.getRequiredDegree()), ChatFormatting.YELLOW, true);
+
+				return false;
+
+			}
+
+			if (curRecipe.getResultItem(level.registryAccess()).getItem() instanceof BloodMemoryItem canon
+
+					&& !com.vincenthuto.hemomancy.common.manipulation.saint.CanonGifts.trialAllows(player, canon.getManip())) {
+
+				msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.requires_trial",
+
+						com.vincenthuto.hemomancy.common.manipulation.saint.CanonGifts.saintOf(canon.getManip()).getDisplayName()),
+
+						ChatFormatting.YELLOW, true);
+
+				return false;
+
+			}
+
 			// The payer recalls their own engram; its reference lanes must be affordable before any blood is taken.
 
 			// Plying can make that cheaper than three spans a fragment, so the engram, not the recipe, decides.
@@ -1032,7 +1055,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		ritualBloodCharged += amount;
 
-		if (livingStaff) {
+		if (livingStaff && level != null && level.getGameTime() % 8L == 0L) {
 
 			playSound(SoundEvents.BEACON_POWER_SELECT, 0.35f, 0.8f);
 
@@ -1832,49 +1855,59 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 			EngramRecollections.get(server).record(weaver, selectedRecipeId);
 
-		if (player instanceof ServerPlayer serverPlayer) {
+		boolean ganglionic = upgradeTier() >= 1 && SomaticWeaveRules.stageFor(completedRank) >= 1;
 
-			var stationProgress = HemoCapabilityAccess.stationUpgrades(serverPlayer);
+		if (player instanceof ServerPlayer serverPlayer) creditWeave(serverPlayer, result, ganglionic);
 
-			stationProgress.recordUse(UpgradeStation.LOOM, StationUpgradeCatalog.LOOM_WEAVE);
+		else if (player == null && level instanceof ServerLevel server && weaver != null)
 
-			if (upgradeTier() >= 1 && SomaticWeaveRules.stageFor(completedRank) >= 1)
+			OfflineCredits.owe(server.getServer(), weaver,
 
-				stationProgress.recordUse(UpgradeStation.LOOM, StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC);
-
-			SkillPointGainEvents.onMemoryWeavingCompleted(serverPlayer);
-
-			if (result.is(ItemInit.memory_blood_shot.get()) && result.getItem() instanceof BloodMemoryItem memory) {
-
-				var learning = KnownManipulationGrantHelper.checkMemoryGrant(serverPlayer, memory.getManip(), memory);
-
-				if (learning.success() || learning.status() == KnownManipulationGrantHelper.MemoryGrantStatus.ALREADY_KNOWN) {
-
-					HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
-
-							HarbingerAdvancementGranter.ADV_MNEMONIST_FIRST_WEAVE_COMPLETE);
-
-				}
-
-			}
-
-			if (HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer)
-
-					&& HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(serverPlayer)) {
-
-				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
-
-						HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_FINISHED);
-
-			}
-
-		}
+					ganglionic ? OfflineCredits.Kind.LOOM_WEAVE_GANGLIONIC : OfflineCredits.Kind.LOOM_WEAVE, result);
 
 		clearActiveRitual(false);
 
 		refreshRecipe();
 
 		BlockEntitySync.markAndSync(this);
+
+	}
+
+	/** What a finished weave records for its weaver; an offline weaver receives it at their next login. */
+
+	public static void creditWeave(ServerPlayer serverPlayer, ItemStack result, boolean ganglionic) {
+
+		var stationProgress = HemoCapabilityAccess.stationUpgrades(serverPlayer);
+
+		stationProgress.recordUse(UpgradeStation.LOOM, StationUpgradeCatalog.LOOM_WEAVE);
+
+		if (ganglionic) stationProgress.recordUse(UpgradeStation.LOOM, StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC);
+
+		SkillPointGainEvents.onMemoryWeavingCompleted(serverPlayer);
+
+		if (result.is(ItemInit.memory_blood_shot.get()) && result.getItem() instanceof BloodMemoryItem memory) {
+
+			var learning = KnownManipulationGrantHelper.checkMemoryGrant(serverPlayer, memory.getManip(), memory);
+
+			if (learning.success() || learning.status() == KnownManipulationGrantHelper.MemoryGrantStatus.ALREADY_KNOWN) {
+
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+
+						HarbingerAdvancementGranter.ADV_MNEMONIST_FIRST_WEAVE_COMPLETE);
+
+			}
+
+		}
+
+		if (HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer)
+
+				&& HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(serverPlayer)) {
+
+			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+
+					HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_FINISHED);
+
+		}
 
 	}
 
@@ -2034,6 +2067,10 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 				case RANK_TOO_LOW -> HemoText.translatable("message.hemomancy.somatic_loom_block_entity.requires_degree", check.requiredDegree());
 
+				case TRIAL_NOT_ENDED -> Component.translatable("message.hemomancy.somatic_loom_block_entity.requires_trial",
+
+						com.vincenthuto.hemomancy.common.manipulation.saint.CanonGifts.saintOf(check.manipulation()).getDisplayName());
+
 				case GRANTED, GRANTED_EQUIPPED -> Component.translatable("message.hemomancy.somatic_loom_block_entity.can_learn_memory");
 
 				case ALREADY_KNOWN -> Component.translatable("message.hemomancy.somatic_loom_block_entity.already_know_memory");
@@ -2182,7 +2219,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	public void onLoad() {
 
-		volume.setActive(true);
+		super.onLoad();
 
 	}
 
@@ -2227,10 +2264,6 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		tag.remove(TAG_RECIPE);
 
 		tag.remove(TAG_CRAFT_PHASE);
-
-		// Blood lives in the attachment; keep it in the snapshot under its old key so a mid-rite change still aborts.
-
-		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 
 		return tag;
 
@@ -2278,10 +2311,6 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		super.loadAdditional(tag, registries);
 
-		// Loading replaces the attachment instance; keep the field on the live one.
-
-		volume = HemoCapabilityAccess.getBloodVolume(this).orElseThrow(IllegalStateException::new);
-
 		loadShared(tag, registries);
 
 	}
@@ -2293,8 +2322,6 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		CompoundTag tag = new CompoundTag();
 
 		saveShared(tag, registries);
-
-		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 
 		return tag;
 
@@ -2385,10 +2412,6 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		contents = createMutableContents(size);
 
 		ContainerHelper.loadAllItems(tag, contents, registries);
-
-		// Saves before the attachment became the only store still carry their own copy.
-
-		if (tag.contains(TAG_BLOOD_LEVEL)) volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
 
 		recipePath = tag.getString(TAG_RECIPE);
 

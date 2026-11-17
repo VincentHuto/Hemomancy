@@ -572,6 +572,10 @@ public final class NpcTradeGameTests {
 			List<String> quests = topicTexts(open(h, captured, ringmaster, "ringmaster"), DialogueCategory.QUESTS);
 			h.assertTrue(quests.contains(trial), "the trial is Quest Work: " + quests);
 			CircusPlayerProgress.completeChallenge(player, 0, 0);
+			// ARRANGE: the D-30 pact gate, Degree 4 and one school report.
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(player)
+					.putBoolean("quest.empty_ring", true);
 			quests = topicTexts(open(h, captured, ringmaster, "ringmaster"), DialogueCategory.QUESTS);
 			h.assertTrue(quests.containsAll(List.of("hemomancy.circus.option.accept", "hemomancy.circus.option.reject")),
 					"accept and reject are Quest Work: " + quests);
@@ -675,7 +679,7 @@ public final class NpcTradeGameTests {
 
 	/** Right-clicking the stone, as far as the trade cares: the conversation it opens and the hub it sends. */
 	private static DialogueTree talkToStone(CapturedPlayer captured, BlockPos at, int degree) {
-		DialogueTree hub = SanguineMonolithDialogueTrees.hub(captured.player, degree);
+		DialogueTree hub = SanguineMonolithDialogueTrees.hub(captured.player, degree, true);
 		MonolithDialogueContext.open(captured.player, at, hub);
 		return hub;
 	}

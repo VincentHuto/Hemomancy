@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.resource;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LanternTickResourceTest {
 	private static final Path ROOT = Path.of("src/main/resources");
@@ -13,7 +17,8 @@ public final class LanternTickResourceTest {
 	private LanternTickResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		assertRegistries();
 		assertServerBehavior();
 		assertClientBehavior();
@@ -79,16 +84,6 @@ public final class LanternTickResourceTest {
 	private static void assertFileExists(Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError("missing " + path);
-		}
-	}
-
-	private static String read(Path path) throws IOException {
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
 		}
 	}
 }

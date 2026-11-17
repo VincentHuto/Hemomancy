@@ -13,6 +13,8 @@ import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.common.tendril.*;
@@ -61,7 +63,8 @@ public final class EarlyInitiation {
     public static boolean tryProject(ServerPlayer founder) {
         if (ACTIVE.values().stream().anyMatch(c -> c.vicar == founder)) return true;
         if (foundedBloodline(founder) == null) return false;
-        double reach = SanguineProjectionTargeting.PROJECTION_REACH;
+        double reach = com.vincenthuto.hemomancy.common.manipulation.verb.VerbReach.of(founder,
+                com.vincenthuto.hemomancy.common.manipulation.verb.Verb.PROJECT);
         Vec3 eye = founder.getEyePosition();
         var blockHit = SanguineProjectionTargeting.pick(
                 founder.level(), founder, reach, true);
@@ -70,7 +73,19 @@ public final class EarlyInitiation {
                 founder.level(), founder, eye, end,
                 founder.getBoundingBox().expandTowards(end.subtract(eye)).inflate(1),
                 entity -> entity.isPickable() && !entity.isSpectator());
-        return hit != null && hit.getEntity() instanceof ServerPlayer recruit && begin(recruit, founder);
+        if (hit == null || !(hit.getEntity() instanceof ServerPlayer recruit)) return false;
+        // PT-9 (NQ-10-9): the recruit is told who offers and kneels (sneaks) to accept; walking away declines.
+        if (!recruit.isShiftKeyDown()) {
+            if (!eligible(recruit) || !near(recruit, founder)) return false;
+            if (founder.level().getGameTime() % 20L == 0L) {
+                recruit.displayClientMessage(Component.translatable("hemomancy.initiation.founder_offer",
+                        founder.getDisplayName()), true);
+                founder.displayClientMessage(Component.translatable("hemomancy.initiation.founder_waits",
+                        recruit.getDisplayName()), true);
+            }
+            return true;
+        }
+        return begin(recruit, founder);
     }
     private static Bloodline foundedBloodline(ServerPlayer founder) {
         var degree = HemoCapabilityAccess.getInitiatoryDegree(founder);
@@ -152,7 +167,7 @@ public final class EarlyInitiation {
             if (member != player && line.hasMember(member.getUUID())) syncMembership(member, line);
         }
         SkillPointGainEvents.onBloodlineJoined(player);
-        player.displayClientMessage(Component.translatable("hemomancy.initiation.bloodline", line.getName()), false);
+        player.displayClientMessage(Component.translatable("hemomancy.initiation.bloodline", line.displayName()), false);
     }
     private static void syncMembership(ServerPlayer player, Bloodline line) {
         var volume = HemoCapabilityAccess.getBloodVolume(player);
@@ -180,19 +195,26 @@ public final class EarlyInitiation {
         cancel(player);
         if (!DegreeProgression.advance(player, 1)) return;
         if (c.bloodline != null) bindBloodline(player, c);
-        give(player, new ItemStack(ItemInit.sanguine_conduit.get()));
+        // PT-16: the kit is owed before its one-time flag, so a Creative discard or a full pack leaves it owed.
+        List<ItemStack> kit = new ArrayList<>();
+        kit.add(new ItemStack(ItemInit.sanguine_conduit.get()));
         var starter = Hemomancy.rloc("hemomancy/initiation_blood_claimed");
-        if (!HarbingerAdvancementGranter.hasAdvancement(player, starter)) {
-            HarbingerAdvancementGranter.grantIfNotDone(player, starter);
-            give(player, new ItemStack(ItemInit.bloody_flask.get(), 4));
+        boolean firstFlasks = !HarbingerAdvancementGranter.hasAdvancement(player, starter);
+        if (firstFlasks) {
+            ItemStack flasks = new ItemStack(ItemInit.bloody_flask.get(), 4);
+            BloodyFlaskItem.stampBottled(flasks, player.level().getGameTime());
+            kit.add(flasks);
         }
-        if (!player.getInventory().contains(new ItemStack(ItemInit.harbinger_assignment_ledger.get())))
-            give(player, new ItemStack(ItemInit.harbinger_assignment_ledger.get()));
+        if (!OwedRewards.carriesOrOwed(player, ItemInit.harbinger_assignment_ledger.get()))
+            kit.add(new ItemStack(ItemInit.harbinger_assignment_ledger.get()));
+        OwedRewards.owe(player, kit);
+        if (firstFlasks) HarbingerAdvancementGranter.grantIfNotDone(player, starter);
+        OwedRewards.deliver(player);
         HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED);
         player.displayClientMessage(Component.translatable("hemomancy.initiation.welcome"), false);
         player.displayClientMessage(Component.translatable("hemomancy.tutorial.current_controls",
                 Component.keybind("key.hemomancy.bloodformation.desc"), Component.keybind("key.hemomancy.bloodcrafting.desc"),
-                Component.keybind("key.hemomancy.cyclemanip.desc")), false);
+                Component.keybind("key.hemomancy.cyclemanip.desc"), Component.keybind("key.hemomancy.bloodverb.desc")), false);
     }
     private static void visuals(ServerPlayer player, Ceremony c, long elapsed) {
         for (int i = 0; i < 10; i++) {

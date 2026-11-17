@@ -516,11 +516,14 @@ public final class SomaticLoomWeavingGameTests {
     @GameTest(template = "empty")
     public static void aPerfectusIntrusionBitesItsWeaver(GameTestHelper helper) {
         Setup s = withReachableIntrusion(helper, AXONAL, 2);
-        int before = helper.getLevel().getEntitiesOfClass(FrayedThreadEntity.class, new AABB(s.pos).inflate(12)).size();
+        // Only this loom's threads count: another test's loom may share a weaver name, never this loom's position.
+        java.util.function.Predicate<FrayedThreadEntity> ours = thread -> thread.loomPos().equals(s.pos) && thread.hunts(s.weaver);
+        int before = helper.getLevel().getEntitiesOfClass(FrayedThreadEntity.class, new AABB(s.pos).inflate(12), ours).size();
+        helper.assertTrue(before == 0, "the loom had " + before + " threads loose before the intrusion");
         threadIntrusion(helper, s);
-        var bites = helper.getLevel().getEntitiesOfClass(FrayedThreadEntity.class, new AABB(s.pos).inflate(12));
-        helper.assertTrue(bites.size() == before + 1, "a failed Harbinger's memory tears loose");
-        helper.assertTrue(bites.getLast().hunts(s.weaver) && bites.getLast().windup() > 0, "it winds up at its weaver, in plain sight");
+        var bites = helper.getLevel().getEntitiesOfClass(FrayedThreadEntity.class, new AABB(s.pos).inflate(12), ours);
+        helper.assertTrue(bites.size() == 1, "a failed Harbinger's memory tears loose as one thread, got " + bites.size());
+        helper.assertTrue(bites.getFirst().windup() > 0, "it winds up at its weaver, in plain sight");
         bites.forEach(net.minecraft.world.entity.Entity::discard);
         helper.succeed();
     }
@@ -848,6 +851,54 @@ public final class SomaticLoomWeavingGameTests {
         helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION.equals(s.loom.getWeaverTheme()),
                 "The theme survives a reload");
         chambers.clearSkyThemeOverride(s.weaver);
+        helper.succeed();
+    }
+
+    /**
+     * C-6 and D-1 (NQ-08-2 A): a canon memory weaves and teaches only at D8, and only for one who ended its Saint's
+     * trial. D7, and D8 without the trial record, take no blood and cannot learn it. A Perfectus memory, so a Cortical
+     * loom (stage 2).
+     */
+    @GameTest(template = "empty")
+    public static void aCanonMemoryWeavesAndTeachesOnlyAtDegreeEightAfterTheTrial(GameTestHelper helper) {
+        Setup below = setup(helper, "memory_weaving/memory_crimson_tithe", PLENTY, 2, "canon_d7");
+        HemoCapabilityAccess.getInitiatoryDegree(below.weaver).setDegreeNumber(7);
+        double before = HemoCapabilityAccess.getBloodVolume(below.weaver).getBloodVolume();
+        helper.assertTrue(!below.loom.tryChargeRitualBlood(below.weaver, 10_000, false) && !below.loom.isWeaving(),
+                "a D7 weaver is refused the canon weave");
+        helper.assertTrue(HemoCapabilityAccess.getBloodVolume(below.weaver).getBloodVolume() == before
+                        && below.loom.getRitualBloodCharged() == 0, "the refused weave takes no blood");
+        var tithe = ItemInit.memory_crimson_tithe.get();
+        var manip = ((BloodMemoryItem) tithe).getManip();
+        var refused = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper
+                .checkMemoryGrant(below.weaver, manip, tithe);
+        helper.assertTrue(refused.status() == com.vincenthuto.hemomancy.common.capability.player.harbinger.manip
+                        .KnownManipulationGrantHelper.MemoryGrantStatus.RANK_TOO_LOW && refused.requiredDegree() == 8,
+                "a D7 player cannot learn the canon memory: " + refused.status() + " at " + refused.requiredDegree());
+
+        Setup untried = setup(helper, "memory_weaving/memory_crimson_tithe", PLENTY, 2, "canon_d8_untried");
+        HemoCapabilityAccess.getInitiatoryDegree(untried.weaver).setDegreeNumber(8);
+        double held = HemoCapabilityAccess.getBloodVolume(untried.weaver).getBloodVolume();
+        helper.assertTrue(!untried.loom.tryChargeRitualBlood(untried.weaver, 10_000, false) && !untried.loom.isWeaving(),
+                "a D8 weaver who never ended Hemorath's trial is refused the weave");
+        helper.assertTrue(HemoCapabilityAccess.getBloodVolume(untried.weaver).getBloodVolume() == held
+                && untried.loom.getRitualBloodCharged() == 0, "the refused weave takes no blood");
+        var untriedGrant = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper
+                .checkMemoryGrant(untried.weaver, manip, tithe);
+        helper.assertTrue(untriedGrant.status() == com.vincenthuto.hemomancy.common.capability.player.harbinger.manip
+                .KnownManipulationGrantHelper.MemoryGrantStatus.TRIAL_NOT_ENDED,
+                "a handed-over memory teaches nothing without the trial: " + untriedGrant.status());
+
+        Setup at = setup(helper, "memory_weaving/memory_crimson_tithe", PLENTY, 2, "canon_d8");
+        HemoCapabilityAccess.getInitiatoryDegree(at.weaver).setDegreeNumber(8);
+        HemoCapabilityAccess.getInitiatoryDegree(at.weaver).recordSaintTrialEnded(
+                com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType.HEMORATH);
+        pay(helper, at);
+        helper.assertTrue(com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper
+                        .checkMemoryGrant(at.weaver, manip, tithe).success(), "a D8 player who ended the trial can learn it");
+        var record = HemoCapabilityAccess.getInitiatoryDegree(at.weaver);
+        helper.assertTrue(!record.hasEndedSaintTrial(com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType.SERAPHAE),
+                "one Saint's trial records only that Saint");
         helper.succeed();
     }
 

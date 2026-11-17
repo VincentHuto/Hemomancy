@@ -2,12 +2,14 @@ package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.manipulation.HematicCommandState.Command;
+import com.vincenthuto.hemomancy.common.manipulation.HematicCommandState.Mode;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.NerveCommandRules;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -31,9 +33,16 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Rebuke, Impressment, Sovereign redirection and the Marionette. The command itself lives on the mob
+ * ({@link HematicCommandState}, an attachment), so it survives the mob unloading and the server restarting; the maps here
+ * are only an index of the loaded mobs under command, rebuilt as each one joins its level. A command whose caster is
+ * away waits (the mob stays out of its own targeting) until the caster returns or it runs out. The Marionette is a
+ * channel and ends when its body unloads.
+ */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class HematicCommandManager {
-	private static final Map<UUID, CommandState> COMMANDS = new HashMap<>();
+    /** Loaded mobs under command, by UUID; the command is read from each mob's attachment. */
     private static final Map<UUID, Mob> BODIES = new HashMap<>();
     private static final Map<UUID, MarionetteMoveGoal> MOVEMENT = new HashMap<>();
     private static final String COMMAND_PROJECTILE_OWNER = "hemomancy:command_projectile_owner";
@@ -53,36 +62,40 @@ public final class HematicCommandManager {
 		if (!available(caster, target)) return false;
         if (isMarionetteChannel(caster)) ManipulationChannelManager.stop(caster, false);
 		UUID previousId = IMPRESSED_BY_CASTER.get(caster.getUUID());
-		if (previousId != null) {
-			if (caster.serverLevel().getEntity(previousId) instanceof Mob previous) release(previous);
-			COMMANDS.remove(previousId);
-		}
+		if (previousId != null && BODIES.get(previousId) instanceof Mob previous) release(previous);
+		IMPRESSED_BY_CASTER.remove(caster.getUUID());
 		return apply(caster, target, Mode.IMPRESSED,
 				HematicCommandRules.impressmentDurationTicks(target.getMaxHealth()), null);
 	}
 
 	public static boolean canCommand(LivingEntity target) {
 		return HematicCommandRules.canCommand(target instanceof Mob, target instanceof ServerPlayer,
-				ManipulationReactiveEvents.isBoss(target), HemoEntityPredicates.NOBLOOD.test(target), target.getMaxHealth());
+				HemoEntityPredicates.isBoss(target), HemoEntityPredicates.NOBLOOD.test(target), target.getMaxHealth());
 	}
 
 	public static boolean isRebuked(LivingEntity target) {
-		CommandState state = COMMANDS.get(target.getUUID());
-		return state != null && state.mode == Mode.REBUKED;
+		Command state = command(target);
+		return state != null && state.mode() == Mode.REBUKED;
 	}
 
 	public static boolean isImpressed(LivingEntity target, ServerPlayer caster) {
-		CommandState state = COMMANDS.get(target.getUUID());
-		return state != null && controlled(state) && state.caster.equals(caster.getUUID());
+		Command state = command(target);
+		return state != null && state.controlled() && state.caster().equals(caster.getUUID());
 	}
 
 	public static boolean redirect(ServerPlayer caster, Mob mob, LivingEntity target, int duration) {
 		return apply(caster, mob, Mode.REDIRECTED, duration, target.getUUID());
 	}
 
-	private static boolean controlled(CommandState state) {
-        return state.mode == Mode.IMPRESSED || state.mode == Mode.MARIONETTE;
-    }
+	/** The command on a loaded, indexed mob, or null. */
+	private static Command command(Entity entity) {
+		return entity != null && BODIES.containsKey(entity.getUUID()) ? HemoCapabilityAccess.getHematicCommand(entity) : null;
+	}
+
+	private static Command command(UUID id) {
+		Mob mob = BODIES.get(id);
+		return mob == null ? null : HemoCapabilityAccess.getHematicCommand(mob);
+	}
 
     public static boolean available(ServerPlayer caster, LivingEntity target) {
         return availableForMarionette(caster, target)
@@ -91,9 +104,9 @@ public final class HematicCommandManager {
 
     /** Marionette takes a Blood-Bound body by releasing the binding; the other commands refuse a captive. */
     public static boolean availableForMarionette(ServerPlayer caster, LivingEntity target) {
-        CommandState existing = COMMANDS.get(target.getUUID());
+        Command existing = command(target);
         return canCommand(target) && ManipulationCombatHelper.canHarm(caster, target)
-                && (existing == null || existing.caster.equals(caster.getUUID()))
+                && (existing == null || existing.caster().equals(caster.getUUID()))
                 && !(target instanceof net.minecraft.world.entity.OwnableEntity ownable && ownable.getOwnerUUID() != null)
                 && !(target instanceof com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon bound
                     && bound.hemomancy$getOwnerUUID() != null)
@@ -102,8 +115,8 @@ public final class HematicCommandManager {
 
     public static Mob marionette(ServerPlayer caster) {
         UUID id = IMPRESSED_BY_CASTER.get(caster.getUUID());
-        CommandState state = id == null ? null : COMMANDS.get(id);
-        return state != null && state.mode == Mode.MARIONETTE ? BODIES.get(id) : null;
+        Command state = id == null ? null : command(id);
+        return state != null && state.mode() == Mode.MARIONETTE ? BODIES.get(id) : null;
     }
 
     public static boolean isMarionetteChannel(ServerPlayer caster) {
@@ -123,15 +136,15 @@ public final class HematicCommandManager {
     public static boolean maintainMarionette(ServerPlayer caster) {
         Mob mob = marionette(caster);
         if (mob == null || !mob.isAlive() || !caster.isAlive() || mob.level() != caster.level()) return false;
-        CommandState state = COMMANDS.get(mob.getUUID());
+        Command state = command(mob);
         return SanguineMarionetteRules.maintain(caster.level().getGameTime(),
-                state.until - SanguineMarionetteRules.MAX_TICKS, caster.distanceTo(mob));
+                state.until() - SanguineMarionetteRules.MAX_TICKS, caster.distanceTo(mob));
     }
 
     public static void releaseMarionette(UUID caster) {
         UUID id = IMPRESSED_BY_CASTER.get(caster);
-        CommandState state = id == null ? null : COMMANDS.get(id);
-        if (state != null && state.mode == Mode.MARIONETTE) {
+        Command state = id == null ? null : command(id);
+        if (state != null && state.mode() == Mode.MARIONETTE) {
             Mob mob = BODIES.get(id);
             if (mob != null) release(mob);
         }
@@ -176,8 +189,8 @@ public final class HematicCommandManager {
     }
 
     private static Order marionetteOrder(Mob mob) {
-        CommandState state = COMMANDS.get(mob.getUUID());
-        return state != null && state.mode == Mode.MARIONETTE ? ORDERS.get(mob.getUUID()) : null;
+        Command state = command(mob);
+        return state != null && state.mode() == Mode.MARIONETTE ? ORDERS.get(mob.getUUID()) : null;
     }
 
     private static LivingEntity orderedEnemy(Mob mob) {
@@ -189,8 +202,8 @@ public final class HematicCommandManager {
     }
 
     public static void maintainBrainOrder(Mob mob) {
-        CommandState state = COMMANDS.get(mob.getUUID());
-        if (state == null || state.mode != Mode.MARIONETTE) return;
+        Command state = command(mob);
+        if (state == null || state.mode() != Mode.MARIONETTE) return;
         LivingEntity enemy = orderedEnemy(mob);
         mob.setTarget(enemy);
         mob.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, java.util.Optional.ofNullable(enemy));
@@ -201,8 +214,8 @@ public final class HematicCommandManager {
 
     /** Only order memories are reserved; species combat, cooldowns and locomotion remain native. */
     public static boolean mayChangeBrainMemory(Mob mob, MemoryModuleType<?> type, Object value) {
-        CommandState state = COMMANDS.get(mob.getUUID());
-        if (state == null || state.mode != Mode.MARIONETTE) return true;
+        Command state = command(mob);
+        if (state == null || state.mode() != Mode.MARIONETTE) return true;
         if (type == MemoryModuleType.ATTACK_TARGET) return value == orderedEnemy(mob);
         Order order = marionetteOrder(mob);
         if (type == MemoryModuleType.WALK_TARGET && order != null && order.ground != null) {
@@ -215,27 +228,28 @@ public final class HematicCommandManager {
     @SubscribeEvent
     public static void commandedTarget(net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent event) {
         if (!(event.getEntity() instanceof Mob mob)) return;
-        CommandState state = COMMANDS.get(mob.getUUID());
-        if (state != null && state.mode == Mode.MARIONETTE) event.setNewAboutToBeSetTarget(orderedEnemy(mob));
+        Command state = command(mob);
+        if (state != null && state.mode() == Mode.MARIONETTE) event.setNewAboutToBeSetTarget(orderedEnemy(mob));
     }
 
     private static boolean apply(ServerPlayer caster, LivingEntity target, Mode mode, int duration, UUID redirectedTarget) {
 		if (!(target instanceof Mob mob) || !ManipulationCombatHelper.canHarm(caster, target)
 				|| !canCommand(target)) return false;
-		CommandState existing = COMMANDS.get(target.getUUID());
-        if (existing != null && !existing.caster.equals(caster.getUUID())) return false;
-        boolean targetDisabled = existing != null ? existing.targetDisabled
+		Command existing = command(target);
+        if (existing != null && !existing.caster().equals(caster.getUUID())) return false;
+        boolean targetDisabled = existing != null ? existing.targetDisabled()
                 : ((com.vincenthuto.hemomancy.mixin.core.GoalSelectorAccessor)mob.targetSelector)
                     .hemomancy$disabledFlags().contains(Goal.Flag.TARGET);
-        CommandState old = COMMANDS.put(target.getUUID(), new CommandState(caster.getUUID(),
-				caster.level().dimension(), caster.level().getGameTime() + duration, mode, redirectedTarget, targetDisabled));
+        Command old = existing;
+        HemoCapabilityAccess.setHematicCommand(mob, new Command(caster.getUUID(),
+				caster.level().getGameTime() + duration, mode, redirectedTarget, targetDisabled));
         BODIES.put(mob.getUUID(), mob);
         if (mode == Mode.MARIONETTE && !MOVEMENT.containsKey(mob.getUUID())) {
             var goal = new MarionetteMoveGoal(mob);
             MOVEMENT.put(mob.getUUID(), goal);
             mob.goalSelector.addGoal(0, goal);
         }
-		if (old != null && controlled(old)) IMPRESSED_BY_CASTER.remove(old.caster, target.getUUID());
+		if (old != null && old.controlled()) IMPRESSED_BY_CASTER.remove(old.caster(), target.getUUID());
 		if (mode == Mode.IMPRESSED || mode == Mode.MARIONETTE) IMPRESSED_BY_CASTER.put(caster.getUUID(), target.getUUID());
 		mob.setTarget(null);
 		mob.targetSelector.disableControlFlag(Goal.Flag.TARGET);
@@ -251,33 +265,39 @@ public final class HematicCommandManager {
 				else DuctilisLightningEffects.conductiveMark(caster, mob);
 			}
 		}
-        visual(caster,mob,COMMANDS.get(mob.getUUID()));
+        visual(caster,mob,command(mob));
 		return true;
 	}
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
-		if (!(event.getLevel() instanceof ServerLevel level) || COMMANDS.isEmpty()) return;
+		if (!(event.getLevel() instanceof ServerLevel level) || BODIES.isEmpty()) return;
 		long now = level.getGameTime();
-		for (Map.Entry<UUID, CommandState> entry : java.util.List.copyOf(COMMANDS.entrySet())) {
-			CommandState state = entry.getValue();
-			if (!state.dimension.equals(level.dimension())) continue;
-			Entity entity = level.getEntity(entry.getKey());
-			ServerPlayer caster = level.getPlayerByUUID(state.caster) instanceof ServerPlayer player ? player : null;
-			if (!(entity instanceof Mob mob) || !mob.isAlive() || caster == null || now >= state.until
-                    || state.mode == Mode.MARIONETTE && !maintainMarionette(caster)) {
-				if (BODIES.get(entry.getKey()) instanceof Mob body) release(body);
-				if (controlled(state)) IMPRESSED_BY_CASTER.remove(state.caster, entry.getKey());
-				COMMANDS.remove(entry.getKey());
-                if (state.mode == Mode.MARIONETTE && caster != null) ManipulationChannelManager.stop(caster, false);
+		for (Mob mob : java.util.List.copyOf(BODIES.values())) {
+			if (mob.level() != level) continue;
+			Command state = HemoCapabilityAccess.getHematicCommand(mob);
+			if (state == null) {
+				BODIES.remove(mob.getUUID());
+				continue;
+			}
+			ServerPlayer caster = level.getPlayerByUUID(state.caster()) instanceof ServerPlayer player ? player : null;
+			if (!mob.isAlive() || now >= state.until()
+                    || state.mode() == Mode.MARIONETTE && (caster == null || !maintainMarionette(caster))) {
+				release(mob);
+                if (state.mode() == Mode.MARIONETTE && caster != null) ManipulationChannelManager.stop(caster, false);
+				continue;
+			}
+			if (caster == null) {
+				// The caster is away: the body waits, out of its own targeting, until they return or the command runs out.
+				mob.setTarget(null);
 				continue;
 			}
 	            if(now%5==0) visual(caster,mob,state);
-			if (state.mode == Mode.REBUKED) tickRebuke(mob, caster, now);
-			else if (state.mode == Mode.REDIRECTED) {
-				Entity redirected = level.getEntity(state.redirectedTarget);
+			if (state.mode() == Mode.REBUKED) tickRebuke(mob, caster, now);
+			else if (state.mode() == Mode.REDIRECTED) {
+				Entity redirected = level.getEntity(state.redirectedTarget());
 				mob.setTarget(redirected instanceof LivingEntity living && ManipulationCombatHelper.canHarm(caster, living) ? living : null);
-			} else if (state.mode == Mode.MARIONETTE) {
+			} else if (state.mode() == Mode.MARIONETTE) {
                 maintainBrainOrder(mob);
             } else tickImpressed(mob, caster);
 		}
@@ -296,15 +316,15 @@ public final class HematicCommandManager {
         }
 		Entity attacker = event.getSource().getEntity();
 		if (!(attacker instanceof LivingEntity livingAttacker)) return;
-		CommandState defenderState = COMMANDS.get(event.getEntity().getUUID());
-		if (defenderState != null && controlled(defenderState)
-				&& alliedToCaster(event.getEntity().level(), defenderState.caster, livingAttacker)) {
+		Command defenderState = command(event.getEntity());
+		if (defenderState != null && defenderState.controlled()
+				&& alliedToCaster(event.getEntity().level(), defenderState.caster(), livingAttacker)) {
 			event.setCanceled(true);
 			return;
 		}
-		CommandState attackerState = COMMANDS.get(livingAttacker.getUUID());
-		if (attackerState != null && controlled(attackerState)
-				&& alliedToCaster(event.getEntity().level(), attackerState.caster, event.getEntity())) {
+		Command attackerState = command(livingAttacker);
+		if (attackerState != null && attackerState.controlled()
+				&& alliedToCaster(event.getEntity().level(), attackerState.caster(), event.getEntity())) {
 			event.setCanceled(true);
 		}
 	}
@@ -324,8 +344,8 @@ public final class HematicCommandManager {
         if (source == null) return null;
         if (source.getPersistentData().hasUUID(COMMAND_PROJECTILE_OWNER))
             return source.getPersistentData().getUUID(COMMAND_PROJECTILE_OWNER);
-        CommandState state = COMMANDS.get(source.getUUID());
-        return state != null && controlled(state) ? state.caster : null;
+        Command state = command(source);
+        return state != null && state.controlled() ? state.caster() : null;
     }
 
     public static boolean mayAffect(Entity source, LivingEntity target) {
@@ -355,9 +375,9 @@ public final class HematicCommandManager {
             setFlags(java.util.EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
         @Override public boolean canUse() {
-            var state = COMMANDS.get(mob.getUUID());
+            var state = command(mob);
             var order = ORDERS.get(mob.getUUID());
-            return state != null && state.mode == Mode.MARIONETTE && order != null && order.ground != null;
+            return state != null && state.mode() == Mode.MARIONETTE && order != null && order.ground != null;
         }
         @Override public boolean requiresUpdateEveryTick() { return true; }
         @Override public void tick() {
@@ -414,9 +434,9 @@ public final class HematicCommandManager {
 		return caster != null && !ManipulationCombatHelper.canHarm(caster, entity);
 	}
 
-    private static void visual(ServerPlayer caster, Mob mob, CommandState state) {
-        if (state.mode == Mode.MARIONETTE) {
-            int ticks = (int)Math.min(10, state.until - caster.level().getGameTime());
+    private static void visual(ServerPlayer caster, Mob mob, Command state) {
+        if (state.mode() == Mode.MARIONETTE) {
+            int ticks = (int)Math.min(10, state.until() - caster.level().getGameTime());
             var tether = new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
                     ManipulationVisuals.Form.MARIONETTE_TETHER, mob.getId(), mob.position(), caster.getEyePosition(),
                     mob.getBbHeight(), ticks, caster.getId());
@@ -433,19 +453,20 @@ public final class HematicCommandManager {
             return;
         }
         // Rebuke and Impressment are Ductilis nerve commands; Sovereign Instinct's redirection keeps the Animus crown.
-        boolean nerve = state.mode == Mode.REBUKED || state.mode == Mode.IMPRESSED;
+        boolean nerve = state.mode() == Mode.REBUKED || state.mode() == Mode.IMPRESSED;
         PacketHandler.sendNear(caster.serverLevel(),
                 mob.getX(),mob.getY(),mob.getZ(),64,
                 new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
                         nerve ? ManipulationVisuals.Form.NERVE_COMMAND : ManipulationVisuals.Form.COMMAND,mob.getId(),mob.position(),
-                        caster.getEyePosition(),mob.getBbHeight(),(int)Math.min(10,state.until-caster.level().getGameTime()),
-                        nerve ? (state.mode == Mode.REBUKED ? NerveCommandRules.REBUKE : NerveCommandRules.IMPRESS)
-                                : state.mode.ordinal()+1));
+                        caster.getEyePosition(),mob.getBbHeight(),(int)Math.min(10,state.until()-caster.level().getGameTime()),
+                        nerve ? (state.mode() == Mode.REBUKED ? NerveCommandRules.REBUKE : NerveCommandRules.IMPRESS)
+                                : state.mode().ordinal()+1));
     }
 
 	private static void release(Mob mob) {
-        CommandState old = COMMANDS.remove(mob.getUUID());
-        if (old != null && controlled(old)) IMPRESSED_BY_CASTER.remove(old.caster, mob.getUUID());
+        Command old = HemoCapabilityAccess.getHematicCommand(mob);
+        HemoCapabilityAccess.setHematicCommand(mob, null);
+        if (old != null && old.controlled()) IMPRESSED_BY_CASTER.remove(old.caster(), mob.getUUID());
         BODIES.remove(mob.getUUID());
         ORDERS.remove(mob.getUUID());
         Goal movement = MOVEMENT.remove(mob.getUUID());
@@ -465,23 +486,54 @@ public final class HematicCommandManager {
         ManipulationVisuals.attached(mob,ManipulationVisuals.Form.MARIONETTE_TETHER,0,0,0);
         ManipulationVisuals.attached(mob,ManipulationVisuals.Form.MARIONETTE_ORDER,0,0,0);
 		mob.setTarget(null);
-		mob.targetSelector.setControlFlag(Goal.Flag.TARGET, old == null || !old.targetDisabled);
+		mob.targetSelector.setControlFlag(Goal.Flag.TARGET, old == null || !old.targetDisabled());
 	}
 
     @SubscribeEvent
     public static void tracking(net.neoforged.neoforge.event.entity.player.PlayerEvent.StartTracking event) {
-        CommandState state = COMMANDS.get(event.getTarget().getUUID());
+        Command state = command(event.getTarget());
         if (state != null && event.getTarget() instanceof Mob mob
-                && mob.level().getPlayerByUUID(state.caster) instanceof ServerPlayer caster) visual(caster, mob, state);
+                && mob.level().getPlayerByUUID(state.caster()) instanceof ServerPlayer caster) visual(caster, mob, state);
     }
 
+    /** A mob carrying a command rejoins the index as it loads; a stale or spent command is dropped instead. */
+    @SubscribeEvent
+    public static void loaded(net.neoforged.neoforge.event.entity.EntityJoinLevelEvent event) {
+        if (event.getLevel().isClientSide() || !(event.getEntity() instanceof Mob mob)) return;
+        Command state = HemoCapabilityAccess.getHematicCommand(mob);
+        if (state == null) return;
+        UUID current = state.controlled() ? IMPRESSED_BY_CASTER.get(state.caster()) : null;
+        if (state.mode() == Mode.MARIONETTE || event.getLevel().getGameTime() >= state.until()
+                || current != null && !current.equals(mob.getUUID())) {
+            HemoCapabilityAccess.setHematicCommand(mob, null);
+            return;
+        }
+        BODIES.put(mob.getUUID(), mob);
+        if (state.controlled()) IMPRESSED_BY_CASTER.put(state.caster(), mob.getUUID());
+        mob.targetSelector.disableControlFlag(Goal.Flag.TARGET);
+    }
+
+    /**
+     * A commanded mob that unloads keeps its command and leaves the index; one that dies or is discarded is released.
+     * The Marionette ends either way, since its caster's channel cannot hold a body that is not there.
+     */
     @SubscribeEvent
     public static void unloaded(net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent event) {
-        if (event.getEntity() instanceof Mob mob && COMMANDS.containsKey(mob.getUUID())) {
-            CommandState state = COMMANDS.get(mob.getUUID());
-            release(mob);
-            if (state.mode == Mode.MARIONETTE && event.getLevel() instanceof ServerLevel level
-                    && level.getPlayerByUUID(state.caster) instanceof ServerPlayer caster)
+        if (event.getEntity() instanceof Mob mob && BODIES.containsKey(mob.getUUID())) {
+            Command state = HemoCapabilityAccess.getHematicCommand(mob);
+            boolean marionette = state != null && state.mode() == Mode.MARIONETTE;
+            var reason = mob.getRemovalReason();
+            if (state == null || marionette || reason == null || !reason.shouldSave()) {
+                release(mob);
+            } else {
+                BODIES.remove(mob.getUUID());
+                ORDERS.remove(mob.getUUID());
+                Goal movement = MOVEMENT.remove(mob.getUUID());
+                if (movement != null) mob.goalSelector.removeGoal(movement);
+                if (state.controlled()) IMPRESSED_BY_CASTER.remove(state.caster(), mob.getUUID());
+            }
+            if (marionette && event.getLevel() instanceof ServerLevel level
+                    && level.getPlayerByUUID(state.caster()) instanceof ServerPlayer caster)
                 ManipulationChannelManager.stop(caster, false);
         } else if (event.getEntity() instanceof ServerPlayer player) releaseMarionette(player.getUUID());
     }
@@ -497,14 +549,19 @@ public final class HematicCommandManager {
 				0.7F, mode == Mode.REBUKED ? 0.7F : 1.15F);
 	}
 
+	/**
+	 * Forgets the index of loaded bodies. The commands stay on the mobs, which is what lets them outlast a restart;
+	 * each body rejoins the index when it loads again.
+	 */
 	public static void clearSessionState() {
-        for (Mob mob : java.util.List.copyOf(BODIES.values())) release(mob);
-		COMMANDS.clear();
+		BODIES.clear();
+		MOVEMENT.clear();
+		ORDERS.clear();
 		IMPRESSED_BY_CASTER.clear();
 	}
 
-	private enum Mode { REBUKED, IMPRESSED, REDIRECTED, MARIONETTE }
-
-	private record CommandState(UUID caster, ResourceKey<Level> dimension, long until, Mode mode, UUID redirectedTarget, boolean targetDisabled) {
+	/** Ends every command on a loaded body and gives each its own targeting back (tests use this to clean up). */
+	public static void releaseAll() {
+		for (Mob mob : java.util.List.copyOf(BODIES.values())) release(mob);
 	}
 }

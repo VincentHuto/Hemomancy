@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 class LivingStaffArmamentSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 
@@ -79,10 +82,6 @@ class LivingStaffArmamentSourceTest {
 		assertContains("flail model layer registered", layerEvents, "LivingFlailModel.LAYER_LOCATION");
 	}
 
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
 	private static String compact(String text) {
 		return text.replaceAll("\\s+", "");
 	}
@@ -90,12 +89,6 @@ class LivingStaffArmamentSourceTest {
 	private static void assertResource(String label, String path) {
 		if (!Files.exists(ROOT.resolve(path))) {
 			throw new AssertionError(label + " missing at " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
 		}
 	}
 }

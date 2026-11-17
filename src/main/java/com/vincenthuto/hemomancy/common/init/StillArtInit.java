@@ -10,9 +10,9 @@ import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionRules;
 import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionSummonService;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArtEnding;
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.util.HemoText;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -36,8 +36,6 @@ import java.util.List;
 
 public class StillArtInit {
 	/** Still-water motes: pale, small and slow. No blood tint anywhere in the Unstained lane. */
-	private static final ParticleColor STILL_WHITE = new ParticleColor(244, 246, 248);
-	private static final ParticleColor STILL_SILVER = new ParticleColor(201, 209, 217);
 
 	public static final ResourceKey<Registry<StillArt>> STILL_ART_KEY = ResourceKey
 			.createRegistryKey(Hemomancy.rloc("still_arts"));
@@ -54,14 +52,14 @@ public class StillArtInit {
 				AABB area = player.getBoundingBox().inflate(5.0);
 				Vec3 look = player.getLookAngle().normalize();
 				List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area,
-						target -> ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED) && isInFront(player, look, target, 0.25));
+						target -> ManipulationCombatHelper.canHarm(player, target) && isInFront(player, look, target, 0.25));
 				for (LivingEntity target : targets) {
 					Vec3 away = target.position().subtract(player.position()).normalize();
 					target.push(away.x * 0.8, 0.25, away.z * 0.8);
 					target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 0, false, true));
 				}
 				level.playSound(null, player.blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 1.0f, 1.45f);
-				level.sendParticles(HemoParticleData.glow(STILL_WHITE), player.getX(), player.getY() + 1.0, player.getZ(),
+				level.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE), player.getX(), player.getY() + 1.0, player.getZ(),
 						24, 1.1, 0.6, 1.1, 0.01);
 				return true;
 			}));
@@ -84,7 +82,7 @@ public class StillArtInit {
 				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(7.0), candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER))
 						.forEach(target -> target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, true)));
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 0, false, true));
-				level.sendParticles(HemoParticleData.glow(STILL_SILVER), player.getX(), player.getY() + 0.5, player.getZ(),
+				level.sendParticles(HemoParticleData.glow(HemoPalette.STILL_SILVER), player.getX(), player.getY() + 0.5, player.getZ(),
 						40, 2.5, 0.25, 2.5, 0.005);
 				return true;
 			}));
@@ -121,7 +119,7 @@ public class StillArtInit {
 				target.setTarget(null);
 				target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 160, 1, false, true));
 				target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 80, 0, false, true));
-				level.sendParticles(HemoParticleData.glow(STILL_WHITE), target.getX(), target.getY() + 1.0, target.getZ(),
+				level.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE), target.getX(), target.getY() + 1.0, target.getZ(),
 						20, 0.4, 0.6, 0.4, 0.01);
 				return true;
 			}));
@@ -134,7 +132,7 @@ public class StillArtInit {
 				player.clearFire();
 				player.removeEffect(MobEffects.POISON);
 				player.removeEffect(MobEffects.WITHER);
-				level.sendParticles(HemoParticleData.glow(STILL_WHITE), player.getX(), player.getY() + 0.2, player.getZ(),
+				level.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE), player.getX(), player.getY() + 0.2, player.getZ(),
 						18, 0.35, 0.15, 0.35, 0.01);
 				return true;
 			}));
@@ -152,14 +150,14 @@ public class StillArtInit {
 	public static final DeferredHolder<StillArt, StillArt> autoimmune_edge = STILL_ARTS.register("autoimmune_edge",
 			() -> new StillArt("autoimmune_edge", EnumClarityStage.ENLIGHTENED, 600, StillArtEnding.REBUKE, (player, level, heldItem, pos, art) -> {
 				List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5.0),
-						target -> ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED));
+						target -> ManipulationCombatHelper.canHarm(player, target));
 				targets.forEach(target -> {
-					target.hurt(player.damageSources().magic(), 4.0f);
+					target.hurt(player.damageSources().indirectMagic(player, player), 4.0f);
 					target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0, false, true));
 				});
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, true));
 				player.displayClientMessage(Component.translatable("message.hemomancy.still_art_init.the_immune_will_cuts_outward").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
-				level.sendParticles(HemoParticleData.glow(STILL_SILVER), player.getX(), player.getY() + 1.0, player.getZ(),
+				level.sendParticles(HemoParticleData.glow(HemoPalette.STILL_SILVER), player.getX(), player.getY() + 1.0, player.getZ(),
 						60, 2.2, 1.0, 2.2, 0.01);
 				return true;
 			}));

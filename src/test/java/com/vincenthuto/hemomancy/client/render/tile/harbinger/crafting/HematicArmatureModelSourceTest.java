@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 class HematicArmatureModelSourceTest {
     private static final Path MODELS = Path.of("src/main/resources/assets/hemomancy/models/block");
@@ -20,10 +21,6 @@ class HematicArmatureModelSourceTest {
     private static final Path GENERATOR = Path.of("tools/model_export/hematic_armature.py");
     private static final List<String> STAGES = List.of(
             "hematic_armature", "hematic_armature_consecrated", "hematic_armature_monolithic");
-
-    private static String read(Path path) throws IOException {
-        return Files.readString(path).replace("\r\n", "\n");
-    }
 
     private static List<String> partModels() throws IOException {
         var matcher = Pattern.compile("PART_MODELS = \\{(.*?)};", Pattern.DOTALL).matcher(read(RENDERER));

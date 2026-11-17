@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
+import org.junit.jupiter.api.Test;
+
 public final class VasculariumCharmRulesTest {
 	private VasculariumCharmRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 
 		assertFalse("the charm cannot be removed from an unvalidated equipment menu",
 				VasculariumCharmRules.canRemoveFromEquipmentMenu(false));

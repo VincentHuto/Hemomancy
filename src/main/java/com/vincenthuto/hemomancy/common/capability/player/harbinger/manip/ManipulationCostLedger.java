@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.TemperCharge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.effect.MindBrokenRules;
@@ -23,6 +24,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.ModList;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +39,21 @@ public final class ManipulationCostLedger {
 		return collect(player, manipulation, purityCostMultiplier(player));
 	}
 
+	/** The ledger with a preview of an R cast's Temper charge (what a cast now would meet). */
 	public static ManipulationCostSnapshot collect(Player player, BloodManipulation manipulation,
 			double purityCostMultiplier) {
+		if (player == null || manipulation == null || manipulation == BloodManipulation.BLANK) {
+			return ManipulationCostSnapshot.EMPTY;
+		}
+		return collect(player, manipulation, purityCostMultiplier, TemperCharge.forCast(player, manipulation, 1.0F, false));
+	}
+
+	/**
+	 * The ledger for an effect whose Temper charge is already worked out ({@code null}: it charges none). The Temper
+	 * line reads "tempered", "catalyst" or "dry", and only a dry charge changes the price.
+	 */
+	public static ManipulationCostSnapshot collect(Player player, BloodManipulation manipulation,
+			double purityCostMultiplier, @Nullable TemperCharge.Charge temperCharge) {
 		if (player == null || manipulation == null || manipulation == BloodManipulation.BLANK) {
 			return ManipulationCostSnapshot.EMPTY;
 		}
@@ -78,7 +93,7 @@ public final class ManipulationCostLedger {
 							SkillPointHelper.getQliphothGestationLevel(player)));
 		}
 
-		if (BloodMoonEvents.isBloodMoonActive(player.level())) {
+		if (BloodMoonEvents.grantsCastDiscount(player)) {
 			addIfNotNeutral(contributions, "blood_moon", "message.hemomancy.manipulation_cost_ledger.blood_moon", Category.WORLD, 0.75D);
 		}
 
@@ -101,6 +116,12 @@ public final class ManipulationCostLedger {
 				MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams)));
 		addIfNotNeutral(contributions, "mind_broken", "message.hemomancy.manipulation_cost_ledger.mind_broken", Category.EFFECT,
 				MindBrokenRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mind_broken)));
+
+		if (temperCharge != null) {
+			addIfNotNeutral(contributions, "temper", "message.hemomancy.manipulation_cost_ledger.temper", Category.TEMPER,
+					temperCharge.costMultiplier(), "message.hemomancy.manipulation_cost_ledger.temper."
+							+ temperCharge.outcome().name().toLowerCase(java.util.Locale.ROOT));
+		}
 
 		boolean clotted = HemoCapabilityAccess.getVascularSystem(player).getBloodFlowBySection(manipulation.getSection()) == EnumBloodFlow.ClOTTED;
 		if (clotted) {
@@ -134,16 +155,7 @@ public final class ManipulationCostLedger {
 		if (temper == null || manipulationTemper == null) {
 			return false;
 		}
-		EnumBloodTemper strongest = null;
-		float highestVal = 0.0F;
-		for (EnumBloodTemper candidate : EnumBloodTemper.values()) {
-			float val = temper.getAlignmentByTemper(candidate);
-			if (val > highestVal) {
-				highestVal = val;
-				strongest = candidate;
-			}
-		}
-		return strongest == manipulationTemper;
+		return temper.strongestTemper() == manipulationTemper;
 	}
 
 	private static void addIfNotNeutral(List<ManipulationCostContribution> contributions, String sourceId,

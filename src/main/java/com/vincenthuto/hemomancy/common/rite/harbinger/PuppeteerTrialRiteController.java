@@ -27,7 +27,7 @@ import java.util.UUID;
 
 /** Owns manifestation and combat tracking for Cardinal Rite puppeteer ordeals. */
 public final class PuppeteerTrialRiteController {
-	private static final BloodAccounting.Source TRIAL = BloodAccounting.Source.of("puppeteer_trial", Category.RITE, false, false);
+	private static final BloodAccounting.Source TRIAL = BloodAccounting.Source.of("puppeteer_trial", Category.RITE, false);
 	private PuppeteerTrialRiteController() {
 	}
 

@@ -58,7 +58,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(graphics, mouseX, mouseY);
 		BloodVolumeBarWidget.renderTooltip(graphics, font, bloodBarBounds,
-				te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
+				com.vincenthuto.hemomancy.common.tile.ReservoirReading.of(te), mouseX, mouseY);
 		if (BloodVolumeBarWidget.Bounds.EMPTY != null) return;
 
 		// Blood bar hover tooltip
@@ -232,7 +232,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		int barY = gy + 74 - barH - 4;        // 4px gap above the slot
 		if (BloodVolumeBarWidget.Bounds.EMPTY != null) {
 			bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
-					te.getBloodVolume(), te.getMaxBloodVolume(), time, BORDER_OUTER, BORDER_INNER);
+					com.vincenthuto.hemomancy.common.tile.ReservoirReading.of(te), time, BORDER_OUTER, BORDER_INNER);
 			return;
 		}
 

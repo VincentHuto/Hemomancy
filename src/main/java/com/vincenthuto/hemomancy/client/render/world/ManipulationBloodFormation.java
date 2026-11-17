@@ -13,8 +13,8 @@ final class ManipulationBloodFormation {
     static boolean retainsDissolvingBody(Form form) {
         if(form.name().endsWith("_CHARGE"))return false;
         return switch(form) {
-            case VERDICT,CROWN,CHOIR,WARD,RETORT,MARK,WOUND,HUNGER,GRAVE,DEBT,HOUR,
-                    COMMAND,CIRCUIT,BEACON,ORE,IRON_HEART,BLACK_HEART,PHOENIX_READY,EYE -> false;
+            case VERDICT,CROWN,CHOIR,WARD,RETORT,MARK,WOUND,HUNGER,GRAVE,
+                    COMMAND,CIRCUIT,BEACON,ORE,IRON_HEART,BLACK_HEART,PHOENIX_READY -> false;
             default -> true;
         };
     }
@@ -32,7 +32,6 @@ final class ManipulationBloodFormation {
             case CHOIR,WARD,RETORT,BLACK_HEART,MARK,WOUND,HUNGER,CIRCUIT,
                     RUSH,CAUTERIZE,MENDING,FORGE,PHOENIX,PHOENIX_READY -> 1;
             case GRAVE -> 2.2;
-            case EYE,DEBT,HOUR -> 2.4;
             case COMMAND -> packet.radius()+.35;
             default -> .12;
         };

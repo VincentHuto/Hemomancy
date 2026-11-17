@@ -82,7 +82,7 @@ public final class ManipulationTargetingGameTests {
         } finally { h.getLevel().getServer().setPvpAllowed(pvp); wolf.discard(); other.discard(); p.discard(); }
     }
 
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_targeting")
+    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_targeting_flare")
     public static void flareSkipsProtectedTargetsWithoutRevealingThem(GameTestHelper h) {
         ServerPlayer p = player(h), other = player(h);
         var wolf = EntityType.WOLF.create(h.getLevel());
@@ -130,7 +130,7 @@ public final class ManipulationTargetingGameTests {
             h.assertTrue(ally.hasEffect(MobEffects.DIG_SPEED), "Circuit missed ally");
             h.assertTrue(!enemy.hasEffect(MobEffects.DIG_SPEED), "Circuit buffed enemy");
             ManipulationReactiveEvents.createHematicBeacon(h.getLevel(), p.position(), 6, 160, p.getUUID());
-            near(h, 12.4, ally.getHealth(), "Beacon missed ally");
+            near(h, 12.8, ally.getHealth(), "Beacon missed ally");
             near(h, 1, enemy.getHealth(), "Beacon healed opponent");
             h.succeed();
         } finally { scoreboard.removePlayerTeam(team); p.discard(); ally.discard(); enemy.discard(); }
@@ -201,12 +201,13 @@ public final class ManipulationTargetingGameTests {
             HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(cost);
             p.setHealth(5);
             var damage = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 30));
-            ManipulationReactiveEvents.onFinalDamage(damage);
-            near(h, 0, damage.getNewDamage(), "Phoenix failed valid lethal trigger");
+            h.assertTrue(ManipulationReactiveEvents.tryPhoenixDebt(p, damage), "Phoenix failed valid lethal trigger");
+            // NQ-17-1: the save cuts the hit to what leaves 1 of the 5 health, and that much still lands.
+            near(h, 4, damage.getNewDamage(), "Phoenix did not leave the caster at 1 health");
             near(h, 0, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Phoenix payment");
             HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(cost);
             damage = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 30));
-            ManipulationReactiveEvents.onFinalDamage(damage);
+            h.assertTrue(!ManipulationReactiveEvents.tryPhoenixDebt(p, damage), "Phoenix fired twice");
             near(h, 30, damage.getNewDamage(), "Phoenix fired twice");
             near(h, cost, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Blocked Phoenix paid again");
             h.succeed();
@@ -240,7 +241,7 @@ public final class ManipulationTargetingGameTests {
     public static void hostilePayloadsLeaveAlliedHealthStatusesAndMotionUntouched(GameTestHelper h) {
         for (String name : List.of("blood_aneurysm", "activation_potential", "prismatic_reproof", "sanguine_ignition",
                 "vitric_combustion", "scalding_updraft", "soaring_updraft", "suspended_updraft", "expulsive_updraft",
-                "cryogenic_pulse", "osseous_bloom", "blood_eclipse", "bloom_of_rot", "hemorrhage")) {
+                "cryogenic_pulse", "osseous_bloom", "blood_eclipse", "hemorrhage")) {
             ServerPlayer p = player(h);
             var ally = EntityType.COW.create(h.getLevel());
             // The aneurysm only seeks hostiles, so its opponent is a husk rather than a cow.
@@ -257,7 +258,6 @@ public final class ManipulationTargetingGameTests {
                 h.assertTrue(ally.getActiveEffects().isEmpty() && !ally.isOnFire(), "Allied status/fire: " + name);
                 near(h, 0, ally.getDeltaMovement().length(), "Allied knockback: " + name);
                 h.assertTrue(enemy.getHealth() < enemy.getMaxHealth() || !enemy.getActiveEffects().isEmpty() || enemy.isOnFire(), "No hostile payload: " + name);
-                if (name.equals("bloom_of_rot")) h.assertTrue(p.hasEffect(MobEffects.POISON), "Bloom lost its intentional self-poison");
             } finally { board.removePlayerTeam(team); ally.discard(); enemy.discard(); p.discard(); h.setBlock(2, 3, 7, net.minecraft.world.level.block.Blocks.AIR); }
         }
         h.succeed();

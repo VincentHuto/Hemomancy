@@ -241,7 +241,7 @@ public class SeraphaeEntity extends SaintTrialEntity {
 				SeraphaePhases.table(), SaintDamageTypes.SERAPHAE, SaintKit.CHALLENGER_SCALING, SeraphaeEndingRules.SPEC);
 	}
 
-	/** Containment integrity: 0 to 100, from 30, decaying by challengers and living fragments. */
+	/** Containment integrity: 0 to 100, from 20, decaying by challengers and living fragments. */
 	private final class IntegrityRule implements SaintMeter.Rule {
 		@Override
 		public float max(int challengers) {
@@ -1936,10 +1936,10 @@ public class SeraphaeEntity extends SaintTrialEntity {
 		return SoundEvents.AMETHYST_BLOCK_CHIME;
 	}
 
-	/** An opening hit breaks light out of her; a hit that closes only rings. */
+	/** {@link #onHitTaken} sounds every blow at the hit point; a hurt sound here would double it. */
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return openings().isOpen() ? SoundEvents.AMETHYST_CLUSTER_BREAK : SoundEvents.AMETHYST_BLOCK_HIT;
+		return null;
 	}
 
 	@Override

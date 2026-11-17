@@ -30,6 +30,20 @@ final class EarthenVeinTravelRulesTest {
 	}
 
 	@Test
+	void aLivingVeinCarriesACrossingForAFlatPriceWithinOneDimension() {
+		assertEquals(EarthenVeinTravelRules.LIVING_VEIN_COST, EarthenVeinTravelRules.cost(BlockPos.ZERO, OVERWORLD,
+				new BlockPos(40, 0, 0), OVERWORLD, true));
+		assertEquals(125, EarthenVeinTravelRules.LIVING_VEIN_COST);
+		assertEquals(500, EarthenVeinTravelRules.cost(BlockPos.ZERO, OVERWORLD, new BlockPos(40, 0, 0), OVERWORLD, false),
+				"an uncarried crossing costs its distance");
+		assertEquals(4_000, EarthenVeinTravelRules.cost(BlockPos.ZERO, OVERWORLD, new BlockPos(1, 1, 1), NETHER, true),
+				"no vein carries a traveller between dimensions");
+		assertEquals(EarthenVeinTravelRules.cost(BlockPos.ZERO, OVERWORLD, new BlockPos(2_000, 0, 0), OVERWORLD),
+				EarthenVeinTravelRules.cost(BlockPos.ZERO, OVERWORLD, new BlockPos(2_000, 0, 0), OVERWORLD, false),
+				"the four-argument cost is the uncarried one");
+	}
+
+	@Test
 	void crossDimensionTravelAlwaysCostsFourThousand() {
 		assertEquals(4_000, EarthenVeinTravelRules.cost(BlockPos.ZERO, OVERWORLD,
 				new BlockPos(1, 1, 1), NETHER));

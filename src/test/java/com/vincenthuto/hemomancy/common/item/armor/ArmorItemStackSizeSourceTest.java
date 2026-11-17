@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.armor;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,7 +14,8 @@ public final class ArmorItemStackSizeSourceTest {
 	private ArmorItemStackSizeSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		List<Path> armorItems = armorItemSources();
 		if (armorItems.isEmpty()) {
 			throw new AssertionError("expected at least one ArmorItem subclass under " + SOURCE_ROOT);

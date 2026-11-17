@@ -51,6 +51,7 @@ public class CircusProgress implements INBTSerializable<CompoundTag> {
 	private UUID actSubject;
 	private transient boolean inside;
 	private transient boolean perceptionDirty;
+	private transient boolean ruined;
 
 	public boolean discovered() {
 		return discovered;
@@ -78,6 +79,16 @@ public class CircusProgress implements INBTSerializable<CompoundTag> {
 	void setInside(boolean inside) {
 		if (this.inside != inside) perceptionDirty = true;
 		this.inside = inside;
+	}
+
+	/** Whether the pavilion the player stands in is a ruin; never saved. */
+	public boolean ruined() {
+		return ruined;
+	}
+
+	void setRuined(boolean ruined) {
+		if (this.ruined != ruined) perceptionDirty = true;
+		this.ruined = ruined;
 	}
 
 	public boolean isPerceptionDirty() {

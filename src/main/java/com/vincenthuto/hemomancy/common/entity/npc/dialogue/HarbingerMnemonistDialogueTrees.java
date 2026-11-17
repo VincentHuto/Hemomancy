@@ -57,12 +57,22 @@ public final class HarbingerMnemonistDialogueTrees {
 			boolean canClaimStarter, boolean wovenVesselComplete, boolean morphlingPuppetInterference,
 			boolean anchoriteReferral, boolean anchoriteCounsel, boolean circusDiscovered,
 			boolean carryingCircusWaybill) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, canClaimStarter, wovenVesselComplete,
+				morphlingPuppetInterference, anchoriteReferral, anchoriteCounsel, circusDiscovered, carryingCircusWaybill,
+				false);
+	}
+
+	/** {@code isSilentium}: a Degree 8 Silentium, greeted with their own entry in the record (PT-83). */
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean canClaimStarter, boolean wovenVesselComplete, boolean morphlingPuppetInterference,
+			boolean anchoriteReferral, boolean anchoriteCounsel, boolean circusDiscovered,
+			boolean carryingCircusWaybill, boolean isSilentium) {
 		if (degree <= 0) return uninitiated(entityId);
 		if (degree == 1) return neophyte(entityId, canClaimStarter);
 		if (degree == 2) return votary(entityId, canClaimStarter);
 		return woven(entityId, degree, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter,
 				!wovenVesselComplete, morphlingPuppetInterference, anchoriteReferral, anchoriteCounsel,
-				circusDiscovered, carryingCircusWaybill);
+				circusDiscovered, carryingCircusWaybill, isSilentium && degree >= 8);
 	}
 
 	public static DialogueTree withGuidedChamber(DialogueTree tree, int degree, boolean completed,
@@ -161,8 +171,12 @@ public final class HarbingerMnemonistDialogueTrees {
 	private static DialogueTree woven(int entityId, int degree, boolean hasBloodline, boolean isNpcRecruited,
 			boolean canClaimStarter, boolean canCompleteWovenVessel, boolean morphlingPuppetInterference,
 			boolean anchoriteReferral, boolean anchoriteCounsel, boolean circusDiscovered,
-			boolean carryingCircusWaybill) {
+			boolean carryingCircusWaybill, boolean silentium) {
 		List<DialogueOption> options = new ArrayList<>();
+		if (silentium) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_silentium_entry",
+					"silentium_entry", null).withLore());
+		}
 		if (canCompleteWovenVessel) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.woven_vessel",
 					"woven_vessel", EVENT_BLANK_MEMORY_RECIPE));
@@ -191,9 +205,11 @@ public final class HarbingerMnemonistDialogueTrees {
 					"mnemonic_doctrine", null).withLore());
 		}
 		if (anchoriteReferral && !anchoriteCounsel) {
+			// PT-71: Quest Work with a sigil until the counsel is recorded, not a lore card a read clears.
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.anchorite_counsel",
 					"anchorite_counsel", EVENT_ANCHORITE_COUNSEL,
-					DialogueOptionPresentation.prompt("hemomancy.mnemonist.anchorite_counsel.prompt")).withLore());
+					DialogueOptionPresentation.attention(DialogueAttention.NOTICE,
+							"hemomancy.mnemonist.anchorite_counsel.prompt").withQuest()));
 		}
 		if (CircusIntroductionRules.introductionFor(degree, circusDiscovered)
 				!= CircusIntroductionRules.Introduction.HIDDEN) {
@@ -208,7 +224,10 @@ public final class HarbingerMnemonistDialogueTrees {
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null));
 
 		var builder = DialogueTree.builder(SPEAKER, MNEMONIST_ICON, entityId)
-				.addNode(new DialogueNode("greeting", List.of(
+				.addNode(new DialogueNode("greeting", silentium ? List.of(
+						"hemomancy.mnemonist.silentium.line1",
+						"hemomancy.mnemonist.silentium.line2"
+				) : List.of(
 						"hemomancy.mnemonist.woven.line1",
 						"hemomancy.mnemonist.woven.line2"
 				), options))
@@ -231,11 +250,18 @@ public final class HarbingerMnemonistDialogueTrees {
 				.addNode(itemHintNode());
 		if (degree >= 4) builder.addNode(memoryPracticeNode());
 		if (degree >= 5) builder.addNode(distributorNode());
+		if (silentium) builder.addNode(new DialogueNode("silentium_entry", List.of(
+				"hemomancy.mnemonist.silentium.entry.line1",
+				"hemomancy.mnemonist.silentium.entry.line2"), List.of(
+				new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null))));
 		return builder.build();
 	}
 
 	private static DialogueNode circusNode(int degree, boolean discovered, boolean carryingWaybill) {
-		List<String> lines = discovered ? List.of(
+		List<String> lines = CircusIntroductionRules.introductionFor(degree, discovered)
+				== CircusIntroductionRules.Introduction.TEASER ? List.of(
+				"hemomancy.mnemonist.circus.teaser.line1",
+				"hemomancy.mnemonist.circus.teaser.line2") : discovered ? List.of(
 				"hemomancy.mnemonist.circus.discovered.line1",
 				"hemomancy.mnemonist.circus.discovered.line2") : List.of(
 				"hemomancy.mnemonist.circus.undiscovered.line1",
@@ -311,7 +337,8 @@ public final class HarbingerMnemonistDialogueTrees {
 	private static DialogueNode slotsNode() {
 		return new DialogueNode("slots", List.of(
 				"hemomancy.mnemonist.slots.line1",
-				"hemomancy.mnemonist.slots.line2"
+				"hemomancy.mnemonist.slots.line2",
+				"hemomancy.mnemonist.slots.sculpting"
 		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}
 
@@ -401,8 +428,7 @@ public final class HarbingerMnemonistDialogueTrees {
 
 	private static DialogueNode recruitOfferNode() {
 		return new DialogueNode("recruit_offer", List.of(
-				"hemomancy.dialogue.recruit.mnemonist.consider",
-				"hemomancy.dialogue.recruit.mnemonist.accept"
+				"hemomancy.dialogue.recruit.mnemonist.consider"
 		), List.of(
 				new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 				new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)

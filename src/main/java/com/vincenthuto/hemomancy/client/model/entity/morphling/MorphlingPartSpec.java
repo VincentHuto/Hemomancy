@@ -14,9 +14,22 @@ package com.vincenthuto.hemomancy.client.model.entity.morphling;
  * @param flags      the {@code MorphlingActiveState} bits a state motion answers
  * @param glowGroup  the glow pulse it lights in (a travelling pulse lights one group after another)
  * @param grows      whether it is the first part of its stage in its branch, so it grows in (0.7, 0.88, 1.0)
+ * @param until      the last maturity it shows at; a later growth replaces it (Ink Cap's cap under the Primal hood)
  */
 public record MorphlingPartSpec(String name, String parent, int stage, Limb limb, Motion motion, float amp, float speed,
-                                float phase, int flags, int glowGroup, boolean grows) {
+                                float phase, int flags, int glowGroup, boolean grows, int until) {
+    public static final int LAST_STAGE = 5;
+
+    public MorphlingPartSpec(String name, String parent, int stage, Limb limb, Motion motion, float amp, float speed,
+                             float phase, int flags, int glowGroup, boolean grows) {
+        this(name, parent, stage, limb, motion, amp, speed, phase, flags, glowGroup, grows, LAST_STAGE);
+    }
+
+    /** Whether the part shows on a Morphling of this maturity. */
+    public boolean showsAt(int maturity) {
+        return maturity >= stage && maturity <= until;
+    }
+
     public enum Limb {
         NONE, UPPER, LOWER
     }

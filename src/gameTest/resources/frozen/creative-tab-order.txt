@@ -30,9 +30,9 @@ hemomancy:vitality_chalice
 hemomancy:vascular_status_gauge
 hemomancy:sanguine_conduit
 hemomancy:charm_of_vascularium
+hemomancy:titration_bandolier
 hemomancy:unsigned_ancestral_ledger
 hemomancy:terrestrial_speculum
-hemomancy:sporitic_thurible
 hemomancy:mind_spike
 hemomancy:listening_scar
 hemomancy:ahaematic_colloid
@@ -40,6 +40,7 @@ hemomancy:wax_cylinder
 hemomancy:ambergris_cylinder
 hemomancy:corpse_wax_cylinder
 hemomancy:memory_thread
+hemomancy:sporitic_thurible
 hemomancy:gourd
 hemomancy:vial_centrifuge
 hemomancy:centrifugal_governor_kit
@@ -67,6 +68,7 @@ hemomancy:morphling_incubator
 hemomancy:morphling_cradle
 hemomancy:sanguine_vigil
 hemomancy:specimen_jar
+hemomancy:specimen_vat
 hemomancy:enzymatic_scriptorium
 hemomancy:rubricators_quill
 hemomancy:palimpsest_burin
@@ -91,7 +93,6 @@ hemomancy:earthen_vein
 hemomancy:hematic_stake
 hemomancy:somnolent_seat
 hemomancy:harbinger_escritoire
-hemomancy:dictation_table
 hemomancy:humoral_barometer
 hemomancy:mnemonic_candle
 hemomancy:hematic_suture_node
@@ -111,6 +112,9 @@ hemomancy:crude_memory_void_shroud
 hemomancy:crude_memory_hematic_flare
 hemomancy:memory_blood_shot
 hemomancy:memory_blood_binding
+hemomancy:memory_tendon_line
+hemomancy:memory_blood_lash
+hemomancy:memory_venous_cling
 hemomancy:memory_blood_rush
 hemomancy:memory_deadly_gaze
 hemomancy:memory_blood_needle
@@ -139,11 +143,13 @@ hemomancy:memory_blood_needle_lance
 hemomancy:memory_guided_blood_shot
 hemomancy:memory_soaring_updraft
 hemomancy:memory_canopy_mortis
+hemomancy:memory_living_land
 hemomancy:memory_activation_potential
 hemomancy:memory_sanguine_ward
 hemomancy:memory_conductive_mark
 hemomancy:memory_summon_avatar
 hemomancy:memory_iron_retort
+hemomancy:memory_lode_draw
 hemomancy:memory_umbral_step
 hemomancy:memory_hematic_rebuke
 hemomancy:memory_hematic_riposte
@@ -169,6 +175,7 @@ hemomancy:memory_summon_avatar_arms
 hemomancy:memory_blood_aneurysm
 hemomancy:memory_blood_cloud
 hemomancy:memory_sanguine_magnetism
+hemomancy:memory_hematic_hewing
 hemomancy:memory_ferric_rampart
 hemomancy:memory_ferric_spikes
 hemomancy:memory_umbral_rend
@@ -299,6 +306,7 @@ hemomancy:living_weapon_graft *
 hemomancy:living_weapon_graft *
 hemomancy:living_blade
 hemomancy:living_axe
+hemomancy:living_pickaxe
 hemomancy:living_spear
 hemomancy:living_baghnakh
 hemomancy:living_crossbow
@@ -318,6 +326,7 @@ hemomancy:hematic_iron_helm
 hemomancy:hematic_iron_chestplate
 hemomancy:hematic_iron_leggings
 hemomancy:hematic_iron_boots
+hemomancy:hematic_cleats
 hemomancy:barbed_helm
 hemomancy:barbed_chestplate
 hemomancy:barbed_leggings
@@ -382,13 +391,16 @@ hemomancy:blood_rock
 hemomancy:blood_stained_stone
 hemomancy:bleeding_bulb
 hemomancy:dried_gourd
-hemomancy:constrictor_cord
 hemomancy:scale_grip
 hemomancy:gourd_seeds
 hemomancy:gourd_slice
 hemomancy:gourd_stew
 hemomancy:raw_venison
 hemomancy:cooked_venison
+hemomancy:tainted_meat
+hemomancy:tainted_harvest
+hemomancy:glowroot
+hemomancy:emberpod
 hemomancy:venous_stone
 hemomancy:venous_stone_stairs
 hemomancy:venous_stone_slab
@@ -566,7 +578,7 @@ hemomancy:gorebound_yoke
 hemomancy:mnemonist_cradle
 hemomancy:scarlet_gorget
 hemomancy:sanguine_hound_bridle
-hemomancy:tendon_line
+hemomancy:sinew_cord
 hemomancy:ringmaster_topper
 hemomancy:marionette_crossbar
 hemomancy:puppeteers_wool
@@ -579,6 +591,42 @@ hemomancy:laughing_mask
 hemomancy:mourning_mask
 hemomancy:blank_mask
 hemomancy:troupe_rigging
+hemomancy:circus_canvas
+hemomancy:circus_laced_canvas
+hemomancy:circus_wainscot
+hemomancy:circus_sawdust
+hemomancy:circus_wagon_panel
+hemomancy:circus_wrecked_panel
+hemomancy:circus_king_pole
+hemomancy:circus_quarter_pole
+hemomancy:circus_ring_curb
+hemomancy:circus_seating
+hemomancy:circus_gallery_rail
+hemomancy:circus_trapeze
+hemomancy:circus_net
+hemomancy:circus_valance
+hemomancy:circus_guy_stake
+hemomancy:circus_podium
+hemomancy:circus_footlight
+hemomancy:circus_crossbar_rig
+hemomancy:circus_spindle_rack
+hemomancy:circus_trophy
+hemomancy:circus_pelt_drape
+hemomancy:circus_plinth
+hemomancy:circus_wagon_wheel
+hemomancy:circus_cookpot
+hemomancy:circus_costume_rack
+hemomancy:circus_trunk
+hemomancy:circus_ticket_window
+hemomancy:circus_pennant_line
+hemomancy:circus_knife_wheel
+hemomancy:circus_target_board
+hemomancy:circus_stilt_rack
+hemomancy:circus_weight_frame
+hemomancy:circus_fire_pit
+hemomancy:circus_bellows_stand
+hemomancy:circus_hound_hoop
+hemomancy:circus_prompt_table
 hemomancy:circus_curtain
 hemomancy:spawn_egg_blood_drunk_puppeteer
 hemomancy:spawn_egg_enthralled_doll
@@ -619,6 +667,7 @@ hemomancy:morphling_jar
 hemomancy:erythrocoral_block
 hemomancy:calcified_erythrocoral
 hemomancy:mnemonic_ambergris_block
+hemomancy:salt_stained_timber
 hemomancy:sunburst_crust
 hemomancy:sunburst_lamp
 hemomancy:sunburst_frond
@@ -759,6 +808,9 @@ hemomancy:reliquary_sconce
 hemomancy:adipocere_crust
 hemomancy:blood_gutter
 hemomancy:venous_basin
+hemomancy:vein_node
+hemomancy:catalyst_feeder
+hemomancy:planting_basin
 hemomancy:saint_sarcophagus
 hemomancy:saint_sarcophagus *
 hemomancy:saint_sarcophagus *

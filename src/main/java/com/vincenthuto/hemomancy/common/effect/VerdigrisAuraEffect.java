@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -50,19 +52,15 @@ public class VerdigrisAuraEffect extends MobEffect {
 			double angle = (2.0 * Math.PI * i) / particleCount;
 			double px = entity.getX() + Math.cos(angle) * radius * 0.7;
 			double pz = entity.getZ() + Math.sin(angle) * radius * 0.7;
-			serverLevel.sendParticles(ParticleTypes.SCRAPE,
+			serverLevel.sendParticles(HemoParticleData.emberSpark(HemoPalette.VERDIGRIS, 0.031F, 0.9F, 24),
 					px, entity.getY() + 0.5, pz,
 					1, 0.2, 0.3, 0.2, 0.0);
 		}
 
 		// Apply debuffs to hemomancy mobs in range
 		AABB area = entity.getBoundingBox().inflate(radius);
-		List<LivingEntity> targets = serverLevel.getEntitiesOfClass(LivingEntity.class, area, target -> {
-			if (target == entity) return false;
-			if (!target.isAlive()) return false;
-			// Only affect hemomancy-tagged mobs
-			return target.getType().is(EntityInit.HEMOMANCY_MOB);
-		});
+		List<LivingEntity> targets = serverLevel.getEntitiesOfClass(LivingEntity.class, area,
+				target -> target.getType().is(EntityInit.HEMOMANCY_MOB) && ManipulationCombatHelper.canHarmFor(entity, target));
 
 		for (LivingEntity target : targets) {
 			// Slowness I — copper patina corroding their movement

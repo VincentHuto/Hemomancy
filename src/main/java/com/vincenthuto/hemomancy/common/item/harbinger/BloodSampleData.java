@@ -21,6 +21,11 @@ public final class BloodSampleData {
                 || entityType(stack) != null;
     }
     private BloodSampleData() {}
+    /** Which individual a sample came from (core-loop Track 5): a creature's UUID, or a kept creature's vessel and Vigor band. */
+    public static final String TAG_DONOR = "donor";
+    public static String donor(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getString(TAG_DONOR);
+    }
     public record Profile(ResourceLocation sourceEntityId, List<EnumBloodTemper> tempers,
                           List<ResourceLocation> properties, boolean identified) {
         public Profile {
@@ -72,6 +77,7 @@ public final class BloodSampleData {
         var tag = sample.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         tag.remove(BloodVialItem.TAG_ENTITY_TYPE);
         tag.remove(BloodVialItem.TAG_STATE);
+        tag.remove(TAG_DONOR);
         tag.remove(com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.KEY);
         if (tag.isEmpty()) empty.remove(DataComponents.CUSTOM_DATA);
         else empty.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));

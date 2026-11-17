@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  * Which side each dialogue speaker belongs to, keyed by the speaker id the hub and {@code dialogue_inquiry/} use. The
- * side decides who may trade and which prices are legal (docs/archive/tracks/npc_trade/00-README.md). A Java table, not data: a
+ * side decides who may trade and which prices are legal (docs/NPC_DIALOGUE_AND_TRADE.md, "Rulings that bind"). A Java table, not data: a
  * datapack can add offers, not change who trades with whom.
  */
 public final class NpcTradeSides {

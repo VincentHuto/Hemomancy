@@ -45,6 +45,9 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpecimenJarBlockEntity>> specimen_jar = TILES
 			.register("specimen_jar", () -> BlockEntityType.Builder
 					.of(SpecimenJarBlockEntity::new, BlockInit.specimen_jar.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.SpecimenVatBlockEntity>> specimen_vat = TILES
+			.register("specimen_vat", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.SpecimenVatBlockEntity::new, BlockInit.specimen_vat.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UnstainedPodiumBlockEntity>> unstained_podium = TILES
 			.register("unstained_podium", () -> BlockEntityType.Builder
@@ -86,6 +89,27 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GourdvineTapBlockEntity>> gourdvine_tap = TILES
 			.register("gourdvine_tap", () -> BlockEntityType.Builder
 					.of(GourdvineTapBlockEntity::new, BlockInit.gourdvine_tap.get()).build(null));
+
+	// The ground network (core-loop Track 6).
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.decoration.VenousBasinBlockEntity>> venous_basin = TILES
+			.register("venous_basin", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.decoration.VenousBasinBlockEntity::new,
+							BlockInit.venous_basin.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.ground.VeinNodeBlockEntity>> vein_node = TILES
+			.register("vein_node", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.ground.VeinNodeBlockEntity::new,
+							BlockInit.vein_node.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.ground.CatalystFeederBlockEntity>> catalyst_feeder = TILES
+			.register("catalyst_feeder", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.ground.CatalystFeederBlockEntity::new,
+							BlockInit.catalyst_feeder.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.plant.PlantingBasinBlockEntity>> planting_basin = TILES
+			.register("planting_basin", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.plant.PlantingBasinBlockEntity::new,
+							BlockInit.planting_basin.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SanguineCondenserBlockEntity>> sanguine_condenser = TILES
 			.register("sanguine_condenser", () -> BlockEntityType.Builder
@@ -240,6 +264,9 @@ public class BlockEntityInit {
 			.register("filler_block", () -> BlockEntityType.Builder
 					.of(FillerBlockEntity::new, BlockInit.filler_block.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GuyStakeBlockEntity>> guy_stake = TILES
+			.register("guy_stake", () -> BlockEntityType.Builder
+					.of(GuyStakeBlockEntity::new, BlockInit.circus_guy_stake.get()).build(null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AbocipherEmitterBlockEntity>> abocipher_emitter = TILES
 			.register("abocipher_emitter", () -> BlockEntityType.Builder
 					.of(AbocipherEmitterBlockEntity::new, BlockInit.abocipher_emitter.get()).build(null));

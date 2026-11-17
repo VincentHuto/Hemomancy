@@ -14,7 +14,7 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
             case "summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs",
                     "summon_avatar_complete" -> CastStyle.AVATAR;
             case "conjure_staff", "conjure_blade", "conjure_axe", "conjure_spear", "conjure_claws",
-                    "conjure_crossbow", "conjure_torch", "conjure_flail", "conjure_sickle" -> CastStyle.STAFF;
+                    "conjure_crossbow", "conjure_torch", "conjure_flail", "conjure_sickle", "conjure_pickaxe" -> CastStyle.STAFF;
             case "crimson_tithe" -> CastStyle.CRIMSON_TITHE;
             case "unclosing_eye" -> CastStyle.UNCLOSING_EYE;
             case "bloom_of_rot" -> CastStyle.BLOOM_OF_ROT;
@@ -52,13 +52,14 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
             case "blood_rush", "summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs",
                     "summon_avatar_complete", "iron_retort", "ironhearted", "void_shroud", "black_veil_covenant",
                     "insatiable_hunger", "grave_debt", "blackhearted", "sovereign_instinct", "phoenix_debt",
-                    "living_circuit", "furnace_veins", "crimson_tithe", "endless_hour", "hematic_riposte", "axonal_transduction" -> SELF;
+                    "living_circuit", "furnace_veins", "endless_hour", "hematic_riposte", "axonal_transduction" -> SELF;
             case "sanguine_halo", "blood_cloud", "expansive_blood_cloud", "pursuing_blood_cloud", "sanguine_tempest",
                     "blood_aneurysm", "vital_effusion", "activation_potential", "sanguine_ward", "hemolymphal_pulse",
                     "hematic_flare", "hematic_beacon", "cryogenic_pulse", "osseous_bloom", "vitric_combustion",
                     "cauterizing_rebuke", "blood_eclipse", "crimson_coronation", "synaptic_storm",
                     "absolute_stillness", "iron_choir", "funeral_bell", "carrion_communion", "eclipse_well",
-                    "unclosing_eye", "bloom_of_rot", "umbral_rend", "lodestone_collapse", "fruiting_contagion" -> AREA;
+                    "unclosing_eye", "bloom_of_rot", "umbral_rend", "lodestone_collapse", "fruiting_contagion",
+                    "crimson_tithe" -> AREA;
             case "blood_binding", "lingering_blood_binding", "chain_blood_binding", "sanguine_marionette",
                     "blood_lattice", "deadly_gaze", "hematic_rebuke", "hematic_impressment", "conductive_mark",
                     "blood_absorption", "sanguine_mending", "glacial_grasp", "vascular_dowsing", "pyretic_forge",
@@ -66,7 +67,7 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
                     "canopy_mortis", "worked_lignum", "exsanguinate", "rimebound_sentence" -> TARGETED;
             case "sanguine_magnetism", "ferric_rampart", "ferric_spikes", "glacial_rampart" -> CONSTRUCTION;
             case "conjure_blade", "conjure_axe", "conjure_spear", "conjure_claws", "conjure_crossbow",
-                    "conjure_torch", "conjure_flail", "conjure_sickle", "conjure_staff", "crimson_flame_conjuration" -> CONJURATION;
+                    "conjure_torch", "conjure_flail", "conjure_sickle", "conjure_pickaxe", "conjure_staff", "crimson_flame_conjuration" -> CONJURATION;
             case "umbral_step", "umbral_reversal", "penumbral_drift", "scalding_updraft", "soaring_updraft",
                     "suspended_updraft", "expulsive_updraft", "radiant_wake" -> TRAVEL;
             default -> null;

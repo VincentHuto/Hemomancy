@@ -7,7 +7,7 @@ public final class MermaidsPurseRules {
 	public static final int PROC_TICKS = 40;
 	private static final double[] SIPHON = { 1.0D, 1.5D, 2.0D, 2.5D, 3.0D, 3.5D };
 	private static final double[] SWIM = { 0.0D, 0.05D, 0.10D, 0.15D, 0.20D, 0.25D };
-	/** The full Prismatic set's ceiling; the strain never grants more. */
+	/** The strain's own ceiling. A worn set's bonus is separate and multiplies with it. */
 	public static final double SWIM_CAP = 0.35D;
 	public static final double SPRINT_SWIM_BANK_MULTIPLIER = 1.5D;
 
@@ -43,20 +43,13 @@ public final class MermaidsPurseRules {
 		return SIPHON[SunburstRules.clamp(stage)];
 	}
 
-	/** Swim speed bonus while submerged; home raises it by half, never past {@link #SWIM_CAP}. */
+	/**
+	 * Swim speed bonus while submerged: the strain's own share, whatever armour is worn; home raises it by half, never
+	 * past {@link #SWIM_CAP}.
+	 */
 	public static double swimBonus(int stage, boolean home) {
 		double base = SWIM[SunburstRules.clamp(stage)];
 		return Math.min(SWIM_CAP, home ? base * 1.5D : base);
-	}
-
-	/**
-	 * The strain's swim bonus under another multiplier already on the host (the full Prismatic or Phantasmal Bloodlust
-	 * set's x1.35): the strain only tops the total up to {@code 1 + SWIM_CAP}, so the set and the strain never stack
-	 * past +35% together.
-	 */
-	public static double swimBonus(int stage, boolean home, double otherMultiplier) {
-		double headroom = (1.0D + SWIM_CAP) / Math.max(1.0D, otherMultiplier) - 1.0D;
-		return Math.max(0.0D, Math.min(swimBonus(stage, home), headroom));
 	}
 
 	/** School's Share heal: 6 at Mature, 9 at Apex, 12 at Primal. */

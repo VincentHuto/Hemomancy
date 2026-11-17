@@ -75,9 +75,8 @@ public class ScarletMummerEntity extends GroundPuppetEntity implements SyncedBou
 		if (!BoundSummonBehavior.commonServerTick(this, this)) return;
 		Optional<Player> owner = BoundSummonBehavior.ownerFor(this, this);
 		if (owner.orElse(null) instanceof ServerPlayer serverOwner) {
-			if (getTarget() == null && BoundSummonBehavior.shouldFollowOwner(serverOwner, this)
-					&& distanceToSqr(owner.get()) > 25.0D) {
-				getNavigation().moveTo(owner.get(), 1.0D);
+			if (getTarget() == null && BoundSummonBehavior.shouldFollowOwner(serverOwner, this)) {
+				BoundSummonBehavior.followOwnerOnFoot(this, owner.get(), 1.0D);
 			}
 			tickPerformance(serverOwner);
 		}
@@ -90,23 +89,31 @@ public class ScarletMummerEntity extends GroundPuppetEntity implements SyncedBou
 			return;
 		}
 		if (tickCount % ScarletMummerRules.PERFORMANCE_INTERVAL_TICKS != 0) return;
+		spotlight(owner, ScarletMummerRules.ATTENTION_RADIUS);
+	}
 
+	/**
+	 * Draws the nearest threats on the owner or the owner's bodies within {@code radius} onto the Mummer and starts its
+	 * performance. Its own beat uses the attention radius; the Spotlight act reaches further. False when none was near.
+	 */
+	public boolean spotlight(ServerPlayer owner, double radius) {
 		List<Mob> threats = level().getEntitiesOfClass(Mob.class,
-				getBoundingBox().inflate(ScarletMummerRules.ATTENTION_RADIUS), mob -> mayRedirect(mob, owner))
+				getBoundingBox().inflate(radius), mob -> mayRedirect(mob, owner, radius))
 				.stream()
 				.sorted((left, right) -> Double.compare(distanceToSqr(left), distanceToSqr(right)))
 				.limit(ScarletMummerRules.MAX_ATTENTION_TARGETS)
 				.toList();
-		if (threats.isEmpty()) return;
+		if (threats.isEmpty()) return false;
 		startPerformance();
 		for (Mob threat : threats) {
 			redirectedTargets.add(threat.getUUID());
 			threat.setTarget(this);
 		}
+		return true;
 	}
 
-	private boolean mayRedirect(Mob mob, ServerPlayer owner) {
-		if (distanceToSqr(mob) > ScarletMummerRules.ATTENTION_RADIUS * ScarletMummerRules.ATTENTION_RADIUS) return false;
+	private boolean mayRedirect(Mob mob, ServerPlayer owner, double radius) {
+		if (distanceToSqr(mob) > radius * radius) return false;
 		LivingEntity target = mob.getTarget();
 		boolean alliedAttacker = mob instanceof BoundPuppeteerSummon ally
 				&& owner.getUUID().equals(ally.hemomancy$getOwnerUUID());

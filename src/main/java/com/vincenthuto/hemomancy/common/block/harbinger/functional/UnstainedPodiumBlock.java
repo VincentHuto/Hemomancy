@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -12,7 +14,6 @@ import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -217,17 +218,17 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 
 	private void spawnPurityParticles(Level worldIn, BlockPos pos) {
 		if (worldIn instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.VERDIGRIS),
 					pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-					20, 0.5, 0.5, 0.5, 0.1);
+					20, 0.5, 0.5, 0.5, 0.05);
 		}
 	}
 
 	private void spawnClarityParticles(Level worldIn, BlockPos pos) {
 		if (worldIn instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.END_ROD,
+			serverLevel.sendParticles(HemoParticleData.glow(HemoPalette.STILL_WHITE),
 					pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-					30, 0.5, 0.5, 0.5, 0.1);
+					30, 0.5, 0.5, 0.5, 0.05);
 		}
 	}
 

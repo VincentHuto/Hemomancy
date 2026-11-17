@@ -41,6 +41,20 @@ void main(){
         float r=length(p);alpha=exp(-pow((r-.76)*28.0,2.0))*(.5+.5*n);shine=.3;
     }else if(abs(flowShape-9.0)<.5){
         alpha=1.0;shine=smoothstep(.53,.83,n)*.8;
+    }else if(abs(flowShape-12.0)<.5){
+        // Focus: a hot core in a soft halo, lit from within rather than glossed like the droplet.
+        float r=length(p);
+        float core=1.0-smoothstep(0.0,.42+.06*n,r);
+        float halo=(1.0-smoothstep(.3,1.0,r))*(.35+.25*n);
+        alpha=max(core,halo);
+        shine=core*core*(.6+.4*n);
+    }else if(abs(flowShape-13.0)<.5){
+        // Slash: a thin bright cut that tapers to a point at both ends.
+        float taper=sin(uv.x*3.14159);
+        float d=abs(p.y-(n-.5)*.12*taper);
+        float width=.05+.22*taper;
+        alpha=(1.0-smoothstep(width*.5,width,d))*smoothstep(0.0,.06,uv.x)*(1.0-smoothstep(.9,1.0,uv.x));
+        shine=exp(-d*d*260.0)*taper;
     }else{
         vec2 drop=p;drop.x*=1.0+p.y*.25;
         float radius=length(drop);

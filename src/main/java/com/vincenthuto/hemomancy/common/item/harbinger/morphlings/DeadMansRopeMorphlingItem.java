@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -126,7 +126,7 @@ public class DeadMansRopeMorphlingItem extends HouseMorphlingItem {
 				target.setDeltaMovement(toHost.normalize().scale(Math.min(2.0D, toHost.length() * 0.25D)).add(0.0D, 0.3D, 0.0D));
 				target.resetFallDistance();
 			} else {
-				if (!ManipulationReactiveEvents.isBoss(target)) {
+				if (!HemoEntityPredicates.isBoss(target)) {
 					target.setDeltaMovement(toHost.normalize().scale(Math.min(1.6D, toHost.length() * 0.2D)).add(0.0D, 0.25D, 0.0D));
 				}
 				MorphlingLock.pin(target, DeadMansRopeRules.RED_ROPE_ROOT_TICKS);

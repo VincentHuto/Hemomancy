@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Rotation;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The four Chapels of a Saint's mausoleum, each a deed of the Saint's life told backwards. Beholding replays a memory
@@ -55,11 +56,23 @@ public final class ChapelRules {
 	public static final double PULSE_REACH = 9.0;
 	public static final int FAIL_COOLDOWN_TICKS = 100;
 	private static final double STILL_SQR = 0.0025;
+	/** The Saints whose Beholding memory is told in words, a line a flash: every complex that has a Beholding. */
+	private static final Set<String> NARRATED_BEHOLDINGS = Set.of("HEMORATH", "SERAPHAE", "VELORUM");
 
 	private ChapelRules() {}
 
 	public static boolean mayAttempt(int degree) {
 		return degree >= ATTEMPT_DEGREE;
+	}
+
+	public static boolean narratesBeholding(String saint) {
+		return NARRATED_BEHOLDINGS.contains(saint);
+	}
+
+	/** The line a Beholding shows with flash {@code flash} (0 to 3), or {@code -1} for its closing line. */
+	public static String beholdingLine(String saint, int flash) {
+		String root = "message.hemomancy.chapel.beholding." + saint.toLowerCase(java.util.Locale.ROOT) + ".";
+		return flash < 0 ? root + "done" : root + (flash + 1);
 	}
 
 	/** The witnesses a Beholding's memory touches among its four, in order: never the same one twice running. */

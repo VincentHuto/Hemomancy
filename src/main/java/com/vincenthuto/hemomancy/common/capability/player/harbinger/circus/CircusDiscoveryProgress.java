@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.circus;
 
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.ChatFormatting;
@@ -55,6 +56,8 @@ public final class CircusDiscoveryProgress {
 				CircusPlayerProgress.addAcclimation(player, 1);
 			}
 		}
-		CircusPlayerProgress.setInside(player, inside);
+		boolean ruined = inside && CircusPavilionSavedData.get(player.serverLevel())
+				.isRuinWithin(player.serverLevel(), start.getBoundingBox());
+		CircusPlayerProgress.setInside(player, inside, ruined);
 	}
 }

@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.recipe.serializer;
 
+import org.junit.jupiter.api.Test;
+
 public final class PatternKeyEntryTest {
 	private PatternKeyEntryTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		PatternKeyEntry blockEntry = PatternKeyEntry.fromJsonLiteral("B", "{\"block\":\"minecraft:polished_basalt\"}");
 		assertFalse("legacy block entry is not a tag", blockEntry.isTag());
 		assertEquals("legacy block id", "minecraft:polished_basalt", blockEntry.blockIdString());

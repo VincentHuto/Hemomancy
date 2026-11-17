@@ -98,7 +98,9 @@ public class MasonsRespiteStructure extends HemoJigsawStructure {
 		}
 	}
 
-	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos pos) {
+	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos marker) {
+		BlockPos pos = ResidentSpawnSpot.find(level, marker);
+		if (pos == null) return;
 		T entity = type.create(level.getLevel());
 		if (entity == null) return;
 		entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,

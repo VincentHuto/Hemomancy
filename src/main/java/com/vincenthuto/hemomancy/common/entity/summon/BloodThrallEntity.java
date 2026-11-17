@@ -2,15 +2,19 @@ package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.*;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.tile.BlockBloodVolume;
+import com.vincenthuto.hemomancy.common.tile.CoagulationRules;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.DustParticleOptions;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -34,7 +38,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -71,8 +74,12 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
     private int workTimer = 0;
     /** Server-side counter for how long the thrall has been awaiting target selection */
     private int awaitingTimer = 0;
+    /** The age of the blood it carries, from the tank it was taken from; a courier never makes blood younger (NQ-01-5). */
+    private long carriedAge = 0L;
     /** Maximum ticks to wait for target selection before discarding (~30 seconds) */
     private static final int AWAITING_TIMEOUT = 600;
+    private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
+    private static final ParticleColor CLOT = new ParticleColor(70, 6, 14);
 
     // ── Constructor ──
 
@@ -160,6 +167,16 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         this.entityData.set(DATA_CARRIED_BLOOD, Math.max(0, Math.min(MAX_CARRY, amount)));
     }
 
+    public long getCarriedAge() {
+        return carriedAge;
+    }
+
+    /** Takes {@code amount} more blood that is {@code age} ticks old; what it carries blends by volume. */
+    public void takeBlood(float amount, long age) {
+        carriedAge = CoagulationRules.blendedAge(getCarriedBlood(), carriedAge, amount, age);
+        setCarriedBlood(getCarriedBlood() + amount);
+    }
+
     /** How "full" the thrall is, 0..1 — used for rendering scale/color */
     public float getCarryRatio() {
         return Math.min(1f, getCarriedBlood() / MAX_CARRY);
@@ -203,11 +220,9 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         double dx = (random.nextDouble() - 0.5) * 0.4;
         double dy = random.nextDouble() * 0.5 + 0.1;
         double dz = (random.nextDouble() - 0.5) * 0.4;
-        float size = 0.4f + ratio * 0.6f;
-        level().addParticle(
-                new DustParticleOptions(new Vector3f(0.55f, 0.05f, 0.05f), size),
+        level().addParticle(HemoParticleData.bloodCell(BLOOD),
                 getX() + dx, getY() + dy, getZ() + dz,
-                0, 0.01, 0
+                0, -0.01, 0
         );
     }
 
@@ -220,6 +235,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         if (getSourcePos() != null) tag.put("SourcePos", NbtUtils.writeBlockPos(getSourcePos()));
         if (getDestPos() != null) tag.put("DestPos", NbtUtils.writeBlockPos(getDestPos()));
         tag.putFloat("CarriedBlood", getCarriedBlood());
+        tag.putLong("CarriedAge", carriedAge);
         tag.putInt("ThrallState", thrallState.ordinal());
         tag.putBoolean("AwaitingTarget", getAwaitingTarget());
     }
@@ -231,6 +247,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         setSourcePos(NbtUtils.readBlockPos(tag, "SourcePos").orElse(null));
         setDestPos(NbtUtils.readBlockPos(tag, "DestPos").orElse(null));
         setCarriedBlood(tag.getFloat("CarriedBlood"));
+        carriedAge = tag.getLong("CarriedAge");
         int stOrd = tag.getInt("ThrallState");
         if (stOrd >= 0 && stOrd < ThrallState.values().length) {
             thrallState = ThrallState.values()[stOrd];
@@ -289,17 +306,10 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
 
             if (player.isShiftKeyDown()) {
                 // ── Shift+click: reabsorb thrall back into blood volume ──
-                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player);
-                if (playerVol != null) {
-                    double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
-                    playerVol.fill(bloodBack);
-                    if (player instanceof ServerPlayer serverPlayer) {
-                        BloodVolumeEvents.syncVolume(serverPlayer, playerVol);
-                    }
-                    player.displayClientMessage(
-                            HemoText.translatable("message.hemomancy.blood_thrall_entity.thrall_reabsorbed_recovered_ml",
-                            		(int) bloodBack), true);
-                }
+                double recovered = reabsorbInto(player);
+                player.displayClientMessage(
+                        HemoText.translatable("message.hemomancy.blood_thrall_entity.thrall_reabsorbed_recovered_ml",
+                                (int) recovered), true);
 
                 level().broadcastEntityEvent(this, BLOOD_SPLATTER_EVENT);
                 playSound(SoundEvents.SLIME_SQUISH, 0.6f, 1.2f);
@@ -307,14 +317,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                 return InteractionResult.SUCCESS;
             } else {
                 // ── Right-click: absorb thrall back into blood volume ──
-                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player);
-                if (playerVol != null) {
-                    double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
-                    playerVol.fill(bloodBack);
-                    if (player instanceof ServerPlayer serverPlayer) {
-                        BloodVolumeEvents.syncVolume(serverPlayer, playerVol);
-                    }
-                }
+                reabsorbInto(player);
 
                 // Blood splatter particles on absorb
                 level().broadcastEntityEvent(this, BLOOD_SPLATTER_EVENT);
@@ -325,6 +328,17 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             }
         }
         return super.mobInteract(player, hand);
+    }
+
+    /**
+     * Returns the thrall's body and what it carried to {@code player} as income the flow ledger records, which also
+     * stops at a full volume and at a dormant one. Returns what was actually taken in.
+     */
+    private double reabsorbInto(Player player) {
+        if (!(player instanceof ServerPlayer serverPlayer)) return 0.0D;
+        return BloodFlowLedger.applyDirectIncome(serverPlayer, HemoCapabilityAccess.getBloodVolume(serverPlayer),
+                "thrall_reabsorb", "message.hemomancy.blood_thrall_entity.reabsorb_source", Category.OTHER,
+                ABSORB_BLOOD_RETURN + getCarriedBlood(), 1);
     }
 
     // ── Drop carried blood on death ──
@@ -347,11 +361,16 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                 double dx = (random.nextDouble() - 0.5) * 1.0;
                 double dy = random.nextDouble() * 0.6;
                 double dz = (random.nextDouble() - 0.5) * 1.0;
-                level().addParticle(
-                        new DustParticleOptions(new Vector3f(0.6f, 0.02f, 0.02f), 1.2f),
+                level().addParticle(HemoParticleData.bloodCell(BLOOD),
                         getX() + dx, getY() + dy, getZ() + dz,
-                        dx * 0.3, 0.15, dz * 0.3
+                        dx * 0.3, 0.04, dz * 0.3
                 );
+                if (i < 6) {
+                    level().addParticle(HemoParticleData.darkGlow(CLOT),
+                            getX() + dx, getY() + dy, getZ() + dz,
+                            dx * 0.3, 0.04, dz * 0.3
+                    );
+                }
             }
         } else {
             super.handleEntityEvent(id);
@@ -481,13 +500,16 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                     double drawn = BloodRoutingHelper.drawForCourier(serverLevel, thrall.getSourcePos(), link,
                             space, Math.min(transferRate, space));
                     if (drawn > 0) {
-                        thrall.setCarriedBlood(thrall.getCarriedBlood() + (float) drawn);
+                        thrall.takeBlood((float) drawn, 0L);
                         return true;
                     }
                 }
             }
 
             if (be instanceof IBloodReservoir closed && !closed.canProvideBlood()) return false;
+            // A courier hauls only from its master's machines, their bloodline's, or anyone's if the server allows.
+            if (!com.vincenthuto.hemomancy.common.tile.BloodDrawRights.mayDraw(
+                    thrall.level() instanceof ServerLevel level ? level : null, thrall.getOwnerUUID(), be)) return false;
             IBloodVolume srcVol = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
             if (srcVol == null) return false;
 
@@ -496,8 +518,9 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             if (toTransfer <= 0) return false;
 
             if (srcVol.getBloodVolume() >= toTransfer) {
+                long age = srcVol instanceof BlockBloodVolume tank ? tank.age() : 0L;
                 srcVol.drain(toTransfer);
-                thrall.setCarriedBlood(thrall.getCarriedBlood() + toTransfer);
+                thrall.takeBlood(toTransfer, age);
                 if (be instanceof IBloodReservoir bt) bt.sendUpdates();
                 return true;
             }
@@ -512,7 +535,8 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             if (destVol == null) return false;
 
             float transferRate = transferRate();
-            ThrallCourierSource courier = new ThrallCourierSource(thrall.getCarriedBlood(), transferRate);
+            ThrallCourierSource courier = new ThrallCourierSource(thrall.getCarriedBlood(), transferRate,
+                    thrall.getCarriedAge());
             double transferred = courier.transferTo(destVol, transferRate);
             if (transferred > 0) {
                 thrall.setCarriedBlood((float) courier.getCarriedBlood());

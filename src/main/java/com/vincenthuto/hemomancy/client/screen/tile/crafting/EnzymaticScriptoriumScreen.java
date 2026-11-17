@@ -59,7 +59,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
         if (minecraft != null && minecraft.player != null) {
             float time = AnimationTime.age(minecraft.player, partialTick) / 20.0F;
             bloodBarBounds = BloodVolumeBarWidget.render(g, x + 200, y + 27, 10, 91,
-                    menu.bloodVolume(), menu.bloodCapacity(), time, OUTER, INNER);
+                    menu.reading(), time, OUTER, INNER);
         }
 
         g.fillGradient(x + 8, y + 24, x + 103, y + 83, 0x60100406, 0x10100406);
@@ -224,7 +224,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
         renderTooltip(g, mouseX, mouseY);
         if (minecraft != null && minecraft.player != null && bloodBarBounds.contains(mouseX, mouseY)) {
             BloodVolumeBarWidget.renderTooltip(g, font, bloodBarBounds,
-                    menu.bloodVolume(), menu.bloodCapacity(), mouseX, mouseY);
+                    menu.reading(), mouseX, mouseY);
             return;
         }
         for (int i = 0; i < 11; i++) {

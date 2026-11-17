@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
@@ -28,6 +29,9 @@ public final class SchoolHitHelper {
 	private static final String CONDUCTIVE_LAST_ARC_KEY = "hemomancy:conductive_mark_last_arc";
 	private static final String GRAVE_DEBT_OWNER_KEY = "hemomancy:grave_debt_owner";
 	private static final String GRAVE_DEBT_BURST_USED_KEY = "hemomancy:grave_debt_burst_used";
+	private static final String GRAVE_DEBT_PAID_KEY = "hemomancy:grave_debt_paid";
+	public static final String GRAVE_DEBT_REFUND_SOURCE = "grave_debt_refund";
+	public static final String GRAVE_DEBT_REFUND_LABEL = "blood_source.hemomancy.grave_debt_refund";
 
 	private SchoolHitHelper() {
 	}
@@ -99,12 +103,13 @@ public final class SchoolHitHelper {
 		return arcs[0] > 0;
 	}
 
-	public static void markGraveDebt(LivingEntity target, Player caster, int durationTicks) {
-		markGraveDebt(target, caster.getUUID(), durationTicks);
+	/** {@code paid} is the blood the caster paid for this mark; a share of it comes back on the caster's kill. */
+	public static void markGraveDebt(LivingEntity target, Player caster, int durationTicks, double paid) {
+		markGraveDebt(target, caster.getUUID(), durationTicks, paid);
 		LivingWeaponGraftRecipeUnlockEvents.onAxeAlignedManipulation(caster);
 	}
 
-	public static void markGraveDebt(LivingEntity target, @Nullable UUID ownerId, int durationTicks) {
+	public static void markGraveDebt(LivingEntity target, @Nullable UUID ownerId, int durationTicks, double paid) {
 		target.addEffect(new MobEffectInstance(EffectInit.grave_debt, durationTicks, 0, false, true, true));
 		CompoundTag data = target.getPersistentData();
 		if (ownerId != null) {
@@ -113,6 +118,7 @@ public final class SchoolHitHelper {
 			data.remove(GRAVE_DEBT_OWNER_KEY);
 		}
 		data.putBoolean(GRAVE_DEBT_BURST_USED_KEY, false);
+		data.putDouble(GRAVE_DEBT_PAID_KEY, Math.max(0.0D, paid));
 	}
 
 	public static boolean tryTriggerGraveDebtBurst(LivingEntity target, float previousHealth) {
@@ -137,7 +143,7 @@ public final class SchoolHitHelper {
             states.recordPayoff(hit.rootAttack(), target.level().getGameTime());
         }
 
-		Player owner = graveDebtOwner(target);
+		Player owner = graveDebtOwner(target, data);
 		Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.45D, 0.0D);
 		float burst = ManipulationStatusRules.GRAVE_DEBT_BURST_DAMAGE * (owner == null ? 1.0F
 				: (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(owner));
@@ -156,24 +162,28 @@ public final class SchoolHitHelper {
 		if (target.level().isClientSide() || !target.hasEffect(EffectInit.grave_debt)) {
 			return;
 		}
-		Player owner = graveDebtOwner(target);
+		CompoundTag data = target.getPersistentData();
+		Player owner = graveDebtOwner(target, data);
 		if (!(owner instanceof ServerPlayer serverPlayer)) {
 			return;
 		}
+		double refund = ManipulationStatusRules.graveDebtRefund(data.getDouble(GRAVE_DEBT_PAID_KEY),
+				target.getKillCredit() == serverPlayer);
+		if (refund <= 0.0D) {
+			return;
+		}
 		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
-					if (volume.isActive()) {
-						volume.fill(ManipulationStatusRules.GRAVE_DEBT_DEATH_REFUND);
-						BloodVolumeEvents.syncVolume(serverPlayer, volume);
-		                BloodFlowVisuals.connect(serverPlayer,target,com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.EXTRACTION);
-					}
+		if (BloodFlowLedger.applyDirectIncome(serverPlayer, volume, GRAVE_DEBT_REFUND_SOURCE, GRAVE_DEBT_REFUND_LABEL,
+				BloodFlowContribution.Category.CAST, refund, 1) > 0.0D) {
+			BloodFlowVisuals.connect(serverPlayer, target, com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.EXTRACTION);
+		}
 	}
 
 	@Nullable
-	private static Player graveDebtOwner(LivingEntity target) {
+	private static Player graveDebtOwner(LivingEntity target, CompoundTag data) {
 		if (!(target.level() instanceof ServerLevel serverLevel)) {
 			return null;
 		}
-		CompoundTag data = target.getPersistentData();
 		if (!data.hasUUID(GRAVE_DEBT_OWNER_KEY)) {
 			return null;
 		}

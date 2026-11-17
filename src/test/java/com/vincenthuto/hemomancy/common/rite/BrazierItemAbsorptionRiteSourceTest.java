@@ -3,13 +3,11 @@ package com.vincenthuto.hemomancy.common.rite;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 final class BrazierItemAbsorptionRiteSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	@Test
 	void graftsScarsAndMemoriesShareTheSameItemParticleChannel() throws IOException {
@@ -44,10 +42,6 @@ final class BrazierItemAbsorptionRiteSourceTest {
 		assertContains(scar, "preflight(player, offering, burn)");
 		assertContains(scar, "new ScarPlan(burn, preflight)");
 		assertContains(scar, "ritualStack, plan.burn(), plan.preflight())");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
 	}
 
 	private static void assertContains(String source, String expected) {

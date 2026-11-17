@@ -61,6 +61,8 @@ public class HemoServerConfig {
 	public static ModConfigSpec.DoubleValue BLOODLINE_HEAL_HEALTH_THRESHOLD;
 	public static ModConfigSpec.DoubleValue BLOODLINE_HEAL_RANGE;
 	public static ModConfigSpec.IntValue FANE_MAX_STAKE_BUDGET;
+	/** CL-8: whether a player may draw from a reservoir someone outside their bloodline placed. */
+	public static ModConfigSpec.BooleanValue FOREIGN_RESERVOIR_DRAW;
 
 	// ===== Morphling =====
 	public static ModConfigSpec.BooleanValue MORPHLING_PASSIVE_DRAIN_ENABLED;
@@ -129,10 +131,40 @@ public class HemoServerConfig {
 	/** How many blocks a Lidless Door crossing is. */
 	public static ModConfigSpec.IntValue LIDLESS_PASSAGE_LENGTH;
 
+	/** Core-loop Track 9: whether Living Land moves real blocks, or strikes with conjured copies and leaves the world. */
+	public static ModConfigSpec.BooleanValue LIVING_LAND_LIFTS_BLOCKS;
+
+	/** Core-loop Track 10: whether grass under old stains in a heavy region turns to stained sod (terrain change). */
+	public static ModConfigSpec.BooleanValue WORLD_ANSWER_GROUND_REMEMBERS;
+	/** Core-loop Track 10: whether wet stains draw vampire bats and strong chum draws drowned. */
+	public static ModConfigSpec.BooleanValue WORLD_ANSWER_SCAVENGERS;
+	/** Living blood (CQ-6, LP-3, LP-4): how a pour into a tank that holds clot revives it. */
+	public static ModConfigSpec.DoubleValue CLOT_REVIVE_SHARE;
+	public static ModConfigSpec.DoubleValue CLOT_REVIVE_YIELD;
+	public static ModConfigSpec.DoubleValue SUTURED_CLOT_REVIVE_YIELD;
+
 	public static void registerServerConfig(Builder builder) {
         builder.push("lidless_door");
         LIDLESS_PASSAGE_LENGTH = builder.comment("How many blocks a player walks through the void behind a Lidless Door before stepping out its far side.")
                 .defineInRange("passage_length", 16, 4, 64);
+        builder.pop();
+        builder.push("living_land");
+        LIVING_LAND_LIFTS_BLOCKS = builder.comment("Whether Living Land lifts real blocks (put back when the strike or raise ends). When false its strikes are conjured copies of the ground, the world is never changed, and the patch cannot be raised.")
+                .define("lifts_blocks", true);
+        builder.pop();
+        builder.push("world_answer");
+        WORLD_ANSWER_GROUND_REMEMBERS = builder.comment("Whether grass under a stain that wears away, in a region where much blood has been spilled, turns to stained sod (it turns back as the region quiets). False leaves terrain alone.")
+                .define("ground_remembers", true);
+        WORLD_ANSWER_SCAVENGERS = builder.comment("Whether wet blood stains draw vampire bats at night or underground, and strong chum pools draw drowned.")
+                .define("scavengers", true);
+        builder.pop();
+        builder.push("living_blood");
+        CLOT_REVIVE_SHARE = builder.comment("Share of blood projected or sutured into a tank that holds clot which goes to waking the clot. The rest goes in as fresh blood; a pour that finds no room spends all of it on the clot.")
+                .defineInRange("clotReviveShare", 0.5D, 0.0D, 1.0D);
+        CLOT_REVIVE_YIELD = builder.comment("Clot woken back to fresh blood by each mL of Blood Projection spent on it. The spent mL is used up.")
+                .defineInRange("clotReviveYield", 2.0D, 0.0D, 64.0D);
+        SUTURED_CLOT_REVIVE_YIELD = builder.comment("Clot woken back to fresh blood by each mL a Hematic Suture draws from its owner to revive its buffer. The spent mL is used up.")
+                .defineInRange("suturedClotReviveYield", 4.0D, 0.0D, 64.0D);
         builder.pop();
         builder.push("succession");
         SUCCESSORS_PER_BLOODLINE = builder.comment("Maximum living successors per bloodline; zero uses workplace capacity only.").defineInRange("per_bloodline_cap", 0, 0, 10000);
@@ -147,7 +179,7 @@ public class HemoServerConfig {
 
 		BLOOD_REGEN_RATE = builder
 				.comment("Amount of blood restored per regen tick.")
-				.defineInRange("bloodRegenRate", 1.0, 0.1, 100.0);
+				.defineInRange("bloodRegenRate", 2.0, 0.1, 100.0);
 
 		BLOOD_REGEN_INTERVAL = builder
 				.comment("How many ticks between each passive blood regen tick. 20 ticks = 1 second.")
@@ -276,6 +308,10 @@ public class HemoServerConfig {
 		BLOODLINE_POOL_ENABLED = builder
 				.comment("Whether bloodline members passively contribute blood to the shared pool.")
 				.define("bloodlinePoolEnabled", true);
+
+		FOREIGN_RESERVOIR_DRAW = builder
+				.comment("Whether a player may absorb blood, scrape clot or collect Formations from a machine placed by someone outside their bloodline. Owners and their bloodline always may.")
+				.define("foreignReservoirDraw", false);
 
 		BLOODLINE_POOL_CONTRIBUTION_RATE = builder
 				.comment("Amount of blood contributed to the shared pool per tick interval.")
@@ -414,7 +450,7 @@ public class HemoServerConfig {
 				.defineInRange("drudgeCooldownMultiplier", 2, 1, 10);
 
 		DRUDGE_REQUIRED_DEGREE = builder
-				.comment("Minimum Initiatory Degree required to birth a Drudge (3 = Illuminatus).")
+				.comment("Minimum Initiatory Degree required to birth a Drudge (3 = Initiate).")
 				.defineInRange("drudgeRequiredDegree", 3, 0, 8);
 
 		DRUDGE_WORK_RADIUS = builder

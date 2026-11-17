@@ -1,19 +1,21 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class BloodAbsorptionItemSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private BloodAbsorptionItemSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String source = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
 		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientInputEvents.java");
-		String livingStaff = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java");
+		String channel = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/verb/VerbChannel.java");
 		String onUseTick = source.substring(source.indexOf("public void onUseTick"),
 				source.indexOf("public static Optional<LivingEntity> findBareAbsorptionTarget"));
 		String use = source.substring(source.indexOf("public InteractionResultHolder<ItemStack> use"));
@@ -22,12 +24,14 @@ public final class BloodAbsorptionItemSourceTest {
 
 		assertBefore("bare absorption skips client drain ticks",
 				onUseTick, "if (worldIn.isClientSide)", "absorbFromTarget");
-		assertContains("bare block absorption uses the bare absorption reach",
-				onUseTick, "LivingStaffFocusRules.bareAbsorptionRange()");
+		assertContains("bare absorption uses the one verb reach",
+				onUseTick, "VerbReach.of(player, Verb.ABSORB)");
+		assertBefore("a claiming Sculpting acts before the full-body stop",
+				onUseTick, "SculptingDispatcher.trySculpt(sculptor, Verb.ABSORB)", "BloodAbsorptionChannelRules.canDrainLivingTarget");
 		assertContains("bare block absorption uses the shared bare per-tick helper",
 				onUseTick, "LivingStaffFocusRules.bareBlockAbsorptionPerTick()");
-		assertContains("bare absorption applies channel movement penalty while held",
-				onUseTick, "applyChannelMovementPenalty");
+		assertContains("bare absorption applies the channel's movement rule while held",
+				onUseTick, "VerbChannel.applyMovement(channelingPlayer)");
 		assertContains("bare living-target absorption uses pulse interval helper",
 				onUseTick, "BloodAbsorptionChannelRules.livingTargetPulseInterval");
 		assertContains("bare living-target absorption records strain only after mob drain",
@@ -36,10 +40,10 @@ public final class BloodAbsorptionItemSourceTest {
 				use, "BloodAbsorptionChannelRules.canStartChannel(volume.isActive())");
 		assertBefore("full blood stops ordinary mob drain after block and Will rites get priority",
 				onUseTick, "BloodAbsorptionChannelRules.canDrainLivingTarget", "findBareAbsorptionTarget");
-		assertContains("bare absorption reads Sated Siphon before full-volume drain",
-				onUseTick, "SkillPointInit.skill_sated_siphon");
-		assertContains("Living Staff absorption reads Sated Siphon before full-volume drain",
-				livingStaff, "SkillPointInit.skill_sated_siphon");
+		assertContains("NQ-04-10: Sated Siphon sends a full body's lost blood to a worn gourd",
+				absorbFromTarget, "SkillPointInit.skill_sated_siphon");
+		assertContains("NQ-04-10: the lost blood goes to the worn gourd",
+				absorbFromTarget, "BloodGourdItem.fillWornGourd(absorbingPlayer, overflow)");
 		assertBefore("absorbing from a target only hurts entities on the server",
 				absorbFromTarget, "if (level.isClientSide)", "target.hurt");
 		assertContains("absorption tracks target health before damage",
@@ -50,10 +54,21 @@ public final class BloodAbsorptionItemSourceTest {
 				absorbFromTarget, "target.getHealth()", "volume.fill");
 		assertContains("absorption ignores rejected or zero-damage hits",
 				absorbFromTarget, "if (!hurt || absorbed <= 0.0D)");
-		assertContains("absorption derives personal credit from actual damage",
-				absorbFromTarget, "personalBlood(sharing, absorbed)");
-		assertContains("shared siphon derives its redirect from actual damage",
-				absorbFromTarget, "sharedBlood(sharing, absorbed)");
+		assertContains("absorption derives what comes back from actual damage, scaled by the rider (CL-26)",
+				absorbFromTarget, "double returned = absorbed * rider.blood()");
+		assertContains("absorption derives personal credit from what came back",
+				absorbFromTarget, "personalBlood(sharing, returned)");
+		assertContains("shared siphon derives its redirect from what came back",
+				absorbFromTarget, "sharedBlood(sharing, returned)");
+		assertContains("the draw's damage names the one drawing (CL-24)",
+				absorbFromTarget, "HemoDamageTypes.bloodAbsorption(level, user)");
+		if (absorbFromTarget.contains("damageSources().generic()")) {
+			throw new AssertionError("the draw no longer deals ownerless generic damage (CL-24)");
+		}
+		assertContains("the rider table is read from the creature's school states",
+				absorbFromTarget, "AbsorptionRiderEffects.riderFor(target)");
+		assertContains("Crimson Mastery scales the draw's damage",
+				absorbFromTarget, "SkillPointHelper.getCrimsonMasteryMultiplier(absorbingPlayer)");
 		assertContains("channel movement penalty reads Dragging Siphon",
 				source, "SkillPointHelper.getDraggingSiphonLevel");
 		assertContains("channel movement penalty reads Mobile Conduit",
@@ -63,15 +78,17 @@ public final class BloodAbsorptionItemSourceTest {
 		assertContains("channel movement exposes multiplier for client input",
 				source, "getChannelMovementMultiplier");
 		assertContains("channel movement compensates client input for vanilla use-item slowdown",
-				source, "getClientChannelMovementInputMultiplier");
+				channel, "BloodAbsorptionChannelRules.clientInputMultiplier(movementMultiplier(player))");
 		assertContains("channel movement detects bare blood absorption use",
-				source, "player.getUseItem().getItem() instanceof BloodAbsorptionItem");
-		assertContains("channel movement detects staff blood absorption use",
-				source, "LivingStaffItem.isLivingStaffAbsorptionUse(player, player.getUseItem())");
+				channel, "stack.getItem() instanceof BloodAbsorptionItem");
+		assertContains("channel movement detects staff use of the active verb",
+				channel, "stack.getItem() instanceof LivingStaffItem");
+		assertContains("a Sculpting that claims decides rooting",
+				channel, "claim.selected().sculpting().roots()");
 		assertContains("client input event handles channel movement at the input layer",
 				clientEvents, "MovementInputUpdateEvent");
-		assertContains("client input event checks blood absorption channeling",
-				clientEvents, "BloodAbsorptionItem.isChannelingBloodAbsorption(player)");
+		assertContains("client input event checks the verb channel",
+				clientEvents, "VerbChannel.channelling(player)");
 		assertContains("client input event scales forward input by channel multiplier",
 				clientEvents, "input.forwardImpulse *= inputMultiplier");
 		assertContains("client input event scales strafe input by channel multiplier",
@@ -89,21 +106,11 @@ public final class BloodAbsorptionItemSourceTest {
 				source, "isHemomancyNpc(target)");
 	}
 
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
 	private static void assertBefore(String label, String text, String first, String second) {
 		int firstIndex = text.indexOf(first);
 		int secondIndex = text.indexOf(second);
 		if (firstIndex < 0 || secondIndex < 0 || firstIndex > secondIndex) {
 			throw new AssertionError(label + " (expected '" + first + "' before '" + second + "')");
-		}
-	}
-
-	private static void assertContains(String label, String text, String needle) {
-		if (!text.contains(needle)) {
-			throw new AssertionError(label + " (missing '" + needle + "')");
 		}
 	}
 }

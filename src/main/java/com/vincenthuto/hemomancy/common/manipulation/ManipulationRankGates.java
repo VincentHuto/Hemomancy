@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 /**
- * Central degree gates for learning blood manipulations by rank.
+ * Central degree gates for learning blood manipulations by rank, raised by a manipulation's own degree floor.
  */
 public final class ManipulationRankGates {
 	private ManipulationRankGates() {
@@ -20,5 +20,15 @@ public final class ManipulationRankGates {
 
 	public static boolean playerMeetsRank(int degree, EnumManipulationRank rank) {
 		return degree >= minDegreeForRank(rank);
+	}
+
+	/** The degree a manipulation is learned at: its rank's gate, or its own floor when that is higher. */
+	public static int minDegreeFor(BloodManipulation manipulation) {
+		if (manipulation == null) return 0;
+		return Math.max(minDegreeForRank(manipulation.getRank()), manipulation.getRequiredDegree());
+	}
+
+	public static boolean playerMeets(int degree, BloodManipulation manipulation) {
+		return degree >= minDegreeFor(manipulation);
 	}
 }

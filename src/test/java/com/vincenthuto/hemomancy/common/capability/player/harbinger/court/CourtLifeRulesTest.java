@@ -68,16 +68,37 @@ class CourtLifeRulesTest {
 
 	@Test
 	void aVisitMakesAStrangerAGuestAndNoMore() {
-		assertEquals(Standing.GUEST, CourtStandingRules.afterAct(Standing.STRANGER, ActKind.VISIT));
-		assertEquals(Standing.GUEST, CourtStandingRules.afterAct(Standing.GUEST, ActKind.VISIT));
-		assertEquals(Standing.FRIEND, CourtStandingRules.afterAct(Standing.FRIEND, ActKind.VISIT));
+		assertEquals(Standing.GUEST, CourtStandingRules.afterAct(Standing.STRANGER, ActKind.VISIT, false, false));
+		assertEquals(Standing.GUEST, CourtStandingRules.afterAct(Standing.GUEST, ActKind.VISIT, false, true),
+				"two visit-kind acts alone stop at guest");
+		assertEquals(Standing.FRIEND, CourtStandingRules.afterAct(Standing.FRIEND, ActKind.VISIT, false, true));
 	}
 
 	@Test
 	void aCustomRaisesOneStepToFriend() {
-		assertEquals(Standing.GUEST, CourtStandingRules.afterAct(Standing.STRANGER, ActKind.CUSTOM));
-		assertEquals(Standing.FRIEND, CourtStandingRules.afterAct(Standing.GUEST, ActKind.CUSTOM));
-		assertEquals(Standing.FRIEND, CourtStandingRules.afterAct(Standing.FRIEND, ActKind.CUSTOM));
+		assertEquals(Standing.GUEST, CourtStandingRules.afterAct(Standing.STRANGER, ActKind.CUSTOM, false, false));
+		assertEquals(Standing.FRIEND, CourtStandingRules.afterAct(Standing.GUEST, ActKind.CUSTOM, false, true));
+		assertEquals(Standing.FRIEND, CourtStandingRules.afterAct(Standing.FRIEND, ActKind.CUSTOM, true, true));
+	}
+
+	@Test
+	void aCustomAndAVisitMakeAFriendInEitherOrder() {
+		Standing visitFirst = CourtStandingRules.afterAct(Standing.STRANGER, ActKind.VISIT, false, false);
+		assertEquals(Standing.FRIEND, CourtStandingRules.afterAct(visitFirst, ActKind.CUSTOM, false, true));
+		Standing customFirst = CourtStandingRules.afterAct(Standing.STRANGER, ActKind.CUSTOM, false, false);
+		assertEquals(Standing.GUEST, customFirst);
+		assertEquals(Standing.FRIEND, CourtStandingRules.afterAct(customFirst, ActKind.VISIT, true, false),
+				"the first visit after the custom made the guest makes a friend");
+		assertEquals(Standing.GUEST, CourtStandingRules.afterAct(Standing.GUEST, ActKind.VISIT, true, true),
+				"a second visit-kind act after that adds nothing");
+	}
+
+	@Test
+	void anActsKindIsReadFromItsId() {
+		assertEquals(ActKind.CUSTOM, CourtStandingRules.kindOf("custom_food"));
+		assertEquals(ActKind.CUSTOM, CourtStandingRules.kindOf("custom_vent_offering"));
+		assertEquals(ActKind.VISIT, CourtStandingRules.kindOf("visit"));
+		assertEquals(ActKind.VISIT, CourtStandingRules.kindOf("welcome_gift"));
 	}
 
 	@Test
@@ -128,22 +149,34 @@ class CourtLifeRulesTest {
 
 	@Test
 	void theUsurpationGateNeedsTheCourtAnApexStrainAndKindlingFriendship() {
-		assertEquals(CourtChampionRules.Gate.OPEN, CourtChampionRules.challenge(true, false, false, true, Standing.FRIEND, 100L, 0L));
-		assertEquals(CourtChampionRules.Gate.REFUSED_UNKNOWN, CourtChampionRules.challenge(false, false, false, true, Standing.FRIEND, 100L, 0L));
-		assertEquals(CourtChampionRules.Gate.REFUSED_SHUNNED, CourtChampionRules.challenge(true, true, false, true, Standing.FRIEND, 100L, 0L));
-		assertEquals(CourtChampionRules.Gate.REFUSED_CHAMPION, CourtChampionRules.challenge(true, false, true, true, Standing.FRIEND, 100L, 0L));
-		assertEquals(CourtChampionRules.Gate.REFUSED_STRAIN, CourtChampionRules.challenge(true, false, false, false, Standing.FRIEND, 100L, 0L));
-		assertEquals(CourtChampionRules.Gate.REFUSED_STANDING, CourtChampionRules.challenge(true, false, false, true, Standing.GUEST, 100L, 0L));
+		assertEquals(CourtChampionRules.Gate.OPEN, CourtChampionRules.challenge(true, false, false, true, true, Standing.FRIEND, 100L, 0L));
+		assertEquals(CourtChampionRules.Gate.REFUSED_UNKNOWN, CourtChampionRules.challenge(false, false, false, true, true, Standing.FRIEND, 100L, 0L));
+		assertEquals(CourtChampionRules.Gate.REFUSED_SHUNNED, CourtChampionRules.challenge(true, true, false, true, true, Standing.FRIEND, 100L, 0L));
+		assertEquals(CourtChampionRules.Gate.REFUSED_CHAMPION, CourtChampionRules.challenge(true, false, true, true, true, Standing.FRIEND, 100L, 0L));
+		assertEquals(CourtChampionRules.Gate.REFUSED_STRAIN, CourtChampionRules.challenge(true, false, false, true, false, Standing.FRIEND, 100L, 0L));
+		assertEquals(CourtChampionRules.Gate.REFUSED_STANDING, CourtChampionRules.challenge(true, false, false, true, true, Standing.GUEST, 100L, 0L));
+	}
+
+	@Test
+	void theUsurpationNeedsTheFifthDegreeAndSaysSo() {
+		assertEquals(5, CourtChampionRules.MINIMUM_DEGREE);
+		assertEquals(CourtChampionRules.Gate.REFUSED_DEGREE,
+				CourtChampionRules.challenge(true, false, false, false, true, Standing.FRIEND, 100L, 0L));
+		assertEquals(CourtChampionRules.Gate.REFUSED_CHAMPION,
+				CourtChampionRules.challenge(true, false, true, false, true, Standing.FRIEND, 100L, 0L), "the title is named first");
+		assertEquals(CourtChampionRules.Gate.REFUSED_DEGREE,
+				CourtChampionRules.challenge(true, false, false, false, true, Standing.FRIEND, 100L, 5000L), "and the Degree before the wait");
+		assertEquals("hemomancy.court.champion.refused_degree", CourtChampionRules.Gate.REFUSED_DEGREE.translationKey());
 	}
 
 	@Test
 	void aLostUsurpationWaitsOneDay() {
 		long retry = CourtChampionRules.retryAfterLoss(1000L);
 		assertEquals(25000L, retry);
-		assertEquals(CourtChampionRules.Gate.REFUSED_WAIT, CourtChampionRules.challenge(true, false, false, true, Standing.FRIEND, 24999L, retry));
-		assertEquals(CourtChampionRules.Gate.OPEN, CourtChampionRules.challenge(true, false, false, true, Standing.FRIEND, 25000L, retry));
+		assertEquals(CourtChampionRules.Gate.REFUSED_WAIT, CourtChampionRules.challenge(true, false, false, true, true, Standing.FRIEND, 24999L, retry));
+		assertEquals(CourtChampionRules.Gate.OPEN, CourtChampionRules.challenge(true, false, false, true, true, Standing.FRIEND, 25000L, retry));
 		// A loss moves the worn strain into the Jar: the refusal still names the wait, not the strain.
-		assertEquals(CourtChampionRules.Gate.REFUSED_WAIT, CourtChampionRules.challenge(true, false, false, false, Standing.FRIEND, 24999L, retry));
+		assertEquals(CourtChampionRules.Gate.REFUSED_WAIT, CourtChampionRules.challenge(true, false, false, true, false, Standing.FRIEND, 24999L, retry));
 	}
 
 	// --- Saved state ---------------------------------------------------------------------------------------------

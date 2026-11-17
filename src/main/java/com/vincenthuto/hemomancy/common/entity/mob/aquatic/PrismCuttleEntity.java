@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 import net.minecraft.core.BlockPos;
 import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
 import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species;
-import net.minecraft.core.particles.DustParticleOptions;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -37,7 +38,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -47,6 +47,8 @@ public class PrismCuttleEntity extends WaterAnimal {
 			SynchedEntityData.defineId(PrismCuttleEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> FLASH_TICKS =
 			SynchedEntityData.defineId(PrismCuttleEntity.class, EntityDataSerializers.INT);
+	private static final ParticleColor FLASH_MAGENTA = new ParticleColor(242, 26, 230);
+	private static final ParticleColor FLASH_CYAN = new ParticleColor(26, 230, 255);
 
 	private int flashCooldownTicks;
 	private Vec3 fleeImpulse = Vec3.ZERO;
@@ -179,10 +181,10 @@ public class PrismCuttleEntity extends WaterAnimal {
 		this.level().playSound(null, this.blockPosition(), SoundEvents.GLOW_SQUID_SQUIRT, SoundSource.NEUTRAL,
 				0.6F, 1.35F);
 		if (this.level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(new DustParticleOptions(new Vector3f(0.95F, 0.1F, 0.9F), 1.2F),
-					this.getX(), this.getY() + 0.25D, this.getZ(), 18, 0.4D, 0.25D, 0.4D, 0.02D);
-			serverLevel.sendParticles(new DustParticleOptions(new Vector3f(0.1F, 0.9F, 1.0F), 1.2F),
-					this.getX(), this.getY() + 0.25D, this.getZ(), 18, 0.4D, 0.25D, 0.4D, 0.02D);
+			serverLevel.sendParticles(HemoParticleData.emberSpark(FLASH_MAGENTA, 0.06F, 1.0F, 20),
+					this.getX(), this.getY() + 0.25D, this.getZ(), 18, 0.4D, 0.25D, 0.4D, 0.01D);
+			serverLevel.sendParticles(HemoParticleData.emberSpark(FLASH_CYAN, 0.06F, 1.0F, 20),
+					this.getX(), this.getY() + 0.25D, this.getZ(), 18, 0.4D, 0.25D, 0.4D, 0.01D);
 		}
 	}
 

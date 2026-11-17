@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
@@ -226,6 +227,40 @@ public final class MorphlingStrainMatrixGameTests {
 	@GameTest(template = "empty", batch = BATCH, timeoutTicks = 544)
 	public static void sunburstHomeWithAlly(GameTestHelper h) {
 		run(h, new Sunburst(), true, true);
+	}
+
+	// --- Two home and set rules the matrix rows don't reach --------------------------------------------------------
+
+	/** Sun-Fed's home reaches a host 5 blocks under a sunlit water surface in daytime; 6 blocks is too deep. */
+	@GameTest(template = "empty", batch = BATCH, timeoutTicks = 60)
+	public static void sunburstHomeReachesFiveBlocksUnderASunlitSurface(GameTestHelper h) {
+		ServerPlayer host = MorphlingPowerGameTests.host(h);
+		Rig r = new Rig(h, new Sunburst(), true, host, null);
+		host.moveTo(r.at(0.0D, 0.0D));
+		h.runAfterDelay(1, () -> sunlitColumn(r, MorphlingHomeConditions.SUNLIT_WATER_DEPTH));
+		h.runAfterDelay(15, () -> {
+			r.check(h.getLevel().isDay(), "the test world is in daytime");
+			r.check(sunburstHome(r), "home " + MorphlingHomeConditions.SUNLIT_WATER_DEPTH + " blocks under the surface");
+			sunlitColumn(r, MorphlingHomeConditions.SUNLIT_WATER_DEPTH + 1);
+		});
+		h.runAfterDelay(30, () -> {
+			r.check(!sunburstHome(r), "not home " + (MorphlingHomeConditions.SUNLIT_WATER_DEPTH + 1) + " blocks under it");
+			MorphlingPowerGameTests.done(h, host);
+		});
+	}
+
+	/** A glass tube of water over the host whose open surface lies {@code depth} blocks above the host's eyes. */
+	private static void sunlitColumn(Rig r, int depth) {
+		int eye = 2;
+		r.fill(-1, 0, -1, 1, eye + 8, 1, Blocks.GLASS);
+		r.fill(0, 1, 0, 0, eye + depth - 1, 0, Blocks.WATER);
+		r.fill(0, eye + depth, 0, 0, eye + 8, 0, Blocks.AIR);
+	}
+
+	private static boolean sunburstHome(Rig r) {
+		r.wet();
+		MorphlingHomeConditions.forget(r.host);
+		return r.host.isInWater() && MorphlingHomeConditions.sunburst(r.host);
 	}
 
 	// --- The runner -----------------------------------------------------------------------------------------------
@@ -668,9 +703,17 @@ public final class MorphlingStrainMatrixGameTests {
 			r.check(near(m.breakSpeedMultiplier(r.host, r.stack, Blocks.STONE.defaultBlockState()),
 					1.0D + HoldfastRules.gripBreakSpeed(s)), "Grip breaks stone faster");
 			r.check(m.breakSpeedMultiplier(r.host, r.stack, Blocks.DIRT.defaultBlockState()) == 1.0F, "but not dirt");
+			// Cling holds a sturdy face the body touches (the shared cling rules, core-loop Track 9): stand one beside it.
+			net.minecraft.core.BlockPos wall = r.host.blockPosition().north();
+			net.minecraft.world.level.block.state.BlockState[] was = {r.h.getLevel().getBlockState(wall),
+					r.h.getLevel().getBlockState(wall.above())};
+			r.h.getLevel().setBlock(wall, Blocks.STONE.defaultBlockState(), 3);
+			r.h.getLevel().setBlock(wall.above(), Blocks.STONE.defaultBlockState(), 3);
 			r.host.horizontalCollision = true;
 			r.check(HoldfastMorphlingItem.clings(r.host, r.stack) == (s >= 2), "Cling from Developing");
 			r.host.horizontalCollision = false;
+			r.h.getLevel().setBlock(wall, was[0], 3);
+			r.h.getLevel().setBlock(wall.above(), was[1], 3);
 			r.check(HoldfastMorphlingItem.isBreakwater(r.host, r.stack) == (s >= 4), "Breakwater from Apex");
 			r.check(r.host.hasEffect(MobEffects.DAMAGE_RESISTANCE) == (s >= 4), "an anchored Breakwater hardens its host alone");
 			if (r.ally != null) {
@@ -897,9 +940,12 @@ public final class MorphlingStrainMatrixGameTests {
 		MorphlingPowerGameTests.done(h, player);
 	}
 
-	/** The full Prismatic set already sits at +35% swim speed, so a Purse worn with it adds nothing on top. */
+	/**
+	 * The Purse's swim bonus is the strain's own share (HN-2): inside the full Prismatic set it keeps all of it, and the
+	 * set's x1.35 multiplies on top. This pinned the old ceiling on the total until the 2026-11-13 ruling.
+	 */
 	@GameTest(template = "empty", timeoutTicks = 40)
-	public static void purseSwimSpeedNeverStacksPastThePrismaticSet(GameTestHelper h) {
+	public static void purseSwimSpeedKeepsItsShareInsideThePrismaticSet(GameTestHelper h) {
 		for (int x = 1; x <= 3; x++) for (int z = 1; z <= 3; z++) for (int y = 1; y <= 3; y++)
 			h.setBlock(new BlockPos(x, y, z), x == 2 && z == 2 && y > 1 ? Blocks.WATER : Blocks.GLASS);
 		ServerPlayer player = MorphlingPowerGameTests.host(h);
@@ -915,8 +961,11 @@ public final class MorphlingStrainMatrixGameTests {
 		player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ItemInit.prismatic_leggings.get()));
 		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemInit.prismatic_boots.get()));
 		((IMorphling) purse.getItem()).onEquippedServerTick(player, purse);
-		h.assertTrue(player.getAttribute(NeoForgeMod.SWIM_SPEED).getModifier(MermaidsPurseMorphlingItem.SWIM_SPEED) == null,
-				"inside the full Prismatic set the strain adds no swim speed");
+		AttributeModifier worn = player.getAttribute(NeoForgeMod.SWIM_SPEED).getModifier(MermaidsPurseMorphlingItem.SWIM_SPEED);
+		h.assertTrue(ArmorSetHelper.hasFullPrismaticSet(player), "the full Prismatic set is worn");
+		h.assertTrue(worn != null && near(worn.amount(), bare.amount()),
+				"inside the full Prismatic set the strain keeps its whole share: " + (worn == null ? "none" : worn.amount())
+						+ " against " + bare.amount());
 		for (EquipmentSlot slot : new EquipmentSlot[] { EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS,
 				EquipmentSlot.FEET }) player.setItemSlot(slot, ItemStack.EMPTY);
 		MorphlingPowerGameTests.done(h, player);
@@ -971,6 +1020,8 @@ public final class MorphlingStrainMatrixGameTests {
 			h.getLevel().getChunkSource().move(watcher);
 		});
 		h.runAfterDelay(10, () -> {
+			// A strand ties to a real block: the rope's own tick prunes anchors that are air (every tenth game tick).
+			h.setBlock(new BlockPos(2, 1, 4), Blocks.STONE);
 			BlockPos anchor = h.absolutePos(new BlockPos(2, 1, 4));
 			IMorphling ropeStrain = (IMorphling) ropeStack.getItem();
 			h.assertTrue(ropeStrain.onEquippedSneakUse(rope, ropeStack, watcher, null)

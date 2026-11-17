@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.HematicFortificationRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
@@ -57,8 +56,7 @@ public final class ThelemicMemoryActivationService {
         double bloodCost = payment.bloodCost() - borrowed;
         boolean paid = bloodCost <= .000001D || BloodAccounting.payUpkeep(player, bloodCost,
                 new BloodAccounting.Source("thelemic_memory_" + memory.id(), "thelemic_memory.hemomancy." + memory.id(),
-                        Category.THELEMIC_MEMORY,
-                        false, true), 1, true).satisfied();
+                        Category.THELEMIC_MEMORY, true), 1, true).satisfied();
         if (!paid) {
             if (borrowed > 0D) BorrowedBloodReserve.deposit(player, borrowed);
             return TriggerResult.REJECTED;
@@ -69,13 +67,13 @@ public final class ThelemicMemoryActivationService {
 
         if (HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) {
             var vascular = HemoCapabilityAccess.getVascularSystem(player);
-            EnumBloodFlow before = vascular.getBloodFlowBySection(memory.section());
             boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification();
             vascular.setVascularSectionHealth(memory.section(),
                     -HematicFortificationRules.adjustedStrain(payment.strain(), fortified));
             VascularSystemEvents.syncVascular(player, vascular);
-            VeinMasonAssignments.onThelemicStrain(player, before,
-                    vascular.getBloodFlowBySection(memory.section()));
+            VeinMasonAssignments.onThelemicStrain(player, vascular.getBloodFlowBySection(memory.section()));
+        } else {
+            VeinMasonAssignments.onThelemicCastWithoutDegradation(player);
         }
         var temper = HemoCapabilityAccess.getBloodTemperament(player);
         temper.addTemperAlignment(memory.primaryTemper(), .075F);

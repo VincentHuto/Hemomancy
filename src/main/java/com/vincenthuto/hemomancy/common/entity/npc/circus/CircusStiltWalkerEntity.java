@@ -30,7 +30,7 @@ public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 40.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.18D).add(Attributes.ARMOR, 4.0D)
-				.add(Attributes.STEP_HEIGHT, 1.5D).add(Attributes.FOLLOW_RANGE, 24.0D);
+				.add(Attributes.STEP_HEIGHT, 1.5D).add(Attributes.ATTACK_DAMAGE, 3.0D).add(Attributes.FOLLOW_RANGE, 24.0D);
 	}
 
 	@Override
@@ -96,9 +96,7 @@ public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 	protected void telegraphDefense(ServerLevel server, LivingEntity target, int tick, BossMoveTimeline move) {
 		float charge = tick / (float) move.windup();
 		CircusEffects.gather(server, position().add(0.0D, getBbHeight() * 0.8D, 0.0D), CircusEffects.BONE, charge);
-		if (tick % 4 != 0) return;
-		BossTelegraphs.ring(server, position(), SLAM_RADIUS, CircusEffects.CRIMSON, 32);
-		BossTelegraphs.ring(server, position(), SLAM_RADIUS * charge, CircusEffects.BONE, 18);
+		CircusEffects.ringFootprint(server, position(), SLAM_RADIUS, charge);
 	}
 
 	@Override
@@ -114,11 +112,11 @@ public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 					SLAM_RADIUS * 0.4D, 0.14D);
 		}
 		for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(SLAM_RADIUS))) {
-			if (victim == this || isTroupeMember(victim)) continue;
+			if (!canStrike(victim)) continue;
 			double dx = victim.getX() - getX();
 			double dz = victim.getZ() - getZ();
 			double length = Math.max(0.001D, Math.sqrt(dx * dx + dz * dz));
-			if (victim.hurt(damageSources().mobAttack(this), 3.0F))
+			if (victim.hurt(damageSources().mobAttack(this), (float) getAttributeValue(Attributes.ATTACK_DAMAGE)))
 				victim.push(dx / length * 1.1D, 0.35D, dz / length * 1.1D);
 		}
 	}

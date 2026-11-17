@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerCicatrixAnchoriteEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEntity;
@@ -29,11 +31,13 @@ public final class DialogueEventSpeakers {
 	private static final Map<String, List<Class<? extends Entity>>> EVENTS = Map.ofEntries(
 			Map.entry(HarbingerVicarDialogueTrees.EVENT_HERMIT_ROAD_REPORT, VICAR),
 			Map.entry(HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE, VICAR),
+			Map.entry(HarbingerVicarDialogueTrees.EVENT_LEAVE_BLOODLINE, VICAR),
 			Map.entry("give_sanguine_monolith_blueprint", VICAR),
 			// The Zealot hands the same map to the Unstained.
 			Map.entry("give_stained_church_map", List.of(HarbingerVicarEntity.class, UnstainedZealotEntity.class)),
 			Map.entry(HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF, ALCHEMIST),
 			Map.entry(HarbingerAlchemistDialogueTrees.EVENT_BODY_ANSWERS_BRIEF, ALCHEMIST),
+			Map.entry(FirstSeparationSpinDialogue.CLEAR, ALCHEMIST),
 			Map.entry(HarbingerMnemonistDialogueTrees.EVENT_RELIQUARY_TAUGHT, MNEMONIST),
 			Map.entry(HarbingerMnemonistDialogueTrees.EVENT_ANCHORITE_COUNSEL, MNEMONIST),
 			Map.entry(HarbingerCicatrixAnchoriteDialogueTrees.EVENT_DIAGNOSIS, ANCHORITE),
@@ -43,11 +47,20 @@ public final class DialogueEventSpeakers {
 			Map.entry("recruit_harbinger", RECRUITABLE),
 			Map.entry("expel_harbinger", RECRUITABLE));
 
-	/** Event families named by prefix: the red taxonomy samples, the bestiary and the scar-pattern replacements. */
-	private static final Map<String, List<Class<? extends Entity>>> PREFIXES = Map.of(
-			HarbingerAlchemistDialogueTrees.EVENT_RED_TAXONOMY_PREFIX, ALCHEMIST,
-			"alchemist_bestiary_", ALCHEMIST,
-			"vein_mason_replace_", ANCHORITE);
+	/**
+	 * Event families named by prefix: the red taxonomy samples, the bestiary, the scar-pattern replacements and each
+	 * speaker's core-loop lessons ({@link CoreLoopLessons}). No prefix starts another.
+	 */
+	private static final Map<String, List<Class<? extends Entity>>> PREFIXES = Map.ofEntries(
+			Map.entry(HarbingerAlchemistDialogueTrees.EVENT_RED_TAXONOMY_PREFIX, ALCHEMIST),
+			Map.entry("alchemist_bestiary_", ALCHEMIST),
+			Map.entry("vein_mason_replace_", ANCHORITE),
+			Map.entry("hermit_craft_", List.of(HarbingerHermitEntity.class)),
+			Map.entry("vicar_craft_", VICAR),
+			Map.entry("alchemist_craft_", ALCHEMIST),
+			Map.entry("mnemonist_craft_", MNEMONIST),
+			Map.entry("artificer_craft_", List.of(HarbingerArtificerEntity.class)),
+			Map.entry("anchorite_craft_", ANCHORITE));
 
 	private DialogueEventSpeakers() {
 	}

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.unstained.crafting;
 
+import com.vincenthuto.hemomancy.common.particle.HemoPalette;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
@@ -10,7 +12,6 @@ import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -112,11 +113,11 @@ public class PallidRetortBlock extends BaseEntityBlock implements EntityBlock, I
 						0.6F, 0.8F + random.nextFloat() * 0.4F, false);
 			}
 
-			// Blood drip particles rising from the top like steam
+			// Lethean drips at the spout
 			for (int i = 0; i < 2; i++) {
 				double ox = (random.nextDouble() - 0.5) * 0.4;
 				double oz = (random.nextDouble() - 0.5) * 0.4;
-				level.addParticle(ParticleTypes.DRIPPING_LAVA, x + ox, y + 0.1, z + oz,
+				level.addParticle(HemoParticleData.letheanDrip(), x + ox, y + 0.1, z + oz,
 						0.0, 0.02, 0.0);
 			}
 
@@ -124,7 +125,7 @@ public class PallidRetortBlock extends BaseEntityBlock implements EntityBlock, I
 			if (random.nextDouble() < 0.3) {
 				double ox = (random.nextDouble() - 0.5) * 0.3;
 				double oz = (random.nextDouble() - 0.5) * 0.3;
-				level.addParticle(ParticleTypes.END_ROD, x + ox, y + 0.15, z + oz, 0.0, 0.015, 0.0);
+				level.addParticle(HemoParticleData.glow(HemoPalette.PALE_GLOW), x + ox, y + 0.15, z + oz, 0.0, 0.015, 0.0);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.resource;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,7 +15,8 @@ public final class AbocipherTextureResourceTest {
 	private AbocipherTextureResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		List<Path> roots = List.of(
 				RESOURCE_ROOT.resolve("assets/hemomancy/textures/particle/abocipher"),
 				RESOURCE_ROOT.resolve("assets/hemomancy/textures/font/abocipher"));

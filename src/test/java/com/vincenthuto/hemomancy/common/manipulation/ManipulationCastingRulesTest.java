@@ -22,12 +22,13 @@ class ManipulationCastingRulesTest {
 	}
 
 	@Test
-	void chargedCostRefusesBelowTheQuarterFloor() {
-		assertEquals(0.25F, ManipulationCastingRules.MIN_CHARGE_FRACTION);
+	void chargedCostRefusesBelowTheHalfFloor() {
+		assertEquals(0.5F, ManipulationCastingRules.MIN_CHARGE_FRACTION);
 		assertTrue(ManipulationCastingRules.chargedCost(400.0D, 4, 40).isEmpty(), "0.1 charge must be refused");
 		assertTrue(ManipulationCastingRules.chargedCost(400.0D, 0, 40).isEmpty(), "no charge must be refused");
-		assertEquals(100.0D, ManipulationCastingRules.chargedCost(400.0D, 10, 40).getAsDouble(), 1.0E-9,
-				"0.25 charge pays 25% of the cost");
+		assertTrue(ManipulationCastingRules.chargedCost(400.0D, 19, 40).isEmpty(), "just under half must be refused");
+		assertEquals(200.0D, ManipulationCastingRules.chargedCost(400.0D, 20, 40).getAsDouble(), 1.0E-9,
+				"0.5 charge pays 50% of the cost");
 	}
 
 	@Test

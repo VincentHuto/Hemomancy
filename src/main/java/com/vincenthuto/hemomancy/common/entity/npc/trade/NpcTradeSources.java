@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public final class NpcTradeSources {
 	public static final BloodAccounting.Source TITHE = BloodAccounting.Source.of(NpcTradeWant.Blood.TITHE,
-			Category.OTHER, true, true);
+			Category.OTHER, true);
 	private static final Map<String, BloodAccounting.Source> BY_ID = Map.of(TITHE.id(), TITHE);
 
 	private NpcTradeSources() {}

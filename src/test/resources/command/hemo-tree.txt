@@ -52,6 +52,11 @@ hemo permission2
       mundane executes permission0
       outsider executes permission0
       rival executes permission0
+  gouge permission0
+    clear executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    light executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
   manipulations permission0
     add permission0
       <manipulation:string(SINGLE_WORD)> suggests executes permission0
@@ -126,6 +131,11 @@ hemo permission2
     remove permission0
       <summon:string(SINGLE_WORD)> suggests executes permission0
         <player:entity(single=true, playersOnly=true)> executes permission0
+  tank permission0
+    clear executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    clot executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
   temper permission0
     get executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
@@ -136,6 +146,13 @@ hemo permission2
     <temper:string(SINGLE_WORD)> suggests permission0
       <value:float(0.0)> executes permission0
         <player:entity(single=true, playersOnly=true)> executes permission0
+  temperpool permission0
+    carried executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    dry executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    restore executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
   unstained permission0
     begin executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
@@ -158,6 +175,11 @@ hemo permission2
         <value:float(0.0, 100.0)> executes permission0
           <player:entity(single=true, playersOnly=true)> executes permission0
     reset executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+  vat permission0
+    clear executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    fill executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
   vesper permission0
     fight executes permission0

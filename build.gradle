@@ -349,6 +349,18 @@ tasks.named('runPelagicValidationServer').configure {
     }
 }
 
+// Bakes every hematic HUD state's binding to textures/gui/blood_hud/layouts/ for hand editing (-Pforce rewrites).
+tasks.register('exportHudLayouts', JavaExec) {
+    group = 'hemomancy'
+    description = 'Bake the living HUD binding for every state into editable PNGs.'
+    dependsOn 'testClasses'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.vincenthuto.hemomancy.client.screen.overlay.bloodhud.HudLayoutExport'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    workingDir = projectDir
+    args = [project.hasProperty('force') ? 'force' : 'keep']
+}
+
 tasks.register('alphaCheck') {
     group = 'verification'
     description = 'Runs JVM contracts, dedicated GameTests, runtime resource errors and packaged client resource checks.'

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodContribution.Category;
 
 import java.util.List;
@@ -8,7 +9,8 @@ public final class MaxBloodRulesTest {
 	private MaxBloodRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		capacitySpleenAndEternalCovenantStackAdditively();
 		scarPenaltiesSubtractAfterBonuses();
 		negativeTotalsClampToMinimumCapacity();

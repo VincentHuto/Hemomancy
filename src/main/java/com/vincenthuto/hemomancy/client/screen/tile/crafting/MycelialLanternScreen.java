@@ -88,7 +88,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         super.render(gfx, mouseX, mouseY, partialTick);
         this.renderTooltip(gfx, mouseX, mouseY);
         BloodVolumeBarWidget.renderTooltip(gfx, font, bloodBarBounds,
-                menu.getBloodVolume(), menu.getMaxBloodVolume(), mouseX, mouseY);
+                menu.reading(), mouseX, mouseY);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         int barX = gx + 12;
         int barY = gy + 26;
         bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
-                menu.getBloodVolume(), menu.getMaxBloodVolume(), animTime, BORDER_RED, 0xFF220606);
+                menu.reading(), animTime, BORDER_RED, 0xFF220606);
     }
 
     private void drawSlotBackground(GuiGraphics gfx, int sx, int sy, int slotIndex) {

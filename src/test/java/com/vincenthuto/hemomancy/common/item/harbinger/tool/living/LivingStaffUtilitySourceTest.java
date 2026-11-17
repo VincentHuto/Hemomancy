@@ -1,16 +1,19 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LivingStaffUtilitySourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private LivingStaffUtilitySourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String staff = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java");
 		String layer = read("src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandLayer.java");
 		String useMethod = staff.substring(staff.indexOf("public InteractionResultHolder<ItemStack> use"));
@@ -22,8 +25,10 @@ public final class LivingStaffUtilitySourceTest {
 
 		assertBefore("staff starts using before the server-only branch so client hold ticks and particles run",
 				useMethod, "playerIn.startUsingItem(handIn);", "if (!worldIn.isClientSide)");
-		assertContains("staff utility selection uses the shared name rule",
-				staff, "LivingStaffUtilitySelectionRules.isSelectedUtility");
+		assertContains("the staff channels the player's active verb, not the selection (CL-2)",
+				staff, "Verb verb = VerbChannel.activeVerb(player);");
+		assertContains("a tap that moved no blood calls the Primal Morphling",
+				staff, "held <= MORPHLING_TAP_TICKS");
 		assertContains("staff emits the shared cell-hand first-person particles while held",
 				staff, "ClientBridge.get().spawnFirstPersonCellHandParticles(stack, activeArm)");
 		assertContains("third-person blood hand layer recognizes active living staff utility use",
@@ -40,12 +45,14 @@ public final class LivingStaffUtilitySourceTest {
 				projectWithStaff, "LivingStaffFocusRules.addBloodHandled");
 		assertBefore("staff block absorption streams every tick before entity pulse gating",
 				onUseTick, "tryAbsorbFromLookedAtBlockWithStaff", "BloodAbsorptionChannelRules.livingTargetPulseInterval");
-		assertContains("staff absorption applies channel movement penalty while held",
-				onUseTick, "BloodAbsorptionItem.applyChannelMovementPenalty");
+		assertContains("staff applies the channel's movement rule while held",
+				onUseTick, "VerbChannel.applyMovement(player)");
 		assertContains("staff living-target absorption records strain only after mob drain",
 				onUseTick, "BloodAbsorptionItem.updateChannelStrain(player, handled > 0.0D)");
-		assertContains("staff block absorption uses the shared focus-derived reach",
-				absorbBlockWithStaff, "LivingStaffFocusRules.absorptionRange(focus)");
+		assertContains("staff block absorption takes the one verb reach from its caller",
+				onUseTick, "tryAbsorbFromLookedAtBlockWithStaff(pLevel, player, focus, reach)");
+		assertContains("staff absorption reach is the one verb reach",
+				onUseTick, "VerbReach.of(player, Verb.ABSORB)");
 		assertContains("staff block absorption uses the shared focus-derived block tick rate",
 				absorbBlockWithStaff, "LivingStaffFocusRules.blockAbsorptionPerTick(focus)");
 		assertNotContains("staff entity absorption no longer hides block draw behind pulse intervals",
@@ -54,18 +61,8 @@ public final class LivingStaffUtilitySourceTest {
 				staff, "recordUtilityBloodHandled(player,");
 		assertContains("staff commits handled blood once when utility use is released",
 				staff, "commitUtilityBloodHandled(player);");
-		assertContains("staff tracks handled blood on the player without powering focus from item data",
-				staff, "progress.addBloodHandled(handled);");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
+		assertContains("staff tracks the blood it spent or drew on the player, as the Staff's age (Track 8, CQ-8)",
+				staff, "LivingStaffGrowth.record(serverPlayer, ringBlood);");
 	}
 
 	private static void assertBefore(String label, String text, String first, String second) {
@@ -73,12 +70,6 @@ public final class LivingStaffUtilitySourceTest {
 		int secondIndex = text.indexOf(second);
 		if (firstIndex < 0 || secondIndex < 0 || firstIndex > secondIndex) {
 			throw new AssertionError(label + " (expected '" + first + "' before '" + second + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
 		}
 	}
 

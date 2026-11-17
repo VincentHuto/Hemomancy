@@ -75,6 +75,39 @@ class DialogueTradeLayoutTest {
 	}
 
 	@Test
+	void aCardGrowsForEveryLineItsTextWrapsTo() {
+		assertEquals(DialogueTradeLayout.CARD_HEIGHT, DialogueTradeLayout.bodyHeight(1, 2));
+		assertEquals(DialogueTradeLayout.CARD_HEIGHT, DialogueTradeLayout.bodyHeight(0, 0));
+		assertEquals(DialogueTradeLayout.CARD_HEIGHT + DialogueTradeLayout.LINE_HEIGHT,
+				DialogueTradeLayout.bodyHeight(1, 3), "a three-line card");
+		assertEquals(DialogueTradeLayout.CARD_HEIGHT + 2 * DialogueTradeLayout.LINE_HEIGHT,
+				DialogueTradeLayout.bodyHeight(1, 4), "a four-line card");
+		assertEquals(DialogueTradeLayout.CARD_HEIGHT + 2 * DialogueTradeLayout.LINE_HEIGHT,
+				DialogueTradeLayout.bodyHeight(2, 3), "a two-line title pushes the card line down");
+
+		int four = DialogueTradeLayout.bodyHeight(1, 4);
+		DialogueTradeLayout layout = DialogueTradeLayout.calculate(CONTENT,
+				new int[] {DialogueTradeLayout.CARD_HEIGHT, four, DialogueTradeLayout.CARD_HEIGHT}, -1, 0, false);
+		assertEquals(four, layout.cards().get(1).frame().height());
+		assertEquals(layout.cards().get(1).frame().bottom() + DialogueTradeLayout.GAP, layout.cards().get(2).frame().y());
+		DialogueTradeLayout base = DialogueTradeLayout.calculate(CONTENT, 3, -1, 0, false);
+		assertEquals(base.contentHeight() + four - DialogueTradeLayout.CARD_HEIGHT, layout.contentHeight());
+	}
+
+	@Test
+	void theExpandedStripSitsUnderATallerBody() {
+		int three = DialogueTradeLayout.bodyHeight(1, 3);
+		DialogueTradeLayout.Card card = DialogueTradeLayout.calculate(CONTENT, new int[] {three}, 0, 4, true)
+				.cards().getFirst();
+
+		assertEquals(three, card.body().height());
+		assertEquals(card.body().bottom(), card.note().y());
+		assertTrue(card.wells().getFirst().y() >= card.note().bottom());
+		assertTrue(card.offer().y() >= card.body().bottom());
+		assertTrue(card.frame().bottom() >= card.offer().bottom());
+	}
+
+	@Test
 	void scrollStopsAtTheLastCard() {
 		DialogueTradeLayout few = DialogueTradeLayout.calculate(CONTENT, 1, -1, 0, false);
 		DialogueTradeLayout many = DialogueTradeLayout.calculate(CONTENT, 20, -1, 0, false);

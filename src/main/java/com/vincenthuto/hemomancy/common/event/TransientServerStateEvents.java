@@ -113,6 +113,7 @@ public final class TransientServerStateEvents {
 		com.vincenthuto.hemomancy.common.entity.npc.dialogue.OfferedDialogues.clearSessionState();
 		BloodManipulation.clearSessionState();
 		HematicCommandManager.clearSessionState();
+		com.vincenthuto.hemomancy.common.entity.menagerie.MenagerieLeash.clearSessionState();
 		StillArt.clearSessionState();
 		SporiticThuribleResonanceState.clearSessionState();
 		BloodwoodGrowthHandler.clearSessionState();
@@ -127,6 +128,30 @@ public final class TransientServerStateEvents {
 		HoldfastMorphlingItem.clearSessionState();
 		BlackVeilCovenantManager.clearSessionState();
 		TemporaryIceManager.clearSessionState();
+		com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.verb.SculptingSessions.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.mortem.LignumMortisSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.ferric.LodeDrawSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.verb.strand.StrandService.clearSessionState();
+		com.vincenthuto.hemomancy.common.item.harbinger.tool.living.AbsorptionRiderEffects.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.flammeus.PyreticForgeSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.world.ground.GroundNetwork.clearSessionState();
+		com.vincenthuto.hemomancy.common.world.ground.DarkFields.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.tenebris.EclipseDomeSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialGraspSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.ferric.FerricRunSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.congeatio.CruorJavelinThrowSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.lux.FlareBeamSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.ferric.NeedleVolleySculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.flammeus.FlamePaintSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.ferric.GougeCuttingSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.verb.SweepTrail.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.lux.LuxTraceSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.animus.LivingLandSculpting.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.animus.BossBindings.clearSessionState();
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.verb.VerbPresence.clearSessionState();
+		com.vincenthuto.hemomancy.common.command.CoreLoopFixtures.clearSessionState();
 		BloodStructureFeedManager.clear();
 		BloodInfusionManager.clear();
 		PendingBloodCraftManager.clear();
@@ -155,6 +180,7 @@ public final class TransientServerStateEvents {
 		ThermalStatusVisuals.clearSessionState();
 		EarthenVeinTravelManager.clearSessionState();
 		HarbingerCardinalRiteEvents.clearSessionState();
+		com.vincenthuto.hemomancy.common.rite.harbinger.HematicUnbindingRules.clearSessionState();
 		PacketLedgerAction.clearSessionState();
 		EngramTracing.clear();
 		ActiveEngramLooms.clear();
@@ -164,6 +190,8 @@ public final class TransientServerStateEvents {
 		com.vincenthuto.hemomancy.common.worldgen.structure.circus.CircusWaybillSearch.clearSessionState();
 		com.vincenthuto.hemomancy.common.worldgen.structure.StructureSitePrediction.clearSessionState();
 		CircusPracticalController.clearSessionState();
+		com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules.clearSessionState();
+		com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetActs.clearSessionState();
 		BloodVialInjectionAnimation.clearSessionState();
 		MicroscopeExamination.clearSessionState();
 		TerrestrialSpeculumPlantingManager.clearSessionState();
@@ -186,6 +214,11 @@ public final class TransientServerStateEvents {
 		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintRoot.clearSessionState();
 		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintChannelRouter.clearSessionState();
 		com.vincenthuto.hemomancy.common.entity.boss.BossHold.clearSessionState();
+		com.vincenthuto.hemomancy.common.util.FlightArbiter.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.mortem.BlackheartedEvents.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.clearSessionState();
+		com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteSync.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState.clearSessionState();
 	}
 
 	/** Ends one player's session state. Teardowns that cancel, restore or move something run before plain removals. */
@@ -193,6 +226,7 @@ public final class TransientServerStateEvents {
 		if (player instanceof ServerPlayer serverPlayer) {
 			com.vincenthuto.hemomancy.common.entity.npc.dialogue.OfferedDialogues.logout(serverPlayer);
 			com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter.logout(serverPlayer);
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync.logout(serverPlayer);
 			ManipulationChannelManager.logout(serverPlayer);
 			CastingAnimationManager.logout(serverPlayer);
 			AvatarManifestationManager.logout(serverPlayer);
@@ -201,12 +235,13 @@ public final class TransientServerStateEvents {
 			EarthenVeinTravelManager.logout(serverPlayer);
 			CircusPracticalController.logout(serverPlayer);
 			TerrestrialSpeculumPlantingManager.logout(serverPlayer);
-			FoundingFaneEvents.clearPreviewRelation(serverPlayer);
+			FoundingFaneEvents.logout(serverPlayer);
 			HeartNodeEnvelopeSync.logout(serverPlayer);
 			HeartNodeEvents.logout(serverPlayer);
 			LanternTickLightManager.logout(serverPlayer);
 			com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionSequences.logout(serverPlayer);
 			com.vincenthuto.hemomancy.common.entity.boss.saint.SaintChannelRouter.logout(serverPlayer);
+			com.vincenthuto.hemomancy.common.manipulation.animus.BossBindings.logout(serverPlayer);
 		}
 		ManipulationReactiveEvents.logout(player);
 		ConductionManager.logout(player);
@@ -214,6 +249,8 @@ public final class TransientServerStateEvents {
 		VoyagerVesselGuidance.logout(player);
 		com.vincenthuto.hemomancy.common.worldgen.structure.court.CourtSeatSearch.logout(player.getUUID());
 		com.vincenthuto.hemomancy.common.worldgen.structure.circus.CircusWaybillSearch.logout(player.getUUID());
+		com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules.logout(player);
+		com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetActs.logout(player);
 		BloodVialInjectionAnimation.logout(player);
 		MicroscopeExamination.logout(player);
 		EngramTracing.end(player);
@@ -226,6 +263,27 @@ public final class TransientServerStateEvents {
 		BloodlineChatRateLimit.logout(player);
 		com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeRequestLimiter.logout(player);
 		BloodFlowLedger.logout(player);
+		com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.verb.SculptingSessions.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.mortem.LignumMortisSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.ferric.LodeDrawSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.verb.strand.StrandService.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.flammeus.PyreticForgeSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.world.ground.GroundNetwork.logout(player);
+		com.vincenthuto.hemomancy.common.world.ground.DarkFields.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.tenebris.EclipseDomeSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialGraspSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.ferric.FerricRunSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.congeatio.CruorJavelinThrowSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.lux.FlareBeamSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.ferric.NeedleVolleySculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.flammeus.FlamePaintSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.ferric.GougeCuttingSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.verb.SweepTrail.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.verb.VerbPresence.logout(player);
+		com.vincenthuto.hemomancy.common.command.CoreLoopFixtures.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.lux.LuxTraceSculpting.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.animus.LivingLandSculpting.logout(player);
 		SporiticThuribleEvents.logout(player);
 		GardensNetwork.logout(player);
 		MausoleumEvents.logout(player);
@@ -242,5 +300,10 @@ public final class TransientServerStateEvents {
 		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintLines.logout(player);
 		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintRoot.end(player);
 		com.vincenthuto.hemomancy.common.entity.boss.BossHold.logout(player.getUUID());
+		com.vincenthuto.hemomancy.common.util.FlightArbiter.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.mortem.BlackheartedEvents.logout(player);
+		com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.logout(player);
+		com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteSync.logout(player);
+		com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState.end(player.getUUID());
 	}
 }

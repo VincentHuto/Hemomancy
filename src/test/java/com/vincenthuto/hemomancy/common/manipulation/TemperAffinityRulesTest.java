@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import org.junit.jupiter.api.Test;
+
 public final class TemperAffinityRulesTest {
 	private TemperAffinityRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		pureManipulationUsesFullPrimaryAffinity();
 		weakerSecondaryNeverDilutesThePrimary();
 		strongerSecondaryAddsOnlyItsQuarterWeight();

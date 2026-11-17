@@ -106,8 +106,6 @@ public class EnzymaticScriptoriumBlock extends Block implements EntityBlock {
             double dx = offset.getX() + random.nextDouble() - 0.5D;
             double dy = offset.getY() - 0.5D + random.nextDouble() * 0.5D;
             double dz = offset.getZ() + random.nextDouble() - 0.5D;
-            level.addParticle(net.minecraft.core.particles.ParticleTypes.ENCHANT,
-                    targetX, targetY, targetZ, dx, dy, dz);
             level.addParticle(new com.vincenthuto.hemomancy.common.particle.data.WillAbsorptionGlowParticleData(
                     0.35F, 0.015F, 0.025F, false), targetX, targetY, targetZ, dx, dy, dz);
         }

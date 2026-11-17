@@ -1,5 +1,13 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeRules;
+import com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftEvents;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintCombatController;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.ContainmentAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
@@ -298,5 +306,39 @@ public final class SeraphaeFightGameTests {
 		} finally {
 			clean(h, seraphae, player);
 		}
+	}
+
+	/**
+	 * The Unclosing Eye on Seraphae (D-1, NQ-08-11): in her escaping light each pulse on her adds 1 integrity, at most
+	 * six a cast, and grows nothing.
+	 */
+	@GameTest(template = TEMPLATE, timeoutTicks = 260)
+	public static void herOwnEyeHoldsHerAndGrowsNothing(GameTestHelper h) {
+		SeraphaeEntity seraphae = seraphae(h);
+		ServerPlayer player = player(h, seraphae.position().add(6.0D, 0.0D, 0.0D));
+		UnclosingEyeManip eye = (UnclosingEyeManip) ManipulationInit.unclosing_eye.get();
+		CanonGiftGameTests.ready(player, eye);
+		tick(seraphae, 2);
+		seraphae.meter().set(80.0F);
+		for (int i = 0; i < 160 && seraphae.phases().phase() != SeraphaePhases.ESCAPING_LIGHT; i++) tick(seraphae, 1);
+		h.assertTrue(seraphae.phases().phase() == SeraphaePhases.ESCAPING_LIGHT, "her light escapes at 75");
+		player.moveTo(seraphae.position().add(6.0D, 0.0D, 0.0D));
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, seraphae.position().add(0, seraphae.getBbHeight() * 0.5D, 0));
+		float before = seraphae.meter().value();
+		eye.getAction(player, h.getLevel(), ItemStack.EMPTY, player.blockPosition(), UnclosingEyeRules.FULL_CHARGE);
+		CanonGiftState.EyeBeam beam = CanonGiftState.beam(player.getUUID());
+		h.assertTrue(beam != null, "the beam opened");
+		h.onEachTick(() -> CanonGiftEvents.onPlayerTick(new PlayerTickEvent.Post(player)));
+		h.runAfterDelay(UnclosingEyeRules.BEAM_TICKS - 4, () -> {
+			try {
+				h.assertTrue(beam.integrity == UnclosingEyeRules.SERAPHAE_INTEGRITY_CAP, "seven pulses gave her the cast's six: " + beam.integrity);
+				h.assertTrue(seraphae.meter().value() > before, "being witnessed held her: " + (seraphae.meter().value() - before));
+				h.assertTrue(UnclosingEyeManip.growthOf(seraphae) == 0, "nothing grows on her");
+				h.succeed();
+			} finally {
+				CanonGiftState.end(player.getUUID());
+				clean(h, seraphae, player);
+			}
+		});
 	}
 }

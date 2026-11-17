@@ -1,9 +1,12 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class CardinalRiteRecipeDataTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources/data");
@@ -11,7 +14,8 @@ public final class CardinalRiteRecipeDataTest {
 	private CardinalRiteRecipeDataTest() {
 	}
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    void allChecksPass() throws IOException {
         for (String retired : new String[]{"sanguine_initiation", "votary_rite"}) {
             assertFalse(Files.exists(RESOURCE_ROOT.resolve("hemomancy/recipe/cardinal_rite/" + retired + ".json")), "retired rank recipe still shipped");
         }
@@ -22,12 +26,6 @@ public final class CardinalRiteRecipeDataTest {
 
 	private static String read(String path) throws IOException {
 		return Files.readString(RESOURCE_ROOT.resolve(path)).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 
 	private static void assertMatches(String label, String text, String regex) {

@@ -61,13 +61,8 @@ public final class VesperManipulationCaster {
 			}
 			case DEBUFF -> {
 				ManipulationVisuals.attached(target, form, 1.2D, 60, 1);
-				if (form == ManipulationVisuals.Form.HOUR) {
-					target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1));
-					target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 100, 2));
-				} else {
-					target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 50, 3));
-					target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 80, 0));
-				}
+				target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 50, 3));
+				target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 80, 0));
 			}
 			case PULL -> {
 				ManipulationVisuals.burst(server, form, at, eye, 1.5D, 18);

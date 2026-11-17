@@ -8,7 +8,11 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 public final class CircusRingmasterRenderer extends MobRenderer<CircusRingmasterEntity, CircusRingmasterModel> {
 	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/npc/harbinger/circus/ringmaster.png");
@@ -25,6 +29,25 @@ public final class CircusRingmasterRenderer extends MobRenderer<CircusRingmaster
 	@Override
 	public ResourceLocation getTextureLocation(CircusRingmasterEntity entity) {
 		return TEXTURE;
+	}
+
+	/**
+	 * Sleight's doubles (chunk 15 T15) are not entities: they are drawn here, in his own pose, where the server says
+	 * they stand. Nothing can strike them; only he bleeds.
+	 */
+	@Override
+	public void render(CircusRingmasterEntity entity, float entityYaw, float partialTick, PoseStack poseStack,
+			MultiBufferSource buffer, int packedLight) {
+		super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+		double x = Mth.lerp(partialTick, entity.xo, entity.getX());
+		double y = Mth.lerp(partialTick, entity.yo, entity.getY());
+		double z = Mth.lerp(partialTick, entity.zo, entity.getZ());
+		for (Vec3 decoy : entity.doubles()) {
+			poseStack.pushPose();
+			poseStack.translate(decoy.x - x, decoy.y - y, decoy.z - z);
+			super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+			poseStack.popPose();
+		}
 	}
 
 	@Override

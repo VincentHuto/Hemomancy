@@ -38,7 +38,13 @@ class PendingDeliveryRegistryTest {
 			new String[] {"common/rite/harbinger/QliphothBloomEvents.java", "setFungalSpineGranted(true)"},
 			"CircusPlayerProgress.FINALE_REWARDS",
 			new String[] {"common/capability/player/harbinger/circus/CircusPlayerProgress.java",
-					"setPendingTopper(count(left, ItemInit.ringmaster_topper.get()))"});
+					"setPendingTopper(count(left, ItemInit.ringmaster_topper.get()))"},
+			"StationUpgradeProgress.KITS",
+			new String[] {"common/capability/player/harbinger/station/StationUpgradeProgress.java", "\"Pending\""},
+			"ScaleGripEvents.RETURNS",
+			new String[] {"common/item/shared/ScaleGripEvents.java", "\"scale_grip_returns\""},
+			"OwedRewards.CLAIM",
+			new String[] {"common/mission/shared/OwedRewards.java", "\"owed_rewards\""});
 
 	@Test
 	void onlyPendingDeliveryCountsInsertions() throws Exception {

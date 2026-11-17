@@ -41,7 +41,7 @@ import java.util.UUID;
 
 public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implements IBloodReservoir, WorldlyContainer,
         UpgradeableStation {
-    private static final BloodAccounting.Source HAMMER_REPAIR = BloodAccounting.Source.of("resonant_forge_hammer", Category.STATION, false, false);
+    private static final BloodAccounting.Source HAMMER_REPAIR = BloodAccounting.Source.of("resonant_forge_hammer", Category.STATION, false);
     private static final int[] NO_AUTOMATION_SLOTS = new int[0];
     public static final int APPLICATION_ITEM = 0;
     public static final int APPLICATION_CYLINDER = 1;
@@ -325,9 +325,13 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
         held.shrink(1); hammerAsh = true; BlockEntitySync.markAndSync(this); return true;
     }
 
-    /** Blood aimed at a worn hammer with its iron and ash in place repairs it; the rest of the forge fills as usual. */
+    /**
+     * Blood aimed at a worn hammer with its iron and ash in place repairs it; the rest of the forge fills as usual.
+     * A rite-locked forge takes none.
+     */
     @Override
     public double takeProjectedBlood(Player player, BlockPos hitPos, double rate, boolean livingStaff) {
+        if (riteLocked) return 0.0D;
         BlockState state = level == null ? null : level.getBlockState(worldPosition);
         if (state != null && state.getBlock() instanceof ResonantForgeBlock block
                 && block.part(state, worldPosition, hitPos) == ResonantForgeBlock.Part.HAMMER

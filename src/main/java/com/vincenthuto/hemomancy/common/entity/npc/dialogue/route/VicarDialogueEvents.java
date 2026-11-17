@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.route;
 
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
@@ -9,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
+import com.vincenthuto.hemomancy.common.mission.shared.OwedRewards;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnSanguineOmenEffectPacket;
@@ -19,6 +22,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
+
+import java.util.List;
 
 /**
  * The Vicar's dialogue events: early initiation, the Voyager report, blood-shotting, the Hermit road report, the
@@ -35,6 +40,7 @@ final class VicarDialogueEvents {
 
 	/** Handles the event when it is one of this NPC's; false lets the next route try. */
 	public static boolean handle(DialogueEvent event) {
+		if (CoreLoopLessonRoutes.teach(event, CoreLoopLessons.VICAR, HarbingerVicarEntity.class)) return true;
 		ServerPlayer player = event.getPlayer();
 		switch (event.getEventId()) {
 		case VoyagerIntroductionDialogue.REPORT -> event.setRewardDelivered(
@@ -43,6 +49,8 @@ final class VicarDialogueEvents {
 		case VoyagerIntroductionDialogue.BEARING -> event.setRewardDelivered(
 				com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.tellBearing(
 						player, player.level().getEntity(event.getEntityId())));
+		case HarbingerVicarDialogueTrees.EVENT_LEAVE_BLOODLINE -> event.setRewardDelivered(
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineMembership.leave(player));
 		case HarbingerVicarDialogueTrees.EVENT_BLOOD_SHOTTING -> {
 			handleVicarBloodShotting(player);
 		}
@@ -109,18 +117,22 @@ final class VicarDialogueEvents {
 			return;
 		}
 
+		OwedRewards.owe(player, List.of(new ItemStack(BlockInit.befouling_ash_trail.get(), 4)));
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED);
-		DialogueRewards.giveOrDropAtEntity(player, entityId, new ItemStack(BlockInit.befouling_ash_trail.get(), 4));
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_reported")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		OwedRewards.deliver(player);
 	}
 
 	private static boolean handleVicarFirstBloodcraftReward(ServerPlayer player, int entityId) {
 		if (!(player.level().getEntity(entityId) instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity vicar)
-				|| !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, vicar)) return false;
+				|| !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, vicar)) {
+			refuse(player, DialogueRewards.TOO_FAR);
+			return false;
+		}
 		if (!FirstBloodcraftAssignment.canClaim(player)) {
 			String messageKey = FirstBloodcraftAssignment.isClaimed(player)
 					? "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_known"
@@ -132,32 +144,45 @@ final class VicarDialogueEvents {
 		}
 
 		boolean issueKit = !FirstBloodcraftAssignment.isClaimed(player);
-		if (issueKit && !FirstBloodcraftAssignment.markClaimed(player)) {
-			player.displayClientMessage(
-					Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed")
-							.withStyle(ChatFormatting.RED), false);
-			return false;
-		}
-		if (!FirstBloodcraftAssignment.promote(player)) return false;
 		if (issueKit) {
-			for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks()) {
-				DialogueRewards.giveOrDropAtEntity(player, entityId, stack);
+			List<ItemStack> owedBefore = HemoCapabilityAccess.owedRewards(player).owed();
+			OwedRewards.owe(player, FirstBloodcraftAssignment.rewardStacks());
+			if (!FirstBloodcraftAssignment.markClaimed(player)) {
+				HemoCapabilityAccess.owedRewards(player).settle(owedBefore);
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed")
+								.withStyle(ChatFormatting.RED), false);
+				return false;
 			}
+		}
+		if (!FirstBloodcraftAssignment.promote(player)) {
+			refuse(player, DialogueRewards.NOT_NOW);
+			return false;
 		}
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		OwedRewards.deliver(player);
 		return true;
 	}
 
 	private static void handleVicarBloodcraftBlueprint(ServerPlayer player, int entityId, String recipe) {
-		if (!ProgressionGates.isDegree(player, 1)
-				|| !(player.level().getEntity(entityId) instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity vicar)
-				|| !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, vicar)) return;
+		if (!(player.level().getEntity(entityId) instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity vicar)
+				|| !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, vicar)) {
+			refuse(player, DialogueRewards.TOO_FAR);
+			return;
+		}
+		if (!ProgressionGates.isDegree(player, 1)) {
+			refuse(player, "hemomancy.dialogue.event.vicar_blueprint_unready");
+			return;
+		}
 		var target = new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE,
 				Hemomancy.rloc("blood_structure/" + recipe));
-		if (player.getInventory().items.stream().anyMatch(stack -> target.equals(MnemonicBlueprintItem.getTarget(stack)))) return;
+		if (player.getInventory().items.stream().anyMatch(stack -> target.equals(MnemonicBlueprintItem.getTarget(stack)))) {
+			refuse(player, "hemomancy.dialogue.event.vicar_blueprint_carried");
+			return;
+		}
 		DialogueRewards.giveOrDropAtEntity(player, entityId, MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(), target));
 	}
 
@@ -169,45 +194,48 @@ final class VicarDialogueEvents {
 					false);
 			return;
 		}
-		if (HarbingerAdvancementGranter.isVicarMasonsRespiteDirective(player)) {
+		boolean directed = HarbingerAdvancementGranter.isVicarMasonsRespiteDirective(player);
+		if (directed && !needsMasonsRespiteMap(player)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vicar_masons_respite_known")
 							.withStyle(ChatFormatting.GRAY),
 					false);
 			return;
 		}
-		DialogueRewards.giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.masons_respite_map.get()));
+		OwedRewards.owe(player, List.of(new ItemStack(ItemInit.masons_respite_map.get())));
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE);
 		player.displayClientMessage(
-				Component.translatable("hemomancy.dialogue.event.vicar_masons_respite_map")
+				Component.translatable(directed
+								? "hemomancy.dialogue.event.vicar_masons_respite_reissued"
+								: "hemomancy.dialogue.event.vicar_masons_respite_map")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		OwedRewards.deliver(player);
+	}
+
+	/** PT-4: a directed player who carries no Mason's Respite map, and is owed none, may ask the Vicar for another. */
+	private static boolean needsMasonsRespiteMap(ServerPlayer player) {
+		return !OwedRewards.carriesOrOwed(player, ItemInit.masons_respite_map.get());
 	}
 
 	/**
-	 * Gives the player a mnemonic blueprint pre-configured for the Sanguine Monolith
-	 * Working craft. The item is dropped
-	 * at the NPC entity's position so the player can pick it up naturally.
-	 * If the NPC entity cannot be found, the item is given directly to the player's
-	 * inventory instead.
-	 */
-	/**
-	 * Gives the player a mnemonic blueprint pre-configured for the Sanguine Monolith
-	 * Working craft. The item is dropped
-	 * at the NPC entity's position so the player can pick it up naturally.
-	 * If the NPC entity cannot be found, the item is given directly to the player's
-	 * inventory instead.
+	 * The Monolith scrap: a mnemonic blueprint for the Sanguine Monolith Working craft, owed and delivered (PT-3). The
+	 * Vicar gives one whenever none is carried or owed, never a second while one is held (PT-27, NQ-10-7).
 	 */
 	private static void handleGiveSanguineMonolithBlueprint(ServerPlayer player, int entityId) {
-		// Only the fifth-Degree Vicar tells the Monolith rumour that offers the scrap, and not to a purifying player.
-		if (!ProgressionGates.isDegree(player, 5)
-				|| com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.hasBegunPurification(player)) return;
-		ItemStack hint = MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(),
-				new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.CARDINAL_RITE,
-						ResourceLocation.tryBuild(Hemomancy.MOD_ID, "cardinal_rite/working/sanguine_monolith")));
-
-		DialogueRewards.giveOrDropAtEntity(player, entityId, hint);
+		// The Vicar tells the Monolith rumour that offers the scrap from the fifth Degree on, and not to a purifying player.
+		if (!ProgressionGates.hasDegree(player, 5) || HemoCapabilityAccess.hasBegunPurification(player)) {
+			refuse(player, "hemomancy.dialogue.event.vicar_scrap_refused");
+			return;
+		}
+		MnemonicBlueprintTarget target = new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.CARDINAL_RITE,
+				ResourceLocation.tryBuild(Hemomancy.MOD_ID, "cardinal_rite/working/sanguine_monolith"));
+		if (OwedRewards.carriesOrOwed(player, stack -> target.equals(MnemonicBlueprintItem.getTarget(stack)))) {
+			refuse(player, "hemomancy.dialogue.event.vicar_scrap_carried");
+			return;
+		}
+		OwedRewards.give(player, List.of(MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(), target)));
 
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_gives_scrap")
@@ -216,14 +244,21 @@ final class VicarDialogueEvents {
 	}
 
 	private static void handleGiveStainedChurchMap(ServerPlayer player, int entityId) {
-		if (!mayReceiveStainedChurchMap(player, player.level().getEntity(entityId))) return;
-		ItemStack map = new ItemStack(ItemInit.stained_church_map.get());
-		DialogueRewards.giveOrDropAtEntity(player, entityId, map);
+		if (!mayReceiveStainedChurchMap(player, player.level().getEntity(entityId))) {
+			refuse(player, "hemomancy.dialogue.event.stained_church_map_refused");
+			return;
+		}
+		OwedRewards.give(player, List.of(new ItemStack(ItemInit.stained_church_map.get())));
 
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.gives_stained_church_map")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+	}
+
+	/** PT-28: a reward the speaker will not give says so. */
+	private static void refuse(ServerPlayer player, String key) {
+		player.displayClientMessage(Component.translatable(key).withStyle(ChatFormatting.GRAY), false);
 	}
 
 	/**

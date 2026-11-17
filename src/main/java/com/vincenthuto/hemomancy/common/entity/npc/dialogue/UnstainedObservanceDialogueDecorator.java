@@ -45,9 +45,7 @@ public final class UnstainedObservanceDialogueDecorator {
 			boolean accepted = (progress.getAcceptedObservances() & observance.mask()) != 0;
 			boolean ready = accepted && UnstainedObservances.isReady(player, observance);
 			DialogueAttention attention = observanceAttention(accepted, ready);
-			String promptKey = ready ? "hemomancy.dialogue.unstained.observance.ready"
-					: accepted ? "hemomancy.dialogue.unstained.observance.active"
-					: "hemomancy.dialogue.unstained.observance.available";
+			String promptKey = promptKey(issuer, accepted, ready);
 			startOptions.add(insertIndex++, new DialogueOption(optionKey(observance), null, observance.eventId(),
 					attention == DialogueAttention.NONE ? DialogueOptionPresentation.prompt(promptKey)
 							: DialogueOptionPresentation.attention(attention, promptKey)));
@@ -63,6 +61,12 @@ public final class UnstainedObservanceDialogueDecorator {
 		nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), List.copyOf(startOptions)));
 		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 				tree.entityId(), tree.theme(), tree.presentation());
+	}
+
+	/** The issuing speaker's own line for an observance that is offered, carried or ready (CD-7). */
+	static String promptKey(UnstainedObservances.Issuer issuer, boolean accepted, boolean ready) {
+		return "hemomancy.dialogue." + issuer.id() + ".observance."
+				+ (ready ? "ready" : accepted ? "active" : "available");
 	}
 
 	static DialogueAttention observanceAttention(boolean accepted, boolean ready) {

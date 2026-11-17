@@ -43,10 +43,10 @@ public final class MaterialAcceptanceGameTests {
         for (int slot = 10; slot < 18; slot++) machine.setItem(slot, ItemStack.EMPTY);
         helper.assertTrue(machine.attemptStartup(null) == VialCentrifugeStartupResult.SUCCESS, "Clearing outputs must allow a normal retry");
         tick(helper, machine, 200);
-        helper.assertTrue(machine.getBloodVolume() == 250
+        helper.assertTrue(machine.getBloodVolume() == 0
                 && BloodVialItem.getEntityType(machine.getItem(2)) == null
                 && BloodVialItem.getEntityType(machine.getItem(6)) == null,
-                "Retry must consume both samples and award exactly one batch of blood");
+                "Retry must consume both samples and make no blood (core-loop Track 3)");
         helper.succeed();
     }
 
@@ -107,14 +107,15 @@ public final class MaterialAcceptanceGameTests {
         tickAlembic(helper, machine, 1);
         helper.assertTrue(machine.getProcessingStatus() == GhastlyAlembicBlockEntity.Status.OUTPUT_BLOCKED, "Full product slot must report its blockage");
         machine.setItem(GhastlyAlembicBlockEntity.SLOT_RESULT, ItemStack.EMPTY);
+        // Core-loop Track 3: a free distillation leaves no blood behind, so a full tank no longer stops it.
         HemoCapabilityAccess.getBloodVolume(machine).orElseThrow().setBloodVolume(5000);
         tickAlembic(helper, machine, 1);
-        helper.assertTrue(machine.getProcessingStatus() == GhastlyAlembicBlockEntity.Status.TANK_FULL, "Full reservoir must stop byproduct cooking with a reason");
+        helper.assertTrue(machine.getProcessingStatus() == GhastlyAlembicBlockEntity.Status.DISTILLING, "A full reservoir must not stop free paste");
         HemoCapabilityAccess.getBloodVolume(machine).orElseThrow().setBloodVolume(0);
         tickAlembic(helper, machine, 100);
         helper.assertTrue(machine.getItem(GhastlyAlembicBlockEntity.SLOT_RESULT).is(ItemInit.foul_paste.get())
-                && machine.getItem(GhastlyAlembicBlockEntity.SLOT_RESULT).getCount() == 2 && machine.getBloodVolume() == 100,
-                "Normal paste must still produce two paste and 100 reservoir ml");
+                && machine.getItem(GhastlyAlembicBlockEntity.SLOT_RESULT).getCount() == 2 && machine.getBloodVolume() == 0,
+                "Normal paste must still produce two paste and make no blood");
         machine.setItem(GhastlyAlembicBlockEntity.SLOT_RESULT, ItemStack.EMPTY);
         machine.setItem(GhastlyAlembicBlockEntity.SLOT_INPUT, new ItemStack(ItemInit.sanguine_formation.get()));
         tickAlembic(helper, machine, 1);
@@ -168,9 +169,12 @@ public final class MaterialAcceptanceGameTests {
                 helper.assertTrue(machine.isSpinning() && machine.getOutputSlots().stream().allMatch(ItemStack::isEmpty),
                         "Reload must retain the unfinished 200-tick process without early output");
                 tick(helper, machine, 1);
-                helper.assertTrue(!machine.isSpinning() && machine.getBloodVolume() == 250,
-                        "A completed batch contributes exactly the authored 250 ml in 200 processing ticks");
-                var enzyme = species.equals("minecraft:cow") ? ItemInit.vivacious_enzyme.get() : ItemInit.neurotic_enzyme.get();
+                helper.assertTrue(!machine.isSpinning() && machine.getBloodVolume() == 0,
+                        "A completed batch finishes in 200 processing ticks and makes no blood (core-loop Track 3)");
+                // The goat is Congeatio since NQ-06-12 (it was Ductilis).
+                var enzyme = species.equals("minecraft:cow") ? ItemInit.vivacious_enzyme.get()
+                        : com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.getRepEnzyme(
+                                com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.CONGEATIO);
                 // Fractions share outputs 10-17 and merge matching stacks, so check the batch total.
                 int produced = 0;
                 for (var output : machine.getOutputSlots()) {

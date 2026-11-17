@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -151,7 +151,7 @@ public final class HematicRiposteEvents {
 			attacker.knockback(KNOCKBACK, player.getX() - attacker.getX(), player.getZ() - attacker.getZ());
 			if (attacker instanceof ServerPlayer struck) struck.hurtMarked = true;
 			// Paralysis would mark bosses Conductive instead; a parry only staggers them.
-			if (!ManipulationReactiveEvents.isBoss(attacker))
+			if (!HemoEntityPredicates.isBoss(attacker))
 				Paralysis.apply(attacker, attacker instanceof Player ? STUN_PLAYER : STUN_MOB);
 			ManipulationParticles.impact(attacker, EnumBloodTemper.ANIMUS, EnumBloodTemper.DUCTILIS,
 					attacker.position().subtract(player.position()));

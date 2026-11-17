@@ -9,7 +9,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -146,8 +145,7 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 
 	public static boolean canSpawnHere(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,
 			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
-		return pLevel.getDifficulty() != Difficulty.PEACEFUL
-				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+		return checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 
 	@Override

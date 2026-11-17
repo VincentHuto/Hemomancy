@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.entity.npc.circus;
 import com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity;
 import net.minecraft.core.BlockPos;
 import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
-import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -24,8 +23,16 @@ import net.minecraft.world.phys.Vec3;
 public final class CircusKnifeThrowerEntity extends CircusPerformerEntity {
 	private static final EntityDataAccessor<Boolean> JUGGLING = SynchedEntityData.defineId(
 			CircusKnifeThrowerEntity.class, EntityDataSerializers.BOOLEAN);
+	/** The fan's spread either side of the centre throw, in degrees. */
+	private static final double FAN_SPREAD = 18.0D;
+	/** Ticks between the fan's three throws. */
+	private static final int FAN_GAP = 3;
 	private int attackCooldown;
 	private int volley;
+	/** The fan's throws still to leave, the target they go to and the ticks until the next one. */
+	private int fanLeft;
+	private int fanDelay;
+	private LivingEntity fanTarget;
 
 	public CircusKnifeThrowerEntity(EntityType<? extends CircusKnifeThrowerEntity> type, Level level) {
 		super(type, level);
@@ -48,6 +55,16 @@ public final class CircusKnifeThrowerEntity extends CircusPerformerEntity {
 		super.tick();
 		if (!level().isClientSide && getActState() != ActState.PERFORM && isJuggling()) {
 			entityData.set(JUGGLING, false);
+		}
+		if (!level().isClientSide && fanLeft > 0 && --fanDelay <= 0) {
+			if (fanTarget == null || !fanTarget.isAlive() || !isAlive() || isDowned()) {
+				fanLeft = 0;
+			} else {
+				throwKnife(fanTarget, fanLeft == 2 ? 0.0D : FAN_SPREAD, 3.0F);
+				level().playSound(null, blockPosition(), SoundEvents.TRIDENT_THROW.value(), SoundSource.HOSTILE, 0.8F, 1.55F);
+				fanLeft--;
+				fanDelay = FAN_GAP;
+			}
 		}
 	}
 
@@ -100,22 +117,22 @@ public final class CircusKnifeThrowerEntity extends CircusPerformerEntity {
 		float charge = tick / (float) move.windup();
 		Vec3 hand = getEyePosition().add(getLookAngle().yRot((float) Math.toRadians(-70.0D)).scale(0.45D));
 		CircusEffects.gather(server, hand, CircusEffects.BONE, charge);
-		if (tick % 3 != 0) return;
 		boolean fan = (volley + 1) % 4 == 0;
-		for (double yaw : fan ? new double[] { -10.0D, 0.0D, 10.0D } : new double[] { 0.0D }) {
+		for (double yaw : fan ? new double[] { -FAN_SPREAD, 0.0D, FAN_SPREAD } : new double[] { 0.0D }) {
 			Vec3 reach = target.position().subtract(position()).yRot((float) Math.toRadians(yaw));
-			BossTelegraphs.line(server, position(), position().add(reach), CircusEffects.CRIMSON);
+			CircusEffects.lineFootprint(server, position(), position().add(reach), CircusEffects.BONE);
 		}
-		BossTelegraphs.ring(server, target.position(), 0.8D, CircusEffects.BONE, 12);
+		CircusEffects.ringFootprint(server, target.position(), 0.8D, charge);
 	}
 
 	@Override
 	protected void strikeDefense(LivingEntity target) {
 		boolean fan = ++volley % 4 == 0;
 		if (fan) {
-			throwKnife(target, -10.0D, 3.0F);
-			throwKnife(target, 0.0D, 3.0F);
-			throwKnife(target, 10.0D, 3.0F);
+			throwKnife(target, -FAN_SPREAD, 3.0F);
+			fanTarget = target;
+			fanLeft = 2;
+			fanDelay = FAN_GAP;
 		} else {
 			throwKnife(target, 0.0D, 4.0F);
 		}

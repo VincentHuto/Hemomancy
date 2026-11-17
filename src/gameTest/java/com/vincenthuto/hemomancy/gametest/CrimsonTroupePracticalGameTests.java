@@ -137,7 +137,23 @@ public final class CrimsonTroupePracticalGameTests {
             h.assertTrue(e.passed(), "actual player-origin replay did not pass");
         } h.succeed();
     }
-    @GameTest(template="empty", timeoutTicks=40) public static void daggerVolleyMatchesLegacyBloodShotImpactAndBleeding(GameTestHelper h) throws Exception {
+    @GameTest(template="empty", timeoutTicks=40) public static void aKilledThreatEndsAGuestActUnpaid(GameTestHelper h) {
+        try (var e = exercise(h, "scarlet_mummer", EntityInit.circus_stilt_walker.get())) {
+            CircusApprenticeshipProgress.completePractical(e.pupil, "scarlet_mummer");
+            h.assertTrue(CircusPracticalController.begin(e.pupil, e.teacher, "scarlet_mummer", true), "guest act could not begin");
+            var guests = h.getLevel().getEntitiesOfClass(Mob.class, e.teacher.getBoundingBox().inflate(8),
+                    mob -> mob.isAlive() && mob.getPersistentData().hasUUID(CircusPracticalController.EXAM)
+                            && e.pupil.getUUID().equals(mob.getPersistentData().getUUID(CircusPracticalController.EXAM)));
+            h.assertTrue(guests.size() == 2, "the Mummer guest act brings two threats: " + guests.size());
+            guests.forEach(mob -> { mob.setNoAi(true); mob.setNoGravity(true); });
+            guests.get(0).discard(); e.observe();
+            h.assertTrue(guests.get(1).isRemoved(), "the guest act did not end when a threat it needs was lost");
+            h.assertTrue(CircusApprenticeshipProgress.state(e.pupil).getInt("guest.pending") == 0
+                    && !CircusApprenticeshipProgress.state(e.pupil).contains("guest.day"), "an ended guest act paid");
+        } h.succeed();
+    }
+    /** NQ-15-7: the volley keeps the old raw damage; the third dagger pins about 1.5 s and no dagger bleeds. */
+    @GameTest(template="empty", timeoutTicks=40) public static void daggerVolleyKeepsItsDamageAndTheThirdDaggerPins(GameTestHelper h) throws Exception {
         Mob oldTarget = EntityType.PIG.create(h.getLevel()), newTarget = EntityType.PIG.create(h.getLevel());
         oldTarget.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(80); oldTarget.setHealth(80);
         newTarget.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(80); newTarget.setHealth(80);
@@ -146,14 +162,117 @@ public final class CrimsonTroupePracticalGameTests {
         var oldHit = BloodShotEntity.class.getDeclaredMethod("onHitEntity", EntityHitResult.class); oldHit.setAccessible(true);
         oldHit.invoke(old, new EntityHitResult(oldTarget));
         var daggerHit = CircusKnifeProjectileEntity.class.getDeclaredMethod("onHitEntity", EntityHitResult.class); daggerHit.setAccessible(true);
-        for (int i=0; i<3; i++) {
+        for (int tick = 0; tick <= 20; tick++) {
+            if (!MarrowJugglerRules.throwTick(tick)) continue;
+            h.assertTrue(!com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingLock.isPinned(newTarget),
+                    "the target was pinned before the volley's third dagger");
             var dagger = new CircusKnifeProjectileEntity(h.getLevel(), shooter, MarrowJugglerRules.daggerDamage(5));
-            dagger.setPuppetDagger(); dagger.setDeltaMovement(new Vec3(1.7,0,0));
+            if (MarrowJugglerRules.pinsTarget(tick)) dagger.setPinDagger(); else dagger.setPuppetDagger();
+            dagger.setDeltaMovement(new Vec3(1.7,0,0));
+            newTarget.invulnerableTime = 0;
             daggerHit.invoke(dagger, new EntityHitResult(newTarget));
         }
         h.assertTrue(Math.abs(oldTarget.getHealth()-newTarget.getHealth()) < .001,
                 "three dagger impacts changed the original raw damage budget: " + oldTarget.getHealth() + " vs " + newTarget.getHealth());
-        h.assertTrue(newTarget.hasEffect(EffectInit.blood_loss) && oldTarget.hasEffect(EffectInit.blood_loss), "daggers lost the original Blood Loss");
+        h.assertTrue(!newTarget.hasEffect(EffectInit.blood_loss), "a Juggler dagger still causes Blood Loss");
+        var pin = newTarget.getEffect(EffectInit.pinned);
+        h.assertTrue(pin != null && pin.getDuration() == MarrowJugglerRules.PIN_TICKS, "the third dagger did not pin for 30 ticks: " + pin);
+        h.assertTrue(newTarget.getArrowCount() == 0, "a dagger left a stuck arrow");
+        h.succeed();
+    }
+
+    /** FX-26: a troupe knife and a plain blood needle leave no vanilla arrow stuck in what they hit. */
+    @GameTest(template="empty", timeoutTicks=40) public static void needlesAndKnivesLeaveNoStuckArrow(GameTestHelper h) throws Exception {
+        Mob target = EntityType.PIG.create(h.getLevel());
+        target.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(80); target.setHealth(80);
+        target.setPos(h.absoluteVec(new Vec3(2, 2, 2))); h.getLevel().addFreshEntity(target);
+        var thrower = EntityInit.circus_knife_thrower.get().create(h.getLevel());
+        var knife = new CircusKnifeProjectileEntity(h.getLevel(), thrower, 2);
+        knife.setDeltaMovement(new Vec3(1.7,0,0));
+        var knifeHit = CircusKnifeProjectileEntity.class.getDeclaredMethod("onHitEntity", EntityHitResult.class); knifeHit.setAccessible(true);
+        knifeHit.invoke(knife, new EntityHitResult(target));
+        h.assertTrue(target.getArrowCount() == 0, "a troupe knife left " + target.getArrowCount() + " stuck arrows");
+        var needle = new com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity(h.getLevel(), thrower);
+        needle.setBaseDamage(2); needle.setDeltaMovement(new Vec3(1.7,0,0));
+        var needleHit = com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity.class.getDeclaredMethod("onHitEntity", EntityHitResult.class);
+        needleHit.setAccessible(true);
+        target.invulnerableTime = 0;
+        needleHit.invoke(needle, new EntityHitResult(target));
+        h.assertTrue(target.getHealth() < 80, "the needle fixture did not land");
+        h.assertTrue(target.getArrowCount() == 0, "a blood needle left " + target.getArrowCount() + " stuck arrows");
+        target.discard();
+        h.succeed();
+    }
+
+    private static Mob body(GameTestHelper h, ServerPlayer owner, UUID crossbar, String shape, Vec3 at) {
+        var definition = PuppeteerSummonDefinitions.byName(shape).orElseThrow();
+        HemoCapabilityAccess.getKnownSummons(owner).learn(definition);
+        Mob body = PuppeteerSummonFactory.create(definition, h.getLevel(), owner, crossbar, 0).orElseThrow();
+        body.setPos(at); body.setNoAi(true); body.setNoGravity(true); h.getLevel().addFreshEntity(body);
+        return body;
+    }
+    private static ServerPlayer actor(GameTestHelper h, ItemStack crossbar, String selected) {
+        ServerPlayer owner = StationUpgradeGameTests.claimant(h, 5);
+        h.getLevel().addNewPlayer(owner); onlinePlayers(h).put(owner.getUUID(), owner);
+        owner.setPos(h.absoluteVec(new Vec3(4, 2, 4)));
+        MarionetteCrossbarItem.bindCrossbar(crossbar, owner); MarionetteCrossbarItem.addThread(crossbar, 200);
+        owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
+        MarionetteCrossbarItem.setSelectedSummonName(crossbar, selected);
+        return owner;
+    }
+
+    /** D-38, NQ-15-9 A: with one Crossbar, the Pattern's Ring makes the Mummer and the Hound perform their acts at once. */
+    @GameTest(template="empty", timeoutTicks=40) public static void ringPerformsEveryBodysActOnOneCrossbar(GameTestHelper h) {
+        ItemStack crossbar = new ItemStack(ItemInit.marionette_crossbar.get());
+        ServerPlayer owner = actor(h, crossbar, PuppeteerSummonDefinitions.RINGMASTER_PATTERN);
+        UUID id = MarionetteCrossbarItem.ensureCrossbarId(crossbar);
+        Mob pattern = body(h, owner, id, PuppeteerSummonDefinitions.RINGMASTER_PATTERN, owner.position().add(1, 0, 0));
+        Mob mummer = body(h, owner, id, PuppeteerSummonDefinitions.SCARLET_MUMMER, owner.position().add(3, 0, 0));
+        Mob hound = body(h, owner, id, PuppeteerSummonDefinitions.SANGUINE_HOUND, owner.position().add(0, 0, 3));
+        Mob threat = EntityType.ZOMBIE.create(h.getLevel());
+        threat.setPos(owner.position().add(6, 0, 0)); threat.setNoAi(true); h.getLevel().addFreshEntity(threat);
+        threat.setTarget(owner);
+        try {
+            h.assertTrue(com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetActs.fire(owner, crossbar), "the Ring was refused");
+            h.assertTrue(threat.getTarget() == mummer, "the Mummer's Spotlight did not take the threat: " + threat.getTarget());
+            h.assertTrue(threat.hasEffect(net.minecraft.world.effect.MobEffects.GLOWING), "the Hound's Scent did not mark the threat");
+            int cost = com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetAct.RING.threadCost();
+            h.assertTrue(MarionetteCrossbarItem.getThread(crossbar) == 200 - cost, "the Ring did not cost " + cost + " thread once: "
+                    + MarionetteCrossbarItem.getThread(crossbar));
+            h.assertTrue(!com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetActs.fire(owner, crossbar)
+                    && MarionetteCrossbarItem.getThread(crossbar) == 200 - cost, "a second Ring inside its cooldown was not refused");
+        } finally {
+            threat.discard(); pattern.discard(); mummer.discard(); hound.discard();
+            com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetActs.logout(owner);
+            onlinePlayers(h).remove(owner.getUUID()); owner.discard();
+        }
+        h.succeed();
+    }
+
+    /** D-37, NQ-15-8 A: Trapeze swaps the owner and the Vulture; an act with nothing to do costs no thread. */
+    @GameTest(template="empty", timeoutTicks=40) public static void trapezeSwapsOwnerAndVulture(GameTestHelper h) {
+        ItemStack crossbar = new ItemStack(ItemInit.marionette_crossbar.get());
+        ServerPlayer owner = actor(h, crossbar, PuppeteerSummonDefinitions.VEINWING_VULTURE);
+        UUID id = MarionetteCrossbarItem.ensureCrossbarId(crossbar);
+        Vec3 ownerAt = owner.position();
+        Mob vulture = body(h, owner, id, PuppeteerSummonDefinitions.VEINWING_VULTURE, ownerAt.add(4, 0, 0));
+        Vec3 vultureAt = vulture.position();
+        try {
+            h.assertTrue(com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetActs.fire(owner, crossbar), "Trapeze was refused");
+            h.assertTrue(owner.position().distanceTo(vultureAt) < 0.01 && vulture.position().distanceTo(ownerAt) < 0.01,
+                    "Trapeze did not swap: owner " + owner.position() + ", Vulture " + vulture.position());
+            int cost = com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetAct.TRAPEZE.threadCost();
+            h.assertTrue(MarionetteCrossbarItem.getThread(crossbar) == 200 - cost, "Trapeze cost the wrong thread");
+            MarionetteCrossbarItem.setSelectedSummonName(crossbar, PuppeteerSummonDefinitions.SCARLET_MUMMER);
+            Mob mummer = body(h, owner, id, PuppeteerSummonDefinitions.SCARLET_MUMMER, owner.position().add(2, 0, 0));
+            h.assertTrue(!com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetActs.fire(owner, crossbar)
+                    && MarionetteCrossbarItem.getThread(crossbar) == 200 - cost, "a Spotlight with no threat spent thread");
+            mummer.discard();
+        } finally {
+            vulture.discard();
+            com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetActs.logout(owner);
+            onlinePlayers(h).remove(owner.getUUID()); owner.discard();
+        }
         h.succeed();
     }
 }

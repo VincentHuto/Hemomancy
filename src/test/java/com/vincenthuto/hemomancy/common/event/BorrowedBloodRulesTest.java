@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import org.junit.jupiter.api.Test;
+
 public final class BorrowedBloodRulesTest {
 	private BorrowedBloodRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		depositsRespectTheCap();
 		drainsNeverExceedTheReserve();
 		overkillIsOnlyTheWastedSlice();

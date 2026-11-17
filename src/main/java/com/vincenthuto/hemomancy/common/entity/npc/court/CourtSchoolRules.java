@@ -78,6 +78,16 @@ public final class CourtSchoolRules {
 		return new double[] {side * (1.6D + 0.6D * row), ((slot % 3) - 1) * 0.7D, 2.2D * row};
 	}
 
+	/**
+	 * Where a follower whose station lies in rock or air swims instead: straight behind the leader at its station's
+	 * distance back, in the leader's wake. {x, z}.
+	 */
+	public static double[] trailAt(double x, double z, float yawDegrees, int slot) {
+		double back = station(slot)[2];
+		double rad = Math.toRadians(yawDegrees);
+		return new double[] {x + back * Math.sin(rad), z - back * Math.cos(rad)};
+	}
+
 	/** A follower's station in the world: {x, y offset, z} behind a leader at (x, z) facing {@code yawDegrees}. */
 	public static double[] stationAt(double x, double z, float yawDegrees, int slot) {
 		double[] station = station(slot);

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.loot.modifier;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
@@ -36,6 +37,8 @@ public class AddItemModifier extends LootModifier
 	@Override
 	protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
 		ItemStack addedStack = new ItemStack(addedItem, count);
+		// FX-2: an added Flask or Jug is stamped here, since modifier order does not promise stamp_bottled runs after.
+		BloodyFlaskItem.stampBottled(addedStack, context.getLevel().getGameTime());
 
 		if (addedStack.getCount() < addedStack.getMaxStackSize()) {
 			generatedLoot.add(addedStack);

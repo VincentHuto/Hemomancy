@@ -45,6 +45,8 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 			Hemomancy.rloc("textures/gui/empty_jar_slot_background.png");
 	private static final ResourceLocation EMPTY_FITTING_SLOT =
 			Hemomancy.rloc("textures/gui/empty_staf_fitting_slot_background.png");
+	private static final ResourceLocation EMPTY_BANDOLIER_SLOT =
+			Hemomancy.rloc("textures/gui/empty_bandolier_slot_background.png");
 
 	private final Inventory playerInventory;
 	private float oldMouseX;
@@ -85,6 +87,9 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 		renderLayerToggleTooltip(graphics, mouseX, mouseY);
         if(mouseX>=leftPos+198 && mouseX<leftPos+214 && mouseY>=topPos+38 && mouseY<topPos+54 && !menu.getSlot(45).hasItem())
             graphics.renderTooltip(font,Component.translatable("hemomancy.antecedent.scar.socket"),mouseX,mouseY);
+		Slot bandolier = menu.getSlot(HarbingerEquipmentMenu.BANDOLIER_MENU_SLOT);
+		if (!bandolier.hasItem() && isMouseOver(leftPos + bandolier.x, topPos + bandolier.y, 16, 16, mouseX, mouseY))
+			graphics.renderTooltip(font, Component.translatable("screen.hemomancy.scarlet_vanity.bandolier_slot"), mouseX, mouseY);
 		this.oldMouseX = mouseX;
 		this.oldMouseY = mouseY;
 	}
@@ -282,6 +287,8 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 				gfx.blit(EMPTY_JAR_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
 			} else if (menuSlot == HarbingerEquipmentMenu.FITTING_MENU_SLOT) {
 				gfx.blit(EMPTY_FITTING_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
+			} else if (menuSlot == HarbingerEquipmentMenu.BANDOLIER_MENU_SLOT) {
+				gfx.blit(EMPTY_BANDOLIER_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
 			}
 		}
 	}

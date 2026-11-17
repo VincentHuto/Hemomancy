@@ -1,12 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class MnemonistPuppetEvents {
 	private static final double MEMORY_RANGE = 24.0D;
 	private static final ThreadLocal<Boolean> REPLAYING_DAMAGE = ThreadLocal.withInitial(() -> false);
@@ -14,7 +10,7 @@ public final class MnemonistPuppetEvents {
 	private MnemonistPuppetEvents() {
 	}
 
-	@SubscribeEvent
+	/** Consumer stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}: it remembers what lands. */
 	public static void onLivingDamage(LivingDamageEvent.Pre event) {
 		if (isReplayingDamage() || event.getNewDamage() <= 0.0F) {
 			return;

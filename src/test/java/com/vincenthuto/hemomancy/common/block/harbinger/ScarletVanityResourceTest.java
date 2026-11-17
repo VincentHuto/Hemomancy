@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class ScarletVanityResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -11,7 +15,8 @@ public final class ScarletVanityResourceTest {
 	private ScarletVanityResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String blockInit = readSource("com/vincenthuto/hemomancy/common/init/BlockInit.java");
 		String tileInit = readSource("com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
 		String clientEvents = readSource("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
@@ -50,9 +55,9 @@ public final class ScarletVanityResourceTest {
 		assertContains("scarlet vanity block entity should use its registry type", vanityTile,
 				"super(BlockEntityInit.scarlet_vanity.get(), pos, state);");
 
-		assertDoesNotContain("scrying podium should no longer open the equipment menu", scryingPodium,
+		assertNotContains("scrying podium should no longer open the equipment menu", scryingPodium,
 				"PacketOpenScarsInv");
-		assertDoesNotContain("scrying podium should no longer send the equipment menu packet", scryingPodium,
+		assertNotContains("scrying podium should no longer send the equipment menu packet", scryingPodium,
 				"new PacketOpenScarsInv");
 		assertContains("scarlet vanity renderer should render equipped gourd", vanityRenderer,
 				"HarbingerEquipmentMenu.GOURD_SLOT_INDEX");
@@ -62,26 +67,26 @@ public final class ScarletVanityResourceTest {
 				"HarbingerEquipmentMenu.JAR_SLOT_INDEX");
 		assertContains("scarlet vanity renderer should lay item stacks onto the table with world item context",
 				vanityRenderer, "renderStatic(stack, ItemDisplayContext.GROUND");
-		assertDoesNotContain("scarlet vanity renderer should not use fixed display lighting for tabletop items",
+		assertNotContains("scarlet vanity renderer should not use fixed display lighting for tabletop items",
 				vanityRenderer, "renderStatic(stack, ItemDisplayContext.FIXED");
 		assertContains("scarlet vanity renderer should sample world light for tabletop items", vanityRenderer,
 				"LevelRenderer.getLightColor(te.getLevel(), te.getBlockPos().above())");
 		assertContains("scarlet vanity renderer should cap display item light so equipment is not fullbright",
 				vanityRenderer, "DISPLAY_ITEM_MAX_LIGHT");
-		assertDoesNotContain("scarlet vanity renderer should not pass block-entity light directly to item stacks",
+		assertNotContains("scarlet vanity renderer should not pass block-entity light directly to item stacks",
 				vanityRenderer, "renderEquippedItems(te, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);");
 		assertContains("scarlet vanity renderer should pass facing into all tabletop item transforms",
 				vanityRenderer, "renderEquippedItem(te, facing, equipment");
 		assertContains("scarlet vanity renderer should mirror item yaw on north/south facings",
 				vanityRenderer, "case NORTH, SOUTH -> -yaw;");
-		assertDoesNotContain("scarlet vanity renderer should not use raw decorative yaw for tabletop items",
+		assertNotContains("scarlet vanity renderer should not use raw decorative yaw for tabletop items",
 				vanityRenderer, "Axis.YP.rotationDegrees(yaw)");
 
 		assertContains("scarlet vanity blockstate should support north-facing rotation", blockstate,
 				"\"facing=north,half=lower\"");
 		assertContains("scarlet vanity static model should use the cutout block render path", blockModel,
 				"\"render_type\": \"cutout\"");
-		assertDoesNotContain("scarlet vanity static model should not blend the room through the cabinet",
+		assertNotContains("scarlet vanity static model should not blend the room through the cabinet",
 				blockModel, "\"render_type\": \"translucent\"");
 		assertContains("scarlet vanity model should have a red cabinet face", blockModel,
 				"\"name\": \"red_cabinet\"");
@@ -101,24 +106,5 @@ public final class ScarletVanityResourceTest {
 
 	private static String readResource(String path) throws IOException {
 		return read(RESOURCE_ROOT.resolve(path));
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
-		}
 	}
 }

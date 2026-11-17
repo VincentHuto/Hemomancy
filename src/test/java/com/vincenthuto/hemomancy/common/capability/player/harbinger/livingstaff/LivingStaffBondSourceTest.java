@@ -1,16 +1,18 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LivingStaffBondSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	private LivingStaffBondSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String pendingCraft = read("src/main/java/com/vincenthuto/hemomancy/common/event/PendingBloodCraftManager.java");
 		String helper = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/livingstaff/LivingStaffBondHelper.java");
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/livingstaff/LivingStaffProgressEvents.java");
@@ -37,15 +39,5 @@ public final class LivingStaffBondSourceTest {
 		assertContains("conjure staff registered", manipInit, "MANIPS.register(\"conjure_staff\"");
 		assertContains("conjure staff summons living staff", manipInit, "ItemInit.living_staff");
 		assertContains("conjure staff in manipulation tree", treeInit, "register(\"conjure_staff\"");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
 	}
 }

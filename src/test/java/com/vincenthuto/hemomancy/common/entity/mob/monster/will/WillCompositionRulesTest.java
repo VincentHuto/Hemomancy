@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -9,7 +10,8 @@ public final class WillCompositionRulesTest {
 	private WillCompositionRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		degreeGatesMapToExpectedTiers();
 		compositionsMatchThreatRoles();
 		targetChoicePrefersHighestDegree();

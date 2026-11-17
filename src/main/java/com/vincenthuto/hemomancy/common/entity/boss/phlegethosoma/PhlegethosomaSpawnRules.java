@@ -1,24 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma;
 
-import com.vincenthuto.hemomancy.common.init.BiomeInit;
 import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticTags;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.AABB;
 
+/** The Phlegethosoma no longer spawns naturally (CR-7); a summons still asks for a pool broad enough to hold it. */
 public final class PhlegethosomaSpawnRules {
     private PhlegethosomaSpawnRules() {}
-
-    public static boolean canSpawn(EntityType<PhlegethosomaEntity> type, ServerLevelAccessor level,
-                                   MobSpawnType reason, BlockPos pos, RandomSource random) {
-        if (level.getDifficulty() == Difficulty.PEACEFUL || !level.getLevel().dimension().equals(Level.NETHER)
-                || !level.getBiome(pos).is(BiomeInit.PHLEGETHONTIC_BASIN)) return false;
-        return validPool(level,pos) && level.getLevel().getEntitiesOfClass(PhlegethosomaEntity.class,
-                new AABB(pos).inflate(64)).isEmpty();
-    }
 
     /** A broad connected pool, rather than a fully supported dry bank. No fluids are placed or moved. */
     public static boolean validPool(LevelAccessor level, BlockPos pos) {

@@ -16,7 +16,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class BloodLossEffect extends MobEffect {
-	private static final BloodAccounting.Source SOURCE = BloodAccounting.Source.of("blood_loss", Category.EFFECT, false, false);
+	private static final BloodAccounting.Source SOURCE = BloodAccounting.Source.of("blood_loss", Category.EFFECT, false);
+	/** A bleeding mob sheds a Sanguine Formation on 0.02% of its ticks (LP-8). */
+	public static final double MOB_FORMATION_CHANCE = 0.0002D;
 
 	public BloodLossEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
@@ -43,7 +45,7 @@ public class BloodLossEffect extends MobEffect {
 				}
 			} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {
 				entity.hurt(entity.damageSources().generic(), 0.5F);
-				if (entity.level().random.nextDouble() > 0.999) {
+				if (entity.level().random.nextDouble() < MOB_FORMATION_CHANCE) {
 					if (!entity.level().isClientSide) {
 						ServerLevel sLevel = (ServerLevel) entity.level();
 						sLevel.addFreshEntity(new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(),

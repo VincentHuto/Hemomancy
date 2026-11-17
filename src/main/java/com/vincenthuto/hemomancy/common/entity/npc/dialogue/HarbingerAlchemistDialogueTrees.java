@@ -117,6 +117,15 @@ public final class HarbingerAlchemistDialogueTrees {
 			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar,
 			boolean canBriefFirstSeparation, boolean canClaimFirstSeparation, boolean canBriefBodyAnswers,
 			boolean canDiscussThelemicMemories) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, heldRedTaxonomySample, heldSpecimenJar,
+				canBriefFirstSeparation, canClaimFirstSeparation, canBriefBodyAnswers, canDiscussThelemicMemories, false);
+	}
+
+	/** {@code isSilentium}: a Degree 8 Silentium, who gets the Silentium tree in place of the Apotheos's (PT-83). */
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar,
+			boolean canBriefFirstSeparation, boolean canClaimFirstSeparation, boolean canBriefBodyAnswers,
+			boolean canDiscussThelemicMemories, boolean isSilentium) {
 		DialogueTree tree = switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
@@ -127,7 +136,8 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited);
 			case 6 -> sanctified(entityId, hasBloodline, isNpcRecruited);
 			case 7 -> archon(entityId, hasBloodline, isNpcRecruited);
-			default -> apotheos(entityId, hasBloodline, isNpcRecruited); // degree 8+
+			default -> isSilentium ? silentium(entityId, hasBloodline, isNpcRecruited)
+					: apotheos(entityId, hasBloodline, isNpcRecruited); // degree 8+
 		};
 		boolean heldResearch = degree >= 2 && (heldRedTaxonomySample != null || heldSpecimenJar != null);
 		if (degree < 1 || degree == 2 || !(heldResearch || canBriefFirstSeparation || canClaimFirstSeparation
@@ -595,7 +605,8 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("enzyme_uses", List.of(
 						"hemomancy.alchemist.enzyme_uses.brewing",
 						"hemomancy.alchemist.enzyme_uses.culture",
-						"hemomancy.alchemist.enzyme_uses.workshop"
+						"hemomancy.alchemist.enzyme_uses.workshop",
+						"hemomancy.alchemist.enzyme_uses.temper"
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))) )
 				.addNode(new DialogueNode("gourd_upgrades", List.of(
 						"hemomancy.alchemist.votary.gourd_upgrades"
@@ -642,7 +653,8 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("enzyme_uses", List.of(
 						"hemomancy.alchemist.enzyme_uses.brewing",
 						"hemomancy.alchemist.enzyme_uses.culture",
-						"hemomancy.alchemist.enzyme_uses.workshop"
+						"hemomancy.alchemist.enzyme_uses.workshop",
+						"hemomancy.alchemist.enzyme_uses.temper"
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))) )
 				.addNode(new DialogueNode("gourd_upgrades", List.of(
 						"hemomancy.alchemist.votary.gourd_upgrades"
@@ -778,8 +790,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				), vesselUseOptions()))
 				.addNode(gourdUseLesson())
 				.addNode(new DialogueNode("recruit_offer", List.of(
-						"hemomancy.dialogue.recruit.alchemist.consider",
-						"hemomancy.dialogue.recruit.alchemist.accept"
+						"hemomancy.dialogue.recruit.alchemist.consider"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
@@ -815,8 +826,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				), vesselUseOptions()))
 				.addNode(gourdUseLesson())
 				.addNode(new DialogueNode("recruit_offer", List.of(
-						"hemomancy.dialogue.recruit.alchemist.consider",
-						"hemomancy.dialogue.recruit.alchemist.accept"
+						"hemomancy.dialogue.recruit.alchemist.consider"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
@@ -841,8 +851,43 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.archon.line2"
 				), greetingOptions))
 				.addNode(new DialogueNode("recruit_offer", List.of(
-						"hemomancy.dialogue.recruit.alchemist.consider",
-						"hemomancy.dialogue.recruit.alchemist.accept"
+						"hemomancy.dialogue.recruit.alchemist.consider"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
+						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/**
+	 * Degree 8 — Silentium (PT-83). The alchemist's reading comes back the same as an Archon's; what changed is not in
+	 * the glass, and what a memory means is the Mnemonist's to say.
+	 */
+	public static DialogueTree silentium(int entityId, boolean hasBloodline, boolean isNpcRecruited) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.what_does_the_reading_say", "reading", null).withLore());
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null));
+		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.silentium.line1",
+						"hemomancy.alchemist.silentium.line2"
+				), greetingOptions))
+				.addNode(new DialogueNode("reading", List.of(
+						"hemomancy.alchemist.silentium.reading.line1",
+						"hemomancy.alchemist.silentium.reading.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("recruit_offer", List.of(
+						"hemomancy.dialogue.recruit.alchemist.consider"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
@@ -874,8 +919,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
-						"hemomancy.dialogue.recruit.alchemist.consider",
-						"hemomancy.dialogue.recruit.alchemist.accept"
+						"hemomancy.dialogue.recruit.alchemist.consider"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)

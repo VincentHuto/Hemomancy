@@ -92,8 +92,8 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.peacock_spider.get(), PeacockSpiderRenderer::new);
         event.registerEntityRenderer(EntityInit.vampire_bat.get(), VampireBatRenderer::new);
         event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
+        event.registerEntityRenderer(EntityInit.cruor_javelin.get(), NoopRenderer::new);
         event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
-        event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);
         event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), MorphlingPolypItemRenderer::new);
         event.registerEntityRenderer(EntityInit.qliphoth_seed_item.get(), QliphothSeedItemEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
@@ -109,6 +109,8 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.leech.get(), LeechRenderer::new);
         event.registerEntityRenderer(EntityInit.bloodlicker.get(), BloodlickerRenderer::new);
         event.registerEntityRenderer(EntityInit.unsettled_ichor.get(), UnsettledIchorRenderer::new);
+        event.registerEntityRenderer(EntityInit.living_land_strike.get(),
+                com.vincenthuto.hemomancy.client.render.entity.misc.LivingLandStrikeRenderer::new);
         event.registerEntityRenderer(EntityInit.awakened_ichorian_sigil.get(),
                 AwakenedIchorianSigilRenderer::new);
         event.registerEntityRenderer(EntityInit.daemon.get(), HumanitySpriteRenderer::new);
@@ -169,7 +171,6 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
         event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(EntityInit.hemolytic_vial_projectile.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(EntityInit.constrictor_cord_projectile.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(EntityInit.sanguis_lancea.get(), SanguisLanceaRenderer::new);
         event.registerEntityRenderer(EntityInit.unstained_zealot.get(), UnstainedZealotRenderer::new);
         event.registerEntityRenderer(EntityInit.unstained_guardian.get(), UnstainedGuardianRenderer::new);
@@ -267,6 +268,8 @@ public final class EntityRendererRegistrar {
         event.registerBlockEntityRenderer(BlockEntityInit.discovery_inscription.get(),
                 DiscoveryInscriptionBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.scar_station.get(), ScarStationRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.guy_stake.get(),
+                com.vincenthuto.hemomancy.client.render.tile.harbinger.decoration.GuyLineRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.ghastly_alembic.get(), GhastlyAlembicRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.pallid_retort.get(), PallidRetortRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
@@ -277,6 +280,8 @@ public final class EntityRendererRegistrar {
         event.registerBlockEntityRenderer(BlockEntityInit.gourdvine_tap.get(), GourdvineTapRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.pelagic_colony.get(), com.vincenthuto.hemomancy.client.render.tile.harbinger.plant.PelagicColonyRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.specimen_jar.get(), SpecimenJarRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.specimen_vat.get(),
+                com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.SpecimenVatRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.sanguine_condenser.get(),

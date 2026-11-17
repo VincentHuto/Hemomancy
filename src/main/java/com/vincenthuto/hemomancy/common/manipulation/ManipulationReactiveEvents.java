@@ -14,8 +14,6 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.IronheartedEvents;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.BlackheartedEvents;
-import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
-import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncManipulationHearts;
 import net.minecraft.resources.ResourceKey;
@@ -52,7 +50,6 @@ public final class ManipulationReactiveEvents {
 	private static final Map<UUID, Ward> WARD_REMNANTS = new HashMap<>();
 	/** Game tick of a melee swing that broke a Penumbral Drift, so the blow it started still lands as an ambush. */
 	private static final Map<UUID, Long> PENUMBRAL_AMBUSH = new HashMap<>();
-	private static final Map<UUID, UnclosingEye> UNCLOSING_EYES = new HashMap<>();
 	/** Session tier: each player's passive trigger cooldowns by manipulation name, cleared at respawn and logout. */
 	private static final Map<UUID, Map<String, Long>> PASSIVE_COOLDOWNS = new HashMap<>();
 	private static final List<EclipseWell> ECLIPSE_WELLS = new ArrayList<>();
@@ -68,7 +65,6 @@ public final class ManipulationReactiveEvents {
 		SANGUINE_WARDS.clear();
 		WARD_REMNANTS.clear();
 		PENUMBRAL_AMBUSH.clear();
-		UNCLOSING_EYES.clear();
 		PASSIVE_COOLDOWNS.clear();
 		ECLIPSE_WELLS.clear();
 		GAZE_SLAMS.clear();
@@ -146,12 +142,6 @@ public final class ManipulationReactiveEvents {
 		return ward == null || ward.until < player.level().getGameTime() ? 0 : ward.pool;
 	}
 
-	public static void armUnclosingEye(Player player, int duration) {
-		UNCLOSING_EYES.put(player.getUUID(), new UnclosingEye(player.level().getGameTime() + duration,
-                SchoolDamage.context(ManipulationInit.unclosing_eye.get(), player)));
-        ManipulationVisuals.attached(player, ManipulationVisuals.Form.EYE, 1, duration, 1);
-	}
-
 	public static void scheduleDeadlyGazeSlam(ServerLevel level, Player owner, LivingEntity target, int delay, float damage) {
 		GAZE_SLAMS.add(new GazeSlam(level.dimension(), owner.getUUID(), target.getUUID(), level.getGameTime() + delay, damage,
                 SchoolDamage.context(ManipulationInit.deadly_gaze.get(), owner)));
@@ -160,10 +150,6 @@ public final class ManipulationReactiveEvents {
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onIncomingDamage(LivingIncomingDamageEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player) || event.getAmount() <= 0) return;
-		if (EndlessHourManip.isSettlement(event.getSource())) {
-			EndlessHourManip.waiveMitigation(event);
-			return;
-		}
 		long now = player.level().getGameTime();
 		Entity attacker = event.getSource().getEntity();
 		Ward ward = SANGUINE_WARDS.get(player.getUUID());
@@ -251,9 +237,8 @@ public final class ManipulationReactiveEvents {
 
     }
 
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void onFinalDamage(LivingDamageEvent.Pre event) {
-		EndlessHourManip.deferDamage(event);
+	/** Attacker stage of {@link DamageStages}. */
+	public static void applyPenumbralAmbush(LivingDamageEvent.Pre event) {
 		if (event.getSource().getEntity() instanceof ServerPlayer attacker && event.getEntity() != attacker
 				&& selected(attacker, "penumbral_drift")) {
 			// Breaking cover from the drift lands as an ambush: the first blow bites deeper and leaves the victim Obscured.
@@ -267,14 +252,14 @@ public final class ManipulationReactiveEvents {
 			}
 			ManipulationChannelManager.stop(attacker);
 		}
-		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		// Endless Hour settlement waives absorption, so only health stands between the debt and death.
-		float buffer = player.getHealth() + (EndlessHourManip.isSettlement(event.getSource()) ? 0 : player.getAbsorptionAmount());
-		if (event.getNewDamage() < buffer || !phoenixDebtReady(player)
-				|| !trigger(player, ManipulationInit.phoenix_debt.get(), 6000)) return;
+	}
+
+	/** A Last Rite of the death-save stage in {@link DamageStages}: the hit is cut to leave the caster at 1 health. */
+	public static boolean tryPhoenixDebt(ServerPlayer player, LivingDamageEvent.Pre event) {
+		if (!DamageStages.isLethal(player, event) || !phoenixDebtReady(player)
+				|| !trigger(player, ManipulationInit.phoenix_debt.get(), 6000)) return false;
 		LastRiteHelper.consume(player, LastRiteHelper.PHOENIX_DEBT_ID);
-		event.setNewDamage(0);
-		player.setHealth(1.0F);
+		DamageStages.leaveBarelyAlive(player, event);
 		player.getActiveEffects().stream()
 				.filter(effect -> effect.getEffect().value().getCategory() == MobEffectCategory.HARMFUL)
 				.map(MobEffectInstance::getEffect).toList().forEach(player::removeEffect);
@@ -293,6 +278,7 @@ public final class ManipulationReactiveEvents {
 			// Attached so the wings follow the body that paid for them; radius is the blast's reach.
 			ManipulationVisuals.attached(player, ManipulationVisuals.Form.PHOENIX, 5, 48, 1);
 		}
+		return true;
 	}
 
 	@SubscribeEvent
@@ -324,36 +310,17 @@ public final class ManipulationReactiveEvents {
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		CrimsonTitheManip.tickDebt(player);
         if (player.tickCount % 20 == 0) {
-            var data = player.getPersistentData();
             long now=player.level().getGameTime();
             if(active(player,"sovereign_instinct") && passiveCooldown(player,"sovereign_instinct")<=now)
                 ManipulationVisuals.attached(player,ManipulationVisuals.Form.COMMAND,1.8,25,3);
             if(phoenixDebtReady(player)
                     && passiveCooldown(player,"phoenix_debt")<=now)
                 ManipulationVisuals.attached(player,ManipulationVisuals.Form.PHOENIX_READY,1,25,1);
-            long tithe = data.getLong("hemomancy:crimson_tithe_expiry") - player.level().getGameTime();
-            double reserve = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve.get(player);
-            if (tithe > 0) ManipulationVisuals.attached(player, ManipulationVisuals.Form.DEBT,
-                    Math.max(0, data.getDouble("hemomancy:crimson_tithe_stored") - reserve) * 2, (int)Math.max(0, tithe), (int)reserve);
-            long hour = data.getLong("hemomancy:endless_hour_expiry") - player.level().getGameTime();
-            if (hour > 0) ManipulationVisuals.attached(player, ManipulationVisuals.Form.HOUR, data.getFloat("hemomancy:endless_hour_deferred"), (int)Math.max(0, hour), 1);
         }
-		EndlessHourManip.tickEndlessHour(player);
 		if (active(player, "phoenix_debt")) {
-			if (!LastRiteHelper.hasArmedSource(player)) LastRiteHelper.arm(player, LastRiteHelper.PHOENIX_DEBT_ID);
+			if (LastRiteHelper.isOpenToArm(player)) LastRiteHelper.arm(player, LastRiteHelper.PHOENIX_DEBT_ID);
 		} else LastRiteHelper.clearIfArmed(player, LastRiteHelper.PHOENIX_DEBT_ID);
-		UnclosingEye eye = UNCLOSING_EYES.get(player.getUUID());
-		if (eye == null || eye.until <= player.level().getGameTime()) UNCLOSING_EYES.remove(player.getUUID());
-		else if (player.tickCount % 10 == 0) {
-			for (LivingEntity target : player.level().getEntitiesOfClass(LivingEntity.class,
-					player.getBoundingBox().inflate(32), entity -> entity != player && entity.isAlive())) {
-				SchoolStates.apply(eye.hit, player, target, SchoolState.ILLUMINATED, 25, 1);
-			}
-			SchoolStates.apply(eye.hit, player, player, SchoolState.ILLUMINATED, 25, 1);
-			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 25, 0, false, false, true));
-		}
 		Coronation crown = CORONATIONS.get(player.getUUID());
 		if (crown != null) {
 			if (player.level().getGameTime() >= crown.until) CORONATIONS.remove(player.getUUID());
@@ -427,26 +394,12 @@ public final class ManipulationReactiveEvents {
 
 	/** Called by {@code TransientServerStateEvents} when the player logs out. */
 	public static void logout(Player player) {
-		EndlessHourManip.settleDebt(player);
 		clear(player);
 	}
 
 	@SubscribeEvent
 	public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		clear(event.getEntity());
-	}
-
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void onDeath(net.neoforged.neoforge.event.entity.living.LivingDeathEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) EndlessHourManip.clearDebt(player);
-	}
-
-	@SubscribeEvent
-	public static void onClone(PlayerEvent.Clone event) {
-		if (event.isWasDeath()) {
-			EndlessHourManip.clearDebt(event.getOriginal());
-			EndlessHourManip.clearDebt(event.getEntity());
-		} else EndlessHourManip.transferDebt(event.getOriginal(), event.getEntity());
 	}
 
 	private static void sovereignInstinct(ServerPlayer player) {
@@ -456,7 +409,7 @@ public final class ManipulationReactiveEvents {
 		Vec3 chest = player.position().add(0, player.getBbHeight() * .6, 0);
 		for (int i = 0; i < mobs.size(); i++) {
 			Mob mob = mobs.get(i);
-			boolean boss = isBoss(mob);
+			boolean boss = HemoEntityPredicates.isBoss(mob);
 			// Bodies too large to command shrug the instinct off; bosses only feel its pressure.
 			if (!boss && !HematicCommandManager.canCommand(mob)) continue;
 			// The instinct is seen: a lash of sinew from the sovereign to every body it turns.
@@ -472,6 +425,9 @@ public final class ManipulationReactiveEvents {
 		}
 	}
 
+	/** Health each ally inside a Hematic Beacon regains a pulse, once a second (CB-9). */
+	public static final float HEMATIC_BEACON_HEAL_PER_PULSE = 0.8F;
+
 	private static void pulseHematicBeacon(ServerLevel level, HematicBeacon beacon) {
 		Player owner = level.getPlayerByUUID(beacon.owner);
 		if (owner == null) return;
@@ -479,7 +435,7 @@ public final class ManipulationReactiveEvents {
         AABB area = new AABB(beacon.center, beacon.center).inflate(beacon.radius);
 		for (Player ally : level.getEntitiesOfClass(Player.class, area,
 				player -> player.isAlive() && ManipulationCombatHelper.allied(owner, player))) {
-			ally.heal(0.4F);
+			ally.heal(HEMATIC_BEACON_HEAL_PER_PULSE);
 			ally.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 30, 0, false, true));
 		}
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area,
@@ -537,21 +493,10 @@ public final class ManipulationReactiveEvents {
 		SANGUINE_WARDS.remove(player);
 		WARD_REMNANTS.remove(player);
 		PENUMBRAL_AMBUSH.remove(player);
-		UNCLOSING_EYES.remove(player);
 		PASSIVE_COOLDOWNS.remove(player);
 		ECLIPSE_WELLS.removeIf(well -> well.owner.equals(player));
 		GAZE_SLAMS.removeIf(slam -> slam.owner.equals(player));
 		HEMATIC_BEACONS.removeIf(beacon -> beacon.owner.equals(player));
-	}
-
-	/** The one boss predicate every manipulation cap, command limit and immunity reads. */
-	public static boolean isBoss(LivingEntity target) {
-		return target instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon
-				|| target instanceof net.minecraft.world.entity.boss.wither.WitherBoss
-				|| target instanceof net.minecraft.world.entity.monster.warden.Warden
-				|| target instanceof net.minecraft.world.entity.monster.ElderGuardian
-				|| target.getType().is(net.neoforged.neoforge.common.Tags.EntityTypes.BOSSES)
-				|| target.getClass().getName().startsWith("com.vincenthuto.hemomancy.common.entity.boss.");
 	}
 
 	/** A crown still holding swords; recasting would only overwrite it. */
@@ -562,7 +507,6 @@ public final class ManipulationReactiveEvents {
 
 	private record Coronation(int lances, float strength, long until, SchoolHitContext hit) { }
 	private record Ward(float pool, long until) { }
-    private record UnclosingEye(long until, SchoolHitContext hit) { }
 	private record GazeSlam(ResourceKey<Level> dimension, UUID owner, UUID target, long at, float damage, SchoolHitContext hit) { }
 	private record EclipseWell(ResourceKey<Level> dimension, Vec3 center, double radius, long start, long until, UUID owner,
 			SchoolHitContext hit, float pulseDamage, boolean collapses) { }
@@ -574,7 +518,7 @@ public final class ManipulationReactiveEvents {
 		double reach = com.vincenthuto.hemomancy.common.manipulation.tenebris.EclipseWellManip.COLLAPSE_RADIUS;
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,
 				new AABB(well.center, well.center).inflate(reach),
-				candidate -> candidate.isAlive() && !isBoss(candidate)
+				candidate -> candidate.isAlive() && !HemoEntityPredicates.isBoss(candidate)
 						&& ManipulationCombatHelper.isHostileTarget(owner, candidate)
 						&& candidate.getBoundingBox().distanceToSqr(well.center) <= reach * reach))
 			com.vincenthuto.hemomancy.common.manipulation.tenebris.EclipseWellManip.scatter(level, target);

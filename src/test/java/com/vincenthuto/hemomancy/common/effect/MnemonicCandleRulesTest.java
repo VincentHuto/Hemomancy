@@ -1,15 +1,18 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import org.junit.jupiter.api.Test;
+
 public final class MnemonicCandleRulesTest {
 	private MnemonicCandleRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		assertEquals(80, MnemonicCandleRules.AURA_INTERVAL_TICKS, "aura interval");
 		assertEquals(120, MnemonicCandleRules.AURA_DURATION_TICKS, "aura duration");
 		assertEquals(0.90D, MnemonicCandleRules.manipulationCooldownMultiplier(true), "cooldown aura");
 		assertEquals(1.0D, MnemonicCandleRules.manipulationCooldownMultiplier(false), "no aura cooldown");
-		assertEquals(1.5D, MnemonicCandleRules.bonusBloodRegenPerTick(true), "regen aura");
+		assertEquals(0.25D, MnemonicCandleRules.bonusBloodRegenPerTick(true), "regen aura: 5 mL/s (CB-2)");
 		assertEquals(0.0D, MnemonicCandleRules.bonusBloodRegenPerTick(false), "no aura regen");
 	}
 

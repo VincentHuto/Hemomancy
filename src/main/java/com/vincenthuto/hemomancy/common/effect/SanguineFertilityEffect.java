@@ -12,10 +12,10 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 /**
- * A beneficial effect that causes nearby animals to enter love mode (breeding)
- * and accelerates the growth of baby animals. The radius and speed scale with
- * the amplifier level. Affected animals emit green (baby growth) and red
- * (breeding) glow particles.
+ * Sanguine Fertility. On an animal (a dose of a Harbinger's blood by plain Projection, core-loop Track 5) it works
+ * on that animal alone: an adult that can fall in love does, with the usual breeding cooldown, and a baby grows. On
+ * anything else (a player who drank the potion) it reaches the animals around them: adults are put in love and
+ * babies grow, faster with the amplifier. Affected animals show red (breeding) and green (growth) glow.
  */
 public class SanguineFertilityEffect extends MobEffect {
 
@@ -27,6 +27,13 @@ public class SanguineFertilityEffect extends MobEffect {
 	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		if (entity == null) return true;
 		Level level = entity.level();
+		if (entity instanceof Animal dosed) {
+			if (!level.isClientSide) {
+				if (dosed.isBaby()) dosed.ageUp(2 + amplifier);
+				else if (dosed.getAge() == 0 && dosed.canFallInLove() && !dosed.isInLove()) dosed.setInLove(null);
+			}
+			return true;
+		}
 
 		double radius = 6.0 + amplifier * 2.0;
 		AABB area = entity.getBoundingBox().inflate(radius);

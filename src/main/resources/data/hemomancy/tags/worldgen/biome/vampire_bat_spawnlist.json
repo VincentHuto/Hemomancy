@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "#minecraft:is_nether"
+    "minecraft:nether_wastes",
+    "minecraft:crimson_forest",
+    "minecraft:basalt_deltas",
+    "hemomancy:phlegethontic_basin"
   ]
 }

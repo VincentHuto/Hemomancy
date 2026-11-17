@@ -195,6 +195,29 @@ class NpcTradeServiceTest {
 		assertEquals(List.of("insert minecraft:bread x1"), party.changes);
 	}
 
+	@Test
+	void aCustomGivenInDialoguePaysWhatItsCardPays() {
+		NpcTradeOffer custom = new NpcTradeOffer(rl("hemomancy:court_gardener/custom"), "court_gardener",
+				NpcTradeSides.Side.COURT, "t", "l", 0, NpcTradeRequirements.NONE, new NpcTradeWant.Custom("custom_food"),
+				List.of(), List.of(), 2, NpcTradeStock.UNLIMITED_STOCK, false, Optional.empty());
+		NpcTradeLedger byWord = new NpcTradeLedger();
+		assertEquals(2, NpcTradeService.creditCustom(byWord, "court_gardener", List.of(custom), "custom_food"));
+		assertEquals(4, NpcTradeService.creditCustom(byWord, "court_gardener", List.of(custom), "custom_food"),
+				"every time, as the card pays");
+
+		NpcTradeLedger byCard = new NpcTradeLedger();
+		NpcTradeService.run(custom, FakeParty.bones(Grade.FAIR).offering(1), byCard, DAY, slots(1));
+		NpcTradeLedger once = new NpcTradeLedger();
+		NpcTradeService.creditCustom(once, "court_gardener", List.of(custom), "custom_food");
+		assertEquals(byCard.rapport("court_gardener"), once.rapport("court_gardener"), "the card and the dialogue pay the same");
+
+		NpcTradeLedger other = new NpcTradeLedger();
+		assertEquals(0, NpcTradeService.creditCustom(other, "court_gardener", List.of(custom), "custom_promise"),
+				"another house's custom pays nothing here");
+		assertEquals(0, NpcTradeService.creditCustom(other, "court_braced_elder", List.of(), "custom_promise"),
+				"a speaker with no custom card pays nothing");
+	}
+
 	private static NpcTradeOffer offer(String path, NpcTradeWant want, List<NpcTradeGive> give, List<NpcTradeGive> fine,
 			NpcTradeStock stock) {
 		return new NpcTradeOffer(rl("hemomancy:" + path), "alchemist", NpcTradeSides.Side.HARBINGER, "t", "l", 0,

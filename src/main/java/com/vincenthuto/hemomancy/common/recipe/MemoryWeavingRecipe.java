@@ -22,6 +22,7 @@ public class MemoryWeavingRecipe extends StationRecipe {
 	private final List<Ingredient> catalysts;
 	private final EnumMap<EnumBloodTemper, Integer> enzymeRequirements;
 	private final double bloodCost;
+	private final int requiredDegree;
 	private final ItemStack result;
 
 	public static HashMap<EnumBloodTemper, Float> blank() {
@@ -51,10 +52,16 @@ public class MemoryWeavingRecipe extends StationRecipe {
 
 	public MemoryWeavingRecipe(ResourceLocation id, List<Ingredient> catalysts,
 			Map<EnumBloodTemper, Integer> enzymeRequirements, double bloodCost, ItemStack result) {
+		this(id, catalysts, enzymeRequirements, bloodCost, 0, result);
+	}
+
+	public MemoryWeavingRecipe(ResourceLocation id, List<Ingredient> catalysts,
+			Map<EnumBloodTemper, Integer> enzymeRequirements, double bloodCost, int requiredDegree, ItemStack result) {
 		this.id = id;
 		this.catalysts = sanitizeCatalysts(catalysts);
 		this.enzymeRequirements = sanitizeEnzymes(enzymeRequirements);
 		this.bloodCost = Math.max(0.0D, bloodCost);
+		this.requiredDegree = Math.max(0, requiredDegree);
 		this.result = result == null ? ItemStack.EMPTY : result;
 	}
 
@@ -231,6 +238,11 @@ public class MemoryWeavingRecipe extends StationRecipe {
 
 	public double getBloodCost() {
 		return bloodCost;
+	}
+
+	/** The degree the weaver must hold; 0 when the recipe names none. */
+	public int getRequiredDegree() {
+		return requiredDegree;
 	}
 
 	public int getTotalOrbCount() {

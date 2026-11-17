@@ -125,11 +125,13 @@ public final class DialogueScreen extends Screen {
 		hoveredLoreMarker = false;
 		if (!inTradeBox()) tradeView.reset();
 		resetGuiState();
+		DialogueLineEditor.beginFrame();
 		gfx.blitSprite(style.frameSprite(), layout.panel().x(), layout.panel().y(),
 				layout.panel().width(), layout.panel().height());
 		renderHeader(gfx);
 		renderContent(gfx, mouseX, mouseY);
 		renderFooter(gfx, mouseX, mouseY);
+		DialogueLineEditor.endFrame();
 		resetGuiState();
 		super.render(gfx, mouseX, mouseY, partialTick);
 		if (!hoveredInquiryItem.isEmpty()) {
@@ -218,10 +220,22 @@ public final class DialogueScreen extends Screen {
 		if (maxScroll > 0) renderScrollbar(gfx);
 	}
 
+	/** The hub as drawn: its cards grown to the longest summary, so the Important tab sits where it is shown. */
+	public DialogueHubLayout hubLayout() {
+		DialogueHubLayout hub = DialogueHubLayout.calculate(layout);
+		int summaryWidth = DialogueHubLayout.summaryWidth(hub.cards().getFirst());
+		int summaryLines = 0;
+		for (DialogueCategory category : tree.presentation().categories()) {
+			summaryLines = Math.max(summaryLines, font.split(hubSummary(category), summaryWidth).size());
+		}
+		return DialogueHubLayout.calculate(layout, summaryLines);
+	}
+
 	private int renderHub(GuiGraphics gfx, int mouseX, int mouseY, int startY) {
 		var content = layout.content();
-		DialogueHubLayout hub = DialogueHubLayout.calculate(layout);
 		List<DialogueCategory> categories = tree.presentation().categories();
+		DialogueHubLayout hub = hubLayout();
+		int summaryWidth = DialogueHubLayout.summaryWidth(hub.cards().getFirst());
 		for (int i = 0; i < categories.size(); i++) {
 			DialogueCategory category = categories.get(i);
 			DialogueLayout.Rect card = hub.cards().get(i);
@@ -229,8 +243,7 @@ public final class DialogueScreen extends Screen {
 			int y = card.y() - scrollOffset;
 			int cardWidth = card.width();
 			int cardHeight = card.height();
-			boolean enabled = tree.presentation().hasTopics(category)
-					|| category == DialogueCategory.TRADE && tradeBoard.present();
+			boolean enabled = categoryEnabled(category);
 			boolean selected = enabled && (contains(x, y, cardWidth, cardHeight, mouseX, mouseY)
 					|| navigation.focusIndex() == i);
 			gfx.blitSprite(enabled ? DialogueThemeStyle.categoryCard(category, selected)
@@ -239,11 +252,8 @@ public final class DialogueScreen extends Screen {
 			gfx.blitSprite(icon, x + 8, y + 8, 16, 16);
 			gfx.drawString(font, categoryTitle(category), x + 30, y + 8,
 					enabled ? style.optionColor() : style.disabledColor(), true);
-			Component summary = enabled
-					? Component.translatable(categorySummary(category))
-					: Component.translatable("hemomancy.dialogue.ui.no_topics");
-			drawWrapped(gfx, summary, x + 30, y + 23, cardWidth - 38, 2,
-					enabled ? style.textColor() : style.disabledColor());
+			drawWrapped(gfx, hubSummary(category), x + DialogueHubLayout.SUMMARY_X, y + DialogueHubLayout.SUMMARY_Y,
+					summaryWidth, Integer.MAX_VALUE, enabled ? style.textColor() : style.disabledColor());
 			if (enabled && hasUnread(category)) {
 				gfx.blitSprite(DialogueThemeStyle.statusIcon("unread"), x + cardWidth - 14, y + 5, 8, 8);
 			}
@@ -283,7 +293,7 @@ public final class DialogueScreen extends Screen {
 		int x = content.x() + CONTENT_PAD;
 		int width = content.width() - CONTENT_PAD * 2;
 		for (DialogueTopic topic : DialogueImportance.topics(tree.presentation())) {
-			int height = topic.category() == DialogueCategory.QUESTS ? 54 : 44;
+			int height = topicCardHeight(topic, topic.category(), width);
 			renderTopicCard(gfx, mouseX, mouseY, content, topic, x, y, width, height,
 					navigation.focusIndex() == clickTargets.size());
 			y += height + 6;
@@ -316,7 +326,7 @@ public final class DialogueScreen extends Screen {
 		int y = startY + CONTENT_PAD;
 		int width = content.width() - CONTENT_PAD * 2;
 		for (int i = 0; i < topics.size(); i++) {
-			int height = navigation.category() == DialogueCategory.QUESTS ? 54 : 44;
+			int height = topicCardHeight(topics.get(i), navigation.category(), width);
 			renderTopicCard(gfx, mouseX, mouseY, content, topics.get(i), content.x() + CONTENT_PAD, y, width, height,
 					navigation.focusIndex() == i);
 			y += height + 6;
@@ -324,12 +334,35 @@ public final class DialogueScreen extends Screen {
 		return Math.max(content.height(), y - startY + CONTENT_PAD);
 	}
 
+	/** A topic card tall enough for its whole title and summary; a Quest Work card keeps room for its progress bar. */
+	private int topicCardHeight(DialogueTopic topic, DialogueCategory category, int width) {
+		int base = category == DialogueCategory.QUESTS ? 54 : 44;
+		return DialogueTopicCardLayout.height(base, topicTitleLines(topic, width),
+				font.split(Component.translatable(topic.summaryKey()), DialogueTopicCardLayout.summaryWidth(width)).size());
+	}
+
+	private int topicTitleLines(DialogueTopic topic, int width) {
+		return Math.max(1, font.split(topicTitle(topic),
+				DialogueTopicCardLayout.titleWidth(width, showsUnread(topic))).size());
+	}
+
+	private Component topicTitle(DialogueTopic topic) {
+		return topic.displayItemId() != null
+				? new ItemStack(BuiltInRegistries.ITEM.get(topic.displayItemId())).getHoverName()
+				: Component.translatable(topic.titleKey());
+	}
+
+	private boolean showsUnread(DialogueTopic topic) {
+		return topic.unread() && !locallyReadTopics.contains(topic.id());
+	}
+
 	private void renderTopicCard(GuiGraphics gfx, int mouseX, int mouseY, DialogueLayout.Rect content, DialogueTopic topic,
 			int x, int y, int width, int height, boolean focused) {
 		boolean enabled = topic.state().enabled();
 		DialogueLayout.Rect card = new DialogueLayout.Rect(x, y, width, height);
-		boolean showUnread = topic.unread() && !locallyReadTopics.contains(topic.id());
-		DialogueTopicCardLayout cardLayout = DialogueTopicCardLayout.calculate(card, showUnread);
+		boolean showUnread = showsUnread(topic);
+		DialogueTopicCardLayout cardLayout = DialogueTopicCardLayout.calculate(card, showUnread,
+				topicTitleLines(topic, width));
 		renderCard(gfx, x, y, width, height, mouseX, mouseY,
 				enabled, focused);
 		if (topic.displayItemId() != null) {
@@ -343,15 +376,13 @@ public final class DialogueScreen extends Screen {
 			}
 		}
 		int color = enabled ? style.optionColor() : style.disabledColor();
-		Component title = topic.displayItemId() != null
-				? new ItemStack(BuiltInRegistries.ITEM.get(topic.displayItemId())).getHoverName()
-				: Component.translatable(topic.titleKey());
-		var titleLines = font.split(title, cardLayout.title().width());
-		if (!titleLines.isEmpty()) {
-			gfx.drawString(font, titleLines.getFirst(), cardLayout.title().x(), cardLayout.title().y(), color, true);
+		var titleLines = font.split(topicTitle(topic), cardLayout.title().width());
+		for (int i = 0; i < titleLines.size(); i++) {
+			gfx.drawString(font, titleLines.get(i), cardLayout.title().x(), cardLayout.title().y() + i * LINE_HEIGHT,
+					color, true);
 		}
 		drawWrapped(gfx, Component.translatable(topic.summaryKey()), cardLayout.summary().x(),
-				cardLayout.summary().y(), cardLayout.summary().width(), 2,
+				cardLayout.summary().y(), cardLayout.summary().width(), Integer.MAX_VALUE,
 				enabled ? style.textColor() : style.disabledColor());
 		renderTopicStatus(gfx, topic, x, y, width, height);
 		clickTargets.add(ClickTarget.topic(x, y, width, height, topic, enabled));
@@ -518,10 +549,10 @@ public final class DialogueScreen extends Screen {
 		texture.restoreLastBlurMipmap();
 	}
 
-	/** The speaker's crest, or the default crest when no sprite was drawn for them (the Circus has none yet). */
+	/** The speaker's crest, or the default crest when no sprite was drawn for them. */
 	private ResourceLocation crest() {
 		if (resolvedCrest == null) {
-			ResourceLocation crest = DialogueThemeStyle.crest(tree.presentation().styleId());
+			ResourceLocation crest = DialogueThemeStyle.crest(tree.theme(), tree.presentation().styleId());
 			boolean missing = Minecraft.getInstance().getGuiSprites().getSprite(crest).contents().name()
 					.equals(net.minecraft.client.renderer.texture.MissingTextureAtlasSprite.getLocation());
 			resolvedCrest = missing ? DialogueThemeStyle.crest(null) : crest;
@@ -580,6 +611,10 @@ public final class DialogueScreen extends Screen {
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (keyCode == GLFW.GLFW_KEY_F7 && DialogueLineEditor.available()) {
+			minecraft.setScreen(new DialogueLineEditScreen(this, DialogueLineEditor.lastFrameKeys()));
+			return true;
+		}
 		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
 			if (navigation.back()) {
 				currentNode = tree.getStartNode();
@@ -786,6 +821,16 @@ public final class DialogueScreen extends Screen {
 		for (int i = 0; i < Math.min(maxLines, lines.size()); i++) {
 			gfx.drawString(font, lines.get(i), x, y + i * LINE_HEIGHT, color, false);
 		}
+	}
+
+	/** A hub card's summary, or the no-topics line for a card with nothing behind it. */
+	private Component hubSummary(DialogueCategory category) {
+		return categoryEnabled(category) ? Component.translatable(categorySummary(category))
+				: Component.translatable("hemomancy.dialogue.ui.no_topics");
+	}
+
+	private boolean categoryEnabled(DialogueCategory category) {
+		return tree.presentation().hasTopics(category) || category == DialogueCategory.TRADE && tradeBoard.present();
 	}
 
 	private Component categoryTitle(DialogueCategory category) {

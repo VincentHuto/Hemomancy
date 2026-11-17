@@ -15,13 +15,17 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemo
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryPrimingRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.CleatsFitting;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.manipulation.verb.Verb;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.BloodVerbChoicePacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ActivateArmorSetAbilityC2SPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleCleatsPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentMemoryPacket;
 import com.vincenthuto.hemomancy.common.util.HemoText;
@@ -32,6 +36,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -138,10 +144,12 @@ public class RadialChooseManipScreen extends Screen {
 			String selectedManipName = selectedMemory.kind() == MemoryEntryKind.MANIPULATION
 					? selectedMemory.id() : "";
 
-			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
-			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
+			// The two verbs sit on the inner wheel. Picking one is the plain verb: it sets the verb and puts the memory down.
+			addVerb(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION, Verb.ABSORB, manips.getActiveVerb());
+			addVerb(allManips, ManipulationEquipHelper.BLOOD_PROJECTION, Verb.PROJECT, manips.getActiveVerb());
 			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.CONJURE_STAFF, selectedManipName);
 			addArmorSetAbility();
+			addCleatsToggle();
 
 			for (ManipulationWheelOrder.Entry entry : ManipulationWheelOrder.resolve(allManips, equippedNames)) {
 				this.cachedMenuItems.add(createManipulationItem(
@@ -214,6 +222,27 @@ public class RadialChooseManipScreen extends Screen {
 		}
 	}
 
+	private void addVerb(List<BloodManipulation> allManips, String manipName, Verb verb, Verb activeVerb) {
+		for (BloodManipulation manipulation : allManips) {
+			if (manipulation == null || !manipName.equals(manipulation.getName())) continue;
+			// The verbs show the hand items they conjure, not memory icons.
+			ItemStack hand = new ItemStack(verb == Verb.ABSORB ? ItemInit.blood_absorption.get() : ItemInit.blood_projection.get());
+			ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(this.menu, -1, hand,
+					manipulation.getDisplayName(), List.of(manipulation.getDisplayName())) {
+				@Override
+				public boolean onClick() {
+					PacketHandler.sendToServer(new BloodVerbChoicePacket(verb));
+					RadialChooseManipScreen.this.menu.close();
+					return true;
+				}
+			};
+			if (verb == activeVerb) item.setVeinyBorder(true);
+			item.setVisible(true);
+			this.cachedMechanicalItems.add(item);
+			return;
+		}
+	}
+
 	private void addArmorSetAbility() {
 		ArmorSetAbilityRegistry.getActiveAbility(mc.player).ifPresent(ability -> {
 			ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(this.menu, -1,
@@ -237,6 +266,30 @@ public class RadialChooseManipScreen extends Screen {
 			item.setVisible(true);
 			this.cachedMechanicalItems.add(item);
 		});
+	}
+
+	/** While the worn boots carry Hematic Cleats, one inner slice turns them on or off (CN-10). */
+	private void addCleatsToggle() {
+		ItemStack boots = mc.player.getItemBySlot(EquipmentSlot.FEET);
+		if (!CleatsFitting.isFitted(boots)) return;
+		boolean on = CleatsFitting.isOn(boots);
+		Component name = Component.translatable("screen.hemomancy.radial_choose_manip.cleats");
+		List<Component> tooltip = List.of(name, Component.translatable(on
+				? "screen.hemomancy.radial_choose_manip.cleats.on" : "screen.hemomancy.radial_choose_manip.cleats.off")
+				.withStyle(ChatFormatting.GRAY));
+		ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(this.menu, -1,
+				new ItemStack(ItemInit.hematic_cleats.get()), name, tooltip) {
+			@Override
+			public boolean onClick() {
+				PacketHandler.sendToServer(ToggleCleatsPacket.INSTANCE);
+				RadialChooseManipScreen.this.menu.close();
+				return true;
+			}
+		};
+		if (on) item.setVeinyBorder(true);
+		else item.setBackgroundColor(UNAVAILABLE_ABILITY_SLICE_TINT);
+		item.setVisible(true);
+		this.cachedMechanicalItems.add(item);
 	}
 
 	private List<Component> armorAbilityTooltip(ArmorSetAbility ability) {

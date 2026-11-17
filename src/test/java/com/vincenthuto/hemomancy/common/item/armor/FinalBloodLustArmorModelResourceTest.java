@@ -1,9 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.armor;
 
+import org.junit.jupiter.api.Test;
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class FinalBloodLustArmorModelResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -12,7 +15,8 @@ public final class FinalBloodLustArmorModelResourceTest {
 	private FinalBloodLustArmorModelResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String layers = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
 		String helper = read(SOURCE_ROOT.resolve(
@@ -77,19 +81,6 @@ public final class FinalBloodLustArmorModelResourceTest {
 		assertTextureSize(prefix + " layer 2 should be a copied readable armor atlas",
 				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/" + prefix + "_blood_lust_layer_2.png"),
 				expectedWidth, expectedHeight);
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 
 	private static void assertTextureSize(String label, Path path, int expectedWidth, int expectedHeight) throws IOException {

@@ -4,7 +4,7 @@
   "bloodCost": 0,
   "riteType": "lesser",
   "purpose": "making",
-  "required_degree": 4,
+  "required_degree": 8,
   "rankup": false,
   "riteName": "Working of the Sporitic Thurible",
   "riteDescription": "Build the Sporitic Thurible beside the Cardinal Focus, feed it, and let the Working floor take it.",

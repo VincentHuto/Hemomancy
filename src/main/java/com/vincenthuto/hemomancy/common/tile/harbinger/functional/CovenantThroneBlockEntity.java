@@ -25,7 +25,7 @@ import java.util.UUID;
  * check.</p>
  *
  * <p>{@link IBloodReservoir} is implemented only to satisfy internal capability
- * lookup conventions; no blood is stored in this block entity itself.</p>
+ * lookup conventions; it declares {@link #holdsBlood()} false, so it has no tank.</p>
  */
 public class CovenantThroneBlockEntity extends HemoBlockEntity implements IBloodReservoir, IMultiBlockEntity {
 
@@ -101,6 +101,12 @@ public class CovenantThroneBlockEntity extends HemoBlockEntity implements IBlood
     }
 
     // ── IBloodReservoir ─────────────────────────────────────────────────────────────
+
+    /** The throne never spends blood, so it keeps no tank (core-loop Track 3). */
+    @Override
+    public boolean holdsBlood() {
+        return false;
+    }
 
     // ── Serialisation ─────────────────────────────────────────────────────────
 

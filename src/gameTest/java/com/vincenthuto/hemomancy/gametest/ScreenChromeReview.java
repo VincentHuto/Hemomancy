@@ -116,8 +116,38 @@ public final class ScreenChromeReview {
             block("resonant_forge", "tile.crafting.ResonantForgeScreen", BlockInit.resonant_forge),
             block("clairaudiograph", "tile.functional.ClairaudiographScreen", BlockInit.clairaudiograph),
             block("phlebotomists_cabinet", "tile.functional.PhlebotomistsCabinetScreen", BlockInit.phlebotomists_cabinet),
+            Scene.server("specimen_vessel", "tile.functional.SpecimenVesselScreen", ScreenChromeReview::placeVessel,
+                    ScreenChromeReview::openVessel),
             // Last, because it gives the reviewer a bloodline that the ledger and pool scenes would otherwise show.
-            new Scene("bloodline_pool_fane", BloodlinePoolScreen.class, ScreenChromeReview::openPoolWithFane, null, null));
+            new Scene("bloodline_pool_fane", BloodlinePoolScreen.class, ScreenChromeReview::openPoolWithFane, null, null),
+            // A full pool greys the Donate button (PT-42).
+            new Scene("bloodline_pool_full", BloodlinePoolScreen.class, ScreenChromeReview::openFullPool, null, null),
+            // The leader's petition row (PT-35).
+            new Scene("ledger_petitions", LedgerScreen.class, ScreenChromeReview::openLedgerWithPetitions, null, null));
+
+    private static void reviewLine() {
+        Minecraft minecraft = Minecraft.getInstance();
+        java.util.UUID leader = minecraft.player.getUUID();
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(minecraft.player).setBloodLine(
+                new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline("Chrome Review",
+                        leader, java.util.UUID.nameUUIDFromBytes(new byte[] {9}), new java.util.ArrayList<>(List.of(leader))));
+    }
+
+    private static void openFullPool() {
+        reviewLine();
+        com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData.set(10_000.0F, 10_000.0F, 2);
+        Minecraft.getInstance().setScreen(new BloodlinePoolScreen());
+    }
+
+    private static void openLedgerWithPetitions() {
+        reviewLine();
+        com.vincenthuto.hemomancy.client.data.BloodlinePetitionClientData.set(List.of(
+                new com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePetitions.Petition(
+                        java.util.UUID.nameUUIDFromBytes(new byte[] {21}), "Ashwell"),
+                new com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePetitions.Petition(
+                        java.util.UUID.nameUUIDFromBytes(new byte[] {22}), "Corvane")));
+        Minecraft.getInstance().setScreen(new LedgerScreen());
+    }
 
     /** The pool screen with a sample fane on its map: four stakes (the last cut off) and a neighbour's fane. */
     private static void openPoolWithFane() {
@@ -260,6 +290,37 @@ public final class ScreenChromeReview {
             if (player.containerMenu == player.inventoryMenu && level.getBlockEntity(pos[0]) instanceof MenuProvider provider)
                 player.openMenu(provider, pos[0]);
         });
+    }
+
+    /** RV-60: a Specimen Vat south of the reviewer keeping a cow at 64 Vigor over a 345 mL buffer. */
+    private static void placeVessel(ServerPlayer player) {
+        var level = player.serverLevel();
+        BlockPos base = anchor.relative(Direction.SOUTH, 2);
+        level.setBlockAndUpdate(base.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+        var lower = BlockInit.specimen_vat.get().defaultBlockState()
+                .setValue(com.vincenthuto.hemomancy.common.block.harbinger.functional.SpecimenVatBlock.FACING, Direction.NORTH);
+        level.setBlock(base, lower, 3);
+        level.setBlock(base.above(), lower.setValue(com.vincenthuto.hemomancy.common.block.harbinger.functional.SpecimenVatBlock.HALF,
+                net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER), 3);
+        if (level.getBlockEntity(base) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.SpecimenVatBlockEntity vat) {
+            vat.buffer().setOwner(player.getUUID());
+            var cow = net.minecraft.world.entity.EntityType.COW.create(level);
+            if (cow != null) {
+                vat.kept().keep(com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData.captureEntity(cow),
+                        cow.getMaxHealth(), 64.0D, level.getGameTime());
+                cow.discard();
+            }
+            vat.buffer().setBloodVolume(345.0D);
+            com.vincenthuto.hemomancy.common.util.BlockEntitySync.markAndSync(vat);
+        }
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+    }
+
+    private static void openVessel(ServerPlayer player) {
+        var level = player.serverLevel();
+        BlockPos base = anchor.relative(Direction.SOUTH, 2);
+        if (level.getBlockEntity(base) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.SpecimenVatBlockEntity vat)
+            com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.SpecimenVessels.useEmptyHand(level, base, vat, player, vat::fits);
     }
 
     /** Puts the item in hand, then uses it once the client holds it too (some menus read the held stack). */

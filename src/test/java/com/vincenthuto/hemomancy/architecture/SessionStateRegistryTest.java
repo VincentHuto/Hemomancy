@@ -31,8 +31,6 @@ class SessionStateRegistryTest {
 
 	/** Collections the hub leaves alone, each with the reason. Keys are {@code path#FIELD} under {@code common/}. */
 	private static final Map<String, String> EXEMPT = Map.of(
-			"item/shared/ScaleGripEvents.java#PENDING_RETURNS",
-			"holds the protected items until respawn; clearing it would lose them (F-4 persists them instead)",
 			"manipulation/mortem/BlackheartedEvents.java#RUPTURING", "re-entrancy guard for one rupture",
 			"init/EffectInit.java#MNEMONIC_WHISPERS_REDRINKS", "re-entrancy guard for one drink",
 			"manipulation/mortem/LignumMortisManip.java#SESSIONS",
@@ -42,12 +40,12 @@ class SessionStateRegistryTest {
 	private static final Map<String, String> LOGOUT_HANDLERS = Map.of(
 			"common/event/ChamberVisitEvents.java", "returns the player from an interrupted Chamber visit",
 			"common/capability/player/harbinger/morphling/EquippedMorphlingEvents.java", "persists the equipped morphling",
-			"common/event/FungalProjectionEvents.java", "forces a projection back to its body",
 			"common/event/PossessionEvents.java", "returns a possessing will to its body",
 			"common/item/harbinger/tool/living/LivingStaffWeaponFormEvents.java", "restores the staff's held form",
 			"common/item/harbinger/tool/living/LivingTorchChannelEvents.java", "stops a breathing channel",
 			"common/entity/summon/puppeteer/PuppeteerCommandEvents.java", "rotates the owner's puppet session",
-			"common/manipulation/ductilis/Paralysis.java", "lifts paralysis, as on login, respawn and dimension change");
+			"common/manipulation/ductilis/Paralysis.java", "lifts paralysis, as on login, respawn and dimension change",
+			"common/entity/boss/court/KindledChampionTrial.java", "ends a usurpation the challenger left and records the wait");
 
 	@Test
 	void everyUuidKeyedCollectionIsRegisteredWithTheHub() throws Exception {

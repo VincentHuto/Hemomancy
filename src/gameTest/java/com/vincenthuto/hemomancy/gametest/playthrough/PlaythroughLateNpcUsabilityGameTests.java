@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.CovenantProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtMemberDialogue;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
@@ -1390,7 +1391,7 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 					PlaythroughLog.note(helper, scenario, pointer.label() + ": named by " + naming.size() + " line(s) "
 							+ naming.subList(0, Math.min(3, naming.size())) + "; ledger " + ledgerKey(player));
 					if (pointer.state().stage() == Stage.D5 && pointer.state().role() == LineRole.LEADER) {
-						// DECISION D5-5 (logged here; probed by quintessenceHasNoPointer): the Fane needs Sanguine Quintessence.
+						// DECISION D5-5 (logged here; probed by quintessenceSourceIsNamed): the Fane needs Sanguine Quintessence.
 						PlaythroughLog.note(helper, scenario, "D5-5 at the Fane step: a line names where Quintessence comes "
 								+ "from: " + namesQuintessenceSource(heard));
 					}
@@ -1413,14 +1414,16 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 			try {
 				player.relog();
 				int queued = player.pendingWhispers().size();
-				// The player takes up "Listen when ready" and reads through the inbox, oldest first, until the choice
-				// opens (CHAIN-2: memo whispers may come first). A memo alone in the inbox is not the choice.
+				// The player takes up "Listen when ready": the decision whisper opens first (PT-89), ahead of any
+				// older memo whisper. A memo alone in the inbox is not the choice.
 				int opened = openUntilChoice(player);
 				PlaythroughLog.note(helper, scenario, "D7 choice pending, after a relog: queued " + queued + "; the choice "
 						+ (opened > 0 ? "opened as whisper " + opened : "never opened") + ", last whisper "
 						+ player.whisper().map(DialogueView::describe).orElse("none"));
 				if (opened == 0) findings.add("the whisper inbox", "the revelation choice is not in front of the player after a relog",
 						"D7 choice pending");
+				else if (opened != 1) findings.add("the whisper inbox", "the revelation choice opened as whisper " + opened
+						+ ", not first (PT-89)", "D7 choice pending");
 			} finally {
 				player.offline();
 			}
@@ -1481,18 +1484,18 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 	}
 
 	/** At D7 after Communion, some reachable speaker names the Fungal Spine the player now carries. */
-	// DECISION D7-8: after Communion no reachable speaker names the Fungal Spine, and the Spine has no item inquiry.
-	// Options: a Vicar or Monolith line / a Spine item inquiry / the delivery line and the Liber only.
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
+	// FIX: PT-78 (D7-8) the Alchemist's greeting names the Spine after Communion until the first crossing
+	// (hemomancy.dialogue.ending.alchemist.communed, DialogueHubFactory.withArchonAcknowledgment).
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void springPointerAfterCommunion(GameTestHelper helper) {
 		pointerProbe(helper, "springPointerAfterCommunion", new Pointer("D7 communed: the Fungal Spine",
 				new LateState(Stage.D7_COMMUNED, LineRole.LEADER), words("fungal spine"), "D7-8"));
 	}
 
 	/** A D7 Silence who has not met Vesper hears some reachable speaker name the Severance or the Living Sickle. */
-	// DECISION D7-9: a D7 Silence (SILENT_PENDING, Vesper not yet met) hears nothing that names the Severance or the
-	// Living Sickle. Options: a Vicar or Mnemonist line / the whisper and the Liber only / keep.
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
+	// FIX: PT-79 (D7-9) the Vicar's silent_pending ending line names the Severance, the Living Sickle and the Bloom,
+	// as what the Order's older accounts say.
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void severancePointerForSilence(GameTestHelper helper) {
 		pointerProbe(helper, "severancePointerForSilence", new Pointer("D7 Silence chosen: the Severance",
 				new LateState(Stage.D7_SILENT, LineRole.LEADER),
@@ -1538,17 +1541,15 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 	}
 
 	// =================================================================================================================
-	// mainStepsAreQuests (D NPC-3)
+	// mainStepsAreQuests (PT-86)
 	// =================================================================================================================
 
 	/**
-	 * DECISION NPC-3: the D5 and D6 Main guidance is the Vicar's "what degree next" lore card, whose notice sigil clears
-	 * after one read, with no Quest Work card; and {@code complete_vigil} names only a recruited Vicar as the Vigil's
-	 * helper. Options: a Quest card with a sigil per step / extra lines / keep. Expects, for a D5 founder (the Fane
-	 * next), a D6 Sanctified leader (the Living Covenant next) and a D5 member: the guidance on a Quests card whose sigil
-	 * stays lit after it is read while the step is open; and the Vigil line naming the other helpers.
+	 * PT-86: each D5 and D6 Main step ({@code CovenantProgress.steps}) is its own Quest Work card with a sigil, and the
+	 * sigil stays lit after the card is opened while the step is open. For a D5 founder (the Fane next), a D6 Sanctified
+	 * leader (the Living Covenant next) and a D5 member.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
 	public static void mainStepsAreQuests(GameTestHelper helper) {
 		String scenario = "mainStepsAreQuests";
 		Late ctx = new Late(helper);
@@ -1558,55 +1559,52 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 				new LateState(Stage.D5, LineRole.MEMBER))) {
 			PlaythroughPlayer player = playerIn(ctx, helper.absolutePos(STAND), state, null);
 			try {
+				List<String> steps = CovenantProgress.of(player.player()).steps(player.degree());
 				DialogueView view = player.talkTo(vicar);
-				Optional<DialogueTopic> card = view.topics().stream()
-						.filter(topic -> "degree_hint".equals(topic.targetNodeId())).findFirst();
-				if (card.isEmpty()) {
-					findings.add(state + ": no card leads to the guidance; " + view.describe());
-					continue;
-				}
-				DialogueTopic before = card.get();
-				if (before.lore() && before.unread()) player.openTopic(vicar, before.id());
-				DialogueView again = player.talkTo(vicar);
-				Optional<DialogueTopic> after = again.topicById(before.id());
-				boolean quest = before.category() == DialogueCategory.QUESTS;
-				boolean anyQuest = !again.topics(DialogueCategory.QUESTS).isEmpty();
-				String row = state + ": guidance card " + before.id() + " in " + before.category() + " (lore " + before.lore()
-						+ "), sigil " + before.attention() + " before reading, "
-						+ after.map(topic -> topic.attention().toString()).orElse("gone") + " after; Quests cards "
-						+ again.topics(DialogueCategory.QUESTS).stream().map(DialogueTopic::titleKey).toList();
-				PlaythroughLog.note(helper, scenario, row);
-				if (!quest || after.isEmpty() || after.get().attention() == DialogueAttention.NONE) {
-					findings.add(row + (anyQuest ? "" : " (no Quest Work card at all)"));
+				for (String step : steps) {
+					Optional<DialogueTopic> card = view.topics().stream()
+							.filter(topic -> ("covenant_" + step).equals(topic.targetNodeId())).findFirst();
+					if (card.isEmpty()) {
+						findings.add(state + ": no card for the step " + step + "; " + view.describe());
+						continue;
+					}
+					player.openTopic(vicar, card.get().id());
+					Optional<DialogueTopic> after = player.talkTo(vicar).topicById(card.get().id());
+					String row = state + ": step " + step + " card in " + card.get().category() + ", sigil "
+							+ card.get().attention() + " before opening, "
+							+ after.map(topic -> topic.attention().toString()).orElse("gone") + " after";
+					PlaythroughLog.note(helper, scenario, row);
+					if (card.get().category() != DialogueCategory.QUESTS || after.isEmpty()
+							|| after.get().attention() == DialogueAttention.NONE) {
+						findings.add(row);
+					}
 				}
 			} finally {
 				player.offline();
 			}
 		}
+		// PT-86: the Vigil line names every helper the Vigil accepts, not only a recruited Vicar.
 		String vigil = english(COVENANT + "complete_vigil");
 		boolean namesOthers = words("alchemist|mnemonist|member|any recruit|recruited harbinger").matcher(vigil).find();
 		PlaythroughLog.note(helper, scenario, "complete_vigil reads: " + vigil + " (names a helper other than a Vicar: "
 				+ namesOthers + ")");
-		if (!namesOthers) findings.add("complete_vigil names only a recruited Vicar as the Vigil's helper");
-		for (String finding : findings) PlaythroughLog.note(helper, scenario, "DECISION NPC-3 " + finding);
-		helper.assertTrue(findings.isEmpty(), "DECISION NPC-3: " + String.join(" | ", findings));
+		if (!namesOthers) findings.add("complete_vigil names only a Vicar: " + vigil);
+		helper.assertTrue(findings.isEmpty(), "PT-86: " + String.join(" | ", findings));
 		helper.succeed();
 	}
 
 	// =================================================================================================================
-	// quintessenceHasNoPointer (D D5-5)
+	// quintessenceSourceIsNamed (PT-39)
 	// =================================================================================================================
 
 	/**
-	 * DECISION D5-5: no NPC says where Sanguine Quintessence comes from, though the Founding Fane, the sanctified rite
-	 * and at least four more D5-D7 steps seat it. Options: a Vicar or Alchemist line / an item inquiry / the Liber only.
-	 * A D5 founder (the Fane next) and a D6 Sanctified player, each carrying one, talk to every outpost speaker and the
-	 * Monolith empty-handed and with it in hand; expects some line that mentions Quintessence to name its source (the
-	 * Exsanguination rite, where lifeblood crystallizes into it).
+	 * PT-39: a D5 founder (the Fane next) and a D6 Sanctified player, each carrying Sanguine Quintessence, talk to every
+	 * outpost speaker and the Monolith empty-handed and with it in hand; some line that mentions Quintessence names its
+	 * source (the Exsanguination rite, where lifeblood crystallizes into it).
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
-	public static void quintessenceHasNoPointer(GameTestHelper helper) {
-		String scenario = "quintessenceHasNoPointer";
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
+	public static void quintessenceSourceIsNamed(GameTestHelper helper) {
+		String scenario = "quintessenceSourceIsNamed";
 		Late ctx = new Late(helper);
 		PlaythroughSites.OutpostWing outpost = PlaythroughSites.outpostWing(helper, at(helper, WING), HARBINGER_WING);
 		List<Speaker> speakers = new ArrayList<>(wing(outpost));
@@ -1633,24 +1631,22 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 				player.offline();
 			}
 		}
-		helper.assertTrue(named, "DECISION D5-5: no speaker a D5 or D6 player can reach says where Sanguine "
+		helper.assertTrue(named, "PT-39: no speaker a D5 or D6 player can reach says where Sanguine "
 				+ "Quintessence comes from (see the [playthrough] lines)");
 		helper.succeed();
 	}
 
 	// =================================================================================================================
-	// monolithBlueprintOnlyAtD5 (D D5-10)
+	// monolithBlueprintFromD5 (PT-43)
 	// =================================================================================================================
 
 	/**
-	 * DECISION D5-10: the Vicar's Monolith scrap (the Working craft's blueprint) is offered only at exactly D5, and its
-	 * handler refuses any other degree, so a player who reached D6 without asking can never get it from him. Options:
-	 * offer at D5+ / a recipe / keep. Expects the Vicar to offer it at D6, D7 and D8 (both paths) to a player who
-	 * never took one; logs the D5 control and what a forged ask gives.
+	 * PT-43: the Vicar offers the Monolith scrap (the Working craft's blueprint) at D5 and above, so a player who
+	 * reached D6, D7 or D8 (both paths) without asking still gets it from him; logs what a forged ask gives if not.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH, required = false)
-	public static void monolithBlueprintOnlyAtD5(GameTestHelper helper) {
-		String scenario = "monolithBlueprintOnlyAtD5";
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
+	public static void monolithBlueprintFromD5(GameTestHelper helper) {
+		String scenario = "monolithBlueprintFromD5";
 		Late ctx = new Late(helper);
 		HarbingerVicarEntity vicar = PlaythroughNpcs.vicar(helper, helper.absolutePos(NPC));
 		List<String> findings = new ArrayList<>();
@@ -1671,7 +1667,7 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 				player.offline();
 			}
 		}
-		helper.assertTrue(findings.isEmpty(), "DECISION D5-10: " + String.join(" | ", findings));
+		helper.assertTrue(findings.isEmpty(), "PT-43: " + String.join(" | ", findings));
 		helper.succeed();
 	}
 
@@ -1750,14 +1746,14 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 	}
 
 	/**
-	 * DECISION: D-3 (late instances; not re-decided here). One-time late rewards that drop unowned at the NPC's feet:
+	 * RULING PT-3 (2026-11-13): one-time late rewards are owed and delivered, never dropped at the NPC's feet:
 	 * the Vicar's Monolith scrap (D5) and stained church map (D7), the Mnemonist's Circus waybill (D5), the Voyager's
 	 * Relay Chart (D5), the Artificer's Consecration Kit (D5) and the Monolith's cornerstone (D7). For each, records
 	 * where the reward lands (inventory, PendingDelivery, the player's feet, the speaker's feet) and expects only the
 	 * first two. Each claim's preconditions are arranged (the kit's worked Armature, the cornerstone's own Monolith), and
 	 * a claim that is still not offered fails the probe as a broken arrangement.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 300, batch = BATCH, required = false)
+	@GameTest(template = EMPTY, timeoutTicks = 300, batch = BATCH)
 	public static void rewardLandingSurveyLate(GameTestHelper helper) {
 		String scenario = "rewardLandingSurveyLate";
 		Late ctx = new Late(helper);
@@ -2166,30 +2162,29 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 	// =================================================================================================================
 
 	/**
-	 * DECISION NPC-6: the bloodline name is concatenated English ({@code "<name>'s Blood Line"},
-	 * {@code CardinalRiteCompletionEffects} 979) stored in saved data, so a player in another language reads it in
-	 * English wherever it shows: the join line, the ledger tooltip and screens, the initiation line. Options: a
-	 * translatable default name with a storage change / keep. Logged only: a second player joins through the founder's
-	 * signed ledger (a real {@code use}) and the name as stored and as said is logged; the probe fails until the user
-	 * decides.
+	 * The line's name as the Founding rite stores it: the founder's name and an empty custom name, shown through the
+	 * {@code hemomancy.bloodline.default_name} key in the reader's language. A second player's petition names it so.
 	 */
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void bloodlineNameIsEnglish(GameTestHelper helper) {
-		String scenario = "bloodlineNameIsEnglish";
+	// RULING PT-87 (2026-11-13): the default line name is translatable. Was the DECISION NPC-6 probe
+	// bloodlineNameIsEnglish.
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void bloodlineNameIsTranslatable(GameTestHelper helper) {
+		String scenario = "bloodlineNameIsTranslatable";
 		PlaythroughPlayer founder = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		Bloodline line = PlaythroughStates.foundedLineD5(founder); // ARRANGE: the line as the Founding rite names it
 		PlaythroughPlayer joiner = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 8, 4));
 		PlaythroughStates.illuminatusD5(joiner); // ARRANGE
 		joiner.give(PlaythroughStates.signedLedger(line)); // ARRANGE: the founder hands over a copy of the ledger
 		joiner.wield(ItemInit.unsigned_ancestral_ledger.get());
-		Outcome join = joiner.use(net.minecraft.world.InteractionHand.MAIN_HAND);
-		Bloodline joined = PlaythroughStates.lineOf(joiner);
-		String stored = joined == null ? "<no line>" : joined.getName();
-		PlaythroughLog.note(helper, scenario, "DECISION NPC-6 stored name \"" + stored + "\" (a translation key: "
-				+ LangKeys.exists(stored) + ", the rite's format: " + stored.equals(PlaythroughStates.lineName(founder))
-				+ "); the joiner was told " + join.chat());
-		helper.assertTrue(LangKeys.exists(stored), "DECISION NPC-6: the line's default name is stored as a translatable key,"
-				+ " not the English \"" + stored + "\"");
+		Outcome petition = joiner.use(net.minecraft.world.InteractionHand.MAIN_HAND);
+		var name = line.displayName();
+		PlaythroughLog.note(helper, scenario, "PT-87 stored founder \"" + line.getFounderName() + "\", custom \""
+				+ line.getCustomName() + "\", shown as " + name.getContents() + "; the joiner was told " + petition.chat());
+		helper.assertTrue(line.getFounderName().equals(founder.player().getName().getString()) && line.getCustomName().isEmpty(),
+				"the line stores its founder's name and no custom name");
+		helper.assertTrue(name.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents key
+				&& key.getKey().equals("hemomancy.bloodline.default_name") && LangKeys.exists(key.getKey()),
+				"the default name shows through a lang key: " + name.getContents());
 		helper.succeed();
 	}
 

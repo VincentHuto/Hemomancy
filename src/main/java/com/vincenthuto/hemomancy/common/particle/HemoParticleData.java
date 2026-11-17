@@ -21,6 +21,11 @@ public final class HemoParticleData {
         return ParticleInit.abocipher.get();
     }
 
+    /** The Lethean still-water drip, the Unstained counterpart of a falling blood drop. */
+    public static ParticleOptions letheanDrip() {
+        return ParticleInit.lethean_drip.get();
+    }
+
     public static ParticleOptions glow(ParticleColor color) {
         return new ColorParticleData(HLParticleInit.glow.get(), color);
     }

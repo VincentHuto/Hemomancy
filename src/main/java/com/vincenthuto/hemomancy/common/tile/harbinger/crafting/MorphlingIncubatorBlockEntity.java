@@ -13,15 +13,16 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingBloodBondingRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -37,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -49,6 +51,9 @@ public class MorphlingIncubatorBlockEntity extends HemoContainerBlockEntity impl
 	private static final int ENZYME_TIME_BASE = 100;
 	private static final int ENZYME_TIME_PER_ITEM = 60;
 	public static final float BLOOD_COST_PER_TICK = 0.5f;
+	private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
+	private static final ParticleColor PALE_SPORE = new ParticleColor(214, 196, 150);
+	private static final ParticleColor CRIMSON_SPORE = new ParticleColor(150, 40, 58);
 
 	// Slot layout:
 	// 0 = center (polyp or morphling)
@@ -117,6 +122,46 @@ public class MorphlingIncubatorBlockEntity extends HemoContainerBlockEntity impl
 
 	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
 			MorphlingIncubatorBlockEntity self) {
+		long gameTime = level.getGameTime();
+		int progress = self.craftingProgress;
+		int index = 0;
+		for (ItemStack stack : self.getCatalystStacks()) {
+			if (stack.isEmpty()) continue;
+			Vec3 at = catalystOrbit(worldPosition, index++, progress, gameTime);
+			level.addParticle(HemoParticleData.ember(ParticleColor.PURPLE, 2, 0.12f, 14), at.x, at.y, at.z, 0, 0, 0);
+			if (progress > 0 && progress < 25) {
+				// Crumbs of the catalyst being drawn into the tank.
+				for (Vec3 v : HLParticleUtils.randomSphere(4, 0.25f, 0.25f)) {
+					level.addParticle(new net.minecraft.core.particles.ItemParticleOption(
+							net.minecraft.core.particles.ParticleTypes.ITEM, stack), at.x + v.x, at.y + v.y, at.z + v.z, 0, 0, 0);
+				}
+			}
+		}
+		if (!self.getCenterStack().isEmpty() && gameTime % 4 == 0) {
+			level.addParticle(HemoParticleData.emberSpark(PALE_SPORE, 0.031F, 0.6F, 30), worldPosition.getX() + 0.5,
+					worldPosition.getY() + incubatedItemY(gameTime), worldPosition.getZ() + 0.5, 0, 0.005, 0);
+		}
+	}
+
+	/** Height in the tank of the incubated item's centre, bobbing in the blood (tools/model_export/morphling_incubator.py). */
+	public static float incubatedItemY(float time) {
+		return 11F / 16F + (float) Math.sin(time * 0.06F) * 0.4F / 16F;
+	}
+
+	/**
+	 * Where the {@code index}-th present catalyst circles the incubator: it closes in on the tank as the craft counts
+	 * down from {@code progress} and bobs with the game time.
+	 */
+	public static Vec3 catalystOrbit(BlockPos pos, int index, double progress, long gameTime) {
+		float radius = 1.5f;
+		float t = (float) progress * 0.125f;
+		if (t < 1.5 && t > 0) {
+			radius = radius - (1.5f - t);
+		}
+		double angle = t + index * Math.PI / 2;
+		double bob = index % 2 == 0 ? Math.sin(gameTime * 0.1f) * 0.1f : Math.cos(gameTime * 0.1f) * 0.1f;
+		return new Vec3(pos.getX() + 0.5f + radius * Math.cos(angle), pos.getY() + 1 + bob,
+				pos.getZ() + 0.5f + radius * Math.sin(angle));
 	}
 
 	@Override
@@ -124,7 +169,8 @@ public class MorphlingIncubatorBlockEntity extends HemoContainerBlockEntity impl
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			vol.setActive(true);
-			vol.setMaxBloodVolume(2500f);
+			// A working buffer (core-loop Track 3): a few crafts' worth, topped by a suture or filled and spent.
+			vol.setMaxBloodVolume(com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingRules.DEFAULT_WORKING_RESERVE);
 		}
 	}
 
@@ -142,10 +188,19 @@ public class MorphlingIncubatorBlockEntity extends HemoContainerBlockEntity impl
 				te.craftingProgress--;
 				changed = true;
 
-				HLParticleUtils.spawnPoof((ServerLevel) level, pos, ParticleTypes.MYCELIUM);
+				ServerLevel server = (ServerLevel) level;
+				server.sendParticles(HemoParticleData.sporiticSpore(PALE_SPORE),
+						pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 2, 0.17, 0.17, 0.17, 0.01);
 
 				if (te.craftingProgress <= 0) {
-					HLParticleUtils.spawnPoof((ServerLevel) level, pos, ParticleTypes.REVERSE_PORTAL);
+					// A Morphling is born: wet and alive.
+					HLParticleUtils.spawnPoof(server, pos, HemoParticleData.bloodCell(BLOOD));
+					for (int i = 0; i < 8; i++) {
+						server.sendParticles(HemoParticleData.serpent(CRIMSON_SPORE),
+								pos.getX() + 0.5 + (server.random.nextDouble() - 0.5) * 0.4, pos.getY() + 1.0,
+								pos.getZ() + 0.5 + (server.random.nextDouble() - 0.5) * 0.4, 0,
+								(server.random.nextDouble() - 0.5) * 0.02, 0.04, (server.random.nextDouble() - 0.5) * 0.02, 1.0);
+					}
 					te.finishCrafting();
 				}
 			}

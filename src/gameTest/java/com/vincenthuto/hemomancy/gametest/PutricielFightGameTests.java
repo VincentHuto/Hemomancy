@@ -1,5 +1,12 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftEvents;
+import com.vincenthuto.hemomancy.common.manipulation.saint.BloomOfRotRules;
+import com.vincenthuto.hemomancy.common.manipulation.saint.BloomOfRotManip;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.block.harbinger.decoration.RotPyreBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.decoration.SporeShelfBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -605,5 +612,59 @@ public final class PutricielFightGameTests {
 		h.assertTrue(!ash(h, 11, 8), "and restores the sludge's ash as it goes");
 		sweep(h);
 		h.succeed();
+	}
+
+	/**
+	 * Bloom of Rot in Putriciel's chamber (D-1, NQ-08-11): in a rot phase the field's Kindling feeds theirs one for one;
+	 * in their interval the field will not take.
+	 */
+	@GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "putriciel_fight_bloom")
+	public static void theirOwnBloomFeedsTheirKindlingAndWillNotTakeInTheInterval(GameTestHelper h) {
+		PutricielEntity saint = saint(h);
+		ServerPlayer player = TemperFixtures.carry(player(h, 4.5D, 8.5D));
+		BloomOfRotManip bloom = (BloomOfRotManip) ManipulationInit.bloom_of_rot.get();
+		CanonGiftGameTests.ready(player, bloom);
+		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+		HemoCapabilityAccess.getBloodVolume(player).setMaxBloodVolume(10_000.0D);
+		HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(5000.0D);
+		tick(saint, 1);
+		h.assertTrue(saint.currentPhase() == PutricielPhase.ROT_I, "the fight opens in rot");
+		h.assertTrue(bloom.tryPerformAction(player, h.getLevel(), ItemStack.EMPTY, player.blockPosition(), 0),
+				"the rot is sown in a rot phase");
+		CanonGiftState.BloomField field = CanonGiftState.bloom(player.getUUID());
+		float before = saint.meter().value();
+		h.onEachTick(() -> CanonGiftEvents.onPlayerTick(new PlayerTickEvent.Post(player)));
+		h.runAfterDelay(BloomOfRotRules.KINDLING_TICKS + 1, () -> {
+			try {
+				// the level ticks them as well, so their own creep may add to it
+				h.assertTrue(field.kindling >= 1.0D && saint.meter().value() - before >= (float) field.kindling - 0.01F,
+						"the field's Kindling fed theirs one for one: " + field.kindling + " / " + (saint.meter().value() - before));
+				var burning = net.minecraft.world.entity.EntityType.ZOMBIE.create(h.getLevel());
+				burning.setNoAi(true);
+				burning.setPos(player.position().add(1.5D, 0.0D, 0.0D));
+				h.getLevel().addFreshEntity(burning);
+				double fieldBefore = field.kindling;
+				float theirsBefore = saint.meter().value();
+				burning.hurt(burning.damageSources().onFire(), 12.0F);
+				double fed = field.kindling - fieldBefore;
+				burning.discard();
+				h.assertTrue(fed > 5.0D && Math.abs(saint.meter().value() - theirsBefore - (float) fed) < 0.01F,
+						"fire on the field fed both Kindlings alike: " + fed + " / " + (saint.meter().value() - theirsBefore));
+				boolean interval = toTheFire(saint) && tickUntil(saint, 200, () -> saint.currentPhase() == PutricielPhase.INTERVAL);
+				h.assertTrue(interval || saint.currentPhase() == PutricielPhase.INTERVAL, "the fire brings their interval");
+				CanonGiftEvents.onPlayerTick(new PlayerTickEvent.Post(player));
+				h.assertTrue(CanonGiftState.bloom(player.getUUID()) == null, "the live field gave way to their fire");
+				bloom.capCooldown(player, 0);
+				double blood = HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
+				h.assertTrue(!bloom.tryPerformAction(player, h.getLevel(), ItemStack.EMPTY, player.blockPosition(), 0)
+						&& CanonGiftState.bloom(player.getUUID()) == null
+						&& HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() == blood, "a field will not take in their interval");
+				h.succeed();
+			} finally {
+				CanonGiftState.end(player.getUUID());
+				saint.discard();
+				player.discard();
+			}
+		});
 	}
 }

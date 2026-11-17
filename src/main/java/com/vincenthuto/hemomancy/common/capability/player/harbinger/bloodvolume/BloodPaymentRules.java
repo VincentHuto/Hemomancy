@@ -48,7 +48,7 @@ public final class BloodPaymentRules {
 	}
 
 	public static Outcome settle(IBloodVolume volume, double amount, boolean reserveProtected, boolean reserveEnabled,
-			boolean countsAsSpend, Terms terms) {
+			Terms terms) {
 		double allowed = allowed(volume, amount, reserveProtected, reserveEnabled);
 		double paid = 0.0D;
 		boolean satisfied = false;
@@ -69,9 +69,6 @@ public final class BloodPaymentRules {
 			if (!satisfied && paid + EPSILON < amount) {
 				condition = allowed + EPSILON < amount ? RESERVE_PROTECTED : EXHAUSTED;
 			}
-		}
-		if (countsAsSpend && satisfied) {
-			volume.addBloodSpend(amount);
 		}
 		return new Outcome(amount, paid, satisfied, condition);
 	}

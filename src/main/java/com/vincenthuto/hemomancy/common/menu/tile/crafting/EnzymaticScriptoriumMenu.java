@@ -84,6 +84,8 @@ public final class EnzymaticScriptoriumMenu extends HemoContainerMenu {
 
     public double bloodVolume() { return station.getBloodVolume(); }
     public double bloodCapacity() { return station.getMaxBloodVolume(); }
+    /** The tank as its bar draws it: fresh blood over clot (core-loop Track 3). */
+    public com.vincenthuto.hemomancy.common.tile.ReservoirReading reading() { return com.vincenthuto.hemomancy.common.tile.ReservoirReading.ofMenu(bloodVolume(), bloodCapacity(), station); }
 
     public int offerCost(int tier) { return data.get(tier); }
     public int selected(int tube) { return data.get(3 + tube); }

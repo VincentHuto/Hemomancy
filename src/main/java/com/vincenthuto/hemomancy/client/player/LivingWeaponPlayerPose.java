@@ -216,6 +216,8 @@ public final class LivingWeaponPlayerPose {
 	@Nullable
 	public static Stroke stroke(Item item, int combo) {
 		if (item instanceof LivingAxeItem) return Stroke.AXE;
+		// The pickaxe form swings the axe's overhead stroke, a pick driven down into the face.
+		if (item instanceof com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingPickaxeItem) return Stroke.AXE;
 		if (item instanceof LivingBladeItem) return (combo & 1) == 0 ? Stroke.BLADE_FOREHAND : Stroke.BLADE_BACKHAND;
 		if (item instanceof SanguisLanceaItem || item instanceof AnnettasSanguisLanceaItem) return Stroke.LANCEA;
 		if (item instanceof LivingSpearItem) return Stroke.SPEAR;

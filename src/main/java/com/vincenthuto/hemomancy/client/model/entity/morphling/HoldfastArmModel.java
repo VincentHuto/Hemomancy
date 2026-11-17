@@ -22,6 +22,7 @@ public final class HoldfastArmModel extends MorphlingStrainModel {
     public static final List<MorphlingPartSpec> PARTS = List.of(
             new MorphlingPartSpec("wrist_knots", "root", 2, MorphlingPartSpec.Limb.LOWER, MorphlingPartSpec.Motion.NONE, 0.000F, 0.000F, 0.000F, 0, 0, true),
             new MorphlingPartSpec("forearm_roots", "root", 3, MorphlingPartSpec.Limb.LOWER, MorphlingPartSpec.Motion.NONE, 0.000F, 0.000F, 0.000F, 0, 0, true),
+            new MorphlingPartSpec("forearm_knots", "forearm_roots", 3, MorphlingPartSpec.Limb.LOWER, MorphlingPartSpec.Motion.NONE, 0.000F, 0.000F, 0.000F, 0, 0, false),
             new MorphlingPartSpec("wrap_root_0", "root", 3, MorphlingPartSpec.Limb.LOWER, MorphlingPartSpec.Motion.NONE, 0.000F, 0.000F, 0.000F, 0, 0, true),
             new MorphlingPartSpec("wrap_root_1", "root", 3, MorphlingPartSpec.Limb.LOWER, MorphlingPartSpec.Motion.NONE, 0.000F, 0.000F, 0.000F, 0, 0, true),
             new MorphlingPartSpec("wrap_root_2", "root", 3, MorphlingPartSpec.Limb.LOWER, MorphlingPartSpec.Motion.NONE, 0.000F, 0.000F, 0.000F, 0, 0, true),
@@ -70,65 +71,71 @@ public final class HoldfastArmModel extends MorphlingStrainModel {
                 .texOffs(20, 6).addBox(-2F, 1F, 2F, 4F, 1F, 0.5F)
                 .texOffs(29, 6).addBox(-2F, 1F, -2.5F, 4F, 1F, 0.5F)
                 .texOffs(38, 6).addBox(2.25F, -0.25F, -0.5F, 0.5F, 0.5F, 0.5F), PartPose.offsetAndRotation(1.000000F, 6.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
+        PartDefinition forearm_knots = forearm_roots.addOrReplaceChild("forearm_knots", CubeListBuilder.create()
+                .texOffs(40, 6).addBox(2F, -2.5F, -1.5F, 1.5F, 2F, 2F)
+                .texOffs(47, 6).addBox(-1.5F, -2F, 2F, 2.5F, 2F, 1.25F)
+                .texOffs(55, 6).addBox(-3F, -1F, -1F, 1.25F, 2F, 1.75F)
+                .texOffs(0, 12).addBox(0.5F, 0.5F, -3F, 1.75F, 1.5F, 1F)
+                .texOffs(6, 12).addBox(3F, -0.5F, 0.75F, 0.75F, 0.75F, 0.75F), PartPose.offsetAndRotation(0.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition wrap_root_0 = root.addOrReplaceChild("wrap_root_0", CubeListBuilder.create()
-                .texOffs(40, 6).addBox(-0.25F, 0F, -0.25F, 0.5F, 4.5F, 0.5F), PartPose.offsetAndRotation(3.100000F, 2.500000F, 1.000000F, 0.450000F, 0.000000F, 0.000000F));
+                .texOffs(9, 12).addBox(-0.25F, 0F, -0.25F, 0.5F, 4.5F, 0.5F), PartPose.offsetAndRotation(3.100000F, 2.500000F, 1.000000F, 0.450000F, 0.000000F, 0.000000F));
         PartDefinition wrap_root_1 = root.addOrReplaceChild("wrap_root_1", CubeListBuilder.create()
-                .texOffs(42, 6).addBox(-0.25F, 0F, -0.25F, 0.5F, 4.5F, 0.5F), PartPose.offsetAndRotation(1.000000F, 2.500000F, 2.100000F, 0.000000F, 0.000000F, 0.450000F));
+                .texOffs(11, 12).addBox(-0.25F, 0F, -0.25F, 0.5F, 4.5F, 0.5F), PartPose.offsetAndRotation(1.000000F, 2.500000F, 2.100000F, 0.000000F, 0.000000F, 0.450000F));
         PartDefinition wrap_root_2 = root.addOrReplaceChild("wrap_root_2", CubeListBuilder.create()
-                .texOffs(44, 6).addBox(-0.25F, 0F, -0.25F, 0.5F, 4.5F, 0.5F), PartPose.offsetAndRotation(-1.100000F, 3.000000F, -1.000000F, -0.400000F, 0.000000F, 0.000000F));
+                .texOffs(13, 12).addBox(-0.25F, 0F, -0.25F, 0.5F, 4.5F, 0.5F), PartPose.offsetAndRotation(-1.100000F, 3.000000F, -1.000000F, -0.400000F, 0.000000F, 0.000000F));
         PartDefinition wrap_root_3 = root.addOrReplaceChild("wrap_root_3", CubeListBuilder.create()
-                .texOffs(46, 6).addBox(-0.25F, 0F, -0.25F, 0.5F, 4.5F, 0.5F), PartPose.offsetAndRotation(2.000000F, 3.000000F, -2.100000F, 0.000000F, 0.000000F, -0.500000F));
+                .texOffs(15, 12).addBox(-0.25F, 0F, -0.25F, 0.5F, 4.5F, 0.5F), PartPose.offsetAndRotation(2.000000F, 3.000000F, -2.100000F, 0.000000F, 0.000000F, -0.500000F));
         PartDefinition forearm_cluster = root.addOrReplaceChild("forearm_cluster", CubeListBuilder.create()
-                .texOffs(48, 6).addBox(1.5F, -2.5F, -2F, 2.5F, 4F, 3.5F)
-                .texOffs(0, 14).addBox(-1.5F, -2F, 1.5F, 3.5F, 3F, 1.75F)
-                .texOffs(11, 14).addBox(2.5F, 0.75F, 1F, 1.5F, 1.5F, 1.5F)
-                .texOffs(17, 14).addBox(-3.25F, -1.5F, -1.5F, 1.5F, 3F, 2.75F)
-                .texOffs(26, 14).addBox(2.5F, -4F, -1F, 1.5F, 1.5F, 1.5F)
-                .texOffs(32, 14).addBox(-1F, -3F, -3F, 2.5F, 2F, 1.25F)
-                .texOffs(40, 14).addBox(-0.75F, 1F, -2.75F, 1F, 1F, 0.75F)
-                .texOffs(44, 14).addBox(3.75F, -1F, -0.5F, 0.75F, 2F, 1F), PartPose.offsetAndRotation(1.000000F, 7.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
+                .texOffs(17, 12).addBox(1.5F, -2.5F, -2F, 2.5F, 4F, 3.5F)
+                .texOffs(29, 12).addBox(-1.5F, -2F, 1.5F, 3.5F, 3F, 1.75F)
+                .texOffs(40, 12).addBox(2.5F, 0.75F, 1F, 1.5F, 1.5F, 1.5F)
+                .texOffs(46, 12).addBox(-3.25F, -1.5F, -1.5F, 1.5F, 3F, 2.75F)
+                .texOffs(55, 12).addBox(2.5F, -4F, -1F, 1.5F, 1.5F, 1.5F)
+                .texOffs(0, 20).addBox(-1F, -3F, -3F, 2.5F, 2F, 1.25F)
+                .texOffs(8, 20).addBox(-0.75F, 1F, -2.75F, 1F, 1F, 0.75F)
+                .texOffs(12, 20).addBox(3.75F, -1F, -0.5F, 0.75F, 2F, 1F), PartPose.offsetAndRotation(1.000000F, 7.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition grip_0_0 = root.addOrReplaceChild("grip_0_0", CubeListBuilder.create()
-                .texOffs(48, 14).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(-0.500000F, 10.000000F, -1.250000F, 0.000000F, 0.000000F, -0.350000F));
+                .texOffs(16, 20).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(-0.500000F, 10.000000F, -1.250000F, 0.000000F, 0.000000F, -0.350000F));
         PartDefinition grip_0_1 = grip_0_0.addOrReplaceChild("grip_0_1", CubeListBuilder.create()
-                .texOffs(50, 14).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(0.000000F, 1.500000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
+                .texOffs(18, 20).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(0.000000F, 1.500000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition grip_1_0 = root.addOrReplaceChild("grip_1_0", CubeListBuilder.create()
-                .texOffs(52, 14).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(1.000000F, 10.000000F, -1.500000F, 0.000000F, 0.000000F, 0.000000F));
+                .texOffs(20, 20).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(1.000000F, 10.000000F, -1.500000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition grip_1_1 = grip_1_0.addOrReplaceChild("grip_1_1", CubeListBuilder.create()
-                .texOffs(54, 14).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(0.000000F, 1.500000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
+                .texOffs(22, 20).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(0.000000F, 1.500000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition grip_2_0 = root.addOrReplaceChild("grip_2_0", CubeListBuilder.create()
-                .texOffs(56, 14).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(2.500000F, 10.000000F, -1.000000F, 0.000000F, 0.000000F, 0.350000F));
+                .texOffs(24, 20).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(2.500000F, 10.000000F, -1.000000F, 0.000000F, 0.000000F, 0.350000F));
         PartDefinition grip_2_1 = grip_2_0.addOrReplaceChild("grip_2_1", CubeListBuilder.create()
-                .texOffs(58, 14).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(0.000000F, 1.500000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
+                .texOffs(26, 20).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(0.000000F, 1.500000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition grip_3_0 = root.addOrReplaceChild("grip_3_0", CubeListBuilder.create()
-                .texOffs(60, 14).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(1.000000F, 10.000000F, 1.250000F, 0.000000F, 0.000000F, 0.200000F));
+                .texOffs(28, 20).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(1.000000F, 10.000000F, 1.250000F, 0.000000F, 0.000000F, 0.200000F));
         PartDefinition grip_3_1 = grip_3_0.addOrReplaceChild("grip_3_1", CubeListBuilder.create()
-                .texOffs(62, 14).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(0.000000F, 1.500000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
+                .texOffs(30, 20).addBox(-0.25F, 0F, -0.25F, 0.5F, 1.5F, 0.5F), PartPose.offsetAndRotation(0.000000F, 1.500000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition hand_mass = root.addOrReplaceChild("hand_mass", CubeListBuilder.create()
-                .texOffs(0, 20).addBox(-2.75F, -2F, -2.75F, 5.5F, 3.5F, 5.5F)
-                .texOffs(22, 20).addBox(-3.25F, -1F, -1F, 0.75F, 2F, 2F)
-                .texOffs(28, 20).addBox(2.5F, -1.5F, 0.5F, 1F, 2F, 1.5F)
-                .texOffs(33, 20).addBox(-1F, -2.5F, 2.5F, 2F, 1.5F, 1F)
-                .texOffs(39, 20).addBox(1F, 1F, -3F, 1.25F, 1F, 0.75F)
-                .texOffs(43, 20).addBox(-2F, 0.75F, 2.5F, 0.75F, 0.75F, 0.75F), PartPose.offsetAndRotation(1.000000F, 9.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
+                .texOffs(32, 20).addBox(-2.75F, -2F, -2.75F, 5.5F, 3.5F, 5.5F)
+                .texOffs(54, 20).addBox(-3.25F, -1F, -1F, 0.75F, 2F, 2F)
+                .texOffs(0, 29).addBox(2.5F, -1.5F, 0.5F, 1F, 2F, 1.5F)
+                .texOffs(5, 29).addBox(-1F, -2.5F, 2.5F, 2F, 1.5F, 1F)
+                .texOffs(11, 29).addBox(1F, 1F, -3F, 1.25F, 1F, 0.75F)
+                .texOffs(15, 29).addBox(-2F, 0.75F, 2.5F, 0.75F, 0.75F, 0.75F), PartPose.offsetAndRotation(1.000000F, 9.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition shoulder_mass = root.addOrReplaceChild("shoulder_mass", CubeListBuilder.create()
-                .texOffs(46, 20).addBox(-0.5F, -1.5F, -2.5F, 4F, 2.5F, 5F)
-                .texOffs(0, 29).addBox(2.5F, -1F, -1F, 1F, 1.5F, 2F), PartPose.offsetAndRotation(1.000000F, -1.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
+                .texOffs(18, 29).addBox(-0.5F, -1.5F, -2.5F, 4F, 2.5F, 5F)
+                .texOffs(36, 29).addBox(2.5F, -1F, -1F, 1F, 1.5F, 2F), PartPose.offsetAndRotation(1.000000F, -1.000000F, 0.000000F, 0.000000F, 0.000000F, 0.000000F));
         PartDefinition anchor_strand_0_0 = root.addOrReplaceChild("anchor_strand_0_0", CubeListBuilder.create()
-                .texOffs(6, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(-1.500000F, 10.500000F, -1.500000F, -0.180000F, 0.000000F, -0.600000F));
+                .texOffs(42, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(-1.500000F, 10.500000F, -1.500000F, -0.180000F, 0.000000F, -0.600000F));
         PartDefinition anchor_strand_0_1 = anchor_strand_0_0.addOrReplaceChild("anchor_strand_0_1", CubeListBuilder.create()
-                .texOffs(8, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(0.000000F, 4.000000F, 0.000000F, 0.000000F, 0.000000F, 0.300000F));
+                .texOffs(44, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(0.000000F, 4.000000F, 0.000000F, 0.000000F, 0.000000F, 0.300000F));
         PartDefinition anchor_strand_1_0 = root.addOrReplaceChild("anchor_strand_1_0", CubeListBuilder.create()
-                .texOffs(10, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(3.500000F, 10.500000F, -1.000000F, -0.120000F, 0.000000F, 0.600000F));
+                .texOffs(46, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(3.500000F, 10.500000F, -1.000000F, -0.120000F, 0.000000F, 0.600000F));
         PartDefinition anchor_strand_1_1 = anchor_strand_1_0.addOrReplaceChild("anchor_strand_1_1", CubeListBuilder.create()
-                .texOffs(12, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(0.000000F, 4.000000F, 0.000000F, 0.000000F, 0.000000F, -0.300000F));
+                .texOffs(48, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(0.000000F, 4.000000F, 0.000000F, 0.000000F, 0.000000F, -0.300000F));
         PartDefinition anchor_strand_2_0 = root.addOrReplaceChild("anchor_strand_2_0", CubeListBuilder.create()
-                .texOffs(14, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(1.000000F, 10.500000F, 2.000000F, 0.240000F, 0.000000F, 0.200000F));
+                .texOffs(50, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(1.000000F, 10.500000F, 2.000000F, 0.240000F, 0.000000F, 0.200000F));
         PartDefinition anchor_strand_2_1 = anchor_strand_2_0.addOrReplaceChild("anchor_strand_2_1", CubeListBuilder.create()
-                .texOffs(16, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(0.000000F, 4.000000F, 0.000000F, 0.000000F, 0.000000F, -0.100000F));
+                .texOffs(52, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(0.000000F, 4.000000F, 0.000000F, 0.000000F, 0.000000F, -0.100000F));
         PartDefinition anchor_strand_3_0 = root.addOrReplaceChild("anchor_strand_3_0", CubeListBuilder.create()
-                .texOffs(18, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(1.000000F, 10.500000F, -2.500000F, -0.300000F, 0.000000F, -0.150000F));
+                .texOffs(54, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(1.000000F, 10.500000F, -2.500000F, -0.300000F, 0.000000F, -0.150000F));
         PartDefinition anchor_strand_3_1 = anchor_strand_3_0.addOrReplaceChild("anchor_strand_3_1", CubeListBuilder.create()
-                .texOffs(20, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(0.000000F, 4.000000F, 0.000000F, 0.000000F, 0.000000F, 0.075000F));
+                .texOffs(56, 29).addBox(-0.25F, 0F, -0.25F, 0.5F, 4F, 0.5F), PartPose.offsetAndRotation(0.000000F, 4.000000F, 0.000000F, 0.000000F, 0.000000F, 0.075000F));
         return LayerDefinition.create(mesh, 64, 64);
     }
 }

@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import org.junit.jupiter.api.Test;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 public final class WillEquipmentRulesTest {
 	private WillEquipmentRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		tierOneBrokenWillsUseLivingStaff();
 		tierTwoBrokenWillsUseSchoolWeapons();
 		sentWillsUseSchoolWeaponsAtEveryTier();

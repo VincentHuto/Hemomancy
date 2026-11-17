@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.encounter;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.SilentiumAscensionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -14,7 +16,6 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRu
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
@@ -49,6 +50,8 @@ public final class VesperOrdealManager {
 	private static final String ACTIVE_BLOOM_KEY = Hemomancy.MOD_ID + ":vesper_ordeal_bloom";
 	private static final String ACTIVE_BLOOM_ID_KEY = Hemomancy.MOD_ID + ":vesper_ordeal_bloom_id";
 	private static final String PENDING_MEMORY_KEY = Hemomancy.MOD_ID + ":vesper_memory_pending";
+	/** The experience every completed ordeal gives, through the victory rather than a death (CR-22). */
+	public static final int VICTORY_XP = 180;
 	/**
 	 * The first victory's Memory, retried until it really lands. Reading the claim first moves an older root-level
 	 * claim into the data vanilla copies on death.
@@ -91,7 +94,7 @@ public final class VesperOrdealManager {
 		player.stopRiding();
 		player.changeDimension(new DimensionTransition(arenaLevel, destination, Vec3.ZERO,
 				180.0F, 0.0F, DimensionTransition.DO_NOTHING));
-		PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.activate(center));
+		ChamberOfWillManager.sendScene(player, PacketSyncVesperFightScene.activate(center));
 		spawnCrownedRefusal(arenaLevel, player, bloom.center().asLong(), bloom.bloomId(), center, true);
 		player.displayClientMessage(Component.translatable("message.hemomancy.vesper_ordeal_manager.strike_the_exposed_throne_anchors_when").withStyle(ChatFormatting.DARK_PURPLE), false);
 		return true;
@@ -140,7 +143,7 @@ public final class VesperOrdealManager {
 	/** Ends an attempt without changing the severed Bloom, so its owner can retry. */
 	public static void abandonAttempt(ServerPlayer player) {
 		if (!isActive(player)) return;
-		PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.clearScene());
+		ChamberOfWillManager.sendScene(player, PacketSyncVesperFightScene.clearScene());
 		ServerLevel arena = player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (arena != null) clearOwnedVespers(arena, player.getUUID(), arenaCenter(player));
 		player.getPersistentData().remove(ACTIVE_BLOOM_KEY);
@@ -169,8 +172,9 @@ public final class VesperOrdealManager {
 				HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
 		blooms.sealBloom(bloom);
 		HarbingerAdvancementGranter.grantIfNotDone(owner, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
+		owner.giveExperiencePoints(VICTORY_XP);
 		if (firstVictory) queueMemoryClaim(owner);
-		PacketHandler.sendToPlayer(owner, PacketSyncVesperFightScene.clearScene());
+		ChamberOfWillManager.sendScene(owner, PacketSyncVesperFightScene.clearScene());
 		owner.getPersistentData().remove(ACTIVE_BLOOM_KEY);
 		owner.getPersistentData().remove(ACTIVE_BLOOM_ID_KEY);
 		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
@@ -277,8 +281,10 @@ public final class VesperOrdealManager {
 		vesper.moveTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() - 8.5, 0.0F, 0.0F);
 		vesper.setTarget(owner);
 		if (arriving) vesper.beginArrival();
-		if (level.addFreshEntity(vesper) && arriving)
+		if (level.addFreshEntity(vesper) && arriving) {
 			BossScenes.play(vesper, BossPresentationIds.SCENE_VESPER_CROWNED_REFUSAL);
+			LiberKnowledgeHelper.unlockForEncounter(owner, LiberEntryDefinitions.VESPER);
+		}
 	}
 
 	private static void reconcileArenaBoss(ServerLevel level, ServerPlayer owner, BlockPos center) {
@@ -395,7 +401,7 @@ public final class VesperOrdealManager {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		boolean inChamber = player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (isActive(player) && inChamber && !hasValidActiveBloom(player)) {
-			PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.clearScene());
+			ChamberOfWillManager.sendScene(player, PacketSyncVesperFightScene.clearScene());
 			return;
 		}
 		VesperOrdealRecoveryRules.Action action = VesperOrdealRecoveryRules.reconnectAction(
@@ -406,7 +412,7 @@ public final class VesperOrdealManager {
 			ServerLevel arena = (ServerLevel) player.level();
 			BlockPos center = arenaCenter(player);
 			ensureArena(arena, center);
-			PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.activate(center));
+			ChamberOfWillManager.sendScene(player, PacketSyncVesperFightScene.activate(center));
 			reconcileArenaBoss(arena, player, center);
 		}
 	}

@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
 
 public final class WillFalterBurstSourceTest {
 	private static final String WILL = "src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java";
@@ -10,7 +14,8 @@ public final class WillFalterBurstSourceTest {
 	private WillFalterBurstSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String source = Files.readString(Path.of(WILL));
 		burstMeterUsesPlayerDamageOnly(source);
 		burstMeterIsSingleAttackerAndTimed(source);
@@ -54,17 +59,5 @@ public final class WillFalterBurstSourceTest {
 		assertContains("burst damage is zeroed", source, "falterBurstDamage = 0.0F;");
 		assertContains("burst window is zeroed", source, "falterBurstWindowTicks = 0;");
 		assertContains("burst attacker is zeroed", source, "falterBurstAttackerId = null;");
-	}
-
-	private static void assertContains(String label, String source, String expected) {
-		if (!source.contains(expected)) {
-			throw new AssertionError(label + ": missing `" + expected + "`");
-		}
-	}
-
-	private static void assertNotContains(String label, String source, String unexpected) {
-		if (source.contains(unexpected)) {
-			throw new AssertionError(label + ": found `" + unexpected + "`");
-		}
 	}
 }

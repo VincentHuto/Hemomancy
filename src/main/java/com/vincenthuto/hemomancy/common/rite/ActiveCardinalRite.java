@@ -1018,6 +1018,13 @@ public class ActiveCardinalRite {
 	public Set<UUID> getRiteThreats() { return Set.copyOf(riteThreats); }
 	public List<String> getWaveDeck() { return waveDeck; }
 	public boolean hasEscrowedStaff() { return !escrowedStaff.isEmpty(); }
+	/** The growth rings stamped on the escrowed Staff, or -1 when none is held or it carries no stamp. */
+	public int escrowedStaffRings(HolderLookup.Provider provider) {
+		if (escrowedStaff.isEmpty()) return -1;
+		ItemStack staff = ItemStack.parseOptional(provider, escrowedStaff);
+		return staff.has(com.vincenthuto.hemomancy.common.init.DataComponentInit.STAFF_RINGS.get())
+				? com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffGrowth.stampedRing(staff) : -1;
+	}
 	public void setEscrowedStaff(ItemStack stack, HolderLookup.Provider provider) {
 		escrowedStaff = stack == null || stack.isEmpty() ? new CompoundTag()
 				: (CompoundTag) stack.copyWithCount(1).save(provider);

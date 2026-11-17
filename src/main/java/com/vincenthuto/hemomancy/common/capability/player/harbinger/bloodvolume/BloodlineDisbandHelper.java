@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleBursts;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -18,37 +20,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 
 public final class BloodlineDisbandHelper {
 
+	private static final ParticleColor ASH = new ParticleColor(78, 66, 62);
+
 	private BloodlineDisbandHelper() {
-	}
-
-	public static int resetOnlineMembers(MinecraftServer server, Bloodline disbandedLine,
-			@Nullable Function<ServerPlayer, Component> notificationFactory) {
-		int resetCount = 0;
-		for (ServerPlayer online : server.getPlayerList().getPlayers()) {
-			if (!disbandedLine.hasMember(online.getUUID())) {
-				continue;
-			}
-
-			var volume = HemoCapabilityAccess.getBloodVolume(online);
-			volume.setBloodLine(Bloodline.NOBLOODLINE);
-			BloodVolumeEvents.syncVolume(online, volume);
-			burnBloodlineLedgers(online, disbandedLine);
-			if (notificationFactory != null) {
-				Component notification = notificationFactory.apply(online);
-				if (notification != null) {
-					online.displayClientMessage(notification, false);
-				}
-			}
-			resetCount++;
-		}
-		return resetCount;
 	}
 
 	public static int burnBloodlineLedgers(ServerPlayer player, Bloodline disbandedLine) {
@@ -82,6 +61,10 @@ public final class BloodlineDisbandHelper {
 		return removed;
 	}
 
+	/**
+	 * Burns a signed ledger whose line is gone, or crumbles one written before its holder was removed from the line
+	 * (PT-37, NQ-11-1 B). Returns whether the stack went.
+	 */
 	public static boolean burnInvalidLedgerIfPresent(ServerPlayer player, ItemStack stack) {
 		if (!(stack.getItem() instanceof UnsignedLedgerItem)) {
 			return false;
@@ -99,12 +82,18 @@ public final class BloodlineDisbandHelper {
 
 		BloodlineSavedData savedData = BloodlineSavedData.get(player.server.overworld());
 		if (savedData.getBloodline(savedLine.getBloodlineUUID()) != null) {
-			return false;
+			if (!savedData.ledgerCrumbles(savedLine.getBloodlineUUID(), player.getUUID(),
+					tag.getLong(UnsignedLedgerItem.TAG_MINTED))) {
+				return false;
+			}
+			stack.shrink(stack.getCount());
+			changed(player);
+			crumbleEffect(player);
+			return true;
 		}
 
 		stack.shrink(stack.getCount());
-		player.getInventory().setChanged();
-		player.containerMenu.broadcastChanges();
+		changed(player);
 		player.level().playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH,
 				SoundSource.PLAYERS, 0.8f, 1.6f);
 		player.displayClientMessage(
@@ -112,6 +101,31 @@ public final class BloodlineDisbandHelper {
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 		return true;
+	}
+
+	/** Applies the removed-player rule to every carried ledger at once, as when the removal happens. */
+	public static int crumbleRemovedLedgers(ServerPlayer player) {
+		Inventory inventory = player.getInventory();
+		int removed = 0;
+		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+			ItemStack stack = inventory.getItem(slot);
+			if (stack.getItem() instanceof UnsignedLedgerItem && burnInvalidLedgerIfPresent(player, stack)) removed++;
+		}
+		return removed;
+	}
+
+	private static void changed(ServerPlayer player) {
+		player.getInventory().setChanged();
+		player.containerMenu.broadcastChanges();
+	}
+
+	/** One line, a dry crumbling sound and a small burst of ash motes. Nothing is left behind (NQ-11-2). */
+	private static void crumbleEffect(ServerPlayer player) {
+		player.level().playSound(null, player.blockPosition(), SoundEvents.SAND_BREAK, SoundSource.PLAYERS, 0.9f, 0.7f);
+		HemoParticleBursts.outward(player.serverLevel(), HemoParticleData.ember(ASH, 0.08F, 0.8F, 24),
+				player.getX(), player.getY() + 1.0D, player.getZ(), 14, 0.05D, 0.2D);
+		player.displayClientMessage(Component.translatable("hemomancy.ledger.crumbled")
+				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 	}
 
 	private static boolean isLedgerForBloodline(ItemStack stack, UUID bloodlineUuid) {

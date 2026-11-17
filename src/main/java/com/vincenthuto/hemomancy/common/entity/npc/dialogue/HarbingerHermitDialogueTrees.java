@@ -49,6 +49,63 @@ public final class HarbingerHermitDialogueTrees {
 		};
 	}
 
+	/**
+	 * PT-8 and NQ-10-12: reads this Hermit's own Display. A heart someone else took is not offered again, and a player
+	 * whose blood another heart woke hears that his heart stays here, with no farewell, which only his claimant can
+	 * take.
+	 */
+	public static DialogueTree forState(int degree, boolean hasBlood, boolean hasClaimedThisHermitsHeart,
+			boolean heartTaken, int entityId) {
+		return forState(degree, hasBlood, hasClaimedThisHermitsHeart, heartTaken, false, entityId);
+	}
+
+	/** UN-19: a Degree 8 Silentium hears the Archon's tree with one greeting line of their own. */
+	public static DialogueTree forState(int degree, boolean hasBlood, boolean hasClaimedThisHermitsHeart,
+			boolean heartTaken, boolean isSilentium, int entityId) {
+		if (!hasBlood && heartTaken) return heartTaken(entityId);
+		if (hasBlood && degree == 0 && !hasClaimedThisHermitsHeart) return stranger(entityId);
+		if (isSilentium && degree >= 8 && TempleOathRules.shouldShowInitiationGuidance(hasBlood, hasClaimedThisHermitsHeart)) {
+			return silentium(entityId);
+		}
+		return forDegree(degree, hasBlood, hasClaimedThisHermitsHeart, entityId);
+	}
+
+	/** His heart is gone from the stone, to someone else. He has nothing left to offer. */
+	public static DialogueTree heartTaken(int entityId) {
+		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.hermit.heart_taken.line1",
+						"hemomancy.hermit.heart_taken.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.who_are_you", "hermit_duty", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("hermit_duty", List.of(
+						"hemomancy.hermit.no_blood.duty.line1"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Blood already woken by another Hermit's heart, at the first Degree's door. His own heart stays on the stone. */
+	public static DialogueTree stranger(int entityId) {
+		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.hermit.stranger.line1",
+						"hemomancy.hermit.stranger.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_is_this_place", "temple_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("temple_lore", List.of(
+						"hemomancy.hermit.temple_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.build();
+	}
+
 	/** Player has no blood magic active — the hermit offers his heart and welcomes the newcomer. */
 	public static DialogueTree noBlood(int entityId) {
 		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
@@ -250,10 +307,19 @@ public final class HarbingerHermitDialogueTrees {
 
 	/** Degree 7 — Archon. The hermit kneels before a master. */
 	public static DialogueTree archon(int entityId) {
+		return kneeling(entityId, "hemomancy.hermit.archon.line2");
+	}
+
+	/** Degree 8 — Silentium (UN-19). The Archon's tree; he names the title and knows nothing under it. */
+	public static DialogueTree silentium(int entityId) {
+		return kneeling(entityId, "hemomancy.hermit.silentium.line2");
+	}
+
+	private static DialogueTree kneeling(int entityId, String greeting) {
 		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.hermit.archon.line1",
-						"hemomancy.hermit.archon.line2"
+						greeting
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.share_wisdom", null,
 								"hermit_archon_wisdom", DialogueOptionPresentation.prompt(

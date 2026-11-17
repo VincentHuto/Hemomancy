@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
 import org.junit.jupiter.api.Test;
 
@@ -23,36 +22,22 @@ public final class FungalProjectionRulesTest {
 	}
 
 	@Test
-	void onlyTheApotheosTravelsInTheBody() {
+	void theFirstCrossingIsAProjectionAndEveryWayInIsDormantAfterIt() {
 		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.FIRST_PROJECTION,
-				FungalProjectionRules.travelKind(false, 7, true, EnumArchonPath.NONE));
-		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.PHYSICAL,
-				FungalProjectionRules.travelKind(true, 8, true, EnumArchonPath.APOTHEOS));
-		for (EnumArchonPath path : new EnumArchonPath[] {EnumArchonPath.NONE, EnumArchonPath.SILENT_PENDING,
-				EnumArchonPath.APOTHEOS_PENDING}) {
-			org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.REFUSED,
-					FungalProjectionRules.travelKind(true, 7, true, path), path.name());
-		}
+				FungalProjectionRules.travelKind(false, 7, true));
+		// D-27: after the first crossing the Podium lies dormant like the Spine, for an Apotheos too.
+		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.DORMANT,
+				FungalProjectionRules.travelKind(true, 7, true));
+		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.DORMANT,
+				FungalProjectionRules.travelKind(true, 8, true));
 		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.REFUSED,
-				FungalProjectionRules.travelKind(true, 8, true, EnumArchonPath.SILENTIUM));
+				FungalProjectionRules.travelKind(false, 6, true));
 		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.REFUSED,
-				FungalProjectionRules.travelKind(false, 6, true, EnumArchonPath.NONE));
+				FungalProjectionRules.travelKind(false, 7, false));
 	}
 
 	@Test
-	void theSpineMakesOnlyTheFirstCrossing() {
-		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.FIRST_PROJECTION,
-				FungalProjectionRules.travelKind(false, 7, true, EnumArchonPath.NONE, true));
-		for (EnumArchonPath path : EnumArchonPath.values()) {
-			org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.DORMANT,
-					FungalProjectionRules.travelKind(true, 8, true, path, true), path.name());
-		}
-		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.PHYSICAL,
-				FungalProjectionRules.travelKind(true, 8, true, EnumArchonPath.APOTHEOS, false),
-				"a Podium still carries the Apotheos");
-	}
-
-	public static void main(String[] args) {
+	void allChecksPass() {
 		assertEquals("first projection lasts two minutes", 2400, FungalProjectionRules.FIRST_VISIT_TICKS);
 		assertTrue("first visit starts a projection", FungalProjectionRules.shouldStartProjection(false, 7, true));
 		assertFalse("witnessed players use normal travel", FungalProjectionRules.shouldStartProjection(true, 7, true));

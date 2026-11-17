@@ -1,5 +1,8 @@
 {
-  "tempers": [],
+  "tempers": [
+    "ductilis",
+    "tenebris"
+  ],
   "properties": [],
   "requires_living_syringe": true
 }

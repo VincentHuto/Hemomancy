@@ -111,6 +111,17 @@ public interface IInitiatoryDegree {
 
 	void setHematicFortification(boolean fortified);
 
+	/** The Rite of the Eternal Covenant was performed; the Unstained cure clears it (NQ-11-14). */
+	boolean isEternalCovenantSealed();
+
+	void setEternalCovenantSealed(boolean sealed);
+
+	/** The Covenant Throne this player is bound to, so the bond can be cleared when their line ends (PT-70). */
+	@Nullable
+	BoundThrone getBoundThrone();
+
+	void setBoundThrone(@Nullable BoundThrone throne);
+
 	int getAncestralCommunions();
 
 	void setAncestralCommunions(int communions);
@@ -130,4 +141,14 @@ public interface IInitiatoryDegree {
 	boolean isMycophantDefeated();
 
 	void setMycophantDefeated(boolean defeated);
+
+	/** A lost rematch the hunt owes back after the cooldown (PT-84). Server only, never synced. */
+	boolean isMycophantRematchOwed();
+
+	void setMycophantRematchOwed(boolean owed);
+
+	/** True once this player stood in a Saint's trial at a rewarded ending (D-1, NQ-08-2). Server only, never synced. */
+	boolean hasEndedSaintTrial(com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType saint);
+
+	void recordSaintTrialEnded(com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType saint);
 }

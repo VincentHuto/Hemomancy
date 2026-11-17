@@ -25,6 +25,11 @@ public final class VesperEncounterPuppetEvents {
 	public static final String PUPPET_KEY = "HemomancyVesperEncounterPuppet";
 	public static final String BOSS_KEY = "HemomancyVesperEncounterBoss";
 	public static final String SINCE_KEY = "HemomancyVesperPuppetSince";
+
+	/** Whether {@code entity} is one of Vesper's encounter bodies (D-35: Thread Ripper leaves them alone). */
+	public static boolean isEncounterPuppet(Entity entity) {
+		return entity.getPersistentData().getBoolean(PUPPET_KEY);
+	}
 	private static final String ORPHAN_KEY = "HemomancyVesperPuppetOrphan";
 	private static final int LEASH_INTERVAL = 10;
 

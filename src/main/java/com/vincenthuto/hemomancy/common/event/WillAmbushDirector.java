@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.will.WillPresenceCuePacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
+import com.vincenthuto.hemomancy.common.world.answer.WorldAnswer;
 import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoConfigValues;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -137,6 +138,8 @@ public final class WillAmbushDirector {
 			chance *= 1.5D;
 		}
 		chance *= 1.0D + Math.min(1.5D, state.getHiveAttention() * 0.05D);
+		// The world's answer (core-loop Track 10): blood left where the player works draws attention there.
+		chance *= WorldAnswer.willMultiplier(server, player.blockPosition());
 		return Math.max(0.0D, Math.min(1.0D, chance));
 	}
 

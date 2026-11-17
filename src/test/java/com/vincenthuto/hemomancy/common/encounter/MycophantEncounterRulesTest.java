@@ -58,4 +58,30 @@ final class MycophantEncounterRulesTest {
 		assertFalse(MycophantEncounterRules.canUseLure(8, EnumArchonPath.APOTHEOS,
 				true, 0, true, true, true));
 	}
+
+	@Test
+	void aLostRematchReArmsOnceTheCooldownHasRun() {
+		assertTrue(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, true, true, 0,
+				true, true, false, false, false));
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, true, false, 0,
+				true, true, false, false, false), "no lost rematch is owed");
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, true, true, 1,
+				true, true, false, false, false), "the cooldown has not run");
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, false, true, 0,
+				true, true, false, false, false), "an unbeaten player is on the first hunt");
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.SILENTIUM, true, true, 0,
+				true, true, false, false, false));
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(7, EnumArchonPath.APOTHEOS, true, true, 0,
+				true, true, false, false, false));
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, true, true, 0,
+				false, true, false, false, false), "outside the Gardens");
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, true, true, 0,
+				true, false, false, false, false), "dead");
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, true, true, 0,
+				true, true, true, false, false), "creative");
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, true, true, 0,
+				true, true, false, true, false), "spectator");
+		assertFalse(MycophantEncounterRules.shouldRearmRematch(8, EnumArchonPath.APOTHEOS, true, true, 0,
+				true, true, false, false, true), "already fighting");
+	}
 }

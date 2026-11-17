@@ -39,8 +39,8 @@ public class CourtStrainLayer extends RenderLayer<CourtMemberEntity, CourtMember
 	/**
 	 * The active bits a role shows: the Lightkeeper's open lantern fronds, an arbor holding (until it withdraws), a
 	 * Braced elder's anchor strands spread into the stone (until it lets go), an Edge-swimmer's sail raised while
-	 * it swims, a Lamp-colony anchored in the network (until it lets go to speak), a Veiled resident folded away while
-	 * still, and a Sleeper sealed in its bell.
+	 * it swims and the Shared Wake's flush while it swims with a school, a Lamp-colony anchored in the network (until
+	 * it lets go to speak), a Veiled resident folded away while still, and a Sleeper sealed in its bell.
 	 */
 	public static int flags(CourtMemberEntity entity) {
 		CourtRole role = entity.role();
@@ -54,6 +54,7 @@ public class CourtStrainLayer extends RenderLayer<CourtMemberEntity, CourtMember
 		if (role == CourtRole.ARBOR && !entity.isWithdrawn()) flags |= MorphlingActiveState.ARBOR | MorphlingActiveState.STILL;
 		if (role == CourtRole.BRACED_ELDER && !entity.isWithdrawn()) flags |= MorphlingActiveState.ANCHORED | MorphlingActiveState.STILL;
 		if (role == CourtRole.EDGE_SWIMMER && CourtHumanoidModel.swimming(entity)) flags |= MorphlingActiveState.SAIL_RAISED;
+		if (role == CourtRole.EDGE_SWIMMER && entity.isSchooling()) flags |= MorphlingActiveState.SHARED_WAKE;
 		if (role == CourtRole.LAMP_COLONY && !entity.isWithdrawn() && entity.talkAmount(0.0F) <= 0.0F) {
 			flags |= MorphlingActiveState.ANCHORED | MorphlingActiveState.STILL;
 		}

@@ -2,16 +2,10 @@ package com.vincenthuto.hemomancy.common.entity.projectile;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 final class LivingFlailReworkSourceTest {
-	private static String read(String relative) throws IOException {
-		return Files.readString(Path.of(relative));
-	}
 
 	private static void contains(String label, String source, String expected) {
 		assertTrue(source.contains(expected), label + " missing: " + expected);
@@ -36,7 +30,7 @@ final class LivingFlailReworkSourceTest {
 	@Test
 	void impactUsesProtectionHooksAndAuthoredGlacialEffects() throws Exception {
 		String effects = read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/LivingFlailImpactEffects.java");
-		contains("placement hook", effects, "EventHooks.onBlockPlace");
+		contains("player block edits (game mode, spawn protection, break and place events)", effects, "PlayerBlockEdits.");
 		contains("authored glow", effects, "HemoParticleData.glow");
 		contains("authored tendril", effects, "TendrilEffectSpawner");
 		contains("authored cells", effects, "HemoParticleData.bloodCell");

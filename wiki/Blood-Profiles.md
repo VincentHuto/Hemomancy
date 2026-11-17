@@ -56,7 +56,7 @@ attack without filling the vial or awarding collection evidence. Carrying a
 syringe is insufficient: use it with its loaded vial rack. Dead and invulnerable
 targets remain invalid during direct sampling even with the syringe.
 
-The current data contains 147 profiles, of which 81 require the syringe: the
+The current data contains 204 profiles (counted 2026-11-16), of which 118 require the syringe: the
 selected large/armored vanilla animals and hostile mobs, villagers and wandering
 traders, all registered Hemomancy NPCs, registered Hemomancy mobs/summons with
 declared base health above 20 HP (except Hemomancy Armadillo, Desiccant,
@@ -70,7 +70,9 @@ Pelagic Herring Ductilis, Siphonophore Congeatio, Bloody-Belly Comb Jelly Tenebr
 Hagfish Mortem, and Vampire Squid Tenebris with the aquatic property. Only Chiton requires a Living Syringe. Existing ocean
 creatures retain their established profiles when their home habitats change. Osteophage Vultures add a Mortem profile and allow ordinary sampling; their skeletal appearance does not impose the Living Syringe gate.
 
-Ice Fish have no blood temper, retain the aquatic property and permit ordinary sampling. Their haemoglobin-free circulation is regarded as naturally pure in Unstained lore; their death drop shares the existing Cleansing Hemolymph item with Hemolymphopoda.
+Ice Fish carry Congeatio (since 2026-11-14, NQ-06-12), retain the aquatic property and permit ordinary sampling. Their haemoglobin-free circulation is regarded as naturally pure in Unstained lore; their death drop shares the existing Cleansing Hemolymph item with Hemolymphopoda.
+
+Cold animals carry Congeatio: the goat (with the cold-native property, no longer Ductilis), the polar bear, which now permits ordinary sampling, and a new vanilla wolf profile (Animus and Congeatio). The 2026-11-14 pass also gave a profile to every creature that had none and a Temper to the empty Gardens profiles, the Mnemonic Whale and the Chthonian Queen; the full list is in `docs/HEMOMANCY_REFERENCE.md` 26.7 (CR-23, CR-24). The Enthralled Doll, Morphling Polyp, Antibody and Verdigris Moth have an explicit temper-free profile.
 
 Piglin, Piglin Brute, and Zombified Piglin are included; the illager set includes
 Pillager, Vindicator, Evoker, and Illusioner. Camel Husk has no registered entity

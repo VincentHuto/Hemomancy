@@ -53,6 +53,8 @@ public final class PriestessCombatRules {
 
     // A planted lance or a plunge wakes the blood under the floor: thorns burst up after a short tell.
     public static final int ERUPTION_TELL = 8;
+    /** Thorns in the line a plunge sends toward its target. */
+    public static final int PLUNGE_LINE = 7;
     public static final int ERUPTION_LIFE = 26;
     /** Below this share of her health she throws three lances instead of one. */
     public static final float JAVELIN_FAN_HEALTH = 0.5F;
@@ -118,6 +120,11 @@ public final class PriestessCombatRules {
     /** Thorn delays along the plunge's line: each one bursts a beat after the one before, running away from her. */
     public static int lineDelay(int index) {
         return ERUPTION_TELL + index * 2;
+    }
+
+    /** UN-17: of a plunge's line only the first and last thorn sound; the ring round the spear is silent. */
+    public static boolean plungeThornSounds(int index) {
+        return index == 0 || index == PLUNGE_LINE - 1;
     }
 
     /** How many lances the javelin throws at this share of health. */

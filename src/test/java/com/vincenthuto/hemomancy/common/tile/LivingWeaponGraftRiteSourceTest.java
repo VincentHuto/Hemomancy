@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
@@ -10,7 +11,8 @@ public final class LivingWeaponGraftRiteSourceTest {
 	private LivingWeaponGraftRiteSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/rite/IronBrazierBlockEntity.java");
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java");
 		String rite = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java");

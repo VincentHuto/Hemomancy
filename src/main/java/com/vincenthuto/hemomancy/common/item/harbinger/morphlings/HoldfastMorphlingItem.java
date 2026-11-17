@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.cling.ClingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.cling.ClingSurface;
 import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -59,9 +61,12 @@ public class HoldfastMorphlingItem extends HouseMorphlingItem {
 		return MorphlingSession.isOpen(player, BRACE_WINDOW);
 	}
 
-	/** Cling: pressed against a wall, or submerged (currents stop pushing), from Developing. Read on both sides. */
+	/**
+	 * Cling: pressed against a wall that holds by the shared cling rules (a sturdy face, {@code ClingSurface}), or
+	 * submerged (currents stop pushing), from Developing. Read on both sides.
+	 */
 	public static boolean clings(Player player, ItemStack stack) {
-		return stage(stack) >= 2 && (player.horizontalCollision || player.isUnderWater());
+		return stage(stack) >= 2 && (player.isUnderWater() || ClingSurface.againstWall(player));
 	}
 
 	@Override
@@ -91,7 +96,7 @@ public class HoldfastMorphlingItem extends HouseMorphlingItem {
 	public static void applyCling(Player player, ItemStack stack) {
 		if (!clings(player, stack) || player.isUnderWater() || player.onGround()) return;
 		Vec3 motion = player.getDeltaMovement();
-		if (motion.y < 0.0D) player.setDeltaMovement(motion.x, 0.0D, motion.z);
+		player.setDeltaMovement(motion.x, ClingRules.holdfastVertical(motion.y), motion.z);
 		player.resetFallDistance();
 	}
 

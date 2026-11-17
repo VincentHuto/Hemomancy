@@ -66,7 +66,7 @@ repo/
 *.java~
 __pycache__/
 
-# tools/ holds local editors and art pipelines. Only the model generators that tests read, the review launchers, the mausoleum generator, the Brined Court generators, the Mason's Respite generator, the wayside sites generator and the Harbinger sites generator are tracked.
+# tools/ holds local editors and art pipelines. Only the model generators that tests read, the review launchers, the mausoleum generator, the Brined Court generators, the Mason's Respite generator, the wayside sites generator, the Harbinger sites generator and the Circus sites generator are tracked.
 /tools/*
 !/tools/model_export/
 # The Circus puppet and faculty builders; their previews and old versions stay local.
@@ -87,4 +87,6 @@ __pycache__/
 !/tools/worldgen/wayside_sites.py
 !/tools/worldgen/harbinger_sites/
 !/tools/worldgen/harbinger_sites.py
+!/tools/worldgen/circus/
+!/tools/worldgen/circus_sites.py
 .ignore

@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class AnnettaCanonSourceTest {
 	private AnnettaCanonSourceTest() {}
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String annetta = read("src/main/java/com/vincenthuto/hemomancy/common/entity/boss/annetta/AnnettaKnowlesEntity.java");
 		String infection = read("src/main/java/com/vincenthuto/hemomancy/common/entity/boss/annetta/LatentAnnettaInfectionEntity.java");
 		String priestess = read("src/main/java/com/vincenthuto/hemomancy/common/entity/boss/annetta/StainedPriestessEntity.java");
@@ -41,7 +43,6 @@ public final class AnnettaCanonSourceTest {
 		assertContains(lore, "never knew she was infected");
 		assertContains(lore, "Annetta dies");
 	}
-	private static String read(String path) throws IOException { return Files.readString(Path.of(path)); }
 	private static void assertContains(String source, String expected) { if (!source.contains(expected)) throw new AssertionError("missing " + expected); }
 	private static void assertNotContains(String source, String forbidden) { if (source.contains(forbidden)) throw new AssertionError("unexpected " + forbidden); }
 	private static void assertBefore(String source, String first, String second) {

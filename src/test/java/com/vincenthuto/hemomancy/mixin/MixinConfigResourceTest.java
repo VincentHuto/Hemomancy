@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.mixin;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class MixinConfigResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -19,7 +23,8 @@ public final class MixinConfigResourceTest {
 	private MixinConfigResourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String modsToml = read(MODS_TOML);
 		String mixinConfig = read(MAIN_MIXIN_CONFIG);
 		String entityMixin = read(ENTITY_MIXIN);
@@ -39,24 +44,5 @@ public final class MixinConfigResourceTest {
 				entityMixin, "System.out.println");
 		assertNotContains("living entity renderer mixin should not print every render pass",
 				livingEntityRendererMixin, "System.out.println");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": found " + unexpected);
-		}
 	}
 }

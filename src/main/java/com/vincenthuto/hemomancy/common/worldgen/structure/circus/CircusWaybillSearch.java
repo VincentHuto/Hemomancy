@@ -30,6 +30,9 @@ public final class CircusWaybillSearch {
 	public static final int UNFINISHED_RADIUS = 2560;
 	public static final TagKey<Structure> PAVILIONS = TagKey.create(Registries.STRUCTURE,
 			Hemomancy.rloc("circus_waybill_targets"));
+	/** The abandoned stages, where The Missing Understudy's stage record lies. */
+	public static final TagKey<Structure> STAGES = TagKey.create(Registries.STRUCTURE,
+			Hemomancy.rloc("troupe_abandoned_stage_targets"));
 
 	/** The nearest predicted site, and for pavilions every site within {@link #UNFINISHED_RADIUS}, nearest first. */
 	public record Found(Optional<BlockPos> nearest, List<BlockPos> nearby) {

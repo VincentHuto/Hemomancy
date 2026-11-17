@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.worldgen.structure.vagrantmind.VagrantMindPiece;
@@ -178,6 +180,7 @@ public final class VagrantMindEncounterManager {
         if (!level.addFreshEntity(boss)) return failed(player, piece, "blocked");
         data.active(piece.origin(), boss.getUUID(), boss.blockPosition());
         BossScenes.playTo(player, boss, BossPresentationIds.SCENE_NAEGLEROPHAEON, 0);
+        LiberKnowledgeHelper.unlockForEncounter(player, LiberEntryDefinitions.NAEGLEROPHAEON);
         return true;
     }
 

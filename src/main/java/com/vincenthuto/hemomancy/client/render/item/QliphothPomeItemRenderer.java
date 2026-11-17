@@ -1,5 +1,6 @@
   package com.vincenthuto.hemomancy.client.render.item;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
@@ -60,7 +61,7 @@ public class QliphothPomeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 		Matrix4f mat = poseStack.last().pose();
 
-		float time = (float) (System.currentTimeMillis() % 100000L) / 50.0f;
+		float time = (float) (AnimationTime.itemMillis() % 100000.0) / 50.0f;
 		float pulse = (float) (Math.sin(time * 0.06) + 1.0) * 0.5f;
 
 		// ── Wandering bloom hotspot on the sphere surface ──

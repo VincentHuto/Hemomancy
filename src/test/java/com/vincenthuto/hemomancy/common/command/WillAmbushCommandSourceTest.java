@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.command;
 
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
 public final class WillAmbushCommandSourceTest {
 	private static final Path COMMAND = Path.of(
@@ -12,7 +15,8 @@ public final class WillAmbushCommandSourceTest {
 	private WillAmbushCommandSourceTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void allChecksPass() throws IOException {
 		String command = Files.readString(COMMAND).replace("\r\n", "\n");
 		String reference = Files.readString(REFERENCE).replace("\r\n", "\n");
 		String compact = compact(command);
@@ -45,12 +49,6 @@ public final class WillAmbushCommandSourceTest {
 
 		assertContains("reference documents anchor command", reference, "/hemo will ambush anchor");
 		assertContains("reference documents immediate command", reference, "/hemo will ambush immediate");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
 	}
 
 	private static String compact(String text) {

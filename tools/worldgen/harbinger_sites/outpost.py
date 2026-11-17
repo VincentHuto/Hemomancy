@@ -426,6 +426,8 @@ def artificer(p, top):
 def alchemist(p, top):
     p.put(5, 3, 5, 'hemomancy:vial_centrifuge', {'facing': 'south'})
     p.put(8, 3, 5, 'hemomancy:ghastly_alembic', {'facing': 'south'})
+    # The Alembic distils only over heat (PT-12): a lit campfire sunk in the floor under it.
+    p.set(8, 2, 5, 'minecraft:campfire', {'facing': 'south', 'lit': 'true', 'signal_fire': 'false', 'waterlogged': 'false'})
     p.set(6, 3, 7, 'hemomancy:phlebotomists_cabinet')
     p.set(5, 3, 3, 'minecraft:brewing_stand', {'has_bottle_0': 'true', 'has_bottle_1': 'true', 'has_bottle_2': 'true'},
           _vial_display())

@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memory;
 
+import org.junit.jupiter.api.Test;
+
 public final class LastDeathMemorySnapshotTest {
-    public static void main(String[] args) {
+    @Test
+    void allChecksPass() {
         LastDeathMemory memory = new LastDeathMemory();
         long packed = LastDeathMemory.packPosition(12, 64, -9);
         LastDeathMemorySnapshot.present("minecraft:overworld", packed, 2400L).applyTo(memory);

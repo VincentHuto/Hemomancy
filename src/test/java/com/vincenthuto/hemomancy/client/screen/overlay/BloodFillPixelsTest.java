@@ -13,6 +13,14 @@ class BloodFillPixelsTest {
     private static final Path ROOT = Path.of("src/main/resources/assets/hemomancy/textures/gui/blood_overlay");
 
     @Test
+    void liquidFillsRedrawThirtyTimesASecond() {
+        assertEquals(0, BloodFillPixels.frame(0f));
+        assertEquals(0, BloodFillPixels.frame(0.033f), "within one thirtieth of a second the fill is reused");
+        assertEquals(1, BloodFillPixels.frame(0.034f));
+        assertEquals(30, BloodFillPixels.frame(1f));
+    }
+
+    @Test
     void fillHeightControlsVisibleLiquidRows() throws Exception {
         BufferedImage back = texture("vessel_back.png");
         int[] empty = render(back, 0, 0, 0, 0);

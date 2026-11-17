@@ -34,4 +34,10 @@ public class StaffWeaponFormManip extends BloodManipulation {
 	public DeferredHolder<Item, Item> getFormItem() {
 		return formItem;
 	}
+
+	/** Conjuring a tool is not a school's effect: it burns no Temper. */
+	@Override
+	public boolean chargesTemper() {
+		return false;
+	}
 }

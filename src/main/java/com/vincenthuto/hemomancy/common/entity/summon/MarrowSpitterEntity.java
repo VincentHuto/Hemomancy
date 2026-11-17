@@ -114,13 +114,16 @@ public class MarrowSpitterEntity extends Skeleton implements SyncedBoundSummon {
         if (target == null || !target.isAlive() || !canAttack(target) || !hasLineOfSight(target)) { shotCooldown = 0; return; }
         getLookControl().setLookAt(target, 30, 30);
         if (distanceToSqr(target) > 24 * 24) { shotCooldown = 0; return; }
-        if (com.vincenthuto.hemomancy.common.entity.summon.MarrowJugglerRules.throwTick(shotCooldown)) performRangedAttack(target, 1);
+        if (MarrowJugglerRules.throwTick(shotCooldown)) throwDagger(target, MarrowJugglerRules.pinsTarget(shotCooldown));
         shotCooldown = (shotCooldown + 1) % SHOT_INTERVAL_TICKS;
     }
     @Override public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        throwDagger(target, false);
+    }
+    public void throwDagger(LivingEntity target, boolean pin) {
         var shot = new com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity(level(), this,
-                com.vincenthuto.hemomancy.common.entity.summon.MarrowJugglerRules.daggerDamage(getAttributeValue(Attributes.ATTACK_DAMAGE)));
-        shot.setPuppetDagger();
+                MarrowJugglerRules.daggerDamage(getAttributeValue(Attributes.ATTACK_DAMAGE)));
+        if (pin) shot.setPinDagger(); else shot.setPuppetDagger();
         double dx = target.getX() - getX(), dz = target.getZ() - getZ();
         shot.shoot(dx, target.getY(.55) - shot.getY() + Math.sqrt(dx * dx + dz * dz) * .03, dz, 1.7F, 1);
         level().addFreshEntity(shot);

@@ -39,11 +39,9 @@ public final class ManipulationCombatHelper {
 	}
 
 	/**
-	 * How far an effect reaches past {@link #canHarm(Player, LivingEntity)}. {@link #STRICT} is canHarm itself. The
-	 * wider presets reproduce sites written before step 9 flag for flag. Moving a site onto STRICT is a pending
-	 * decision in the consolidation ledger: G-2b for the caster's own puppets in Monster filters, F-16 for the area
-	 * damage from armour, Still Arts, Sheolic and Saprovitta. Other wider sites (the morphling look target, the
-	 * Verdigris mark) would need their own decision.
+	 * How far an effect reaches past {@link #canHarm(Player, LivingEntity)}. {@link #STRICT} is canHarm itself. The two
+	 * Monster filters spare the caster's allies (G-2b) but still reach any monster whatever PvP says. The area damage
+	 * from armour, Still Arts, Sheolic and Saprovitta asks STRICT (F-16).
 	 *
 	 * @param allies     also reach the caster's allies: itself excepted, its pets, teammates, its own and allied
 	 *                   puppets, and mobs it has impressed
@@ -54,14 +52,10 @@ public final class ManipulationCombatHelper {
 	 */
 	public record Reach(boolean allies, boolean anyPlayer, boolean creative, boolean spectators, boolean dying) {
 		public static final Reach STRICT = new Reach(false, false, false, false, false);
-		/** A {@code Monster.class} gather filtered on {@code isAlive}: every monster, the caster's own puppets too. */
-		public static final Reach MONSTER_FILTER = new Reach(true, true, true, true, false);
-		/** A {@code Monster.class} gather with no predicate, which also returns dying bodies. */
-		public static final Reach MONSTER_FILTER_ANY_STATE = new Reach(true, true, true, true, true);
-		/** Every living body but the caster: pets, allies, puppets, and players whatever PvP says. */
-		public static final Reach UNGATED = new Reach(true, true, true, true, false);
-		/** As {@link #UNGATED}, but creative and spectating players are spared. */
-		public static final Reach UNGATED_SURVIVAL = new Reach(true, true, false, false, false);
+		/** A {@code Monster.class} gather filtered on {@code isAlive}: every monster but the caster's allies (G-2b). */
+		public static final Reach MONSTER_FILTER = new Reach(false, true, true, true, false);
+		/** As {@link #MONSTER_FILTER}, but dying bodies are reached too. */
+		public static final Reach MONSTER_FILTER_ANY_STATE = new Reach(false, true, true, true, true);
 
 		boolean relational() {
 			return !allies || !anyPlayer;
@@ -70,7 +64,7 @@ public final class ManipulationCombatHelper {
 
 	/**
 	 * Whether {@code caster}'s effect may reach {@code target}. Only a player caster can be held to allies or PvP; a
-	 * Drudge or a scar's non-player wearer uses a preset that checks neither.
+	 * Drudge or a scar's non-player wearer asks {@link #canHarmFor} instead.
 	 */
 	public static boolean canHarm(LivingEntity caster, LivingEntity target, Reach reach) {
 		if (target == caster || !reach.dying() && !target.isAlive() || !reach.spectators() && target.isSpectator()) return false;
@@ -180,6 +174,49 @@ public final class ManipulationCombatHelper {
 			Vec3 delta = target.getEyePosition().subtract(eye);
 			return delta.lengthSqr() > 0.001D && look.dot(delta.normalize()) >= dot && visible(player, target);
 		}).min(Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
+	}
+
+	/**
+	 * Every creature {@code player} may harm whose box, grown by {@code radius}, a swept segment crosses: what a strand
+	 * swinging through the air strikes this tick (core-loop Track 12). Each segment is {@code {from, to}}. A creature
+	 * the caster may not harm is never gathered, so it neither takes the hit nor shields the one behind it.
+	 */
+	public static List<LivingEntity> swept(Player player, List<Vec3[]> segments, double radius) {
+		if (segments.isEmpty()) return List.of();
+		net.minecraft.world.phys.AABB bounds = null;
+		for (Vec3[] segment : segments) {
+			net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(segment[0], segment[1]);
+			bounds = bounds == null ? box : bounds.minmax(box);
+		}
+		return player.level().getEntitiesOfClass(LivingEntity.class, bounds.inflate(radius + 1.0D),
+				target -> canHarm(player, target) && crossed(target.getBoundingBox().inflate(radius), segments));
+	}
+
+	private static boolean crossed(net.minecraft.world.phys.AABB box, List<Vec3[]> segments) {
+		for (Vec3[] segment : segments) {
+			if (box.contains(segment[0]) || box.contains(segment[1]) || box.clip(segment[0], segment[1]).isPresent()) return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Every creature {@code player} may harm and can see within a cone from {@code origin} along {@code axis}, out to
+	 * {@code range}, whose half-angle has cosine {@code minDot}: the one shared cone gather (core-loop Track 12).
+	 */
+	public static List<LivingEntity> cone(Player player, Vec3 origin, Vec3 axis, double range, double minDot) {
+		Vec3 unit = axis.lengthSqr() < 1.0E-8D ? player.getLookAngle() : axis.normalize();
+		return player.level().getEntitiesOfClass(LivingEntity.class,
+				new net.minecraft.world.phys.AABB(origin, origin).inflate(range + 1.0D),
+				target -> canHarm(player, target) && inCone(origin, unit, target, range, minDot) && visible(player, target));
+	}
+
+	private static boolean inCone(Vec3 origin, Vec3 unit, LivingEntity target, double range, double minDot) {
+		Vec3 centre = target.getBoundingBox().getCenter();
+		Vec3 to = centre.subtract(origin);
+		double distance = to.length();
+		double reachable = range + target.getBbWidth() * 0.5D;
+		if (distance > reachable) return false;
+		return distance < 1.0E-4D || unit.dot(to.scale(1.0D / distance)) >= minDot;
 	}
 
 	public static boolean hostileProjectile(Player player, net.minecraft.world.entity.projectile.Projectile projectile) {

@@ -45,8 +45,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodVolumeEvents {
-	private static final BloodAccounting.Source WOUND = BloodAccounting.Source.of("wound", Category.BODY, false, true);
-	private static final BloodAccounting.Source BLOODLINE_TRICKLE = BloodAccounting.Source.of("bloodline_trickle", Category.BLOODLINE, false, true);
+	private static final BloodAccounting.Source WOUND = BloodAccounting.Source.of("wound", Category.BODY, true);
+	private static final BloodAccounting.Source BLOODLINE_TRICKLE = BloodAccounting.Source.of("bloodline_trickle", Category.BLOODLINE, true);
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void ordinaryRecruitDied(LivingDeathEvent event) {
 		if (!(event.getEntity() instanceof ProfessionalHarbingerEntity npc)
@@ -79,6 +79,10 @@ public class BloodVolumeEvents {
 			boolean changed = volume.isActive() || volume.getBloodVolume() != 0
 					|| (volume.getBloodLine() != null && volume.getBloodLine().isValid());
 			if (changed) {
+				// Clean blood leaves the saved line too, so a login cannot put it back.
+				if (player instanceof ServerPlayer serverPlayer && volume.getBloodLine().isValid()) {
+					BloodlineMembership.releaseCleansed(serverPlayer);
+				}
 				volume.setActive(false);
 				volume.setBloodVolume(0);
 				volume.setBloodLine(Bloodline.NOBLOODLINE);
@@ -106,12 +110,15 @@ public class BloodVolumeEvents {
 			MaxBloodLedger.apply(serverPlayer, volume);
 		}
 
-		//  Passive blood regen (Mind Broken slows it by 15%) 
+		//  Passive blood regen (Mind Broken slows it by 15%)
 		double passiveRegenMultiplier = MindBrokenRules.passiveRegenMultiplier(player.hasEffect(EffectInit.mind_broken));
 		if (HemoServerConfig.BLOOD_REGEN_ENABLED.get()) {
 			int interval = HemoServerConfig.BLOOD_REGEN_INTERVAL.get();
 			if (player.tickCount % interval == 0) {
-				double regenRate = HemoServerConfig.BLOOD_REGEN_RATE.get() * passiveRegenMultiplier;
+				// The body sets the base rate (core-loop Track 10): the food bar and a night's sleep.
+				double body = BloodRegenRules.multiplier(player.getFoodData().getFoodLevel(),
+						player.getFoodData().getSaturationLevel(), player.hasEffect(EffectInit.well_rested));
+				double regenRate = HemoServerConfig.BLOOD_REGEN_RATE.get() * passiveRegenMultiplier * body;
 				BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "base_regen",
 						"message.hemomancy.blood_volume_events.base_regen", Category.BODY, regenRate, interval);
 			}
@@ -274,10 +281,25 @@ public class BloodVolumeEvents {
 	}
 
 	/**
-	 * When the player takes damage, drain blood proportional to the damage dealt.
-	 * Wounds cause blood loss this is the core cost of being reckless in combat.
+	 * Iron Will: a defender reduction while blood is critically low. Defender stage of
+	 * {@link com.vincenthuto.hemomancy.common.damage.DamageStages}.
 	 */
-	@SubscribeEvent
+	public static void applyIronWill(LivingDamageEvent.Pre event) {
+		if (!(event.getEntity() instanceof Player player) || player.level().isClientSide
+				|| !HemoServerConfig.BLOOD_DRAIN_ON_DAMAGE_ENABLED.get()) return;
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		if (!volume.isActive()) return;
+		double ironWillThreshold = volume.getMaxBloodVolume() * SkillPointHelper.getIronWillThreshold();
+		if (volume.getBloodVolume() < ironWillThreshold && volume.getBloodVolume() > 0) {
+			event.setNewDamage(event.getNewDamage() * (float) SkillPointHelper.getIronWillMultiplier(player));
+		}
+	}
+
+	/**
+	 * When the player takes damage, drain blood proportional to the damage that lands.
+	 * Wounds cause blood loss this is the core cost of being reckless in combat.
+	 * Consumer stage of {@link com.vincenthuto.hemomancy.common.damage.DamageStages}.
+	 */
 	public static void onPlayerDamaged(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
@@ -285,14 +307,7 @@ public class BloodVolumeEvents {
 
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume.isActive()) {
-			//  Skill: Iron Will reduce incoming damage when blood is critically low 
-			double ironWillThreshold = volume.getMaxBloodVolume() * SkillPointHelper.getIronWillThreshold();
-			float damage = event.getNewDamage();
-			if (volume.getBloodVolume() < ironWillThreshold && volume.getBloodVolume() > 0) {
-				damage *= (float) SkillPointHelper.getIronWillMultiplier(player);
-				event.setNewDamage(damage);
-			}
-
+			float damage = com.vincenthuto.hemomancy.common.damage.DamageStages.landing(player, event);
 			double drainAmount = damage * HemoServerConfig.BLOOD_DRAIN_PER_DAMAGE.get()
 					* SkillPointHelper.getHemostasisMultiplier(player);
 			if (SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_automatic_coagulation)) {
@@ -303,7 +318,6 @@ public class BloodVolumeEvents {
 				drainAmount *= 0.5D;
 			}
 			BloodAccounting.pay(player, drainAmount, WOUND);
-			volume.addDamage(damage);
 
 			// Warn the player when blood is critically low
 			if (volume.getBloodVolume() < volume.getMaxBloodVolume() * 0.1 && volume.getBloodVolume() > 0) {
@@ -341,6 +355,8 @@ public class BloodVolumeEvents {
 		if (source == null || !(source.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.BLOOD_GAIN_ON_KILL_ENABLED.get()) return;
+		// A kill by draw already paid its blood: no kill blood as well (CL-24).
+		if (!com.vincenthuto.hemomancy.common.damage.HemoDamageTypes.paysKillBounty(source)) return;
 
 		LivingEntity victim = event.getEntity();
 
@@ -419,7 +435,7 @@ public class BloodVolumeEvents {
 		syncBloodlinePool(overworld, globalLine);
 	}
 
-	private static void syncBloodlinePool(ServerLevel overworld, Bloodline globalLine) {
+	public static void syncBloodlinePool(ServerLevel overworld, Bloodline globalLine) {
 		if (globalLine == null) {
 			return;
 		}
@@ -488,6 +504,10 @@ public class BloodVolumeEvents {
 		// Re-associate player with their global bloodline from saved data
 		ServerLevel overworld = player.server.overworld();
 		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		if (savedData.getBloodlineForPlayer(player.getUUID()) != null
+				&& UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player))) {
+			BloodlineMembership.releaseCleansed(player);
+		}
 		Bloodline globalLine = savedData.getBloodlineForPlayer(player.getUUID());
 		if (globalLine != null) {
 			volume.setBloodLine(globalLine);
@@ -500,7 +520,13 @@ public class BloodVolumeEvents {
 		} else {
 			volume.setBloodLine(Bloodline.NOBLOODLINE);
 		}
+		BloodlineMembership.settle(player);
+	}
 
+	/** A player who logged in dead is settled once they stand again. */
+	@SubscribeEvent
+	public static void playerRespawned(PlayerEvent.PlayerRespawnEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) BloodlineMembership.settle(player);
 	}
 
 }

@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -160,10 +159,7 @@ public class UnstainedGaugeOverlay {
 	}
 
 	private float getAnimationTime(float partialTicks) {
-		if (mc.level != null) {
-			return AnimationTime.gameTime(mc.level, partialTicks) * 0.05f;
-		}
-		return Util.getMillis() * 0.001f;
+		return (float) (AnimationTime.ticksOrWallClock(mc.level, partialTicks) * 0.05);
 	}
 
 	private float getBloodFillRatio(LocalPlayer player, float fallbackRatio) {

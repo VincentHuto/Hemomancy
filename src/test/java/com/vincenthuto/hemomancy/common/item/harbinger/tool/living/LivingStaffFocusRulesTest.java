@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
+
 public final class LivingStaffFocusRulesTest {
 	private LivingStaffFocusRulesTest() {
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void allChecksPass() {
 		bareAbsorptionOnlyTargetsOneCreature();
 		unskilledStaffAbsorbsAndProjectsFasterThanBareHands();
 		unskilledStaffAbsorptionMatchesBareHandOnOneTargetAndBeatsItWithTwo();

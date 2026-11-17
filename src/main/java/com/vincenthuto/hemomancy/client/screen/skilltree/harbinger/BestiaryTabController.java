@@ -6,10 +6,19 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenCont
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.bestiary.PacketRequestSpecimenBestiary;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
+import com.vincenthuto.hemomancy.common.mission.alchemist.BloodResearch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class BestiaryTabController implements IProgressTab {
 	static final float PREVIEW_DRAG_ROTATION_SPEED = 0.02F;
@@ -39,8 +48,23 @@ public class BestiaryTabController implements IProgressTab {
 			return;
 		}
 		var progress = HemoCapabilityAccess.getSpecimenBestiary(mc.player);
-		state.rebuild(progress.recordedSpecimens(),
-								progress.surrenderedSpecimens(), progress.recordedMorphlingLayers());
+		Map<String, String> met = new TreeMap<>();
+		int metCount = 0, readCount = 0, studiedCount = 0;
+		for (ResourceLocation id : BloodProfileData.snapshot(true).json().keySet()) {
+			if (!BloodResearch.met(mc.player, id)) continue;
+			EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
+			if (type == null) continue;
+			metCount++;
+			if (BloodResearch.knows(mc.player, id)) readCount++;
+			if (BloodResearch.studied(mc.player, id)) studiedCount++;
+			// A roster specimen keeps its authored dossier and gains the blood block there instead.
+			if (!SpecimenBestiaryDefinitions.isResearchSpecimen(id)) met.put(id.toString(), type.getDescriptionId());
+		}
+		state.rebuild(progress.recordedSpecimens(), progress.surrenderedSpecimens(), progress.recordedMorphlingLayers(),
+				met, key -> I18n.get(key));
+		state.metCount = metCount;
+		state.readCount = readCount;
+		state.studiedCount = studiedCount;
 	}
 
 	@Override

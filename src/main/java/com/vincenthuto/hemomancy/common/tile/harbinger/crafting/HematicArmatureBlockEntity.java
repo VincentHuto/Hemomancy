@@ -7,8 +7,10 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.CleatsFitting;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
@@ -18,6 +20,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmature
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
 import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -25,8 +28,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -45,7 +46,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -63,8 +63,11 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 	public static final int MAX_BLOOD = 8_000;
 	public static final int PROCESS_INTERVAL_TICKS = 100;
 	private static final double HAND_GOURD_TRANSFER_TICKS = 20.0D;
-	private static final DustParticleOptions CRIMSON_FLASH =
-			new DustParticleOptions(new Vector3f(0.85F, 0.02F, 0.02F), 2.4F);
+	private static final ParticleColor CRIMSON_FLASH = new ParticleColor(214, 30, 46);
+	private static final ParticleColor BOWL_FIRE = new ParticleColor(238, 98, 30);
+	private static final ParticleColor BLOOD = new ParticleColor(150, 14, 26);
+	private static final ParticleColor CLOT = new ParticleColor(70, 6, 14);
+	private static final ParticleColor CRIMSON_SPORE = new ParticleColor(150, 40, 58);
 	private static final double[][] BOWL_PARTICLE_OFFSETS = ArmatureGeometry.BOWLS;
 
 	private static final String TAG_RESTRAINED_PLAYER = "RestrainedPlayer";
@@ -104,20 +107,26 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 		if (restrainedPlayer == null || !(level instanceof ServerLevel serverLevel)) {
 			return false;
 		}
-		long now = level.getGameTime();
-
 		ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(restrainedPlayer);
 		if (!isValidRestrainedPlayer(player)) {
 			clearRestrainedPlayer(null);
 			return true;
 		}
+		return processRestrainedPlayer(serverLevel, player);
+	}
 
+	/**
+	 * One cycle of the Armature's work on the player it holds: the first worn piece with a matching bowl reagent is
+	 * upgraded, or, when the worn boots take cleats and a bowl holds Hematic Cleats, the cleats are fitted to them.
+	 */
+	public boolean processRestrainedPlayer(ServerLevel serverLevel, ServerPlayer player) {
+		long now = serverLevel.getGameTime();
 		IBloodVolume reservoir = getBloodCapability();
 		if (reservoir == null) {
 			return false;
 		}
 
-		List<ArmatureUpgradeRecipe> recipes = ArmatureUpgradeRecipe.getAllRecipes(level);
+		List<ArmatureUpgradeRecipe> recipes = ArmatureUpgradeRecipe.getAllRecipes(serverLevel);
 		for (ArmatureUpgradeRules.ArmatureSlot slot : ArmatureUpgradeRules.processingOrder()) {
 			EquipmentSlot equipmentSlot = toEquipmentSlot(slot);
 			ItemStack worn = player.getItemBySlot(equipmentSlot);
@@ -128,23 +137,26 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 			if (match == null) {
 				continue;
 			}
-			ArmatureUpgradeRecipe recipe = match.recipe();
-			if (reservoir.getBloodVolume() < recipe.getBloodCost()) {
+			double bloodCost = match.bloodCost();
+			if (reservoir.getBloodVolume() < bloodCost) {
 				if (!isPendingCraft(slot, match.bowlSlot())
 						|| now - craftStartTick >= PROCESS_INTERVAL_TICKS) {
 					startPendingCraft(slot, match.bowlSlot(), now);
 					player.sendSystemMessage(Component.translatable(
 							"block.hemomancy.hematic_armature.insufficient_blood",
-							(int) recipe.getBloodCost()).withStyle(ChatFormatting.DARK_RED));
+							(int) bloodCost).withStyle(ChatFormatting.DARK_RED));
 				}
 				return false;
 			}
 
 			if (!isPendingCraft(slot, match.bowlSlot())) {
 				startPendingCraft(slot, match.bowlSlot(), now);
-				player.sendSystemMessage(Component.translatable("block.hemomancy.hematic_armature.preparing",
-						recipe.createResult(level.registryAccess()).getHoverName(), (int) recipe.getBloodCost(),
-						match.reagent().getHoverName(), Component.keybind("key.sneak")));
+				player.sendSystemMessage(match.recipe() == null
+						? Component.translatable("block.hemomancy.hematic_armature.fitting_cleats", worn.getHoverName(),
+								(int) bloodCost, Component.keybind("key.sneak"))
+						: Component.translatable("block.hemomancy.hematic_armature.preparing",
+								match.recipe().createResult(serverLevel.registryAccess()).getHoverName(), (int) bloodCost,
+								match.reagent().getHoverName(), Component.keybind("key.sneak")));
 				spawnWindupEffects(serverLevel, player, match.bowlSlot(), 0.0D);
 				return false;
 			}
@@ -156,28 +168,36 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 				return false;
 			}
 
-			ItemStack upgraded = recipe.createResult(level.registryAccess());
-			mergeCustomData(worn, upgraded);
-			copyDamage(worn, upgraded);
-			player.setItemSlot(equipmentSlot, upgraded);
-			ArtificerAssignments.onArmatureUpgrade(player, upgraded, recipe.getRequiredDegree());
-			var stationProgress = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player);
-			stationProgress.recordUse(UpgradeStation.ARMATURE,
-					com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.ARMOR_UPGRADE);
-			if (getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED.id())
+			Component done;
+			ArmatureUpgradeRecipe recipe = match.recipe();
+			if (recipe == null) {
+				// A fitting keeps the worn boots and records no armor-upgrade practice (NQ-05-11).
+				CleatsFitting.fit(worn);
+				done = Component.translatable("block.hemomancy.hematic_armature.cleats_fitted", worn.getHoverName());
+			} else {
+				ItemStack upgraded = recipe.createResult(serverLevel.registryAccess());
+				mergeCustomData(worn, upgraded);
+				copyDamage(worn, upgraded);
+				CleatsFitting.carry(worn, upgraded);
+				player.setItemSlot(equipmentSlot, upgraded);
+				ArtificerAssignments.onArmatureUpgrade(player, upgraded, recipe.getRequiredDegree());
+				var stationProgress = HemoCapabilityAccess.stationUpgrades(player);
 				stationProgress.recordUse(UpgradeStation.ARMATURE,
-						com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.ARMOR_UPGRADE_CONSECRATED);
+						com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.ARMOR_UPGRADE);
+				if (getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED.id())
+					stationProgress.recordUse(UpgradeStation.ARMATURE,
+							com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.ARMOR_UPGRADE_CONSECRATED);
+				done = Component.translatable("block.hemomancy.hematic_armature.upgraded", upgraded.getHoverName());
+			}
 			ItemStack reagent = match.reagent();
 			reagent.shrink(1);
 			if (reagent.isEmpty()) {
 				setItem(match.bowlSlot(), ItemStack.EMPTY);
 			}
-			reservoir.drain(recipe.getBloodCost());
+			reservoir.drain(bloodCost);
 			spawnUpgradeEffects(serverLevel, player, match.bowlSlot());
 			clearPendingCraft();
-			player.sendSystemMessage(Component.translatable(
-					"block.hemomancy.hematic_armature.upgraded",
-					upgraded.getHoverName()).withStyle(ChatFormatting.DARK_RED));
+			player.sendSystemMessage(done.copy().withStyle(ChatFormatting.DARK_RED));
 			return true;
 		}
 		clearPendingCraft();
@@ -194,7 +214,11 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 			}
 			ArmatureUpgradeRecipe recipe = findMatchingRecipe(recipes, slot, worn, reagent, player, getArmatureTier());
 			if (recipe != null) {
-				return new MatchedUpgrade(recipe, bowlSlot, reagent);
+				return new MatchedUpgrade(recipe, bowlSlot, reagent, recipe.getBloodCost());
+			}
+			if (slot == ArmatureUpgradeRules.ArmatureSlot.FEET && CleatsFitting.isCleats(reagent)
+					&& CleatsFitting.canFit(worn)) {
+				return new MatchedUpgrade(null, bowlSlot, reagent, CleatsFitting.BLOOD_COST);
 			}
 		}
 		return null;
@@ -221,18 +245,24 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 
 	private void spawnUpgradeEffects(ServerLevel serverLevel, ServerPlayer player, int bowlSlot) {
 		Vec3 bowl = bowlParticlePosition(bowlSlot);
-		serverLevel.sendParticles(ParticleTypes.FLAME,
+		serverLevel.sendParticles(HemoParticleData.emberSpark(BOWL_FIRE, 0.05F, 1F, 20),
 				bowl.x, bowl.y, bowl.z,
-				14, 0.14D, 0.08D, 0.14D, 0.01D);
-		serverLevel.sendParticles(ParticleTypes.SMOKE,
+				14, 0.14D, 0.08D, 0.14D, 0.02D);
+		serverLevel.sendParticles(HemoParticleData.darkGlow(CLOT),
 				bowl.x, bowl.y + 0.04D, bowl.z,
 				6, 0.10D, 0.04D, 0.10D, 0.01D);
 
 		double playerY = player.getY() + player.getBbHeight() * 0.55D;
-		serverLevel.sendParticles(CRIMSON_FLASH,
+		serverLevel.sendParticles(HemoParticleData.hitGlow(CRIMSON_FLASH),
 				player.getX(), playerY, player.getZ(),
-				48, 0.62D, 0.86D, 0.62D, 0.0D);
-		serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
+				1, 0.0D, 0.0D, 0.0D, 0.0D);
+		serverLevel.sendParticles(HemoParticleData.bloodCell(BLOOD),
+				player.getX(), playerY, player.getZ(),
+				24, 0.30D, 0.45D, 0.30D, 0.06D);
+		serverLevel.sendParticles(HemoParticleData.darkGlow(CLOT),
+				player.getX(), playerY, player.getZ(),
+				12, 0.40D, 0.55D, 0.40D, 0.01D);
+		serverLevel.sendParticles(HemoParticleData.sporiticSpore(CRIMSON_SPORE),
 				player.getX(), playerY, player.getZ(),
 				26, 0.50D, 0.68D, 0.50D, 0.02D);
 	}
@@ -243,13 +273,19 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 		}
 		Vec3 bowl = bowlParticlePosition(bowlSlot);
 		double spread = 0.04D + progress * 0.10D;
-		serverLevel.sendParticles(ParticleTypes.FLAME,
+		serverLevel.sendParticles(HemoParticleData.emberSpark(BOWL_FIRE, 0.031F, 0.9F, 14),
 				bowl.x, bowl.y, bowl.z,
 				2, spread, 0.04D, spread, 0.005D);
-		serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
-				player.getX(), player.getY() + player.getBbHeight() * 0.55D, player.getZ(),
-				2, 0.25D + progress * 0.20D, 0.35D + progress * 0.20D,
-				0.25D + progress * 0.20D, 0.01D);
+		// Spores drawn from the bowl into the restrained body: the glow flies its offset back to where it spawned.
+		double chestY = player.getY() + player.getBbHeight() * 0.55D;
+		double reach = 0.25D + progress * 0.20D;
+		for (int i = 0; i < 2; i++) {
+			double x = player.getX() + (serverLevel.random.nextDouble() - 0.5D) * reach;
+			double y = chestY + (serverLevel.random.nextDouble() - 0.5D) * reach;
+			double z = player.getZ() + (serverLevel.random.nextDouble() - 0.5D) * reach;
+			serverLevel.sendParticles(HemoParticleData.willAbsorptionGlow(CRIMSON_SPORE),
+					x, y, z, 0, bowl.x - x, bowl.y - y, bowl.z - z, 1.0D);
+		}
 	}
 
 	private Vec3 bowlParticlePosition(int bowlSlot) {
@@ -300,7 +336,8 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 		craftStartTick = -1L;
 	}
 
-	private record MatchedUpgrade(ArmatureUpgradeRecipe recipe, int bowlSlot, ItemStack reagent) {
+	/** A matched piece of work; {@code recipe} is null for a cleats fitting. */
+	private record MatchedUpgrade(@Nullable ArmatureUpgradeRecipe recipe, int bowlSlot, ItemStack reagent, double bloodCost) {
 	}
 
 	private static void copyDamage(ItemStack from, ItemStack to) {

@@ -1,6 +1,6 @@
 # Registered Hemomancy payloads for this PROTOCOL_VERSION, checked by PayloadProtocolVersionTest.
 # When the set changes, bump PacketHandler.PROTOCOL_VERSION and rewrite this file.
-version 41
+version 56
 playToServer ActivateArmorSetAbilityC2SPacket
 playBidirectional AntecedentEffectPacket
 playToServer ArborFruitInteractPacket
@@ -10,6 +10,8 @@ playToServer BloodCraftingKeyPressPacket
 playToClient BloodFlowPacket
 playToServer BloodFormationKeyPressPacket
 playToClient BloodTemperamentServerPacket
+playToServer BloodVerbChoicePacket
+playToServer BloodVerbKeyPacket
 playToServer BloodVolumeClientPacket
 playToClient BloodVolumeServerPacket
 playToClient BossBarFramePacket
@@ -34,8 +36,8 @@ playToServer DialogueTopicOpenedPacket
 playToClient EarthenVeinTravelVisualPacket
 playToClient EntityVisualPacket
 playToServer EquipManipulationPacket
-playToServer GroundBloodDrawPacket
 playToClient HeartNodeEnvelopePacket
+playToServer HeartNodeLeavePacket
 playToClient HeartNodeMomentPacket
 playToServer HeartNodeSettingsPacket
 playToServer ImprintMnemonicBlueprintPacket
@@ -44,6 +46,9 @@ playToClient KnownManipulationServerPacket
 playToClient KnownStillArtsServerPacket
 playToServer KnownSummonsRequestPacket
 playToClient KnownSummonsServerPacket
+playToServer LashAimPacket
+playToClient LashAimSyncPacket
+playToServer LashTapPacket
 playToServer LidlessPassageInputPacket
 playToClient LidlessPassageStatePacket
 playToClient LivingFlailImpactPacket
@@ -68,6 +73,7 @@ playToClient OpenInscriptionPacket
 playToServer OpenMorphlingJarPacket
 playToClient OpenPendingWhisperPacket
 playToClient OpenSSCScreenPacket
+playToServer PacketAnswerBloodlinePetition
 playToClient PacketAntecedentResearch
 playToClient PacketBloodCraftRing
 playToClient PacketBloodStructureFeed
@@ -91,6 +97,7 @@ playToServer PacketOpenScarsInv
 playToServer PacketOpenScryingDiagnostics
 playToServer PacketOpenTemperamentView
 playToServer PacketPrepareScarPattern
+playToServer PacketPuppetAct
 playToServer PacketPuppeteersSpindleAction
 playToServer PacketRequestPoolData
 playToServer PacketRequestSpecimenBestiary
@@ -99,11 +106,14 @@ playToClient PacketSpawnVeinSpiderCourier
 playToClient PacketSyncActiveRites
 playToClient PacketSyncBloodFlowDiagnostics
 playToClient PacketSyncBloodMoon
+playToClient PacketSyncBloodTemper
+playToClient PacketSyncBloodlinePetitions
 playToClient PacketSyncBloodlinePool
 playToClient PacketSyncChamberOfWill
 playToClient PacketSyncChamberVisit
 playToClient PacketSyncCircusPerception
 playToClient PacketSyncCircusSchool
+playToClient PacketSyncCling
 playToClient PacketSyncClinicalBlood
 playToClient PacketSyncCourtProgress
 playToClient PacketSyncDegree
@@ -128,8 +138,10 @@ playToClient PacketSyncSpecimenBestiary
 playToClient PacketSyncSporeLoad
 playToClient PacketSyncStationUpgrades
 playToClient PacketSyncSutureLinks
+playToClient PacketSyncTendonAnchor
 playToClient PacketSyncThelemicMemory
 playToClient PacketSyncUnstainedProgress
+playToClient PacketSyncVerbPresence
 playToClient PacketSyncVesperFightScene
 playToServer PacketToggleSkill
 playToServer PacketToggleUnstainedBonus
@@ -156,6 +168,7 @@ playToClient SpawnClawSlashPacket
 playToClient SpawnSanguineOmenEffectPacket
 playToServer StartCentrifugeButtonPacket
 playToClient StillArtCooldownPacket
+playToServer StrandSnapPacket
 playToServer SynapticLoadoutActionPacket
 playToClient SyncArmorSetAbilityCooldownS2CPacket
 playToClient SyncBloodBindingTendrilS2CPacket
@@ -164,6 +177,7 @@ playToClient SyncEquippedMorphlingPacket
 playToClient SyncSchoolCombatS2CPacket
 playToClient SyncSilentSlippingStateS2CPacket
 playToClient SyncTrackingAvatarPacket
+playToServer ToggleCleatsPacket
 playToServer ToggleEquipmentLayerVisibilityPacket
 playToServer ToggleGourdKeyPacket
 playToServer ToggleSilentSlippingC2SPacket
@@ -173,5 +187,6 @@ playToServer UpdateSelectedStillArtPacket
 playToServer UseManipKeyPacket
 playToServer UseStillArtKeyPacket
 playToClient VascularSystemServerPacket
+playToClient VerbRefusalPacket
 playToClient WardStrikePacket
 playToClient WillPresenceCuePacket

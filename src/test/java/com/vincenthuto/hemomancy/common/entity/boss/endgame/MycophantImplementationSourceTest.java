@@ -63,7 +63,7 @@ final class MycophantImplementationSourceTest {
 		int clear = manager.indexOf("private static void clear(ServerPlayer player) {");
 		assertTrue(clear > 0);
 		assertTrue(manager.indexOf("discardBrood(player);", clear) > clear);
-		int victory = manager.indexOf("public static void completeVictory(");
+		int victory = manager.indexOf("private static void settleVictory(");
 		int cleared = manager.indexOf("clear(owner);", victory);
 		int exited = manager.indexOf("exitChamber(owner);", cleared);
 		int delivered = manager.indexOf("givePendingTendril(owner);", exited);

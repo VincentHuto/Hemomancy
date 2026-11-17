@@ -31,14 +31,14 @@ public record AnchoriteProgressSnapshot(int degree, boolean activeBlood, boolean
     }
 
 	private static int replacementTier(ServerPlayer player) {
-		if (has(player, VeinMasonAssignments.D6_REWARD)
-				&& VeinMasonScarLesson.needsReplacement(player, VeinMasonScarLesson.strongestForPlayer(player, 3))) return 3;
-		if (has(player, VeinMasonAssignments.D5_REWARD)
-				&& VeinMasonScarLesson.needsReplacement(player, VeinMasonScarLesson.strongestForPlayer(player, 2))) return 2;
-		if (HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player)
-				&& VeinMasonScarLesson.needsReplacement(player, VeinMasonScarLesson.continuationForPlayer(player))) return 1;
-		if (HarbingerAdvancementGranter.isVeinMasonFirstLesson(player)
-				&& VeinMasonScarLesson.needsReplacement(player, VeinMasonScarLesson.forPlayer(player))) return 1;
+		if (has(player, VeinMasonAssignments.D6_REWARD) && VeinMasonScarLesson.needsReplacement(player,
+				VeinMasonScarLesson.issued(player, VeinMasonScarLesson.Slot.D6))) return 3;
+		if (has(player, VeinMasonAssignments.D5_REWARD) && VeinMasonScarLesson.needsReplacement(player,
+				VeinMasonScarLesson.issued(player, VeinMasonScarLesson.Slot.D5))) return 2;
+		if (HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player) && VeinMasonScarLesson.needsReplacement(player,
+				VeinMasonScarLesson.issued(player, VeinMasonScarLesson.Slot.CONTINUATION))) return 1;
+		if (HarbingerAdvancementGranter.isVeinMasonFirstLesson(player) && VeinMasonScarLesson.needsReplacement(player,
+				VeinMasonScarLesson.issued(player, VeinMasonScarLesson.Slot.FIRST))) return 1;
 		return 0;
 	}
 

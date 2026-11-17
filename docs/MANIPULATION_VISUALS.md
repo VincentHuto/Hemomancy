@@ -1,19 +1,20 @@
 # Manipulation visuals: the Hematic Riposte standard
 
-Current standard: 2026-10-09. Hematic Riposte's blood-arm (`client/render/world/HematicRiposteGeometry.java`) is the reference for focal manipulation, rite, boss and impact visuals. Read that file before building or upgrading one. Bring older effects up to this bar when they are touched; do not copy them as templates. Current source remains authoritative; update this page when the standard intentionally changes. For every existing effect's current grade and the ordered touch-up list, see [the manipulation visual catalogue](archive/audits/MANIPULATION_VISUAL_CATALOGUE.md).
+Current standard: 2026-10-09. Hematic Riposte's blood-arm (`client/render/world/HematicRiposteGeometry.java`) is the reference for focal manipulation, rite, boss and impact visuals. Read that file before building or upgrading one. Bring older effects up to this bar when they are touched; do not copy them as templates. Current source remains authoritative; update this page when the standard intentionally changes. For every effect's grade and the upgrade order the owner approved on 2026-11-13 (VX-1), see [the 2026-11-11 visual audit](audits/2026-11-11-visual-balance/manipulation-visuals.md). Eighteen of its rows predate the 2026-11-12 held-form rework and are owed a re-grade; the plan is [chunk 09](owner_answers/09-visuals-particles-and-texels.md). [The older catalogue](archive/audits/MANIPULATION_VISUAL_CATALOGUE.md) is the 2026-10-09 snapshot. The three VX-1 upgrades that would have brought back held forms cut on 2026-11-12 are dropped (2026-11-14); the re-grade of the stale rows is the [2026-11-15 addendum](audits/2026-11-11-visual-balance/2026-11-15-a-row-review-and-regrade.md). Open questions about visuals live in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md): NQ-09-2 (reusing the cut spray art on two R casts) and VX-18 (per-school looks for planted and branded strands).
 
 ## Structure
 
 - Give each focal effect its own `final`, package-private, static-only geometry class in `client/render/world/`. It needs `handles(Form)` and a `draw(packet, poses, vertexConsumer, camera, right, up, time, age, alpha, frame)` entry point.
 - Hook it into `ManipulationVisualRenderer` **before** the shared `AnimusMortemGeometry` branch. Draw on the school's material (for example `FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS)`) so the school shader and texture supply the colour.
-- Build from the `LuxUmbraGeometry` primitives: `ribbonPath` for spines, strands and trails; `card` for camera-facing glows and wisps; `stream` for streaks; `slashOffsets()` for parallel claw marks. Use the `RIBBON`, `WISP`, `FOCUS` and `SLASH` sprites.
+- Build from the `LuxUmbraGeometry` primitives: `ribbonPath` for spines, strands and trails; `card` for camera-facing glows and wisps; `stream` for streaks; `slashOffsets()` for parallel claw marks. Use the `RIBBON`, `WISP`, `FOCUS` and `SLASH` sprites. On Animus, `FOCUS` (4) and `SLASH` (7) draw the glossy droplet Riposte is built on; a core or a cut that should glow asks for `ANIMUS_FOCUS` (12) or `ANIMUS_SLASH` (13). Umbra has `UMBRA_WISP` (14), a round puff of shadow, and `UMBRA_FOCUS` (15), a dark core in a violet rim (VX-4). Shape ids are per shader: Mortem reads 8 and 10 for its own looks.
 - Keep timing, encoding and direction maths in a pure rules class with no Minecraft types (`HematicRiposteRules`), so JVM tests can cover it.
 
 ## Animation
 
 - Author a full timeline with named phase constants instead of relying on the shared entrance fade. Riposte uses emerge 0–2, sweep 2–6, strike 6–8 and dissolve 8–16 ticks. The shared formation fade swallows the first ticks of a fast effect, so draw at full opacity until the cue retires.
-- Ease each phase differently: `smooth` (smoothstep) for growth, cubic `easeInOut` for travel, a `sin` overshoot for the impact.
+- Ease each phase differently: `HemoEasing.smoothstep` for growth, `HemoEasing.easeInOutCubic` for travel, a `sin` overshoot for the impact.
 - End by fraying, not popping: during dissolve, widths grow, alpha falls and strands drift upward.
+- The shared tiers (`AnimusMortemGeometry`, `LuxUmbraGeometry`, `ThermalGeometry`, `FerricDuctilisGeometry`) seed each cue through `CueSeed.of(packet, salt)`, salted with the tick the client first saw it, so one caster's repeated casts differ (VX-5, NQ-09-1). Two viewers may see different variants; nothing in the packet carries it.
 - Vary each cast: pack a seeded side/tilt into the packet `count` (keep it ≥ 1 so the cue is not treated as empty). Retire the keyed cue before sending a new one (`attached(entity, form, 0, 0, 0)` then the real cue) so rapid recasts replay the whole animation instead of refreshing a dying one.
 
 ## Anatomy and layering
@@ -33,6 +34,7 @@ Give each element its own seeded flicker (`sin(time * 0.9 + i * 1.7 + seed)`) so
 - Base tint is white (`0xFFFFFF`); the school material provides the hue.
 - Add exactly two accents: a hot pale core for highlights (`0xFFD2C4`) and a dark clot for depth (`0x7A1020`).
 - The shading comes from contrast between translucent layers (shell, wisps) and opaque ones (sinew, claws). Do not substitute a wider palette.
+- Verdigris (`HemoPalette.VERDIGRIS`, 86, 160, 132) is for Unstained effects only, never a blood-side one (VX-8).
 
 ## Anchoring
 
@@ -60,4 +62,4 @@ Boss telegraphs, hazards and impacts meet the same bar (user, 2026-11-06): a foo
 
 Visual timing never gates gameplay. The server owns windows, damage and cooldowns, and the presentation timeline is decorative. Pair new geometry with a source-contract test that its renderer hook and draw order are in place, plus JVM tests for the pure rules.
 
-No vanilla `ParticleTypes` in `common/manipulation/`: use a `ManipulationVisuals.Form` or `HemoParticleData`. `ManipulationVanillaParticleSourceTest` fails the build if one comes back.
+No vanilla `ParticleTypes` in `common/manipulation/`: use a `ManipulationVisuals.Form` or `HemoParticleData`. `ManipulationVanillaParticleSourceTest` fails the build if one comes back. Outside that package the vanilla particle sweep finished on 2026-11-14 (VX-6): `VanillaParticleRatchetTest` allows only the 17 listed files, each for block debris, item crumbs, water or a vanilla fixture's own cue.
