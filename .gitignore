@@ -90,3 +90,4 @@ __pycache__/
 !/tools/worldgen/circus/
 !/tools/worldgen/circus_sites.py
 .ignore
+/docs/.obsidian/
