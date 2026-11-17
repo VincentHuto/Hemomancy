@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 28,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Living Land",
+  "subtitle": "Ground woken by blood",
+  "text": "Living Land is an Animus memory with a Ferric edge and nothing to cast. Sculpting, Projection: hold the verb on a floor, a wall or a ceiling and that patch wakes. After a second it begins to strike. Each pulse it can, it tears a short column of its own stone out of the surface under the nearest enemy in front of it and drives it home: teeth out of a floor, lances out of a wall, a fall from a ceiling. The column goes back to its socket after it lands. With no enemy near, the patch rises instead, a block a pulse, into a step, a ledge or a hanging spur. Let go and everything settles where it came from. Nothing it moves is ever lost or gained; if a block's place is taken, it settles beside it. It will not wake ground under a Saint's ward, inside a rite space or a Saint's chamber, nor anything that holds contents. It costs 30 mL a second, and a dry pulse lifts shorter columns. From the third rank of mastery two columns can be out at once.",
+  "icon": "hemomancy:memory_living_land"
+}

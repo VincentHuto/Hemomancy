@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:pointed_blood_scorched_scab"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.first_drip.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.first_drip.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/set_through",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

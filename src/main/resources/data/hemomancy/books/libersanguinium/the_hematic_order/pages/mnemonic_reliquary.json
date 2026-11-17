@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 26,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Mnemonic Reliquary",
+  "subtitle": "The casket of what you carry",
+  "text": "The Reliquary lays out your known Noetic and Thelemic memories by Temper and sets which of them you carry. It teaches nothing new. The craft also waits for the Mnemonist's lesson at the third Degree. At Degree 3 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Sanguine Formation in the Focus and light a Book in the braziers. Feed the frame 75 mL and the floor takes it.",
+  "icon": "hemomancy:mnemonic_reliquary"
+}

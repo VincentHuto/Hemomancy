@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "minecraft:block/dirt",
+    "side": "hemomancy:block/stained_sod_side",
+    "top": "hemomancy:block/stained_sod_top"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "minecraft:dirt"
+  },
+  "sculpting": "hemomancy:vital_effusion",
+  "blood_cost": 20,
+  "result": {
+    "id": "minecraft:rooted_dirt",
+    "count": 1
+  }
+}

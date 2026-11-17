@@ -1,0 +1,400 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "north": "true",
+        "age": "0"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_wet_0"
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_1"
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_2"
+        }
+      ]
+    },
+    {
+      "when": {
+        "east": "true",
+        "age": "0"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_wet_0",
+          "y": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_1",
+          "y": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_2",
+          "y": 90,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "south": "true",
+        "age": "0"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_wet_0",
+          "y": 180,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_1",
+          "y": 180,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_2",
+          "y": 180,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "west": "true",
+        "age": "0"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_wet_0",
+          "y": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_1",
+          "y": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_2",
+          "y": 270,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "up": "true",
+        "age": "0"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_wet_0",
+          "x": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_1",
+          "x": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_2",
+          "x": 270,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "down": "true",
+        "age": "0"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_wet_0",
+          "x": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_1",
+          "x": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_wet_2",
+          "x": 90,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "north": "true",
+        "age": "1"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_tacky_0"
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_1"
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_2"
+        }
+      ]
+    },
+    {
+      "when": {
+        "east": "true",
+        "age": "1"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_tacky_0",
+          "y": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_1",
+          "y": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_2",
+          "y": 90,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "south": "true",
+        "age": "1"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_tacky_0",
+          "y": 180,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_1",
+          "y": 180,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_2",
+          "y": 180,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "west": "true",
+        "age": "1"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_tacky_0",
+          "y": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_1",
+          "y": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_2",
+          "y": 270,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "up": "true",
+        "age": "1"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_tacky_0",
+          "x": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_1",
+          "x": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_2",
+          "x": 270,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "down": "true",
+        "age": "1"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_tacky_0",
+          "x": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_1",
+          "x": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_tacky_2",
+          "x": 90,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "north": "true",
+        "age": "2"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_dry_0"
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_1"
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_2"
+        }
+      ]
+    },
+    {
+      "when": {
+        "east": "true",
+        "age": "2"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_dry_0",
+          "y": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_1",
+          "y": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_2",
+          "y": 90,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "south": "true",
+        "age": "2"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_dry_0",
+          "y": 180,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_1",
+          "y": 180,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_2",
+          "y": 180,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "west": "true",
+        "age": "2"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_dry_0",
+          "y": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_1",
+          "y": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_2",
+          "y": 270,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "up": "true",
+        "age": "2"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_dry_0",
+          "x": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_1",
+          "x": 270,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_2",
+          "x": 270,
+          "uvlock": true
+        }
+      ]
+    },
+    {
+      "when": {
+        "down": "true",
+        "age": "2"
+      },
+      "apply": [
+        {
+          "model": "hemomancy:block/blood_stain_dry_0",
+          "x": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_1",
+          "x": 90,
+          "uvlock": true
+        },
+        {
+          "model": "hemomancy:block/blood_stain_dry_2",
+          "x": 90,
+          "uvlock": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 21,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Living Veins and Basins",
+  "subtitle": "Short runs, small flows, never storage",
+  "text": "Set a Vein Node at the end of a gouge run and project blood into it: tissue grows along the gouge, a few cells a pulse, turning it into living vein. From the Third Degree you may keep sixteen cells of vein grown, more with each Degree after. Between two nodes, a vein carries a little blood from the tank one node touches to the tank the other touches, but only toward a tank that is drawing: one something has taken blood from in the last five seconds, or a machine below its six hundred millilitre working reserve. A Venous Basin, a Gourdvine Tap or a vat never pulls just because it is low. Blood moves only while you stand within thirty-two blocks, and you pay a millilitre a second while it moves. Water runs over a living vein without breaking it. Walk away or log out and it goes still. Leave it untended for a day and it withers back to gouge. A living run that joins two of your Earthen Veins carries you between them: the crossing costs a flat hundred and twenty-five, however far apart they stand. A Venous Basin you set down keeps a real bowl of blood. Set a gutter in the floor under its spout and run the gutters to a machine or to farmland: while the blood in the bowl is fresh it runs down them and feeds what they end at. After about five minutes the bowl sets, the stream stops, and the clot is scraped out with Absorption as Sanguine Formations. Pour it and walk away for a few minutes; it will not keep. Two basins pouring into one run of gutters share it: each gutter runs as full as the fuller stream that reaches it. The gutters and basins of a Saint's hall are not yours to fill.",
+  "icon": "hemomancy:vein_node"
+}

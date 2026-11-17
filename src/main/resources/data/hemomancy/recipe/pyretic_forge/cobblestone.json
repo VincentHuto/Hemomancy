@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:cobblestone",
+  "blood_cost": 40,
+  "result": "minecraft:stone",
+  "sculpting": "hemomancy:pyretic_forge",
+  "in_place": true
+}

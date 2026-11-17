@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#hemomancy:menagerie_people",
+    "#hemomancy:menagerie_wills",
+    "#hemomancy:bosses"
+  ]
+}

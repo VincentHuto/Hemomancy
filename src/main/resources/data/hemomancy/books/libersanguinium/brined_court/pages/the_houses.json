@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Eight Houses",
+  "subtitle": "The other tradition in the sea",
+  "text": "The Order is not the only Harbinger tradition that went into the sea. The Brined Court is eight houses down the ocean's depths, each keeping one hereditary Morphling strain, and they practise a bodily hemomancy in which the strain is a partner. The Giving Light keeps the Sunburst in its Lighthouse Garden on the reef. The Holding Stone keeps Holdfast at its Tide Refuge on the rockpool shore. The Shared Wake keeps the Mermaid's Purse in a school that never stops swimming. The Woven Current keeps Dead Man's Rope at its Line Camp in the twilight water. The Veiled Fold keeps the Ink Cap behind its Screened Cleft. The Still Bell keeps the Hushbell in a grown diving bell under the cold midnight sea. Last Marrow keeps the Marrowplume in a whale fall. The Kindling keep the Kinbud at their Vent Sanctum. Marimo is the moss at the top and Hydra the chimneys at the bottom; neither is met as a creature. A stranger is made a guest, and keeping a house's custom makes a friend. From the fifth Degree a guest may join a house, and may move once. The houses shun an Unstained body but never raise a hand against it.",
+  "icon": "hemomancy:relay_chart"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 27,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Mining by Projection",
+  "subtitle": "Lode Draw and Hematic Hewing",
+  "text": "Two Ferric memories turn held Projection into mining, from the Staff at its reach or from the bare cell hand at a shorter one. Neither has anything to cast on R. Lode Draw, Sculpting, Projection: hold the verb on an ore and the draw runs through the connected blocks of that lode, iron ore and deepslate iron ore alike, one block a pulse while blood flows. Let go and everything it reached breaks loose; a lode it has reached to the end breaks at once. Hematic Hewing, Sculpting, Projection: each second of the held verb cuts a shape out of the face you strike. A plain hold cuts a tunnel one wide and two tall. Sneak and it cuts three by three; with the Staff, begin the hold and then sneak, since a sneaking press leaves the Staff idle. Aim steeply into a wall, up or down, and it cuts a column three tall, a step on a stair. Both take only what your Staff's rings let it harvest, so neither pulls diamonds before the second ring or obsidian before the fourth. Both cost more blood a block than the pickaxe form and give plain drops, without Fortune or Silk Touch. Hewing leaves alone anything that holds something, a chest or a machine, and anything that cannot be broken. The Talaromyces scar's sneaking vein mine follows a lode by the same rule.",
+  "icon": "hemomancy:memory_lode_draw"
+}

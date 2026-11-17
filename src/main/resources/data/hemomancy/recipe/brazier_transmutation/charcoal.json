@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "tag": "minecraft:logs_that_burn"
+  },
+  "sculpting": "hemomancy:pyretic_forge",
+  "blood_cost": 20,
+  "result": {
+    "id": "minecraft:charcoal",
+    "count": 2
+  }
+}

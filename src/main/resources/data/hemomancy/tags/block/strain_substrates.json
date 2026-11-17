@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#hemomancy:strain_substrates/flesh",
+    "#hemomancy:strain_substrates/brined",
+    "#hemomancy:strain_substrates/common"
+  ]
+}

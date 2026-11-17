@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "tag": "minecraft:smelts_to_glass"
+  },
+  "sculpting": "hemomancy:pyretic_forge",
+  "blood_cost": 20,
+  "result": {
+    "id": "minecraft:glass",
+    "count": 2
+  }
+}

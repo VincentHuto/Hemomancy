@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "hemomancy:chitinous_husk"
+    },
+    "D": {
+      "item": "hemomancy:bleeding_bulb"
+    },
+    "S": {
+      "item": "hemomancy:serpent_scale"
+    },
+    "T": {
+      "item": "hemomancy:enthralling_filament"
+    }
+  },
+  "pattern": [
+    "TCT",
+    "SDS",
+    "TCT"
+  ],
+  "result": {
+    "count": 2,
+    "id": "hemomancy:sinew_cord"
+  }
+}

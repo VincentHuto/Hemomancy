@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 35,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Covenant Throne",
+  "subtitle": "The seat of a line",
+  "text": "Any member of a line with active blood may bind a Throne that stands in that line's Fane. Sitting on it makes the place in front of it your return point. Seated, the Progenitor alone may enter the Covenant Trance. At Degree 6 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Sanguine Formation in the Focus and light Sanguine Quintessence, Blood Crystal and Crying Obsidian in the braziers. Feed the frame 8,000 mL and the floor takes it.",
+  "icon": "hemomancy:covenant_throne"
+}

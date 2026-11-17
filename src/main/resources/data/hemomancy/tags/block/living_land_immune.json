@@ -1,0 +1,12 @@
+{
+  "values": [
+    "#minecraft:wither_immune",
+    "minecraft:obsidian",
+    "minecraft:crying_obsidian",
+    "minecraft:respawn_anchor",
+    "minecraft:spawner",
+    "minecraft:trial_spawner",
+    "minecraft:vault",
+    "minecraft:budding_amethyst"
+  ]
+}

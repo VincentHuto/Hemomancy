@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_golem",
+    "minecraft:snow_golem",
+    "hemomancy:drudge",
+    "hemomancy:ferric_rampart",
+    "hemomancy:iron_pillar"
+  ]
+}

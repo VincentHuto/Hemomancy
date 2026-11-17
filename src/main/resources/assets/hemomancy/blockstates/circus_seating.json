@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/circus_seating"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/circus_seating",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/circus_seating",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/circus_seating",
+      "y": 270
+    }
+  }
+}

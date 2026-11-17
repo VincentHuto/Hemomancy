@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "hemomancy:block/circus_ring_curb"
+    },
+    "rotation=1": {
+      "model": "hemomancy:block/circus_ring_curb_diagonal",
+      "y": 90
+    },
+    "rotation=2": {
+      "model": "hemomancy:block/circus_ring_curb",
+      "y": 90
+    },
+    "rotation=3": {
+      "model": "hemomancy:block/circus_ring_curb_diagonal",
+      "y": 180
+    },
+    "rotation=4": {
+      "model": "hemomancy:block/circus_ring_curb",
+      "y": 180
+    },
+    "rotation=5": {
+      "model": "hemomancy:block/circus_ring_curb_diagonal",
+      "y": 270
+    },
+    "rotation=6": {
+      "model": "hemomancy:block/circus_ring_curb",
+      "y": 270
+    },
+    "rotation=7": {
+      "model": "hemomancy:block/circus_ring_curb_diagonal"
+    }
+  }
+}

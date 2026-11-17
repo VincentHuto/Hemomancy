@@ -1,0 +1,16 @@
+none | armed - | alive=false health=0.00 paid=100.00 | rite after - cooldown=0 | horn damage=-1
+Silent Refusal | armed hemomancy:silent_refusal | alive=true health=1.00 paid=3095.00 | rite after hemomancy:silent_refusal cooldown=12000 | horn damage=-1
+Phoenix Debt | armed hemomancy:phoenix_debt | alive=true health=1.00 paid=1295.00 | rite after hemomancy:phoenix_debt cooldown=12000 | horn damage=-1
+Ink Mantle | armed hemomancy:ink_mantle | alive=true health=8.00 paid=600.00 | rite after hemomancy:ink_mantle cooldown=12000 | horn damage=-1
+Cryptobiosis | armed hemomancy:cryptobiosis | alive=true health=10.00 paid=750.00 | rite after hemomancy:cryptobiosis cooldown=12000 | horn damage=-1
+Curved Horn | armed hemomancy:curved_horn | alive=true health=1.00 paid=95.00 | rite after hemomancy:curved_horn cooldown=12000 | horn damage=1
+Silent Refusal + Phoenix Debt | armed hemomancy:phoenix_debt | alive=true health=1.00 paid=1295.00 | rite after hemomancy:phoenix_debt cooldown=12000 | horn damage=-1
+Silent Refusal + Ink Mantle | armed hemomancy:ink_mantle | alive=true health=8.00 paid=600.00 | rite after hemomancy:ink_mantle cooldown=12000 | horn damage=-1
+Silent Refusal + Cryptobiosis | armed hemomancy:cryptobiosis | alive=true health=10.00 paid=750.00 | rite after hemomancy:cryptobiosis cooldown=12000 | horn damage=-1
+Silent Refusal + Curved Horn | armed hemomancy:silent_refusal | alive=true health=1.00 paid=3095.00 | rite after hemomancy:silent_refusal cooldown=12000 | horn damage=0
+Phoenix Debt + Ink Mantle | armed hemomancy:ink_mantle | alive=true health=8.00 paid=600.00 | rite after hemomancy:ink_mantle cooldown=12000 | horn damage=-1
+Phoenix Debt + Cryptobiosis | armed hemomancy:cryptobiosis | alive=true health=10.00 paid=750.00 | rite after hemomancy:cryptobiosis cooldown=12000 | horn damage=-1
+Phoenix Debt + Curved Horn | armed hemomancy:phoenix_debt | alive=true health=1.00 paid=1295.00 | rite after hemomancy:phoenix_debt cooldown=12000 | horn damage=0
+Ink Mantle + Cryptobiosis | cannot arm together: one Morphling slot
+Ink Mantle + Curved Horn | armed hemomancy:ink_mantle | alive=true health=8.00 paid=600.00 | rite after hemomancy:ink_mantle cooldown=12000 | horn damage=0
+Cryptobiosis + Curved Horn | armed hemomancy:cryptobiosis | alive=true health=10.00 paid=750.00 | rite after hemomancy:cryptobiosis cooldown=12000 | horn damage=0

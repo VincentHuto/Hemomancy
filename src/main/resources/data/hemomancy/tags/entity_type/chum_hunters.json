@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:drowned",
+    "hemomancy:brined_votary",
+    "hemomancy:bog_revenant"
+  ]
+}

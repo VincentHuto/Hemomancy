@@ -1,0 +1,42 @@
+id,rank,type,counted_as,damage_per_body_hp,bodies_counted,damage_counted_hp,target_hp_per_ml,old_cost_ml,old_hp_per_ml,rule_cost_ml,new_cost_ml,new_hp_per_ml,result,how_damage_was_read,source
+blood_needle_lance,HUMILIS,CHARGED,bolt,18,1,18,0.02,150,0.12,900,150,0.12,kept (at or above target),6 per needle x 3 needles on one body,ferric/BloodNeedleManip.java
+blood_shot,HUMILIS,QUICK,bolt,5,1,5,0.02,100,0.05,250,100,0.05,kept (at or above target),arrow base 1.0 at speed 4.5,animus/BloodShotManip.java
+cryogenic_pulse,HUMILIS,QUICK,area,3,3,9,0.02,150,0.06,450,150,0.06,kept (at or above target),every body within 5,congeatio/CryogenicPulseManip.java
+deadly_gaze,HUMILIS,CHARGED,bolt,6,1,6,0.02,100,0.06,300,100,0.06,kept (at or above target),slam 6 at full charge,ductilis/DeadlyGazeManip.java
+glacial_grasp,HUMILIS,QUICK,area,2,3,6,0.02,125,0.048,300,125,0.048,kept (at or above target),every dry hostile on the path,congeatio/GlacialGraspManip.java
+gloam_laceration,HUMILIS,QUICK,bolt,3.5,1,3.5,0.02,175,0.02,175,175,0.02,kept (at or above target),nearest body in the slash; ambush +2.5 not counted,tenebris/GloamLacerationManip.java
+guided_blood_shot,HUMILIS,QUICK,bolt,5,1,5,0.02,140,0.0357,250,140,0.0357,kept (at or above target),homing Blood Shot,animus/BloodShotManip.java
+hematic_flare,HUMILIS,QUICK,bolt,3,1,3,0.02,125,0.024,150,125,0.024,kept (at or above target),nearest body on the ray,lux/HematicFlareManip.java
+hemorrhage,HUMILIS,QUICK,bolt,12,1,12,0.02,75,0.16,600,75,0.16,kept (at or above target),"Blood Loss II for 12 s, estimate",mortem/HemorrhageManip.java
+insatiable_hunger,HUMILIS,QUICK,bolt,2,1,2,0.02,225,0.0089,100,100,0.02,cut,one cursed body,mortem/InsatiableHungerManip.java
+sanguine_ignition,HUMILIS,QUICK,area,2,3,6,0.02,125,0.048,300,125,0.048,kept (at or above target),every body within 5,flammeus/SanguineIgnitionManip.java
+scalding_updraft,HUMILIS,QUICK,left out,1.5,,,,225,0.0067,,225,0.0067,kept (updraft),"updraft, priced for movement",flammeus/
+soaring_updraft,HUMILIS,QUICK,left out,1.5,,,,300,0.005,,300,0.005,kept (updraft),"updraft, priced for movement",flammeus/
+synaptic_jolt,HUMILIS,QUICK,bolt,3,1,3,0.02,150,0.02,150,150,0.02,kept (at or above target),nearest body in the cone; conduction not counted,ductilis/SynapticJoltManip.java
+activation_potential,MEDIOCRITAS,CHARGED,area,5,3,15,0.025,200,0.075,600,200,0.075,kept (at or above target),every body within 5 at full charge,ductilis/ActivationPotentialManip.java
+blood_eclipse,MEDIOCRITAS,QUICK,area,3,3,9,0.025,300,0.03,360,300,0.03,kept (at or above target),every body in the cone,tenebris/BloodEclipseManip.java
+cauterizing_rebuke,MEDIOCRITAS,QUICK,area,3,3,9,0.025,150,0.06,360,150,0.06,kept (at or above target),every hostile within 4,flammeus/CauterizingRebukeManip.java
+cruor_javelin,MEDIOCRITAS,QUICK,bolt,4,1,4,0.025,200,0.02,160,160,0.025,cut,one aimed body,congeatio/CruorJavelinManip.java
+expulsive_updraft,MEDIOCRITAS,QUICK,left out,3,,,,450,0.0067,,450,0.0067,kept (updraft),"updraft, priced for movement",flammeus/
+grave_debt,MEDIOCRITAS,QUICK,area,5,3,15,0.025,325,0.0462,600,325,0.0462,kept (at or above target),the mark bursts on every other body within 4,"mortem/GraveDebtManip.java, SchoolHitHelper.java"
+hematic_mortar,MEDIOCRITAS,CHARGED,area,6,3,18,0.025,200,0.09,720,200,0.09,kept (at or above target),"6 at the centre, less 0.75 a block, at least 3",entity/projectile/BloodShotEntity.java
+prismatic_reproof,MEDIOCRITAS,QUICK,area,4,3,12,0.025,325,0.0369,480,325,0.0369,kept (at or above target),every body in the cone; Illuminated x2 not counted,lux/PrismaticReproofManip.java
+sanguine_halo,MEDIOCRITAS,QUICK,bolt,25,1,25,0.025,220,0.1136,1000,220,0.1136,kept (at or above target),five shots of 5 that can all find one body,animus/BloodShotManip.java
+searing_lash,MEDIOCRITAS,QUICK,bolt,4,1,4,0.025,225,0.0178,160,160,0.025,cut,one aimed body; Searing not counted,flammeus/SearingLashManip.java
+suspended_updraft,MEDIOCRITAS,QUICK,left out,1.5,,,,350,0.0043,,350,0.0043,kept (updraft),"updraft, priced for movement",flammeus/
+blood_aneurysm,SUMMA,CHARGED,bolt,8,1,8,0.031,400,0.02,260,260,0.0308,cut,8 on the aimed body; the 3 splash on others not counted,animus/BloodAneurysmManip.java
+blood_cloud,SUMMA,QUICK,area,20,3,60,0.031,300,0.2,1935,300,0.2,kept (at or above target),"about 4 a second for the cloud life, estimate",animus/BloodCloudManip.java
+bloom_of_rot,SUMMA,QUICK,area,3,3,9,0.031,500,0.018,290,290,0.031,cut,every body within 8,saint/BloomOfRotManip.java
+expansive_blood_cloud,SUMMA,QUICK,area,24,3,72,0.031,375,0.192,2325,375,0.192,kept (at or above target),estimate,animus/BloodCloudManip.java
+fruiting_contagion,SUMMA,QUICK,area,3,3,9,0.031,400,0.0225,290,290,0.031,cut,every carrier within 10,mortem/FruitingContagionManip.java
+pursuing_blood_cloud,SUMMA,QUICK,area,32,3,96,0.031,425,0.2259,3095,425,0.2259,kept (at or above target),estimate,animus/BloodCloudManip.java
+sanguine_magnetism,SUMMA,QUICK,area,4,3,12,0.031,450,0.0267,385,385,0.0312,cut,pillar crush on every body within 3; Lodestone +2 not counted,entity/summon/EntityIronPillar.java
+umbral_rend,SUMMA,QUICK,area,5,3,15,0.031,450,0.0333,485,450,0.0333,kept (at or above target),up to six bodies; Obscured +4 not counted,tenebris/UmbralRendManip.java
+vitric_combustion,SUMMA,CHARGED,area,8,3,24,0.031,350,0.0686,775,350,0.0686,kept (at or above target),every body in the blast at full charge,flammeus/VitricCombustionManip.java
+rimebound_sentence,MAGISTER,CHARGED,bolt,12,1,12,0.039,750,0.016,310,310,0.0387,cut,4 + 8 at full charge on one body,congeatio/RimeboundSentenceManip.java
+sanguine_tempest,MAGISTER,QUICK,area,64,3,192,0.039,600,0.32,4925,600,0.32,kept (at or above target),"cloud plus bolts, upper estimate",animus/BloodCloudManip.java
+eclipse_well,PERFECTUS,CHARGED,area,15,3,45,0.049,900,0.05,920,900,0.05,kept (at or above target),1.5 a second for 10 s on each body the well holds,tenebris/EclipseWellManip.java
+funeral_bell,PERFECTUS,CHARGED,area,7,3,21,0.049,1000,0.021,430,430,0.0488,cut,7 at full charge; +2 per affliction not counted,mortem/FuneralBellManip.java
+lodestone_collapse,PERFECTUS,CHARGED,area,10,3,30,0.049,900,0.0333,610,610,0.0492,cut,10 at full charge on every body in the pull,ferric/LodestoneCollapseManip.java
+synaptic_storm,PERFECTUS,CHARGED,area,8,3,24,0.049,900,0.0267,490,490,0.049,cut,2 + 6 at full charge on each body of the chain,ductilis/SynapticStormManip.java
+white_verdict,PERFECTUS,CHARGED,area,12,3,36,0.049,800,0.045,735,735,0.049,cut,3 + 9 at full charge on every body on the line; Illuminated x1.5 not counted,lux/WhiteVerdictManip.java

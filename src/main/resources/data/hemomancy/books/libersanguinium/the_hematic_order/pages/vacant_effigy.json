@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 33,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Vacant Effigy",
+  "subtitle": "A body for a resident",
+  "text": "An empty body for a Fane's resident. The Rite of Hematic Succession raises a new resident in it, and the Rite of Mnemonic Restoration brings a lost one back into it. At Degree 5 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Sanguine Formation in the Focus and light an Armor Stand and Blood Stained Stone in the braziers. Feed the frame 250 mL and the floor takes it.",
+  "icon": "hemomancy:vacant_effigy"
+}

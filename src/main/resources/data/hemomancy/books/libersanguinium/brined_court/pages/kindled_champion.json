@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Kindled Champion",
+  "subtitle": "A title, not a person",
+  "text": "Nobody fights Hydra. The Kindling's trials are against the strongest of their own: the Kindled elder in the mature Hydra form who is strongest and has not yet surrendered holds the title of Champion. From the fifth Degree an outsider may ask the Head-tender to let them usurp it, and the asking is an honour. The fight is on the mound in the vent water. The Champion sweeps with its neck, stings with its crown, catches you in it and grows back what it loses, budding more crown as it is pressed, while the chimneys vent around you. A challenger who falls dies and may ask again after a day; leaving the fight counts as falling. A Champion who is beaten yields and lives, and steps back among the elders without shame. Hydra's largest head lowers its crown over the victor, and the Head-tender names them Champion. The title is recognition at every Kindling site and nothing else: no strain, no head, and never a request to enter the threshold.",
+  "icon": "hemomancy:hydra_crown"
+}

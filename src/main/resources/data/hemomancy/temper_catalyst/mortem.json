@@ -1,0 +1,17 @@
+{
+  "temper": "mortem",
+  "catalysts": [
+    {
+      "item": "hemomancy:ruinous_enzyme",
+      "worth": 10
+    },
+    {
+      "item": "hemomancy:ruinous_spores",
+      "worth": 5
+    },
+    {
+      "item": "minecraft:bone",
+      "worth": 3
+    }
+  ]
+}

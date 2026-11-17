@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Armature Rack",
+  "subtitle": "Armour remade while worn",
+  "text": "The Armature does not take armour laid on it like an anvil. Wear the piece, load a reagent into each of its four bowls, fill its reservoir and step into the frame. Walking in binds you there. While you hold still it works down the body, helmet first, then chest, legs and boots, about five seconds a piece, and any bowl can answer any piece that matches. If it stops partway, what it finished stays finished. Sneak and use it to take back the last reagent you put in. The reservoir holds 8,000 mL and every graft is paid from it, never from your health. The base rack takes the armour recipes below the fifth Degree. Two rites raise it, and each keeps its stage when the Armature is broken and moved. Hematic Cleats set in a bowl are fitted to boots that take them instead of replacing anything, for 250 mL at any stage.",
+  "icon": "hemomancy:hematic_armature"
+}

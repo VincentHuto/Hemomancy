@@ -1,0 +1,242 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat"
+      },
+      "when": {
+        "facing": "north",
+        "half": "lower",
+        "part": "single"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_glass"
+      },
+      "when": {
+        "facing": "north",
+        "half": "lower",
+        "part": "single"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "lower",
+        "part": "single"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_glass",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "lower",
+        "part": "single"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "lower",
+        "part": "single"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_glass",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "lower",
+        "part": "single"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "lower",
+        "part": "single"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_glass",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "lower",
+        "part": "single"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w1_bottom"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w1_bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w1_bottom_glass"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w1_bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w1_top"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w1_top"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w1_top_glass"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w1_top"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w2_only"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w2_only"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w2_only_glass"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w2_only"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w2_bottom"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w2_bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w2_bottom_glass"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w2_bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w2_top"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w2_top"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w2_top_glass"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w2_top"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w3_only"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w3_only"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w3_only_glass"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w3_only"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w3_bottom"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w3_bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w3_bottom_glass"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w3_bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w3_top"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w3_top"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_w3_top_glass"
+      },
+      "when": {
+        "half": "lower",
+        "part": "w3_top"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/specimen_vat_upper"
+      },
+      "when": {
+        "half": "upper"
+      }
+    }
+  ]
+}

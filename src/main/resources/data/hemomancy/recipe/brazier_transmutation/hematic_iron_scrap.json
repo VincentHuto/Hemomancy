@@ -1,0 +1,15 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "hemomancy:hematic_iron_powder"
+  },
+  "sculpting": "hemomancy:pyretic_forge",
+  "catalyst": {
+    "tag": "minecraft:coals"
+  },
+  "blood_cost": 40,
+  "result": {
+    "id": "hemomancy:hematic_iron_scrap",
+    "count": 1
+  }
+}

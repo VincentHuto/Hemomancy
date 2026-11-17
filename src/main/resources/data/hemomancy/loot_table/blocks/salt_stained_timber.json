@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:salt_stained_timber"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "hemomancy:blocks/salt_stained_timber"
+}

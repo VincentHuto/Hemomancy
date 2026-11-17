@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 18,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Unread Humours",
+  "subtitle": "Sampling has a price, research has a point",
+  "text": "A vial takes two of a creature's health and a Living Syringe one, and the creature cannot be drawn again for half a minute. A kept creature pays for a sample in Vigor instead, though a thick-hided kind still needs the Living Syringe. Until you have examined a sample of a creature's kind under the Hematic Microscope its blood is an unread humour to you. Samples, vessels and their screens will not say what it is, and a draw from it, wild or kept, gives you only half its Temper: your body and mind do not yet understand it. The blood itself comes through in full, and an injected sample is unchanged. What you have examined you know, whoever drew the sample, and a sample you trade stays unread to someone who has not done the work. Examine three individuals of a kind, or one kept creature at three levels of Vigor, and a vessel's screen also tells you what a draw will give and how the kind behaves. Plain Projection into a passive animal doses it: it goes into season at once. The cost is taint. Its meat comes off it tainted, which feeds a Harbinger and sickens anyone else. Every further dose makes it likelier to go feral for a minute. Its young may carry a weak second school, yours.",
+  "icon": "hemomancy:hematic_microscope"
+}

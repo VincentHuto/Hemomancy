@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "minecraft:gravel"
+  },
+  "sculpting": "hemomancy:pyretic_forge",
+  "blood_cost": 10,
+  "result": {
+    "id": "minecraft:flint",
+    "count": 2
+  }
+}

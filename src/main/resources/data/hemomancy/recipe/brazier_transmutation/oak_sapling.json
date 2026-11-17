@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "minecraft:dead_bush"
+  },
+  "sculpting": "hemomancy:vital_effusion",
+  "blood_cost": 40,
+  "result": {
+    "id": "minecraft:oak_sapling",
+    "count": 1
+  }
+}

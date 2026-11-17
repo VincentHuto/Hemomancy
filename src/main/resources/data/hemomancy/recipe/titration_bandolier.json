@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "minecraft:glass_bottle"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "S": {
+      "item": "hemomancy:sinew_cord"
+    }
+  },
+  "pattern": [
+    "LSL",
+    "GGG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "hemomancy:titration_bandolier"
+  }
+}

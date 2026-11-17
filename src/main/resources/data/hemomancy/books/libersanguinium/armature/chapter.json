@@ -1,0 +1,11 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 11,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.2,0,0",
+  "title": "The Hematic Armature",
+  "subtitle": "Armour remade on the body",
+  "icon": "hemomancy:hematic_armature",
+  "tabColor": "#330505",
+  "rowLimit": 7
+}

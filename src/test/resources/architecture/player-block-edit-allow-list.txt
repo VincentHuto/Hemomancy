@@ -1,0 +1,122 @@
+# Raw block edits (setBlock, setBlockAndUpdate, destroyBlock, removeBlock) under the PlayerBlockEditGuardrailTest scan
+# roots: count, file, reason. Every file with a raw edit site is listed with its exact count, whether or not it also
+# goes through PlayerBlockEdits elsewhere; the reason says why each raw edit is not a player's, or is one vanilla already
+# checked. A player-caused edit goes through PlayerBlockEdits instead. Stale rows and wrong counts fail.
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BloodScabPointedDripstoneBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+8	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/CrimsonFlameBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/CreativeStationUpgrades.java	creative-only or operator tooling
+4	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/GhastlyAlembicBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/MycelialCrucibleBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/ResonantForgeBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/SomaticLoomBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/StationTierProperty.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/BloodGutterBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/HumoralBarometerBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/OssuaryClockBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/StackedSetPieceBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/TroupeWagonWheelBlock.java	places its own other quarters after the vanilla placement of the first, as a door places its upper half
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/VenousBasinBlock.java	its own fill and the fill state of the gutters it flows into; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/WardenBloomBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/ConsecratedBloodwellBlock.java	its own fane's stakes go when the bloodwell heart is removed, a removal that already passed its own checks
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/CovenantThroneBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/EarthenVeinBlock.java	changes or removes the very block the player used, inside the vanilla use path that already checked mayInteract and the right-click event
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/FruitingBodyCacheBlock.java	changes or removes the very block the player used, inside the vanilla use path that already checked mayInteract and the right-click event
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/FungalImplantationPylonBlock.java	changes or removes the very block the player used, inside the vanilla use path that already checked mayInteract and the right-click event
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/HematicStakeBlock.java	a Blood Structure formation turning the pattern its owner built into the stake; the craft checked the owner when it began (PendingBloodCraftManager.mayConsume)
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/MycelialSynapseBlock.java	a Blood Structure formation turning the pattern its owner built into the synapse (checked when the craft began), and its own withering
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/PhlebotomistsCabinetBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/SanguineCondenserBlock.java	a plain cauldron under a scab drip seats a Condenser on the spike's own tick (the drop's tank owner claims it); the player's own conversions go through PlayerBlockEdits
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/ScarletVanityBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/ScryingPodiumBlock.java	changes or removes the very block the player used, inside the vanilla use path that already checked mayInteract and the right-click event
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/SpecimenDisplayState.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/SpecimenJarBlock.java	changes or removes the very block the player used, inside the vanilla use path that already checked mayInteract and the right-click event
+4	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/SpecimenVatBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/UnstainedPodiumBlock.java	changes or removes the very block the player used, inside the vanilla use path that already checked mayInteract and the right-click event
+4	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/WarpChairBlock.java	its own fillers, and the paired Chamber seat the visit service sets out; no player edits the world here
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/ground/LivingVeinBlock.java	its own water state as water flows onto, over and off it, and a bucket taking up its source inside the vanilla bucket path that already checked mayInteract
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/ground/LuxTraceBlock.java	a trace dims and goes out on its own scheduled tick; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/ground/StainedSodBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/AdipocereCrustBlock.java	changes or removes the very block the player used, inside the vanilla use path that already checked mayInteract and the right-click event
+4	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/BloodwoodGrowthHandler.java	a fed sapling growing into its tree, as a sapling grows by itself; the clearance of every cell was checked against the feeding player (mayAlter, PlayerBlockEdits.mayBreak) before it grows
+4	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/BogBodyBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+5	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/BroodTumorBlock.java	a tumour the Mycophant raises and bursts, and its own halves; no player is the actor
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/CapBridgeBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/ErythrocyticMyceliumBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/FungalGillBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/FungalStrainBlock.java	a strain growing a stage on its own tick, or by bone meal inside vanilla's use path, which already checked the player may use the item there
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/GourdvineTapBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/HematicAlgalCrustBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/HyphaeBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/InfestedWoodBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/PelagicColonyBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/PuffballFungusBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/RecollectionCystBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/puzzle/RingDoorBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+5	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/puzzle/SaintSarcophagusBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/AshTrailBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BloodCrystalBlock.java	growth, spread, decay or survival on a block tick; no player is the actor
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+3	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/EngramBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/shared/FillerBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/shared/LidlessDoorBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/shared/MnemonicCandleBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+3	src/main/java/com/vincenthuto/hemomancy/common/block/shared/MultiBlockHelper.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/shared/WaterloggedDoorBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/unstained/ViridSalisTrailBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/unstained/crafting/PallidRetortBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/block/unstained/functional/PaleSilverBellsBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/block/unstained/plant/LetheanPoppyBlock.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+3	src/main/java/com/vincenthuto/hemomancy/common/entity/boss/court/BloomWardenEntity.java	a boss raising and clearing its own Warden Blooms in its arena; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/NaeglerophaeonEntity.java	a boss breaking a node of its own fight; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/boss/saint/SaintArena.java	a Saint's fight changing its own chamber, every change recorded and restored; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/animal/ChoirKeeperEntity.java	a mob planting a chorus flower on its own; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/animal/LeechEntity.java	a mob eating the block over its head on its own; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/animal/VampireBatEntity.java	a bat drinking the stain it scented; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/BoreFiberGoal.java	an arthropod boring through fibre on its own; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/ChewWoodGoal.java	an arthropod chewing wood on its own; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/FiberRepair.java	an arthropod mending nerve fibre on its own; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusSiteStateService.java	a settled pavilion laid into its ruin or tenancy overlay, only where the world still holds the pavilion's own block; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/CrimsonFireballEntity.java	a mob's fireball setting crimson flames, only when the mob's owner may grief (canEntityGrief); a player's fireball sets nothing
+3	src/main/java/com/vincenthuto/hemomancy/common/event/HeartNodeEvents.java	the planter's own old Heart-Node withers when a new one is planted (a placement the place event already passed), and a dead Apotheos's cache is set down, or taken back when no owner could be bound to it; no live player edit
+1	src/main/java/com/vincenthuto/hemomancy/common/event/MachineAccessEvents.java	runs inside the player's own break event, which already passed every check
+1	src/main/java/com/vincenthuto/hemomancy/common/event/PendingBloodCraftManager.java	a Blood Structure formation consuming the pattern its owner built; the craft checked the owner when it began (mayConsume), and the formation itself goes through PlayerBlockEdits
+2	src/main/java/com/vincenthuto/hemomancy/common/event/WhiteHumorPurificationEvents.java	an item soaking in a White Humor pool spends the pool; no player is the actor
+15	src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/DebugShowcaseItem.java	creative-only or operator tooling
+1	src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/EngramStampItem.java	re-cuts the character of the very engram block the player used, inside the vanilla use path that already checked mayInteract and the right-click event; the stamp's new engram goes through PlayerBlockEdits
+3	src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/TerrestrialSpeculumItem.java	removes the player's own temporary Earthen Vein origin (it checks the owner first); the origin's placement goes through PlayerBlockEdits
+1	src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityCasts.java	Wills and Vespers casting; no player is the actor
+4	src/main/java/com/vincenthuto/hemomancy/common/manipulation/congeatio/TemporaryIceManager.java	removes the ice it placed itself; placement is guarded by its callers
+1	src/main/java/com/vincenthuto/hemomancy/common/manipulation/flammeus/FlamePaintSculpting.java	puts out the painted flame it placed itself when its time is up or it flares; placement goes through PlayerBlockEdits
+10	src/main/java/com/vincenthuto/hemomancy/common/network/PlaceStructurePacket.java	creative, operator-only structure spawner
+1	src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletion.java	a completed Blood Structure rite consuming the pattern its caster built; no player edits the world here
+6	src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java	a completed rite setting its own result over its own floor (the Rooted Vein, the Bloom, the fane's bloodwell) and clearing the caster's own former fane; the cells a rite converts round it go through PlayerBlockEdits for the caster
+1	src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java	a collapsed ceremony cracking fragile cells of its own floor as backlash; the rite's failure, not an edit the caster chose
+1	src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/WorkingCraftRites.java	a Working craft consuming its own subject when it settles; no player edits the world here
+5	src/main/java/com/vincenthuto/hemomancy/common/rite/succession/SuccessionRites.java	a succession rite forming and clearing its own Vacant Effigy; no player edits the world here
+2	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/GhastlyAlembicBlockEntity.java	a machine or set piece working its own block or the one it feeds; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/ResonantForgeBlockEntity.java	a machine or set piece working its own block or the one it feeds; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/decoration/VenousBasinBlockEntity.java	a machine: a worked basin's own fill, and the moisture of farmland its gutters reach; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/menagerie/VatAssembly.java	changes only Specimen Vats' own states (which sides a vat joins in its vessel), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/ClairaudiographBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/EarthenVeinBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/HeartNodeBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does, and removes itself when no player planted it
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/HeartwoodCoreBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/PhlebotomistsCabinetBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+2	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/PhlebotomistsFieldCaseBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/SanguineCondenserBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/SanguineMonolithBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/SanguineVigilBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+6	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/VigilArchiveBlockEntity.java	a machine or set piece working its own block or the one it feeds; no player is the actor
+3	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/plant/PelagicColonyBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/plant/PlantingBasinBlockEntity.java	a planting basin shows its own soaked bed; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/puzzle/ChapelFocusBlockEntity.java	a machine or set piece working its own block or the one it feeds; no player is the actor
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/puzzle/RingDoorBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/rite/IronBrazierBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/unstained/crafting/PallidRetortBlockEntity.java	changes only its own state or its own parts (fillers, halves, storeys), as a door or lever does
+1	src/main/java/com/vincenthuto/hemomancy/common/world/HeartNodeService.java	a player who is no longer an Apotheos loses their sanctum: their own heart-node withers (a rule, not a player edit)
+1	src/main/java/com/vincenthuto/hemomancy/common/world/answer/WorldAnswer.java	the world answering spilled blood: grass under a worn stain turns to stained sod; no player is the actor
+2	src/main/java/com/vincenthuto/hemomancy/common/world/farm/ScabDrip.java	a fed scab spike growing a block longer, or a drip raising a spike from the floor below, on the spike's own tick; no player is the actor
+9	src/main/java/com/vincenthuto/hemomancy/common/world/ground/GroundNetwork.java	the marks' own natural changes: a run lighting and going dark on its clock, a feeding run growing crops, a stain ageing or a kill's blood left on the ground, an untended vein withering; every player edit here (stains, cuts, veins, and a hot or cold run's lighting and freezing for its owner) goes through PlayerBlockEdits
+2	src/main/java/com/vincenthuto/hemomancy/common/world/livingland/LivingLandLedger.java	Living Land settling moved ground back where it came from, the owner's moves checked when they were made; with the owner here the return goes through PlayerBlockEdits.settle first
+1	src/main/java/com/vincenthuto/hemomancy/common/world/vein/EarthenVeinTravelManager.java	removes the traveller's own temporary Earthen Vein origin in another dimension (it checks the owner first)

@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:wet_sponge",
+  "blood_cost": 30,
+  "result": "minecraft:sponge",
+  "sculpting": "hemomancy:pyretic_forge",
+  "in_place": true
+}

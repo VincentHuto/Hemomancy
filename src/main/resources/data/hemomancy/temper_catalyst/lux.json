@@ -1,0 +1,21 @@
+{
+  "temper": "lux",
+  "catalysts": [
+    {
+      "item": "hemomancy:incandescent_enzyme",
+      "worth": 10
+    },
+    {
+      "item": "hemomancy:incandescent_spores",
+      "worth": 5
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "worth": 3
+    },
+    {
+      "item": "hemomancy:glowroot",
+      "worth": 2
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#c:bosses",
+      "required": false
+    },
+    "minecraft:ender_dragon",
+    "minecraft:wither",
+    "minecraft:warden",
+    "minecraft:elder_guardian",
+    "hemomancy:annetta_knowles",
+    "hemomancy:stained_priestess",
+    "hemomancy:latent_annetta_infection",
+    "hemomancy:vesper_crowned_refusal",
+    "hemomancy:vesper_evening_star",
+    "hemomancy:mycophant",
+    "hemomancy:naeglerophaeon",
+    "hemomancy:phlegethosoma",
+    "hemomancy:bloom_warden",
+    "hemomancy:kindled_champion",
+    "hemomancy:hemorath",
+    "hemomancy:putriciel",
+    "hemomancy:seraphae",
+    "hemomancy:seraphae_fragment",
+    "hemomancy:velorum",
+    "hemomancy:velorum_devotee",
+    "hemomancy:circus_ringmaster"
+  ]
+}

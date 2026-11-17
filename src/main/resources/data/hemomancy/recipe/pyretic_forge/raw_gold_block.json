@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:raw_gold_block",
+  "blood_cost": 180,
+  "result": "minecraft:gold_block",
+  "sculpting": "hemomancy:pyretic_forge",
+  "in_place": true
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "side": "hemomancy:block/circus_wainscot",
+    "end": "hemomancy:block/circus_wainscot_end"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 34,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Sanguine Monolith",
+  "subtitle": "The Crimson Lodestone",
+  "text": "The Monolith counsels from the fifth Degree, when the Vicar steps back as an equal. The Vicar's scrap is its blueprint, and its Quintessence is a creature's lifeblood crystallized by the Rite of Exsanguination. At the seventh Degree its builder may press it until it shatters. It breaks into a Qliphoth Seed and eight Monolith Fragments. At Degree 5 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Sanguine Formation in the Focus and light Sanguine Quintessence and an Echo Shard in the braziers. Feed the frame 175 mL and the floor takes it.",
+  "icon": "hemomancy:sanguine_monolith"
+}

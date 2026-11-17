@@ -1,0 +1,240 @@
+{
+  "main": {
+    "id": "7e351953e6361c4b",
+    "type": "split",
+    "children": [
+      {
+        "id": "072651635c3475c2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7fe1084ebcc05197",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "OPEN_QUESTIONS.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "OPEN_QUESTIONS"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "6b10c88ff8a7d221",
+    "type": "split",
+    "children": [
+      {
+        "id": "a80a4923636e9055",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "cedb96358f92f15d",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "018a9c11114f7244",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "f1c0fca636c7ba9e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 370.8333435058594,
+    "collapsed": true
+  },
+  "right": {
+    "id": "47c46e9b6e9abbbe",
+    "type": "split",
+    "children": [
+      {
+        "id": "d92f20e0537d6498",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1ee3d6de393772f9",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "OPEN_QUESTIONS.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "7d629424fbe430d2",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "OPEN_QUESTIONS.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "766ef4d880b66370",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "96e6a196be84272f",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "4053fab2b8881b53",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "OPEN_QUESTIONS.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "7fe1084ebcc05197",
+  "lastOpenFiles": [
+    "sed69xanB",
+    "sed3imnGG",
+    "sedTrmUK3",
+    "sedkdGyzt",
+    "sedrZz6bJ",
+    "sedoP7Hl3",
+    "sedYflOne",
+    "sedMc6n3P",
+    "owner_answers/BUILD_LOG_2.md",
+    "HEMOMANCY_REFERENCE.md.tmp.1066160.3bcaeef051d4",
+    "HEMOMANCY_REFERENCE.md.tmp.1066160.6a68c027bcf8",
+    "HEMOMANCY_REFERENCE.md.tmp.1066160.36a619e87e24",
+    "owner_answers/17-architecture-combat-rules-and-housekeeping.md",
+    "owner_answers/18-questions-never-on-the-sheet.md",
+    "archive/tracks/owner_answers_2026-11/18-questions-never-on-the-sheet.md",
+    "archive/tracks/owner_answers_2026-11/92-still-to-do.md",
+    "archive/tracks/owner_answers_2026-11/91-new-questions.md",
+    "archive/tracks/owner_answers_2026-11/90-conflict-sheet.md",
+    "archive/tracks/owner_answers_2026-11/answered-sheet-2026-11-13.md",
+    "archive/tracks/owner_answers_2026-11/OWNER_ANSWER_SHEET-blank-2026-11-11.md",
+    "archive/tracks/owner_answers_2026-11/OPEN_QUESTIONS-before-2026-11-14.md",
+    "owner_answers/BUILD_LOG_2026-11-14.md",
+    "owner_answers/16-npc-dialogue-canon-and-liber.md",
+    "owner_answers/15-circus.md",
+    "owner_answers/14-brined-court.md",
+    "owner_answers/10-early-and-mid-progression.md",
+    "owner_answers/11-bloodline-and-throne.md",
+    "owner_answers/12-endgame-paths.md",
+    "owner_answers/90-conflict-sheet.md",
+    "Open Questions.md",
+    "owner_answers/00-README.md",
+    "owner_answers/92-still-to-do.md",
+    "owner_answers/91-new-questions.md",
+    "owner_answers/01-living-blood-and-containers.md",
+    "owner_answers/05-verbs-sculpting-and-strands.md",
+    "owner_answers/13-rites-and-crafts.md",
+    "superpowers/mockups/living-hud/vessel_back.png",
+    "superpowers/mockups/living-hud/gourd_frame_red.png",
+    "superpowers/mockups/living-hud/gourd_back.png",
+    "superpowers/mockups/living-hud/base_degree_8.png",
+    "superpowers/mockups/living-hud/base_degree_7.png",
+    "superpowers/mockups/living-hud/base_degree_5.png",
+    "superpowers/mockups/living-hud/base_degree_4.png",
+    "superpowers/mockups/living-hud/base_degree_3.png",
+    "superpowers/mockups/living-hud/base_degree_2.png"
+  ]
+}

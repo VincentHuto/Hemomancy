@@ -1,0 +1,17 @@
+{
+  "temper": "congeatio",
+  "catalysts": [
+    {
+      "item": "hemomancy:frigid_enzyme",
+      "worth": 10
+    },
+    {
+      "item": "hemomancy:frigid_spores",
+      "worth": 5
+    },
+    {
+      "item": "minecraft:packed_ice",
+      "worth": 3
+    }
+  ]
+}

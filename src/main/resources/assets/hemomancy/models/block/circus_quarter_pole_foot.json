@@ -1,0 +1,569 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    64
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/circus_quarter_pole",
+    "particle": "hemomancy:block/circus_quarter_pole"
+  },
+  "elements": [
+    {
+      "name": "shoe",
+      "from": [
+        3,
+        0.03,
+        3
+      ],
+      "to": [
+        13,
+        4,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.25,
+            8.5,
+            2.5,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.5,
+            8.5,
+            3.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.75,
+            8.5,
+            5.0,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            5.0,
+            8.5,
+            6.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.125,
+            4.0,
+            5.375,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.375,
+            4.0,
+            6.625,
+            6.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "shoe_lip",
+      "from": [
+        2.5,
+        0,
+        2.5
+      ],
+      "to": [
+        13.5,
+        1,
+        13.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12.875,
+            9.75,
+            14.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            14.25,
+            9.75,
+            15.625,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            10.25,
+            1.375,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.375,
+            10.25,
+            2.75,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.0,
+            0.0,
+            10.375,
+            2.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            10.375,
+            0.0,
+            11.75,
+            2.75
+          ],
+          "texture": "#atlas",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "shaft",
+      "from": [
+        5,
+        4,
+        5
+      ],
+      "to": [
+        11,
+        16,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.0,
+            0.0,
+            6.75,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            6.75,
+            0.0,
+            7.5,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            7.5,
+            0.0,
+            8.25,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            8.25,
+            0.0,
+            9.0,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.0,
+            6.75,
+            7.75,
+            8.25
+          ],
+          "texture": "#atlas",
+          "cullface": "up"
+        },
+        "down": {
+          "uv": [
+            7.75,
+            6.75,
+            8.5,
+            8.25
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "wedge_0",
+      "from": [
+        7,
+        0.03,
+        1.5
+      ],
+      "to": [
+        9,
+        3,
+        3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.5,
+            8.5,
+            8.75,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            8.75,
+            8.5,
+            9.0,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            9.0,
+            8.5,
+            9.25,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.25,
+            8.5,
+            9.5,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            3.375,
+            9.75,
+            3.625,
+            10.25
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            3.625,
+            9.75,
+            3.875,
+            10.25
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "wedge_1",
+      "from": [
+        7,
+        0.03,
+        13
+      ],
+      "to": [
+        9,
+        3,
+        14.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9.5,
+            8.5,
+            9.75,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            9.75,
+            8.5,
+            10.0,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.0,
+            8.5,
+            10.25,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            10.25,
+            8.5,
+            10.5,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            3.875,
+            9.75,
+            4.125,
+            10.25
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.125,
+            9.75,
+            4.375,
+            10.25
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "wedge_2",
+      "from": [
+        1.5,
+        0.03,
+        7
+      ],
+      "to": [
+        3,
+        3,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.5,
+            8.5,
+            10.75,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            10.75,
+            8.5,
+            11.0,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            11.0,
+            8.5,
+            11.25,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.25,
+            8.5,
+            11.5,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.375,
+            9.75,
+            4.625,
+            10.25
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.625,
+            9.75,
+            4.875,
+            10.25
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "wedge_3",
+      "from": [
+        13,
+        0.03,
+        7
+      ],
+      "to": [
+        14.5,
+        3,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.5,
+            8.5,
+            11.75,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            11.75,
+            8.5,
+            12.0,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.0,
+            8.5,
+            12.25,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.25,
+            8.5,
+            12.5,
+            9.25
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.875,
+            9.75,
+            5.125,
+            10.25
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.125,
+            9.75,
+            5.375,
+            10.25
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "band",
+      "from": [
+        4.75,
+        10,
+        4.75
+      ],
+      "to": [
+        11.25,
+        11,
+        11.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.125,
+            10.5,
+            5.0,
+            10.75
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.0,
+            10.5,
+            5.875,
+            10.75
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.875,
+            10.5,
+            6.75,
+            10.75
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.75,
+            10.5,
+            7.625,
+            10.75
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            14.125,
+            4.0,
+            15.0,
+            5.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            15.0,
+            4.0,
+            15.875,
+            5.75
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

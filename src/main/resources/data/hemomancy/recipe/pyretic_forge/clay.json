@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:clay",
+  "blood_cost": 60,
+  "result": "minecraft:terracotta",
+  "sculpting": "hemomancy:pyretic_forge",
+  "in_place": true
+}

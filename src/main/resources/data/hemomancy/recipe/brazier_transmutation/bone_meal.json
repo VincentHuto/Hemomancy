@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "minecraft:bone"
+  },
+  "sculpting": "hemomancy:vital_effusion",
+  "blood_cost": 15,
+  "result": {
+    "id": "minecraft:bone_meal",
+    "count": 5
+  },
+  "byproduct": {
+    "id": "hemomancy:ruinous_spores",
+    "count": 1
+  }
+}

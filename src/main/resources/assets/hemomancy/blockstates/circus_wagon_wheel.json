@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=north,quarter=0": {
+      "model": "hemomancy:block/circus_wagon_wheel_q0"
+    },
+    "facing=north,quarter=1": {
+      "model": "hemomancy:block/circus_wagon_wheel_q1"
+    },
+    "facing=north,quarter=2": {
+      "model": "hemomancy:block/circus_wagon_wheel_q2"
+    },
+    "facing=north,quarter=3": {
+      "model": "hemomancy:block/circus_wagon_wheel_q3"
+    },
+    "facing=east,quarter=0": {
+      "model": "hemomancy:block/circus_wagon_wheel_q0",
+      "y": 90
+    },
+    "facing=east,quarter=1": {
+      "model": "hemomancy:block/circus_wagon_wheel_q1",
+      "y": 90
+    },
+    "facing=east,quarter=2": {
+      "model": "hemomancy:block/circus_wagon_wheel_q2",
+      "y": 90
+    },
+    "facing=east,quarter=3": {
+      "model": "hemomancy:block/circus_wagon_wheel_q3",
+      "y": 90
+    },
+    "facing=south,quarter=0": {
+      "model": "hemomancy:block/circus_wagon_wheel_q0",
+      "y": 180
+    },
+    "facing=south,quarter=1": {
+      "model": "hemomancy:block/circus_wagon_wheel_q1",
+      "y": 180
+    },
+    "facing=south,quarter=2": {
+      "model": "hemomancy:block/circus_wagon_wheel_q2",
+      "y": 180
+    },
+    "facing=south,quarter=3": {
+      "model": "hemomancy:block/circus_wagon_wheel_q3",
+      "y": 180
+    },
+    "facing=west,quarter=0": {
+      "model": "hemomancy:block/circus_wagon_wheel_q0",
+      "y": 270
+    },
+    "facing=west,quarter=1": {
+      "model": "hemomancy:block/circus_wagon_wheel_q1",
+      "y": 270
+    },
+    "facing=west,quarter=2": {
+      "model": "hemomancy:block/circus_wagon_wheel_q2",
+      "y": 270
+    },
+    "facing=west,quarter=3": {
+      "model": "hemomancy:block/circus_wagon_wheel_q3",
+      "y": 270
+    }
+  }
+}

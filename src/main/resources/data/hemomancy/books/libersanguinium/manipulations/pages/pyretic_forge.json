@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 16,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Pyretic Forge",
+  "subtitle": "Fevered blood that smelts",
+  "text": "Pyretic Forge runs your blood hot enough to smelt. Pressed on R it still smelts what you hold. Sculpting, Projection: hold the verb on items lying on the ground and they smelt where they lie, two a pulse by hand, more through the Staff and with Crimson Mastery, with the furnace's experience. Hold it on sand, cobblestone, stone, clay, a wet sponge or a block of raw ore and the block is fired in place once enough blood has gone into it. At a lit Iron Brazier, select Pyretic Forge and hold Absorption: the offering is smelted, and some offerings become more than a furnace would make of them. Ores themselves are not fired; mine them and smelt what drops.",
+  "icon": "hemomancy:memory_pyretic_forge"
+}

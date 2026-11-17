@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 27,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Somnolent Seat",
+  "subtitle": "A chair for the Chamber",
+  "text": "Sleep in it, or use it while seated, and you visit the Chamber of Will for a measured time: five minutes at the third Degree, ten at the fourth, twenty at the fifth. The visit is practice. The rite of the sixth Degree is a separate attunement. At Degree 3 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Sanguine Formation in the Focus and light two Blood Crystals and two Ender Pearls in the braziers. Feed the frame 250 mL and the floor takes it.",
+  "icon": "hemomancy:somnolent_seat"
+}

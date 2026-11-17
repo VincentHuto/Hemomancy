@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:stone_bricks",
+  "blood_cost": 40,
+  "result": "minecraft:cracked_stone_bricks",
+  "sculpting": "hemomancy:pyretic_forge",
+  "in_place": true
+}

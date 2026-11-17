@@ -1,0 +1,15 @@
+{
+  "function": "feed",
+  "temper": "hemomancy:animus",
+  "ticks_per_worth": 1200,
+  "items": [
+    {
+      "item": "minecraft:bone_meal",
+      "ticks": 3600
+    },
+    {
+      "item": "hemomancy:tainted_harvest",
+      "ticks": 1200
+    }
+  ]
+}

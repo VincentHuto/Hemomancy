@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:memory_blood_eclipse"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.field_of_dark.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.field_of_dark.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/sculpted",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

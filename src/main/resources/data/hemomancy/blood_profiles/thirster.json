@@ -1,0 +1,9 @@
+{
+  "tempers": [
+    "mortem"
+  ],
+  "properties": [
+    "hemomancy:fungal"
+  ],
+  "requires_living_syringe": false
+}

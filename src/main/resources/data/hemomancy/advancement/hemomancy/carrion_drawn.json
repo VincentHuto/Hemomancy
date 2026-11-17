@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:memory_carrion_communion"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.carrion_drawn.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.carrion_drawn.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/sculpted",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

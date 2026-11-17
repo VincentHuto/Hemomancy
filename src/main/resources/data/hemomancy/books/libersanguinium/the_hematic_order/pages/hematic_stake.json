@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 39,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Hematic Stake",
+  "subtitle": "An anchor for a Fane",
+  "text": "Each stake adds a lobe to a Fane's envelope and must overlap the heart or another stake. A progenitor calls one up with an empty hand, sneaking against a block in or beside their Fane. From the fifth Degree one can also be raised in place: set a Blood Crystal on Hematic Iron Bars, hold a Sanguine Formation in your offhand and pour 100 mL into the bars. A line holds three stakes, and one more for each member and each recruited kind, up to the server's limit. Only the line's owner may take one up.",
+  "icon": "hemomancy:hematic_stake"
+}

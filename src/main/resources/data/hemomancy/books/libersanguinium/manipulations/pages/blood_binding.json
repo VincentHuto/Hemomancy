@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 18,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Blood Binding",
+  "subtitle": "Living blood taught to stay put",
+  "text": "Blood Binding treats another body as blood that has been taught to stay put. Pressed on R it binds the creature you look at for a few seconds. Sculpting, Projection: hold the verb on a creature and it cannot move while blood flows; when the flow stops it only crawls for a moment after, constricted, as a thrown cord once held it. The lingering form holds the crawl longer, the chain form runs on into up to three more creatures nearby, and the lattice spreads to everything close around the first. You can only bind what you could strike. Held for three seconds on a creature that is passive, or worn down to a third of its health, the binding becomes a leash: the creature follows you home, placid, for a little blood each second (see The Menagerie).",
+  "icon": "hemomancy:memory_blood_binding"
+}

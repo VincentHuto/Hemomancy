@@ -1,0 +1,379 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "hemomancy:block/polished_venous_stone_bricks",
+    "rim": "hemomancy:block/polished_venous_stone_bricks",
+    "band": "hemomancy:block/hematic_iron_block",
+    "soil": "hemomancy:block/erythrocytic_dirt"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        11,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            5,
+            16,
+            16
+          ],
+          "texture": "#rim"
+        },
+        "south": {
+          "uv": [
+            0,
+            5,
+            16,
+            16
+          ],
+          "texture": "#rim"
+        },
+        "east": {
+          "uv": [
+            0,
+            5,
+            16,
+            16
+          ],
+          "texture": "#rim"
+        },
+        "west": {
+          "uv": [
+            0,
+            5,
+            16,
+            16
+          ],
+          "texture": "#rim"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#rim"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.01,
+        11,
+        -0.01
+      ],
+      "to": [
+        16.01,
+        12.5,
+        16.01
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            6,
+            16,
+            7.5
+          ],
+          "texture": "#band"
+        },
+        "south": {
+          "uv": [
+            0,
+            6,
+            16,
+            7.5
+          ],
+          "texture": "#band"
+        },
+        "east": {
+          "uv": [
+            0,
+            6,
+            16,
+            7.5
+          ],
+          "texture": "#band"
+        },
+        "west": {
+          "uv": [
+            0,
+            6,
+            16,
+            7.5
+          ],
+          "texture": "#band"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12.5,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            2
+          ],
+          "texture": "#rim"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12.5,
+        14
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "up": {
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ],
+          "texture": "#rim"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12.5,
+        2
+      ],
+      "to": [
+        2,
+        16,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            0,
+            14,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "south": {
+          "uv": [
+            2,
+            0,
+            14,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "east": {
+          "uv": [
+            2,
+            0,
+            14,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "west": {
+          "uv": [
+            2,
+            0,
+            14,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "up": {
+          "uv": [
+            0,
+            2,
+            2,
+            14
+          ],
+          "texture": "#rim"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        12.5,
+        2
+      ],
+      "to": [
+        16,
+        16,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            0,
+            14,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "south": {
+          "uv": [
+            2,
+            0,
+            14,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "east": {
+          "uv": [
+            2,
+            0,
+            14,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "west": {
+          "uv": [
+            2,
+            0,
+            14,
+            3.5
+          ],
+          "texture": "#rim"
+        },
+        "up": {
+          "uv": [
+            14,
+            2,
+            16,
+            14
+          ],
+          "texture": "#rim"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        11,
+        2
+      ],
+      "to": [
+        14,
+        15,
+        14
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ],
+          "texture": "#soil"
+        }
+      }
+    }
+  ]
+}

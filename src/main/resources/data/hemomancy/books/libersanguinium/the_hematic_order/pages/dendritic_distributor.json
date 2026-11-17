@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 31,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Dendritic Distributor",
+  "subtitle": "Whole loadouts, kept",
+  "text": "The Distributor keeps Synaptic Loadouts: whole mixed patterns of Noetic and Thelemic memories, saved and applied at once. It holds three, and the Synaptic Memory skill adds more, up to seven. Saving or overwriting one costs 100 mL and 25 experience. Applying and renaming are free. At Degree 5 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Sanguine Formation in the Focus and light Sinew Cord and Ferric Binder in the braziers. Feed the frame 500 mL and the floor takes it.",
+  "icon": "hemomancy:dendritic_distributor"
+}

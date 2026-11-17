@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 14,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Two Verbs",
+  "subtitle": "Projection and Absorption",
+  "text": "Everything a Harbinger does with their hands is one of two verbs. Projection pushes blood out into the world; Absorption draws it back. Both sit on the inner ring of the wheel: pick one there and you have the plain verb, with no memory sculpting it. Pick a memory on the outer ring and it sculpts whichever verb is set. The verb key (Y unless you have moved it) turns the verb and keeps the memory: press it with an empty hand and your blood forms the hand of whichever verb is set. Press it again and the hand turns: Projection to Absorption and back. Sneak and press it to let the hand go. The Living Staff carries the same verb you have set, so the key turns it too. A bare hand reaches five and a half blocks; the Staff reaches as far as its focus allows, and Sanguine Reach carries either further. A rite, a Saint's trial or a faltering Will always takes the blood before anything else does. A memory that can sculpt a verb, changing what it does to the thing you aim at, says so in its own entry.",
+  "icon": "hemomancy:blood_projection"
+}

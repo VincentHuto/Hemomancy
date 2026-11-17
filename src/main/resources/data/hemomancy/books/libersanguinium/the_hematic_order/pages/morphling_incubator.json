@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 32,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Morphling Incubator",
+  "subtitle": "A polyp grown to a strain",
+  "text": "The Incubator grows a Morphling Polyp into a chosen strain. Seat the polyp at its centre, feed enzymes and catalysts into the four slots around it, and keep its tank in blood. It draws half a millilitre a tick while it works. At Degree 5 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Morphling Polyp in the Focus and light Swollen Leech and a Slimeball in the braziers. Feed the frame 200 mL and the floor takes it.",
+  "icon": "hemomancy:morphling_incubator"
+}

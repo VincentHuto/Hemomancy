@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 25,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Draw and the Mark",
+  "subtitle": "What Absorption reads",
+  "text": "Absorption names whoever drains: the creature turns on you and its death is yours, though a kill by draw pays no blood or Temperament beyond what the draw itself took. The draw reads what you set up. Pressure pulls the body toward you and gives more back; Searing draws harder but boils some away; Rime slows and, at its deepest, holds it still; Lodestone strips its armour while you draw; Necrosis spreads to what stands near if the draw kills; Disrupted arcs the draw to the next marked body; Illuminated lets you draw from half again as far; Obscured makes it lose its quarry and veils you. Your own brand is drawn first, from twice your reach. Brand at range, draw from safety.",
+  "icon": "hemomancy:blood_absorption"
+}

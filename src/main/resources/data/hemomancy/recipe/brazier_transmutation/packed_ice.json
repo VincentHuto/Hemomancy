@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "minecraft:ice"
+  },
+  "sculpting": "hemomancy:glacial_grasp",
+  "catalyst": {
+    "item": "minecraft:ice"
+  },
+  "catalyst_count": 3,
+  "blood_cost": 30,
+  "result": {
+    "id": "minecraft:packed_ice",
+    "count": 1
+  }
+}

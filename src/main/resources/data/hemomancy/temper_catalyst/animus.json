@@ -1,0 +1,17 @@
+{
+  "temper": "animus",
+  "catalysts": [
+    {
+      "item": "hemomancy:vivacious_enzyme",
+      "worth": 10
+    },
+    {
+      "item": "hemomancy:vivacious_spores",
+      "worth": 5
+    },
+    {
+      "item": "minecraft:rotten_flesh",
+      "worth": 3
+    }
+  ]
+}

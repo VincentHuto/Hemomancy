@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 32,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "More Held Forms",
+  "subtitle": "Memories that hold, and the skills that train them",
+  "text": "Each of these still casts on R as it always has. Held Projection puts out its strand instead. Gloam Laceration is the razor, a short dark lash ending in three tails: every click and crack lands three quick cuts, deeper from behind, in the dark or on the Obscured, and the third click in a row cracks. Cruor Javelin is drawn into the hand through three stages and thrown when you let go; it breaks on a body and sticks in a block, where your Absorption takes half its blood back. Blood Needle Lance gathers barbed needles round you, up to six; let go to loose them all, or click to loose one. Synaptic Jolt jumps to water, iron, copper or your own Ferric constructs and keeps the whole run live, or jolts a creature each pulse. Crimson Flame Conjuration still kindles unlit lights near the aim first; held on bare ground it paints a line of flame where you look, and a click flares the whole line. Ferric Spikes sends a run of blades through the ground toward wherever you look, impaling what it passes under; click and it stands up where it is as blades that block the way. A Blood Binding that holds a creature brands it, so your Absorption reaches it from twice as far. The Living Staff branch trains them. Long Strand lengthens a lash and reaches every held memory further. Taut Line tightens a lash's tip. Free Hand gives back your pace with a lash or a held memory out. Whipcrack makes a lash's crack and a held memory's click hit harder and last longer. Deep Brand keeps a Blood Binding's brand longer. Second Strand, late, pours a twin from the off hand when it is empty or wears a cell hand: a second lash that trails the first. The twin costs half again as much blood.",
+  "icon": "hemomancy:memory_gloam_laceration"
+}

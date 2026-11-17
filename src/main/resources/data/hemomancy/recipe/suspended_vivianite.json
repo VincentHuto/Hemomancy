@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "VVV",
+    " V "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "V": {
+      "item": "hemomancy:vivianite_cluster"
+    }
+  },
+  "result": {
+    "id": "hemomancy:suspended_vivianite",
+    "count": 1
+  }
+}

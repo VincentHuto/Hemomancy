@@ -1,0 +1,813 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "java_block",
+    "box_uv": false
+  },
+  "name": "circus_pennant_line",
+  "ambientocclusion": false,
+  "resolution": {
+    "width": 16,
+    "height": 16
+  },
+  "elements": [
+    {
+      "name": "cord",
+      "from": [
+        0,
+        14,
+        7.75
+      ],
+      "to": [
+        16,
+        14.5,
+        8.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            60.0,
+            0.0,
+            76.0,
+            1.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            76.0,
+            0.0,
+            92.0,
+            1.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32.0,
+            3.0,
+            33.0,
+            4.0
+          ],
+          "texture": 0,
+          "cullface": "east"
+        },
+        "west": {
+          "uv": [
+            33.0,
+            3.0,
+            34.0,
+            4.0
+          ],
+          "texture": 0,
+          "cullface": "west"
+        },
+        "up": {
+          "uv": [
+            92.0,
+            0.0,
+            108.0,
+            1.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            108.0,
+            0.0,
+            124.0,
+            1.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "5bee0569-768b-57f3-a40e-8ca297964c71",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_0",
+      "from": [
+        1,
+        11,
+        7.85
+      ],
+      "to": [
+        5,
+        14,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4.0,
+            0.0,
+            8.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            24.0,
+            0.0,
+            25.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            25.0,
+            0.0,
+            26.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            124.0,
+            0.0,
+            128.0,
+            1.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0.0,
+            3.0,
+            4.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "f57306b6-fd2a-5876-83c8-ff596a0d4483",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_mid_0",
+      "from": [
+        2,
+        9,
+        7.85
+      ],
+      "to": [
+        4,
+        11,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            30.0,
+            0.0,
+            32.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32.0,
+            0.0,
+            34.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            42.0,
+            0.0,
+            43.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            43.0,
+            0.0,
+            44.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            20.0,
+            3.0,
+            22.0,
+            4.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            22.0,
+            3.0,
+            24.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "90510f1d-38c5-57c5-82fb-1e516051f190",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_tip_0",
+      "from": [
+        2.5,
+        7,
+        7.85
+      ],
+      "to": [
+        3.5,
+        9,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            44.0,
+            0.0,
+            45.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            45.0,
+            0.0,
+            46.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            46.0,
+            0.0,
+            47.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            47.0,
+            0.0,
+            48.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            34.0,
+            3.0,
+            35.0,
+            4.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            35.0,
+            3.0,
+            36.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "44ec0752-1036-5731-93d9-783afb909e04",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_1",
+      "from": [
+        6,
+        11,
+        7.85
+      ],
+      "to": [
+        10,
+        14,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.0,
+            0.0,
+            12.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            26.0,
+            0.0,
+            27.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            27.0,
+            0.0,
+            28.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4.0,
+            3.0,
+            8.0,
+            4.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8.0,
+            3.0,
+            12.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "07adce87-45c7-5c5f-b817-d2a9ab4499fe",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_mid_1",
+      "from": [
+        7,
+        9,
+        7.85
+      ],
+      "to": [
+        9,
+        11,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            34.0,
+            0.0,
+            36.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            36.0,
+            0.0,
+            38.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48.0,
+            0.0,
+            49.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            49.0,
+            0.0,
+            50.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            24.0,
+            3.0,
+            26.0,
+            4.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            26.0,
+            3.0,
+            28.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "d68409d2-ceb8-5207-8b3c-8b3ec76dc3ca",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_tip_1",
+      "from": [
+        7.5,
+        7,
+        7.85
+      ],
+      "to": [
+        8.5,
+        9,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            50.0,
+            0.0,
+            51.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            51.0,
+            0.0,
+            52.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            52.0,
+            0.0,
+            53.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            53.0,
+            0.0,
+            54.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            36.0,
+            3.0,
+            37.0,
+            4.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            37.0,
+            3.0,
+            38.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "5c5ede31-2bb0-5bdd-9f73-9982c889ae43",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_2",
+      "from": [
+        11,
+        11,
+        7.85
+      ],
+      "to": [
+        15,
+        14,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16.0,
+            0.0,
+            20.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            20.0,
+            0.0,
+            24.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            28.0,
+            0.0,
+            29.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            29.0,
+            0.0,
+            30.0,
+            3.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12.0,
+            3.0,
+            16.0,
+            4.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16.0,
+            3.0,
+            20.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "b1298bf4-f74e-5f4c-85ff-05d920cb16dc",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_mid_2",
+      "from": [
+        12,
+        9,
+        7.85
+      ],
+      "to": [
+        14,
+        11,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            38.0,
+            0.0,
+            40.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            40.0,
+            0.0,
+            42.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            54.0,
+            0.0,
+            55.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            55.0,
+            0.0,
+            56.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            28.0,
+            3.0,
+            30.0,
+            4.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            30.0,
+            3.0,
+            32.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "dd76777a-ed5f-56c4-9cdb-2c7bf5124123",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flag_tip_2",
+      "from": [
+        12.5,
+        7,
+        7.85
+      ],
+      "to": [
+        13.5,
+        9,
+        8.15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            56.0,
+            0.0,
+            57.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            57.0,
+            0.0,
+            58.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            58.0,
+            0.0,
+            59.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            59.0,
+            0.0,
+            60.0,
+            2.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            38.0,
+            3.0,
+            39.0,
+            4.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            39.0,
+            3.0,
+            40.0,
+            4.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "9a41bf7f-ff9e-5da1-90d8-b1128daf1410",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    }
+  ],
+  "outliner": [
+    "5bee0569-768b-57f3-a40e-8ca297964c71",
+    "f57306b6-fd2a-5876-83c8-ff596a0d4483",
+    "90510f1d-38c5-57c5-82fb-1e516051f190",
+    "44ec0752-1036-5731-93d9-783afb909e04",
+    "07adce87-45c7-5c5f-b817-d2a9ab4499fe",
+    "d68409d2-ceb8-5207-8b3c-8b3ec76dc3ca",
+    "5c5ede31-2bb0-5bdd-9f73-9982c889ae43",
+    "b1298bf4-f74e-5f4c-85ff-05d920cb16dc",
+    "dd76777a-ed5f-56c4-9cdb-2c7bf5124123",
+    "9a41bf7f-ff9e-5da1-90d8-b1128daf1410"
+  ],
+  "textures": [
+    {
+      "name": "circus_pennant_line.png",
+      "id": "atlas",
+      "uuid": "999e153c-6cf5-5f20-b6fc-38a16208278a",
+      "uv_width": 128,
+      "uv_height": 16,
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAYAAADeWHeIAAACW0lEQVR4nO2UO2/TUBTHj2Onjeu0djKgTKhiqCoE4k2hQz8BA+rIyAwbEhLtDqqYYWNkRlW/Ao9GiXgMxMpQKgYaIpI2cRLHsZOg/6F23dKE0vn8JOuee+953HvOuVbeLN0Z0hjOP79P3W6XUqnUsePW6utx5of8gK+PXp0ozv/6/b69TWdnZ6P1UXE2i0VamJ4mVVXp7e4u3TZNCoKAvgQBXUgkSNd1yrdadGVykvU/NJu0aFnU6/Wo6Lp8vouqyvYfPY8uJZMsv2806IZhROtXUymW3+3tcbx+v0+bjsP+4VtRFJ5f03WOA5vrU1Mc57Pv062ZGRoMBnxG2EP+1OuxT/iGPc5zeWKCkskk+7qZTrMeZJzZdV32hRiapvFdTMNgHTAcDkkrFAqUTqfZSa1W4w3Lsniz3W6TZi/ypc/kclFxqpVKNM/n85TNZjmJnU6HD2YYBvtxHIdM02RZs20ukG3blEgkOCGIEcrnjjRXuVwm3/fZHy4NXXyYQx92+GAXFh+2IaVSiUdcFjbQhfy0vaNQe+egIzqVf3eZ+zOmP0Zv1F4r7uvInhOTGzG5OSL+OOL2rR/H+4rHQ12QNHQdkopEIcn1ep2ThaTNzc8fFMW2/2oG2Far1Ugfo+d5XDzM0VjoPvgBWEdBn/zaUuIHWVm6R6fh8SnthD9oeL3hKwN3159xoVEwjCHhK9tYXuV5+HozmQzP46803AcLLx9ywwA0DBoCzbaWmxuiGbz9P4Gx/8td3ljjWIUHL1hvpfbtUKMIgiAIgiAIgiAIgiAIgiAIgiAIdGJ+A32NT04FG1uUAAAAAElFTkSuQmCC",
+      "mode": "bitmap",
+      "namespace": "hemomancy",
+      "folder": "block"
+    }
+  ],
+  "display": {}
+}

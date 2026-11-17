@@ -1,0 +1,711 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    16
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/circus_gallery_rail",
+    "particle": "hemomancy:block/circus_gallery_rail"
+  },
+  "elements": [
+    {
+      "name": "handrail",
+      "from": [
+        0,
+        14,
+        6.5
+      ],
+      "to": [
+        16,
+        16,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.0,
+            0.0,
+            10.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            10.0,
+            0.0,
+            12.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.0,
+            12.0,
+            4.375,
+            14.0
+          ],
+          "texture": "#atlas",
+          "cullface": "east"
+        },
+        "west": {
+          "uv": [
+            4.375,
+            12.0,
+            4.75,
+            14.0
+          ],
+          "texture": "#atlas",
+          "cullface": "west"
+        },
+        "up": {
+          "uv": [
+            4.0,
+            0.0,
+            6.0,
+            3.0
+          ],
+          "texture": "#atlas",
+          "cullface": "up"
+        },
+        "down": {
+          "uv": [
+            6.0,
+            0.0,
+            8.0,
+            3.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "rail_lo",
+      "from": [
+        0,
+        0,
+        7
+      ],
+      "to": [
+        16,
+        2,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12.0,
+            0.0,
+            14.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            14.0,
+            0.0,
+            16.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.75,
+            12.0,
+            5.0,
+            14.0
+          ],
+          "texture": "#atlas",
+          "cullface": "east"
+        },
+        "west": {
+          "uv": [
+            5.0,
+            12.0,
+            5.25,
+            14.0
+          ],
+          "texture": "#atlas",
+          "cullface": "west"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            12.0,
+            2.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            2.0,
+            12.0,
+            4.0,
+            14.0
+          ],
+          "texture": "#atlas",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "baluster_0",
+      "from": [
+        1.25,
+        2,
+        7.25
+      ],
+      "to": [
+        2.75,
+        14,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            0.0,
+            0.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            0.25,
+            0.0,
+            0.5,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.5,
+            0.0,
+            0.75,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            0.75,
+            0.0,
+            1.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            5.25,
+            12.0,
+            5.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.5,
+            12.0,
+            5.75,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "collar_0",
+      "from": [
+        1.0,
+        6.5,
+        7
+      ],
+      "to": [
+        3.0,
+        8,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.75,
+            12.0,
+            6.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            6.0,
+            12.0,
+            6.25,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            6.25,
+            12.0,
+            6.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.5,
+            12.0,
+            6.75,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            6.75,
+            12.0,
+            7.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.0,
+            12.0,
+            7.25,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "baluster_1",
+      "from": [
+        5.25,
+        2,
+        7.25
+      ],
+      "to": [
+        6.75,
+        14,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.0,
+            0.0,
+            1.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            1.25,
+            0.0,
+            1.5,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            1.5,
+            0.0,
+            1.75,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.75,
+            0.0,
+            2.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.25,
+            12.0,
+            7.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.5,
+            12.0,
+            7.75,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "collar_1",
+      "from": [
+        5.0,
+        6.5,
+        7
+      ],
+      "to": [
+        7.0,
+        8,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.75,
+            12.0,
+            8.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            8.0,
+            12.0,
+            8.25,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            8.25,
+            12.0,
+            8.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            8.5,
+            12.0,
+            8.75,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.75,
+            12.0,
+            9.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.0,
+            12.0,
+            9.25,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "baluster_2",
+      "from": [
+        9.25,
+        2,
+        7.25
+      ],
+      "to": [
+        10.75,
+        14,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.0,
+            0.0,
+            2.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.25,
+            0.0,
+            2.5,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.5,
+            0.0,
+            2.75,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            2.75,
+            0.0,
+            3.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.25,
+            12.0,
+            9.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.5,
+            12.0,
+            9.75,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "collar_2",
+      "from": [
+        9.0,
+        6.5,
+        7
+      ],
+      "to": [
+        11.0,
+        8,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9.75,
+            12.0,
+            10.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            10.0,
+            12.0,
+            10.25,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.25,
+            12.0,
+            10.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            10.5,
+            12.0,
+            10.75,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            10.75,
+            12.0,
+            11.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            11.0,
+            12.0,
+            11.25,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "baluster_3",
+      "from": [
+        13.25,
+        2,
+        7.25
+      ],
+      "to": [
+        14.75,
+        14,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.0,
+            0.0,
+            3.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            3.25,
+            0.0,
+            3.5,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.5,
+            0.0,
+            3.75,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.75,
+            0.0,
+            4.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.25,
+            12.0,
+            11.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            11.5,
+            12.0,
+            11.75,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "collar_3",
+      "from": [
+        13.0,
+        6.5,
+        7
+      ],
+      "to": [
+        15.0,
+        8,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.75,
+            12.0,
+            12.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            12.0,
+            12.0,
+            12.25,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.25,
+            12.0,
+            12.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.5,
+            12.0,
+            12.75,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.75,
+            12.0,
+            13.0,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            13.0,
+            12.0,
+            13.25,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

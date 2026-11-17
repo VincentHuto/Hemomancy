@@ -1,0 +1,75 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    64
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/ossuary_clock",
+    "particle": "hemomancy:block/blood_wood_planks"
+  },
+  "elements": [
+    {
+      "name": "lunette",
+      "from": [
+        5.5,
+        12,
+        2
+      ],
+      "to": [
+        10.5,
+        13.25,
+        2.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.0,
+            11.75,
+            3.625,
+            12.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.0,
+            12.75,
+            5.125,
+            13.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            5.125,
+            12.75,
+            5.25,
+            13.25
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.25,
+            13.75,
+            9.875,
+            14.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.875,
+            13.75,
+            10.5,
+            14.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

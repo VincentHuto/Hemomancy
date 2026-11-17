@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "hemomancy:block/stained_sod"
+      },
+      {
+        "model": "hemomancy:block/stained_sod",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/stained_sod",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/stained_sod",
+        "y": 270
+      }
+    ]
+  }
+}

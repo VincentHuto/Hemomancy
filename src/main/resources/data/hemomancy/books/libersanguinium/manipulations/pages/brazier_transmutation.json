@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 19,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Brazier Transmutation",
+  "subtitle": "What the fire makes of an offering",
+  "text": "An Iron Brazier does more than burn memories and scars. Set an offering in it, light it with Projection, and hold Absorption on it: if no memory, scar or graft rite wants the offering, the fire works it into something else, and what it becomes depends on the memory you have selected. With Pyretic Forge, logs give twice the charcoal, sand twice the glass, gravel gives flint, and anything a furnace would smelt is smelted. With Glacial Grasp, ice packs and packed ice turns blue, each with three more of the same in your off hand, and magma cools to obsidian. With Vital Effusion, dirt roots, stone grows moss, a dead bush puts out a sapling, and a bone becomes bone meal and a pinch of ruinous spores. Some offerings want a catalyst in your off hand, spent when the offering is drawn out. The blood is paid when the offering is drawn out, and the fire goes out with it. Sneak to take an offering back.",
+  "icon": "hemomancy:iron_brazier"
+}

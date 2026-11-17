@@ -1,0 +1,46 @@
+{
+  "type": "hemomancy:chum_catch",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:gameplay/fishing"
+    }
+  ],
+  "home_waters": "hemomancy:chum_home_waters",
+  "catches": [
+    {
+      "item": "hemomancy:raw_pelagic_herring",
+      "weight": 6
+    },
+    {
+      "item": "hemomancy:erythrocoral_fragment",
+      "weight": 2
+    },
+    {
+      "item": "hemomancy:swollen_leech",
+      "weight": 2
+    }
+  ],
+  "by_school": {
+    "lux": [
+      {
+        "item": "hemomancy:cuttlefish_chromatophores",
+        "weight": 5
+      },
+      {
+        "item": "hemomancy:raw_pelagic_herring",
+        "weight": 2
+      }
+    ],
+    "animus": [
+      {
+        "item": "hemomancy:swollen_leech",
+        "weight": 5
+      },
+      {
+        "item": "hemomancy:raw_pelagic_herring",
+        "weight": 3
+      }
+    ]
+  }
+}

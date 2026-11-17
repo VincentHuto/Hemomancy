@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:blood_scorched_scab",
+    "#minecraft:base_stone_overworld",
+    "#minecraft:base_stone_nether",
+    "hemomancy:venous_stone",
+    "hemomancy:polished_venous_stone",
+    "hemomancy:infested_venous_stone"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 36,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Sanguine Vigil",
+  "subtitle": "A ward post for the kept",
+  "text": "Stock the Vigil with a Temper catalyst. While you stand within 16 blocks of it, it keeps every kept creature within 8 blocks from fading, and spends one catalyst every five minutes of tending. While it holds blood it also binds hostile creatures within 20 blocks, 25 mL of its own store for each one it holds. At Degree 6 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Grand Working floor or larger, seat a Sanguine Formation in the Focus and light Vascular Poultice, Sinew Cord and Sanguine Quintessence in the braziers. Feed the frame 6,500 mL and the floor takes it.",
+  "icon": "hemomancy:sanguine_vigil"
+}

@@ -1,0 +1,9 @@
+{
+  "function": "point",
+  "items": [
+    {
+      "item": "minecraft:compass",
+      "ticks": 12000
+    }
+  ]
+}

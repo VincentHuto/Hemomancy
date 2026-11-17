@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 24,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Lashes and Held Forms",
+  "subtitle": "What held Projection becomes",
+  "text": "Blood Lash and Searing Lash put out a lash, two blocks longer than your reach. Hematic Flare is a searchlight: a beam that Illuminates and outlines whatever it passes over, builds heat on a body it rests on, and flashes at a click. Not every memory puts out a strand. Blood Eclipse opens a dome of dark round you that grows as you hold it, Obscures what you may harm inside and hides what stands in it; click and it ends in a flash. Glacial Grasp closes a hand of ice on one creature: it forms over a second, holds the creature where it stands, and a click squeezes harder the longer it held. Each slows you a little while it is held; with nothing out, Projection into a station moves you as it always did. Every hit is yours and carries its school, and like any cast it ends a Marionette you are holding. More memories work under held Projection, and the Living Staff branch trains them all; see More Held Forms.",
+  "icon": "hemomancy:memory_blood_lash"
+}

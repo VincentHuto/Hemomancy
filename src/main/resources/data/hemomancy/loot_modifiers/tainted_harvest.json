@@ -1,0 +1,7 @@
+{
+  "type": "hemomancy:tainted_harvest",
+  "conditions": [],
+  "crops": "minecraft:crops",
+  "item": "hemomancy:tainted_harvest",
+  "chance": 0.08
+}

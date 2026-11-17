@@ -1,0 +1,11 @@
+{
+  "function": "light",
+  "temper": "hemomancy:lux",
+  "ticks_per_worth": 2400,
+  "items": [
+    {
+      "item": "hemomancy:organic_prism",
+      "ticks": 48000
+    }
+  ]
+}

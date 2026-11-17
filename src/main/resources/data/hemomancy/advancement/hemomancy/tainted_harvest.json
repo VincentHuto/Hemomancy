@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:tainted_harvest"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.tainted_harvest.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.tainted_harvest.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/basin_harvest",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

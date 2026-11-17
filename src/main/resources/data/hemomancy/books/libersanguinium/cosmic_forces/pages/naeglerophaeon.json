@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 12,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Naeglerophaeon",
+  "subtitle": "The sleeper in the ganglion",
+  "text": "The Borers mend the Vagrant Mind's fibres, and in a dormant ganglion, a maroon knot in an ivory sheath, Naeglerophaeon sleeps. Passing through the organ does not wake it. Breaking the sheath does. Then it takes whatever has entered the fibres. Its short arms spark, and its great red axon swings forward to bind prey and draw it to the core. It crosses the organ as a signal, folding into a synapse and surfacing elsewhere. Cut a fibre and it answers the hand that cut it. Near death it hangs inverted at the centre and burns out the Mind's synapses one by one; when the last goes dark it dims and drifts until someone ends it. Its ganglion still conducts. Taken to the Somatic Loom, it can give up Axonal Transduction, the memory of passing through the nerves as a living impulse. No one agrees whether it found the Mind or is an old reflex of the Mind itself.",
+  "icon": "hemomancy:naeglerophaeon_ganglion"
+}

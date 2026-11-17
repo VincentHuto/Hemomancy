@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 40,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Mycelial Synapse",
+  "subtitle": "The heart-node's stake",
+  "text": "In the Gardens an Apotheos sets a Sporite Crystal against a hematic iron block on any face, holds a Sanguine Formation in the offhand and pours 120 mL into the iron. The synapse must chain to the heart-node or another of your synapses and touch no one else's envelope, and a node holds six. Each one widens the envelope in which its owner heals and gathers spores.",
+  "icon": "hemomancy:mycelial_synapse"
+}

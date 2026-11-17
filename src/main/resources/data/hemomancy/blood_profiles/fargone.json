@@ -1,0 +1,9 @@
+{
+  "tempers": [
+    "animus"
+  ],
+  "properties": [
+    "hemomancy:fungal"
+  ],
+  "requires_living_syringe": false
+}

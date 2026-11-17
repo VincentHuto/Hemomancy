@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 21,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Brood",
+  "subtitle": "Glass, needle and young",
+  "text": "Use a kept creature's jar or vat with an empty hand and the glass opens to you: the creature, its Vigor, the buffer, what its blood is as far as you have read it, and its brood. A thick-hided kind refuses a vial in glass as it does in the wild. The Living Syringe draws any kept creature for less Vigor than a vial, and only for its keeper or their bloodline. The Living Bestiary keeps a page for every kind you have sampled, kept or seen through glass. Its humours stay unread marks until you examine a sample, and its yield and habits stay hidden until you have studied three. Two kept creatures of one kind, side by side in glass with one keeper, may breed. Press Let them breed on either screen. While both stay above three quarters of their Vigor, the brood takes blood from their buffers each second, for about two minutes; a bigger body costs more blood. Then the young goes into an empty vessel beside them. If no vessel waits, it waits. Part them, break the glass or let a parent fade, and what was paid is lost. Afterwards both parents rest for five minutes. The dead do not breed.",
+  "icon": "hemomancy:specimen_jar"
+}

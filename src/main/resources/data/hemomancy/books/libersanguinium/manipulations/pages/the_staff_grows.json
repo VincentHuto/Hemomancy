@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 26,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Staff Grows",
+  "subtitle": "Growth rings and the pickaxe",
+  "text": "Every millilitre you move through the Living Staff stays in it. When enough has passed, the Staff lays down a growth ring, a band of bone round the shaft that anyone can see. The first closes at 5,000 mL, then 25,000, 100,000, 300,000 and 750,000. The first ring adds half a block to the verbs' reach through the Staff. The second lets its digging forms take what needs an iron tool, diamond ore among it, at iron speed. The third adds a block of reach and moves blood a tenth faster. The fourth lets them take what needs a diamond tool, obsidian among it. The fifth adds another block of reach and cuts every form swap by 25 mL, down to 25. Skills and grafts are the growth you choose; rings are the growth you earn. The pickaxe form comes with the bond. Select Conjure Pickaxe with the Staff in hand. It takes iron ore from the first day, diamonds from the second ring and obsidian from the fourth, never past that, and no enchantment takes on it or on any form. A form has no durability: each block an axe or pickaxe form breaks costs blood by its hardness, 3 mL for stone and 6 for an ore. With too little blood to pay, it digs like a bare hand and drops what a hand would. It is one tool, summoned and in one shape at a time, so a good pickaxe is still worth carrying for long work.",
+  "icon": "hemomancy:living_pickaxe"
+}

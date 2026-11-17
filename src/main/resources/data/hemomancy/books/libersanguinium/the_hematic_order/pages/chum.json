@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 16,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Chum",
+  "subtitle": "Blood in the water",
+  "text": "Project into water with nothing selected and the blood spreads into a pool around where it struck, two millilitres a tick. The more you pour the wider it reaches, from three blocks to twelve, and the stronger it is. No block is placed; the pool lies in the water and fades by half every forty-five seconds, much faster where the water runs or rain falls on it. Inside a pool a fishing line is taken sooner, and now and then the catch is the pool's own: a pelagic herring, a leech, a coral fragment. Near the reef and the pelagic seas, where those come from, they come far more often. Hold a catalyst in your off hand as you pour and it dissolves into the pool and colours it with its temper; a Lux pool brings up cuttlefish chromatophores, an Animus pool leeches. A strong pool in water three blocks deep or more draws herring to it. After dark, or where much blood has already been spilled, a strong pool also draws a hunter, one at a time: a Brined Votary rises from the reef and the pelagic seas, a Bog Revenant hauls itself out of a swamp, and the drowned come anywhere else.",
+  "icon": "hemomancy:raw_pelagic_herring"
+}

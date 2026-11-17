@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/circus_fire_pit"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/circus_fire_pit",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/circus_fire_pit",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/circus_fire_pit",
+      "y": 270
+    }
+  }
+}

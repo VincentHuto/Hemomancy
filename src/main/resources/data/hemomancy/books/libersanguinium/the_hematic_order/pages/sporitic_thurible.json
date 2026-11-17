@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 37,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Sporitic Thurible",
+  "subtitle": "A relic of the Apotheos",
+  "text": "The Thurible is carried in the offhand and burns one spore of one Temper. It is grown for an Apotheos: only an Apotheos can light it or keep it burning, and it answers no one else. Lit, it costs blood every second, more the harder it swings. Its smoke strengthens nearby Harbingers in the spore's Temper and sickens monsters around them. The floor will not raise it for anyone else. At Degree 8 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Lesser Working floor or larger, seat a Spore Sac in the Focus and light a Chain and a Brown Mushroom in the braziers. Feed the frame 1,000 mL and the floor takes it.",
+  "icon": "hemomancy:sporitic_thurible"
+}

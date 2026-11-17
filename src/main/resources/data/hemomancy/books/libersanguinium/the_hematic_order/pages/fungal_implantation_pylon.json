@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 28,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Fungal Implantation Pylon",
+  "subtitle": "One scar, set in the flesh",
+  "text": "The Pylon installs, replaces or removes one cultivated fungal scar. It gives no extra slot. At Degree 4 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Lesser Working floor or larger, seat a Hyphal Substrate in the Focus and light Neurotic Spores and Bone Meal in the braziers. Feed the frame 1,200 mL and the floor takes it.",
+  "icon": "hemomancy:fungal_implantation_pylon"
+}

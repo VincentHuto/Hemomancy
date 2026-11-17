@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "minecraft:rotten_flesh"
+  },
+  "sculpting": "hemomancy:pyretic_forge",
+  "blood_cost": 25,
+  "result": {
+    "id": "minecraft:leather",
+    "count": 1
+  }
+}

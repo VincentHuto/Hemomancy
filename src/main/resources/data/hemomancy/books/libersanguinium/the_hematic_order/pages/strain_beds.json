@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 22,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Strain Beds",
+  "subtitle": "Spores, planted",
+  "text": "A spore set on the right ground roots as a strain. The flesh-feeding strains, Vivacious, Fervent and Ruinous, root only in Ravenous Heartwood; the Brined strains, Neurotic, Frigid and Ferric, only in Salt-Stained Timber; Incandescent and Umbral in podzol or mycelium. A strain needs no light, but it does not stir on dry wood and bone meal will not wake it. A drip from a scab spike above lets it creep along; a planting basin beside its wood, or a lit feeding run beside it, lets it grow at its own pace. Cut ripe, it gives back its spore and often a second, and a spore still fruits its enzyme under the Lantern's bell. Salt-Stained Timber is worked from eight logs and a drowned voyager's log: the salt in its pages still carries a culture. After that, one timber and a strip of dried kelp seed four more logs. Glowroot, from a carrot dusted with glowstone, and emberpod, from nether wart and blaze powder, are crops for fed ground, a planting basin or the cloche. Each is its own seed and dissolves into blood as a weak catalyst, Lux and Flammeus. Ordinary crops ripened on over-fed ground, a fresh basin's or a feeding run's, now and then give up a Tainted Harvest with your blood in it: food to you, sickness to anyone else, and feed for a gouge run. A drip never taints. A drop that strikes bare scab or stone now and then raises a spike from the floor, which grows toward the one above it but always stops short of it.",
+  "icon": "hemomancy:vivacious_spores"
+}

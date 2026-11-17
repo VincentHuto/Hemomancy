@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "minecraft:magma_block"
+  },
+  "sculpting": "hemomancy:glacial_grasp",
+  "blood_cost": 80,
+  "result": {
+    "id": "minecraft:obsidian",
+    "count": 1
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "HSH",
+    "VJV",
+    "HFH"
+  ],
+  "key": {
+    "H": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "V": {
+      "item": "hemomancy:vivianite_glass"
+    },
+    "J": {
+      "item": "hemomancy:specimen_jar"
+    },
+    "S": {
+      "item": "hemomancy:sinew_cord"
+    },
+    "F": {
+      "item": "hemomancy:sanguine_formation"
+    }
+  },
+  "result": {
+    "id": "hemomancy:specimen_vat",
+    "count": 1
+  }
+}

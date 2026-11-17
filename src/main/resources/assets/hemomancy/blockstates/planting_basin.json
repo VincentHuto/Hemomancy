@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "fed=false": {
+      "model": "hemomancy:block/planting_basin"
+    },
+    "fed=true": {
+      "model": "hemomancy:block/planting_basin_fed"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "temper": "flammeus",
+  "catalysts": [
+    {
+      "item": "hemomancy:fervent_enzyme",
+      "worth": 10
+    },
+    {
+      "item": "hemomancy:fervent_spores",
+      "worth": 5
+    },
+    {
+      "item": "minecraft:blaze_powder",
+      "worth": 3
+    },
+    {
+      "item": "minecraft:coal",
+      "worth": 1
+    },
+    {
+      "item": "minecraft:charcoal",
+      "worth": 1
+    },
+    {
+      "item": "hemomancy:emberpod",
+      "worth": 2
+    }
+  ]
+}

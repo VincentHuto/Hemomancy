@@ -1,0 +1,17 @@
+{
+  "temper": "ferric",
+  "catalysts": [
+    {
+      "item": "hemomancy:ferric_enzyme",
+      "worth": 10
+    },
+    {
+      "item": "hemomancy:ferric_spores",
+      "worth": 5
+    },
+    {
+      "item": "hemomancy:hematic_iron_scrap",
+      "worth": 3
+    }
+  ]
+}

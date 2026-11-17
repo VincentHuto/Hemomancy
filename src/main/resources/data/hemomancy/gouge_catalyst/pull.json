@@ -1,0 +1,15 @@
+{
+  "function": "pull",
+  "temper": "hemomancy:ferric",
+  "ticks_per_worth": 1200,
+  "items": [
+    {
+      "item": "minecraft:iron_ingot",
+      "ticks": 6000
+    },
+    {
+      "item": "minecraft:iron_nugget",
+      "ticks": 700
+    }
+  ]
+}

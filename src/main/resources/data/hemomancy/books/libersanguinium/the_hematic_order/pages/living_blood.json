@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 14,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Living Blood",
+  "subtitle": "Why a tank does not keep",
+  "text": "Blood is fuel only while something alive holds it: your body, a worn gourd, a Gourdvine Tap. Poured into a machine or bottled in a flask it stays fresh for about five minutes after it was last fed, then begins to set, a tenth of what is left each minute, and an hour on there is nothing fresh in it at all. Clot is not fuel and it takes room in the tank. A top-up does not make old blood new: the tank's age blends by volume, so a little fresh blood barely changes it. Blood Projection can wake clot. While a tank holds clot, half of what you project in goes to the clot and is used up, and each measure spent wakes two of clot back to fresh blood; the rest goes in fresh, and a tank with no room left spends the whole pour on its clot. Flasks, gourds, gutters and Thralls only add fresh blood where there is room, and a Thrall's blood is as old as the tank it came from. Or draw on the tank with Blood Absorption: the fresh blood comes first, and once it is gone the clot comes away as Sanguine Formations, though a neglected tank gives far fewer than a Sanguine Condenser, which sets blood on purpose. From the third Degree a Hematic Suture lets a machine drink from you while you stand within sixteen blocks. Its buffer clots like any tank, but the suture wakes the clot from your blood at four measures of clot for each one drawn; walk away or fall and it stalls and clots. A station held by an upgrade rite keeps its blood exactly as old as it went in. Only you and your bloodline may draw from the machines you place. The Vascular Status Gauge, used on a machine, reads its tank, and a sutured machine's own blood gauge shows a broken stitch while it stalls: hold the cursor over the gauge and it says why.",
+  "icon": "hemomancy:sanguine_formation"
+}

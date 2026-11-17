@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 29,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Mason's Effigy",
+  "subtitle": "Where a loadout is prepared",
+  "text": "The Effigy prepares a scar loadout. Choose up to seven of the scars you know, set Runic Motif Paper on it, and charge the motif with Blood Projection, 500 mL for each scar chosen. It gives back a prepared Scar Pattern, which you commit at an Iron Brazier. At Degree 4 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Runic Motif Paper in the Focus and light two flowers in the braziers. Feed the frame 150 mL and the floor takes it.",
+  "icon": "hemomancy:mason_effigy"
+}

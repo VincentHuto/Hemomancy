@@ -1,0 +1,213 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/humoral_barometer",
+    "particle": "hemomancy:block/blood_wood_planks"
+  },
+  "elements": [
+    {
+      "name": "needle",
+      "from": [
+        7.875,
+        5.5,
+        13.75
+      ],
+      "to": [
+        8.125,
+        8.5,
+        13.875
+      ],
+      "rotation": {
+        "angle": -45,
+        "axis": "z",
+        "origin": [
+          8,
+          5.5,
+          13.8125
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9.5,
+            0.0,
+            9.625,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            9.625,
+            0.0,
+            9.75,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.75,
+            0.0,
+            9.875,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.5,
+            11.5,
+            11.625,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            11.625,
+            11.5,
+            11.75,
+            12.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "needle_tail",
+      "from": [
+        7.75,
+        4.25,
+        13.75
+      ],
+      "to": [
+        8.25,
+        5.5,
+        13.875
+      ],
+      "rotation": {
+        "angle": -45,
+        "axis": "z",
+        "origin": [
+          8,
+          5.5,
+          13.8125
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            3.25,
+            10.5,
+            3.375,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.375,
+            10.5,
+            3.5,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.5,
+            10.5,
+            3.625,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.75,
+            11.5,
+            11.875,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            11.875,
+            11.5,
+            12.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "column_blood",
+      "from": [
+        7.75,
+        10,
+        14.125
+      ],
+      "to": [
+        8.25,
+        13.5,
+        14.375
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            14.375,
+            0.0,
+            14.5,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            14.5,
+            0.0,
+            14.625,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            14.625,
+            0.0,
+            14.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.0,
+            11.5,
+            12.125,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.125,
+            11.5,
+            12.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

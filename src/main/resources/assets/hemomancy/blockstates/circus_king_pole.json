@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "section=foot": {
+      "model": "hemomancy:block/circus_king_pole_foot"
+    },
+    "section=shaft": {
+      "model": "hemomancy:block/circus_king_pole_shaft"
+    },
+    "section=collar": {
+      "model": "hemomancy:block/circus_king_pole_collar"
+    },
+    "section=finial": {
+      "model": "hemomancy:block/circus_king_pole_finial"
+    }
+  }
+}

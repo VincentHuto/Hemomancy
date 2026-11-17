@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:sand",
+  "blood_cost": 40,
+  "result": "minecraft:glass",
+  "sculpting": "hemomancy:pyretic_forge",
+  "in_place": true
+}

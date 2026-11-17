@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "O": {
+      "item": "minecraft:bone"
+    },
+    "S": {
+      "item": "hemomancy:sinew_cord"
+    }
+  },
+  "pattern": [
+    "ISI",
+    "O O",
+    "O O"
+  ],
+  "result": {
+    "count": 1,
+    "id": "hemomancy:hematic_cleats"
+  }
+}

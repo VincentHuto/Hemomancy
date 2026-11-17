@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "SDS",
+    "SIS"
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:polished_venous_stone"
+    },
+    "D": {
+      "item": "minecraft:dirt"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "result": {
+    "id": "hemomancy:planting_basin"
+  }
+}

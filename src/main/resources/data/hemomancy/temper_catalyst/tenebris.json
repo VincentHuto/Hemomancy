@@ -1,0 +1,17 @@
+{
+  "temper": "tenebris",
+  "catalysts": [
+    {
+      "item": "hemomancy:umbral_enzyme",
+      "worth": 10
+    },
+    {
+      "item": "hemomancy:umbral_spores",
+      "worth": 5
+    },
+    {
+      "item": "minecraft:ink_sac",
+      "worth": 3
+    }
+  ]
+}

@@ -1,0 +1,612 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "translucent",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/specimen_vat_glass",
+  "glass": "hemomancy:block/specimen_vat_glass",
+  "lip": "hemomancy:block/vivianite_glass"
+ },
+ "elements": [
+  {
+   "name": "glass",
+   "from": [
+    -13.65,
+    0.0,
+    -0.9677
+   ],
+   "to": [
+    -13.3,
+    27.4,
+    16.9677
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "glass",
+   "from": [
+    -0.9677,
+    0.0,
+    -13.65
+   ],
+   "to": [
+    16.9677,
+    27.4,
+    -13.3
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "glass",
+   "from": [
+    29.3,
+    0.0,
+    -0.9677
+   ],
+   "to": [
+    29.65,
+    27.4,
+    16.9677
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "glass",
+   "from": [
+    -0.9677,
+    0.0,
+    29.3
+   ],
+   "to": [
+    16.9677,
+    27.4,
+    29.65
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "glass",
+   "from": [
+    -13.65,
+    0.0,
+    -0.9677
+   ],
+   "to": [
+    -13.3,
+    27.4,
+    16.9677
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0.0,
+     8.0
+    ]
+   },
+   "faces": {
+    "east": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "glass",
+   "from": [
+    -0.9677,
+    0.0,
+    -13.65
+   ],
+   "to": [
+    16.9677,
+    27.4,
+    -13.3
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0.0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "glass",
+   "from": [
+    29.3,
+    0.0,
+    -0.9677
+   ],
+   "to": [
+    29.65,
+    27.4,
+    16.9677
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0.0,
+     8.0
+    ]
+   },
+   "faces": {
+    "east": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "glass",
+   "from": [
+    -0.9677,
+    0.0,
+    29.3
+   ],
+   "to": [
+    16.9677,
+    27.4,
+    29.65
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0.0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "lip",
+   "from": [
+    -13.85,
+    26.4,
+    -1.0506
+   ],
+   "to": [
+    -13.2,
+    27.4,
+    17.0506
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    },
+    "west": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    }
+   }
+  },
+  {
+   "name": "lip",
+   "from": [
+    -1.0506,
+    26.4,
+    -13.85
+   ],
+   "to": [
+    17.0506,
+    27.4,
+    -13.2
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    },
+    "south": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    }
+   }
+  },
+  {
+   "name": "lip",
+   "from": [
+    29.2,
+    26.4,
+    -1.0506
+   ],
+   "to": [
+    29.85,
+    27.4,
+    17.0506
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    },
+    "west": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    }
+   }
+  },
+  {
+   "name": "lip",
+   "from": [
+    -1.0506,
+    26.4,
+    29.2
+   ],
+   "to": [
+    17.0506,
+    27.4,
+    29.85
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    },
+    "south": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    }
+   }
+  },
+  {
+   "name": "lip",
+   "from": [
+    -13.85,
+    26.4,
+    -1.0506
+   ],
+   "to": [
+    -13.2,
+    27.4,
+    17.0506
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     26.4,
+     8.0
+    ]
+   },
+   "faces": {
+    "east": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    },
+    "west": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    }
+   }
+  },
+  {
+   "name": "lip",
+   "from": [
+    -1.0506,
+    26.4,
+    -13.85
+   ],
+   "to": [
+    17.0506,
+    27.4,
+    -13.2
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     26.4,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    },
+    "south": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    }
+   }
+  },
+  {
+   "name": "lip",
+   "from": [
+    29.2,
+    26.4,
+    -1.0506
+   ],
+   "to": [
+    29.85,
+    27.4,
+    17.0506
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     26.4,
+     8.0
+    ]
+   },
+   "faces": {
+    "east": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    },
+    "west": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    }
+   }
+  },
+  {
+   "name": "lip",
+   "from": [
+    -1.0506,
+    26.4,
+    29.2
+   ],
+   "to": [
+    17.0506,
+    27.4,
+    29.85
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     26.4,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    },
+    "south": {
+     "uv": [
+      0,
+      4.6,
+      16,
+      5.6
+     ],
+     "texture": "#lip"
+    }
+   }
+  }
+ ]
+}

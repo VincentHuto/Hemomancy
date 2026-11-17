@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:cobbled_deepslate",
+  "blood_cost": 50,
+  "result": "minecraft:deepslate",
+  "sculpting": "hemomancy:pyretic_forge",
+  "in_place": true
+}

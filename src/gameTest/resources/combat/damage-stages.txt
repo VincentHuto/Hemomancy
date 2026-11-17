@@ -1,0 +1,22 @@
+none | melee | armed - | landed=true taken=10.00 blood=50.00 strain=5.00
+none | projectile | armed - | landed=true taken=10.00 blood=50.00 strain=5.00
+none | magic | armed - | landed=true taken=10.00 blood=50.00 strain=5.00
+none | player | armed - | landed=true taken=10.00 blood=50.00 strain=5.00
+none | hemomancy_mob | armed - | landed=true taken=10.00 blood=50.00 strain=5.00
+Sheolic stance | melee | armed bastion=true | landed=true taken=0.00 blood=0.00 strain=0.00
+Silent Archon negation | melee | armed set=true | landed=false taken=0.00 blood=0.00 strain=0.00
+avatar | melee | armed avatar=summon_avatar | landed=true taken=7.50 blood=37.50 strain=3.75
+sabatons | projectile | armed feet=sabatons | landed=true taken=8.50 blood=42.50 strain=4.25
+Chitinite | projectile | armed set=chitinite | landed=true taken=7.50 blood=37.50 strain=3.75
+Iron Will | melee | armed level=3 blood=400/5000 | landed=true taken=7.00 blood=35.00 strain=3.50
+Still Waters | magic | armed zone r=3 | landed=true taken=7.00 blood=35.00 strain=3.50
+memory tool effigy | effigy | armed effigy owner=victim | landed=true taken=0.00 blood=0.00 strain=0.00
+Second Pulse | melee | armed enabled=true health=8 | landed=true taken=6.50 blood=44.50 strain=4.00
+Sanguine Fists | player | armed enabled=true swing posted | landed=true taken=12.00 blood=60.00 strain=6.00
+Penumbral ambush | player | armed channeling=true | landed=true taken=15.00 blood=75.00 strain=7.50
+Silver Ward (Unstained milestone) | hemomancy_mob | armed silver_ward I | landed=true taken=8.23 blood=41.14 strain=4.11
+avatar + sabatons | projectile | armed avatar=summon_avatar feet=sabatons | landed=true taken=6.38 blood=31.88 strain=3.19
+Iron Will + avatar | melee | armed level=3 blood=400/5000 avatar=summon_avatar | landed=true taken=5.25 blood=26.25 strain=2.63
+zeroed at LOW | melee | armed listener | landed=true taken=0.00 blood=0.00 strain=0.00
+none | player on hemomancy_mob | armed - | landed=true taken=9.68
+Absolved bonus | player on hemomancy_mob | armed purity=80 | landed=true taken=11.68

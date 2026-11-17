@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:memory_blood_binding"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.bound_and_branded.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.bound_and_branded.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/kept",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

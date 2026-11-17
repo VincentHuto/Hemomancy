@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 38,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Dried Gourd",
+  "subtitle": "An empty vessel",
+  "text": "Lay gourds and Venous Stone in a checker five blocks wide, five deep and three high. Hold Gourd Seeds in your offhand and hold Blood Projection on a gourd until 150 mL has gone in, and the structure dries into a Dried Gourd. It needs no floor and no Degree. The Rite of the Pallid Vessel wakes it into a blood gourd (see Blood Gourds), and the Scarlet Vanity takes one as an offering.",
+  "icon": "hemomancy:dried_gourd"
+}

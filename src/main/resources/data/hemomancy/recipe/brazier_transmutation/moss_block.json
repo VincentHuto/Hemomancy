@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:brazier_transmutation",
+  "input": {
+    "item": "minecraft:stone"
+  },
+  "sculpting": "hemomancy:vital_effusion",
+  "blood_cost": 30,
+  "result": {
+    "id": "minecraft:moss_block",
+    "count": 1
+  }
+}

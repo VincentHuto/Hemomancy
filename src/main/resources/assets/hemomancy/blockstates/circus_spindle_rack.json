@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/circus_spindle_rack"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/circus_spindle_rack",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/circus_spindle_rack",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/circus_spindle_rack",
+      "y": 270
+    }
+  }
+}

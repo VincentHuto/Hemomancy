@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Armature Consecration",
+  "subtitle": "The fifth Degree",
+  "text": "Complete an armour upgrade at an Armature yourself; fitting cleats does not count. At the fifth Degree, with active blood, the Artificer offers one free Armature Consecration Kit. Accepting it is optional: a crafted kit works once your own practice is earned, and no kit replaces it. On a Greater working floor, seat the base Armature two blocks behind the Focus, idle and empty, and plant your Living Staff. Six lit braziers take the kit, an Armor Stand, a Chain, a Sinew Cord, Hemolytic Plating and a Sanguine Formation. Fill the four anchors, seal the daemon, close two 50 mL circuits, then finish the procession. The consecrated Armature takes the armour recipes of the fifth and sixth Degrees, Blood Lust among them. Floor damage pauses the rite; cancellation returns offerings and Staff, not spent blood.",
+  "icon": "hemomancy:vicars_consecration_kit"
+}

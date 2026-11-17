@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 17,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Tendon Line",
+  "subtitle": "A line of living sinew",
+  "text": "The Tendon Line is a memory with nothing to cast. It works only through the two verbs, and it is the plainest showing of what that means. Sculpting, Projection: hold the verb on a solid face and the line is thrown and rooted there, as far as three times your reach. Throw it again to move it, or sneak and use the rooted block to let it go. Thrown into a creature that is passive or worn down to a third of its health, the line roots in its flesh and leads it home behind you. Sculpting, Absorption: hold the verb anywhere and you are hauled along the line toward its root; held on a creature you lead, it is reeled in to you. You do not fall while it pulls. The line snaps if you stray a third further than it can be thrown, if its block can no longer hold it, or when you arrive. Sinew Cord, the craft offering, is made the way the old line was.",
+  "icon": "hemomancy:memory_tendon_line"
+}

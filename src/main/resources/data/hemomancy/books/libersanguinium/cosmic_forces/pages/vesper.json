@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 10,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Vesper",
+  "subtitle": "The Crowned Refusal",
+  "text": "Vesper is the Archon who would not kneel to the hive. The second cut of the Living Sickle opens the cutter's own Bloom as his wound, and the one who cut it meets him alone. As the Crowned Refusal he rides his mount. It burrows and erupts beneath you, he calls up to three puppets from his roster, and three wounds open in him as he weakens. Hold Blood Absorption on an open wound to drain it before it scabs. A puppet you kill is struck from him for good; each one left standing lends the Evening Star an attack. The Evening Star is the same refusal burned down colder, fought in three acts. Beaten, he leaves the Memory of Vesper. Burn it in an Iron Brazier and your Staff learns his sickle, and whoever takes it in is Silentium. He is not redeemed by refusing the hive. He is what silence costs when it takes up arms.",
+  "icon": "hemomancy:memory_of_vesper"
+}

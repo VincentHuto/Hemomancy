@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "hemomancy:block/salt_stained_timber_top",
+    "side": "hemomancy:block/salt_stained_timber"
+  }
+}

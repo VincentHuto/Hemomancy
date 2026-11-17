@@ -1,0 +1,17 @@
+{
+  "temper": "ductilis",
+  "catalysts": [
+    {
+      "item": "hemomancy:neurotic_enzyme",
+      "worth": 10
+    },
+    {
+      "item": "hemomancy:neurotic_spores",
+      "worth": 5
+    },
+    {
+      "item": "minecraft:spider_eye",
+      "worth": 3
+    }
+  ]
+}

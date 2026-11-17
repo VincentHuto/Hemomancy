@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 9,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Phlegethosoma",
+  "subtitle": "The Arterial Fluke",
+  "text": "Nothing in the Phlegethontic Basin meets the Phlegethosoma by chance. It is called. Hold Blood Projection on a broad pool of the basin's ichor, at least seven blocks across, and keep it there until 500 mL has gone in, about fourteen seconds of pouring. The ichor thins what you give it, half in forty-five seconds, so a short pause costs little and a long one costs the count. Anyone with awake blood can call it. It rises at the pour and turns on whoever fed it. Only one lives in a basin at a time, and you can have only one out at a time. If it is left with nothing to fight for a minute, it dives and is gone, and it leaves nothing behind. Killed, it gives Sanguine Formations and Barbed Splinters. Nothing answers in a peaceful world.",
+  "icon": "hemomancy:barbed_splinter"
+}

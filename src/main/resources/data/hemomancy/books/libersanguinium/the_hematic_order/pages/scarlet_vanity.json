@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 24,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Scarlet Vanity",
+  "subtitle": "Where the blood is dressed",
+  "text": "The Vanity holds what a Harbinger wears beyond armour: the charm, the gourd, the Morphling jar, the Staff's fitting and the rest of the blood's own equipment. Its mirror shows the people standing in front of it, and nothing else. At Degree 3 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Minor Working floor or larger, seat a Sanguine Formation in the Focus and light Dried Gourd and Leather in the braziers. Feed the frame 300 mL and the floor takes it.",
+  "icon": "hemomancy:scarlet_vanity"
+}

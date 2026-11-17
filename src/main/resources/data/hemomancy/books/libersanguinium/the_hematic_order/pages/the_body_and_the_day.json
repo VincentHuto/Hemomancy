@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 19,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Body and the Day",
+  "subtitle": "Food, sleep and blood",
+  "text": "Blood comes back by itself, about a millilitre a second, but the body sets the pace. Hungry, with less than three shanks left, it makes half as much; starving, none at all. Full and well fed, with the food bar topped and a hearty meal still in you, it makes half as much again. Meat is blood. Eating it gives some straight back to an awake Harbinger: a few millilitres for each point of nutrition, more cooked than raw, fish a little less than meat: forty-eight for a steak. The Order's own meats give more, and carry a little temper with them: venison a touch of Animus, herring of Ductilis, gourd stew of Animus. Tainted meat, off an animal you dosed yourself, gives the most of any meat for each point it fills. A full night's sleep leaves you Well Rested for five minutes, and while it lasts your blood comes back at twice the pace on top of what food gives. It is not a refill, so the bed is not a potion. Casting never makes you hungry; one thing pays for the work, and the body only decides how fast it returns.",
+  "icon": "minecraft:cooked_beef"
+}

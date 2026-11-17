@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 30,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Mending, Fire and the Dead",
+  "subtitle": "Mending, Flame, Furnace Veins, Carrion",
+  "text": "Sanguine Mending still repairs the tool in your hand on R. Sculpting, Projection: hold it on a dropped tool or piece of armour and blood works back into it, a little durability each pulse. Held on an injured iron or snow golem it heals it, unless the golem is fighting you. Held on a worn anvil for eight pulses it beats it back a stage. Crimson Flame Conjuration still sets crimson flame on R. Sculpting, Projection: held near unlit campfires and candles it kindles them, two a pulse, nearest first, the mirror of Blood Eclipse's snuff. Held on TNT it lights it, and the blast is yours. It leaves Iron Braziers and furnaces alone. Furnace Veins still raises its heat round you on R. Sculpting, Projection: held on a furnace, smoker or blast furnace, your blood burns as its fuel, and as the fuel of every furnace beside it with something to cook, six millilitres a pulse for each furnace fed. Nothing is stored. Let go and the fires die within a second. Carrion Communion still drains the afflicted on R. Sculpting, Absorption: held toward rotten flesh, bones, skulls or a bone block, it draws Mortem Temper and a little health out of them. The dead hold no living blood, so it never gives blood back.",
+  "icon": "hemomancy:memory_furnace_veins"
+}

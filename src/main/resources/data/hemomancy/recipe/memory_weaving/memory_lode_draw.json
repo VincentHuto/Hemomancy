@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:raw_iron"
+    }
+  ],
+  "enzymes": {
+    "animus": 0,
+    "flammeus": 0,
+    "ductilis": 0,
+    "lux": 1,
+    "mortem": 0,
+    "congeatio": 0,
+    "ferric": 2,
+    "tenebris": 0
+  },
+  "blood": 150,
+  "result": "hemomancy:memory_lode_draw",
+  "count": 1
+}

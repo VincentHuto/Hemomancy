@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 23,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Blood Gourds",
+  "subtitle": "Vessels raised by rite",
+  "text": "At Degree 3 the Rite of the Pallid Vessel wakes a Dried Gourd on a Lesser Working floor into a White Blood Gourd that holds its maker's blood. At Degree 4 the Rite of the Crimson Vessel steeps the white gourd with an amethyst shard on a Greater Working floor until it flushes red. At Degree 5 the Rite of the Ashen Vessel takes the red gourd and a ghast tear through fire, and the black gourd that comes out holds the most blood of the three.",
+  "icon": "hemomancy:blood_gourd_white"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 15,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Lignum Mortis",
+  "subtitle": "Rot that knows where the wood runs",
+  "text": "Lignum Mortis threads rot through wood and fungus that grow joined together. Its canopy form runs on through the leaves; its worked form takes planks and beams instead of living trunks. The rot stops at a reach set by your mastery and by how much Mortem and Animus your blood carries, and never takes more than a hundred and twenty-eight blocks. Ordinary logs it fells sometimes leave infested wood behind. Sculpting, Projection: hold the verb on a log or a mushroom stem and the rot crawls from where it strikes while blood flows, about sixteen millilitres a second. Let go and everything it reached falls. Once it has reached all it can, it falls at once.",
+  "icon": "hemomancy:memory_lignum_mortis"
+}

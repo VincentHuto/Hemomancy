@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 12,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Temper",
+  "subtitle": "What the blood is carrying now",
+  "text": "Temperament is what you have done; it moves slowly and is never spent. Temper is what you carry of each school right now, and every casting burns a little of its own school: a Humilis cast one, a Mediocritas two, the higher ranks three to five, a held Sculpting half a measure each pulse. You can carry twenty of any school and more of your own, up to eighty. Draw from a living creature and its schools come with the blood: a creeper gives Ductilis and Flammeus, a parrot Animus and Lux. A bloodless thing, a blaze or a skeleton, gives none to the hand. A faltering Will you take whole by Absorption leaves its school with you: ten for each tier it reached. When the school runs short, a catalyst in your off hand or pack dissolves into the work instead: an enzyme is worth ten, its spores five, the old reagent three (blaze powder for Flammeus; bone, glowstone, ink, packed ice, rotten flesh, spider eye, hematic iron scrap for the rest), coal or charcoal one. With neither, the casting still goes, but dry: it costs more blood and lands softer. A carved scar of the school slows the burn and slowly refills a little. Death takes half. The phials under your blood bar show what you hold.",
+  "icon": "hemomancy:vivacious_enzyme"
+}

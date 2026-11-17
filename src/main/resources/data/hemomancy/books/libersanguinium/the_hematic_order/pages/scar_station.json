@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 30,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Cerebral Scarring Station",
+  "subtitle": "Where scars are cut",
+  "text": "The Station cuts scars from patterns and blanks. At Degree 4 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Greater Working floor or larger, seat a Sanguine Formation in the Focus and light Flint and an Iron Ingot in the braziers. Feed the frame 100 mL and the floor takes it.",
+  "icon": "hemomancy:scar_station"
+}

@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 25,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Mycelial Lantern",
+  "subtitle": "A cloche that fruits enzymes",
+  "text": "The Lantern is a blood-fed cloche. Seat a spore culture, which it keeps, and feed it blood from flasks or gourds. Each enzyme takes 600 mL over two minutes. When blood or room runs out the work waits, and nothing is lost. At Degree 3 it is raised as a Working craft. Build its frame beside the Cardinal Focus of a Lesser Working floor or larger, seat a Ferric Binder in the Focus and light a Brown Mushroom and Glowstone Dust in the braziers. Feed the frame 750 mL and the floor takes it.",
+  "icon": "hemomancy:mycelial_lantern"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 31,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Ice and Iron Walls",
+  "subtitle": "Glacial Grasp and the Ramparts",
+  "text": "Glacial Grasp still freezes an aimed path on R. Sculpting, Projection: hold it on open water and the stream freezes it into Frozen Cruor, a few blocks a pulse, so a held sweep walks a path across a pond. The ice melts back to water ten seconds after you leave it. On the ground the plant strand opens as before. Sculpting, Absorption: hold it on Frozen Cruor or ice and it thaws back to water. Glacial Rampart still raises its aimed wall or crouched bastion on R. Sculpting, Projection: hold and sweep along the ground and an ice wall three high rises wherever the stream passes, joined up even when you sweep fast. It never closes over anyone standing in its path, you included. Held on the wall itself, the stream raises nothing new and keeps that stretch standing. Ferric Rampart still raises its five-wide iron wall on R. Sculpting, Projection: hold and sweep and an iron wall rises one block at a time along your path. Each block stops hostile shots and lets yours through, as the cast wall does. Twelve blocks of it stand at most; let some fall before you draw more.",
+  "icon": "hemomancy:memory_glacial_rampart"
+}

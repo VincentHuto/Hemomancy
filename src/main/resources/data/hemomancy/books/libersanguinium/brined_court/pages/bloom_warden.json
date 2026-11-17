@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Bloom Warden",
+  "subtitle": "The Garden's answer",
+  "text": "Nobody fights Marimo. A wrong against the Giving Light is answered by the Bloom Warden, an arbor elder of the middle tiers, more moss than person but not yet still. It wakes when someone tears up what was planted for everyone, takes from the undercroft, raises a hand against someone who lives there, or takes a second gift. It fights through the room, sowing gold blooms that drink the light coming down the shaft and heal it. It never strikes someone who holds out food. Food held out is amends: the fight ends and the Garden takes you back as a guest. Falling to it is death. Beaten, it does not die. It kneels back into its tier and the anchored name the wrong aloud. Nothing is won by beating it, and the wrong is remembered past death until amends are made.",
+  "icon": "hemomancy:sunburst_bloom"
+}

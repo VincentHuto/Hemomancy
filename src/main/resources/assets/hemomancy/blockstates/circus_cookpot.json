@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/circus_cookpot"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/circus_cookpot",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/circus_cookpot",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/circus_cookpot",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 4,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.1,0.2,0.25",
+  "title": "The Brined Court",
+  "subtitle": "Eight houses down the deep",
+  "icon": "hemomancy:sunburst_lamp",
+  "tabColor": "#1E3A44",
+  "rowLimit": 7
+}

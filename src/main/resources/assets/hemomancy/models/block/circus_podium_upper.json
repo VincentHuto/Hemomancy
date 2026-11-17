@@ -1,0 +1,309 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/circus_podium",
+    "particle": "hemomancy:block/circus_podium"
+  },
+  "elements": [
+    {
+      "name": "post",
+      "from": [
+        6,
+        0,
+        7
+      ],
+      "to": [
+        10,
+        2,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            15.5,
+            11.0,
+            16.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            0.0,
+            12.0,
+            0.5,
+            13.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.5,
+            12.0,
+            1.0,
+            13.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.0,
+            12.0,
+            1.5,
+            13.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.75,
+            6.0,
+            9.25,
+            8.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "desk",
+      "from": [
+        2.5,
+        2,
+        3
+      ],
+      "to": [
+        13.5,
+        3.5,
+        13
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          2.75,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            5.5,
+            11.0,
+            6.875,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            6.875,
+            11.0,
+            8.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            11.0,
+            11.0,
+            12.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.25,
+            11.0,
+            13.5,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            6.0,
+            1.375,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            1.375,
+            6.0,
+            2.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "page",
+      "from": [
+        4,
+        3.5,
+        4.5
+      ],
+      "to": [
+        12,
+        3.75,
+        11.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          2.75,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4.25,
+            12.0,
+            5.25,
+            12.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.25,
+            12.0,
+            6.25,
+            12.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            6.25,
+            12.0,
+            7.125,
+            12.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            7.125,
+            12.0,
+            8.0,
+            12.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            5.25,
+            6.0,
+            6.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            6.25,
+            6.0,
+            7.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "ledge",
+      "from": [
+        2.5,
+        1,
+        1.5
+      ],
+      "to": [
+        13.5,
+        2,
+        3
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          2.75,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            1.5,
+            12.0,
+            2.875,
+            12.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.875,
+            12.0,
+            4.25,
+            12.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            11.5,
+            12.0,
+            11.75,
+            12.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.75,
+            12.0,
+            12.0,
+            12.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.25,
+            11.0,
+            9.625,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.625,
+            11.0,
+            11.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

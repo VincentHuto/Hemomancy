@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 29,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Venous Cling",
+  "subtitle": "Roots into stone",
+  "text": "Venous Cling is an Animus memory with nothing to cast. Sculpting, Projection: hold the verb on a wall or the underside of a ceiling you are touching, and veins run from your hands and feet into the face. You stop falling. Walk to crawl: on a wall, toward it climbs and away from it descends, sideways stays sideways; under a ceiling you shuffle along it. Your free hand can still cast. It costs 6 mL to root and then 4 mL a second on a wall, 6 mL under a ceiling. It lets go when you jump, when you crawl down onto the ground, when the stone gives way, or when your blood runs short. Hematic Cleats are set into your boots at a Hematic Armature: cleats in a bowl, hematic iron boots or a later pair on. Fitted and on, they halve the upkeep and carry you across a wall near walking pace; the inner wheel turns them off. They do nothing without the roots. A Saint's ward will not take them.",
+  "icon": "hemomancy:memory_venous_cling"
+}

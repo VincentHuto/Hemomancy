@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 22,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Sculptings of the Ground",
+  "subtitle": "Dowsing, Beacon, Eclipse, Magnetism",
+  "text": "Vascular Dowsing still reads the veins of ore on R. Sculpting, Projection: sweep the held verb along a floor or wall and it cuts a gouge into each face it passes, the start of a route you can light and find your way back along. Hematic Beacon still raises its rally zone on R. Sculpting, Projection: hold it on a surface and thin lines of light spread across it from where you aim, a few cells a pulse, forking now and then; they give real light and dim out over four minutes. A cave lit this way needs no torches, only blood and Lux. Blood Eclipse still obscures on R. Sculpting, Absorption: held toward a candle, a campfire, a Lux trace or a lit gouge run, it draws their light in and puts them out, and the light it takes hangs there as a field of dark for a while: the more light, the longer and wider. Creatures inside lose their sight, and anyone standing in it is hidden from a creature more than four blocks off. Light it cannot switch off, a torch or glowstone, is beyond it. Sanguine Magnetism still raises its iron pillar on R. Sculpting, Absorption: held toward items lying on the ground, it draws every dropped item within reach to you, faster over wet blood and iron-fed gouges, even when your body is full.",
+  "icon": "hemomancy:memory_sanguine_magnetism"
+}

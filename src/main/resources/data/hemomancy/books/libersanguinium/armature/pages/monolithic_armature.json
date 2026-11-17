@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Monolithic Armature",
+  "subtitle": "The seventh Degree",
+  "text": "Complete an armour upgrade at a consecrated Armature yourself. At the seventh Degree, with active blood, the Sanguine Monolith gives one free Monolithic Cornerstone; you may use a crafted one without accepting it or the earlier kit. Use the same floor and layout with the consecrated Armature. Six lit braziers take the Cornerstone, Netherite Scrap, a Monolith Fragment, Monolith Imbued Cloth, a Barbed Splinter and Sanguine Quintessence. Fill the four inner anchors and seal the daemon; the outer four wake when the station projection begins. Close three 50 mL circuits, the last once the outer ring is fed. The Monolithic Armature takes the armour recipes of the seventh Degree and up: there Blood Lust splits into its lineages, and Silent Archon cloth is its own vow. Floor damage pauses the rite; cancellation returns offerings and Staff, not spent blood.",
+  "icon": "hemomancy:monolithic_cornerstone"
+}

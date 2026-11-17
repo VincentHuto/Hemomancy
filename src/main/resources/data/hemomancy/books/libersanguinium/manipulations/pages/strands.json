@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 23,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Strands",
+  "subtitle": "Held Projection as a weapon",
+  "text": "Some combat memories give Projection a strand. Hold the verb at open air, a creature or bare ground and blood stays out of the hand as a strand until you let go or your blood runs short. How you move it decides what it does. A lash is the exception. Click with one selected and it strikes once, straight ahead. Hold Projection and it gathers in your hand, stronger the longer you wait; flick your aim and it is thrown along that stroke, cracking on the first thing it meets and laying the school's state for a long while. Then it follows your hand, and your view turns only a little while it swings. It hurts only while it moves, a stroke tires after a quarter turn, and a lash left still runs back into the hand. Click while a lash is out to snap it: it cracks down your aim and comes back to it, for extra blood. A strand never takes blood a machine, a rite or a Will could take: aim one at a station and it fills as before. R still casts each of these memories the old way.",
+  "icon": "hemomancy:memory_searing_lash"
+}

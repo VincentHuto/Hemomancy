@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 20,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The World Answers",
+  "subtitle": "Blood left lying",
+  "text": "The ground keeps count of the blood you leave on it. Stains, chum and what pours out of the things you kill all add to a count for the land around them, about four chunks square, and the count fades by half every two days. Blood put to work does not count: a machine you fed, a rite you paid, a Condenser you filled. Take a stain back up with Absorption and its blood comes off the count. The count is felt. A Blood Moon comes most often at the full moon and never at the new, and much more often over land that has been bled on. Wills come where the work was messy. Wet stains in the dark, at night or under a roof, draw vampire bats down to drink them, and a strong pool of chum draws a hunter up after dark or where the count is already high: a Brined Votary in the reef and the pelagic seas, a Bog Revenant out of a swamp, the drowned anywhere else. Leave stains long enough on grass where the count is heavy and the grass keeps them, as stained sod, until the land quiets. A Humoral Barometer's needle stands at the count where it hangs, from still to seething. An Ossuary Clock's lunette goes half red when tonight's moon is likely to turn and crimson when it has, and the clock will tell you how many nights to the full moon. Suspended Vivianite hung in the land halves what is counted there and makes the count fade faster; three in one place is the most that helps.",
+  "icon": "hemomancy:humoral_barometer"
+}

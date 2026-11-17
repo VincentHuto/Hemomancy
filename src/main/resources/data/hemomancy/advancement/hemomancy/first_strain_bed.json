@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:vivacious_spores"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.first_strain_bed.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.first_strain_bed.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/degree_3_initiate",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}
