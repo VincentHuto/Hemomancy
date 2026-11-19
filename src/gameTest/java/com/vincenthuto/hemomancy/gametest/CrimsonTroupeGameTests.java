@@ -75,7 +75,14 @@ public final class CrimsonTroupeGameTests {
         try {
             helper.assertTrue(!PuppeteerTrialRiteController.canBegin(player, crossbar, "cinder_bellows", 0, false), "untaught ordeal accepted");
             DialogueOptionPacket.dispatch(player, "circus_school_teach", fire.getId());
-            helper.assertTrue(PuppeteerTrialRiteController.canBegin(player, crossbar, "cinder_bellows", 0, false), "taught ordeal refused");
+            // The ordeal itself runs on a stage in the Chamber of Will, which the GameTest world lacks: teaching must
+            // clear the curriculum's gate, and the stage is then the only thing left to refuse it.
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum.mayBeginOrdeal("cinder_bellows",
+                    HemoCapabilityAccess.getPlayerDegreeNumber(player),
+                    CircusApprenticeshipProgress.instructionSatisfied(player, "cinder_bellows"), false), "taught ordeal refused");
+            boolean stage = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.refusal(player) == null;
+            helper.assertTrue(PuppeteerTrialRiteController.canBegin(player, crossbar, "cinder_bellows", 0, false) == stage,
+                    "a taught ordeal is refused only for want of a stage");
             var hulk = PuppeteerSummonDefinitions.byName("gorebound_hulk").orElseThrow();
             HemoCapabilityAccess.getKnownSummons(player).learn(hulk);
             helper.assertTrue(CircusApprenticeshipProgress.instructionSatisfied(player, hulk.name())

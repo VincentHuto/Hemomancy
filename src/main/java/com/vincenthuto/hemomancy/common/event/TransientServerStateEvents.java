@@ -110,6 +110,18 @@ public final class TransientServerStateEvents {
 	}
 
 	private static void clearTransientState() {
+		com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealInterventionsDriver.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealHulkMoves.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.CinderBellowsOrdealMoves.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealHoundMoves.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.BeastTamerChoreography.Walk.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.ScarletMummerOrdealMoves.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.VultureOrdealMoves.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealMnemonistMoves.clearSessionState();
+		com.vincenthuto.hemomancy.common.encounter.ordeal.MarrowJugglerOrdealMoves.clearSessionState();
+		com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeSnowClearing.clearSessionState();
 		com.vincenthuto.hemomancy.common.entity.npc.dialogue.OfferedDialogues.clearSessionState();
 		BloodManipulation.clearSessionState();
 		HematicCommandManager.clearSessionState();

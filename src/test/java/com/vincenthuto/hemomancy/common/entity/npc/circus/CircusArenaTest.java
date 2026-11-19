@@ -18,11 +18,4 @@ class CircusArenaTest {
 		assertFalse(arena.holds(new Vec3(100.5D + 25.0D, 64.0D, 100.5D)));
 		assertEquals(200, arena.graceTicks(), "the finale's grace before a straying holder loses the site");
 	}
-
-	@Test
-	void theClosingBeatIsAPhaseOfItsOwn() {
-		assertEquals(CircusPavilionStateRules.Phase.CURTAIN, CircusFinaleRules.nextPhase(
-				com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules.Route.SUCCESSION,
-				CircusPavilionStateRules.Phase.CURTAIN, 1000, true, true), "only the beat itself settles the site");
-	}
 }

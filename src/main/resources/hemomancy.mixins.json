@@ -65,6 +65,7 @@
     "MixinScriptoriumItemRenderer",
     "CastingHandRendererInvoker",
     "CreativePickerMenuInvoker",
+    "EntityRendererShadowAccessor",
     "CreativeScreenAccessor",
     "MixinCreativeTabSections",
     "MixinCamera",

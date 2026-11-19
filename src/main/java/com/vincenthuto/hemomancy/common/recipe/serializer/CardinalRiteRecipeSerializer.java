@@ -248,7 +248,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, requiredDegree));
 			int offeringCount = recipe.getBrazierSignature().stream()
 					.mapToInt(CardinalRiteRecipe.BrazierRequirement::count).sum()
-					+ recipe.getOptionalOfferings().size();
+					+ recipe.getOptionalOfferings().size()
+					// A Crimson Troupe ordeal's key, the professor's own vial (OrdealKey), is a token, not an offering.
+					- (pJson.has("puppeteer_trial") ? 1 : 0);
 			// Station upgrade rites declare their "id" so the codec path is real here.
 			String policyPath = pRecipeId.getPath();
 			List<String> violations = CardinalRiteProgressionPolicy.violations(

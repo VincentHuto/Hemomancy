@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.npc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.npc.CircusCarouselModel;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.CarouselAlive;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -27,12 +28,13 @@ public final class CircusCarouselRenderer extends EntityRenderer<CircusCarouselE
 	public void render(CircusCarouselEntity entity, float yaw, float partialTick, PoseStack poseStack,
 			MultiBufferSource buffers, int packedLight) {
 		poseStack.pushPose();
-		poseStack.translate(0.0D, 7.0D, 0.0D);
+		// A living carousel rides up its pole before it slams.
+		poseStack.translate(0.0D, 7.0D + CarouselAlive.lift(entity.aliveMove(), entity.aliveTime(partialTick)), 0.0D);
 		poseStack.scale(-1.0F, -1.0F, 1.0F);
 		model.prepare(entity, partialTick);
 		model.renderToBuffer(poseStack, buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE)), packedLight,
 				OverlayTexture.NO_OVERLAY, -1);
-		int glowColor = entity.isActive() ? -1 : 0x66FFFFFF;
+		int glowColor = entity.isActive() || entity.aliveMove() != CarouselAlive.Move.NONE ? -1 : 0x66FFFFFF;
 		model.renderToBuffer(poseStack, buffers.getBuffer(RenderType.eyes(GLOW)), 0xF000F0,
 				OverlayTexture.NO_OVERLAY, glowColor);
 		poseStack.popPose();

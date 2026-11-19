@@ -24,12 +24,22 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MarrowSpitterEntity extends Skeleton implements SyncedBoundSummon {
+public class MarrowSpitterEntity extends Skeleton implements SyncedBoundSummon,
+		com.vincenthuto.hemomancy.common.entity.npc.circus.TrueSelf {
 	private static final int SHOT_INTERVAL_TICKS = 35;
 	private static final double ORBIT_RADIUS = 3.25;
 	private static final double ORBIT_HEIGHT = 1.8;
 	private static final BoundSummonSync SYNC = BoundSummonSync.define(MarrowSpitterEntity.class);
+	/** In the Dagger Thrower's Chamber the Juggler is its true self: wilder, a little tougher (2026-11-17). */
+	private static final EntityDataAccessor<Boolean> TRUE_SELF = SynchedEntityData.defineId(MarrowSpitterEntity.class,
+			EntityDataSerializers.BOOLEAN);
+	private static final double TRUE_SELF_HEALTH = 1.3D;
+	/** How far inside the curb an ordeal's Juggler keeps its hover, and how high over the floor it holds at least. */
+	private static final double RING_MARGIN = 1.5D, RING_FLOOR = 1.2D;
 	private int shotCooldown = 0;
+	/** Server side, in an ordeal: the top of the ring's plate at its centre, which its hover stays inside. */
+	@Nullable
+	private Vec3 ordealRing;
 
 	public MarrowSpitterEntity(EntityType<? extends Skeleton> type, Level level) {
 		super(type, level);
@@ -50,6 +60,7 @@ public class MarrowSpitterEntity extends Skeleton implements SyncedBoundSummon {
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 		SYNC.defineDefaults(builder, "marrow_spitter");
+		builder.define(TRUE_SELF, false);
 	}
 
 	@Nullable
@@ -71,8 +82,10 @@ public class MarrowSpitterEntity extends Skeleton implements SyncedBoundSummon {
 		}
 		if (hemomancy$isTrialSummon()) {
 			BoundSummonBehavior.trialServerTick(this, this);
+			// In an ordeal its own moves fly it while they run; its hover and ordinary volley wait.
+			if (com.vincenthuto.hemomancy.common.encounter.ordeal.MarrowJugglerOrdealMoves.busy(getUUID())) return;
 			LivingEntity target = getTarget();
-			if (target != null) tickHoverAround(target, 6.0, 2.2);
+			if (target != null) tickHoverAround(target, 6.0, isTrueSelf() ? 2.8 : 2.2);
 			tickSentryFire();
 			return;
 		}
@@ -95,12 +108,67 @@ public class MarrowSpitterEntity extends Skeleton implements SyncedBoundSummon {
 		double phase = tickCount * 0.025 + Math.floorMod(getUUID().hashCode(), 360) * (Math.PI / 180.0);
 		double bob = Math.sin(tickCount * 0.055 + phase) * 0.22;
 		Vec3 desired = anchor.position().add(Math.cos(phase) * radius, height + bob, Math.sin(phase) * radius);
+		if (ordealRing != null) desired = inRing(desired, ordealRing);
 		Vec3 correction = desired.subtract(position());
 		Vec3 velocity = getDeltaMovement().scale(0.78).add(correction.scale(0.035));
 		double speed = velocity.length();
 		if (speed > 0.18) velocity = velocity.scale(0.18 / speed);
 		setDeltaMovement(velocity);
 		hurtMarked = true;
+	}
+
+	/** A hover point held inside an ordeal's ring: never past the curb, never down on the floor. */
+	private static Vec3 inRing(Vec3 desired, Vec3 floor) {
+		double limit = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealStage.RING_RADIUS - RING_MARGIN;
+		double dx = desired.x - floor.x, dz = desired.z - floor.z, out = Math.sqrt(dx * dx + dz * dz);
+		double x = out > limit ? floor.x + dx / out * limit : desired.x;
+		double z = out > limit ? floor.z + dz / out * limit : desired.z;
+		return new Vec3(x, Math.max(desired.y, floor.y + RING_FLOOR), z);
+	}
+
+	/** Holds its hover inside an ordeal's ring, whose plate's top at its centre is {@code floor} (server side). */
+	public void holdToRing(Vec3 floor) {
+		ordealRing = floor;
+	}
+
+	@Override public boolean isTrueSelf() { return entityData.get(TRUE_SELF); }
+
+	@Override
+	public void setTrueSelf(boolean trueSelf) {
+		entityData.set(TRUE_SELF, trueSelf);
+		if (!trueSelf) return;
+		var health = getAttribute(Attributes.MAX_HEALTH);
+		if (health != null) health.setBaseValue(health.getBaseValue() * TRUE_SELF_HEALTH);
+		setHealth(getMaxHealth());
+	}
+
+	/** Its ordeal moves' poses ({@code MarrowJugglerOrdealMoves}): an entity event per move, timed by the model. */
+	private static final byte ORDEAL_MOVE_EVENT = 80;
+	private static final int ORDEAL_MOVES = 3;
+	private int ordealMove = -1;
+	private int ordealMoveStart;
+
+	/** Starts move {@code kind}'s pose on every watching client, or stops it with -1. */
+	public void ordealMove(int kind) {
+		level().broadcastEntityEvent(this, (byte) (ORDEAL_MOVE_EVENT + (kind < 0 ? ORDEAL_MOVES : kind)));
+	}
+
+	public int ordealMove() {
+		return ordealMove;
+	}
+
+	public float ordealMoveAge(float partialTick) {
+		return tickCount - ordealMoveStart + partialTick;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id >= ORDEAL_MOVE_EVENT && id <= ORDEAL_MOVE_EVENT + ORDEAL_MOVES) {
+			ordealMove = id - ORDEAL_MOVE_EVENT == ORDEAL_MOVES ? -1 : id - ORDEAL_MOVE_EVENT;
+			ordealMoveStart = tickCount;
+		} else {
+			super.handleEntityEvent(id);
+		}
 	}
 
 	@Override

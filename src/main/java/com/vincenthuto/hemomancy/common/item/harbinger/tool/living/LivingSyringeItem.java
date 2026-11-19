@@ -225,6 +225,11 @@ public class LivingSyringeItem extends LivingItem {
 	private InteractionResult fillVialFromTarget(Player player, LivingEntity target, ItemStack syringe,
             java.util.UUID donorBloodline, String donorProfession) {
 		var targetId = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
+		// A troupe professor's blood is the key to their mind: only their gift fills a vial with it (2026-11-17).
+		if (target instanceof com.vincenthuto.hemomancy.common.entity.npc.circus.CircusFacultyEntity) {
+			player.displayClientMessage(Component.translatable("hemomancy.circus.ordeal.key.no_draw"), true);
+			return InteractionResult.FAIL;
+		}
         // Original professionals are protected; their consent-based donation is still permitted.
 		BloodSamplingResult samplingResult = BloodSamplingRules.evaluate(false, true, target.isAlive(),
 				target.isInvulnerable() && donorBloodline == null, targetId != null,

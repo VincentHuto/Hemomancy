@@ -180,8 +180,7 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		if (timeline != null) {
 			switch (move) {
 				case KNIFE_THROW -> throwBeat(Math.min(1.0F, time / THROW_TICKS));
-				case STAFF_STRIKE, SLEIGHT -> staffStrike(time, timeline.commitTick(), timeline.total());
-				case KNIFE_BOARD -> knifeBoard(time, timeline.commitTick());
+				case STAFF_STRIKE -> staffStrike(time, timeline.commitTick(), timeline.total());
 				case SPOTLIGHT -> spotlight(time, timeline.commitTick(), timeline.total(), ageInTicks);
 				case CUE -> cue(time, timeline.commitTick(), timeline.total());
 				case STRINGS_CUT -> pullStrings(time, timeline.commitTick(), timeline.total());
@@ -263,20 +262,6 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		rightArm.xRot = Mth.lerp(smash, rightArm.xRot, -0.75F);
 		body.xRot = Mth.lerp(smash, body.xRot, 0.25F);
 		leftArm.xRot = Mth.lerp(raise, leftArm.xRot, -0.9F);
-	}
-
-	/** Both hands drawn back and spread through the wind-up, as if setting knives in a board, then thrown forward. */
-	private void knifeBoard(float ticks, float commit) {
-		float draw = HemoEasing.smoothstep(0.0F, commit, ticks) * (1.0F - HemoEasing.smoothstep(commit, commit + 2.0F, ticks));
-		float throwOut = HemoEasing.smoothstep(commit - 1.0F, commit + 1.0F, ticks)
-				* (1.0F - HemoEasing.smoothstep(commit + 2.0F, commit + 8.0F, ticks));
-		leftArm.xRot = Mth.lerp(draw, leftArm.xRot, -2.6F);
-		leftArm.zRot = Mth.lerp(draw, leftArm.zRot, -0.9F);
-		rightArm.zRot = Mth.lerp(draw, rightArm.zRot, 0.6F);
-		body.xRot = Mth.lerp(draw, body.xRot, -0.15F);
-		leftArm.xRot = Mth.lerp(throwOut, leftArm.xRot, -1.4F);
-		leftArm.zRot = Mth.lerp(throwOut, leftArm.zRot, 0.1F);
-		body.xRot = Mth.lerp(throwOut, body.xRot, 0.2F);
 	}
 
 	/** The staff lifted high and held, the free hand pointing down at the lit pool, for the whole of the light. */

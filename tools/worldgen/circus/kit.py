@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import nbtlib  # noqa: E402
 from nbtlib import Byte, Compound, Double, Int, List, String  # noqa: E402
 from wayside.kit import Site as WaysideSite  # noqa: E402  (the structure canvas with put/finish)
+from wayside.kit import full  # noqa: E402
 
 AIR = 'minecraft:air'
 FORBIDDEN = ('copper', 'brass', 'bronze', 'gold', 'gilded')
@@ -113,6 +114,27 @@ class Site(WaysideSite):
 
     def frame(self, x, y, z, facing='north'):
         return Frame(self, x, y, z, TURN.index(facing))
+
+    def finish(self):
+        """Joins as the wayside kit does, then seals every pole section walled in on all four sides by full cubes
+        (where a pole runs through the roof canvas), as the block does in play."""
+        super().finish()
+        for (x, y, z), (name, props, nbt) in list(self.blocks.items()):
+            if name.split(':')[-1] not in POLES:
+                continue
+            walled = all(full(self.get(x + dx, y, z + dz)) for dx, dz in STEP.values())
+            p = dict(props)
+            p['sealed'] = 'true' if walled else 'false'
+            self.set(x, y, z, name, p, nbt)
+        # A net's sides, as TroupeNetBlock.side works them out: more net, a pole or solid block to tie off on, or edge.
+        for (x, y, z), (name, props, nbt) in list(self.blocks.items()):
+            if name != 'hemomancy:circus_net':
+                continue
+            p = dict(props)
+            for side, (dx, dz) in STEP.items():
+                other = self.get(x + dx, y, z + dz) or ''
+                p[side] = 'net' if other == name else 'tied' if (other.split(':')[-1] in POLES or full(other))                     else 'edge'
+            self.set(x, y, z, name, p, nbt)
 
 
 class Frame:
@@ -329,9 +351,10 @@ def ringmaster_box(f, x, y, z):
     f.piece(x + 1, y + 3, z + 2, 'circus_spindle_rack', 'north')
 
 
-def rigging_tower(f, x, y, z, height, net_y=None):
+def rigging_tower(f, x, y, z, height, net_y=None, net_reach=7):
     """A rigging tower: a 3 x 3 platform `height` up on four quarter poles, a ladder up its back, rails on three
-    sides, a trapeze hung from an arm reaching north, and a net under the swing."""
+    sides, a trapeze hung from an arm reaching north, and a net under the swing, `net_reach` rows out from the tower
+    (at `net_y`, the floor unless given)."""
     top = y + height
     for dx, dz in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
         pole(f, x + dx, y, z + dz, height + 2, QUARTER_POLE, collars=(height // 2, height))
@@ -352,7 +375,7 @@ def rigging_tower(f, x, y, z, height, net_y=None):
     f.put(x, top + 1, z - 4, 'hemomancy:circus_trapeze', {'facing': 'east'})
     net_y = y if net_y is None else net_y
     for dx in range(-2, 3):
-        for dz in range(-7, -1):
+        for dz in range(-net_reach, -1):
             f.put(x + dx, net_y, z + dz, 'hemomancy:circus_net')
 
 

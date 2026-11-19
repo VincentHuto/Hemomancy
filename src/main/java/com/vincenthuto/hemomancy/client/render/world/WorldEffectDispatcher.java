@@ -84,6 +84,8 @@ public final class WorldEffectDispatcher {
             // The heart-node spread lies on the ground, so it goes first: the ward and every rite visual draw over it.
             HeartNodeSpreadRenderer.render(event.getPoseStack(), partialTick);
             FaneGroundRenderer.render(event.getPoseStack(), partialTick);
+            // The Ringmaster finale's merge: his Chamber's material on the copied tent's own faces, then his theatre.
+            com.vincenthuto.hemomancy.client.render.world.circus.FinaleMergeRenderer.render(event);
             MausoleumWardRenderer.render(event.getPoseStack(), partialTick);
             CircusPerceptionOverlay.renderWorld(event.getPoseStack(), partialTick);
             VesperFightFloorRenderer.renderFadingPerimeter(event);

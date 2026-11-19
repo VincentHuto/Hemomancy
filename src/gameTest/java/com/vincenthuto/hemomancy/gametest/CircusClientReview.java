@@ -132,6 +132,23 @@ public final class CircusClientReview {
 	// Client
 	// =============================================================================================================
 
+	/**
+	 * The review takes stills, not input: a click on the window would attack whatever the crosshair finds, and from a
+	 * detached camera that can be the player's own body, which the server answers by disconnecting. Clicks are drained
+	 * before the game reads them.
+	 */
+	@SubscribeEvent
+	public static void swallowClicks(ClientTickEvent.Pre event) {
+		if (!Boolean.getBoolean(PROPERTY)) return;
+		Minecraft mc = Minecraft.getInstance();
+		while (mc.options.keyAttack.consumeClick()) {
+		}
+		while (mc.options.keyUse.consumeClick()) {
+		}
+		mc.options.keyAttack.setDown(false);
+		mc.options.keyUse.setDown(false);
+	}
+
 	@SubscribeEvent
 	public static void client(ClientTickEvent.Post event) {
 		if (!Boolean.getBoolean(PROPERTY)) return;
@@ -259,7 +276,7 @@ public final class CircusClientReview {
 	// Cameras (computed on the client from its own entities)
 	// =============================================================================================================
 
-	private sealed interface Cam permits Fixed, Watch, Follow, Orbit, Two, Path, PlayerView {
+	private sealed interface Cam permits Fixed, Watch, Follow, Orbit, Two, Path, PlayerView, Across {
 		Vec3[] at(Level level, int t);
 
 		default boolean smooth() {
@@ -333,6 +350,29 @@ public final class CircusClientReview {
 		}
 	}
 
+	/**
+	 * The eye over the apron on the far side of the ring from one entity (the circling Strongman), looking across the
+	 * ring at him: the fight in the foreground, the colossus behind it, whatever his phase. Rises and falls over
+	 * {@code span} ticks between {@code low} and {@code high}.
+	 */
+	private record Across(int id, Vec3 centre, double radius, double low, double high, int span, double lookHeight)
+			implements Cam {
+		public Vec3[] at(Level level, int t) {
+			Entity e = level.getEntity(id);
+			if (e == null) return null;
+			Vec3 toward = e.position().subtract(centre).multiply(1, 0, 1);
+			if (toward.lengthSqr() < 1.0E-4D) return null;
+			toward = toward.normalize();
+			double rise = Math.sin(Math.PI * Math.min(1.0D, t / (double) span));
+			Vec3 eye = centre.subtract(toward.scale(radius)).add(0, low + (high - low) * rise * rise, 0);
+			return new Vec3[] { eye, centre.add(toward.scale(radius * 0.7D)).add(0, lookHeight, 0) };
+		}
+
+		public boolean smooth() {
+			return true;
+		}
+	}
+
 	private record Key(int tick, Vec3 eye, Vec3 look) {
 	}
 
@@ -392,7 +432,7 @@ public final class CircusClientReview {
 				return;
 			}
 			if (t == 0) {
-				command(player, "tick rate " + RATE);
+				command(player, "tick rate " + scene.rate());
 				recording = scene.name();
 			}
 			boolean done = scene.tick(player, t) || t >= scene.maxTicks();
@@ -458,7 +498,14 @@ public final class CircusClientReview {
 			String only = System.getProperty("hemomancy.circusReview.only", "");
 			List<String> wanted = only.isBlank() ? List.of() : Arrays.asList(only.split(","));
 			for (Scene scene : List.of(new Performers(), new Puppets(), new Lanterns(), new Perception(),
-					new Succession(), new Liberation(), new Kit(), new Pavilion(), new Sites())) {
+					new ChamberFinale(null), new ChamberFinale(com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending.KILLED),
+					new ChamberFinale(com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending.ABSORBED), new Kit(), new Pavilion(), new Sites())) {
+				if (wanted.isEmpty() || wanted.contains(scene.name())) SCENES.add(scene);
+			}
+			// One ordeal scene per professor with an ordeal: "ordeal" is the Strongman's, the rest "ordeal_<role>" by the
+			// role without its circus_ prefix (ordeal_acrobat, ordeal_knife_thrower, ...).
+			for (var professor : com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor.all()) {
+				Scene scene = new Ordeal(professor);
 				if (wanted.isEmpty() || wanted.contains(scene.name())) SCENES.add(scene);
 			}
 			command(player, "tick rate " + RATE);
@@ -664,6 +711,14 @@ public final class CircusClientReview {
 		}
 
 		abstract int maxTicks();
+
+		/**
+		 * The tick rate while recording: slowed so every tick is a frame for stills, or the real 20 for a fight whose
+		 * timing and weight are what is being judged.
+		 */
+		int rate() {
+			return RATE;
+		}
 
 		abstract void start(ServerPlayer player);
 
@@ -1127,6 +1182,151 @@ public final class CircusClientReview {
 		}
 	}
 
+	// --- the Chamber ordeal (2026-11-17) ---------------------------------------------------------------------------
+
+	/**
+	 * The Gorebound Hulk's ordeal on the Strongman's stage in the Chamber of Will: the trial's floor is laid in the
+	 * arena, the rite started and handed to the ordeal, then the stage is filmed: the true-self Hulk, the Strongman
+	 * circling over the ring and his telegraphed interventions. Late on the Hulk is felled, for the win and the return.
+	 */
+	private static final class Ordeal extends Scene {
+		private final com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor professor;
+		private com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite rite;
+		private java.util.UUID puppet;
+
+		Ordeal(com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor professor) {
+			this.professor = professor;
+		}
+
+		String name() {
+			return professor == com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor.STRONGMAN ? "ordeal"
+					: "ordeal_" + professor.role().replaceFirst("^circus_", "");
+		}
+		@Override
+		int rate() {
+			// Filmed at full speed: the wind-ups and impacts are judged in real time.
+			return 20;
+		}
+
+
+		int maxTicks() {
+			return 760;
+		}
+
+		void start(ServerPlayer player) {
+			ServerLevel level = player.serverLevel();
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
+			blood.setActive(true);
+			blood.setMaxBloodVolume(5000.0D);
+			blood.setBloodVolume(5000.0D);
+			armUp(player, -1);
+			command(player, "time set 18000");
+			// A trial puppet despawns on Peaceful, as it does in the open; the ordeal needs a fighting world.
+			command(player, "difficulty normal");
+			var id = Hemomancy.rloc("cardinal_rite/puppeteer_trial_" + professor.summon());
+			var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level, id);
+			BlockPos focus = arena.offset(0, 1, 0);
+			com.vincenthuto.hemomancy.common.network.PlaceStructurePacket.placeLayeredCardinalRite(level, focus, recipe, player);
+			var station = com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher.find(level, focus, recipe).orElseThrow();
+			rite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.puppeteerTrial(player.getUUID(), focus, id,
+					recipe.getRiteType().getSize());
+			rite.setMatchedFloor(station.floor().id(), station.floorMatch().getForwards(), station.floorMatch().getUp());
+			com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level).startRite(rite);
+			// The fighter's own bound crossbar in the seat, so a won ordeal pays out as it does in play.
+			ItemStack seat = new ItemStack(ItemInit.marionette_crossbar.get());
+			MarionetteCrossbarItem.bindCrossbar(seat, player);
+			java.util.UUID crossbarId = MarionetteCrossbarItem.getCrossbarId(seat);
+			if (level.getBlockEntity(focus) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity seatFocus) {
+				seatFocus.extractMedium();
+				seatFocus.insertMedium(null, seat);
+			}
+			player.teleportTo(focus.getX() + 0.5D, focus.getY() + 1.0D, focus.getZ() + 2.5D);
+			var definition = PuppeteerSummonDefinitions.byName(professor.summon()).orElseThrow();
+			var begun = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.begin(player, level, rite,
+					professor,
+					(chamber, at) -> com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonFactory
+							.createTrial(definition, chamber, player, at).filter(chamber::addFreshEntity));
+			Hemomancy.LOGGER.info("CIRCUS_REVIEW ordeal begun {} in {}", begun.isPresent(), player.level().dimension().location());
+			begun.ifPresent(mob -> {
+				puppet = mob.getUUID();
+				rite.beginPuppeteerTrial(professor.summon(), puppet, crossbarId);
+			});
+			// Watched from outside the ring, not from the fighter's eyes: from over the apron across the ring from the
+			// Strongman, so the fight is in front and he wades behind it, the eye rising and settling over the scene.
+			var stage = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.ordeal(player.getUUID())
+					.map(o -> o.stage()).orElse(focus);
+			centre = net.minecraft.world.phys.Vec3.atBottomCenterOf(stage).add(0, 1, 0);
+			// After begin the player is on the stage, so their level is the Chamber the Strongman circles in.
+			Entity strongman = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.ordeal(player.getUUID())
+					.flatMap(o -> o.professorEntity()).map(player.serverLevel()::getEntity).orElse(null);
+			cam = strongman == null ? new Fixed(centre.add(10, 6, 10), centre)
+					: new Across(strongman.getId(), centre, 12.0D, 4.0D, 11.0D, 740, 4.0D);
+			camKey = "ordeal";
+		}
+
+		private net.minecraft.world.phys.Vec3 centre;
+
+		boolean tick(ServerPlayer player, int t) {
+			if (centre != null && t < 600 && player.level() instanceof ServerLevel stageLevel
+					&& stageLevel.dimension().equals(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL)) {
+				// The fighter fights: circling the Hulk under its own motion, stepping in to hit it, hopping now and then
+				// over the waves, and kept on its feet so the scene runs to the end.
+				Entity hulk = puppet == null ? null : stageLevel.getEntity(puppet);
+				boolean held = hulk != null && professor.puppetMoves().holding(hulk.getUUID(), stageLevel.getGameTime());
+				if (hulk != null && !held) {
+					// Driven here, not by the client: step toward a point circling the Hulk, carry whatever knockback
+					// the fight gave (the server's motion), fall under gravity, hop now and then, then place.
+					double a = t * 0.03D;
+					boolean pressing = t % 60 >= 40;
+					double radius = pressing ? 2.0D : 4.5D;
+					net.minecraft.world.phys.Vec3 want = hulk.position().add(Math.cos(a) * radius, 0.0D, Math.sin(a) * radius);
+					net.minecraft.world.phys.Vec3 step = want.subtract(player.position()).multiply(1, 0, 1);
+					if (step.length() > 0.32D) step = step.normalize().scale(0.32D);
+					net.minecraft.world.phys.Vec3 motion = player.getDeltaMovement();
+					double floorY = centre.y, y = player.getY();
+					double vy = y <= floorY + 1.0E-3D && t % 45 == 0 ? 0.42D : motion.y - 0.08D;
+					y += vy;
+					if (y < floorY) {
+						y = floorY;
+						vy = 0.0D;
+					}
+					double x = player.getX() + step.x + motion.x, z = player.getZ() + step.z + motion.z;
+					// Inside the ring, as the ordeal's own clamp keeps a real fighter.
+					double ox = x - centre.x, oz = z - centre.z, out = Math.sqrt(ox * ox + oz * oz), limit = 8.5D;
+					if (out > limit) {
+						x = centre.x + ox / out * limit;
+						z = centre.z + oz / out * limit;
+					}
+					player.setDeltaMovement(motion.x * 0.7D, vy, motion.z * 0.7D);
+					net.minecraft.world.phys.Vec3 d = hulk.position().add(0, 1.2D, 0).subtract(x, y + player.getEyeHeight(), z);
+					float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
+					float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)));
+					player.teleportTo(stageLevel, x, y, z, yaw, pitch);
+					if (pressing && t % 8 == 0 && player.distanceTo(hulk) < 3.5D) strike(player, hulk);
+				}
+				if (player.getHealth() < 10.0F) player.setHealth(player.getMaxHealth());
+				// Weaken the Hulk in two steps so both of the Strongman's ramps (and their lines) are seen.
+				if (hulk instanceof net.minecraft.world.entity.LivingEntity living && (t == 160 || t == 340))
+					living.setHealth(living.getMaxHealth() * (t == 160 ? 0.55F : 0.25F));
+			}
+			if (t % 100 == 0) {
+				var o = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.ordeal(player.getUUID());
+				Entity h = puppet == null || !(player.level() instanceof ServerLevel l) ? null : l.getEntity(puppet);
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW ordeal t {} at {} in {} below {} stage {} hulk {}", t, player.blockPosition(),
+						player.level().dimension().location(), player.level().getBlockState(player.blockPosition().below()),
+						o.map(x -> x.stage()).orElse(null), h == null ? "none" : h.blockPosition() + " " + h.isAlive());
+			}
+			if (t == 600 && puppet != null && player.level() instanceof ServerLevel chamber) {
+				Entity hulk = chamber.getEntity(puppet);
+				if (hulk != null) hulk.kill();
+			}
+			if (t == 700) Hemomancy.LOGGER.info("CIRCUS_REVIEW ordeal ended home {} rite {}", player.level().dimension().location(),
+					rite.getPhase());
+			return t >= 740;
+		}
+	}
+
 	// --- 2 and 3: the finales ------------------------------------------------------------------------------------
 
 	private abstract static class Finale extends Scene {
@@ -1143,8 +1343,6 @@ public final class CircusClientReview {
 		int maxTicks() {
 			return 2200;
 		}
-
-		abstract CircusRouteRules.Route route();
 
 		void start(ServerPlayer player) {
 			ServerLevel level = player.serverLevel();
@@ -1172,10 +1370,7 @@ public final class CircusClientReview {
 						HemoCapabilityAccess.getPlayerDegreeNumber(player)));
 				com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(player)
 						.putBoolean("quest.empty_ring", true);
-				CircusPlayerProgress.chooseRoute(player, route());
-				for (int c = 0; c < 5; c++) {
-					if (route() == CircusRouteRules.Route.SUCCESSION || c < 2) CircusPlayerProgress.completeChallenge(player, c, 0);
-				}
+				CircusPlayerProgress.completeChallenge(player, 0, 0);
 				CircusPlayerProgress.syncPerception(player);
 			}
 		}
@@ -1183,169 +1378,368 @@ public final class CircusClientReview {
 		CircusPavilionSavedData.Site site(ServerPlayer player) {
 			return CircusPavilionSavedData.get(player.serverLevel()).site(player.serverLevel(), carousel.encounterOrigin());
 		}
+	}
 
-		List<CircusPerformerEntity> troupe(ServerPlayer player) {
-			// The finale counts its cast by the ring's membership (chunk 15 T13), so the review downs the same bodies.
-			return com.vincenthuto.hemomancy.common.entity.npc.circus.CircusArena.of(carousel.encounterOrigin())
-					.troupe(player.serverLevel()).stream().filter(CircusPerformerEntity::isAlive).toList();
+	/**
+	 * The finale in his Chamber (2026-11-18): begun from his dialogue at the real pavilion, filmed from the player's own
+	 * eyes at the real 20 ticks a second, through the hidden crossing into the copy. Logs the frame the crossing falls on,
+	 * so the frames either side of it can be compared.
+	 */
+	private static final class ChamberFinale extends Finale {
+		/** Phase 1's moves, forced one after another so the film shows each (Task 9); then he is worn down to the reveal. */
+		private static final String[] RAFTER_MOVES = {"rafter_volley", "string_lights", "burning_spotlight", "audience_rush",
+				"horse_volley", "horse_spiral", "pole_slam", "rafter_volley"};
+		private static final int MOVE_GAP = 10;
+		/** The moves wait until the merge has come in to the walls (FinaleRules.VEIL_OPENING_TICKS), so they play under it. */
+		private static final int MOVES_FROM = 110;
+		/** Null for the whole fight; KILLED or ABSORBED for the two endings, brought quickly to the kneel (Task 11). */
+		private final com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending ending;
+		private int kneelAt = -1, endedAt = -1;
+		private boolean crossed;
+		private int raftersAt = -1, moveIndex = -1, idleSince = -1, drainAt = -1;
+		private String running = "none";
+		private int moveStart;
+		/** Phase 2's beats, called in turn once he is down (Task 10): SWOOP sends a swoop, CHARGE fills his charge. */
+		private static final String[] DESCENT_BEATS = {"staff_strike", "carousel_swing", "echo_cue", "echo_cue", "echo_cue", "SWOOP",
+				"CHARGE", "crimson_cascade", "marionette_pull", "staff_strike"};
+		/** The three professors this review fighter has passed: their summons, granted the way an ordeal grants them. */
+		private static final List<com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor> PASSED = List.of(
+				com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor.STRONGMAN,
+				com.vincenthuto.hemomancy.common.encounter.ordeal.KnifeThrowerChoreography.PROFESSOR,
+				com.vincenthuto.hemomancy.common.encounter.ordeal.FireEaterChoreography.PROFESSOR);
+		private int descentIndex = -1, beatIdle = -1, swoopAt = -1, revealAt = -1, finishedAt = -1;
+		private float drainFrom = -1.0F;
+		private Cam wide;
+
+		ChamberFinale(com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending ending) {
+			this.ending = ending;
+		}
+
+		String name() {
+			return ending == null ? "finale" : ending == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending.KILLED ? "finale_kill" : "finale_absorb";
+		}
+
+		@Override
+		int rate() {
+			return 20;
+		}
+
+		@Override
+		int maxTicks() {
+			return ending == null ? 2600 : 700;
+		}
+
+		/** Phase 1: the fighter stands in the ring and each of his moves is called in turn, filmed from over the curb. */
+		private void rafters(ServerPlayer player, int t, com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.Finale finale) {
+			BlockPos stage = finale.stage();
+			if (raftersAt < 0) {
+				raftersAt = t;
+				Vec3 centre = Vec3.atBottomCenterOf(stage);
+				place(player, centre.add(-3.0D, 0.0D, -4.0D), centre.add(0.0D, 1.0D, 0.0D));
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW finale rafters at t {}", t);
+				// The review's reused world keeps bodies from ordeals cut off by earlier runs' closes on this same stage
+				// grid: clear every creature but his copy and the carousel's captives, so the film shows only the finale.
+				Entity wheel = player.serverLevel().getEntity(finale.carousel());
+				for (Entity stray : player.serverLevel().getEntities((Entity) null, new net.minecraft.world.phys.AABB(stage).inflate(40.0D),
+						e2 -> e2 instanceof LivingEntity && !(e2 instanceof ServerPlayer) && !e2.getUUID().equals(finale.ringmaster())
+								&& (wheel == null || e2.getVehicle() != wheel)))
+					stray.discard();
+			}
+			// While the merge comes in, the opening's pan of the tent's sides runs on, and he holds his moves.
+			if (finale.phaseTicks() < MOVES_FROM) {
+				com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.hold(player.getUUID(), MOVE_GAP + 5);
+				return;
+			}
+			if (player.getHealth() < player.getMaxHealth() * 0.5F) player.setHealth(player.getMaxHealth());
+			var moves = finale.moves();
+			String now = moves.move().id();
+			if (!now.equals(running)) {
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW finale move {} -> {} at t {}", running, now, t);
+				running = now;
+				moveStart = t;
+				Vec3 centre = Vec3.atBottomCenterOf(stage);
+				// The volley from behind the fighter, framing him and one fake (the first volley the first fake, the second
+				// the other); the rest from low over the curb, the fighter in the foreground.
+				boolean carousel = now.startsWith("horse") || now.equals("pole_slam");
+				Vec3 feet = player.position();
+				if (now.equals("rafter_volley") && player.serverLevel().getEntity(finale.ringmaster()) instanceof CircusRingmasterEntity copy) {
+					// From high over the seats across the ring from him, so he and his fakes stand in the far half of the frame.
+					Vec3 toward = new Vec3(copy.getX() - centre.x, 0.0D, copy.getZ() - centre.z).normalize();
+					// Turned off the line through him, so the eye never sits on the opposite perch.
+					Vec3 back = toward.yRot((float) Math.toRadians(32.0D));
+					cam = new Fixed(centre.subtract(back.scale(15.0D)).add(0.0D, 12.5D, 0.0D), centre.add(toward.scale(4.0D)).add(0.0D, 5.0D, 0.0D));
+					wide = cam;
+				} else if (!now.equals("none")) {
+					// Low enough that the frame's top runs out past the merge's edge into his dark.
+					cam = carousel ? new Fixed(centre.add(-5.0D, 6.0D, -14.0D), centre.add(0.0D, 2.0D, 2.0D))
+							: new Fixed(centre.add(-7.0D, 6.0D, -14.0D), feet.add(1.0D, 1.5D, 4.0D));
+				}
+			}
+			// Through the volley's gather, a close look at him (the first volley) or at a fake (the second): the tell.
+			if (now.equals("rafter_volley") && player.serverLevel().getEntity(finale.ringmaster()) instanceof CircusRingmasterEntity him) {
+				Vec3 subject = moveIndex == 0 ? him.position() : him.fakeAt(0);
+				if (t - moveStart == 5 && subject != null) {
+					Vec3 centre = Vec3.atBottomCenterOf(stage);
+					Vec3 in = new Vec3(centre.x - subject.x, 0.0D, centre.z - subject.z).normalize();
+					cam = new Fixed(subject.add(in.scale(6.5D)).add(in.yRot(1.2F).scale(2.0D)).add(0.0D, -1.0D, 0.0D), subject.add(0.0D, 3.0D, 0.0D));
+				}
+				if (t - moveStart == 15 && wide != null) cam = wide;
+			}
+			if (moves.move() != com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.Move.NONE) {
+				idleSince = -1;
+				return;
+			}
+			if (idleSince < 0) idleSince = t;
+			if (t - idleSince < MOVE_GAP) {
+				com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.hold(player.getUUID(), MOVE_GAP + 5);
+				return;
+			}
+			if (moveIndex + 1 < RAFTER_MOVES.length) {
+				moveIndex++;
+				// He is worn down across the phase, from full to just over half, so the merge comes in through the
+				// galleries as it would in a fight (FinaleRules.veilStrength strengthens as he is worn down).
+				if (player.serverLevel().getEntity(finale.ringmaster()) instanceof CircusRingmasterEntity worn)
+					worn.setHealth(worn.getMaxHealth() * (1.0F - 0.44F * moveIndex / (RAFTER_MOVES.length - 1)));
+				// Back to the fighter's mark, so every move is aimed at the same spot in frame (a blow may have thrown them).
+				Vec3 centre = Vec3.atBottomCenterOf(stage);
+				place(player, centre.add(-3.0D, 0.0D, -4.0D), centre.add(0.0D, 1.0D, 0.0D));
+				com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.forceNext(player.getUUID(),
+						RAFTER_MOVES[moveIndex]);
+				idleSince = -1;
+			} else if (drainAt < 0) {
+				drainAt = t;
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW finale drain at t {}", t);
+			}
+		}
+
+		void start(ServerPlayer player) {
+			origin = ending == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending.ABSORBED ? siteB : siteA;
+			// The reused world keeps every earlier run's cast where those runs' sites lay; this run's sites move with the
+			// player, so older carousels and Ringmasters can stand here keyed to other origins. Keep only this run's.
+			ServerLevel here = player.serverLevel();
+			BlockPos cell = origin.offset(32, 1, 32);
+			Vec3 perchAt = at(origin, 32.5, 8, 45.5);
+			for (CircusCarouselEntity old : here.getEntitiesOfClass(CircusCarouselEntity.class, new AABB(origin).inflate(96.0D),
+					c -> !c.encounterOrigin().equals(cell) || c.blockPosition().distManhattan(cell) > 1)) {
+				List.copyOf(old.getPassengers()).forEach(Entity::discard);
+				old.discard();
+			}
+			List<CircusRingmasterEntity> masters = here.getEntitiesOfClass(CircusRingmasterEntity.class, new AABB(origin).inflate(96.0D),
+					r -> !r.stageCopy());
+			masters.stream().sorted(java.util.Comparator.comparingDouble(r -> r.distanceToSqr(perchAt))).skip(1).forEach(Entity::discard);
+			super.start(player);
+			// The review's sites move with where the last run left the player, so an older run's settled site can lie under
+			// this one: forget every site record round it, so the finale begins on a clean pavilion.
+			ServerLevel level = player.serverLevel();
+			for (CircusCarouselEntity any : level.getEntitiesOfClass(CircusCarouselEntity.class, new AABB(origin).inflate(96.0D)))
+				CircusPavilionSavedData.get(level).removeSite(level, any.encounterOrigin());
+		}
+
+		@Override
+		void settle(ServerPlayer player, int t) {
+			super.settle(player, t);
+			if (t != SETTLE - 1) return;
+			// Exactly three professors passed: their summons known, as each ordeal teaches its own. The finale reads them
+			// through FinaleEchoes.passed, so only these three echoes perform and are called.
+			var known = HemoCapabilityAccess.getKnownSummons(player);
+			known.setKnownSummonNames(List.of());
+			for (var professor : PASSED)
+				com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions.byName(professor.summon())
+						.ifPresent(known::learn);
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents.sync(player, known);
+			// Blood that runs, so his bats have something to steal.
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
+			blood.setActive(true);
+			blood.setMaxBloodVolume(3000.0D);
+			blood.setBloodVolume(3000.0D);
+			Hemomancy.LOGGER.info("CIRCUS_REVIEW finale passed {}", known.getKnownSummonNames());
+			if (ending == null) return;
+			// The kneel's prompt is shown once per player: forget it, so each ending's film shows it.
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(player)
+					.remove(com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.PROMPT_SEEN);
+			// The absorbing fighter has earned Succession's acts; the killing one has only the attention act.
+			if (ending == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending.ABSORBED)
+				for (int c = 0; c < 5; c++) CircusPlayerProgress.completeChallenge(player, c, 0);
+			Hemomancy.LOGGER.info("CIRCUS_REVIEW {} fighter acclimation {} challenges {}", name(), CircusPlayerProgress.acclimation(player),
+					Integer.toBinaryString(CircusPlayerProgress.challenges(player)));
+		}
+
+		/**
+		 * The two endings: he is worn straight down to the reveal, brought to his knees on the ring, and once the kneel
+		 * settles the fighter strikes (finale_kill) or channels Blood Absorption at him (finale_absorb); then the real
+		 * pavilion is filmed with its ending laid on it.
+		 */
+		private boolean endingTick(ServerPlayer player, int t, java.util.Optional<com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.Finale> under) {
+			if (under.isPresent() && player.serverLevel().getEntity(under.get().ringmaster()) instanceof CircusRingmasterEntity copy) {
+				var finale = under.get();
+				Vec3 centre = Vec3.atBottomCenterOf(finale.stage());
+				var phase = finale.phase();
+				if (player.getHealth() < player.getMaxHealth() * 0.5F) player.setHealth(player.getMaxHealth());
+				com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.hold(player.getUUID(), 20);
+				if (phase == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.FinalePhase.RAFTERS && finale.phaseTicks() == 20) {
+					place(player, centre.add(-3.0D, 0.0D, -4.0D), centre.add(0.0D, 1.0D, 0.0D));
+					copy.setHealth(copy.getMaxHealth() * 0.48F);
+				}
+				if (phase == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.FinalePhase.REVEAL && revealAt < 0) {
+					revealAt = t;
+					cam = new Watch(centre.add(-7.0D, 5.0D, -12.0D), copy.getId(), 2.5D);
+				}
+				// Down on the ring, a blow that would kill him brings him to his knees.
+				if (phase == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.FinalePhase.DESCENT && finale.phaseTicks() == 30) {
+					Hemomancy.LOGGER.info("CIRCUS_REVIEW {} lethal blow at t {}", name(), t);
+					copy.hurt(player.damageSources().playerAttack(player), 1000.0F);
+				}
+				if (phase == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.FinalePhase.KNEEL && kneelAt < 0) {
+					kneelAt = t;
+					Hemomancy.LOGGER.info("CIRCUS_REVIEW {} kneel at t {}", name(), t);
+					Vec3 him = copy.position();
+					Vec3 out = new Vec3(player.getX() - him.x, 0.0D, player.getZ() - him.z);
+					out = out.lengthSqr() < 0.01D ? new Vec3(0.0D, 0.0D, -1.0D) : out.normalize();
+					place(player, him.add(out.scale(3.0D)), him.add(0.0D, 1.5D, 0.0D));
+					Vec3 side = new Vec3(-out.z, 0.0D, out.x);
+					// Side on to the pair, the eye level with the middle between them, so he and the fighter stand at the
+					// same distance and his true self's size reads against the fighter's.
+					cam = new Fixed(him.add(out.scale(1.5D)).add(side.scale(7.0D)).add(0.0D, 2.2D, 0.0D), him.add(out.scale(1.5D)).add(0.0D, 1.6D, 0.0D));
+				}
+				if (kneelAt >= 0) {
+					int k = t - kneelAt;
+					if (ending == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending.KILLED) {
+						// Once the kneel has settled, the fighter's own blow.
+						if (k == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.KNEEL_SETTLE_TICKS + 40) {
+							Hemomancy.LOGGER.info("CIRCUS_REVIEW finale_kill strikes at t {}", t);
+							strike(player, copy);
+						}
+					} else if (k >= com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.KNEEL_SETTLE_TICKS + 30) {
+						// The fighter channels Blood Absorption at him, as the item's use tick does.
+						if (k % 4 == 0) player.swing(InteractionHand.OFF_HAND, true);
+						com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterAbsorption.tryAbsorb(player.level(), player, 6.0D, 1.0F);
+					}
+				}
+			}
+			boolean home = crossed && !com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.isInFinale(player)
+					&& !player.level().dimension().equals(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL);
+			if (home && endedAt < 0 && kneelAt >= 0) {
+				endedAt = t;
+				CircusPavilionSavedData.Site site = site(player);
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW {} home at t {}: outcome {} route {} pattern {} retired {}", name(), t, site.outcome(),
+						CircusPlayerProgress.route(player), HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames()
+								.contains(com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions.RINGMASTER_PATTERN),
+						ringmaster.isAlive() && ringmaster.retired());
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW {} thread ripper known {}", name(), HemoCapabilityAccess.getKnownManipulations(player)
+						
+						.getKnownManips().keySet().stream().anyMatch(m -> m == com.vincenthuto.hemomancy.common.init.ManipulationInit.thread_ripper.get()
+								|| m.getName().equals(com.vincenthuto.hemomancy.common.init.ManipulationInit.thread_ripper.get().getName())));
+				Vec3 perch = ringmaster.position();
+				int id = ringmaster.getId();
+				cam = ringmaster.isAlive() ? new Watch(perch.add(-6.0D, -2.0D, -9.0D), id, 1.5D)
+						: new Fixed(at(origin, 40.5, 30.0, -16.0), at(origin, 40.5, 2.0, 30.0));
+			}
+			if (t == 20 && !crossed && !com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.isInFinale(player)) return true;
+			return endedAt >= 0 && t - endedAt >= 120;
+		}
+
+		/** Phase 2: once he is down, each beat in turn, filmed wide over the curb so the dark and its echoes show. */
+		private void descent(ServerPlayer player, int t, com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.Finale finale) {
+			Vec3 centre = Vec3.atBottomCenterOf(finale.stage());
+			var moves = finale.moves();
+			if (player.getHealth() < player.getMaxHealth() * 0.5F) player.setHealth(player.getMaxHealth());
+			String now = moves.move().id();
+			if (!now.equals(running)) {
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW finale move {} -> {} at t {} (charge {}, echoing {})", running, now, t,
+						finale.swarm().charge(), moves.echoing());
+				running = now;
+			}
+			if (moves.move() != com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.Move.NONE) {
+				beatIdle = -1;
+				return;
+			}
+			com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.hold(player.getUUID(), MOVE_GAP + 5);
+			if (beatIdle < 0) beatIdle = t;
+			if (t - beatIdle < MOVE_GAP + 5) return;
+			String beat = descentIndex + 1 < DESCENT_BEATS.length ? DESCENT_BEATS[descentIndex + 1] : null;
+			if (beat == null) {
+				if (finishedAt < 0) finishedAt = t;
+				return;
+			}
+			// One echo at a time: the next cue waits for the last to fade.
+			if (beat.equals("echo_cue") && moves.echoing()) return;
+			if (beat.equals("SWOOP")) {
+				if (swoopAt < 0) {
+					swoopAt = t;
+					com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleSwarm.swoopNow(player.getUUID());
+					Hemomancy.LOGGER.info("CIRCUS_REVIEW finale swoop at t {}", t);
+					cam = new Fixed(centre.add(-4.0D, 4.0D, -11.5D), player.position().add(0.0D, 3.0D, 2.0D));
+				}
+				if (t - swoopAt < 70) return;
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW finale swoop done, charge {} at t {}", finale.swarm().charge(), t);
+			} else if (beat.equals("CHARGE")) {
+				com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleSwarm.setCharge(player.getUUID(), 100);
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW finale charged at t {}", t);
+			} else {
+				Vec3 mark = centre.add(-3.0D, 0.0D, -4.0D);
+				place(player, mark, centre.add(0.0D, 1.0D, 0.0D));
+				com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleMoves.forceNext(player.getUUID(), beat);
+				// From over the north curb, just inside the island, behind the fighter's shoulder: him, the fighter, the floor's
+				// telegraphs and the dark past the island's edge in one frame.
+				cam = new Fixed(centre.add(-4.0D, 5.0D, -11.5D), mark.add(1.5D, 0.5D, 3.0D));
+			}
+			descentIndex++;
+			beatIdle = -1;
 		}
 
 		boolean tick(ServerPlayer player, int t) {
 			if (t == 0) {
+				cam = new PlayerView(0.0F, 8.0F, 0.0F, 45.0F);
+				// The settle's section-step can leave the player out of his reach (over 24 blocks from the carousel), which
+				// was the open "finale begun false": stand them where the finale is asked for.
+				Vec3 carouselAt = carousel.position();
+				place(player, carouselAt.add(-7.5D, 0.0D, -7.5D), carouselAt.add(0.0D, 4.0D, 0.0D));
+				// A reused world can keep the site held by a run that never ended: release it first.
+				CircusPavilionSavedData.get(player.serverLevel()).resetOwned(player.getUUID());
 				ringmaster.handleChoice(player, CircusRingmasterEntity.EVENT_FINALE);
-				Hemomancy.LOGGER.info("CIRCUS_REVIEW {} finale begins: owner {} phase {}", name(),
-						player.getUUID().equals(site(player).activeOwner()), site(player).phase());
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW {} begun {}", name(),
+						com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.isInFinale(player));
 			}
-			CircusPavilionSavedData.Site site = site(player);
-			if (site.phase() != phase) {
-				Hemomancy.LOGGER.info("CIRCUS_REVIEW {} phase {} -> {} at frame {}", name(), phase, site.phase(), t);
-				phase = site.phase();
-				phaseStart = t;
+			// Not begun: nothing to film.
+			if (t == 20 && !crossed && !com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector
+					.isInFinale(player)) return true;
+			boolean inChamber = player.level().dimension().equals(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL);
+			if (inChamber && !crossed) {
+				crossed = true;
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW crossing at t {}", t);
 			}
-			int local = t - phaseStart;
-			if (site.outcome() != CircusPavilionStateRules.Outcome.NEUTRAL) {
-				if (settledAt < 0) {
-					settledAt = t;
-					Hemomancy.LOGGER.info("CIRCUS_REVIEW {} settles as {} at frame {}",
-							name(), site.outcome(), t);
-					Vec3 rm = ringmaster.position();
-					Vec3 away = player.position().subtract(rm).multiply(1, 0, 1);
-					Vec3 side = away.lengthSqr() < 0.01D ? new Vec3(-1, 0, 0) : new Vec3(-away.z, 0, away.x).normalize();
-					setCam("fin-after", () -> new Fixed(rm.add(side.scale(5.5D)).add(0, 2.4D, 0), rm.add(0, 1.2D, 0)));
-				}
-				if (t - settledAt == 45 && ringmaster.isAlive()) {
-					int id = ringmaster.getId();
-					setCam("fin-perch", () -> new Watch(at(origin, 34.5, 6.5, 40.0), id, 1.8D));
-				}
-				return t - settledAt >= 120;
+			// Once across, pan the tent's sides so the merge's seams show past the walls.
+			if (t == 60) cam = new PlayerView(0.0F, 2.0F, 80.0F, 240.0F);
+			var under = com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.finale(player.getUUID());
+			if (ending != null) return endingTick(player, t, under);
+			if (crossed && under.isPresent() && under.get().phase()
+					== com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.FinalePhase.RAFTERS && drainAt < 0)
+				rafters(player, t, under.get());
+			int drain = drainAt < 0 ? Integer.MAX_VALUE / 2 : drainAt;
+			// Wear him down from where the rafter moves left him to just past half: the reveal.
+			if (crossed && t >= drain && t <= drain + 30 && under.isPresent()
+					&& player.serverLevel().getEntity(under.get().ringmaster()) instanceof CircusRingmasterEntity worn) {
+				if (drainFrom < 0.0F) drainFrom = worn.getHealth() / worn.getMaxHealth();
+				worn.setHealth(worn.getMaxHealth() * com.vincenthuto.hemomancy.common.util.HemoEasing.lerp(drainFrom, 0.48F, (t - drain) / 30.0F));
 			}
-			if (phase == CircusPavilionStateRules.Phase.RAFTERS) rafters(player, local);
-			else if (phase == CircusPavilionStateRules.Phase.CAROUSEL) carousel(player, local);
-			else if (phase == CircusPavilionStateRules.Phase.DESCENT) descent(player, local);
-			return false;
-		}
-
-		void rafters(ServerPlayer player, int local) {
-			if (local < 64) {
-				setCam("raft-wide", () -> new Fixed(at(origin, 21.5, 7.5, 17.5), at(origin, 32.5, 4.0, 33.5)));
-			} else if (local < 112) {
-				setCam("raft-two", () -> new Fixed(at(origin, 34.5, 3.2, 20.5), at(origin, 32.5, 6.5, 37.5)));
-			} else {
-				int id = ringmaster.getId();
-				setCam("raft-rm", () -> new Watch(at(origin, 34.5, 6.5, 40.0), id, 2.0D));
+			// The reveal, watched from over the curb: his leap from the rigging and his true self.
+			if (under.isPresent() && under.get().phase() == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.FinalePhase.REVEAL && revealAt < 0) {
+				revealAt = t;
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW finale reveal at t {}", t);
+				Vec3 centre = Vec3.atBottomCenterOf(under.get().stage());
+				int id = player.serverLevel().getEntity(under.get().ringmaster()).getId();
+				cam = new Watch(centre.add(-7.0D, 5.0D, -12.0D), id, 2.5D);
 			}
-		}
-
-		abstract void carousel(ServerPlayer player, int local);
-
-		/** Ticks into the descent the carousel shot is held (Liberation keeps it for the collapse). */
-		int holdCarousel() {
-			return 0;
-		}
-
-		void descent(ServerPlayer player, int local) {
-			if (local == 0) armUp(player, 1);
-			if (local < holdCarousel()) return;
-			int a = player.getId(), b = ringmaster.getId();
-			setCam("descent", () -> new Two(a, b, 4.2D, 1.8D, new Vec3(-1, 0, 0)));
-			if (local >= 100 && local % 15 == 0 && ringmaster.isAlive()) {
-				Vec3 feet = player.position();
-				if (ringmaster.distanceTo(player) >= 4.5D) {
-					Vec3 away = player.position().subtract(ringmaster.position()).multiply(1, 0, 1);
-					feet = ringmaster.position().add(away.lengthSqr() < 0.01D ? new Vec3(0, 0, -2.2D) : away.normalize().scale(2.2D));
-				}
-				place(player, feet, ringmaster.position().add(0, 1.4D, 0));
-				strike(player, ringmaster);
-			}
+			if (under.isPresent() && under.get().phase() == com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.FinalePhase.DESCENT) descent(player, t, under.get());
+			int end = finishedAt < 0 ? Integer.MAX_VALUE / 2 : finishedAt + 40;
+			if (t % 100 == 0)
+				Hemomancy.LOGGER.info("CIRCUS_REVIEW finale t {} at {} in {} phase {}", t, player.blockPosition(),
+						player.level().dimension().location(), com.vincenthuto.hemomancy.common.encounter.ordeal.finale
+								.RingmasterFinaleDirector.finale(player.getUUID()).map(f -> f.phase().name()).orElse("none"));
+			if (t == Math.min(maxTicks(), end) - 20)
+				com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.end(player, null);
+			return t >= Math.min(maxTicks(), end);
 		}
 	}
 
-	private static final class Succession extends Finale {
-		private CircusPerformerEntity downing;
-
-		String name() {
-			return "succession";
-		}
-
-		CircusRouteRules.Route route() {
-			return CircusRouteRules.Route.SUCCESSION;
-		}
-
-		void start(ServerPlayer player) {
-			origin = siteA;
-			super.start(player);
-		}
-
-		void carousel(ServerPlayer player, int local) {
-			if (local < 110) {
-				setCam("car-high", () -> new Fixed(at(origin, 32.5, 6.0, 19.5), at(origin, 32.5, 1.5, 32.0)));
-				return;
-			}
-			setCam("car-orbit", () -> new Orbit(at(origin, 32.5, 1, 32.5), -1, 10.0D, 4.5D, 200.0D, 0.6D, 0.8D));
-			if (local == 110) armUp(player, 4);
-			if (local % 14 != 0) return;
-			if (downing == null || !downing.isAlive() || downing.isDowned()) {
-				downing = troupe(player).stream().filter(p -> !p.isDowned()).findFirst().orElse(null);
-				if (downing == null) return;
-			}
-			Vec3 from = downing.position().subtract(player.position()).multiply(1, 0, 1);
-			Vec3 stand = downing.position().subtract(from.lengthSqr() < 0.01D ? new Vec3(1.6, 0, 0)
-					: from.normalize().scale(1.6D));
-			place(player, new Vec3(stand.x, downing.getY(), stand.z), downing.position().add(0, 1.2D, 0));
-			strike(player, downing);
-		}
-	}
-
-	private static final class Liberation extends Finale {
-		String name() {
-			return "liberation";
-		}
-
-		CircusRouteRules.Route route() {
-			return CircusRouteRules.Route.LIBERATION;
-		}
-
-		int holdCarousel() {
-			return 45;
-		}
-
-		void start(ServerPlayer player) {
-			origin = siteB;
-			super.start(player);
-		}
-
-		void carousel(ServerPlayer player, int local) {
-			Vec3 hub = carousel.position();
-			setCam("lib-car", () -> new Fixed(hub.add(-6.5D, 5.0D, -6.5D), hub.add(0, 2.0D, 0)));
-			for (int rider = 0; rider < 3; rider++) {
-				if (local == 40 + rider * 40) sever(player, rider);
-				if (local == 170 + rider * 30) anchor(player, rider);
-			}
-		}
-
-		private void sever(ServerPlayer player, int rider) {
-			BloodDrunkPuppeteerEntity captive = carousel.getPassengers().stream()
-					.filter(BloodDrunkPuppeteerEntity.class::isInstance).map(BloodDrunkPuppeteerEntity.class::cast)
-					.filter(c -> c.getCarouselHorse() == rider).findFirst().orElse(null);
-			if (captive == null) {
-				Hemomancy.LOGGER.warn("CIRCUS_REVIEW no captive on horse {}", rider);
-				return;
-			}
-			Vec3 out = captive.position().subtract(carousel.position()).multiply(1, 0, 1).normalize();
-			place(player, carousel.position().add(out.scale(4.3D)), captive.position().add(0, 1.0D, 0));
-			player.swing(InteractionHand.MAIN_HAND, true);
-			var result = player.interactOn(captive, InteractionHand.MAIN_HAND);
-			Hemomancy.LOGGER.info("CIRCUS_REVIEW sever horse {}: {} severed mask {}", rider, result, site(player).severedMask());
-		}
-
-		private void anchor(ServerPlayer player, int horse) {
-			CircusCarouselRules.HorsePose pose = CircusCarouselRules.horsePose(carousel.getYRot(), horse);
-			Vec3 point = new Vec3(carousel.getX() + pose.x(), carousel.getY() + 1.1D + pose.bob(), carousel.getZ() + pose.z());
-			Vec3 out = new Vec3(pose.x(), 0, pose.z()).normalize();
-			place(player, carousel.position().add(out.scale(4.0D)), point);
-			strike(player, carousel);
-			Hemomancy.LOGGER.info("CIRCUS_REVIEW anchor {}: broken mask {} phase {}", horse, site(player).brokenMask(),
-					site(player).phase());
-		}
-	}
 }

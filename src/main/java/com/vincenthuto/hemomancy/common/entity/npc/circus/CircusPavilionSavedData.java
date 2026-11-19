@@ -52,6 +52,18 @@ public final class CircusPavilionSavedData extends SavedData {
                 && Math.abs(entry.getValue().origin.getZ() - position.getZ()) < 80);
     }
 
+	/**
+	 * Whether the ring whose ground {@code home} is on was settled as a ruin: its finale troupe leaves when it next ticks
+	 * (the settlement is usually laid while the site is unloaded).
+	 */
+	public boolean isRuinedRingAt(ServerLevel level, BlockPos home) {
+		String prefix = level.dimension().location() + "|";
+		net.minecraft.world.phys.Vec3 at = net.minecraft.world.phys.Vec3.atBottomCenterOf(home);
+		return sites.entrySet().stream().anyMatch(entry -> entry.getKey().startsWith(prefix)
+				&& entry.getValue().outcome == CircusPavilionStateRules.Outcome.RUIN
+				&& CircusArena.of(entry.getValue().origin).holds(at));
+	}
+
 	public boolean begin(ServerLevel level, BlockPos origin, UUID owner, CircusRouteRules.Route route) {
 		return begin(level, origin, owner, route, CircusPavilionStateRules.Phase.RAFTERS);
 	}

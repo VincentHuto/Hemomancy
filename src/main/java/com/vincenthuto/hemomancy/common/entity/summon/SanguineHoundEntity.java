@@ -28,7 +28,8 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
+public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon,
+		com.vincenthuto.hemomancy.common.entity.npc.circus.TrueSelf {
 	private static final BoundSummonSync SYNC = BoundSummonSync.define(SanguineHoundEntity.class);
 	private static final EntityDataAccessor<Boolean> DATA_CUR =
 			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.BOOLEAN);
@@ -36,6 +37,10 @@ public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
 			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private static final EntityDataAccessor<Integer> DATA_CUR_AGE =
 			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.INT);
+	/** In the Beast Tamer's Chamber the Hound is its true self: bigger, wilder, and it never ruptures (2026-11-17). */
+	private static final EntityDataAccessor<Boolean> TRUE_SELF =
+			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final double TRUE_SELF_HEALTH = 1.5D, TRUE_SELF_SPEED = 1.15D, TRUE_SELF_SCALE = 1.5D;
 	private boolean ruptured;
 
 	public SanguineHoundEntity(EntityType<? extends Wolf> type, Level level) {
@@ -60,6 +65,7 @@ public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
 		builder.define(DATA_CUR, false);
 		builder.define(DATA_CUR_OWNER_UUID, Optional.empty());
 		builder.define(DATA_CUR_AGE, 0);
+		builder.define(TRUE_SELF, false);
 	}
 
 	@Override
@@ -87,7 +93,8 @@ public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
 		boolean hurt = super.hurt(source, amount);
-		if (hurt && !level().isClientSide && SanguineHoundRules.shouldRupture(
+		// Its true self holds together: a rupture would leave the ordeal without its puppet.
+		if (hurt && !level().isClientSide && !isTrueSelf() && SanguineHoundRules.shouldRupture(
 				isBloodCur(), ruptured, getHealth(), getMaxHealth())) ruptureIntoCurs();
 		return hurt;
 	}
@@ -220,4 +227,54 @@ public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
 	}
 
 	@Override public BoundSummonSync hemomancy$sync() { return SYNC; }
+
+	@Override
+	public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+		// Its ordinary bite waits while one of its ordeal moves runs.
+		if (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealHoundMoves.busy(getUUID())) return false;
+		return super.doHurtTarget(target);
+	}
+
+	@Override public boolean isTrueSelf() { return entityData.get(TRUE_SELF); }
+
+	@Override public void setTrueSelf(boolean trueSelf) {
+		entityData.set(TRUE_SELF, trueSelf);
+		if (!trueSelf) return;
+		var health = getAttribute(Attributes.MAX_HEALTH);
+		var speed = getAttribute(Attributes.MOVEMENT_SPEED);
+		var scale = getAttribute(Attributes.SCALE);
+		if (health != null) health.setBaseValue(health.getBaseValue() * TRUE_SELF_HEALTH);
+		if (speed != null) speed.setBaseValue(speed.getBaseValue() * TRUE_SELF_SPEED);
+		if (scale != null) scale.setBaseValue(TRUE_SELF_SCALE);
+		setHealth(getMaxHealth());
+	}
+
+	/** Its ordeal moves' poses ({@code OrdealHoundMoves}): an entity event per move, timed by the model from its arrival. */
+	private static final byte ORDEAL_MOVE_EVENT = 80;
+	private static final int ORDEAL_MOVES = 4;
+	private int ordealMove = -1;
+	private int ordealMoveStart;
+
+	/** Starts move {@code kind}'s pose on every watching client, or stops it with -1. */
+	public void ordealMove(int kind) {
+		level().broadcastEntityEvent(this, (byte) (ORDEAL_MOVE_EVENT + (kind < 0 ? ORDEAL_MOVES : kind)));
+	}
+
+	public int ordealMove() {
+		return ordealMove;
+	}
+
+	public float ordealMoveAge(float partialTick) {
+		return tickCount - ordealMoveStart + partialTick;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id >= ORDEAL_MOVE_EVENT && id <= ORDEAL_MOVE_EVENT + ORDEAL_MOVES) {
+			ordealMove = id - ORDEAL_MOVE_EVENT == ORDEAL_MOVES ? -1 : id - ORDEAL_MOVE_EVENT;
+			ordealMoveStart = tickCount;
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
 }

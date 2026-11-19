@@ -49,6 +49,8 @@ public final class ChamberTransitionScreen extends ReceivingLevelScreen {
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		// The Ringmaster finale's crossing is hidden: its last frame of the real tent stands while his Chamber loads.
+		if (com.vincenthuto.hemomancy.client.data.FinaleCrossingClientState.drawHeld(graphics)) return;
 		float hole = ChamberVeilRules.holeRadius(System.currentTimeMillis() - openedAt, holeStart);
 		LidlessPassageView.renderVeil(graphics, width, height, partialTick, theme, seed, chamberTurn, hole, eyeShape,
 				kept != null ? kept.getColorTextureId() : 0);
@@ -58,7 +60,10 @@ public final class ChamberTransitionScreen extends ReceivingLevelScreen {
 	public void removed() {
 		super.removed();
 		// The client builds this screen more than once over one change; only the one the level arrived under spends the veil.
-		if (levelReceived.getAsBoolean()) ChamberVeil.release(armed);
+		if (levelReceived.getAsBoolean()) {
+			ChamberVeil.release(armed);
+			com.vincenthuto.hemomancy.client.data.FinaleCrossingClientState.arrived();
+		}
 	}
 
 	@Override

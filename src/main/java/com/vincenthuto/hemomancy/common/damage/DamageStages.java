@@ -68,6 +68,12 @@ public final class DamageStages {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void deathSaves(LivingDamageEvent.Pre event) {
+		// A killing blow on a professor's stage is caught first: the caster is thrown out, the rite fails (2026-11-17).
+		if (event.getEntity() instanceof ServerPlayer caster
+				&& com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.tryCatch(caster, event)) return;
+		// And on the Ringmaster's stage: the finale breaks off and the player goes home (2026-11-18).
+		if (event.getEntity() instanceof ServerPlayer finalist
+				&& com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.tryCatch(finalist, event)) return;
 		if (event.getEntity() instanceof ServerPlayer player
 				&& !ArmorSetBonusHandler.trySilentArchonDeathRefusal(player, event)
 				&& !ManipulationReactiveEvents.tryPhoenixDebt(player, event)) {

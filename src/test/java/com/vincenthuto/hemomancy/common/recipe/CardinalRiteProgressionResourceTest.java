@@ -144,6 +144,8 @@ final class CardinalRiteProgressionResourceTest {
 						: json.getAsJsonArray("brazier_signature").asList().stream()
 								.mapToInt(element -> element.getAsJsonObject().get("count").getAsInt())
 								.sum();
+				// A Crimson Troupe ordeal's key vial is a token, not an offering (the serializer counts it the same way).
+				if (json.has("puppeteer_trial")) offerings--;
 				assertTrue(CardinalRiteProgressionPolicy
 								.violations("cardinal_rite/" + id, degree, ceremony, offerings).isEmpty(),
 						id + " exceeds degree " + degree + " ceremony ceiling");

@@ -180,7 +180,7 @@ public final class CrimsonTroupePavilionGameTests {
 		p.joinLevel();
 		PlaythroughCrimsonTroupeGameTests.armUp(p, false); // ARRANGE
 		PlaythroughStates.acclimated(p, 500); // ARRANGE
-		PlaythroughStates.pavilionRoute(p, CircusRouteRules.Route.LIBERATION, 0b11); // ARRANGE
+		PlaythroughStates.pavilionReady(p, 0b11); // ARRANGE
 		CircusRingmasterEntity rm = ring.ringmaster();
 		int[] mark = new int[1];
 		PlaythroughClock.start(helper)
@@ -188,9 +188,11 @@ public final class CrimsonTroupePavilionGameTests {
 				.then(() -> {
 					p.moveTo(ring.stand());
 					p.talkTo(rm);
-					p.choose(rm, CircusRingmasterEntity.EVENT_FINALE);
+					// ARRANGE: the site owned with no finale in his Chamber to settle it (the GameTest world has no Chamber).
+					CircusPavilionSavedData.get(helper.getLevel()).begin(helper.getLevel(), ring.carousel().encounterOrigin(),
+							p.uuid(), CircusRouteRules.Route.NEUTRAL);
 					helper.assertTrue(p.uuid().equals(PlaythroughCrimsonTroupeGameTests.site(ring.carousel()).activeOwner()),
-							"the owner holds the site in the finale");
+							"the owner holds the site");
 					mark[0] = p.mark();
 					PlaythroughNpcs.kill(rm); // ARRANGE: the Ringmaster is lost (an admin kill)
 				})
@@ -203,7 +205,7 @@ public final class CrimsonTroupePavilionGameTests {
 									+ site.phase() + ", outcome " + site.outcome());
 					helper.assertTrue(p.chatSince(mark[0]).stream().anyMatch(line -> line.has(LOST)),
 							"the owner is told the Ringmaster is gone: " + p.chatSince(mark[0]));
-					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.LIBERATION
+					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.NEUTRAL
 									&& p.count(ItemInit.ringmaster_topper.get()) == 0 && owed(p) == 0,
 							"the route is kept and nothing is awarded");
 					var level = helper.getLevel();

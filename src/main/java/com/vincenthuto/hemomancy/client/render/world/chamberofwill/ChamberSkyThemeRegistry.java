@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
 import com.vincenthuto.hemomancy.client.data.MycophantFightClientData;
+import com.vincenthuto.hemomancy.client.data.RingmasterFinaleClientData;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import net.minecraft.resources.ResourceLocation;
@@ -29,6 +30,22 @@ public final class ChamberSkyThemeRegistry {
 	public static final ChamberSkyTheme DEFAULT = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_WILL_DEFAULT)
 			.skybox(0xFF454545, 0xFF808080)
 			.nebula(0x362E00, 0x801A00, 0x2E2600)
+			.tints(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
+			.pulse(1.0F)
+			.layers(1, 2, 2, 3)
+			.build();
+
+	/**
+	 * The Ringmaster's Chamber as his finale projects it onto the tent's faces (2026-11-18 fourth pass): the familiar
+	 * Chamber of Will (the shared capillary web, blue veins, blood vessels, neural structures, nebula and membrane pulse
+	 * at the Will default's full layer counts, untinted) under his own crimson-black skybox and nebula. His own sky
+	 * ({@code THEME_RINGMASTER}) keeps few shared layers and covers them with his canvas, strings and shafts, which on
+	 * the tent read as stripes on stripes rather than as his Chamber.
+	 */
+	public static final ChamberSkyTheme RINGMASTER_VEIL = ChamberSkyTheme.builder(
+			com.vincenthuto.hemomancy.Hemomancy.rloc("ringmaster_veil"))
+			.skybox(0xFF1C0610, 0xFF2A0A16)
+			.nebula(0x4A0A16, 0xA82034, 0x6A4030)
 			.tints(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
 			.pulse(1.0F)
 			.layers(1, 2, 2, 3)
@@ -103,6 +120,27 @@ public final class ChamberSkyThemeRegistry {
 				.toggles(true, false, false, false)
 				.build();
 		register(apotheos, new ApotheosChamberEffects(apotheos));
+		ChamberSkyTheme ringmasterMask = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_RINGMASTER_MASK)
+				.skybox(0xFF78A7FF, 0xFF78A7FF)
+				.nebula(0x000000, 0x000000, 0x000000)
+				.tints(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
+				.pulse(0.0F)
+				.motion(0.0F)
+				.layers(0, 0, 0, 0)
+				.toggles(false, false, false, false)
+				.build();
+		register(ringmasterMask, new RingmasterMaskChamberEffects(ringmasterMask));
+		ChamberSkyTheme ringmaster = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_RINGMASTER)
+				.skybox(0xFF1C0610, 0xFF1C0610)
+				.nebula(0x4A0A16, 0xA82034, 0x6A4030)
+				.tints(0xC03A40, 0xE0203A, 0x5A3A4A, 0xF0D0B0)
+				.pulse(0.6F)
+				.motion(0.6F)
+				.layers(2, 0, 2, 1)
+				.toggles(true, false, true, true)
+				.build();
+		register(ringmaster, new RingmasterChamberEffects(ringmaster));
+		register(RINGMASTER_VEIL, new WillDefaultChamberEffects(RINGMASTER_VEIL));
 	}
 
 	private ChamberSkyThemeRegistry() {
@@ -123,7 +161,8 @@ public final class ChamberSkyThemeRegistry {
 
 	public static ChamberSkyTheme activeTheme() {
 		if (drawing != null) return byId(drawing);
-		return byId(MycophantFightClientData.isActive() ? ChamberOfWillManager.THEME_MYCOPHANT_NURSERY
+		return byId(RingmasterFinaleClientData.isActive() ? ChamberOfWillManager.THEME_RINGMASTER_MASK
+				: MycophantFightClientData.isActive() ? ChamberOfWillManager.THEME_MYCOPHANT_NURSERY
 				: VesperFightClientData.isActive() ? ChamberOfWillManager.THEME_VESPER_FIGHT
 				: ChamberOfWillClientData.skyTheme());
 	}

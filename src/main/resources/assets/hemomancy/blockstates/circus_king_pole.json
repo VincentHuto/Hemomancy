@@ -1,16 +1,28 @@
 {
   "variants": {
-    "section=foot": {
+    "section=foot,sealed=false": {
       "model": "hemomancy:block/circus_king_pole_foot"
     },
-    "section=shaft": {
+    "section=foot,sealed=true": {
+      "model": "hemomancy:block/circus_king_pole_sealed"
+    },
+    "section=shaft,sealed=false": {
       "model": "hemomancy:block/circus_king_pole_shaft"
     },
-    "section=collar": {
+    "section=shaft,sealed=true": {
+      "model": "hemomancy:block/circus_king_pole_sealed"
+    },
+    "section=collar,sealed=false": {
       "model": "hemomancy:block/circus_king_pole_collar"
     },
-    "section=finial": {
+    "section=collar,sealed=true": {
+      "model": "hemomancy:block/circus_king_pole_sealed"
+    },
+    "section=finial,sealed=false": {
       "model": "hemomancy:block/circus_king_pole_finial"
+    },
+    "section=finial,sealed=true": {
+      "model": "hemomancy:block/circus_king_pole_sealed"
     }
   }
 }

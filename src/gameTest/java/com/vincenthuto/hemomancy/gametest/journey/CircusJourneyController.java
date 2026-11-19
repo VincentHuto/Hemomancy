@@ -95,8 +95,7 @@ public final class CircusJourneyController {
 			case ACCLIMATING -> require(stage, CircusProgressRules.stage(CircusPlayerProgress.acclimation(player))
 					== CircusProgressRules.Stage.ATTUNED, "The acclimation fixture has not reached Attuned.");
 			case ATTENTION -> require(stage, (CircusPlayerProgress.challenges(player) & 1) != 0,
-					"Complete the neutral peacock-spider attention act before choosing a route.");
-			case ROUTE -> require(stage, CircusPlayerProgress.route(player) == route(player), "Choose the requested Ringmaster route.");
+					"Complete the neutral peacock-spider attention act.");
 			case ACTS -> require(stage, LIBERATION.equals(mode(player))
 					|| (CircusPlayerProgress.challenges(player) & CircusRouteRules.ALL_CHALLENGES) == CircusRouteRules.ALL_CHALLENGES,
 					"Complete all four controlled acts.");
@@ -115,7 +114,6 @@ public final class CircusJourneyController {
 
 	static BlockPos origin(ServerPlayer player) { return BlockPos.of(player.getPersistentData().getLong(HemoJourneyFixtures.ORIGIN_KEY)); }
 	static CircusJourneyStage stage(ServerPlayer player) { return CircusJourneyStage.byId(player.getPersistentData().getString(HemoJourneySnapshot.STAGE_KEY)); }
-	static CircusRouteRules.Route route(ServerPlayer player) { return LIBERATION.equals(mode(player)) ? CircusRouteRules.Route.LIBERATION : CircusRouteRules.Route.SUCCESSION; }
 	private static CircusRouteRules.Route completedRoute(ServerPlayer player) { return LIBERATION.equals(mode(player)) ? CircusRouteRules.Route.LIBERATION_COMPLETE : CircusRouteRules.Route.SUCCESSION_COMPLETE; }
 
 	private static void setStage(ServerPlayer player, CircusJourneyStage stage) {
@@ -138,9 +136,8 @@ public final class CircusJourneyController {
 			case PERFORMERS -> "Right-click the Fire Eater, Acrobat, Stilt Walker, and Knife Thrower once each.";
 			case ACCLIMATING -> "Inspect the Attuned perception treatment, entity presentation, carousel, particles, and sound.";
 			case ATTENTION -> "Ask the Ringmaster to begin the neutral attention act and keep the trained peacock spider in view.";
-			case ROUTE -> LIBERATION.equals(mode(player)) ? "Tell the Ringmaster you reject the pact." : "Tell the Ringmaster you accept the succession pact.";
 			case ACTS -> LIBERATION.equals(mode(player)) ? "Liberation has no further controlled acts; advance to the finale." : "Ask the Ringmaster for the remaining three controlled acts and complete them.";
-			case FINALE -> LIBERATION.equals(mode(player)) ? "Begin the finale, sever all three riders with Thread Ripper, break their anchors, then kill the Ringmaster." : "Begin the finale, down the troupe after the rafter phase, then defeat the descended Ringmaster nonlethally.";
+			case FINALE -> LIBERATION.equals(mode(player)) ? "Begin the finale from his dialogue, win it in his Chamber, then kill him at his kneel (the fixture lays the kill on this site)." : "Begin the finale from his dialogue, win it in his Chamber, then absorb him at his kneel (the fixture lays the absorbing on this site).";
 			case REWARD -> LIBERATION.equals(mode(player)) ? "Confirm Thread Ripper and the Ringmaster Topper were awarded, then cast Thread Ripper on a hostile tethered puppet." : "Confirm the Ringmaster Pattern and Topper were awarded, then summon the Pattern and relay a Crossbar command.";
 			case COMPLETE -> "Run circus next once more to restore the pre-journey snapshot.";
 		};

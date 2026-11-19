@@ -49,9 +49,12 @@ public final class CircusPerformanceController {
 		if (activeChallenge(player) >= 0) return false;
 		CircusRouteRules.Route route = CircusPlayerProgress.route(player);
 		int challenge = nextChallenge(CircusPlayerProgress.challenges(player));
-		if (challenge < 0 || (route == CircusRouteRules.Route.NEUTRAL
-				&& (challenge != 0 || !CircusProgressRules.canReceivePact(CircusPlayerProgress.acclimation(player))))
-				|| (route != CircusRouteRules.Route.NEUTRAL && route != CircusRouteRules.Route.SUCCESSION)) return false;
+		// 2026-11-18: the attention act opens on acclimation; the three acts that earn taking his place open after it for
+		// anyone the finale's gate admits who is not Unstained. A settled route ends the acts.
+		if (challenge < 0 || route != CircusRouteRules.Route.NEUTRAL) return false;
+		if (challenge == 0 ? !CircusProgressRules.canReceivePact(CircusPlayerProgress.acclimation(player))
+				: CircusRingmasterEntity.pactGate(player) != CircusRouteRules.PactGate.OPEN
+						|| CircusRingmasterEntity.unstained(player)) return false;
 		CircusPavilionSavedData data = CircusPavilionSavedData.get(player.serverLevel());
 		if (!data.beginPerformance(player.serverLevel(), origin, player.getUUID(), route)) {
 			player.displayClientMessage(Component.translatable(CircusPavilionStateRules.refusalKey(

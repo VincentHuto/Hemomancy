@@ -18,10 +18,14 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Optional;
 import java.util.UUID;
 
-public final class CinderBellowsEntity extends GroundPuppetEntity implements SyncedBoundSummon {
+public final class CinderBellowsEntity extends GroundPuppetEntity implements SyncedBoundSummon,
+		com.vincenthuto.hemomancy.common.entity.npc.circus.TrueSelf {
 	private static final BoundSummonSync SYNC = BoundSummonSync.define(CinderBellowsEntity.class);
 
     private static final EntityDataAccessor<Integer> BREATH_CYCLE = SynchedEntityData.defineId(CinderBellowsEntity.class, EntityDataSerializers.INT);
+    /** In the Fire Breather's Chamber the Bellows is its true self: wilder, tougher and a little quicker (2026-11-17). */
+    private static final EntityDataAccessor<Boolean> TRUE_SELF = SynchedEntityData.defineId(CinderBellowsEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final double TRUE_SELF_HEALTH = 1.5D, TRUE_SELF_SPEED = 1.1D;
     private Vec3 breathDirection = Vec3.ZERO;
     public CinderBellowsEntity(EntityType<? extends Zombie> type, Level level) { super(type, level); }
     public static AttributeSupplier.Builder setAttributes() {
@@ -33,6 +37,7 @@ public final class CinderBellowsEntity extends GroundPuppetEntity implements Syn
         super.defineSynchedData(builder);
         SYNC.defineDefaults(builder, "cinder_bellows");
         builder.define(BREATH_CYCLE, 0);
+        builder.define(TRUE_SELF, false);
     }
     public int getBreathCycle() { return entityData.get(BREATH_CYCLE); }
     public void setDemonstrationCycle(int cycle) { entityData.set(BREATH_CYCLE, cycle); }
@@ -41,6 +46,11 @@ public final class CinderBellowsEntity extends GroundPuppetEntity implements Syn
         if (level().isClientSide) return;
         if (hemomancy$isTrialSummon()) BoundSummonBehavior.trialServerTick(this, this);
         else if (!BoundSummonBehavior.commonServerTick(this, this)) return;
+        // In its ordeal a move of its own takes over from the breathing count while it runs.
+        if (com.vincenthuto.hemomancy.common.encounter.ordeal.CinderBellowsOrdealMoves.busy(getUUID())) {
+            entityData.set(BREATH_CYCLE, 0);
+            return;
+        }
         LivingEntity target = getTarget();
         if (isInWaterOrBubble() || target == null || !canAttack(target)) {
             entityData.set(BREATH_CYCLE, 0);
@@ -89,4 +99,51 @@ public final class CinderBellowsEntity extends GroundPuppetEntity implements Syn
 	}
 
 	@Override public BoundSummonSync hemomancy$sync() { return SYNC; }
+
+	/** Whether its ordinary breath is burning now (its inhale and recovery can be cut short by a move). */
+	public boolean breathBurning() {
+		int cycle = getBreathCycle();
+		return cycle > 0 && CinderBellowsRules.phase(cycle) == CinderBellowsRules.Phase.BREATHE;
+	}
+
+	@Override public boolean isTrueSelf() { return entityData.get(TRUE_SELF); }
+
+	@Override public void setTrueSelf(boolean trueSelf) {
+		entityData.set(TRUE_SELF, trueSelf);
+		if (!trueSelf) return;
+		var health = getAttribute(Attributes.MAX_HEALTH);
+		var speed = getAttribute(Attributes.MOVEMENT_SPEED);
+		if (health != null) health.setBaseValue(health.getBaseValue() * TRUE_SELF_HEALTH);
+		if (speed != null) speed.setBaseValue(speed.getBaseValue() * TRUE_SELF_SPEED);
+		setHealth(getMaxHealth());
+	}
+
+	/** Its ordeal moves' poses ({@code CinderBellowsOrdealMoves}): an entity event per move, timed by the model from its arrival. */
+	private static final byte ORDEAL_MOVE_EVENT = 80;
+	private static final int ORDEAL_MOVES = 4;
+	private int ordealMove = -1;
+	private int ordealMoveStart;
+
+	/** Starts move {@code kind}'s pose on every watching client, or stops it with -1. */
+	public void ordealMove(int kind) {
+		level().broadcastEntityEvent(this, (byte) (ORDEAL_MOVE_EVENT + (kind < 0 ? ORDEAL_MOVES : kind)));
+	}
+
+	public int ordealMove() {
+		return ordealMove;
+	}
+
+	public float ordealMoveAge(float partialTick) {
+		return tickCount - ordealMoveStart + partialTick;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id >= ORDEAL_MOVE_EVENT && id <= ORDEAL_MOVE_EVENT + ORDEAL_MOVES) {
+			ordealMove = id - ORDEAL_MOVE_EVENT == ORDEAL_MOVES ? -1 : id - ORDEAL_MOVE_EVENT;
+			ordealMoveStart = tickCount;
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
 }

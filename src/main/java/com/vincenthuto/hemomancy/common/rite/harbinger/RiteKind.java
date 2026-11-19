@@ -158,6 +158,19 @@ public enum RiteKind {
 			return false;
 		}
 
+		/**
+		 * While its caster fights on a professor's stage the rite waits (the caster's absence from this level is not
+		 * abandonment); a won ordeal lets it go on to its culmination and any other end breaks it (2026-11-17).
+		 */
+		@Override
+		Admission admit(ServerLevel level, @Nullable ServerPlayer caster, ActiveCardinalRite rite) {
+			return switch (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.admission(rite.getPlayerUUID())) {
+				case WAIT -> Admission.WAIT;
+				case BREAK -> Admission.BREAK;
+				case TICK, NONE -> Admission.TICK;
+			};
+		}
+
 		@Override
 		boolean holdsBeforeFinale() {
 			return false;

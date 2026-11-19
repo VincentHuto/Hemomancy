@@ -127,11 +127,13 @@ class CircusPresentationRegressionTest {
 	}
 
 	@Test
-	void routeChoiceWarnsBeforeCommitAndRepairDisappearsAfterUse() throws IOException {
+	/** 2026-11-18: no route is chosen before the fight; the ending is decided at his kneel. */
+	void noRouteIsChosenBeforeTheFinale() throws IOException {
 		String ringmaster = source("common/entity/npc/circus/CircusRingmasterEntity.java");
-		assertTrue(ringmaster.contains("\"succession_warning\""));
-		assertTrue(ringmaster.contains("\"liberation_warning\""));
-		assertTrue(ringmaster.contains("CircusPlayerProgress.canRepairRoute(player)"));
+		assertFalse(ringmaster.contains("\"succession_warning\""));
+		assertFalse(ringmaster.contains("\"liberation_warning\""));
+		assertFalse(ringmaster.contains("canRepairRoute"));
+		assertTrue(ringmaster.contains("CircusRouteRules.canBeginFinale(CircusPlayerProgress.challenges(player), pactGate(player))"));
 	}
 
 	@Test

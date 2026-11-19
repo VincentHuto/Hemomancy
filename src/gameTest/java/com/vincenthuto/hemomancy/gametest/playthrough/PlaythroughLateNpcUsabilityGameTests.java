@@ -1079,8 +1079,7 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 					CourtMemberDialogue.JOIN, CourtMemberDialogue.CHALLENGE);
 		}
 		if (label.equals("circus:ringmaster")) {
-			return List.of(RECRUIT, CircusRingmasterEntity.EVENT_ACCEPT, CircusRingmasterEntity.EVENT_REJECT,
-					CircusRingmasterEntity.EVENT_REPAIR, CircusRingmasterEntity.EVENT_TRIAL, CircusRingmasterEntity.EVENT_FINALE);
+			return List.of(RECRUIT, CircusRingmasterEntity.EVENT_TRIAL, CircusRingmasterEntity.EVENT_FINALE);
 		}
 		if (label.startsWith("circus:")) {
 			return List.of(RECRUIT, "circus_school_teach", "circus_school_practical", "circus_school_guest",

@@ -80,7 +80,10 @@ def _blockstate_keys(name):
 # Properties a Hemomancy block may carry without its blockstate switching on them (no model change).
 SILENT = {'waterlogged': BOOL, 'powered': BOOL}
 # Hemomancy blocks with state their blockstate file does not switch on (a block entity renderer draws it).
-UNMODELLED = {'hemomancy:ring_door': {'open': BOOL}, 'hemomancy:pulse_pylon': {'charge': ('0', '1', '2', '3')}}
+SIDE = ('net', 'edge', 'tied')
+# Values a block takes that its blockstate draws nothing for (a net side beside more net shows no rim).
+UNMODELLED = {'hemomancy:ring_door': {'open': BOOL}, 'hemomancy:pulse_pylon': {'charge': ('0', '1', '2', '3')},
+              'hemomancy:circus_net': {'north': SIDE, 'east': SIDE, 'south': SIDE, 'west': SIDE}}
 
 
 def expected(name):
@@ -99,6 +102,7 @@ def expected(name):
         table.update(UNMODELLED.get(name, {}))
         # A multipart that only draws a part when a switch is on names just 'true'; the switch still takes 'false'.
         table.update({k: BOOL if set(v) <= set(BOOL) else tuple(v) for k, v in keys.items()})
+        table.update(UNMODELLED.get(name, {}))
         return table
     return {}
 

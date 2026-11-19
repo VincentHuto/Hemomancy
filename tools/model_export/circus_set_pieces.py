@@ -297,8 +297,19 @@ def trapeze():
             box('knot_e', (12.25, 4.25, 7.25), (13.75, 5.5, 8.75), 'thread')]
 
 
-@piece('circus_net', 'Rigging Net', 'plain')
+@piece('circus_net', 'Rigging Net', 'net')
 def net():
+    """The sheet, an iron rim for a side with no net beside it, and a thread lashing for a side tied off on a pole
+    (each authored on the north side; the blockstate turns them)."""
+    return {'body': net_sheet(),
+            # The rim stands a hair proud of the block edge so the cord ends inside it never share its face, and the
+            # lashing stops at the rim's face, a little thinner, so the two never share a plane.
+            'rim': [box('rim', (0, .5, -.1), (16, 2.5, 1.5), 'iron')],
+            'tie': [box('lash', (6.5, 1.1, -7), (9.5, 2.4, -.1), 'thread'),
+                    box('wrap', (5.5, .5, -2.5), (10.5, 3, -1), 'thread')]}
+
+
+def net_sheet():
     e = []
     for i in range(4):
         c = 2 + i * 4
@@ -783,8 +794,14 @@ def export_piece(name, fn, title, kind, show):
     if kind == 'pole':
         groups = fn()
         models = {f'block/{name}_{s}': s for s in groups}
-        variants = {f'section={s}': {'model': f'hemomancy:block/{name}_{s}'} for s in groups}
+        # A section walled in on all four sides (through the roof canvas) is a full laced-canvas block.
+        variants = {f'section={s},sealed={sealed}': {'model': f'hemomancy:block/{name}_sealed' if sealed == 'true'
+                                                     else f'hemomancy:block/{name}_{s}'}
+                    for s in groups for sealed in ('false', 'true')}
         out = export(name, groups, title, variants, False, SPECIAL, models)
+        (ASSETS / f'models/block/{name}_sealed.json').write_text(json.dumps(
+            {'parent': 'minecraft:block/cube_all', 'textures': {'all': 'hemomancy:block/circus_laced_canvas'}},
+            indent=2) + '\n')
         whole = item_elements((out[f'block/{name}_foot']['elements'], 0), (out[f'block/{name}_finial']['elements'], 16))
         write_item(name, elements=whole, atlas=name, height=atlas_height(name))
         if show:
@@ -828,6 +845,18 @@ def export_piece(name, fn, title, kind, show):
             variants[f'rotation={step}'] = dict({'model': path}, **({'y': y} if y else {}))
         models = {f'block/{name}': 'body', f'block/{name}_diagonal': 'diagonal'}
         out = export(name, fn(), title, variants, show, SPECIAL, models)
+        write_item(name)
+        return out
+    if kind == 'net':
+        groups = fn()
+        models = {f'block/{name}': 'body', f'block/{name}_rim': 'rim', f'block/{name}_tie': 'tie'}
+        out = export(name, groups, title, {}, show, SPECIAL, models)
+        parts = [{'apply': {'model': f'hemomancy:block/{name}'}}]
+        for side, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270)):
+            turn = {'y': y} if y else {}
+            parts.append({'when': {side: 'edge|tied'}, 'apply': dict({'model': f'hemomancy:block/{name}_rim'}, **turn)})
+            parts.append({'when': {side: 'tied'}, 'apply': dict({'model': f'hemomancy:block/{name}_tie'}, **turn)})
+        (ASSETS / f'blockstates/{name}.json').write_text(json.dumps({'multipart': parts}, indent=2) + '\n')
         write_item(name)
         return out
     raise ValueError(kind)

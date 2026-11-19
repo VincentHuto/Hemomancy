@@ -576,10 +576,7 @@ public final class NpcTradeGameTests {
 			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
 			com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(player)
 					.putBoolean("quest.empty_ring", true);
-			quests = topicTexts(open(h, captured, ringmaster, "ringmaster"), DialogueCategory.QUESTS);
-			h.assertTrue(quests.containsAll(List.of("hemomancy.circus.option.accept", "hemomancy.circus.option.reject")),
-					"accept and reject are Quest Work: " + quests);
-			CircusPlayerProgress.chooseRoute(player, CircusRouteRules.Route.SUCCESSION);
+			// 2026-11-18: no route is chosen before the finale; it is offered as soon as the gate opens.
 			quests = topicTexts(open(h, captured, ringmaster, "ringmaster"), DialogueCategory.QUESTS);
 			h.assertTrue(quests.contains("hemomancy.circus.option.finale"), "the finale is Quest Work: " + quests);
 			h.assertFalse(topicTexts(open(h, captured, ringmaster, "ringmaster"), DialogueCategory.CONVERSATION)

@@ -22,9 +22,65 @@ public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 			CircusStiltWalkerEntity.class, EntityDataSerializers.INT);
 	private static final double SLAM_RADIUS = 3.5D;
 	private int attackCooldown;
+	/**
+	 * The true self's ordeal gestures ({@link CircusPerformerEntity#gesture}, 2026-11-17): a stilt planted like a spear,
+	 * a stride across the ring, the spin, and the long shadow falling. Timed by the true self's model from each move's
+	 * first wind-up tick ({@code StiltWalkerMoves}).
+	 */
+	public static final int GESTURE_PLANT = 0, GESTURE_STRIDE = 1, GESTURE_SPIN = 2, GESTURE_FALL = 3;
+	/** The true self's walk, counted in strides ({@code OrdealStiltWalk}), so the model swings its stilts in step. */
+	private static final EntityDataAccessor<Float> STRIDE = SynchedEntityData.defineId(
+			CircusStiltWalkerEntity.class, EntityDataSerializers.FLOAT);
+	/** A gesture's second point: the stride's chord, the spin's start, the shadow's fall (with {@link #gestureAt}). */
+	private static final EntityDataAccessor<org.joml.Vector3f> GESTURE_AIM = SynchedEntityData.defineId(
+			CircusStiltWalkerEntity.class, EntityDataSerializers.VECTOR3);
+	private float strideO, strideNow;
+	/** Server: the walk stands still through this tick while a move is made. */
+	private long strideHeldUntil = Long.MIN_VALUE;
 
 	public CircusStiltWalkerEntity(EntityType<? extends CircusStiltWalkerEntity> type, Level level) {
 		super(type, level);
+	}
+
+	/** Starts gesture {@code kind} at {@code at} with its second point {@code aim}, on every watching client. */
+	public void gesture(int kind, net.minecraft.world.phys.Vec3 at, net.minecraft.world.phys.Vec3 aim) {
+		entityData.set(GESTURE_AIM, aim.toVector3f());
+		gesture(kind, at);
+	}
+
+	public net.minecraft.world.phys.Vec3 gestureAim() {
+		return new net.minecraft.world.phys.Vec3(entityData.get(GESTURE_AIM));
+	}
+
+	/** Walks on one tick's worth of stride, unless a move holds the walk still; returns the strides walked. */
+	public float walk(long now) {
+		float stride = entityData.get(STRIDE);
+		if (now > strideHeldUntil) {
+			stride += 1.0F / com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealStiltWalk.STRIDE_TICKS;
+			entityData.set(STRIDE, stride);
+		}
+		return stride;
+	}
+
+	/** Holds the walk still through {@code until}: the stilts stay planted while a move is made. */
+	public void holdWalk(long until) {
+		strideHeldUntil = Math.max(strideHeldUntil, until);
+	}
+
+	public boolean walkHeld(long now) {
+		return now <= strideHeldUntil;
+	}
+
+	/** The strides walked, between ticks. */
+	public float stride(float partialTick) {
+		return strideO + (strideNow - strideO) * partialTick;
+	}
+
+	/** The true self stands about twelve blocks tall over a man-sized body: cull it by what is drawn. */
+	@Override
+	public net.minecraft.world.phys.AABB getBoundingBoxForCulling() {
+		if (!isTrueSelf()) return super.getBoundingBoxForCulling();
+		return getBoundingBox().inflate(7.0D, 0.0D, 7.0D).expandTowards(0.0D, 13.0D, 0.0D);
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
@@ -37,11 +93,16 @@ public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 		builder.define(SPIN_TICKS, 0);
+		builder.define(STRIDE, 0.0F);
+		builder.define(GESTURE_AIM, new org.joml.Vector3f());
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
+		strideO = strideNow;
+		strideNow = entityData.get(STRIDE);
+		if (Math.abs(strideNow - strideO) > 1.0F) strideO = strideNow;
 		if (!level().isClientSide && getActState() != ActState.PERFORM && entityData.get(SPIN_TICKS) != 0) {
 			entityData.set(SPIN_TICKS, 0);
 		}

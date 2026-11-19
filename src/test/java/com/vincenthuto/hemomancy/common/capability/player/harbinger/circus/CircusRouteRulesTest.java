@@ -6,58 +6,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+/** The finale's gates since the route moved to the kneel (2026-11-18). */
 class CircusRouteRulesTest {
 	@Test
-	void neutralPlayerCanChooseEitherRouteButCompletedPlayerCannotSwitch() {
-		assertTrue(CircusRouteRules.canChoose(CircusRouteRules.Route.NEUTRAL));
-		assertEquals(CircusRouteRules.Route.SUCCESSION,
-				CircusRouteRules.choose(CircusRouteRules.Route.NEUTRAL, CircusRouteRules.Route.SUCCESSION));
-		assertEquals(CircusRouteRules.Route.LIBERATION,
-				CircusRouteRules.choose(CircusRouteRules.Route.NEUTRAL, CircusRouteRules.Route.LIBERATION));
-		assertFalse(CircusRouteRules.canChoose(CircusRouteRules.Route.SUCCESSION_COMPLETE));
-		assertEquals(CircusRouteRules.Route.SUCCESSION_COMPLETE,
-				CircusRouteRules.choose(CircusRouteRules.Route.SUCCESSION_COMPLETE, CircusRouteRules.Route.LIBERATION));
+	void finaleOpensAfterTheAttentionActForAnOpenGate() {
+		assertTrue(CircusRouteRules.canBeginFinale(0b1, CircusRouteRules.PactGate.OPEN));
+		assertFalse(CircusRouteRules.canBeginFinale(0b0, CircusRouteRules.PactGate.OPEN));
+		assertFalse(CircusRouteRules.canBeginFinale(0b1, CircusRouteRules.PactGate.NEEDS_DEGREE));
 	}
 
 	@Test
-	void successionRequiresAttunementAndEveryChallenge() {
-		assertFalse(CircusRouteRules.canBeginFinale(CircusRouteRules.Route.SUCCESSION, 999, 0b1_1111));
-		assertFalse(CircusRouteRules.canBeginFinale(CircusRouteRules.Route.SUCCESSION, 1000, 0b0_1111));
-		assertTrue(CircusRouteRules.canBeginFinale(CircusRouteRules.Route.SUCCESSION, 1000, 0b1_1111));
-		assertTrue(CircusRouteRules.canBeginFinale(CircusRouteRules.Route.LIBERATION, 0, 0));
+	void absorptionNeedsFullAcclimationTheActsAndNotUnstained() {
+		assertTrue(CircusRouteRules.mayAbsorb(1000, 0b1_1101, false));
+		assertFalse(CircusRouteRules.mayAbsorb(999, 0b1_1101, false));
+		assertFalse(CircusRouteRules.mayAbsorb(1000, 0b0_1101, false));
+		assertFalse(CircusRouteRules.mayAbsorb(1000, 0b1_1101, true));
 	}
 
+	/** D-30, NQ-15-5: Degree 4 and any one school report open the finale for everyone but the Unstained. */
 	@Test
-	void oneRepairIsAvailableOnlyWhileAChosenRouteIsUnfinished() {
-		assertTrue(CircusRouteRules.canRepair(CircusRouteRules.Route.SUCCESSION, false));
-		assertTrue(CircusRouteRules.canRepair(CircusRouteRules.Route.LIBERATION, false));
-		assertFalse(CircusRouteRules.canRepair(CircusRouteRules.Route.NEUTRAL, false));
-		assertFalse(CircusRouteRules.canRepair(CircusRouteRules.Route.SUCCESSION, true));
-		assertFalse(CircusRouteRules.canRepair(CircusRouteRules.Route.LIBERATION_COMPLETE, false));
-	}
-
-	/** D-30, NQ-15-5: Degree 4 and any one school report open the pact for everyone but the Unstained. */
-	@Test
-	void thePactNeedsTheFourthDegreeAndAnyOneReport() {
-		for (CircusRouteRules.Route route : new CircusRouteRules.Route[]{CircusRouteRules.Route.SUCCESSION,
-				CircusRouteRules.Route.LIBERATION}) {
-			assertEquals(CircusRouteRules.PactGate.OPEN, CircusRouteRules.pactGate(route, true, true, false, false));
-			assertEquals(CircusRouteRules.PactGate.NEEDS_DEGREE, CircusRouteRules.pactGate(route, false, true, true, false));
-			assertEquals(CircusRouteRules.PactGate.NEEDS_REPORT, CircusRouteRules.pactGate(route, true, false, false, false));
-			assertEquals(CircusRouteRules.PactGate.NEEDS_DEGREE_AND_REPORT,
-					CircusRouteRules.pactGate(route, false, false, false, false));
-		}
+	void theFinaleNeedsTheFourthDegreeAndAnyOneReport() {
+		assertEquals(CircusRouteRules.PactGate.OPEN, CircusRouteRules.pactGate(true, true, false, false));
+		assertEquals(CircusRouteRules.PactGate.NEEDS_DEGREE, CircusRouteRules.pactGate(false, true, true, false));
+		assertEquals(CircusRouteRules.PactGate.NEEDS_REPORT, CircusRouteRules.pactGate(true, false, false, false));
+		assertEquals(CircusRouteRules.PactGate.NEEDS_DEGREE_AND_REPORT, CircusRouteRules.pactGate(false, false, false, false));
 		assertEquals(4, CircusRouteRules.PACT_DEGREE);
 	}
 
-	/** D-31, NQ-15-6 B: the Unstained run Liberation only, on The Missing Understudy report and no Degree. */
+	/** D-31, NQ-15-6 B: the Unstained fight on The Missing Understudy report and no Degree. */
 	@Test
-	void anUnstainedLiberatorNeedsTheUnderstudyReportAndNoDegree() {
-		assertEquals(CircusRouteRules.PactGate.OPEN,
-				CircusRouteRules.pactGate(CircusRouteRules.Route.LIBERATION, false, true, true, true));
-		assertEquals(CircusRouteRules.PactGate.NEEDS_UNDERSTUDY,
-				CircusRouteRules.pactGate(CircusRouteRules.Route.LIBERATION, true, true, false, true));
-		assertEquals(CircusRouteRules.PactGate.UNSTAINED,
-				CircusRouteRules.pactGate(CircusRouteRules.Route.SUCCESSION, true, true, true, true));
+	void theUnstainedMayFightWithTheUnderstudyReport() {
+		assertEquals(CircusRouteRules.PactGate.OPEN, CircusRouteRules.pactGate(false, false, true, true));
+		assertEquals(CircusRouteRules.PactGate.NEEDS_UNDERSTUDY, CircusRouteRules.pactGate(true, true, false, true));
 	}
 }

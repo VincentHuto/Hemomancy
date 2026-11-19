@@ -45,7 +45,10 @@ class SessionStateRegistryTest {
 			"common/item/harbinger/tool/living/LivingTorchChannelEvents.java", "stops a breathing channel",
 			"common/entity/summon/puppeteer/PuppeteerCommandEvents.java", "rotates the owner's puppet session",
 			"common/manipulation/ductilis/Paralysis.java", "lifts paralysis, as on login, respawn and dimension change",
-			"common/entity/boss/court/KindledChampionTrial.java", "ends a usurpation the challenger left and records the wait");
+			"common/entity/boss/court/KindledChampionTrial.java", "ends a usurpation the challenger left and records the wait",
+			"common/encounter/ordeal/OrdealDirector.java", "ends a Chamber ordeal its caster left, failing the rite",
+			"common/encounter/ordeal/finale/RingmasterFinaleDirector.java",
+			"breaks off the Ringmaster's finale its player left, releasing the real site");
 
 	@Test
 	void everyUuidKeyedCollectionIsRegisteredWithTheHub() throws Exception {

@@ -31,8 +31,18 @@ import java.util.*;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
-public class ScarletMummerEntity extends GroundPuppetEntity implements SyncedBoundSummon {
+public class ScarletMummerEntity extends GroundPuppetEntity implements SyncedBoundSummon,
+		com.vincenthuto.hemomancy.common.entity.npc.circus.TrueSelf {
 	private static final BoundSummonSync SYNC = BoundSummonSync.define(ScarletMummerEntity.class);
+	/** In the Stilt Walker's Chamber the Mummer is its true self: wilder, tougher and quicker (2026-11-17). */
+	private static final EntityDataAccessor<Boolean> TRUE_SELF =
+			SynchedEntityData.defineId(ScarletMummerEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final double TRUE_SELF_HEALTH = 2.0D, TRUE_SELF_SPEED = 1.15D;
+	/** Its ordeal moves' poses ({@code ScarletMummerOrdealMoves}): an entity event per move, timed by the model. */
+	private static final byte ORDEAL_MOVE_EVENT = 80;
+	private static final int ORDEAL_MOVES = 4;
+	private int ordealMove = -1;
+	private int ordealMoveStart;
 	private static final EntityDataAccessor<Integer> DATA_PERFORMANCE_TICKS =
 			SynchedEntityData.defineId(ScarletMummerEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Boolean> DATA_EVADE_AVAILABLE =
@@ -61,6 +71,53 @@ public class ScarletMummerEntity extends GroundPuppetEntity implements SyncedBou
 		SYNC.defineDefaults(builder, "scarlet_mummer");
 		builder.define(DATA_PERFORMANCE_TICKS, 0);
 		builder.define(DATA_EVADE_AVAILABLE, false);
+		builder.define(TRUE_SELF, false);
+	}
+
+	@Override
+	public boolean isTrueSelf() {
+		return entityData.get(TRUE_SELF);
+	}
+
+	@Override
+	public void setTrueSelf(boolean trueSelf) {
+		entityData.set(TRUE_SELF, trueSelf);
+		if (!trueSelf) return;
+		var health = getAttribute(Attributes.MAX_HEALTH);
+		var speed = getAttribute(Attributes.MOVEMENT_SPEED);
+		if (health != null) health.setBaseValue(health.getBaseValue() * TRUE_SELF_HEALTH);
+		if (speed != null) speed.setBaseValue(speed.getBaseValue() * TRUE_SELF_SPEED);
+		setHealth(getMaxHealth());
+	}
+
+	/** Starts move {@code kind}'s pose on every watching client, or stops it with -1. */
+	public void ordealMove(int kind) {
+		level().broadcastEntityEvent(this, (byte) (ORDEAL_MOVE_EVENT + (kind < 0 ? ORDEAL_MOVES : kind)));
+	}
+
+	public int ordealMove() {
+		return ordealMove;
+	}
+
+	public float ordealMoveAge(float partialTick) {
+		return tickCount - ordealMoveStart + partialTick;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id >= ORDEAL_MOVE_EVENT && id <= ORDEAL_MOVE_EVENT + ORDEAL_MOVES) {
+			ordealMove = id - ORDEAL_MOVE_EVENT == ORDEAL_MOVES ? -1 : id - ORDEAL_MOVE_EVENT;
+			ordealMoveStart = tickCount;
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
+
+	/** Its ordinary blow waits while one of its ordeal moves runs. */
+	@Override
+	public boolean doHurtTarget(Entity target) {
+		if (com.vincenthuto.hemomancy.common.encounter.ordeal.ScarletMummerOrdealMoves.busy(getUUID())) return false;
+		return super.doHurtTarget(target);
 	}
 
 	@Override

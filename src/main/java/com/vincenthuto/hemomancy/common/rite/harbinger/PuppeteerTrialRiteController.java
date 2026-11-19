@@ -72,6 +72,14 @@ public final class PuppeteerTrialRiteController {
 			if (notify) caster.displayClientMessage(Component.translatable("hemomancy.circus.school.instruction_required"), true);
 			return false;
 		}
+		// An ordeal on a professor's stage has no open-world fallback: it refuses when no stage can be used.
+		if (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor.forSummon(summonName).isPresent()) {
+			Component refusal = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.refusal(caster);
+			if (refusal != null) {
+				if (notify) caster.displayClientMessage(refusal, true);
+				return false;
+			}
+		}
 		boolean enoughBlood = HemoCapabilityAccess.getBloodVolume(caster).getBloodVolume() >= bloodCost;
 		if (!enoughBlood && notify) {
 			caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.no_blood"), true);
@@ -119,14 +127,20 @@ public final class PuppeteerTrialRiteController {
 		}
 		UUID crossbarId = MarionetteCrossbarItem.getCrossbarId(crossbar);
 		var definition = PuppeteerSummonDefinitions.byName(summonName).orElse(null);
-		var created = PuppeteerSummonFactory.createTrial(definition, level, caster, rite.getCenterPos());
-		if (created.isEmpty() || !level.addFreshEntity(created.get())) {
+		var professor = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor.forSummon(summonName);
+		// A professor's ordeal: the puppet manifests on their stage in the Chamber and the caster is drawn after it.
+		var created = professor.isPresent()
+				? com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.begin(caster, level, rite, professor.get(),
+						(chamber, at) -> PuppeteerSummonFactory.createTrial(definition, chamber, caster, at)
+								.filter(chamber::addFreshEntity))
+				: PuppeteerSummonFactory.createTrial(definition, level, caster, rite.getCenterPos());
+		if (created.isEmpty() || (professor.isEmpty() && !level.addFreshEntity(created.get()))) {
 			created.ifPresent(Entity::discard);
 			caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.failed"), false);
 			rite.markCollapsed();
 			return;
 		}
-		com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings.descend(created.get());
+		if (professor.isEmpty()) com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings.descend(created.get());
 		net.minecraft.world.phys.Vec3 manifestation = net.minecraft.world.phys.Vec3.atCenterOf(rite.getCenterPos())
 				.add(0.0D, 1.5D, 0.0D);
 		int drawn = 0;

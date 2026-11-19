@@ -46,6 +46,12 @@ public final class VampireBatEntity extends Bat {
 	/** How far a bat scents a wet stain, and how often it looks. */
 	private static final int SCENT_RADIUS = 10;
 	private static final int SCENT_CHECK_TICKS = 20;
+	/**
+	 * Server only: one of the Ringmaster's roosting bats in his finale (2026-11-18). It hangs upside down in his rigging
+	 * until called; then {@code FinaleSwarm} flies it (a swoop that bites and steals blood, the flight back to him and
+	 * home to its roost). Its own hunting, scavenging and bat wandering stay off.
+	 */
+	private boolean finaleRoost;
 
 	/** 1 as the jaw snaps shut on a bite, falling to 0 over a few ticks. */
 	public float biteSnap(float partialTick) {
@@ -85,6 +91,24 @@ public final class VampireBatEntity extends Bat {
 		getPersistentData().putUUID("CircusSwarmOwner", owner);
 		setResting(false);
 		setPersistenceRequired();
+	}
+
+	/** Makes this a roosting bat of the Ringmaster's finale, flown by his swarm rather than by itself. */
+	public void markFinaleRoost() {
+		finaleRoost = true;
+		noPhysics = true;
+		setNoGravity(true);
+		setPersistenceRequired();
+	}
+
+	public boolean isFinaleRoost() {
+		return finaleRoost;
+	}
+
+	/** The jaw snaps shut with a spray of blood: a bite seen and heard. */
+	public void biteFlourish() {
+		level().broadcastEntityEvent(this, BITE_EVENT);
+		playSound(SoundEvents.BAT_AMBIENT, 0.6F, 1.5F);
 	}
 
 	public boolean isManifestedAggregate() {
@@ -135,7 +159,7 @@ public final class VampireBatEntity extends Bat {
 
 	@Override
 	protected boolean shouldDropLoot() {
-		return !isManifestedAggregate() && !getPersistentData().hasUUID("CircusSwarmOwner") && super.shouldDropLoot();
+		return !isManifestedAggregate() && !finaleRoost && !getPersistentData().hasUUID("CircusSwarmOwner") && super.shouldDropLoot();
 	}
 
 	@Override
@@ -146,6 +170,12 @@ public final class VampireBatEntity extends Bat {
 			easeFlightLean();
 			if (isManifestedAggregate() && random.nextBoolean()) level().addParticle(HemoParticleData.bloodCell(SWARM_MOTE),
 					getRandomX(2.5D), getRandomY(), getRandomZ(2.5D), 0.0D, 0.01D, 0.0D);
+			return;
+		}
+		if (finaleRoost) {
+			// Flown by his swarm: nothing of its own moves it.
+			noPhysics = true;
+			setDeltaMovement(Vec3.ZERO);
 			return;
 		}
 		LivingEntity prey = isManifestedAggregate() ? aggregateOwner() : bleedingPrey();
@@ -222,7 +252,7 @@ public final class VampireBatEntity extends Bat {
 	/** While a scent leads it, the bat neither wanders to the vanilla bat's random points nor roosts. */
 	@Override
 	protected void customServerAiStep() {
-		if (scent != null) return;
+		if (scent != null || finaleRoost) return;
 		super.customServerAiStep();
 	}
 
@@ -248,11 +278,13 @@ public final class VampireBatEntity extends Bat {
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		tag.putBoolean("ManifestedAggregate", isManifestedAggregate());
+		if (finaleRoost) tag.putBoolean("FinaleRoost", true);
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		entityData.set(AGGREGATE, tag.getBoolean("ManifestedAggregate"));
+		if (tag.getBoolean("FinaleRoost")) markFinaleRoost();
 	}
 }

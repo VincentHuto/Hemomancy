@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
-import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
@@ -62,8 +61,6 @@ public final class ThreadRipperManip extends BloodManipulation {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
 
 		if (!(level instanceof ServerLevel server)) return;
-		CircusCarouselEntity carousel = aimedCarousel(player);
-		if (carousel != null && carousel.severCaptive(player)) { ManipulationVisuals.burst(server, ManipulationVisuals.Form.THREAD, player.getEyePosition(), carousel.position().add(0, 2.5, 0), 1, 24); return; }
 
 		EntityHitResult hit = DeadlyGazeManip.rayTraceEntities(player, RANGE,
 				entity -> entity instanceof LivingEntity && entity != player);
@@ -91,14 +88,6 @@ public final class ThreadRipperManip extends BloodManipulation {
                 controller!=null?controller.getEyePosition():player.getEyePosition(), target.getEyePosition(), 1, 24); server.playSound(null, target.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.PLAYERS, 0.8F, 1.25F);
 	        }
     }
-
-	private static CircusCarouselEntity aimedCarousel(Player player) {
-		return player.level().getEntitiesOfClass(CircusCarouselEntity.class,
-				player.getBoundingBox().inflate(RANGE)).stream()
-				.filter(carousel -> player.getEyePosition().vectorTo(carousel.position().add(0.0D, 2.5D, 0.0D))
-						.normalize().dot(player.getLookAngle()) > 0.75D)
-				.min(java.util.Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
-	}
 
 	/** Whoever holds the target's thread, for the severed-thread visual. */
 	private static Entity controller(ServerLevel server, LivingEntity target) {

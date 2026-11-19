@@ -554,14 +554,14 @@ public final class PlaythroughStates {
 	}
 
 	/**
-	 * A chosen pavilion route with the challenges in {@code challengeMask} (bits 0-4) done, each through
-	 * {@code CircusPlayerProgress.completeChallenge} with no acclimation of its own, and the school report the pact asks.
+	 * A pavilion visitor ready for the finale's gate with the challenges in {@code challengeMask} (bits 0-4) done, each
+	 * through {@code CircusPlayerProgress.completeChallenge} with no acclimation of its own, and the school report the pact
+	 * asks. No route is chosen before the finale any more (2026-11-18).
 	 */
-	public static void pavilionRoute(PlaythroughPlayer player, CircusRouteRules.Route route, int challengeMask) {
+	public static void pavilionReady(PlaythroughPlayer player, int challengeMask) {
 		ServerPlayer server = player.player();
 		CircusDiscoveryProgress.markDiscovered(server);
 		schoolReport(player);
-		CircusPlayerProgress.chooseRoute(server, route);
 		for (int challenge = 0; challenge < 5; challenge++) {
 			if ((challengeMask & (1 << challenge)) != 0) CircusPlayerProgress.completeChallenge(server, challenge, 0);
 		}

@@ -24,6 +24,7 @@ public abstract class MixinClientLevel {
 			HeartNodeSpreadRenderer.invalidate(pos);
 			FaneGroundRenderer.invalidate(pos);
 			GroundRunRenderer.invalidate(pos);
+			com.vincenthuto.hemomancy.client.render.world.circus.FinaleVeilRenderer.invalidate(pos);
 		}
 	}
 }

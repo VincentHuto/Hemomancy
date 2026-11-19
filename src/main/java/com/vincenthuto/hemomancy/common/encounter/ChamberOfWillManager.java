@@ -71,6 +71,10 @@ public class ChamberOfWillManager extends SavedData {
     public static final ResourceLocation THEME_APOTHEOS = Hemomancy.rloc("apotheos");
     public static final ResourceLocation THEME_VESPER_FIGHT = Hemomancy.rloc("vesper_fight");
     public static final ResourceLocation THEME_MYCOPHANT_NURSERY = Hemomancy.rloc("mycophant_nursery");
+    /** The Ringmaster's finale: the copied tent's sky, the overworld's as it was at the crossing (2026-11-18). */
+    public static final ResourceLocation THEME_RINGMASTER_MASK = Hemomancy.rloc("ringmaster_mask");
+    /** The Ringmaster's own mind, seen past the finale's merge. */
+    public static final ResourceLocation THEME_RINGMASTER = Hemomancy.rloc("ringmaster");
     private static final List<ResourceLocation> ORDERED_SKY_THEMES = List.of(
             THEME_WILL_DEFAULT,
             THEME_MNEMONIC_LOWTIDE,
@@ -642,6 +646,12 @@ public class ChamberOfWillManager extends SavedData {
 				continue;
 			}
 			if (VesperOrdealManager.tickArenaPlayer(player, serverLevel)) {
+				continue;
+			}
+			if (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.tickArenaPlayer(player, serverLevel)) {
+				continue;
+			}
+			if (com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.tickArenaPlayer(player, serverLevel)) {
 				continue;
 			}
             ProgressionRefresh refresh = manager.refreshProgressionState(player);

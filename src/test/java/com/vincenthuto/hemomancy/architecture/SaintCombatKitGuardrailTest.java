@@ -144,10 +144,12 @@ class SaintCombatKitGuardrailTest {
 			if (!text.contains("BossFootprint") && !text.contains("TelegraphDraw") && !text.contains("HazardDraw")) continue;
 			String name = file.getFileName().toString();
 			boolean saintLane = name.matches("(Hemorath|Seraphae|Putriciel|Velorum)\\w*\\.java");
-			if (!TELEGRAPH_KIT.contains(name) && !saintLane) footprintDrawers.add(RepoPaths.display(file));
+			// a Crimson Troupe ordeal's footprints have one bold pass of their own, claimed through the kit's renderer
+			boolean ordealLane = name.equals("OrdealTelegraphPass.java");
+			if (!TELEGRAPH_KIT.contains(name) && !saintLane && !ordealLane) footprintDrawers.add(RepoPaths.display(file));
 		}
 		assertEquals(Set.of(), footprintDrawers,
-				"footprints are drawn only by the telegraph pass and the Saints' own styles and geometry");
+				"footprints are drawn only by the telegraph pass, the Saints' own styles and geometry, and the ordeal pass");
 	}
 
 	@Test

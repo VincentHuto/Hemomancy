@@ -18,14 +18,27 @@ import javax.annotation.Nullable;
  * which no knife, swarm or performer moves.
  */
 public final class CircusRingmasterScene implements BossScene {
-	private static final int OPEN = CircusRingmasterEntity.INTRO_TICKS - HANDBACK;
+	private static final int OPEN = com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.INTRO_TICKS - HANDBACK;
 	private static final TitleCard CARD = TitleCard.of("circus_ringmaster", 20, 48, 0xC02A34);
-	private static final CinematicShot SHOT = CinematicShot.toward(new Key(0, 8, 2.4F, -2.2F, 0.3F),
-			new Key(22, 30, 3.8F, 0.6F, 0.9F), new Key(OPEN, 42, 6.2F, 1.4F, 1.6F));
+	// Framed on him seated in his box (2026-11-18), laid out from the viewer's side (he faces his box's back, not the
+	// ring, so a shot laid out from his facing runs into the canvas): wide and level on him in his box, rising to a
+	// three-quarter view of his upper body as his name lands. The old low keys showed only his coat tails. It carries on
+	// round his copy past the hidden crossing.
+	private static final CinematicShot SHOT = CinematicShot.toward(new Key(0, 10, 6.5F, 0.6F, 1.5F),
+			new Key(22, 26, 5.0F, 1.6F, 1.7F), new Key(OPEN, 38, 5.8F, 2.2F, 1.6F));
 
 	@Override
 	public int length() {
-		return CircusRingmasterEntity.INTRO_TICKS + 30;
+		return com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.INTRO_TICKS + 30;
+	}
+
+	/**
+	 * His opening runs on through the hidden crossing into his Chamber: the finale replays it on his copy from the
+	 * crossing's tick, so the shot carries on round him there instead of ending when the player is moved.
+	 */
+	@Override
+	public boolean keepsAcrossDimensions() {
+		return true;
 	}
 
 	@Override

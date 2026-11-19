@@ -116,6 +116,9 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 			ManipulationVisuals.attached(player, ManipulationVisuals.Form.CELL_HAND, 1, CellHandRules.USE_TICKS, CellHandRules.ABSORBING);
 		double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(worldIn, player, reach,
 				WillAbsorptionRules.bareProgressPerTick());
+		// The Ringmaster at his kneel takes the same channel (2026-11-18).
+		if (vesperHandled <= 0.0D) vesperHandled = com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterAbsorption
+				.tryAbsorb(worldIn, player, reach, WillAbsorptionRules.bareProgressPerTick());
 		if (vesperHandled > 0.0D) {
 			updateChannelStrain(player, false);
 			return;

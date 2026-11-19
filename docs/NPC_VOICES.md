@@ -548,12 +548,19 @@ sells. He never apologizes, and tells the player to go and count the horses.
   I'd put them on again." No remorse and no flourish.
 - Cut (October `line.liberation_complete`): "Only the ruin answers you now." An oracle line from a man who sells tickets.
 
-**Fixed text.** The keys `ringmaster.silent`, `ringmaster.line.succession`, `ringmaster.line.liberation`,
-`ringmaster.warning.succession` and `finale.complete.*` are named in `PlaythroughCrimsonTroupeGameTests`. Canon: "learn
+**Fixed text.** The keys `ringmaster.silent`, `ringmaster.line.succession` and `finale.complete.*` are named in
+`PlaythroughCrimsonTroupeGameTests` (the pre-fight route lines `line.liberation` and `warning.*` went with the route
+choice, 2026-11-18). Canon: "learn
 every act, hold every eye, then take the hat" (Lore §6.3b) in `line.succession`. Trade keys:
 `hemomancy.trade.circus_ringmaster.*`; rapport: `hemomancy.dialogue.rapport.circus_ringmaster.<slug>`. The yield line
 `hemomancy.circus.ringmaster.yield` (2026-11-15, B31) is the "short and final" handing over: "Enough. The hat's off, and
 it's yours. Go on, call the next act."
+
+**Retired register (2026-11-18).** After a Succession he stays as the old ringmaster, emptied of his Will
+(`ringmaster.retired.*`). He still sells nothing and apologizes for nothing, but he no longer names terms: short plain
+sentences about what he still does (the books, the conductor's lessons, trade), no bill of acts, no barking. In the
+finale (`circus.finale.line.*`) he barks to the end: the kneel line names both ways out like a bill, the refusal is
+frank, and the kill gets one dry line ("count the horses").
 
 **Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 

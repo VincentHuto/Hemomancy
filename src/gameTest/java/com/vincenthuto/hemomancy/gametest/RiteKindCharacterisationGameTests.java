@@ -858,6 +858,133 @@ public final class RiteKindCharacterisationGameTests {
 				.thenSucceed();
 	}
 
+	// ---- Chamber ordeals (2026-11-17) ------------------------------------------------------------------------------
+
+	private static final ResourceLocation HULK_TRIAL = Hemomancy.rloc("cardinal_rite/puppeteer_trial_gorebound_hulk");
+
+	/** The Hulk's trial handed to its ordeal: the caster on the Strongman's stage with the true-self Hulk. */
+	private static Rite ordeal(GameTestHelper helper) {
+		if (helper.getLevel().getServer().getLevel(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL) == null)
+			throw new net.minecraft.gametest.framework.GameTestAssertException("NOT RUN: the GameTest world has no Chamber of Will;"
+					+ " the ordeal's flow is proved by the circusReviewClient ordeal scene");
+		Rite rite = trial(helper, HULK_TRIAL);
+		var professor = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor.STRONGMAN;
+		var definition = com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions
+				.byName("gorebound_hulk").orElseThrow();
+		var puppet = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.begin(rite.caster().player,
+				helper.getLevel(), rite.active(), professor,
+				(chamber, at) -> com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonFactory
+						.createTrial(definition, chamber, rite.caster().player, at).filter(chamber::addFreshEntity));
+		helper.assertTrue(puppet.isPresent(), "The ordeal begins: " + rite.caster().said() + " refusal="
+				+ com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.refusal(rite.caster().player) + " chamber="
+				+ helper.getLevel().getServer().getLevel(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL)
+				+ " in=" + rite.caster().player.level().dimension().location());
+		rite.active().beginPuppeteerTrial("gorebound_hulk", puppet.get().getUUID(), UUID.randomUUID());
+		helper.assertTrue(rite.caster().player.level().dimension()
+				.equals(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL),
+				"The caster is drawn into the Strongman's Chamber");
+		helper.assertTrue(puppet.get() instanceof com.vincenthuto.hemomancy.common.entity.npc.circus.TrueSelf self
+				&& self.isTrueSelf(), "The Hulk is its true self there");
+		return rite;
+	}
+
+	private static boolean home(GameTestHelper helper, Rite rite) {
+		return rite.caster().player.level() == helper.getLevel();
+	}
+
+	/** Where no Chamber can hold it, the Hulk's ordeal refuses to begin, with a line: there is no open-world fallback. */
+	@GameTest(template = ROOM, timeoutTicks = 100, batch = "rite_kind_ordeal_refused")
+	public static void ordealRefusedWithoutAChamber(GameTestHelper helper) {
+		// The Hulk's rite still loads with the Strongman's blood as a strict component ingredient among its offerings.
+		CardinalRiteRecipe hulk = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(), HULK_TRIAL);
+		helper.assertTrue(hulk != null && hulk.isPuppeteerTrial(), HULK_TRIAL + " must load with its blood key");
+		if (helper.getLevel().getServer().getLevel(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL) != null) {
+			helper.succeed();
+			return;
+		}
+		CapturedPlayer caster = caster(helper, 4);
+		var refusal = com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.refusal(caster.player);
+		helper.assertTrue(refusal != null && refusal.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t
+				&& t.getKey().equals("hemomancy.circus.ordeal.refused.no_stage"), "No Chamber, no ordeal: " + refusal);
+		caster.close();
+		helper.succeed();
+	}
+
+	@GameTest(template = ROOM, timeoutTicks = 600, batch = "rite_kind_ordeal_won", required = false)
+	public static void wonOrdealCompletesTheRite(GameTestHelper helper) {
+		Rite rite = ordeal(helper);
+		var chamber = helper.getLevel().getServer().getLevel(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL);
+		helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.RiteKind.of(rite.active(), null) != null, "kind");
+		helper.startSequence()
+				.thenExecuteAfter(5, () -> {
+					var puppet = chamber.getEntity(rite.active().puppeteerTrial().entityId());
+					helper.assertTrue(puppet != null, "The Hulk stands on the stage");
+					puppet.kill();
+				})
+				.thenWaitUntil(() -> helper.assertTrue(home(helper, rite), "The caster comes home"))
+				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()),
+						"The won ordeal's rite runs to its end, in phase " + rite.active().getPhase()))
+				.thenExecute(() -> {
+					helper.assertTrue(rite.active().isComplete(), "It reached completion");
+					helper.assertTrue(rite.caster().said().contains("That's the craft"), "The Strongman's judgement: " + rite.caster().said());
+					rite.close();
+				})
+				.thenSucceed();
+	}
+
+	@GameTest(template = ROOM, timeoutTicks = 600, batch = "rite_kind_ordeal_caught", required = false)
+	public static void caughtBlowFailsTheRite(GameTestHelper helper) {
+		Rite rite = ordeal(helper);
+		var player = rite.caster().player;
+		int carried = player.getInventory().countItem(net.minecraft.world.item.Items.ARROW);
+		helper.startSequence()
+				.thenExecuteAfter(5, () -> {
+					player.getInventory().add(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW, 3));
+					player.setHealth(2.0F);
+					player.hurt(helper.getLevel().damageSources().magic(), 50.0F);
+					helper.assertTrue(player.isAlive(), "The killing blow is caught");
+				})
+				.thenWaitUntil(() -> helper.assertTrue(home(helper, rite), "The caster is thrown out"))
+				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()), "The rite ends"))
+				.thenExecute(() -> {
+					helper.assertTrue(!rite.active().isComplete(), "A caught blow fails the rite");
+					helper.assertTrue(player.getInventory().countItem(net.minecraft.world.item.Items.ARROW) == carried + 3,
+							"Nothing dropped: the real inventory comes home");
+					rite.close();
+				})
+				.thenSucceed();
+	}
+
+	@GameTest(template = ROOM, timeoutTicks = 400, batch = "rite_kind_ordeal_second", required = false)
+	public static void secondOrdealRefused(GameTestHelper helper) {
+		Rite rite = ordeal(helper);
+		helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.refusal(rite.caster().player) != null,
+				"A second ordeal is refused while one runs");
+		com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.end(rite.caster().player,
+				com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealRules.Outcome.LEFT);
+		helper.startSequence()
+				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()), "A left ordeal ends its rite"))
+				.thenExecute(() -> {
+					helper.assertTrue(!rite.active().isComplete() && home(helper, rite), "Failed, and the caster is home");
+					rite.close();
+				})
+				.thenSucceed();
+	}
+
+	@GameTest(template = ROOM, timeoutTicks = 400, batch = "rite_kind_ordeal_floor", required = false)
+	public static void brokenFocusPullsBack(GameTestHelper helper) {
+		Rite rite = ordeal(helper);
+		helper.startSequence()
+				.thenExecuteAfter(5, () -> helper.getLevel().removeBlock(rite.focus(), false))
+				.thenWaitUntil(() -> helper.assertTrue(home(helper, rite), "A broken Focus pulls the caster back"))
+				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()), "and ends the rite"))
+				.thenExecute(() -> {
+					helper.assertTrue(!rite.active().isComplete(), "It failed");
+					rite.close();
+				})
+				.thenSucceed();
+	}
+
 	@GameTest(template = ROOM, timeoutTicks = 100, batch = "rite_kind_trial_reload")
 	public static void puppeteerTrialSavedAndLoadedKeepsItsPuppet(GameTestHelper helper) {
 		Rite rite = trial(helper);
@@ -1093,6 +1220,10 @@ public final class RiteKindCharacterisationGameTests {
 
 	/** A Puppeteer trial on its own floor, started directly so no crossbar has to be attuned. */
 	private static Rite trial(GameTestHelper helper) {
+		return trial(helper, TRIAL);
+	}
+
+	private static Rite trial(GameTestHelper helper, ResourceLocation TRIAL) {
 		ServerLevel level = helper.getLevel();
 		BlockPos focus = helper.absolutePos(FOCUS);
 		CapturedPlayer caster = caster(helper, 4);

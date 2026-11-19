@@ -72,32 +72,9 @@ public final class CircusPlayerProgress {
 		return CircusRouteRules.Route.fromSerializedName(progress(player).route());
 	}
 
-	public static boolean chooseRoute(ServerPlayer player, CircusRouteRules.Route choice) {
-		CircusRouteRules.Route current = route(player);
-		CircusRouteRules.Route selected = CircusRouteRules.choose(current, choice);
-		if (selected == current) return false;
-		progress(player).setRoute(selected.serializedName());
-		return true;
-	}
-
-	public static boolean repairRoute(ServerPlayer player) {
-		CircusProgress progress = progress(player);
-		CircusRouteRules.Route current = route(player);
-		if (!CircusRouteRules.canRepair(current, progress.routeRepaired())) return false;
-		progress.setRouteRepaired(true);
-		progress.setRoute((current == CircusRouteRules.Route.SUCCESSION
-				? CircusRouteRules.Route.LIBERATION : CircusRouteRules.Route.SUCCESSION).serializedName());
-		return true;
-	}
-
-	public static boolean canRepairRoute(Player player) {
-		return CircusRouteRules.canRepair(route(player), progress(player).routeRepaired());
-	}
-
-	public static void completeRoute(ServerPlayer player, CircusRouteRules.Route route) {
-		progress(player).setRoute((route == CircusRouteRules.Route.SUCCESSION
-				? CircusRouteRules.Route.SUCCESSION_COMPLETE
-				: CircusRouteRules.Route.LIBERATION_COMPLETE).serializedName());
+	/** Records the ending the player chose at his kneel: SUCCESSION_COMPLETE or LIBERATION_COMPLETE. */
+	public static void completeRoute(ServerPlayer player, CircusRouteRules.Route completed) {
+		progress(player).setRoute(completed.serializedName());
 	}
 
 	public static int challenges(Player player) {

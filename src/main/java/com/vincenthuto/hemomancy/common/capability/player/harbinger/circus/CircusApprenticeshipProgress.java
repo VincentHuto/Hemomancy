@@ -16,6 +16,18 @@ public final class CircusApprenticeshipProgress {
         return HemoCapabilityAccess.circusProgress(player).apprenticeship();
     }
 
+    /** The in-game day a professor last gave their ordeal key, or -1 if never (Chamber ordeals, 2026-11-17). */
+    public static long ordealKeyDay(Player player, String role) {
+        CompoundTag keys = state(player).getCompound("ordeal_keys");
+        return keys.contains(role) ? keys.getLong(role) : -1L;
+    }
+
+    public static void setOrdealKeyDay(Player player, String role, long day) {
+        CompoundTag keys = state(player).getCompound("ordeal_keys");
+        keys.putLong(role, day);
+        state(player).put("ordeal_keys", keys);
+    }
+
     public static boolean knows(Player player, String summon) {
         return HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames().contains(summon);
     }

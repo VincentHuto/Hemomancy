@@ -131,10 +131,8 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-		if (hand == InteractionHand.MAIN_HAND && getVehicle() instanceof CircusCarouselEntity carousel) {
-			if (!level().isClientSide && !carousel.severCaptive(player, getCarouselHorse())) return InteractionResult.PASS;
-			return InteractionResult.sidedSuccess(level().isClientSide);
-		}
+		// A captive on the Procession is cut free only by the kill at his kneel (2026-11-18), not by hand.
+		if (getVehicle() instanceof CircusCarouselEntity) return InteractionResult.PASS;
 		return super.mobInteract(player, hand);
 	}
 

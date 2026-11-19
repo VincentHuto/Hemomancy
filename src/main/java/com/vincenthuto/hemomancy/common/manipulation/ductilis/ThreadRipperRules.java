@@ -12,8 +12,7 @@ public final class ThreadRipperRules {
 
 	/**
 	 * @param foreignSummon a hostile summoned or owned body that is not a puppet: a Vex, or a creature owned by
-	 *                      someone who is neither the caster nor an ally. Its tie unravels outright. A carousel
-	 *                      captive is cut by {@code CircusCarouselEntity.severCaptive} before this rule is asked.
+	 *                      someone who is neither the caster nor an ally. Its tie unravels outright.
 	 */
 	public static Outcome outcome(boolean tethered, boolean foreignSummon, boolean protectedBody, float healthRatio) {
 		if (protectedBody) return Outcome.NONE;

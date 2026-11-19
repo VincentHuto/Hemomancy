@@ -1,0 +1,153 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/circus_net",
+    "particle": "hemomancy:block/circus_net"
+  },
+  "elements": [
+    {
+      "name": "lash",
+      "from": [
+        6.5,
+        1.1,
+        -7
+      ],
+      "to": [
+        9.5,
+        2.4,
+        -0.1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            14.5,
+            0.0,
+            14.875,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            14.875,
+            0.0,
+            15.25,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            11.5,
+            0.0,
+            12.375,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.375,
+            0.0,
+            13.25,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            1.0,
+            0.0,
+            1.375,
+            3.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            1.375,
+            0.0,
+            1.75,
+            3.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "wrap",
+      "from": [
+        5.5,
+        0.5,
+        -2.5
+      ],
+      "to": [
+        10.5,
+        3,
+        -1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.75,
+            0.0,
+            2.375,
+            1.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.375,
+            0.0,
+            3.0,
+            1.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.0,
+            0.0,
+            3.25,
+            1.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.25,
+            0.0,
+            3.5,
+            1.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            13.25,
+            0.0,
+            13.875,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            13.875,
+            0.0,
+            14.5,
+            1.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

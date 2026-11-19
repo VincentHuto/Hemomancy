@@ -41,9 +41,9 @@ public final class CircusSiteStateService {
 	}
 
 	/** The carousel's cell in the pavilion template: the site's saved origin. */
-	static final BlockPos CAROUSEL = new BlockPos(40, 1, 32);
+	public static final BlockPos CAROUSEL = new BlockPos(40, 1, 32);
 	/** The lower half of the Ringmaster's podium, which tells the pavilion's rotation. */
-	static final BlockPos PODIUM = new BlockPos(40, 8, 46);
+	public static final BlockPos PODIUM = new BlockPos(40, 8, 46);
 	private static final String PAVILION = "crimson_troupe_pavilion";
 	private static final int TICKS = 20;
 
@@ -99,7 +99,7 @@ public final class CircusSiteStateService {
 	}
 
 	/** The pavilion's rotation, read from where its podium stands relative to the carousel. */
-	static Rotation rotation(ServerLevel level, BlockPos origin) {
+	public static Rotation rotation(ServerLevel level, BlockPos origin) {
 		for (Rotation rotation : Rotation.values())
 			if (level.getBlockState(at(origin, PODIUM, rotation)).is(BlockInit.circus_podium.get())) return rotation;
 		return Rotation.NONE;

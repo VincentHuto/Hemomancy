@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.model.entity.npc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.CarouselAlive;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselRules;
 import net.minecraft.client.model.EntityModel;
@@ -23,6 +24,8 @@ public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity>
 	private final ModelPart turntable;
 	private final ModelPart[] horses;
 	private final ModelPart[] anchors;
+	/** Each horse's resting place on the turntable, so a living carousel can fling it out along its own radius. */
+	private final float[] restX = new float[3], restZ = new float[3];
 
 	public CircusCarouselModel(ModelPart root) {
 		this.root = root;
@@ -33,6 +36,10 @@ public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity>
 		anchors = new ModelPart[] {
 				horses[0].getChild("anchor_0"), horses[1].getChild("anchor_1"), horses[2].getChild("anchor_2")
 		};
+		for (int horse = 0; horse < 3; horse++) {
+			restX[horse] = horses[horse].getInitialPose().x;
+			restZ[horse] = horses[horse].getInitialPose().z;
+		}
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -151,10 +158,17 @@ public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity>
 	public void prepare(CircusCarouselEntity entity, float partialTick) {
 		float rotation = Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot());
 		turntable.yRot = -rotation * Mth.DEG_TO_RAD;
+		// A living carousel (his stage's copy) flings its horses out along their radii, hooves dropping to the floor.
+		double reach = CarouselAlive.reach(entity.aliveMove(), entity.aliveTime(partialTick));
+		float out = (float) (reach / CircusCarouselRules.HORSE_RADIUS);
+		float drop = (float) CarouselAlive.drop(reach) * 16.0F;
 		for (int horse = 0; horse < horses.length; horse++) {
-			horses[horse].y = HORSE_BASE_Y - (float) CircusCarouselRules.horsePose(rotation, horse).bob() * 16.0F;
-			horses[horse].visible = !entity.isDestroyed();
-			anchors[horse].visible = entity.isRiderSevered(horse) && !entity.isAnchorBroken(horse);
+			horses[horse].x = restX[horse] * out;
+			horses[horse].z = restZ[horse] * out;
+			horses[horse].y = HORSE_BASE_Y + drop - (float) CircusCarouselRules.horsePose(rotation, horse).bob() * 16.0F;
+			horses[horse].visible = true;
+			// The anchors belonged to the old Liberation's severing; nothing shows them now.
+			anchors[horse].visible = false;
 		}
 	}
 

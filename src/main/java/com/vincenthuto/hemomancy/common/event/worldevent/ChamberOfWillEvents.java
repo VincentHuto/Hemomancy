@@ -45,6 +45,12 @@ public final class ChamberOfWillEvents {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (!level.dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) return;
+        // Nothing is built on a professor's stage, and it is not the player's own Chamber to grow.
+        if (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.isInOrdeal(player)
+                || com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.isInFinale(player)) {
+            event.setCanceled(true);
+            return;
+        }
 
         ChamberOfWillManager.refreshProgressionNow(player);
         ChamberOfWillManager manager = ChamberOfWillManager.get(player.getServer());
@@ -65,6 +71,9 @@ public final class ChamberOfWillEvents {
         if (player.level().isClientSide) return;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         if (!player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) return;
+        // On a professor's stage the player is in the professor's Chamber: none of their own room or progression applies.
+        if (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealDirector.isInOrdeal(serverPlayer)
+                || com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.isInFinale(serverPlayer)) return;
         ChamberOfWillManager.refreshProgressionNow(serverPlayer);
         if (MycophantEncounterManager.isActive(serverPlayer)
                 || !ChamberPlayerSafeguardRules.shouldApply(player.isCreative(), player.isSpectator(),

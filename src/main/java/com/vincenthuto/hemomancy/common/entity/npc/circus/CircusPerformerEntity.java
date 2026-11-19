@@ -39,7 +39,26 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class CircusPerformerEntity extends PathfinderMob
-		implements com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSpeaker {
+		implements com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSpeaker, TrueSelf {
+	/**
+	 * In their Chamber a professor is their true self (2026-11-17): out of reach of the ordeal's ring, never struck,
+	 * moved by the ordeal rather than by goals, and drawn with their true-self model.
+	 */
+	private static final EntityDataAccessor<Boolean> TRUE_SELF = SynchedEntityData.defineId(CircusPerformerEntity.class,
+			EntityDataSerializers.BOOLEAN);
+	/** Where a true self's gesture reaches, in world space: a mark, the ring's centre, or the fighter. */
+	private static final EntityDataAccessor<org.joml.Vector3f> GESTURE_AT = SynchedEntityData.defineId(
+			CircusPerformerEntity.class, EntityDataSerializers.VECTOR3);
+	/**
+	 * A true self's gestures for its ordeal interventions, sent to clients as entity events when a move's wind-up
+	 * begins; the true self's model times the gesture from then. Event ids 80 to 87 (the troupe's own wind-up uses 70
+	 * to 72). What each kind means is the professor's own (the Strongman's are {@code CircusFacultyEntity.GESTURE_*}).
+	 */
+	public static final byte GESTURE_EVENT = 80;
+	public static final int GESTURES = 8;
+	/** Client side: the gesture under way (-1 for none) and the tick it began. */
+	private int gesture = -1;
+	private int gestureStart;
 	private static final EntityDataAccessor<Byte> ACT_STATE = SynchedEntityData.defineId(
 			CircusPerformerEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Byte> VARIANT = SynchedEntityData.defineId(
@@ -74,6 +93,8 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
+		builder.define(TRUE_SELF, false);
+		builder.define(GESTURE_AT, new org.joml.Vector3f());
 		builder.define(ACT_STATE, (byte) ActState.REST.ordinal());
 		builder.define(VARIANT, (byte) -1);
 	}
@@ -88,8 +109,33 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	@Override
 	public void tick() {
 		super.tick();
+		// A true self is placed and turned by its ordeal every tick; left alone the body would turn to its line of travel
+		// (sideways on an orbit). It keeps the body where the ordeal turned it; only the head is free.
+		if (isTrueSelf()) {
+			yBodyRotO = yRotO;
+			yBodyRot = getYRot();
+		}
 		if (level().isClientSide) return;
+		// A finale's stand-in on his stage holds its pose; one no finale owns (a crash's) removes itself.
+		if (getTags().contains(com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.COPY_TAG)) {
+			if (!com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.ownsCopy(this)) discard();
+			return;
+		}
 		initializeHome();
+		if (participatesInFinale() && level() instanceof ServerLevel here) {
+			// A ruined ring's finale troupe leaves, however long after the settlement it loads (2026-11-18 fix pass).
+			if (CircusPavilionSavedData.get(here).isRuinedRingAt(here, getHome())) {
+				leaveRing();
+				return;
+			}
+			// While a finale in his Chamber holds this ring its finale troupe stands still, as the Ringmaster does.
+			if (com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.holdsArenaOf(here.dimension(),
+					getHome())) {
+				getNavigation().stop();
+				setTarget(null);
+				return;
+			}
+		}
 		if (finaleOwner != null && level() instanceof ServerLevel server
 				&& server.getPlayerByUUID(finaleOwner) instanceof LivingEntity owner && owner.isAlive()) {
 			if (!owner.getUUID().equals(threatId)) setThreat(owner);
@@ -236,8 +282,45 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	}
 
 	@Override
+	public boolean isTrueSelf() {
+		return entityData.get(TRUE_SELF);
+	}
+
+	@Override
+	public void setTrueSelf(boolean trueSelf) {
+		entityData.set(TRUE_SELF, trueSelf);
+		setNoAi(trueSelf);
+		setNoGravity(trueSelf);
+		setInvulnerable(trueSelf);
+	}
+
+	/** Starts gesture {@code kind} reaching for {@code at} on every watching client. */
+	public void gesture(int kind, net.minecraft.world.phys.Vec3 at) {
+		if (kind < 0 || kind >= GESTURES) return;
+		entityData.set(GESTURE_AT, at.toVector3f());
+		level().broadcastEntityEvent(this, (byte) (GESTURE_EVENT + kind));
+	}
+
+	public net.minecraft.world.phys.Vec3 gestureAt() {
+		return new net.minecraft.world.phys.Vec3(entityData.get(GESTURE_AT));
+	}
+
+	/** The gesture under way on this client, or -1. */
+	public int gesture() {
+		return gesture;
+	}
+
+	/** Ticks since the gesture's wind-up began, with the partial tick. */
+	public float gestureAge(float partialTick) {
+		return tickCount - gestureStart + partialTick;
+	}
+
+	@Override
 	public void handleEntityEvent(byte id) {
-		if (id == WINDUP_EVENT) {
+		if (id >= GESTURE_EVENT && id < GESTURE_EVENT + GESTURES) {
+			gesture = id - GESTURE_EVENT;
+			gestureStart = tickCount;
+		} else if (id == WINDUP_EVENT) {
 			windupState.start(tickCount);
 		} else if (id == WINDUP_END_EVENT) {
 			windupState.stop();
@@ -308,6 +391,19 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 			setActState(ActState.REST);
 		}
 		setThreat(owner);
+	}
+
+	/** Takes the look of {@code other} (its costume variant), for a stand-in of it. */
+	public void copyLook(CircusPerformerEntity other) {
+		setVariant(other.getVariant());
+	}
+
+	/** Leaves a ruined ring: freed of the finale, the performer is gone in a burst of crimson. */
+	public void leaveRing() {
+		if (!isAlive() || !(level() instanceof ServerLevel server)) return;
+		com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs.spores(server, position().add(0.0D, 1.0D, 0.0D),
+				CircusEffects.CRIMSON, 18, 0.6D, 0.04D);
+		discard();
 	}
 
 	public void resetFinale() {

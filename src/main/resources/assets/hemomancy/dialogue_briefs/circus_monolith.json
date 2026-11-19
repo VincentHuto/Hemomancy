@@ -7,10 +7,6 @@
   "about": "the Artificer saying the Monolith Imbued Cloth is used in Silent Archon vestment work once the frame has taken the Cornerstone",
   "tone": "dry, matter-of-fact"
  },
- "hemomancy.circus.captive.severed": {
-  "about": "a system message that the captive's thread has snapped, that the named captive (the captive's name) dies with it, and that the anchor beneath the carousel horse is now exposed",
-  "tone": "grim, flat"
- },
  "hemomancy.circus.challenge.begin.0": {
   "about": "a challenge-start message telling the player to begin by keeping the trained peacock spider in sight until its dance ends, and that it will not attack",
   "tone": "calm instruction"
@@ -72,20 +68,12 @@
   "tone": "plain, closed"
  },
  "hemomancy.circus.finale.complete.liberation": {
-  "about": "narration of the Liberation finale ending: the Ringmaster falls, the three captives and their anchors are gone, and the carousel is ruined for good",
+  "about": "narration of the Liberation finale ending: the Ringmaster falls, his three captives are cut free, and the carousel is ruined for good",
   "tone": "somber, final"
  },
  "hemomancy.circus.finale.complete.succession": {
   "about": "narration of the Succession finale ending: the Ringmaster yields and lives, his office becomes a pattern, and the pavilion stays standing",
   "tone": "solemn, quiet"
- },
- "hemomancy.circus.finale.empty_troupe": {
-  "about": "narration that no troupe members are left to fall, so the ring stands empty and the Ringmaster comes down to face the player himself",
-  "tone": "ominous, theatrical"
- },
- "hemomancy.circus.finale.no_route": {
-  "about": "a message to a visitor who has not chosen a route: accept or refuse the Ringmaster's bargain before asking for the finale",
-  "tone": "clipped, plain"
  },
  "hemomancy.circus.finale.not_ready": {
   "about": "a message that the player is not ready for Succession and must finish every controlled act and complete their attunement first",
@@ -99,41 +87,13 @@
   "about": "a message that this pavilion's ending has already been decided and its finale will not play again",
   "tone": "flat, final"
  },
- "hemomancy.circus.option.accept": {
-  "about": "accepting the Ringmaster's bargain by saying they will succeed him",
-  "tone": "resolute"
- },
- "hemomancy.circus.option.confirm_liberation": {
-  "about": "confirming Liberation, saying they know the cost and will end the pavilion",
-  "tone": "grim, resolute"
- },
- "hemomancy.circus.option.confirm_succession": {
-  "about": "confirming Succession, saying they understand and asking to be bound to it",
-  "tone": "measured, resolute"
- },
  "hemomancy.circus.option.finale": {
   "about": "asking to begin the finale",
   "tone": "steady"
  },
- "hemomancy.circus.option.not_yet": {
-  "about": "declining for now by saying not yet",
-  "tone": "hesitant"
- },
- "hemomancy.circus.option.reject": {
-  "about": "rejecting the Ringmaster's offer and vowing to break the carousel and free its captives",
-  "tone": "defiant"
- },
- "hemomancy.circus.option.repair": {
-  "about": "saying they chose wrong and asking to use their one chance to change their route",
-  "tone": "regretful, urgent"
- },
  "hemomancy.circus.option.trial": {
   "about": "asking the Ringmaster to show them the next act",
   "tone": "eager, wary"
- },
- "hemomancy.circus.ringmaster.line.liberation": {
-  "about": "the Ringmaster explaining that three failed initiates ride the carousel, that cutting their threads kills their bodies but not the anchors beneath them, and that the player must break the anchors too",
-  "tone": "theatrical, callous"
  },
  "hemomancy.circus.ringmaster.line.liberation_complete": {
   "about": "the Ringmaster's closing line after Liberation, saying only the ruin answers the player now",
@@ -154,14 +114,6 @@
  "hemomancy.circus.ringmaster.silent": {
   "about": "narration of the figure in the rafters looking through the player and refusing to take shape for them yet",
   "tone": "eerie, withholding"
- },
- "hemomancy.circus.ringmaster.warning.liberation": {
-  "about": "a warning that choosing Liberation kills the three bound initiates when their threads are severed, then the player breaks the carousel and leaves the pavilion in ruins, with one change of mind allowed only before either ending is complete",
-  "tone": "blunt, grave"
- },
- "hemomancy.circus.ringmaster.warning.succession": {
-  "about": "a warning that choosing Succession keeps the pavilion standing but binds its trials to the player, with one chance to change their mind before either ending completes",
-  "tone": "blunt, grave"
  },
  "hemomancy.circus.school.ask_aftermath": {
   "about": "asking a professor what happens to the school after the final act",
@@ -191,20 +143,12 @@
   "about": "the Acrobat promising the ropes will stay sound for the next pupil, and saying whoever conducts next does not get to tell the wings how to remember flight",
   "tone": "light, wry, resolved"
  },
- "hemomancy.circus.school.circus_acrobat.aftermath.liberation": {
-  "about": "the acrobat warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
-  "tone": "in the professor's own voice"
- },
  "hemomancy.circus.school.circus_acrobat.aftermath.liberation_complete": {
   "about": "the acrobat saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_acrobat.aftermath.neutral": {
   "about": "the acrobat saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
-  "tone": "in the professor's own voice"
- },
- "hemomancy.circus.school.circus_acrobat.aftermath.succession": {
-  "about": "the acrobat saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_acrobat.aftermath.succession_complete": {
@@ -259,20 +203,12 @@
   "about": "the Beast Tamer saying that, like geese, the pack finds its way without a pavilion, and that when this site is done the other camps go on teaching",
   "tone": "gentle, patient, resolved"
  },
- "hemomancy.circus.school.circus_beast_tamer.aftermath.liberation": {
-  "about": "the beast tamer warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
-  "tone": "in the professor's own voice"
- },
  "hemomancy.circus.school.circus_beast_tamer.aftermath.liberation_complete": {
   "about": "the beast tamer saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_beast_tamer.aftermath.neutral": {
   "about": "the beast tamer saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
-  "tone": "in the professor's own voice"
- },
- "hemomancy.circus.school.circus_beast_tamer.aftermath.succession": {
-  "about": "the beast tamer saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_beast_tamer.aftermath.succession_complete": {
@@ -327,20 +263,12 @@
   "about": "the Fire Breather giving two outcomes after the final act: the troupe can perform among ruins without setting them alight, and the surviving camps can be where pupils learn control again",
   "tone": "measured, counting, resolved"
  },
- "hemomancy.circus.school.circus_fire_eater.aftermath.liberation": {
-  "about": "the fire eater warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
-  "tone": "in the professor's own voice"
- },
  "hemomancy.circus.school.circus_fire_eater.aftermath.liberation_complete": {
   "about": "the fire eater saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_fire_eater.aftermath.neutral": {
   "about": "the fire eater saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
-  "tone": "in the professor's own voice"
- },
- "hemomancy.circus.school.circus_fire_eater.aftermath.succession": {
-  "about": "the fire eater saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_fire_eater.aftermath.succession_complete": {
@@ -395,20 +323,12 @@
   "about": "the Dagger Thrower saying that if the pavilion stands they teach in its blade ring, if it falls a wagon floor will do, and either way the Ringmaster will not own the next generation of hands",
   "tone": "sardonic, dry, resolved"
  },
- "hemomancy.circus.school.circus_knife_thrower.aftermath.liberation": {
-  "about": "the knife thrower warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
-  "tone": "in the professor's own voice"
- },
  "hemomancy.circus.school.circus_knife_thrower.aftermath.liberation_complete": {
   "about": "the knife thrower saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_knife_thrower.aftermath.neutral": {
   "about": "the knife thrower saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
-  "tone": "in the professor's own voice"
- },
- "hemomancy.circus.school.circus_knife_thrower.aftermath.succession": {
-  "about": "the knife thrower saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_knife_thrower.aftermath.succession_complete": {
@@ -463,20 +383,12 @@
   "about": "the Stilt Walker saying a mask can go on looking after a pupil even when the conductor has lost their stage, but refusing to call a dead captive a liberated student",
   "tone": "calm, watchful, resolved"
  },
- "hemomancy.circus.school.circus_stilt_walker.aftermath.liberation": {
-  "about": "the stilt walker warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
-  "tone": "in the professor's own voice"
- },
  "hemomancy.circus.school.circus_stilt_walker.aftermath.liberation_complete": {
   "about": "the stilt walker saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_stilt_walker.aftermath.neutral": {
   "about": "the stilt walker saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
-  "tone": "in the professor's own voice"
- },
- "hemomancy.circus.school.circus_stilt_walker.aftermath.succession": {
-  "about": "the stilt walker saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_stilt_walker.aftermath.succession_complete": {
@@ -531,20 +443,12 @@
   "about": "the Strongman saying they can rebuild a practice ring but not the people under that carousel, and that forgetting them leaves the player practicing alone",
   "tone": "gruff, blunt, resolved"
  },
- "hemomancy.circus.school.circus_strongman.aftermath.liberation": {
-  "about": "the strongman warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
-  "tone": "in the professor's own voice"
- },
  "hemomancy.circus.school.circus_strongman.aftermath.liberation_complete": {
   "about": "the strongman saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_strongman.aftermath.neutral": {
   "about": "the strongman saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
-  "tone": "in the professor's own voice"
- },
- "hemomancy.circus.school.circus_strongman.aftermath.succession": {
-  "about": "the strongman saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_strongman.aftermath.succession_complete": {
@@ -599,20 +503,12 @@
   "about": "the Threadkeeper saying the scattered camps teach as much as the pavilion, and that the player's finished work and any guest pay still owed stay on their account, not the building's",
   "tone": "dry, exact, resolved"
  },
- "hemomancy.circus.school.circus_threadkeeper.aftermath.liberation": {
-  "about": "the threadkeeper warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
-  "tone": "in the professor's own voice"
- },
  "hemomancy.circus.school.circus_threadkeeper.aftermath.liberation_complete": {
   "about": "the threadkeeper saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_threadkeeper.aftermath.neutral": {
   "about": "the threadkeeper saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
-  "tone": "in the professor's own voice"
- },
- "hemomancy.circus.school.circus_threadkeeper.aftermath.succession": {
-  "about": "the threadkeeper saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_threadkeeper.aftermath.succession_complete": {
@@ -651,20 +547,12 @@
   "about": "the Retired Understudy insisting the missing performers were people and that whatever is left of the school keeps their names on the bill, whether a successor takes the Pattern or the carousel ends in blood",
   "tone": "wistful, gentle, resolved"
  },
- "hemomancy.circus.school.circus_understudy.aftermath.liberation": {
-  "about": "the understudy warning that under Liberation cutting a captive's string kills the person bound to it and none of the three survives",
-  "tone": "in the professor's own voice"
- },
  "hemomancy.circus.school.circus_understudy.aftermath.liberation_complete": {
   "about": "the understudy saying the captives and the Ringmaster are dead, the carousel wrecked, teaching goes on from the camps, and no one calls it a win",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_understudy.aftermath.neutral": {
   "about": "the understudy saying the bargain is unsettled and every lesson can be taken without agreeing to an ending",
-  "tone": "in the professor's own voice"
- },
- "hemomancy.circus.school.circus_understudy.aftermath.succession": {
-  "about": "the understudy saying the final act under Succession is the usual run of challenges and the apprenticeship does not change it",
   "tone": "in the professor's own voice"
  },
  "hemomancy.circus.school.circus_understudy.aftermath.succession_complete": {
@@ -1063,20 +951,12 @@
   "about": "a message that the practice space is blocked or wet and the player should clear it before returning for the exercise",
   "tone": "flat, practical"
  },
- "hemomancy.circus.school.ringmaster.aftermath.liberation": {
-  "about": "the Ringmaster warning, coldly, that cutting a captive's string kills the person bound to it, and telling the player to count the horses",
-  "tone": "barker, frank, cold about the captives"
- },
  "hemomancy.circus.school.ringmaster.aftermath.liberation_complete": {
   "about": "the Ringmaster saying the captives are dead, the carousel wrecked, the professors teach from the camps, and he has nothing left to sell",
   "tone": "barker, frank, cold about the captives"
  },
  "hemomancy.circus.school.ringmaster.aftermath.neutral": {
   "about": "the Ringmaster saying no deal is struck, so every lesson is open without promising an ending",
-  "tone": "barker, frank, cold about the captives"
- },
- "hemomancy.circus.school.ringmaster.aftermath.succession": {
-  "about": "the Ringmaster saying the Succession finale is the usual run of challenges and the lessons do not change it",
   "tone": "barker, frank, cold about the captives"
  },
  "hemomancy.circus.school.ringmaster.aftermath.succession_complete": {
@@ -1886,14 +1766,6 @@
  "hemomancy.trade.monolith.weight.title": {
   "about": "a short title for the trade card about a heavier measure",
   "tone": "plain label"
- },
- "message.hemomancy.circus.route.chosen.liberation": {
-  "about": "a system message that the player is bound to Liberation, must sever the captives' threads and break the carousel's anchors, and can change their mind once",
-  "tone": "flat system"
- },
- "message.hemomancy.circus.route.chosen.succession": {
-  "about": "a system message that the player is bound to Succession, must learn every act and then come for the Ringmaster's hat, and can change their mind once",
-  "tone": "flat system"
  },
  "message.hemomancy.circus_ringmaster_entity.thread_ripper_remains_in_its_memory": {
   "about": "a system message that Thread Ripper remains in the creature's memory and should be kept until it can be absorbed at a lit Iron Brazier",

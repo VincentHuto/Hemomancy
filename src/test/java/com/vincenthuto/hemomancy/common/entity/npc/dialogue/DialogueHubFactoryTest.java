@@ -180,15 +180,15 @@ class DialogueHubFactoryTest {
 		DialogueTree base = DialogueTree.builder("speaker", id("portrait"), 42)
 				.addNode(new DialogueNode("greeting", List.of("greeting"), List.of(
 						new DialogueOption("hemomancy.circus.option.trial", null, "circus_trial").withQuest(),
-						new DialogueOption("hemomancy.circus.option.accept", "succession_warning", null).withQuest())))
-				.addNode(new DialogueNode("succession_warning", List.of("warning"), List.of()))
+						new DialogueOption("hemomancy.circus.option.finale", "finale_warning", null).withQuest())))
+				.addNode(new DialogueNode("finale_warning", List.of("warning"), List.of()))
 				.build();
 
 		DialogueTree decorated = DialogueHubFactory.decorate(base, "circus_ringmaster", new DialogueKnowledge());
 
 		assertEquals(2, decorated.presentation().topics(DialogueCategory.QUESTS).size());
 		assertTrue(decorated.presentation().topics(DialogueCategory.CONVERSATION).isEmpty());
-		assertEquals("succession_warning",
+		assertEquals("finale_warning",
 				decorated.presentation().topics(DialogueCategory.QUESTS).get(1).targetNodeId());
 	}
 

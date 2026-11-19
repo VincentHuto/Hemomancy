@@ -19,6 +19,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class CircusAcrobatEntity extends CircusPerformerEntity {
+	/**
+	 * The Acrobat's gestures for their ordeal interventions ({@link CircusPerformerEntity#gesture}), timed by their true
+	 * self's model from the move's first wind-up tick ({@code AcrobatOrdealHits} has each wind-up): the trapeze sent
+	 * swinging, the double's drop, the snare line cast and hauled, the net flung.
+	 */
+	public static final int GESTURE_SWING = 0, GESTURE_DROP = 1, GESTURE_SNARE = 2, GESTURE_NET = 3;
 	private static final EntityDataAccessor<Integer> FLIP_TICKS = SynchedEntityData.defineId(
 			CircusAcrobatEntity.class, EntityDataSerializers.INT);
 	/** FX-26: tells clients the next position update is the vault, to snap to rather than slide. */
@@ -162,6 +168,16 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 		setPos(x, y, z);
 		setRot(yRot, xRot);
 		setOldPosAndRot();
+	}
+
+	/**
+	 * The true self stands at its trapeze bar and is drawn hanging five blocks below it, its lines running up into the
+	 * dark, and its rigging reaches anywhere in the ring: culled by what is drawn, not the small body.
+	 */
+	@Override
+	public AABB getBoundingBoxForCulling() {
+		if (!isTrueSelf()) return super.getBoundingBoxForCulling();
+		return new AABB(getX() - 24.0D, getY() - 16.0D, getZ() - 24.0D, getX() + 24.0D, getY() + 16.0D, getZ() + 24.0D);
 	}
 
 	private boolean canLandAt(Vec3 destination) {

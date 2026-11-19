@@ -18,6 +18,14 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.item.ItemStack;
 
 public final class CircusFireEaterEntity extends CircusPerformerEntity {
+	/**
+	 * The Fire Breather's gestures for their ordeal interventions ({@link CircusPerformerEntity#gesture}), timed by
+	 * their true self's model from the move's first wind-up tick ({@code FireEaterChoreography}): the long breath, the
+	 * spat embers, the ring of fire and the cinder rain.
+	 */
+	public static final int GESTURE_BREATH = 0, GESTURE_SPIT = 1, GESTURE_RING = 2, GESTURE_RAIN = 3;
+	/** How far round a true self's breath and cinders reach, for culling: the whole ring from the pulpit. */
+	private static final double TRUE_SELF_REACH = 30.0D;
 	private int attackCooldown;
 	/** The breath's flat facing, locked when the wind-up starts so the drawn cone is the burned cone. */
 	private Vec3 breathFacing = Vec3.ZERO;
@@ -35,6 +43,12 @@ public final class CircusFireEaterEntity extends CircusPerformerEntity {
 	}
 
 	@Override protected String roleId() { return "circus_fire_eater"; }
+
+	/** The true self is drawn larger than the body and breathes across the ring: it is culled by all of that. */
+	@Override
+	public net.minecraft.world.phys.AABB getBoundingBoxForCulling() {
+		return isTrueSelf() ? getBoundingBox().inflate(TRUE_SELF_REACH, 10.0D, TRUE_SELF_REACH) : super.getBoundingBoxForCulling();
+	}
 	@Override protected String texturePath() { return "textures/entity/npc/harbinger/circus/fire_eater_0.png"; }
 	@Override protected int performanceDuration() { return 80; }
 

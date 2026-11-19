@@ -45,7 +45,17 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.List;
 import java.util.UUID;
+
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.CircusFinaleSettlement;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.InteractionHand;
 
 /** The Ringmaster's site, act and save rules, in the Circus batch so {@code runCrimsonTroupeGameTestServer} runs them. */
 @GameTestHolder("crimson_troupe_validation")
@@ -183,7 +193,8 @@ public final class CircusRingmasterGameTests {
 	public static void failedControlledActReleasesSiteAndCanBeRetried(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer player = connectedPlayer(helper, "circus-retry", origin);
-		CircusPlayerProgress.chooseRoute(player, CircusRouteRules.Route.SUCCESSION);
+		// The attention act opens on acclimation (no route is chosen before it since 2026-11-18).
+		CircusPlayerProgress.addAcclimation(player, 500);
 		helper.assertTrue(CircusPerformanceController.beginNext(player, origin),
 				"The first controlled act must begin through the production controller");
 
@@ -193,9 +204,9 @@ public final class CircusRingmasterGameTests {
 		helper.assertTrue(data.site(helper.getLevel(), origin).activeOwner() == null
 				&& data.site(helper.getLevel(), origin).phase() == CircusPavilionStateRules.Phase.IDLE,
 				"Death during a controlled act must release the site without settling an outcome");
-		helper.assertTrue(CircusPlayerProgress.route(player) == CircusRouteRules.Route.SUCCESSION
+		helper.assertTrue(CircusPlayerProgress.route(player) == CircusRouteRules.Route.NEUTRAL
 				&& CircusPlayerProgress.challenges(player) == 0,
-				"A failed act must retain the route and must not grant challenge credit");
+				"A failed act must settle nothing and must not grant challenge credit");
 
 		player.setHealth(player.getMaxHealth());
 		helper.assertTrue(CircusPerformanceController.beginNext(player, origin),
@@ -228,15 +239,15 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
+	/**
+	 * 2026-11-18: no route is chosen before the finale. His dialogue's finale event is refused until the attention act is
+	 * done and the pact gate is open; a forged event before then holds nothing.
+	 */
 	@GameTest(template = "empty", timeoutTicks = 40)
-	public static void routeChoiceRequiresCompletedAttentionAct(GameTestHelper helper) {
+	public static void finaleGateNeedsTheAttentionActAndThePact(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
-		ServerPlayer player = connectedPlayer(helper, "circus-pact-order", origin);
+		ServerPlayer player = connectedPlayer(helper, "circus-finale-gate", origin);
 		CircusPlayerProgress.addAcclimation(player, 500);
-		// ARRANGE: the D-30 pact gate (Degree 4 and one school report) is met; pactGateNamesWhatIsMissing covers it.
-		com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
-		com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(player)
-				.putBoolean("quest.empty_ring", true);
 		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
 		helper.assertTrue(carousel != null && ringmaster != null, "Circus fixtures must create");
@@ -244,20 +255,23 @@ public final class CircusRingmasterGameTests {
 		ringmaster.setPos(origin.getCenter().add(0.0D, 3.0D, 2.0D));
 		helper.getLevel().addFreshEntity(carousel);
 		helper.getLevel().addFreshEntity(ringmaster);
+		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
 
-		ringmaster.handleChoice(player, CircusRingmasterEntity.EVENT_ACCEPT);
-		helper.assertTrue(CircusPlayerProgress.route(player) == CircusRouteRules.Route.NEUTRAL,
-				"A forged confirmation must not choose Succession before the attention act");
+		ringmaster.handleChoice(player, CircusRingmasterEntity.EVENT_FINALE);
+		helper.assertTrue(data.site(helper.getLevel(), carousel.encounterOrigin()).activeOwner() == null
+				&& !RingmasterFinaleDirector.isInFinale(player), "A forged finale before the attention act must hold nothing");
 		CircusPlayerProgress.completeChallenge(player, 0, 150);
-		ringmaster.handleChoice(player, CircusRingmasterEntity.EVENT_ACCEPT);
-		helper.assertTrue(CircusPlayerProgress.route(player) == CircusRouteRules.Route.SUCCESSION,
-				"Completing the attention act must unlock the warned route choice");
+		ringmaster.handleChoice(player, CircusRingmasterEntity.EVENT_FINALE);
+		helper.assertTrue(data.site(helper.getLevel(), carousel.encounterOrigin()).activeOwner() == null
+				&& !RingmasterFinaleDirector.isInFinale(player), "Without Degree 4 and a school report the finale stays shut");
+		helper.assertTrue(CircusPlayerProgress.route(player) == CircusRouteRules.Route.NEUTRAL,
+				"Asking for the finale never chooses a route");
 
 		player.discard();
 		carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
 		carousel.discard();
 		ringmaster.discard();
-		CircusPavilionSavedData.get(helper.getLevel()).removeSite(helper.getLevel(), origin);
+		data.removeSite(helper.getLevel(), origin);
 		helper.succeed();
 	}
 
@@ -285,47 +299,38 @@ public final class CircusRingmasterGameTests {
 		CircusPlayerProgress.completeChallenge(harbinger, 0, 0);
 		degree.accept(harbinger, 3);
 		school.apply(harbinger).putBoolean("quest.wrong_audience", true);
-		helper.assertTrue(CircusRingmasterEntity.pactGate(harbinger, CircusRouteRules.Route.SUCCESSION)
-				== CircusRouteRules.PactGate.NEEDS_DEGREE, "a Degree 3 visitor with a report is refused for the Degree");
-		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_ACCEPT);
-		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_REJECT);
-		helper.assertTrue(CircusPlayerProgress.route(harbinger) == CircusRouteRules.Route.NEUTRAL,
-				"a forged pact below Degree 4 must not choose a route");
-		degree.accept(harbinger, 4);
-		school.apply(harbinger).remove("quest.wrong_audience");
-		helper.assertTrue(CircusRingmasterEntity.pactGate(harbinger, CircusRouteRules.Route.LIBERATION)
-				== CircusRouteRules.PactGate.NEEDS_REPORT, "a Degree 4 visitor with no report is refused for the report");
-		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_REJECT);
-		helper.assertTrue(CircusPlayerProgress.route(harbinger) == CircusRouteRules.Route.NEUTRAL,
-				"a forged pact with no school report must not choose a route");
-		school.apply(harbinger).putBoolean("quest.wrong_audience", true);
-		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_REJECT);
-		helper.assertTrue(CircusPlayerProgress.route(harbinger) == CircusRouteRules.Route.LIBERATION,
-				"Degree 4 and any one report open the pact");
-		school.apply(harbinger).remove("quest.wrong_audience");
+		// 2026-11-18: no route is chosen before the fight; the gate decides whether the finale opens at all.
+		helper.assertTrue(CircusRingmasterEntity.pactGate(harbinger) == CircusRouteRules.PactGate.NEEDS_DEGREE,
+				"a Degree 3 visitor with a report is refused for the Degree");
 		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_FINALE);
 		helper.assertTrue(CircusPavilionSavedData.get(helper.getLevel()).site(helper.getLevel(), origin).activeOwner() == null,
-				"the finale rechecks the gate and refuses a visitor who no longer meets it");
+				"a forged finale below Degree 4 must not begin");
+		degree.accept(harbinger, 4);
+		school.apply(harbinger).remove("quest.wrong_audience");
+		helper.assertTrue(CircusRingmasterEntity.pactGate(harbinger) == CircusRouteRules.PactGate.NEEDS_REPORT,
+				"a Degree 4 visitor with no report is refused for the report");
+		ringmaster.handleChoice(harbinger, CircusRingmasterEntity.EVENT_FINALE);
+		helper.assertTrue(CircusPavilionSavedData.get(helper.getLevel()).site(helper.getLevel(), origin).activeOwner() == null,
+				"a forged finale with no school report must not begin");
+		school.apply(harbinger).putBoolean("quest.wrong_audience", true);
+		helper.assertTrue(CircusRingmasterEntity.pactGate(harbinger) == CircusRouteRules.PactGate.OPEN,
+				"Degree 4 and any one report open the finale");
+		helper.assertTrue(CircusPlayerProgress.route(harbinger) == CircusRouteRules.Route.NEUTRAL,
+				"opening the gate chooses no route");
 
 		ServerPlayer unstained = connectedPlayer(helper, "circus-pact-cleansed", origin);
-		CircusPlayerProgress.addAcclimation(unstained, 500);
+		CircusPlayerProgress.addAcclimation(unstained, 1000);
 		CircusPlayerProgress.completeChallenge(unstained, 0, 0);
 		com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getUnstainedProgress(unstained).setBaselineRestored(true);
 		degree.accept(unstained, 0);
 		school.apply(unstained).putBoolean("quest.empty_ring", true);
-		ringmaster.handleChoice(unstained, CircusRingmasterEntity.EVENT_REJECT);
-		helper.assertTrue(CircusPlayerProgress.route(unstained) == CircusRouteRules.Route.NEUTRAL,
-				"an Unstained Liberator needs The Missing Understudy, not any report");
+		helper.assertTrue(CircusRingmasterEntity.pactGate(unstained) == CircusRouteRules.PactGate.NEEDS_UNDERSTUDY,
+				"the Unstained need The Missing Understudy, not any report");
 		school.apply(unstained).putBoolean("quest.missing_understudy", true);
-		ringmaster.handleChoice(unstained, CircusRingmasterEntity.EVENT_ACCEPT);
-		helper.assertTrue(CircusPlayerProgress.route(unstained) == CircusRouteRules.Route.NEUTRAL,
-				"the Unstained may never take Succession");
-		ringmaster.handleChoice(unstained, CircusRingmasterEntity.EVENT_REJECT);
-		helper.assertTrue(CircusPlayerProgress.route(unstained) == CircusRouteRules.Route.LIBERATION,
-				"an Unstained Liberator at Degree 0 with The Missing Understudy may take Liberation");
-		ringmaster.handleChoice(unstained, CircusRingmasterEntity.EVENT_REPAIR);
-		helper.assertTrue(CircusPlayerProgress.route(unstained) == CircusRouteRules.Route.LIBERATION,
-				"an Unstained Liberator cannot repair the route into Succession");
+		helper.assertTrue(CircusRingmasterEntity.pactGate(unstained) == CircusRouteRules.PactGate.OPEN,
+				"the Unstained at Degree 0 with The Missing Understudy may fight him");
+		helper.assertTrue(!CircusRouteRules.mayAbsorb(CircusPlayerProgress.acclimation(unstained), 0b1_1111, true),
+				"the Unstained may never take his place");
 
 		harbinger.discard();
 		unstained.discard();
@@ -341,19 +346,21 @@ public final class CircusRingmasterGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer staleOwner = connectedPlayer(helper, "circus-stale-owner", origin);
 		ServerPlayer successor = connectedPlayer(helper, "circus-successor", origin);
-		CircusPlayerProgress.chooseRoute(staleOwner, CircusRouteRules.Route.SUCCESSION);
 		CircusPlayerProgress.completeChallenge(staleOwner, 0, 0);
-		CircusPlayerProgress.completeChallenge(staleOwner, 1, 0);
+		// The doll act after the attention act opens through the finale's gate: Degree 4 and one school report.
+		com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(staleOwner).setDegreeNumber(4);
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(staleOwner)
+				.putBoolean("quest.empty_ring", true);
 		helper.assertTrue(CircusPerformanceController.beginNext(staleOwner, origin),
 				"The controlled act fixture must begin");
 		com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.circusProgress(staleOwner).setActTicks(199);
 		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
 		data.reset(helper.getLevel(), origin, staleOwner.getUUID());
 		helper.assertTrue(data.beginPerformance(helper.getLevel(), origin, successor.getUUID(),
-				CircusRouteRules.Route.SUCCESSION), "A successor must be able to claim the released pavilion");
+				CircusRouteRules.Route.NEUTRAL), "A successor must be able to claim the released pavilion");
 
 		CircusPerformanceController.onPlayerTick(new PlayerTickEvent.Post(staleOwner));
-		helper.assertTrue(CircusPlayerProgress.challenges(staleOwner) == 0b00011,
+		helper.assertTrue(CircusPlayerProgress.challenges(staleOwner) == 0b00001,
 				"An expired act must not award challenge credit from stale player data");
 		helper.assertTrue(CircusPerformanceController.activeChallenge(staleOwner) < 0,
 				"An expired act must clear the stale player timer");
@@ -399,9 +406,9 @@ public final class CircusRingmasterGameTests {
 		UUID intruder = UUID.randomUUID();
 		CircusPavilionSavedData data = new CircusPavilionSavedData();
 
-		helper.assertTrue(data.begin(helper.getLevel(), origin, owner, CircusRouteRules.Route.SUCCESSION),
+		helper.assertTrue(data.begin(helper.getLevel(), origin, owner, CircusRouteRules.Route.NEUTRAL),
 				"An unsettled pavilion must accept its first owner");
-		helper.assertTrue(!data.begin(helper.getLevel(), origin, intruder, CircusRouteRules.Route.LIBERATION),
+		helper.assertTrue(!data.begin(helper.getLevel(), origin, intruder, CircusRouteRules.Route.NEUTRAL),
 				"A second player must not steal an active pavilion");
 		helper.assertTrue(data.complete(helper.getLevel(), origin, owner,
 				CircusPavilionStateRules.Outcome.SUCCESSION), "The active owner must be able to settle the pavilion");
@@ -410,7 +417,7 @@ public final class CircusRingmasterGameTests {
 		CircusPavilionSavedData.Site restored = CircusPavilionSavedData
 				.load(saved, helper.getLevel().registryAccess()).site(helper.getLevel(), origin);
 		helper.assertTrue(restored.activeOwner() == null && owner.equals(restored.completionOwner())
-				&& restored.route() == CircusRouteRules.Route.SUCCESSION
+				&& restored.route() == CircusRouteRules.Route.NEUTRAL
 				&& restored.outcome() == CircusPavilionStateRules.Outcome.SUCCESSION
 				&& restored.phase() == CircusPavilionStateRules.Phase.COMPLETE,
 				"Completion owner, route, outcome, and phase must survive a server save/reload");
@@ -423,7 +430,7 @@ public final class CircusRingmasterGameTests {
 		UUID disconnectedOwner = UUID.randomUUID();
 		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
 		helper.assertTrue(data.begin(helper.getLevel(), origin, disconnectedOwner,
-				CircusRouteRules.Route.SUCCESSION), "Pavilion attempt must begin");
+				CircusRouteRules.Route.NEUTRAL), "Pavilion attempt must begin");
 		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		helper.assertTrue(carousel != null, "Carousel fixture must create");
 		carousel.setPos(origin.getCenter());
@@ -443,45 +450,348 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	/** D-34: in DESCENT a puppet's blow counts as its owner's; a stranger's blow, or their puppet's, does not. */
+	/**
+	 * 2026-11-18: while a finale in his Chamber holds his site, the real Ringmaster stands still and untouchable, and
+	 * anyone who speaks to him gets the line that he is elsewhere. The finale is held here without a Chamber, as its
+	 * director holds a begun one.
+	 */
 	@GameTest(template = "empty", timeoutTicks = 40)
-	public static void ownersPuppetHitCountsInDescent(GameTestHelper helper) {
+	public static void heldSiteFreezesTheRealRingmaster(GameTestHelper helper) throws ReflectiveOperationException {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
-		ServerPlayer owner = connectedPlayer(helper, "circus-puppet-owner", origin.offset(2, 0, 0));
-		ServerPlayer stranger = connectedPlayer(helper, "circus-puppet-stranger", origin.offset(-2, 0, 0));
+		List<Component> heard = new java.util.ArrayList<>();
+		ServerPlayer visitor = listeningPlayer(helper, "circus-held-visitor", origin.offset(2, 0, 0), heard);
+		CircusPlayerProgress.addAcclimation(visitor, 500);
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
-		helper.assertTrue(ringmaster != null, "Ringmaster fixture must create");
-		ringmaster.setPos(origin.getCenter());
-		CompoundTag saved = new CompoundTag();
-		ringmaster.addAdditionalSaveData(saved);
-		saved.putLong("CircusOrigin", origin.asLong());
-		ringmaster.readAdditionalSaveData(saved);
+		helper.assertTrue(carousel != null && ringmaster != null, "Circus fixtures must create");
+		carousel.setPos(origin.getCenter());
+		ringmaster.setPos(origin.getCenter().add(0.0D, 3.0D, 2.0D));
+		helper.getLevel().addFreshEntity(carousel);
 		helper.getLevel().addFreshEntity(ringmaster);
-		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
-		data.begin(helper.getLevel(), origin, owner.getUUID(), CircusRouteRules.Route.LIBERATION);
-		data.setPhase(helper.getLevel(), origin, CircusPavilionStateRules.Phase.DESCENT);
-		var definition = PuppeteerSummonDefinitions.byName(PuppeteerSummonDefinitions.GOREBOUND_HULK).orElseThrow();
-		var puppet = PuppeteerSummonFactory.create(definition, helper.getLevel(), owner, UUID.randomUUID(), 0).orElseThrow();
-		var strangers = PuppeteerSummonFactory.create(definition, helper.getLevel(), stranger, UUID.randomUUID(), 0).orElseThrow();
-		puppet.setPos(origin.offset(1, 0, 0).getCenter());
-		strangers.setPos(origin.offset(-1, 0, 0).getCenter());
-		helper.getLevel().addFreshEntity(puppet);
-		helper.getLevel().addFreshEntity(strangers);
-
-		float health = ringmaster.getHealth();
-		helper.assertTrue(!ringmaster.hurt(ringmaster.damageSources().playerAttack(stranger), 2.0F)
-				&& !ringmaster.hurt(ringmaster.damageSources().mobAttack(strangers), 2.0F)
-				&& ringmaster.getHealth() == health, "A stranger, or a stranger's puppet, must not wound him in DESCENT");
-		helper.assertTrue(ringmaster.hurt(ringmaster.damageSources().mobAttack(puppet), 2.0F)
-				&& ringmaster.getHealth() < health, "The owner's puppet must wound him in DESCENT");
-
-		puppet.discard();
-		strangers.discard();
+		UUID owner = UUID.randomUUID();
+		hold(helper, owner, carousel.encounterOrigin());
+		try {
+			helper.assertTrue(RingmasterFinaleDirector.holds(helper.getLevel().dimension(), carousel.encounterOrigin()),
+					"The finale holds the site");
+			var perch = ringmaster.position();
+			ringmaster.tick();
+			ringmaster.tick();
+			helper.assertTrue(ringmaster.position().distanceTo(perch) < 1.0E-3D, "The held Ringmaster does not move");
+			helper.assertTrue(!ringmaster.hurt(ringmaster.damageSources().playerAttack(visitor), 4.0F)
+					&& ringmaster.getHealth() == ringmaster.getMaxHealth(), "Nobody harms the held Ringmaster");
+			ringmaster.interact(visitor, InteractionHand.MAIN_HAND);
+			helper.assertTrue(heard.stream().anyMatch(line -> line.getContents() instanceof TranslatableContents contents
+					&& contents.getKey().equals("hemomancy.circus.finale.elsewhere")),
+					"Speaking to him gets the elsewhere line: " + heard);
+		} finally {
+			release(owner);
+		}
+		visitor.discard();
+		carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
+		carousel.discard();
 		ringmaster.discard();
-		owner.discard();
-		stranger.discard();
+		CircusPavilionSavedData.get(helper.getLevel()).removeSite(helper.getLevel(), origin);
+		helper.succeed();
+	}
+
+	/**
+	 * A kill at his kneel, laid on the real site as the finale's return lays it: the pavilion is ruined, the route is
+	 * Liberation's, Thread Ripper is learnt and the real Ringmaster dies; the troupe's finale state clears.
+	 */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void killAtTheKneelRuinsTheSite(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		ServerPlayer player = connectedPlayer(helper, "circus-kill-ending", origin);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
+		Fixture fixture = settlementFixture(helper, origin, player);
+		CircusFinaleSettlement.apply(helper.getLevel(), fixture.carousel.encounterOrigin(), player, FinaleRules.Ending.KILLED);
+		CircusPavilionSavedData.Site site = CircusPavilionSavedData.get(helper.getLevel())
+				.site(helper.getLevel(), fixture.carousel.encounterOrigin());
+		helper.assertTrue(site.outcome() == CircusPavilionStateRules.Outcome.RUIN && site.activeOwner() == null,
+				"The kill ruins the site: " + site.outcome());
+		helper.assertTrue(CircusPlayerProgress.route(player) == CircusRouteRules.Route.LIBERATION_COMPLETE,
+				"The route is Liberation's");
+		helper.assertTrue(HemoCapabilityAccess.getKnownManipulations(player).getKnownManips()
+				.containsKey(ManipulationInit.thread_ripper.get()) || player.getInventory().contains(new net.minecraft.world.item.ItemStack(
+						com.vincenthuto.hemomancy.common.init.ItemInit.memory_thread_ripper.get())),
+				"Thread Ripper is learnt, or owed when it cannot be yet");
+		helper.assertTrue(!fixture.ringmaster.isAlive(), "The real Ringmaster dies with the kill");
+		cleanUp(helper, origin, player, fixture);
+		helper.succeed();
+	}
+
+	/**
+	 * Absorbing him at his kneel, laid on the real site: the pavilion stands as the player's tenancy, the route is
+	 * Succession's, the Ringmaster Pattern is known, and the real Ringmaster lives on, retired, offering no finale.
+	 */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void absorbingAtTheKneelRetiresTheRealRingmaster(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		ServerPlayer player = connectedPlayer(helper, "circus-absorb-ending", origin);
+		Fixture fixture = settlementFixture(helper, origin, player);
+		CircusFinaleSettlement.apply(helper.getLevel(), fixture.carousel.encounterOrigin(), player, FinaleRules.Ending.ABSORBED);
+		CircusPavilionSavedData.Site site = CircusPavilionSavedData.get(helper.getLevel())
+				.site(helper.getLevel(), fixture.carousel.encounterOrigin());
+		helper.assertTrue(site.outcome() == CircusPavilionStateRules.Outcome.SUCCESSION && site.activeOwner() == null,
+				"Absorbing him keeps the site as a tenancy: " + site.outcome());
+		helper.assertTrue(CircusPlayerProgress.route(player) == CircusRouteRules.Route.SUCCESSION_COMPLETE,
+				"The route is Succession's");
+		helper.assertTrue(HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames()
+				.contains(PuppeteerSummonDefinitions.RINGMASTER_PATTERN), "The Ringmaster Pattern is known");
+		helper.assertTrue(fixture.ringmaster.isAlive() && fixture.ringmaster.retired(), "The real Ringmaster lives on, retired");
+		CompoundTag saved = new CompoundTag();
+		fixture.ringmaster.addAdditionalSaveData(saved);
+		helper.assertTrue(saved.getBoolean("CircusRetired"), "His retirement is saved");
+		cleanUp(helper, origin, player, fixture);
+		helper.succeed();
+	}
+
+	private record Fixture(CircusCarouselEntity carousel, CircusRingmasterEntity ringmaster) {
+	}
+
+	/** A carousel and the real Ringmaster over it, the site held by {@code player} as a begun finale holds it. */
+	private static Fixture settlementFixture(GameTestHelper helper, BlockPos origin, ServerPlayer player) {
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
+		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
+		helper.assertTrue(carousel != null && ringmaster != null, "Circus fixtures must create");
+		carousel.setPos(origin.getCenter());
+		ringmaster.setPos(origin.getCenter().add(0.0D, 3.0D, 2.0D));
+		helper.getLevel().addFreshEntity(carousel);
+		helper.getLevel().addFreshEntity(ringmaster);
+		helper.assertTrue(CircusPavilionSavedData.get(helper.getLevel()).begin(helper.getLevel(), carousel.encounterOrigin(),
+				player.getUUID(), CircusRouteRules.Route.NEUTRAL), "The finale holds the site for its owner");
+		return new Fixture(carousel, ringmaster);
+	}
+
+	private static void cleanUp(GameTestHelper helper, BlockPos origin, ServerPlayer player, Fixture fixture) {
+		player.discard();
+		fixture.carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
+		fixture.carousel.discard();
+		fixture.ringmaster.discard();
+		CircusPavilionSavedData.get(helper.getLevel()).removeSite(helper.getLevel(), fixture.carousel.encounterOrigin());
+	}
+
+	/**
+	 * F1: the real site is usually unloaded when the finale settles. A kill laid while he is not in the level still ends
+	 * him, and frees the troupe, the first time he ticks; the ending line comes from the settlement itself.
+	 */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void killSettledWhileHeIsAwayEndsHimWhenHeLoads(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		List<Component> heard = new java.util.ArrayList<>();
+		ServerPlayer player = listeningPlayer(helper, "circus-away-kill", origin, heard);
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
+		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
+		var performer = EntityInit.circus_fire_eater.get().create(helper.getLevel());
+		helper.assertTrue(carousel != null && ringmaster != null && performer != null, "Circus fixtures must create");
+		carousel.setPos(origin.getCenter());
+		helper.getLevel().addFreshEntity(carousel);
+		performer.setPos(origin.getCenter().add(4.0D, 0.0D, 0.0D));
+		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
+		BlockPos site = carousel.encounterOrigin();
+		helper.assertTrue(data.begin(helper.getLevel(), site, player.getUUID(), CircusRouteRules.Route.NEUTRAL), "held");
+		// Neither he nor his troupe is in the level as the ending is laid.
+		CircusFinaleSettlement.apply(helper.getLevel(), site, player, FinaleRules.Ending.KILLED);
+		helper.assertTrue(heard.stream().anyMatch(line -> line.getContents() instanceof TranslatableContents contents
+				&& contents.getKey().equals("hemomancy.circus.finale.complete.liberation")),
+				"The settlement tells the player the ending: " + heard);
+		ringmaster.setPos(origin.getCenter().add(0.0D, 3.0D, 2.0D));
+		helper.getLevel().addFreshEntity(ringmaster);
+		helper.getLevel().addFreshEntity(performer);
+		performer.tick();
+		ringmaster.tick();
+		ringmaster.tick();
+		helper.assertTrue(!ringmaster.isAlive(), "A ruined site's Ringmaster dies when he next ticks");
+		helper.assertTrue(performer.isRemoved(), "A ruined site's finale troupe leaves when it next ticks");
+		player.discard();
+		carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
+		carousel.discard();
+		ringmaster.discard();
+		performer.discard();
+		data.removeSite(helper.getLevel(), site);
+		helper.succeed();
+	}
+
+	/** F1: absorbing him while he is away retires him when he next ticks, and he offers nobody the finale again. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void absorbSettledWhileHeIsAwayRetiresHimWhenHeLoads(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		ServerPlayer player = connectedPlayer(helper, "circus-away-absorb", origin);
+		List<Component> heard = new java.util.ArrayList<>();
+		ServerPlayer visitor = listeningPlayer(helper, "circus-away-visit", origin.offset(2, 0, 0), heard);
+		CircusPlayerProgress.addAcclimation(visitor, 500);
+		CircusPlayerProgress.completeChallenge(visitor, 0, 0);
+		HemoCapabilityAccess.getInitiatoryDegree(visitor).setDegreeNumber(4);
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(visitor)
+				.putBoolean("quest.empty_ring", true);
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
+		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
+		helper.assertTrue(carousel != null && ringmaster != null, "Circus fixtures must create");
+		carousel.setPos(origin.getCenter());
+		helper.getLevel().addFreshEntity(carousel);
+		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
+		BlockPos site = carousel.encounterOrigin();
+		helper.assertTrue(data.begin(helper.getLevel(), site, player.getUUID(), CircusRouteRules.Route.NEUTRAL), "held");
+		CircusFinaleSettlement.apply(helper.getLevel(), site, player, FinaleRules.Ending.ABSORBED);
+		ringmaster.setPos(origin.getCenter().add(0.0D, 3.0D, 2.0D));
+		helper.getLevel().addFreshEntity(ringmaster);
+		ringmaster.tick();
+		helper.assertTrue(ringmaster.isAlive() && ringmaster.retired(), "A succeeded site's Ringmaster is retired when he next ticks");
+		ringmaster.handleChoice(visitor, CircusRingmasterEntity.EVENT_FINALE);
+		helper.assertTrue(heard.stream().anyMatch(line -> line.getContents() instanceof TranslatableContents contents
+				&& contents.getKey().equals("hemomancy.circus.finale.settled")), "A settled site's finale is refused aloud: " + heard);
+		player.discard();
+		visitor.discard();
+		carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
+		carousel.discard();
+		ringmaster.discard();
+		data.removeSite(helper.getLevel(), site);
+		helper.succeed();
+	}
+
+	/** F2: a login after a crash mid-finale releases the site it held, so the finale can be begun again. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void loginAfterACrashReleasesTheSite(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		ServerPlayer player = connectedPlayer(helper, "circus-crash-login", origin);
+		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
+		helper.assertTrue(data.begin(helper.getLevel(), origin, player.getUUID(), CircusRouteRules.Route.NEUTRAL), "held");
+		RingmasterFinaleDirector.markActive(player, helper.getLevel().dimension(), origin,
+				net.minecraft.world.level.block.Rotation.NONE, origin.offset(0, 0, 20));
+		RingmasterFinaleDirector.onLogin(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(player));
+		helper.assertTrue(data.site(helper.getLevel(), origin).activeOwner() == null, "The crashed finale's site is released");
+		helper.assertTrue(data.begin(helper.getLevel(), origin, player.getUUID(), CircusRouteRules.Route.NEUTRAL),
+				"The finale can be begun again");
+		player.discard();
 		data.removeSite(helper.getLevel(), origin);
 		helper.succeed();
+	}
+
+	/** F3: a finale asked of a busy or a settled site says so, before anything else is tried. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void beginNamesABusyOrSettledSite(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		List<Component> heard = new java.util.ArrayList<>();
+		ServerPlayer player = listeningPlayer(helper, "circus-begin-refused", origin, heard);
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
+		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
+		helper.assertTrue(carousel != null && ringmaster != null, "Circus fixtures must create");
+		carousel.setPos(origin.getCenter());
+		ringmaster.setPos(origin.getCenter().add(0.0D, 3.0D, 2.0D));
+		helper.getLevel().addFreshEntity(carousel);
+		helper.getLevel().addFreshEntity(ringmaster);
+		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
+		BlockPos site = carousel.encounterOrigin();
+		UUID other = UUID.randomUUID();
+		data.begin(helper.getLevel(), site, other, CircusRouteRules.Route.NEUTRAL);
+		helper.assertTrue(!RingmasterFinaleDirector.begin(player, ringmaster, carousel), "A busy site refuses");
+		helper.assertTrue(said(heard, "hemomancy.circus.finale.busy"), "The busy site is named: " + heard);
+		data.complete(helper.getLevel(), site, other, CircusPavilionStateRules.Outcome.RUIN);
+		heard.clear();
+		helper.assertTrue(!RingmasterFinaleDirector.begin(player, ringmaster, carousel), "A settled site refuses");
+		helper.assertTrue(said(heard, "hemomancy.circus.finale.settled"), "The settled site is named: " + heard);
+		player.discard();
+		carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
+		carousel.discard();
+		ringmaster.discard();
+		data.removeSite(helper.getLevel(), site);
+		helper.succeed();
+	}
+
+	private static boolean said(List<Component> heard, String key) {
+		return heard.stream().anyMatch(line -> line.getContents() instanceof TranslatableContents contents
+				&& contents.getKey().equals(key));
+	}
+
+	/**
+	 * F5: the crossing raises a frozen stand-in for each finale troupe member at the real site, at its mapped place on
+	 * the stage (the overworld stands in for the Chamber: the raise takes its stage level as an argument).
+	 */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void standInsRaiseOnePerTroupeMember(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		var fire = EntityInit.circus_fire_eater.get().create(helper.getLevel());
+		var acrobat = EntityInit.circus_acrobat.get().create(helper.getLevel());
+		var strongman = EntityInit.circus_strongman.get().create(helper.getLevel());
+		helper.assertTrue(fire != null && acrobat != null && strongman != null, "Circus fixtures must create");
+		fire.setPos(origin.getCenter().add(4.0D, 0.0D, 0.0D));
+		acrobat.setPos(origin.getCenter().add(-4.0D, 0.0D, 0.0D));
+		strongman.setPos(origin.getCenter().add(0.0D, 0.0D, 4.0D));
+		helper.getLevel().addFreshEntity(fire);
+		helper.getLevel().addFreshEntity(acrobat);
+		helper.getLevel().addFreshEntity(strongman);
+		BlockPos stage = origin.offset(0, 0, 30);
+		List<com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity> raised =
+				com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleStandIns.raise(helper.getLevel(), helper.getLevel(),
+						origin, stage, net.minecraft.world.level.block.Rotation.NONE);
+		try {
+			helper.assertTrue(raised.size() == 2, "One stand-in per finale troupe member (the faculty Strongman stays): " + raised.size());
+			for (var standIn : raised) {
+				var real = standIn.getType() == fire.getType() ? fire : acrobat;
+				helper.assertTrue(standIn.getType() == real.getType(), "A stand-in is its member's kind");
+				helper.assertTrue(standIn.isNoAi() && standIn.getTags().contains(RingmasterFinaleDirector.COPY_TAG),
+						"A stand-in is frozen and swept with the stage's copies");
+				var at = com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleStage.toCopy(real.position(), origin, stage,
+						net.minecraft.world.level.block.Rotation.NONE);
+				helper.assertTrue(standIn.position().distanceTo(at) < 1.0E-3D, "A stand-in stands at its member's mapped place");
+			}
+		} finally {
+			raised.forEach(net.minecraft.world.entity.Entity::discard);
+			fire.discard();
+			acrobat.discard();
+			strongman.discard();
+		}
+		helper.succeed();
+	}
+
+	/** F5: while the finale holds the site, its real finale troupe stands still as the Ringmaster and carousel do. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void heldSiteFreezesTheRealTroupe(GameTestHelper helper) throws ReflectiveOperationException {
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
+		ServerPlayer owner = connectedPlayer(helper, "circus-held-troupe", origin.offset(2, 0, 0));
+		var fire = EntityInit.circus_fire_eater.get().create(helper.getLevel());
+		helper.assertTrue(fire != null, "Circus fixtures must create");
+		// A strip of floor to walk on, the performer standing on it.
+		for (int x = 2; x <= 10; x++) helper.setBlock(new BlockPos(x, 1, 4), net.minecraft.world.level.block.Blocks.STONE);
+		BlockPos stand = helper.absolutePos(new BlockPos(8, 2, 4));
+		fire.setPos(stand.getX() + 0.5D, stand.getY(), stand.getZ() + 0.5D);
+		helper.getLevel().addFreshEntity(fire);
+		fire.setOnGround(true);
+		fire.tick();
+		fire.setOnGround(true);
+		hold(helper, owner.getUUID(), origin);
+		try {
+			// A walk under way (its own, or a chase) is stopped on the held member's next tick; an unheld one keeps walking.
+			BlockPos to = fire.blockPosition().offset(-3, 0, 0);
+			fire.getNavigation().moveTo(to.getX() + 0.5D, to.getY(), to.getZ() + 0.5D, 1.0D);
+			helper.assertTrue(fire.getNavigation().isInProgress(), "Fixture: the walk must be under way before the tick");
+			fire.tick();
+			helper.assertTrue(fire.getNavigation().isDone(), "A held troupe member does not walk: it stands where it is");
+		} finally {
+			release(owner.getUUID());
+			fire.discard();
+			owner.discard();
+		}
+		helper.succeed();
+	}
+
+	/** Holds the site at {@code origin} as a begun finale holds it, without a Chamber: one entry in the director's table. */
+	@SuppressWarnings("unchecked")
+	private static void hold(GameTestHelper helper, UUID owner, BlockPos origin) throws ReflectiveOperationException {
+		var constructor = RingmasterFinaleDirector.Finale.class.getDeclaredConstructor(net.minecraft.resources.ResourceKey.class,
+				BlockPos.class, net.minecraft.world.level.block.Rotation.class, BlockPos.class);
+		constructor.setAccessible(true);
+		var finale = constructor.newInstance(helper.getLevel().dimension(), origin, net.minecraft.world.level.block.Rotation.NONE, origin);
+		var field = RingmasterFinaleDirector.class.getDeclaredField("FINALES");
+		field.setAccessible(true);
+		((java.util.Map<UUID, RingmasterFinaleDirector.Finale>) field.get(null)).put(owner, finale);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void release(UUID owner) throws ReflectiveOperationException {
+		var field = RingmasterFinaleDirector.class.getDeclaredField("FINALES");
+		field.setAccessible(true);
+		((java.util.Map<UUID, RingmasterFinaleDirector.Finale>) field.get(null)).remove(owner);
 	}
 
 	/** D-34: in a finale the Fire Breather's cone burns its owner's body and spares a bystander beside it. */
@@ -553,6 +863,29 @@ public final class CircusRingmasterGameTests {
 		helper.assertTrue(!ThreadRipperManip.protectedBody(caster, plain), "An unmarked body must not be protected");
 		caster.discard();
 		helper.succeed();
+	}
+
+	/** A connected player whose system chat lines land in {@code heard}. */
+	private static ServerPlayer listeningPlayer(GameTestHelper helper, String name, BlockPos position, List<Component> heard) {
+		CommonListenerCookie cookie = CommonListenerCookie.createInitial(
+				new GameProfile(UUID.randomUUID(), name), false);
+		ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+				cookie.gameProfile(), ClientInformation.createDefault());
+		Connection connection = new Connection(PacketFlow.SERVERBOUND);
+		new EmbeddedChannel(connection);
+		new ServerGamePacketListenerImpl(helper.getLevel().getServer(), connection, player, cookie) {
+			@Override public void send(Packet<?> packet) {
+				if (packet instanceof net.minecraft.network.protocol.game.ClientboundSystemChatPacket chat) heard.add(chat.content());
+			}
+
+			// A system message is sent with a listener (ServerPlayer.sendSystemMessage), through this overload.
+			@Override public void send(Packet<?> packet, @javax.annotation.Nullable net.minecraft.network.PacketSendListener listener) {
+				send(packet);
+			}
+		};
+		player.setPos(position.getX() + 0.5D, position.getY(), position.getZ() + 0.5D);
+		helper.getLevel().addNewPlayer(player);
+		return player;
 	}
 
 	private static ServerPlayer connectedPlayer(GameTestHelper helper, String name, BlockPos position) {

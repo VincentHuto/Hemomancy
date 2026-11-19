@@ -30,6 +30,8 @@ public final class CircusSchoolDialogue {
         CircusCurriculum.forTeacher(role).ifPresent(lesson -> {
             options.add(new DialogueOption(root + "take_lesson", "lesson", "circus_school_teach").withQuest());
             options.add(new DialogueOption(root + "practical", null, "circus_school_practical").withQuest());
+            if (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor.forRole(role).isPresent())
+                options.add(new DialogueOption(root + "ask_key", null, "circus_school_key").withQuest());
             options.add(new DialogueOption(root + "guest", null, "circus_school_guest").withQuest());
         });
         if (role.equals("circus_threadkeeper")) {
@@ -54,6 +56,30 @@ public final class CircusSchoolDialogue {
                     List.of(new DialogueOption(root + "back", "greeting", null))));
         }
         return builder.build();
+    }
+
+    /**
+     * Another vial of the professor's blood: only to a pupil they taught, who has not yet earned the body and carries
+     * no key already, and once a day (Chamber ordeals, 2026-11-17).
+     */
+    private static boolean giveAnotherKey(ServerPlayer player, String role, CircusCurriculum.Lesson lesson) {
+        String root = "hemomancy.circus.school." + role + ".";
+        if (lesson == null || !CircusApprenticeshipProgress.knows(player, lesson.summon())) {
+            player.displayClientMessage(Component.translatable(root + "key_untaught"), false);
+            return false;
+        }
+        if (com.vincenthuto.hemomancy.common.mission.shared.OwedRewards.carriesOrOwed(player,
+                stack -> com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealKey.is(stack, role))) {
+            player.displayClientMessage(Component.translatable(root + "key_held"), false);
+            return false;
+        }
+        if (!com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealKey.mayRegive(player, role)) {
+            player.displayClientMessage(Component.translatable(root + "key_tomorrow"), false);
+            return false;
+        }
+        com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealKey.give(player, role);
+        player.displayClientMessage(Component.translatable(root + "key_again"), false);
+        return true;
     }
 
     /** The professor's own line for the pupil's next step (CD-7). */
@@ -127,7 +153,15 @@ public final class CircusSchoolDialogue {
                 }
                 if (!CircusApprenticeshipProgress.teach(player, lesson.summon())) return false;
                 CircusPracticalController.systemMessage(player, "lesson_taught");
+                // A professor whose ordeal runs in their Chamber hands over the key to it: a vial of their own blood.
+                if (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealProfessor.forRole(role).isPresent()) {
+                    com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealKey.give(player, role);
+                    player.displayClientMessage(Component.translatable("hemomancy.circus.school." + role + ".key_given"), false);
+                }
                 return true;
+            }
+            case "circus_school_key" -> {
+                return giveAnotherKey(player, role, lesson);
             }
             case "circus_school_practical", "circus_school_guest" -> {
                 return lesson != null && CircusPracticalController.begin(player, teacher, lesson.summon(),

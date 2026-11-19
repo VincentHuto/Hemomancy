@@ -28,7 +28,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
-public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedBoundSummon {
+public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedBoundSummon,
+		com.vincenthuto.hemomancy.common.entity.npc.circus.TrueSelf {
 	private static final BoundSummonSync SYNC = BoundSummonSync.define(MnemonistPuppetEntity.class);
 	private static final ParticleOptions MEMORY_GLOW = HemoParticleData.glow(new ParticleColor(158, 10, 18));
 	private static final ParticleOptions PALE_GLOW = HemoParticleData.glow(new ParticleColor(184, 173, 178));
@@ -37,6 +38,15 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 	private static final Set<MnemonistPuppetEntity> LOADED = Collections.newSetFromMap(new WeakHashMap<>());
 
 	private final List<MnemonistPuppetRules.AttackMemory> memories = new ArrayList<>();
+	/** In the Retired Understudy's Chamber the puppet is its true self: memory made flesh, quicker and harder to put down (2026-11-17). */
+	private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> TRUE_SELF = SynchedEntityData.defineId(
+			MnemonistPuppetEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+	private static final double TRUE_SELF_HEALTH = 1.25D, TRUE_SELF_SPEED = 1.1D;
+	/** Its ordeal moves' poses ({@code OrdealMnemonistMoves}): an entity event per move, timed by the model from its arrival. */
+	private static final byte ORDEAL_MOVE_EVENT = 80;
+	private static final int ORDEAL_MOVES = 4;
+	private int ordealMove = -1;
+	private int ordealMoveStart;
 
 	public MnemonistPuppetEntity(EntityType<? extends Zombie> type, Level level) {
 		super(type, level);
@@ -57,6 +67,46 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 		SYNC.defineDefaults(builder, PuppeteerSummonDefinitions.MNEMONIST_PUPPET);
+		builder.define(TRUE_SELF, false);
+	}
+
+	@Override
+	public boolean isTrueSelf() {
+		return entityData.get(TRUE_SELF);
+	}
+
+	@Override
+	public void setTrueSelf(boolean trueSelf) {
+		entityData.set(TRUE_SELF, trueSelf);
+		if (!trueSelf) return;
+		var health = getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH);
+		var speed = getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+		if (health != null) health.setBaseValue(health.getBaseValue() * TRUE_SELF_HEALTH);
+		if (speed != null) speed.setBaseValue(speed.getBaseValue() * TRUE_SELF_SPEED);
+		setHealth(getMaxHealth());
+	}
+
+	/** Starts move {@code kind}'s pose on every watching client, or stops it with -1. */
+	public void ordealMove(int kind) {
+		level().broadcastEntityEvent(this, (byte) (ORDEAL_MOVE_EVENT + (kind < 0 ? ORDEAL_MOVES : kind)));
+	}
+
+	public int ordealMove() {
+		return ordealMove;
+	}
+
+	public float ordealMoveAge(float partialTick) {
+		return tickCount - ordealMoveStart + partialTick;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id >= ORDEAL_MOVE_EVENT && id <= ORDEAL_MOVE_EVENT + ORDEAL_MOVES) {
+			ordealMove = id - ORDEAL_MOVE_EVENT == ORDEAL_MOVES ? -1 : id - ORDEAL_MOVE_EVENT;
+			ordealMoveStart = tickCount;
+		} else {
+			super.handleEntityEvent(id);
+		}
 	}
 
 	static List<MnemonistPuppetEntity> loaded() {
@@ -127,6 +177,7 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 	/** Replays the remembered wound on the current target now. False when there is no target or nothing to replay. */
 	public boolean replayNow() {
 		if (!(level() instanceof ServerLevel serverLevel)) return false;
+		if (isTrueSelf() && com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealMnemonistMoves.busy(getUUID())) return false;
 		MnemonistPuppetRules.pruneExpired(memories, level().getGameTime());
 		LivingEntity target = getTarget();
 		if (target == null || !target.isAlive() || distanceToSqr(target) > 18.0D * 18.0D) {
@@ -163,6 +214,13 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 
 	private UUID targetId() {
 		return getTarget() == null ? null : getTarget().getUUID();
+	}
+
+	/** In its ordeal its ordinary blow waits while one of its own moves runs. */
+	@Override
+	public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+		if (isTrueSelf() && com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealMnemonistMoves.busy(getUUID())) return false;
+		return super.doHurtTarget(target);
 	}
 
 	@Override

@@ -2,11 +2,12 @@ package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
-import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
+import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.CarouselAlive;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleGeometry;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -30,15 +31,31 @@ import java.util.UUID;
 public final class CircusCarouselEntity extends Entity {
 	private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(
 			CircusCarouselEntity.class, EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<Integer> SEVERED = SynchedEntityData.defineId(
+	/**
+	 * The copy carousel on his stage (2026-11-18) comes alive: whether this is the copy, the move it runs
+	 * ({@link CarouselAlive.Move} ordinal) and its tick (idle ticks between moves), the turn the move started from and
+	 * the turn it aims to. Its turn, reach and ride up the pole are worked out from these on both sides.
+	 */
+	private static final EntityDataAccessor<Boolean> COPY = SynchedEntityData.defineId(
+			CircusCarouselEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> ALIVE_MOVE = SynchedEntityData.defineId(
 			CircusCarouselEntity.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Integer> BROKEN = SynchedEntityData.defineId(
+	private static final EntityDataAccessor<Integer> ALIVE_TICK = SynchedEntityData.defineId(
 			CircusCarouselEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Float> ALIVE_FROM = SynchedEntityData.defineId(
+			CircusCarouselEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> ALIVE_FIRE = SynchedEntityData.defineId(
+			CircusCarouselEntity.class, EntityDataSerializers.FLOAT);
+	private final BossReplayClock aliveClock = new BossReplayClock(0);
 	private static final double TROUPE_RANGE = 16.0D;
 	private float rotationSpeed = CircusCarouselRules.targetSpeed(false);
 	private int activeTicks;
 	private BlockPos encounterOrigin;
+	/** The carousel on the finale's stage in his Chamber (2026-11-18): scenery and his weapon, never a real site's. */
+	private boolean stageCopy;
 	private int missingOwnerTicks;
+	/** Server only: whether this real carousel's captives went free with a kill at the kneel (its site lies in ruin). */
+	private boolean captivesFreed;
 
 	public CircusCarouselEntity(EntityType<? extends CircusCarouselEntity> type, Level level) {
 		super(type, level);
@@ -49,8 +66,11 @@ public final class CircusCarouselEntity extends Entity {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		builder.define(ACTIVE, false);
-		builder.define(SEVERED, 0);
-		builder.define(BROKEN, 0);
+		builder.define(COPY, false);
+		builder.define(ALIVE_MOVE, 0);
+		builder.define(ALIVE_TICK, 0);
+		builder.define(ALIVE_FROM, 0.0F);
+		builder.define(ALIVE_FIRE, 0.0F);
 	}
 
 	@Override
@@ -60,13 +80,35 @@ public final class CircusCarouselEntity extends Entity {
 		setNoGravity(true);
 		setDeltaMovement(0.0D, 0.0D, 0.0D);
 		if (level().isClientSide) {
+			if (stageCopy()) {
+				aliveClock.sync(entityData.get(ALIVE_MOVE), entityData.get(ALIVE_TICK), tickCount, 1);
+				setYRot(Mth.wrapDegrees(aliveYaw(aliveTime(0.0F))));
+				return;
+			}
 			rotationSpeed = CircusCarouselRules.nextSpeed(rotationSpeed, isActive());
 			setYRot(Mth.wrapDegrees(getYRot() + rotationSpeed));
 			return;
 		}
 		if (encounterOrigin == null) encounterOrigin = blockPosition();
+		if (stageCopy) {
+			// A copy no finale owns (a crash's, loaded after its stage was cleared) removes itself with its riders.
+			if (!com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.ownsCopy(this)) {
+				java.util.List.copyOf(getPassengers()).forEach(net.minecraft.world.entity.Entity::discard);
+				discard();
+				return;
+			}
+			// Between moves it turns idly on its own clock; in a move the Ringmaster's moves set its tick.
+			if (aliveMove() == CarouselAlive.Move.NONE) entityData.set(ALIVE_TICK, entityData.get(ALIVE_TICK) + 1);
+			setYRot(Mth.wrapDegrees(aliveYaw(entityData.get(ALIVE_TICK))));
+			ensureCaptives((ServerLevel) level());
+			return;
+		}
+		// While the finale runs in his Chamber the real carousel stands as it is: nothing of the site moves.
+		if (com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterFinaleDirector.holds(level().dimension(), encounterOrigin))
+			return;
 		syncEncounterState((ServerLevel) level());
-		ensureCaptives((ServerLevel) level());
+		if (captivesFreed) List.copyOf(getPassengers()).forEach(Entity::discard);
+		else ensureCaptives((ServerLevel) level());
 
 		List<CircusPerformerEntity> troupe = level().getEntitiesOfClass(CircusPerformerEntity.class,
 				getBoundingBox().inflate(TROUPE_RANGE));
@@ -94,7 +136,7 @@ public final class CircusCarouselEntity extends Entity {
 
 	private void ensureCaptives(ServerLevel level) {
 		for (int horse = 0; horse < 3; horse++) {
-			if (isRiderSevered(horse) || captive(horse) != null) continue;
+			if (captive(horse) != null) continue;
 			BloodDrunkPuppeteerEntity captive = EntityInit.blood_drunk_puppeteer.get().create(level);
 			if (captive == null) continue;
 			captive.bindToCarousel(horse);
@@ -119,22 +161,29 @@ public final class CircusCarouselEntity extends Entity {
 			return;
 		}
 		CircusCarouselRules.HorsePose pose = CircusCarouselRules.horsePose(getYRot(), captive.getCarouselHorse());
-		double riderRadius = 1.0D + 0.55D / CircusCarouselRules.HORSE_RADIUS;
+		// A living carousel flings its horses out, and the captives ride them.
+		float t = aliveTime(0.0F);
+		double reach = CarouselAlive.reach(aliveMove(), t);
+		double riderRadius = 1.0D + 0.55D / CircusCarouselRules.HORSE_RADIUS
+				+ (reach - CircusCarouselRules.HORSE_RADIUS) / CircusCarouselRules.HORSE_RADIUS;
+		double rise = CarouselAlive.lift(aliveMove(), t) - CarouselAlive.drop(reach);
 		callback.accept(passenger, getX() + pose.x() * riderRadius,
-				getY() + 2.55D + pose.bob(), getZ() + pose.z() * riderRadius);
+				getY() + 2.55D + pose.bob() + rise, getZ() + pose.z() * riderRadius);
 		float yaw = pose.angleDegrees() + 90.0F;
 		captive.setYRot(yaw);
 		captive.setYBodyRot(yaw);
 		captive.setYHeadRot(yaw);
 	}
 
+	/**
+	 * The site's state as it bears on the carousel: a ruined site's captives are free (the kill at the kneel), and an act
+	 * whose holder has left the ring for longer than the arena's grace is released.
+	 */
 	private void syncEncounterState(ServerLevel level) {
 		CircusPavilionSavedData data = CircusPavilionSavedData.get(level);
 		CircusPavilionSavedData.Site site = data.site(level, encounterOrigin);
-		entityData.set(SEVERED, site.severedMask());
-		entityData.set(BROKEN, site.brokenMask());
-		// The closing beat has been earned: a relog or a death during it waits for the beat to settle the site.
-		if (site.activeOwner() == null || site.phase() == CircusPavilionStateRules.Phase.CURTAIN) {
+		captivesFreed = site.outcome() == CircusPavilionStateRules.Outcome.RUIN;
+		if (site.activeOwner() == null) {
 			missingOwnerTicks = 0;
 			return;
 		}
@@ -144,11 +193,7 @@ public final class CircusCarouselEntity extends Entity {
 			missingOwnerTicks = 0;
 		} else if (++missingOwnerTicks >= arena.graceTicks()) {
 			data.reset(level, encounterOrigin, site.activeOwner());
-			resetEncounterVisuals();
-		} else if (missingOwnerTicks == 1 && owner instanceof net.minecraft.server.level.ServerPlayer straying
-				&& owner.isAlive() && site.phase() != CircusPavilionStateRules.Phase.PERFORMANCE) {
-			straying.displayClientMessage(net.minecraft.network.chat.Component.translatable("hemomancy.circus.finale.leash")
-					.withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
+			missingOwnerTicks = 0;
 		}
 	}
 
@@ -186,78 +231,67 @@ public final class CircusCarouselEntity extends Entity {
 		return entityData.get(ACTIVE);
 	}
 
+	public void markStageCopy() {
+		stageCopy = true;
+		entityData.set(COPY, true);
+		entityData.set(ALIVE_FROM, getYRot());
+	}
+
+	public boolean stageCopy() {
+		return level().isClientSide ? entityData.get(COPY) : stageCopy;
+	}
+
+	/** The move the living copy runs; NONE between moves and on every real carousel. */
+	public CarouselAlive.Move aliveMove() {
+		return CarouselAlive.Move.byId(entityData.get(ALIVE_MOVE));
+	}
+
+	/** Ticks into the running move (or the idle ticks): synced on the server, replayed on the client clock. */
+	public float aliveTime(float partialTick) {
+		return level().isClientSide ? aliveClock.at(tickCount, partialTick) : entityData.get(ALIVE_TICK);
+	}
+
+	public float aliveFromYaw() {
+		return entityData.get(ALIVE_FROM);
+	}
+
+	public float aliveFireYaw() {
+		return entityData.get(ALIVE_FIRE);
+	}
+
+	/** Its turn {@code t} ticks into the running move (or idle). */
+	public float aliveYaw(float t) {
+		return CarouselAlive.yaw(aliveMove(), t, aliveFromYaw(), aliveFireYaw());
+	}
+
+	/** Starts {@code move} from where it stands now, aiming its horses at {@code fire} (a turn). */
+	public void beginAlive(CarouselAlive.Move move, float fire) {
+		entityData.set(ALIVE_FROM, aliveYaw(entityData.get(ALIVE_TICK)));
+		entityData.set(ALIVE_FIRE, fire);
+		entityData.set(ALIVE_MOVE, move.ordinal());
+		entityData.set(ALIVE_TICK, 0);
+	}
+
+	/** The running move's tick, set by the Ringmaster's moves each tick. */
+	public void tickAlive(int tick) {
+		entityData.set(ALIVE_TICK, tick);
+	}
+
+	/** The move is over: it goes back to turning idly from where it stopped. */
+	public void endAlive() {
+		if (aliveMove() == CarouselAlive.Move.NONE) return;
+		entityData.set(ALIVE_FROM, Mth.wrapDegrees(aliveYaw(entityData.get(ALIVE_TICK))));
+		entityData.set(ALIVE_MOVE, CarouselAlive.Move.NONE.ordinal());
+		entityData.set(ALIVE_TICK, 0);
+	}
+
 	public BlockPos encounterOrigin() {
 		return encounterOrigin == null ? blockPosition() : encounterOrigin;
 	}
 
-	public boolean isRiderSevered(int rider) {
-		return (entityData.get(SEVERED) & (1 << Math.floorMod(rider, 3))) != 0;
-	}
-
-	public boolean isAnchorBroken(int anchor) {
-		return (entityData.get(BROKEN) & (1 << Math.floorMod(anchor, 3))) != 0;
-	}
-
-	public boolean isDestroyed() {
-		return CircusCarouselEncounterRules.allAnchorsBroken(entityData.get(BROKEN));
-	}
-
-	public boolean severCaptive(Player player) {
-		return severCaptive(player, nearestHorse(player, entityData.get(SEVERED), false));
-	}
-
-	public boolean severCaptive(Player player, int rider) {
-		if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
-				|| !(level() instanceof ServerLevel server) || rider < 0 || rider > 2 || isRiderSevered(rider)) return false;
-		CircusPavilionSavedData data = CircusPavilionSavedData.get(server);
-		CircusPavilionSavedData.Site site = data.site(server, encounterOrigin());
-		if (!CircusPavilionStateRules.canAct(site.activeOwner(), player.getUUID())
-				|| site.route() != CircusRouteRules.Route.LIBERATION
-				|| site.phase() != CircusPavilionStateRules.Phase.CAROUSEL) return false;
-		int severed = CircusCarouselEncounterRules.sever(site.severedMask(), rider);
-		data.setCarouselProgress(server, encounterOrigin(), severed, site.brokenMask());
-		entityData.set(SEVERED, severed);
-		BloodDrunkPuppeteerEntity captive = captive(rider);
-		if (captive != null) {
-			captive.stopRiding();
-			captive.discard();
-		}
-		CircusCarouselRules.HorsePose pose = CircusCarouselRules.horsePose(getYRot(), rider);
-		// The cut thread whips from the captive back to the hub before the blood falls.
-		Vec3 riderPoint = new Vec3(getX() + pose.x(), getY() + 2.6D + pose.bob(), getZ() + pose.z());
-		BossTelegraphs.tendril(server, riderPoint, position().add(0.0D, 4.5D, 0.0D), CircusEffects.THREAD_CORE_ARGB,
-				CircusEffects.THREAD_GLOW_ARGB, getId() * 31L + rider);
-		BossTelegraphs.bloodCells(server, riderPoint, CircusEffects.CRIMSON, 30, 0.35D, 0.1D);
-		BossTelegraphs.glow(server, riderPoint, CircusEffects.BONE, 8, 0.3D);
-		server.playSound(null, blockPosition(), SoundInit.ENTITY_IMPALED_PROCESSION_THREAD_SEVER.get(), SoundSource.PLAYERS, 1.0F, 0.9F);
-		serverPlayer.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-				"hemomancy.circus.captive.severed", rider + 1), true);
-		return true;
-	}
-
-	private int nearestHorse(Entity player, int mask, boolean requireSevered) {
-		int best = -1;
-		double bestScore = 0.82D;
-		for (int horse = 0; horse < 3; horse++) {
-			boolean selected = (mask & (1 << horse)) != 0;
-			if (selected != requireSevered || requireSevered && isAnchorBroken(horse)) continue;
-			CircusCarouselRules.HorsePose pose = CircusCarouselRules.horsePose(getYRot(), horse);
-			net.minecraft.world.phys.Vec3 target = new net.minecraft.world.phys.Vec3(
-					getX() + pose.x(), getY() + (requireSevered ? 1.1D : 2.6D) + pose.bob(), getZ() + pose.z());
-			net.minecraft.world.phys.Vec3 delta = target.subtract(player.getEyePosition());
-			double score = delta.normalize().dot(player.getLookAngle());
-			if (score > bestScore) { bestScore = score; best = horse; }
-		}
-		return best;
-	}
-
-	private void resetEncounterVisuals() {
-		entityData.set(SEVERED, 0);
-		entityData.set(BROKEN, 0);
-		missingOwnerTicks = 0;
-	}
-
 	public AABB getCarouselRenderBounds() {
+		// Flung out, its horses run to the curb.
+		if (stageCopy()) return getBoundingBox().inflate(RingmasterFinaleGeometry.SPIRAL_TO + 2.0D, 4.0D, RingmasterFinaleGeometry.SPIRAL_TO + 2.0D);
 		return getBoundingBox().inflate(3.5D, 0.5D, 3.5D);
 	}
 
@@ -267,16 +301,20 @@ public final class CircusCarouselEntity extends Entity {
 		activeTicks = 0;
 		rotationSpeed = CircusCarouselRules.targetSpeed(false);
 		encounterOrigin = tag.contains("EncounterOrigin") ? BlockPos.of(tag.getLong("EncounterOrigin")) : blockPosition();
+		stageCopy = tag.getBoolean("StageCopy");
+		entityData.set(COPY, stageCopy);
 	}
 
 	@Override
 	protected void addAdditionalSaveData(CompoundTag tag) {
 		tag.putLong("EncounterOrigin", encounterOrigin().asLong());
+		if (stageCopy) tag.putBoolean("StageCopy", true);
 	}
 
+	/** Nothing of the Procession is struck: its captives went with the old finale's severing (2026-11-18). */
 	@Override
 	public boolean isPickable() {
-		return entityData.get(SEVERED) != 0;
+		return false;
 	}
 
 	@Override
@@ -286,29 +324,11 @@ public final class CircusCarouselEntity extends Entity {
 
 	@Override
 	public boolean isAttackable() {
-		return entityData.get(SEVERED) != 0 && !isDestroyed();
+		return false;
 	}
 
 	@Override
 	public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
-		UUID actor = CircusPavilionStateRules.actingFor(source);
-		Entity striker = source.getEntity() != null ? source.getEntity() : source.getDirectEntity();
-		if (actor == null || striker == null || !(level() instanceof ServerLevel server)) return false;
-		CircusPavilionSavedData data = CircusPavilionSavedData.get(server);
-		CircusPavilionSavedData.Site site = data.site(server, encounterOrigin());
-		if (site.activeOwner() != null && !site.activeOwner().equals(actor))
-			CircusPavilionStateRules.refuseBystander(this, actor, site.activeOwner());
-		if (!CircusPavilionStateRules.canAct(site.activeOwner(), actor)
-				|| site.route() != CircusRouteRules.Route.LIBERATION
-				|| site.phase() != CircusPavilionStateRules.Phase.CAROUSEL) return false;
-		int anchor = nearestHorse(striker, site.severedMask(), true);
-		if (anchor < 0 || !CircusCarouselEncounterRules.canBreakAnchor(site.severedMask(), anchor)) return false;
-		int broken = CircusCarouselEncounterRules.breakAnchor(site.brokenMask(), site.severedMask(), anchor);
-		data.setCarouselProgress(server, encounterOrigin(), site.severedMask(), broken);
-		entityData.set(BROKEN, broken);
-		server.playSound(null, blockPosition(), SoundInit.ENTITY_IMPALED_PROCESSION_ANCHOR_BREAK.get(), SoundSource.PLAYERS, 1.1F, 0.9F);
-		// The carousel reports itself destroyed; the Ringmaster is the one writer of the phase and moves to DESCENT.
-		if (CircusCarouselEncounterRules.allAnchorsBroken(broken)) CircusEffects.collapse(server, position());
-		return true;
+		return false;
 	}
 }

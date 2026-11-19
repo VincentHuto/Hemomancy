@@ -13,6 +13,15 @@ import net.minecraft.world.level.Level;
 /** Faculty outside the original pavilion combat cast. */
 public final class CircusFacultyEntity extends CircusPerformerEntity {
     public CircusFacultyEntity(EntityType<? extends CircusFacultyEntity> type, Level level) { super(type, level); }
+
+    /**
+     * The Strongman's gestures for his ordeal interventions ({@link CircusPerformerEntity#gesture}), timed by his
+     * true self's model from the move's first wind-up tick.
+     */
+    public static final int GESTURE_DROP = 0, GESTURE_SLAM = 1, GESTURE_SWEEP = 2, GESTURE_PULL = 3;
+    /** Ticks from a gesture's start to its blow: every Strongman move's wind-up, when the driver lands it. */
+    public static final int GESTURE_IMPACT = 20;
+
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 30).add(Attributes.MOVEMENT_SPEED, .25)
                 .add(Attributes.ATTACK_DAMAGE, 4).add(Attributes.FOLLOW_RANGE, 24);

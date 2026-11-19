@@ -13,6 +13,20 @@
         "item": "hemomancy:cinder_bellows_frame"
       },
       "count": 1
+    },
+    {
+      "ingredient": {
+        "type": "neoforge:components",
+        "items": "hemomancy:bloody_vial",
+        "strict": true,
+        "components": {
+          "minecraft:custom_data": {
+            "entity_type": "hemomancy:circus_fire_eater",
+            "troupe_key": true
+          }
+        }
+      },
+      "count": 1
     }
   ],
   "medium": {

@@ -30,10 +30,10 @@ public final class PuppeteerSummonVisualResourceTest {
 		assertContains("scarlet mummer layer registration", layerEvents, "ScarletMummerModel.LAYER_LOCATION");
 
 		String clientEvents = readSource("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
-		assertContains("veinwing renderer registration", clientEvents, "VeinwingVultureRenderer::new");
-		assertContains("marrow renderer registration", clientEvents, "MarrowSpitterRenderer::new");
-		assertContains("gorebound renderer registration", clientEvents, "GoreboundHulkRenderer::new");
-		assertContains("scarlet mummer renderer registration", clientEvents, "ScarletMummerRenderer::new");
+		assertContains("veinwing renderer registration", clientEvents, "new VeinwingVultureRenderer(context)");
+		assertContains("marrow renderer registration", clientEvents, "new MarrowSpitterRenderer(context)");
+		assertContains("gorebound renderer registration", clientEvents, "new GoreboundHulkRenderer(context)");
+		assertContains("scarlet mummer renderer registration", clientEvents, "new ScarletMummerRenderer(context)");
 
 		String houndRenderer = readSource(
 				"com/vincenthuto/hemomancy/client/render/entity/summon/SanguineHoundRenderer.java");

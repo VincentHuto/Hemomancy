@@ -46,6 +46,12 @@ public final class GuiLayerRegistrar {
         // Full-screen effects under the whole HUD, vanilla's camera overlays included.
         event.registerBelowAll(Hemomancy.rloc("screen_effects"), (graphics, deltaTracker) ->
                 ScreenOverlayEvents.renderUnderHud(graphics));
+        // The Ringmaster finale's hidden crossing: the real tent's last frame fading into the copy. Drawn with the HUD
+        // hidden too, over everything.
+        event.registerAboveAll(Hemomancy.rloc("finale_crossing"), (graphics, deltaTracker) ->
+                com.vincenthuto.hemomancy.client.data.FinaleCrossingClientState.renderFade(graphics));
+        // The Ringmaster's kneel: the first-time prompt naming the two ways out, and the drawn blood's bar.
+        event.registerAboveAll(Hemomancy.rloc("finale_choice"), hud((graphics, deltaTracker) -> FinaleChoicePrompt.render(graphics)));
         event.registerAboveAll(Hemomancy.rloc("concentration"), hud((graphics, deltaTracker) ->
                 ConcentrationOverlay.render(graphics, graphics.guiWidth(), graphics.guiHeight())));
         event.registerAboveAll(Hemomancy.rloc("ironhearted"), hud((graphics, deltaTracker) ->

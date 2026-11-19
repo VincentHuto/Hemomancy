@@ -186,6 +186,32 @@ public final class PhantomFigures {
 		return cast;
 	}
 
+	/** The finale's audience: the dissolved seating's rows round {@code centre}, filled in the Ringmaster's dark. */
+	private static final double[] FINALE_ROWS = {18.0D, 21.5D, 25.0D};
+	private static final int FINALE_SEATS_PER_ROW = 26;
+
+	/**
+	 * Who sits in the Ringmaster's dark this frame (2026-11-18): rows round the copy's ring where its seating was, each
+	 * row a step higher, most seats taken, everyone watching the ring and clapping on the act's beat. Pure.
+	 */
+	public static List<Figure> planFinale(Vec3 centre, float time, float alpha) {
+		List<Figure> cast = new ArrayList<>();
+		float applause = envelope(time % ACT, APPLAUSE, 6.0F);
+		for (int row = 0; row < FINALE_ROWS.length; row++) {
+			for (int i = 0; i < FINALE_SEATS_PER_ROW; i++) {
+				long seed = row * 7919L + i * 104729L + 0x5DEECE66DL;
+				if (PhantomShowRules.unit(seed) > 0.8F) continue;
+				double angle = Math.PI * 2.0D * (i + 0.5D * row) / FINALE_SEATS_PER_ROW;
+				Vec3 at = centre.add(Math.cos(angle) * FINALE_ROWS[row], 1.0D + row * 1.25D + 9.5D / 16.0D,
+						Math.sin(angle) * FINALE_ROWS[row]);
+				float yaw = (float) Math.toDegrees(Math.atan2(-(centre.x - at.x), centre.z - at.z));
+				cast.add(new Figure(audienceBody(seed), Kind.SEATED, at, yaw, PhantomPose.seated(seed, time, 0.0F, applause),
+						seed, alpha, 0.0D, false));
+			}
+		}
+		return cast;
+	}
+
 	private static Figure seated(Seat seat, long seed, Look look, float time, Vec3 viewer, ShowMarks marks,
 			float applause, float alpha, boolean hides) {
 		Vec3 base = Vec3.atBottomCenterOf(seat.pos());
@@ -259,6 +285,15 @@ public final class PhantomFigures {
 	/** Draws the cast, camera-relative, fading each by the viewer's gaze, nearness and the creatures in front. */
 	public static void render(PoseStack poseStack, MultiBufferSource buffers, Vec3 camera, Vector3f look,
 			List<Figure> cast, List<AABB> creatures, float time) {
+		render(poseStack, buffers, camera, camera, look, cast, creatures, time);
+	}
+
+	/**
+	 * As {@link #render}, under a pose stack already translated to {@code origin} (an entity renderer's), so each figure
+	 * is placed from {@code origin} while the fades still read the camera.
+	 */
+	public static void render(PoseStack poseStack, MultiBufferSource buffers, Vec3 origin, Vec3 camera, Vector3f look,
+			List<Figure> cast, List<AABB> creatures, float time) {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (bakedFrom != minecraft.getEntityModels()) bake(minecraft.getEntityModels());
 		float elapsed = Math.clamp(time - lastTime, 0.0F, 4.0F);
@@ -275,7 +310,7 @@ public final class PhantomFigures {
 			}
 			alpha *= overlapFade(figure.seed() ^ figure.body().ordinal(), covers(camera, centre, creatures), elapsed);
 			if (alpha <= 0.01F) continue;
-			draw(poseStack, buffers, camera, figure, alpha);
+			draw(poseStack, buffers, origin, figure, alpha);
 		}
 	}
 
@@ -296,12 +331,12 @@ public final class PhantomFigures {
 		overlapFades.clear();
 	}
 
-	private static void draw(PoseStack poseStack, MultiBufferSource buffers, Vec3 camera, Figure figure, float alpha) {
+	private static void draw(PoseStack poseStack, MultiBufferSource buffers, Vec3 origin, Figure figure, float alpha) {
 		HumanoidModel<?> model = models.get(figure.body());
 		if (model == null) return;
 		pose(model, figure.pose());
 		poseStack.pushPose();
-		poseStack.translate(figure.at().x - camera.x, figure.at().y - camera.y, figure.at().z - camera.z);
+		poseStack.translate(figure.at().x - origin.x, figure.at().y - origin.y, figure.at().z - origin.z);
 		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - figure.yaw()));
 		if (figure.kind() == Kind.SWINGING) {
 			poseStack.mulPose(Axis.XP.rotation((float) figure.swing()));

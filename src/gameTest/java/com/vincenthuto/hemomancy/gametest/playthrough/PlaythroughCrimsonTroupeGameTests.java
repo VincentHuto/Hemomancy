@@ -71,6 +71,8 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.CircusFinaleSettlement;
+import com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -152,9 +154,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	private static final String SILENT = "hemomancy.circus.ringmaster.silent";
 	private static final String BUSY = "hemomancy.circus.finale.busy";
 	private static final String SETTLED = "hemomancy.circus.finale.settled";
-	private static final String NO_ROUTE = "hemomancy.circus.finale.no_route";
 	private static final String NOT_READY = "hemomancy.circus.finale.not_ready";
-	private static final String SEVERED = "hemomancy.circus.captive.severed";
 	private static final String PATH_GATE = "message.hemomancy.cardinal_rite_activation.this_rite_cannot_answer_your_current";
 	private static final String VOID = "message.hemomancy.puppeteer_trial_rite_controller.the_void_has_claimed_your_will";
 	/** LF-11: the new Circus system lines live under this prefix. */
@@ -876,16 +876,6 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					p.talkTo(keeper);
 					heard.put("claim with nothing pending", p.choose(keeper, CLAIM));
 
-					PlaythroughStates.acclimated(p, 500); // ARRANGE
-					PlaythroughStates.pavilionRoute(p, CircusRouteRules.Route.NEUTRAL, 0b1); // ARRANGE: the attention act (attentionActAndRoute plays it)
-					p.moveTo(ring.stand());
-					p.talkTo(ring.ringmaster());
-					heard.put("route chosen", p.choose(ring.ringmaster(), CircusRingmasterEntity.EVENT_ACCEPT));
-					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.SUCCESSION, "the route is chosen");
-					p.talkTo(ring.ringmaster());
-					heard.put("route repaired", p.choose(ring.ringmaster(), CircusRingmasterEntity.EVENT_REPAIR));
-					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.LIBERATION, "the route is repaired");
-
 					armUp(p, false); // ARRANGE
 					UUID crossbar = attunedCrossbar(p, 100);
 					p.approach(understudy);
@@ -1058,7 +1048,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					PlaythroughStates.acclimated(p, 500); // ARRANGE: the last point of exposure
 					DialogueView view = p.talkTo(pv.ringmaster());
 					view.assertLangKeys(helper, "the Ringmaster at 500").assertNoDeadEnds(helper, "the Ringmaster at 500");
-					helper.assertTrue(view.offers(CircusRingmasterEntity.EVENT_TRIAL) && !view.offers(CircusRingmasterEntity.EVENT_ACCEPT),
+					helper.assertTrue(view.offers(CircusRingmasterEntity.EVENT_TRIAL) && !view.offers(CircusRingmasterEntity.EVENT_FINALE),
 							"at 500 the attention act is offered first; " + view.describe());
 					score[0] = CircusPlayerProgress.acclimation(p.player());
 					Outcome begun = p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_TRIAL);
@@ -1081,28 +1071,15 @@ public final class PlaythroughCrimsonTroupeGameTests {
 							"one spectacle is banked");
 					helper.assertTrue(site(pv.carousel()).activeOwner() == null && spider(p).isEmpty(),
 							"the site is released and the spider gone");
-					DialogueView choice = p.talkTo(pv.ringmaster());
-					choice.assertLangKeys(helper, "the Ringmaster's pact").assertNoDeadEnds(helper, "the Ringmaster's pact");
-					helper.assertTrue(choice.offers(CircusRingmasterEntity.EVENT_ACCEPT) && choice.offers(CircusRingmasterEntity.EVENT_REJECT)
-									&& nodeLines(choice, "succession_warning").contains("hemomancy.circus.ringmaster.warning.succession"),
-							"both routes are offered through their warnings; " + choice.describe());
-					score[0] = CircusPlayerProgress.acclimation(p.player());
-					Outcome chose = p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_ACCEPT);
-					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.SUCCESSION
-									&& (CircusPlayerProgress.challenges(p.player()) & 2) != 0
-									&& CircusPlayerProgress.acclimation(p.player()) == score[0] + 50,
-							"confirming Succession sets the route, bit 1 and +50; " + chose);
-					DialogueView bound = p.talkTo(pv.ringmaster());
-					helper.assertTrue(allLineKeys(bound).contains("hemomancy.circus.ringmaster.line.succession")
-									&& bound.offers(CircusRingmasterEntity.EVENT_REPAIR) && bound.offers(CircusRingmasterEntity.EVENT_TRIAL),
-							"his line names Succession and the repair and next act are offered; " + bound.describe());
-					Outcome repaired = p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_REPAIR);
-					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.LIBERATION,
-							"the one repair switches to Liberation; " + repaired);
-					DialogueView after = p.talkTo(pv.ringmaster());
-					helper.assertTrue(!after.offers(CircusRingmasterEntity.EVENT_REPAIR)
-									&& allLineKeys(after).contains("hemomancy.circus.ringmaster.line.liberation"),
-							"the repair is used up; " + after.describe());
+					// 2026-11-18: no route is chosen before the fight. The finale is offered beside the next act, and his
+					// line says what earns his hat at the kneel.
+					DialogueView offer = p.talkTo(pv.ringmaster());
+					offer.assertLangKeys(helper, "the Ringmaster's offer").assertNoDeadEnds(helper, "the Ringmaster's offer");
+					helper.assertTrue(offer.offers(CircusRingmasterEntity.EVENT_FINALE) && offer.offers(CircusRingmasterEntity.EVENT_TRIAL)
+									&& allLineKeys(offer).contains("hemomancy.circus.ringmaster.line.succession"),
+							"the finale and the next act are offered, and his line names what earns the hat; " + offer.describe());
+					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.NEUTRAL,
+							"no route is chosen by talking to him");
 				})
 				.run();
 	}
@@ -1153,7 +1130,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		p.joinLevel();
 		armUp(p, false); // ARRANGE
 		PlaythroughStates.acclimated(p, 500); // ARRANGE
-		PlaythroughStates.pavilionRoute(p, CircusRouteRules.Route.SUCCESSION, 0b11); // ARRANGE: attention act and pact done
+		PlaythroughStates.pavilionReady(p, 0b11); // ARRANGE: the attention act and the pact's report done
 		PlaythroughClock.start(helper)
 				.idle(2)
 				.then(() -> {
@@ -1174,9 +1151,10 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	}
 
 	/**
-	 * Succession, on the real pavilion: acts 2, 3 and 4 by standing the ring (+100 each), the finale refused before 1000,
-	 * then the finale: the rafters, the troupe downed, the Ringmaster beaten in the descent; the Ringmaster Pattern,
-	 * the Topper, the route complete and the site settled as SUCCESSION.
+	 * Succession, on the real pavilion: acts 2, 3 and 4 by standing the ring (+100 each), then the finale offered and
+	 * its absorbing ending laid on the site as the finale's return lays it (2026-11-18: the fight itself is in his
+	 * Chamber, which the GameTest world does not stage): the Ringmaster Pattern, the Topper, the route complete, the site
+	 * settled as SUCCESSION with the successor's banner, and the real Ringmaster retired.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 5000, batch = PAVILION + "_succession")
 	public static void successionFinale(GameTestHelper helper) {
@@ -1184,17 +1162,17 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	}
 
 	/**
-	 * The Succession finale on the real pavilion. With {@code playActs} acts 2 to 4 and the early refusal are played
-	 * first; without, they are ARRANGE (the compact gated copy in {@code CrimsonTroupePavilionGameTests}).
+	 * The Succession ending on the real pavilion. With {@code playActs} acts 2 to 4 are played first; without, they are
+	 * ARRANGE (the compact gated copy in {@code CrimsonTroupePavilionGameTests}).
 	 */
 	static void successionFinale(GameTestHelper helper, boolean playActs) {
 		Pavilion pv = pavilion(helper);
 		PlaythroughPlayer p = d5(helper, 8, 12);
 		p.joinLevel();
-		armUp(p, true); // ARRANGE: armed for the finale; its balance is not under test
+		armUp(p, true); // ARRANGE
 		PlaythroughStates.acclimated(p, 500); // ARRANGE
-		// ARRANGE: attentionActAndRoute plays bits 0 and 1; the compact run also arranges acts 2 to 4
-		PlaythroughStates.pavilionRoute(p, CircusRouteRules.Route.SUCCESSION, playActs ? 0b11 : 0b11111);
+		// ARRANGE: attentionActAndRoute plays bit 0; the compact run also arranges acts 2 to 4
+		PlaythroughStates.pavilionReady(p, playActs ? 0b1 : 0b11101);
 		int[] topper = new int[1];
 		PlaythroughClock clock = PlaythroughClock.start(helper).until(PlaythroughSites.SITE_READY_TICKS, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast).idle(2);
 		int[][] acts = playActs ? new int[][]{{2, 200}, {3, 240}, {4, 300}} : new int[0][];
@@ -1217,22 +1195,14 @@ public final class PlaythroughCrimsonTroupeGameTests {
 						helper.assertTrue(afterActs >= 800 && afterActs <= 800 + 3 * PASSIVE_SLACK,
 								"three acts add 300 (plus passive exposure): " + afterActs);
 					}
-					p.moveTo(pv.box());
-					p.talkTo(pv.ringmaster());
-					Outcome early = p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_FINALE);
-					early.said(NOT_READY);
-					helper.assertTrue(site(pv.carousel()).activeOwner() == null, "the finale does not begin before 1000; " + early);
 					PlaythroughStates.acclimated(p, 1000); // ARRANGE: the rest is passive exposure (about ten hours inside)
+					p.moveTo(pv.box());
+					DialogueView offer = p.talkTo(pv.ringmaster());
+					helper.assertTrue(offer.offers(CircusRingmasterEntity.EVENT_FINALE), "the finale is offered; " + offer.describe());
 					topper[0] = p.count(ItemInit.ringmaster_topper.get());
-					p.talkTo(pv.ringmaster());
-					p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_FINALE);
-					var site = site(pv.carousel());
-					helper.assertTrue(p.uuid().equals(site.activeOwner()) && site.phase() == CircusPavilionStateRules.Phase.RAFTERS,
-							"the finale begins in the rafters; phase " + site.phase());
-					p.moveTo(pv.ringside()); // ARRANGE: down to the ring for the finale
-					p.wield(Items.NETHERITE_SWORD);
+					settle(helper, p, pv.carousel(), FinaleRules.Ending.ABSORBED);
 				})
-				.step(() -> finale(p, pv, true, 2400))
+				.idle(2)
 				.then(() -> {
 					var site = site(pv.carousel());
 					helper.assertTrue(p.chat().stream().anyMatch(line -> line.has("hemomancy.circus.finale.complete.succession")),
@@ -1242,8 +1212,8 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					helper.assertTrue(p.count(ItemInit.ringmaster_topper.get()) == topper[0] + 1, "the Topper is given once");
 					helper.assertTrue(CircusPlayerProgress.route(p.player()) == CircusRouteRules.Route.SUCCESSION_COMPLETE,
 							"the route is complete");
-					helper.assertTrue(site.outcome() == CircusPavilionStateRules.Outcome.SUCCESSION && pv.ringmaster().isAlive(),
-							"the site settles as SUCCESSION and the Ringmaster lives");
+					helper.assertTrue(site.outcome() == CircusPavilionStateRules.Outcome.SUCCESSION && pv.ringmaster().isAlive()
+									&& pv.ringmaster().retired(), "the site settles as SUCCESSION and the Ringmaster lives on, retired");
 					// NQ-15-10 tenancy: the successor's banner hangs behind the podium, named for them.
 					BlockPos banner = pv.carousel().encounterOrigin().offset(0, 9, 14);
 					helper.assertTrue(helper.getLevel().getBlockState(banner).is(Blocks.RED_WALL_BANNER)
@@ -1252,13 +1222,18 @@ public final class PlaythroughCrimsonTroupeGameTests {
 									&& flag.getCustomName().getString().contains(p.player().getGameProfile().getName()),
 							"the successor's banner hangs behind the podium: " + helper.getLevel().getBlockState(banner));
 					helper.assertTrue(p.player().getGameProfile().getName().equals(site.holderName()), "the site names its holder");
+					DialogueView retired = p.talkTo(pv.ringmaster());
+					helper.assertTrue(allLineKeys(retired).contains("hemomancy.circus.ringmaster.retired.greeting")
+									&& !retired.offers(CircusRingmasterEntity.EVENT_FINALE),
+							"the retired Ringmaster greets as the old man and offers no finale; " + retired.describe());
 				});
 		clock.run();
 	}
 
 	/**
-	 * Liberation, on the real pavilion: the Liberation finale; the three captives severed by right-click, the three anchors
-	 * struck, the descent, the Ringmaster killed; Thread Ripper, the Topper, the route complete, the site a ruin.
+	 * Liberation, on the real pavilion: the finale offered and its killing ending laid on the site as the finale's return
+	 * lays it (2026-11-18): Thread Ripper, the Topper, the route complete, the site a ruin, the captives free and the finale
+	 * performers gone while the faculty stay.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 3400, batch = PAVILION + "_liberation")
 	public static void liberationFinale(GameTestHelper helper) {
@@ -1267,45 +1242,18 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		p.joinLevel();
 		armUp(p, true); // ARRANGE
 		PlaythroughStates.acclimated(p, 500); // ARRANGE
-		PlaythroughStates.pavilionRoute(p, CircusRouteRules.Route.LIBERATION, 0b11); // ARRANGE
+		PlaythroughStates.pavilionReady(p, 0b1); // ARRANGE
 		int[] topper = new int[1];
 		PlaythroughClock.start(helper).until(PlaythroughSites.SITE_READY_TICKS, pv::loaded, "the pavilion's chunks show their entities").then(pv::cast)
 				.idle(5)
 				.then(() -> {
 					p.moveTo(pv.box());
 					DialogueView view = p.talkTo(pv.ringmaster());
-					helper.assertTrue(view.offers(CircusRingmasterEntity.EVENT_FINALE), "Liberation can begin its finale; " + view.describe());
+					helper.assertTrue(view.offers(CircusRingmasterEntity.EVENT_FINALE), "the finale is offered; " + view.describe());
 					topper[0] = p.count(ItemInit.ringmaster_topper.get());
-					p.choose(pv.ringmaster(), CircusRingmasterEntity.EVENT_FINALE);
-					var site = site(pv.carousel());
-					helper.assertTrue(p.uuid().equals(site.activeOwner()) && site.route() == CircusRouteRules.Route.LIBERATION,
-							"the Liberation finale begins; " + site.phase());
-					p.moveTo(pv.ringside()); // ARRANGE: down to the ring for the finale
+					settle(helper, p, pv.carousel(), FinaleRules.Ending.KILLED);
 				})
-				// Chunk 15 T13: threads and anchors answer only in CAROUSEL, after the opening and the rafters.
-				.step(() -> ticks -> {
-					live(p);
-					if (ticks > 400) helper.fail("the finale did not reach CAROUSEL; phase " + site(pv.carousel()).phase());
-					return site(pv.carousel()).phase() == CircusPavilionStateRules.Phase.CAROUSEL;
-				})
-				.then(() -> {
-					List<BloodDrunkPuppeteerEntity> captives = pv.carousel().getPassengers().stream()
-							.filter(BloodDrunkPuppeteerEntity.class::isInstance).map(BloodDrunkPuppeteerEntity.class::cast).toList();
-					helper.assertTrue(captives.size() == 3, "three captives ride the carousel: " + captives.size());
-					for (BloodDrunkPuppeteerEntity captive : captives) p.interactOn(captive).said(SEVERED);
-					helper.assertTrue(site(pv.carousel()).severedMask() == 0b111, "all three threads are cut");
-					p.wield(Items.NETHERITE_SWORD);
-					for (int horse = 0; horse < 3; horse++) {
-						CircusCarouselRules.HorsePose pose = CircusCarouselRules.horsePose(pv.carousel().getYRot(), horse);
-						Vec3 anchor = new Vec3(pv.carousel().getX() + pose.x(), pv.carousel().getY() + 1.1D + pose.bob(), pv.carousel().getZ() + pose.z());
-						strikeAt(p, pv.carousel(), anchor);
-					}
-					helper.assertTrue(site(pv.carousel()).brokenMask() == 0b111, "three anchors break; broken "
-							+ site(pv.carousel()).brokenMask());
-				})
-				// B-7: the carousel only reports itself destroyed; the Ringmaster writes DESCENT on his next tick.
-				.until(5, () -> site(pv.carousel()).phase() == CircusPavilionStateRules.Phase.DESCENT, "the Ringmaster descends")
-				.step(() -> finale(p, pv, false, 1200))
+				.idle(5)
 				.then(() -> {
 					var site = site(pv.carousel());
 					helper.assertTrue(p.chat().stream().anyMatch(line -> line.has("hemomancy.circus.finale.complete.liberation")),
@@ -1326,10 +1274,23 @@ public final class PlaythroughCrimsonTroupeGameTests {
 					helper.assertTrue(helper.getLevel().getEntitiesOfClass(CircusPerformerEntity.class, new AABB(origin).inflate(20.0D),
 							performer -> performer.isAlive() && performer.participatesInFinale()).isEmpty(),
 							"the finale performers have left the ruin");
+					helper.assertTrue(pv.carousel().getPassengers().stream().noneMatch(BloodDrunkPuppeteerEntity.class::isInstance),
+							"the captives are free of the carousel");
 					for (var role : List.of(PlaythroughNpcs.CircusRole.STRONGMAN, PlaythroughNpcs.CircusRole.THREADKEEPER))
 						helper.assertTrue(pv.actor(role) != null && pv.actor(role).isAlive(), "the faculty stay: " + role);
 				})
 				.run();
+	}
+
+	/**
+	 * The ending chosen at the kneel, laid on the real site as the finale's return lays it: the site held for the player
+	 * as a begun finale holds it, then settled.
+	 */
+	static void settle(GameTestHelper helper, PlaythroughPlayer p, CircusCarouselEntity carousel, FinaleRules.Ending ending) {
+		ServerLevel level = helper.getLevel();
+		helper.assertTrue(CircusPavilionSavedData.get(level).begin(level, carousel.encounterOrigin(), p.uuid(),
+				CircusRouteRules.Route.NEUTRAL), "the finale holds the site for its owner");
+		CircusFinaleSettlement.apply(level, carousel.encounterOrigin(), p.player(), ending);
 	}
 
 	// =============================================================================================================
@@ -1462,46 +1423,6 @@ public final class PlaythroughCrimsonTroupeGameTests {
 				.run();
 	}
 
-	/**
-	 * The Liberation finale on the ring: the owner dies in it. After the respawn the site is released and the finale
-	 * can be begun again, with the carousel's three captives riding again.
-	 */
-	@GameTest(template = EMPTY, timeoutTicks = 400, batch = RING + "_finale_death")
-	public static void finaleDeathResets(GameTestHelper helper) {
-		Ring ring = miniRing(helper);
-		PlaythroughPlayer p = d5(helper, 16, 14);
-		p.joinLevel();
-		armUp(p, false); // ARRANGE
-		PlaythroughStates.acclimated(p, 500); // ARRANGE
-		PlaythroughStates.pavilionRoute(p, CircusRouteRules.Route.LIBERATION, 0b11); // ARRANGE
-		CircusRingmasterEntity rm = ring.ringmaster();
-		PlaythroughClock.start(helper)
-				.idle(2)
-				.then(() -> {
-					p.moveTo(ring.stand());
-					p.talkTo(rm);
-					p.choose(rm, CircusRingmasterEntity.EVENT_FINALE);
-					helper.assertTrue(p.uuid().equals(site(ring.carousel()).activeOwner()), "the finale begins");
-					Outcome died = p.die();
-					PlaythroughLog.note(helper, "finaleDeathResets", "the owner dies in the finale (phase "
-							+ site(ring.carousel()).phase() + "): " + died.describe());
-					p.respawn();
-				})
-				.idle(40)
-				.then(() -> {
-					var site = site(ring.carousel());
-					long captives = ring.carousel().getPassengers().stream().filter(BloodDrunkPuppeteerEntity.class::isInstance).count();
-					PlaythroughLog.note(helper, "finaleDeathResets", "after the respawn: owner " + site.activeOwner() + ", phase "
-							+ site.phase() + ", outcome " + site.outcome() + ", captives " + captives);
-					helper.assertTrue(site.activeOwner() == null, "the death releases the site");
-					helper.assertTrue(captives == 3, "the three captives ride the carousel again: " + captives);
-					p.moveTo(ring.stand());
-					DialogueView again = p.talkTo(rm);
-					helper.assertTrue(again.offers(CircusRingmasterEntity.EVENT_FINALE), "the finale can be begun again: " + again.describe());
-				})
-				.run();
-	}
-
 	/** The pupil asks the Mummer professor for the practical with a newly attuned Crossbar in hand: two threats appear. */
 	private static void beginMummer(PlaythroughPlayer p, Entity professor) {
 		UUID crossbar = attunedCrossbar(p, 200); // ARRANGE
@@ -1607,8 +1528,8 @@ public final class PlaythroughCrimsonTroupeGameTests {
 	}
 
 	/**
-	 * PT-61 (CT-6): a refused claim says why. B's act while A holds the ring is told it is busy, B's forged finale on the
-	 * neutral route is told to take a route (not that Succession is unready), and once the site is settled B is told so.
+	 * PT-61 (CT-6): a refused claim says why. B's act while A holds the ring is told it is busy, B's forged finale is told
+	 * what the pact still needs (not that Succession is unready), and once the site is settled B is told so.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 100, batch = RING)
 	public static void refusedClaimsSayWhy(GameTestHelper helper) {
@@ -1619,7 +1540,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		b.joinLevel();
 		armUp(a, false); // ARRANGE
 		PlaythroughStates.acclimated(a, 500); // ARRANGE
-		PlaythroughStates.pavilionRoute(a, CircusRouteRules.Route.LIBERATION, 0b11); // ARRANGE
+		PlaythroughStates.pavilionReady(a, 0b1); // ARRANGE
 		PlaythroughStates.acclimated(b, 500); // ARRANGE
 		CircusRingmasterEntity rm = ring.ringmaster();
 		PlaythroughClock.start(helper)
@@ -1627,13 +1548,14 @@ public final class PlaythroughCrimsonTroupeGameTests {
 				.then(() -> {
 					a.moveTo(ring.stand());
 					b.moveTo(ring.stand().east());
-					a.talkTo(rm);
-					a.choose(rm, CircusRingmasterEntity.EVENT_FINALE);
+					// ARRANGE: A's finale holds the site (its fight is in his Chamber, which the GameTest world does not stage)
+					CircusPavilionSavedData.get(helper.getLevel()).begin(helper.getLevel(), ring.carousel().encounterOrigin(),
+							a.uuid(), CircusRouteRules.Route.NEUTRAL);
 					helper.assertTrue(a.uuid().equals(site(ring.carousel()).activeOwner()), "A holds the site in the finale");
 					b.talkTo(rm);
 					b.choose(rm, CircusRingmasterEntity.EVENT_TRIAL).said(BUSY);
 					Outcome forged = b.forge(CircusRingmasterEntity.EVENT_FINALE, rm.getId());
-					forged.said(NO_ROUTE);
+					forged.said("hemomancy.circus.ringmaster.gate.needs_report");
 					helper.assertTrue(!forged.saidKeys().contains(NOT_READY), "a neutral visitor is not told about Succession: "
 							+ forged.saidKeys());
 					ServerLevel level = helper.getLevel();
@@ -1657,16 +1579,17 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		a.joinLevel();
 		armUp(a, false); // ARRANGE
 		PlaythroughStates.acclimated(a, 500); // ARRANGE
-		PlaythroughStates.pavilionRoute(a, CircusRouteRules.Route.LIBERATION, 0b11); // ARRANGE
+		PlaythroughStates.pavilionReady(a, 0b1); // ARRANGE
 		CircusRingmasterEntity rm = ring.ringmaster();
 		int[] mark = new int[1];
 		PlaythroughClock.start(helper)
 				.idle(2)
 				.then(() -> {
 					a.moveTo(ring.stand());
-					a.talkTo(rm);
-					a.choose(rm, CircusRingmasterEntity.EVENT_FINALE);
-					helper.assertTrue(a.uuid().equals(site(ring.carousel()).activeOwner()), "A holds the site in the finale");
+					// ARRANGE: A's site held with no finale left to settle it
+					CircusPavilionSavedData.get(helper.getLevel()).begin(helper.getLevel(), ring.carousel().encounterOrigin(),
+							a.uuid(), CircusRouteRules.Route.NEUTRAL);
+					helper.assertTrue(a.uuid().equals(site(ring.carousel()).activeOwner()), "A holds the site");
 					mark[0] = a.mark();
 					PlaythroughNpcs.kill(rm); // ARRANGE: the Ringmaster is lost (an admin kill)
 				})
@@ -1950,31 +1873,6 @@ public final class PlaythroughCrimsonTroupeGameTests {
 			live(p);
 			if (p.chatSince(mark).stream().anyMatch(line -> line.has(doneKey))) return true;
 			if (ticks >= maxTicks) p.helper().fail("the act did not end with " + doneKey + " in " + maxTicks + " ticks: " + p.chatSince(mark));
-			return false;
-		};
-	}
-
-	/**
-	 * A finale fought to its settlement: each tick the player lives; on Succession every 12 ticks they strike each
-	 * standing finale performer by the ring (non-lethal: they go down); in the descent they strike the Ringmaster.
-	 */
-	private static PlaythroughClock.Step finale(PlaythroughPlayer p, Pavilion pv, boolean succession, int maxTicks) {
-		return ticks -> {
-			live(p);
-			var site = site(pv.carousel());
-			if (site.outcome() != CircusPavilionStateRules.Outcome.NEUTRAL) return true;
-			if (ticks >= maxTicks) p.helper().fail("the finale did not settle in " + maxTicks + " ticks; phase " + site.phase());
-			if (ticks % 12 == 0 && succession) {
-				for (CircusPerformerEntity performer : p.player().serverLevel().getEntitiesOfClass(CircusPerformerEntity.class,
-						new AABB(pv.carousel().encounterOrigin()).inflate(20.0D),
-						performer -> performer.isAlive() && performer.participatesInFinale() && !performer.isDowned())) {
-					p.attack(performer);
-				}
-			}
-			if (ticks % 12 == 6 && site.phase() == CircusPavilionStateRules.Phase.DESCENT && pv.ringmaster().isAlive()
-					&& pv.ringmaster().isAttackable()) {
-				p.attack(pv.ringmaster());
-			}
 			return false;
 		};
 	}

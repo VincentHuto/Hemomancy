@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
 public enum CircusJourneyStage {
-	DISCOVERY("discovery"), PERFORMERS("performers"), ACCLIMATING("acclimating"), ATTENTION("attention"), ROUTE("route"),
+	DISCOVERY("discovery"), PERFORMERS("performers"), ACCLIMATING("acclimating"), ATTENTION("attention"),
 	ACTS("acts"), FINALE("finale"), REWARD("reward"), COMPLETE("complete");
 
 	private final String id;

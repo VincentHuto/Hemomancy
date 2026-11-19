@@ -23,8 +23,15 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Optional;
 import java.util.UUID;
 
-public class VeinwingVultureEntity extends Vex implements SyncedBoundSummon {
+public class VeinwingVultureEntity extends Vex implements SyncedBoundSummon,
+		com.vincenthuto.hemomancy.common.entity.npc.circus.TrueSelf {
 	private static final int ATTACK_COOLDOWN_TICKS = 15;
+	/** In the Acrobat's Chamber the Vulture is its true self: wilder, larger, a little stronger and quicker (2026-11-17). */
+	private static final EntityDataAccessor<Boolean> TRUE_SELF = SynchedEntityData.defineId(VeinwingVultureEntity.class,
+			EntityDataSerializers.BOOLEAN);
+	private static final double TRUE_SELF_HEALTH = 1.3D, TRUE_SELF_SPEED = 1.1D;
+	/** The true self is drawn and struck at twice the size. */
+	public static final float TRUE_SELF_SIZE = 2.0F;
 	private static final int VOLLEY_COOLDOWN_TICKS = 50;
 	private static final double VOLLEY_MIN_RANGE = 3.5;
 	private static final double VOLLEY_MAX_RANGE = 14.0;
@@ -50,6 +57,7 @@ public class VeinwingVultureEntity extends Vex implements SyncedBoundSummon {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
+		builder.define(TRUE_SELF, false);
 		SYNC.defineDefaults(builder, "veinwing_vulture");
 	}
 
@@ -82,7 +90,19 @@ public class VeinwingVultureEntity extends Vex implements SyncedBoundSummon {
 		if (target == null || !target.isAlive() || !canAttack(target)) {
 			return;
 		}
+		if (com.vincenthuto.hemomancy.common.encounter.ordeal.VultureOrdealMoves.busy(getUUID())) {
+			// One of its ordeal moves has the body: hold still for it, no blows of its own.
+			getMoveControl().setWantedPosition(getX(), getY(), getZ(), 0.0D);
+			return;
+		}
 		Vec3 destination = target.position().add(0.0, target.getBbHeight() * 0.55, 0.0);
+		if (isTrueSelf()) {
+			// The true self circles its quarry, swooping in and out: a wide ring that tightens to striking range.
+			double angle = tickCount * 0.07D;
+			double radius = 2.0D + 1.4D * (0.5D + 0.5D * Math.sin(tickCount * 0.05D));
+			destination = target.position().add(Math.cos(angle) * radius, 1.6D + 0.8D * (0.5D + 0.5D * Math.sin(tickCount * 0.11D)),
+					Math.sin(angle) * radius);
+		}
 		Vec3 delta = destination.subtract(position());
 		if (delta.lengthSqr() > 0.01) {
 			getMoveControl().setWantedPosition(destination.x, destination.y, destination.z, 1.25);
@@ -148,4 +168,62 @@ public class VeinwingVultureEntity extends Vex implements SyncedBoundSummon {
 	}
 
 	@Override public BoundSummonSync hemomancy$sync() { return SYNC; }
+
+	@Override
+	public boolean isTrueSelf() {
+		return entityData.get(TRUE_SELF);
+	}
+
+	@Override
+	public void setTrueSelf(boolean trueSelf) {
+		entityData.set(TRUE_SELF, trueSelf);
+		refreshDimensions();
+		if (!trueSelf) return;
+		var health = getAttribute(Attributes.MAX_HEALTH);
+		var speed = getAttribute(Attributes.FLYING_SPEED);
+		if (health != null) health.setBaseValue(health.getBaseValue() * TRUE_SELF_HEALTH);
+		if (speed != null) speed.setBaseValue(speed.getBaseValue() * TRUE_SELF_SPEED);
+		setHealth(getMaxHealth());
+	}
+
+	@Override
+	public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+		if (TRUE_SELF.equals(key)) refreshDimensions();
+		super.onSyncedDataUpdated(key);
+	}
+
+	@Override
+	public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+		var dimensions = super.getDefaultDimensions(pose);
+		return isTrueSelf() ? dimensions.scale(TRUE_SELF_SIZE) : dimensions;
+	}
+
+	/** Its ordeal moves' poses ({@code VultureOrdealMoves}): an entity event per move, timed by the model from its arrival. */
+	private static final byte ORDEAL_MOVE_EVENT = 80;
+	private static final int ORDEAL_MOVES = 4;
+	private int ordealMove = -1;
+	private int ordealMoveStart;
+
+	/** Starts move {@code kind}'s pose on every watching client, or stops it with -1. */
+	public void ordealMove(int kind) {
+		level().broadcastEntityEvent(this, (byte) (ORDEAL_MOVE_EVENT + (kind < 0 ? ORDEAL_MOVES : kind)));
+	}
+
+	public int ordealMove() {
+		return ordealMove;
+	}
+
+	public float ordealMoveAge(float partialTick) {
+		return tickCount - ordealMoveStart + partialTick;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id >= ORDEAL_MOVE_EVENT && id <= ORDEAL_MOVE_EVENT + ORDEAL_MOVES) {
+			ordealMove = id - ORDEAL_MOVE_EVENT == ORDEAL_MOVES ? -1 : id - ORDEAL_MOVE_EVENT;
+			ordealMoveStart = tickCount;
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
 }

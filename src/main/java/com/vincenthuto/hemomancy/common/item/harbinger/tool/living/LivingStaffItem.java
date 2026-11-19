@@ -151,6 +151,9 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 				double reach = VerbReach.of(player, Verb.ABSORB);
 				double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(pLevel, player, reach,
 						WillAbsorptionRules.staffProgressPerTick(focus));
+				// The Ringmaster at his kneel takes the same channel (2026-11-18).
+				if (vesperHandled <= 0.0D) vesperHandled = com.vincenthuto.hemomancy.common.encounter.ordeal.finale.RingmasterAbsorption
+						.tryAbsorb(pLevel, player, reach, WillAbsorptionRules.staffProgressPerTick(focus));
 				if (vesperHandled > 0.0D) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;

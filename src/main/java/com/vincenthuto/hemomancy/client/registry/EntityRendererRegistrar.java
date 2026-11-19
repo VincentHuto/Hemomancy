@@ -88,7 +88,11 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.veinwing_feather.get(), VeinwingFeatherRenderer::new);
         event.registerEntityRenderer(EntityInit.circus_knife.get(), CircusKnifeProjectileRenderer::new);
         event.registerEntityRenderer(EntityInit.impaled_procession.get(), CircusCarouselRenderer::new);
-        event.registerEntityRenderer(EntityInit.circus_ringmaster.get(), CircusRingmasterRenderer::new);
+        // The Ringmaster's finale copy wears his true self from the reveal on (2026-11-18); he walks the ring in it, so no haze.
+        event.registerEntityRenderer(EntityInit.circus_ringmaster.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new CircusRingmasterRenderer(context),
+                new com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueRingmasterRenderer(context),
+                com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueRingmasterRenderer.TRUE_SCALE));
         event.registerEntityRenderer(EntityInit.peacock_spider.get(), PeacockSpiderRenderer::new);
         event.registerEntityRenderer(EntityInit.vampire_bat.get(), VampireBatRenderer::new);
         event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
@@ -140,14 +144,37 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerRenderer::new);
         event.registerEntityRenderer(EntityInit.enthralled_doll.get(), EnthralledDollRenderer::new);
         event.registerEntityRenderer(EntityInit.blood_thrall.get(), BloodThrallRenderer::new);
-        event.registerEntityRenderer(EntityInit.veinwing_vulture.get(), VeinwingVultureRenderer::new);
-        event.registerEntityRenderer(EntityInit.cinder_bellows.get(), com.vincenthuto.hemomancy.client.render.entity.summon.CinderBellowsRenderer::new);
-        event.registerEntityRenderer(EntityInit.marrow_spitter.get(), MarrowSpitterRenderer::new);
-        event.registerEntityRenderer(EntityInit.gorebound_hulk.get(), GoreboundHulkRenderer::new);
-        event.registerEntityRenderer(EntityInit.mnemonist_puppet.get(), MnemonistPuppetRenderer::new);
+        // In the Acrobat's Chamber the Vulture is drawn as its true self, twice over (2026-11-17).
+        event.registerEntityRenderer(EntityInit.veinwing_vulture.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new VeinwingVultureRenderer(context),
+                new com.vincenthuto.hemomancy.client.render.entity.summon.TrueVeinwingVultureRenderer(context),
+                com.vincenthuto.hemomancy.common.entity.summon.VeinwingVultureEntity.TRUE_SELF_SIZE));
+        // In the Fire Breather's Chamber the Bellows is drawn as its true self (2026-11-17).
+        event.registerEntityRenderer(EntityInit.cinder_bellows.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new com.vincenthuto.hemomancy.client.render.entity.summon.CinderBellowsRenderer(context),
+                new com.vincenthuto.hemomancy.client.render.entity.summon.TrueCinderBellowsRenderer(context), 1.15F));
+        // In the Dagger Thrower's Chamber the Juggler is drawn as its true self (2026-11-17).
+        event.registerEntityRenderer(EntityInit.marrow_spitter.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new MarrowSpitterRenderer(context),
+                new com.vincenthuto.hemomancy.client.render.entity.summon.TrueMarrowJugglerRenderer(context), 1.35F));
+        // In the Strongman's Chamber the Hulk is drawn as its true self (2026-11-17).
+        event.registerEntityRenderer(EntityInit.gorebound_hulk.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new GoreboundHulkRenderer(context),
+                new com.vincenthuto.hemomancy.client.render.entity.summon.TrueGoreboundHulkRenderer(context), 1.1F));
+        // In the Retired Understudy's Chamber the Mnemonist Puppet is drawn as its true self (2026-11-17).
+        event.registerEntityRenderer(EntityInit.mnemonist_puppet.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new MnemonistPuppetRenderer(context),
+                new com.vincenthuto.hemomancy.client.render.entity.summon.TrueMnemonistPuppetRenderer(context), 1.3F));
         event.registerEntityRenderer(EntityInit.ringmaster_pattern.get(), com.vincenthuto.hemomancy.client.render.entity.summon.RingmasterPatternRenderer::new);
-        event.registerEntityRenderer(EntityInit.scarlet_mummer.get(), ScarletMummerRenderer::new);
-        event.registerEntityRenderer(EntityInit.sanguine_hound.get(), SanguineHoundRenderer::new);
+        // In the Stilt Walker's Chamber the Mummer is drawn as its true self (2026-11-17).
+        event.registerEntityRenderer(EntityInit.scarlet_mummer.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new ScarletMummerRenderer(context),
+                new com.vincenthuto.hemomancy.client.render.entity.summon.TrueScarletMummerRenderer(context),
+                com.vincenthuto.hemomancy.client.render.entity.summon.TrueScarletMummerRenderer.SCALE));
+        // In the Beast Tamer's Chamber the Hound is drawn as its true self (2026-11-17); its size is its scale attribute.
+        event.registerEntityRenderer(EntityInit.sanguine_hound.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new SanguineHoundRenderer(context),
+                new com.vincenthuto.hemomancy.client.render.entity.summon.TrueSanguineHoundRenderer(context), 1.0F));
         event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
         event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
         event.registerEntityRenderer(EntityInit.abhorrent_thought.get(), AbhorrentThoughtRenderer::new);
@@ -192,30 +219,58 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.kindled_champion.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.npc.court.CourtMemberRenderer(
                 context, com.vincenthuto.hemomancy.client.model.entity.npc.court.CourtMemberModels.KINDLED_CHAMPION));
         event.registerEntityRenderer(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerRenderer::new);
-        event.registerEntityRenderer(EntityInit.circus_strongman.get(), context -> new CircusPerformerRenderer<>(
-                context, new CircusStrongmanModel(context.bakeLayer(CircusStrongmanModel.LAYER_LOCATION)),
-                "circus_strongman", 0.55F));
-        event.registerEntityRenderer(EntityInit.circus_beast_tamer.get(), context -> new CircusPerformerRenderer<>(
-                context, new CircusBeastTamerModel(context.bakeLayer(CircusBeastTamerModel.LAYER_LOCATION)),
-                "circus_beast_tamer", 0.45F));
+        // The Strongman as his true self in his own Chamber (2026-11-17), drawn larger than life.
+        event.registerEntityRenderer(EntityInit.circus_strongman.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context,
+                new CircusPerformerRenderer<>(context, new CircusStrongmanModel(context.bakeLayer(CircusStrongmanModel.LAYER_LOCATION)),
+                        "circus_strongman", 0.55F),
+                new com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueStrongmanRenderer(context),
+                com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealFlight.SCALE, 1.0D));
+        // The Beast Tamer as their true self in their own Chamber (2026-11-17), drawn larger than life.
+        event.registerEntityRenderer(EntityInit.circus_beast_tamer.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context,
+                new CircusPerformerRenderer<>(context, new CircusBeastTamerModel(context.bakeLayer(CircusBeastTamerModel.LAYER_LOCATION)),
+                        "circus_beast_tamer", 0.45F),
+                new com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueBeastTamerRenderer(context),
+                com.vincenthuto.hemomancy.common.encounter.ordeal.BeastTamerMoves.SCALE));
         event.registerEntityRenderer(EntityInit.circus_threadkeeper.get(), context -> new CircusPerformerRenderer<>(
                 context, new CircusThreadkeeperModel(context.bakeLayer(CircusThreadkeeperModel.LAYER_LOCATION)),
                 "circus_threadkeeper", 0.4F));
-        event.registerEntityRenderer(EntityInit.circus_understudy.get(), context -> new CircusPerformerRenderer<>(
-                context, new CircusUnderstudyModel(context.bakeLayer(CircusUnderstudyModel.LAYER_LOCATION)),
-                "circus_understudy", 0.4F));
-        event.registerEntityRenderer(EntityInit.circus_fire_eater.get(), context -> new CircusPerformerRenderer<>(
-                context, new CircusFireEaterModel(context.bakeLayer(CircusFireEaterModel.LAYER_LOCATION)),
-                "fire_eater", 0.45F));
-        event.registerEntityRenderer(EntityInit.circus_stilt_walker.get(), context -> new CircusPerformerRenderer<>(
-                context, new CircusStiltWalkerModel(context.bakeLayer(CircusStiltWalkerModel.LAYER_LOCATION)),
-                "stilt_walker", 0.5F));
-        event.registerEntityRenderer(EntityInit.circus_acrobat.get(), context -> new CircusPerformerRenderer<>(
-                context, new CircusAcrobatModel(context.bakeLayer(CircusAcrobatModel.LAYER_LOCATION)),
-                "acrobat", 0.4F));
-        event.registerEntityRenderer(EntityInit.circus_knife_thrower.get(), context -> new CircusPerformerRenderer<>(
-                context, new CircusKnifeThrowerModel(context.bakeLayer(CircusKnifeThrowerModel.LAYER_LOCATION)),
-                "knife_thrower", 0.45F));
+        // The Retired Understudy as their true self in their own Chamber (2026-11-17), standing tall in the wings.
+        event.registerEntityRenderer(EntityInit.circus_understudy.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context,
+                new CircusPerformerRenderer<>(context, new CircusUnderstudyModel(context.bakeLayer(CircusUnderstudyModel.LAYER_LOCATION)),
+                        "circus_understudy", 0.4F),
+                new com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueUnderstudyRenderer(context),
+                com.vincenthuto.hemomancy.common.encounter.ordeal.UnderstudyChoreography.SCALE));
+        // The Fire Breather as their true self in their own Chamber (2026-11-17), breathing into the ring from the pulpit.
+        event.registerEntityRenderer(EntityInit.circus_fire_eater.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context,
+                new CircusPerformerRenderer<>(context, new CircusFireEaterModel(context.bakeLayer(CircusFireEaterModel.LAYER_LOCATION)),
+                        "fire_eater", 0.45F),
+                new com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueFireEaterRenderer(context),
+                com.vincenthuto.hemomancy.common.encounter.ordeal.FireEaterChoreography.SCALE));
+        // The Stilt Walker as their true self in their own Chamber (2026-11-17), about twelve blocks tall.
+        event.registerEntityRenderer(EntityInit.circus_stilt_walker.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context,
+                new CircusPerformerRenderer<>(context, new CircusStiltWalkerModel(context.bakeLayer(CircusStiltWalkerModel.LAYER_LOCATION)),
+                        "stilt_walker", 0.5F),
+                new com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueStiltWalkerRenderer(context),
+                com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealStiltWalk.SCALE));
+        // The Acrobat as their true self in their own Chamber (2026-11-17), hung in the rigging twice life size.
+        event.registerEntityRenderer(EntityInit.circus_acrobat.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context,
+                new CircusPerformerRenderer<>(context, new CircusAcrobatModel(context.bakeLayer(CircusAcrobatModel.LAYER_LOCATION)),
+                        "acrobat", 0.4F),
+                new com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueAcrobatRenderer(context),
+                com.vincenthuto.hemomancy.common.encounter.ordeal.AcrobatRigging.SCALE));
+        // The Dagger Thrower as their true self in their own Chamber (2026-11-17), pacing the throwing gallery.
+        event.registerEntityRenderer(EntityInit.circus_knife_thrower.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.TrueSelfRenderer<>(
+                context, new CircusPerformerRenderer<>(
+                        context, new CircusKnifeThrowerModel(context.bakeLayer(CircusKnifeThrowerModel.LAYER_LOCATION)),
+                        "knife_thrower", 0.45F),
+                new com.vincenthuto.hemomancy.client.render.entity.npc.CircusTrueKnifeThrowerRenderer(context),
+                com.vincenthuto.hemomancy.common.encounter.ordeal.KnifeOrdealMoves.SCALE));
         event.registerEntityRenderer(EntityInit.drudge.get(),DrudgeRenderer::new);
         event.registerEntityRenderer(EntityInit.hemorath.get(), HemorathRenderer::new);
         event.registerEntityRenderer(EntityInit.annetta_knowles.get(), AnnettaKnowlesRenderer::new);

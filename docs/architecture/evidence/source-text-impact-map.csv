@@ -60,6 +60,8 @@ src/test/java/com/vincenthuto/hemomancy/architecture/ChamberTransitionScreenTest
 src/test/java/com/vincenthuto/hemomancy/architecture/ChamberTransitionScreenTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ClientSessionEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/ChamberTransitionScreenTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/registry/DimensionTransitionRegistrar.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/ChamberTransitionScreenTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/ChamberTransitionScreen.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/CircusShowFreezeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/CircusShowFog.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/CircusShowFreezeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/CircusPerceptionOverlay.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/ClientBoundPayloadRegistrationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/ClientSessionCacheTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ClientSessionEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common,java,exact-dir
@@ -297,6 +299,7 @@ src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/registry/SaintClientStyles.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/HazardDraw.java,java,by-name
+src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/OrdealTelegraphPass.java,java,by-name
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/SaintTelegraphPainter.java,java,by-name
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/SaintTelegraphRenderer.java,java,by-name
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/SaintTelegraphStyle.java,java,by-name
@@ -1083,6 +1086,7 @@ src/test/java/com/vincenthuto/hemomancy/common/block/ModelFirstTileRendererResou
 src/test/java/com/vincenthuto/hemomancy/common/block/ModelFirstTileRendererResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/tile/unstained/functional/AltarOfCleansingRenderer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/ModelFirstTileRendererResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/BrazierFlames.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/ModelFirstTileRendererResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/common/block/ModelFirstTileRendererResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberDomePortal.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/ModelFirstTileRendererResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/SomaticLoomDomeRenderer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/ModelFirstTileRendererResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/SomaticLoomSeamRenderer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/ModelFirstTileRendererResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/GhastlyAlembicBlock.java,java,base-dir
@@ -1581,6 +1585,7 @@ src/test/java/com/vincenthuto/hemomancy/common/encounter/FungalProjectionSourceT
 src/test/java/com/vincenthuto/hemomancy/common/encounter/FungalProjectionSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/FungalWhisperVignetteOverlay.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/encounter/FungalProjectionSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/encounter/FungalGardenTravelHelper.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/encounter/FungalProjectionSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/event/FungalProjectionEvents.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/encounter/ordeal/OrdealKeyTest.java,junit,src/main/resources/data/hemomancy/recipe/cardinal_rite/puppeteer_trial_gorebound_hulk.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/entity/FargoneVariantSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/monster/FargoneModel.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/FargoneVariantSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/FargoneEntity.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/MyelinBorerBoringSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod,java,exact-dir

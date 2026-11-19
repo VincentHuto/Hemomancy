@@ -41,7 +41,7 @@ public final class CircusKnifeProjectileEntity extends BloodNeedleEntity {
 	private boolean troupeMayStrike(LivingEntity target) {
 		if (level().isClientSide) return true;
 		if (getOwner() instanceof CircusPerformerEntity performer) return performer.canStrike(target);
-		if (getOwner() instanceof CircusRingmasterEntity ringmaster) return ringmaster.canStrike(target);
+		if (getOwner() instanceof CircusRingmasterEntity ringmaster) return com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarmFor(ringmaster, target);
 		return true;
 	}
 

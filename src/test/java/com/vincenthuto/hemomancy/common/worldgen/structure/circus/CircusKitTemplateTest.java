@@ -88,10 +88,7 @@ class CircusKitTemplateTest {
 			assertTrue(lang.has("block.hemomancy." + piece), "No name for " + piece);
 			assertTrue(ResourceReader.exists("assets/hemomancy/models/item/" + piece + ".json"), "No item model for " + piece);
 			JsonObject states = ResourceReader.asset("blockstates/" + piece + ".json");
-			Set<String> models = new HashSet<>();
-			for (var variant : states.getAsJsonObject("variants").entrySet())
-				models.add(variant.getValue().getAsJsonObject().get("model").getAsString());
-			for (String model : models) {
+			for (String model : stateModels(states)) {
 				String path = model.substring("hemomancy:".length());
 				JsonObject json = ResourceReader.asset("models/" + path + ".json");
 				var textures = json.getAsJsonObject("textures");
@@ -111,14 +108,26 @@ class CircusKitTemplateTest {
 		}
 	}
 
+	/** Every model a blockstate draws, from its variants or its multipart (the net, 2026-11-17). */
+	private static Set<String> stateModels(JsonObject states) {
+		Set<String> models = new HashSet<>();
+		if (states.has("variants"))
+			for (var variant : states.getAsJsonObject("variants").entrySet())
+				models.add(variant.getValue().getAsJsonObject().get("model").getAsString());
+		if (states.has("multipart"))
+			for (var part : states.getAsJsonArray("multipart"))
+				models.add(part.getAsJsonObject().getAsJsonObject("apply").get("model").getAsString());
+		return models;
+	}
+
 	/** The rules vanilla's model loader enforces: an element inside -16..32 and a rotation of 0, 22.5 or 45 degrees. */
 	@Test
 	void everySetPieceModelLoads() throws Exception {
 		Set<String> paths = new HashSet<>();
 		for (String piece : PIECES) {
 			paths.add("item/" + piece);
-			for (var variant : ResourceReader.asset("blockstates/" + piece + ".json").getAsJsonObject("variants").entrySet())
-				paths.add(variant.getValue().getAsJsonObject().get("model").getAsString().substring("hemomancy:".length()));
+			for (String model : stateModels(ResourceReader.asset("blockstates/" + piece + ".json")))
+				paths.add(model.substring("hemomancy:".length()));
 		}
 		for (String path : paths) {
 			JsonObject model = ResourceReader.asset("models/" + path + ".json");

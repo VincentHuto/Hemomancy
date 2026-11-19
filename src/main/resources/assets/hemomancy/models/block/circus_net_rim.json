@@ -1,0 +1,86 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/circus_net",
+    "particle": "hemomancy:block/circus_net"
+  },
+  "elements": [
+    {
+      "name": "rim",
+      "from": [
+        0,
+        0.5,
+        -0.1
+      ],
+      "to": [
+        16,
+        2.5,
+        1.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.5,
+            0.0,
+            5.5,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.5,
+            0.0,
+            7.5,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            7.25,
+            9.0,
+            7.5,
+            10.0
+          ],
+          "texture": "#atlas",
+          "cullface": "east"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            9.0,
+            7.75,
+            10.0
+          ],
+          "texture": "#atlas",
+          "cullface": "west"
+        },
+        "up": {
+          "uv": [
+            7.5,
+            0.0,
+            9.5,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.5,
+            0.0,
+            11.5,
+            1.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

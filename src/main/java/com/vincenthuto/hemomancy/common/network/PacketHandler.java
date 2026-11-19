@@ -69,7 +69,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "56";
+    public static final String PROTOCOL_VERSION = "57";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -165,6 +165,8 @@ public class PacketHandler {
 		net.playToClient(PacketSyncChamberVisit.TYPE,
 				PacketSyncChamberVisit.STREAM_CODEC, ClientPayloadHandlers::dispatch);
 		net.playToClient(com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusSchool.TYPE, com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusSchool.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+		net.playToClient(com.vincenthuto.hemomancy.common.network.circus.FinaleCrossingPacket.TYPE,
+				com.vincenthuto.hemomancy.common.network.circus.FinaleCrossingPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
 		net.playToClient(PacketSyncCircusPerception.TYPE,
 				PacketSyncCircusPerception.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSyncChamberOfWill.TYPE,

@@ -44,6 +44,11 @@ EMITTER = 'hemomancy:abocipher_emitter'
 NORTH_DECK, SOUTH_DECK = 5, 7
 BOX = (32, SOUTH_DECK, 44)        # the Ringmaster's box: centre x, deck y, front row z
 PERCH = (32, SOUTH_DECK + 1, 45)  # where he stands, behind the box's front rail
+# The finale's rafter perches (2026-11-18), in template cells (core x + MARGIN), mirrored by FinaleStage in Java:
+# the two rigging-tower platforms and the four quarter poles' collars he blinks between, and four places on the ring
+# curb he drops to after a volley, within a melee reach of the floor. Points in the air, not blocks.
+RAFTER_PERCHES = [(24, 10, 32), (56, 10, 32), (32, 11, 24), (48, 11, 24), (32, 11, 40), (48, 11, 40)]
+LOW_PERCHES = [(33, 2, 32), (47, 2, 32), (40, 2, 25), (40, 2, 39)]
 
 # The actors, by entity id, on their marks (feet cells).
 ACTORS = (
@@ -152,6 +157,13 @@ def ring(site):
     # The two king poles stand in the curb and run up through the roof.
     for x in (CX - RING_R, CX + RING_R):
         kit.pole(f, x, 1, CZ, roof(x, CZ) + 1, collars=(6, 11, 15))
+        # The canvas is laced tight round the pole where it runs through the roof: the stepped roof leaves the cells
+        # beside it open to the sky, so they are closed, and the pole section there seals (TroupePoleBlock.SEALED).
+        y = roof(x, CZ)
+        for dx in (-1, 0, 1):
+            for dz in (-1, 0, 1):
+                if (dx or dz) and site.get(x + dx, y, CZ + dz) in (None, AIR):
+                    site.put(x + dx, y, CZ + dz, LACED)
 
 
 def gallery(site, z0, z1, deck, edge, facing, gaps, posts):
@@ -193,8 +205,9 @@ def seating(site):
 
 def rigging(site):
     # Two rigging towers at the ends, their trapezes reaching toward the ring over a net.
-    kit.rigging_tower(site.frame(16, 0, CZ, 'east'), 0, 1, 0, 8)
-    kit.rigging_tower(site.frame(48, 0, CZ, 'west'), 0, 1, 0, 8)
+    # The nets are slung three blocks up and run all the way to the king poles.
+    kit.rigging_tower(site.frame(16, 0, CZ, 'east'), 0, 1, 0, 8, net_y=4, net_reach=8)
+    kit.rigging_tower(site.frame(48, 0, CZ, 'west'), 0, 1, 0, 8, net_y=4, net_reach=8)
     f = site.frame(0, 0, 0)
     # Quarter poles carry the canvas at the ring's corners; crossbar rigs of spare thread hang under the deck edges.
     for x, z in ((24, 24), (40, 24), (24, 40), (40, 40)):

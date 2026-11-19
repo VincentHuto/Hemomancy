@@ -17,14 +17,18 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 import java.util.UUID;
 
-public class GoreboundHulkEntity extends GroundPuppetEntity implements SyncedBoundSummon {
+public class GoreboundHulkEntity extends GroundPuppetEntity implements SyncedBoundSummon,
+		com.vincenthuto.hemomancy.common.entity.npc.circus.TrueSelf {
 	private static final BoundSummonSync SYNC = BoundSummonSync.define(GoreboundHulkEntity.class);
 
+    /** In a professor's Chamber the Hulk is its true self: wilder, a little stronger and quicker (2026-11-17). */
+    private static final EntityDataAccessor<Boolean> TRUE_SELF = SynchedEntityData.defineId(GoreboundHulkEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> STRIKE_WINDUP = SynchedEntityData.defineId(GoreboundHulkEntity.class, EntityDataSerializers.INT);
     private UUID strikeTarget;
     public int getStrikeWindup() { return entityData.get(STRIKE_WINDUP); }
     public void setDemonstrationWindup(int tick) { entityData.set(STRIKE_WINDUP, tick); }
     public void beginStrike(net.minecraft.world.entity.LivingEntity target) {
+        if (com.vincenthuto.hemomancy.common.encounter.ordeal.OrdealHulkMoves.busy(getUUID())) return;
         if (getStrikeWindup() == 0) { strikeTarget = target.getUUID(); entityData.set(STRIKE_WINDUP, 1); }
     }
     private void tickStrike() {
@@ -59,6 +63,7 @@ public class GoreboundHulkEntity extends GroundPuppetEntity implements SyncedBou
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
         builder.define(STRIKE_WINDUP, 0);
+        builder.define(TRUE_SELF, false);
 		SYNC.defineDefaults(builder, "gorebound_hulk");
 	}
 
@@ -106,4 +111,47 @@ public class GoreboundHulkEntity extends GroundPuppetEntity implements SyncedBou
 	}
 
 	@Override public BoundSummonSync hemomancy$sync() { return SYNC; }
+
+	@Override public boolean isTrueSelf() { return entityData.get(TRUE_SELF); }
+
+	/** Its ordeal moves' poses ({@code OrdealHulkMoves}): an entity event per move, timed by the model from its arrival. */
+	private static final byte ORDEAL_MOVE_EVENT = 80;
+	private static final int ORDEAL_MOVES = 4;
+	private int ordealMove = -1;
+	private int ordealMoveStart;
+
+	/** Starts move {@code kind}'s pose on every watching client, or stops it with -1. */
+	public void ordealMove(int kind) {
+		level().broadcastEntityEvent(this, (byte) (ORDEAL_MOVE_EVENT + (kind < 0 ? ORDEAL_MOVES : kind)));
+	}
+
+	public int ordealMove() {
+		return ordealMove;
+	}
+
+	public float ordealMoveAge(float partialTick) {
+		return tickCount - ordealMoveStart + partialTick;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id >= ORDEAL_MOVE_EVENT && id <= ORDEAL_MOVE_EVENT + ORDEAL_MOVES) {
+			ordealMove = id - ORDEAL_MOVE_EVENT == ORDEAL_MOVES ? -1 : id - ORDEAL_MOVE_EVENT;
+			ordealMoveStart = tickCount;
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
+
+	@Override public void setTrueSelf(boolean trueSelf) {
+		entityData.set(TRUE_SELF, trueSelf);
+		if (!trueSelf) return;
+		var health = getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH);
+		var speed = getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+		if (health != null) health.setBaseValue(health.getBaseValue() * TRUE_SELF_HEALTH);
+		if (speed != null) speed.setBaseValue(speed.getBaseValue() * TRUE_SELF_SPEED);
+		setHealth(getMaxHealth());
+	}
+
+	private static final double TRUE_SELF_HEALTH = 1.25D, TRUE_SELF_SPEED = 1.1D;
 }

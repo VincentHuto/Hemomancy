@@ -384,10 +384,16 @@ class ModelFirstTileRendererResourceTest {
 		assertContains("a base echo stutters", loomEcho, "SomaticLoomEffectRules.echoStutter(time, look.stutter())");
 		String dome = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/world/chamberofwill/SomaticLoomDomeRenderer.java"));
-		for (String rule : new String[]{"RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS", "GL11.glEnable(GL11.GL_STENCIL_TEST)",
-				"GL11.glDisable(GL11.GL_STENCIL_TEST)", "} finally {", "ChamberSkyThemeRegistry.effectsById(theme.id()).renderSky(context)",
-				"loom.getWeaverTheme()", "SomaticLoomEffectRules.domeRadius(", "modelViewStack.popMatrix()"})
+		for (String rule : new String[]{"RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS", "loom.getWeaverTheme()",
+				"SomaticLoomEffectRules.domeRadius(", "ChamberDomePortal.render(event, centre, radius, theme, partial)",
+				"modelViewStack.popMatrix()"})
 			assertContains("the Cortical dome keeps its portal contract: " + rule, dome, rule);
+		String portal = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberDomePortal.java"));
+		for (String rule : new String[]{"GL11.glEnable(GL11.GL_STENCIL_TEST)", "GL11.glDisable(GL11.GL_STENCIL_TEST)", "} finally {",
+				"ChamberSkyThemeRegistry.effectsById(theme.id()).renderSky(context)", "modelViewStack.popMatrix()"})
+			assertContains("the Chamber dome portal keeps its stencil contract: " + rule, portal, rule);
+		assertNotContains("the portal never reads the local player's Chamber theme", portal, "ChamberOfWillClientData");
 		assertNotContains("the dome never reads the local player's Chamber theme", dome, "ChamberOfWillClientData");
 		assertContains("the dome tears the ground open along its seam", dome, "SomaticLoomSeamRenderer.render(");
 		String seam = read(SOURCE_ROOT.resolve(
@@ -401,9 +407,9 @@ class ModelFirstTileRendererResourceTest {
 		assertNotContains("blood beads travel inside the veins rather than over them", seam, "VisceralMesh.drop(world, v, drop");
 		for (String guard : new String[]{"GL11.glDepthRange(1.0D, 1.0D)", "GL11.glDepthRange(0.0D, 1.0D)",
 				"GL30.GL_DRAW_FRAMEBUFFER_BINDING", "isStencilEnabled()"})
-			assertContains("the dome guards its depth and stencil: " + guard, dome, guard);
-		int sky = dome.indexOf("renderSky(event, theme, partial);"), lequal = dome.lastIndexOf("RenderSystem.depthFunc(GL11.GL_LEQUAL)", sky);
-		int always = dome.lastIndexOf("RenderSystem.depthFunc(GL11.GL_ALWAYS)", sky);
+			assertContains("the dome portal guards its depth and stencil: " + guard, portal, guard);
+		int sky = portal.indexOf("renderSky(event, theme, partial);"), lequal = portal.lastIndexOf("RenderSystem.depthFunc(GL11.GL_LEQUAL)", sky);
+		int always = portal.lastIndexOf("RenderSystem.depthFunc(GL11.GL_ALWAYS)", sky);
 		if (sky < 0 || lequal < always)
 			throw new AssertionError("Chamber themes draw with their own LEQUAL depth so 3D theme geometry self-occludes");
 		assertContains("the loom's renderer offers its weave to the dome", loomRenderer, "SomaticLoomDomeRenderer.track(te, dissolving)");

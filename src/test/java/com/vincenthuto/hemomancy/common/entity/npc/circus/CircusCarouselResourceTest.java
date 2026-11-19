@@ -87,8 +87,8 @@ class CircusCarouselResourceTest {
 		String runtime = source("client/model/entity/npc/CircusCarouselModel.java");
 		assertTrue(entityInit.contains(".sized(1.0F, 7.0F)"));
 		assertTrue(runtime.contains("LayerDefinition.create(mesh, 256, 256)"));
-		assertTrue(runtime.contains("horses[horse].visible = !entity.isDestroyed()"));
-		assertTrue(runtime.contains("anchors[horse].visible = entity.isRiderSevered(horse)"));
+		assertTrue(runtime.contains("horses[horse].visible = true"));
+		assertTrue(runtime.contains("anchors[horse].visible = false"), "the old severing's anchors no longer show");
 		assertFalse(runtime.contains("addCaptive("), "captives remain real passengers, not baked geometry");
 	}
 

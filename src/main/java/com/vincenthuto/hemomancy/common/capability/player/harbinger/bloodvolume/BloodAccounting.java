@@ -28,6 +28,9 @@ public final class BloodAccounting {
 		}
 	}
 
+	/** The Ringmaster's bats in his finale, sipping the fighter's blood to carry to him (2026-11-18). */
+	public static final Source RINGMASTER_SWARM = Source.of("ringmaster_swarm", Category.WORLD, true);
+
 	/** {@code satisfied} is what {@link IBloodVolume#drain} returned for a one-off payment. */
 	public record Payment(double requested, double paid, boolean satisfied) {
 		static final Payment NOTHING_OWED = new Payment(0.0D, 0.0D, true);

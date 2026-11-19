@@ -1,7 +1,79 @@
 {
-  "variants": {
-    "": {
-      "model": "hemomancy:block/circus_net"
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/circus_net"
+      }
+    },
+    {
+      "when": {
+        "north": "edge|tied"
+      },
+      "apply": {
+        "model": "hemomancy:block/circus_net_rim"
+      }
+    },
+    {
+      "when": {
+        "north": "tied"
+      },
+      "apply": {
+        "model": "hemomancy:block/circus_net_tie"
+      }
+    },
+    {
+      "when": {
+        "east": "edge|tied"
+      },
+      "apply": {
+        "model": "hemomancy:block/circus_net_rim",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "tied"
+      },
+      "apply": {
+        "model": "hemomancy:block/circus_net_tie",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "edge|tied"
+      },
+      "apply": {
+        "model": "hemomancy:block/circus_net_rim",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "tied"
+      },
+      "apply": {
+        "model": "hemomancy:block/circus_net_tie",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "edge|tied"
+      },
+      "apply": {
+        "model": "hemomancy:block/circus_net_rim",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "tied"
+      },
+      "apply": {
+        "model": "hemomancy:block/circus_net_tie",
+        "y": 270
+      }
     }
-  }
+  ]
 }

@@ -134,6 +134,8 @@ public final class SaintTelegraphRenderer {
 		HazardDraw draw = new HazardDraw(hazard, shape, hazard.frame(), age, hazard.life(),
 				SaintTelegraphTiming.hazardFade(age, hazard.life(), hazard.fade(), hazard.fading(), hazard.fadeStart()), partial);
 		if (draw.fade() <= 0.0F) return;
+		// A Crimson Troupe ordeal's footprints are drawn bold by their own pass, not in the Saints' subtle default.
+		if (OrdealTelegraphPass.paint(draw, canvas)) return;
 		if (saint != null) {
 			EnumSaintType type = saint.saintType();
 			if (SaintClientStyles.telegraph(type).paintHazard(draw, canvas)) return;
