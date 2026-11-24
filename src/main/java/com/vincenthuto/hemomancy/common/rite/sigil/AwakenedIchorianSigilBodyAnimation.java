@@ -7,11 +7,11 @@ public final class AwakenedIchorianSigilBodyAnimation {
 	private AwakenedIchorianSigilBodyAnimation() {
 	}
 
-	public static BodyPose pose(ResourceLocation sigilId, float ageTicks, float movementSpeed) {
+	public static BodyPose pose(ResourceLocation sigilId, float ageTicks) {
 		String path = sigilId == null ? "" : sigilId.getPath();
 		Profile profile = profile(path);
 		float phase = Math.floorMod(path.hashCode(), 6283) / 1000.0F;
-		float activity = 1.0F + Mth.clamp(movementSpeed * 8.0F, 0.0F, 0.65F);
+		float activity = 1.0F + idleLevel(sigilId);
 		float primary = (float) Math.sin(ageTicks * profile.frequency() + phase);
 		float secondary = (float) Math.sin(
 				ageTicks * profile.frequency() * 1.73F + phase * 0.61F + 1.4F);
@@ -30,6 +30,11 @@ public final class AwakenedIchorianSigilBodyAnimation {
 				1.0F + pulse,
 				1.0F - pulse * 0.82F,
 				1.0F + pulse * 0.45F);
+	}
+
+	/** 0..0.65: how lively the form idles while it hovers, in the order of its turn rate (shunt to seal). */
+	static float idleLevel(ResourceLocation sigilId) {
+		return Mth.clamp(AwakenedIchorianSigilMotion.turnRate(sigilId) * 0.5F, 0.0F, 0.65F);
 	}
 
 	private static Profile profile(String path) {

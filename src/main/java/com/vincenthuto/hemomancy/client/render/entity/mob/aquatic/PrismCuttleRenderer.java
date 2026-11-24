@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PrismCuttleModel;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.PrismCuttleEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.PrismCuttleVariant;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +22,12 @@ public class PrismCuttleRenderer extends MobRenderer<PrismCuttleEntity, PrismCut
 			"textures/entity/prism_cuttle/model_prism_cuttle_flash.png");
 
 	public PrismCuttleRenderer(Context context) {
-		super(context, new PrismCuttleModel(context.bakeLayer(PrismCuttleModel.LAYER_LOCATION)), 0.35F);
+		super(context, new PrismCuttleModel(), 0.35F);
+	}
+
+	@Override
+	protected int getBlockLightLevel(PrismCuttleEntity entity, BlockPos pos) {
+		return entity.isFlashing() ? 15 : super.getBlockLightLevel(entity, pos);
 	}
 
 	@Override

@@ -32,10 +32,11 @@ public final class ClientTickEvents {
         StillArtCooldownOverlay.tick();
         ActiveBloodCraftClientData.tick();
         ActiveBloodStructureFeedClientData.tick();
-        ActiveRiteClientData.tick();
         com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.tick();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.tick(Minecraft.getInstance());
-        if (Minecraft.getInstance().level != null && !Minecraft.getInstance().isPaused()) {
+        // A rite's client clocks stand still while the game is paused or its ticking frozen (A-4).
+        if (com.vincenthuto.hemomancy.client.render.AnimationTime.worldTicks()) {
+            ActiveRiteClientData.tick();
             com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.tick(
                     ActiveRiteClientData.getActiveRites(),
                     com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.ghosts(),

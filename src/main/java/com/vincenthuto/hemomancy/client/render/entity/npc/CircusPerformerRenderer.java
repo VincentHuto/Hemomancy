@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.entity.npc.CircusJointedPerformerModel;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.PerformerHandAnchors;
 import com.vincenthuto.hemomancy.client.screen.overlay.CircusPerceptionOverlay;
@@ -21,6 +22,7 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.HumanoidArm;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -40,7 +42,8 @@ public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M ex
 		addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
 		addLayer(new PerceptionEchoLayer());
 		addLayer(new StringHandLayer());
-		grip = PerformerHandAnchors.gripOf(model.rightArm);
+		grip = model instanceof CircusJointedPerformerModel<?> ? new Vector3f()
+				: PerformerHandAnchors.gripOf(model.rightArm);
 		textures = new ResourceLocation[] {
 				Hemomancy.rloc("textures/entity/npc/harbinger/circus/" + textureName + "_0.png"),
 				Hemomancy.rloc("textures/entity/npc/harbinger/circus/" + textureName + "_1.png")
@@ -58,7 +61,11 @@ public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M ex
 				float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks,
 				float netHeadYaw, float headPitch) {
 			poseStack.pushPose();
-			getParentModel().rightArm.translateAndRotate(poseStack);
+			if (getParentModel() instanceof CircusJointedPerformerModel<?> rig) {
+				rig.translateToHand(HumanoidArm.RIGHT, poseStack);
+			} else {
+				getParentModel().rightArm.translateAndRotate(poseStack);
+			}
 			Vector3f hand = poseStack.last().pose().transformPosition(
 					grip.x / 16.0F, grip.y / 16.0F, grip.z / 16.0F, new Vector3f());
 			poseStack.popPose();

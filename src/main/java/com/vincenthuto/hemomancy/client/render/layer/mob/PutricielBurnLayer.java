@@ -26,7 +26,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
  * 30, and in the ending's fire beats.
  */
 public class PutricielBurnLayer<T extends PutricielEntity> extends RenderLayer<T, PutricielModel<T>> {
-	private static final RenderType BURNING = RenderType.eyes(Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_burning.png"));
+	private static final RenderType BURNING = RenderType.eyes(Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_vestment_burning.png"));
 	private static final PutricielFireAnchors.Region[] REGIONS = PutricielFireAnchors.Region.values();
 
 	private final float[] levels = new float[REGIONS.length];

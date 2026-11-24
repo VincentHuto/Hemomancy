@@ -3,15 +3,15 @@ package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
- * Seraphae's shared visual numbers: the render scale (16 px per block at {@code kit.SCALE = 2}), the server cue kinds
+ * Seraphae's shared visual numbers: the render scale (16 px per block from the Blockbench atlas), the server cue kinds
  * her geometry answers, their lives, the nerve wave the trunks sway on and the cues' fade. Decorative only: nothing here
  * gates damage or containment.
  */
 public final class SeraphaeVisualRules {
-	/** Render scale: 2 texels per model unit at this scale is 16 per block. */
-	public static final float MODEL_SCALE = 2.0F;
+	/** Render scale: One texel per model unit at this scale is 16 per block. */
+	public static final float MODEL_SCALE = 1.0F;
 	/** The generator's texels per model unit; {@code TEXELS * 16 / MODEL_SCALE} is the density per block. */
-	public static final int TEXELS = 2;
+	public static final int TEXELS = 1;
 
 	// cue kinds, carried as the cue's count
 	public static final int HIT = 1, FRACTURE_BURST = 2, CLOSE = 3, CAPTURE = 4, SEALED = 5, PAD = 6,

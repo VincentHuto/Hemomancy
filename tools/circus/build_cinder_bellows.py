@@ -1,9 +1,15 @@
-"""Rebuild the Cinder Bellows's connected Java rig, painted atlas and portable BBModel.
+"""Bake the approved Cinder Bellows Blockbench project and atlas into runtime assets.
 
-Geometry, materials and animation live here; puppet_rig.py packs UVs, writes the Java model,
-exports the Blockbench file and paints the atlas so all three stay in step.
+The legacy anatomy, palette and Java template below also serve as the base for the
+independent true-self generator.
 """
-from puppet_rig import ROOT, BBMODELS, build as build_rig, noise, front_edge, back_edge
+import base64
+from io import BytesIO
+import json
+
+from PIL import Image
+
+from puppet_rig import blockbench_mesh_source, ROOT, ASSETS, BBMODELS, MODELS, TEXTURES, noise, front_edge, back_edge
 
 MODEL = BBMODELS / 'CinderBellowsModel.bbmodel'
 PALETTE = ['#1a1216', '#2e1f24', '#4a3236', '#6b4440', '#8f5a4c', '#b98d6c',
@@ -331,8 +337,46 @@ public class CinderBellowsModel extends EntityModel<CinderBellowsEntity> {
 '''
 
 
+PROJECT = ROOT / 'docs/art/cinder_bellows/CinderBellowsPuppet.bbmodel'
+
+
+def layer_source(model):
+    ribs = {'left': 0, 'right': 0}
+
+    def detail_name(group, index, cube):
+        if cube['name'] == 'curved rib bracket' and any(cube.get('rotation', ())):
+            side = 'left' if cube['origin'][0] > 0 else 'right'
+            ribs[side] += 1
+            return f'{side}_rib_{ribs[side]}'
+        return None
+
+    return blockbench_mesh_source(model, 'CinderBellowsMesh', PROJECT.name,
+                                 'build_cinder_bellows.py', lambda name: name, detail_name)
+
+
 def build():
-    return build_rig('cinder_bellows', 'CinderBellowsModel', anatomy(), JAVA, shade, PALETTE, glow=EMBER)
+    data = PROJECT.read_bytes()
+    model = json.loads(data)
+    texture, = model['textures']
+    png = base64.b64decode(texture['source'].split(',', 1)[1], validate=True)
+    atlas = Image.open(BytesIO(png)).convert('RGBA')
+    glow = Image.new('RGBA', atlas.size)
+    ember_cubes = {'furnace recess', 'ember membrane', 'upper palate',
+                   'ember throat lining', 'slit eye socket', 'banked wick', 'wick flare'}
+    for cube in model['elements']:
+        if cube['name'] not in ember_cubes:
+            continue
+        for face in cube['faces'].values():
+            u, v, s, t = face['uv']
+            for y in range(min(v, t), max(v, t)):
+                for x in range(min(u, s), max(u, s)):
+                    r, g, b, a = atlas.getpixel((x, y))
+                    if a and r >= 140 and g >= 36:
+                        glow.putpixel((x, y), (r, g, b, a))
+    (MODELS / 'CinderBellowsMesh.java').write_text(layer_source(model), encoding='utf-8')
+    MODEL.write_bytes(data)
+    (ASSETS / TEXTURES / 'cinder_bellows.png').write_bytes(png)
+    glow.save(ASSETS / TEXTURES / 'cinder_bellows_glow.png')
 
 
 if __name__ == '__main__':

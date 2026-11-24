@@ -42,6 +42,8 @@ import net.neoforged.neoforge.event.VanillaGameEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class MortarboundEntity extends Monster {
+    public static final int STRIKE_WINDUP_TICKS = 16;
+    public static final int STRIKE_RECOVERY_TICKS = 8;
     private static final int HEARD_MEMORY_TICKS = 160;
     private static final ParticleColor CLOT = new ParticleColor(70, 6, 14);
     private static final EntityDataAccessor<Integer> FACE = SynchedEntityData.defineId(MortarboundEntity.class, EntityDataSerializers.INT);
@@ -76,8 +78,11 @@ public class MortarboundEntity extends Monster {
     }
 
     public Direction wallFace() { return Direction.from3DDataValue(entityData.get(FACE)); }
-    public int attackTicks() { return entityData.get(ATTACK); }
-    @Override public AABB getBoundingBoxForCulling() { return getBoundingBox().inflate(.65, .05, .65); }
+    public int attackTicks() { return Math.max(0, attackAnimationTicks()); }
+
+    /** Positive during windup, negative during the visual follow-through. */
+    public int attackAnimationTicks() { return entityData.get(ATTACK); }
+    @Override public AABB getBoundingBoxForCulling() { return getBoundingBox().inflate(1.85, .4, 1.85); }
     public MortarboundFormRules.State formState() {
         int index = Math.clamp(entityData.get(FORM), 0, MortarboundFormRules.Form.values().length - 1);
         return new MortarboundFormRules.State(MortarboundFormRules.Form.values()[index], entityData.get(FORM_TICKS));
@@ -155,10 +160,14 @@ public class MortarboundEntity extends Monster {
         }
         if (cooldown > 0) cooldown--;
         if (forcedEmergenceTicks > 0) forcedEmergenceTicks--;
-        int windup = attackTicks();
-        if (windup > 0) {
-            entityData.set(ATTACK, windup - 1);
-            if (windup == 1) strike();
+        int strikePhase = attackAnimationTicks();
+        if (strikePhase == 1) {
+            entityData.set(ATTACK, -STRIKE_RECOVERY_TICKS);
+            strike();
+        } else if (strikePhase > 1) {
+            entityData.set(ATTACK, strikePhase - 1);
+        } else if (strikePhase < 0) {
+            entityData.set(ATTACK, strikePhase + 1);
         }
         if (wallCell == null && !attach()) {
             discard();
@@ -204,7 +213,7 @@ public class MortarboundEntity extends Monster {
         }
         Player victim = nearestPlayer();
         if (victim != null && cooldown == 0 && attackTicks() == 0) {
-            entityData.set(ATTACK, 16);
+            entityData.set(ATTACK, STRIKE_WINDUP_TICKS);
             playSound(SoundInit.ENTITY_MORTARBOUND_ATTACK.get(), .8F, 1F);
         }
     }

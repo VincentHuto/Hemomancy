@@ -108,7 +108,7 @@
     "tone": "pointed, lecturing"
   },
   "hemomancy.alchemist.body_answers.line2": {
-    "about": "the Alchemist walking through the Alembic brew: Sanguine Formation in the Alembic, Fervent Enzyme as catalyst, empty the Bloody Flask into the tank via the lower-right container input, reinsert the returned clay flask, brewing uses 2,500 mL and fills it, and the tank can be topped up by Projection",
+    "about": "the Alchemist walking through the Alembic brew: Sanguine Formation in the Alembic, Fervent Enzyme as catalyst, empty the Bloody Flask into the tank via the container input on the tap, reinsert the returned clay flask, brewing uses 2,500 mL and fills it, and the tank can be topped up by Projection",
     "tone": "clipped, procedural"
   },
   "hemomancy.alchemist.body_answers.line3": {
@@ -1160,7 +1160,7 @@
     "tone": "clipped, exacting"
   },
   "hemomancy.alchemist.preparations.alembic": {
-    "about": "the Alchemist explaining how to distill Sanguine Formation in the base Alembic with aligned enzyme catalyst, blood from the stored tank, an empty clay flask or jug in the lower-right container input, and that Condenser (Degree 4) and Athanor (Degree 6) upgrade the same Alembic",
+    "about": "the Alchemist explaining how to distill Sanguine Formation in the base Alembic with aligned enzyme catalyst, blood from the stored tank, an empty clay flask or jug in the container input on the tap, and that Condenser (Degree 4) and Athanor (Degree 6) upgrade the same Alembic",
     "tone": "instructive, precise"
   },
   "hemomancy.alchemist.preparations.briefed": {

@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.*;
+import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilMotion;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
@@ -258,7 +259,7 @@ public final class CardinalRiteInteractionHandler {
 		}
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL
 				&& rite.getCurrentWave() < rite.getWaveDeck().size()
-				&& "false_omens".equals(rite.getWaveDeck().get(rite.getCurrentWave()))) {
+				&& CardinalRiteWave.of(rite.getWaveDeck().get(rite.getCurrentWave())) == CardinalRiteWave.FALSE_OMENS) {
 			for (BlockPos offset : CardinalRiteOrdealEngine.FALSE_OMEN_OFFSETS) {
 				BlockPos target = rite.getCenterPos().offset(offset);
 				targets.add(new ProjectionTarget(target,
@@ -407,12 +408,11 @@ public final class CardinalRiteInteractionHandler {
 		double originX = rite.getCenterPos().getX() + placement.x() + 0.5D;
 		double originY = surface.getY() + 0.10D;
 		double originZ = rite.getCenterPos().getZ() + placement.z() + 0.5D;
-		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
-		float footprintRadius = CardinalRiteFootprintResolver.radius(rite, recipe);
-		float orbitRadius = CardinalRiteFootprintRules.awakenedSigilOrbitRadius(footprintRadius);
-		float startingAngle = (float) Math.toRadians(Math.floorMod(placement.progressKey().hashCode(), 360));
-		entity.initialize(rite.getPlayerUUID(), sigil.id(), rite.getCenterPos(),
-				originX, originY, originZ, orbitRadius, startingAngle);
+		AwakenedIchorianSigilMotion.Position hover = AwakenedIchorianSigilMotion.hoverPoint(
+				sigil, originX, surface.getY(), originZ);
+		float turnPhase = Math.floorMod(placement.progressKey().hashCode(), 360);
+		entity.initialize(rite.getPlayerUUID(), sigil.id(),
+				originX, originY, originZ, hover, turnPhase);
 		level.addFreshEntity(entity);
 		level.playSound(null, surface, SoundInit.RITE_SIGIL_AWAKEN.get(),
 				SoundSource.PLAYERS, 0.9F, 1.0F);
@@ -448,7 +448,7 @@ public final class CardinalRiteInteractionHandler {
 			BlockPos target, double projectionRate) {
 		if (rite.getPhase() != CardinalRitePhase.ORDEAL
 				|| rite.getCurrentWave() >= rite.getWaveDeck().size()
-				|| !"false_omens".equals(rite.getWaveDeck().get(rite.getCurrentWave()))) return 0.0D;
+				|| CardinalRiteWave.of(rite.getWaveDeck().get(rite.getCurrentWave())) != CardinalRiteWave.FALSE_OMENS) return 0.0D;
 		for (BlockPos offset : CardinalRiteOrdealEngine.FALSE_OMEN_OFFSETS) {
 			BlockPos falseAnchor = rite.getCenterPos().offset(offset);
 			if (!target.closerThan(falseAnchor, 1.4D) && !target.closerThan(falseAnchor.below(), 1.4D)) continue;
@@ -467,6 +467,11 @@ public final class CardinalRiteInteractionHandler {
 				.filter(placement -> !rite.isSigilAwakened(placement.progressKey())).toList();
 	}
 
+	/** Every sigil the rite shows on the ground, awakened ones included: their gouges stay cut and filled. */
+	static List<SigilPlacement> groundSigils(ServerLevel level, ActiveCardinalRite rite) {
+		return projectionSigils(level, rite);
+	}
+
 	private static List<SigilPlacement> projectionSigils(ServerLevel level, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (recipe == null || recipe.getCeremony() == null) return List.of();
@@ -483,7 +488,7 @@ public final class CardinalRiteInteractionHandler {
 				String wave = rite.getCurrentWave() < rite.getWaveDeck().size()
 						? rite.getWaveDeck().get(rite.getCurrentWave()) : "";
 				SigilPlacement wavePlacement = resolveWaveSigilPlacement(
-						response, wave.startsWith("discover_"), rite.getCurrentWave(),
+						response, CardinalRiteWave.discoveredSigil(wave) != null, rite.getCurrentWave(),
 						supportPlacements, recipe);
 				if (!placements.contains(wavePlacement)) placements.add(wavePlacement);
 			}
@@ -586,13 +591,15 @@ public final class CardinalRiteInteractionHandler {
 	public static ResourceLocation sigilForWave(ActiveCardinalRite rite) {
 		if (rite.getCurrentWave() >= rite.getWaveDeck().size()) return null;
 		String wave = rite.getWaveDeck().get(rite.getCurrentWave());
-		if (wave.startsWith("discover_")) return Hemomancy.rloc(wave.substring("discover_".length()));
-		if ("covenant_pressure".equals(wave)) return Hemomancy.rloc("seal");
-		if ("response_sigil".equals(wave)) {
-			String[] ids = { "suture", "shunt", "seal", "cage", "lens" };
-			return Hemomancy.rloc(ids[Math.floorMod(rite.getCurrentWave() + rite.getDegree(), ids.length)]);
-		}
-		return null;
+		return switch (CardinalRiteWave.of(wave)) {
+			case DISCOVER -> Hemomancy.rloc(CardinalRiteWave.discoveredSigil(wave));
+			case COVENANT_PRESSURE -> Hemomancy.rloc("seal");
+			case RESPONSE_SIGIL -> {
+				String[] ids = { "suture", "shunt", "seal", "cage", "lens" };
+				yield Hemomancy.rloc(ids[Math.floorMod(rite.getCurrentWave() + rite.getDegree(), ids.length)]);
+			}
+			default -> null;
+		};
 	}
 
 	private static int nodeAt(ServerLevel level, ActiveCardinalRite rite, SigilPlacement placement,
@@ -673,7 +680,7 @@ public final class CardinalRiteInteractionHandler {
 		rite.getWaveDeck().clear();
 		rite.getWaveDeck().addAll(recipe.getCeremony().guaranteedWaves());
 		List<String> pool = recipe.getCeremony().waves().isEmpty()
-				? List.of("bloodlicker_siphon") : recipe.getCeremony().waves();
+				? List.of(CardinalRiteWave.FALLBACK.id()) : recipe.getCeremony().waves();
 		// Deal the authored pool in shuffled passes so a deck longer than its pool repeats
 		// every authored ordeal before any one of them comes back.
 		List<String> pass = new ArrayList<>();

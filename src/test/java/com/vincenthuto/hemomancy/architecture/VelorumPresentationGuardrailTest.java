@@ -75,7 +75,7 @@ class VelorumPresentationGuardrailTest {
 		String saint = SourceAssertions.read("tools/model_export/velorum.py");
 		assertFalse(saint.contains("'silver'"), "no silver, brass, bronze or copper on a blood-side body");
 		assertTrue(saint.contains("kit.SCALE = 1"), "16 px per block");
-		assertTrue(saint.contains("'cruor'") && saint.contains("'rime_iron'"));
+		assertTrue(saint.contains("'cruor'") && saint.contains("glow_atlases"));
 		String devotee = SourceAssertions.read("tools/model_export/velorum_devotee.py");
 		assertTrue(devotee.contains("from court_humanoid import humanoid, check_rig"), "the jointed rig, never the vanilla humanoid");
 		assertTrue(devotee.contains("check_rig(r)"));

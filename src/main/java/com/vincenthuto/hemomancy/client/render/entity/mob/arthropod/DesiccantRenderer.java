@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.entity.mob.arthropod;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.DesiccantModel;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.DesiccantEntity;
@@ -13,7 +14,12 @@ public class DesiccantRenderer extends MobRenderer<DesiccantEntity, DesiccantMod
 	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/desiccant/model_desiccant.png");
 
 	public DesiccantRenderer(Context renderManagerIn) {
-		super(renderManagerIn, new DesiccantModel(renderManagerIn.bakeLayer(DesiccantModel.LAYER_LOCATION)), 0.5F);
+		super(renderManagerIn, new DesiccantModel(renderManagerIn.bakeLayer(DesiccantModel.LAYER_LOCATION)), 0.35F);
+	}
+
+	@Override
+	protected void scale(DesiccantEntity entity, PoseStack poseStack, float partialTick) {
+		poseStack.scale(0.5F, 0.5F, 0.5F);
 	}
 
 	@Override

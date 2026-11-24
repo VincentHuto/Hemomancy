@@ -1,0 +1,5290 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "free",
+    "box_uv": false
+  },
+  "name": "Stilt Walker",
+  "resolution": {
+    "width": 128,
+    "height": 128
+  },
+  "elements": [
+    {
+      "name": "Waist and seat",
+      "from": [
+        -3.5,
+        31,
+        -1.75
+      ],
+      "to": [
+        3.5,
+        35,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        33,
+        0
+      ],
+      "uuid": "d76fd4f4-3ed5-4dab-993a-05140ee40ce4",
+      "faces": {
+        "north": {
+          "uv": [
+            50,
+            61,
+            57,
+            65
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            59,
+            61,
+            63,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            65,
+            61,
+            72,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            74,
+            61,
+            78,
+            65
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            61,
+            87,
+            65
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            89,
+            61,
+            96,
+            65
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Costume body",
+      "from": [
+        -3.0,
+        34,
+        -2
+      ],
+      "to": [
+        3.0,
+        45,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        35,
+        0
+      ],
+      "uuid": "957535ba-7519-4d8a-94eb-825ab8371eed",
+      "faces": {
+        "north": {
+          "uv": [
+            93,
+            1,
+            99,
+            12
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            101,
+            1,
+            105,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            107,
+            1,
+            113,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            115,
+            1,
+            119,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            98,
+            61,
+            104,
+            65
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            106,
+            61,
+            112,
+            65
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Crimson waistcoat front",
+      "from": [
+        -2.5,
+        35,
+        -3
+      ],
+      "to": [
+        2.5,
+        44,
+        -2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        35,
+        0
+      ],
+      "uuid": "294b568e-9ee8-4397-a1d6-d41137adb014",
+      "faces": {
+        "north": {
+          "uv": [
+            25,
+            25,
+            30,
+            34
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            25,
+            33,
+            34
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            35,
+            25,
+            40,
+            34
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            42,
+            25,
+            43,
+            34
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            47,
+            92,
+            52,
+            93
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            54,
+            92,
+            59,
+            93
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Standing collar",
+      "from": [
+        -3.5,
+        43,
+        -2
+      ],
+      "to": [
+        3.5,
+        45,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        35,
+        0
+      ],
+      "uuid": "b03caef9-5583-488a-9939-bb45e20740fb",
+      "faces": {
+        "up": {
+          "uv": [
+            114,
+            61,
+            121,
+            65
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1,
+            68,
+            8,
+            72
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            80,
+            79,
+            87,
+            81
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            89,
+            79,
+            93,
+            81
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            95,
+            79,
+            102,
+            81
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            104,
+            79,
+            108,
+            81
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Rolled pale lapel",
+      "from": [
+        -3.5,
+        38,
+        -3.25
+      ],
+      "to": [
+        -1.5,
+        44,
+        -2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        44,
+        -3
+      ],
+      "uuid": "25328e2d-346e-4227-8b67-2ff052056170",
+      "faces": {
+        "north": {
+          "uv": [
+            58,
+            37,
+            60,
+            43
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            62,
+            37,
+            63,
+            43
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            65,
+            37,
+            67,
+            43
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            69,
+            37,
+            70,
+            43
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            61,
+            92,
+            63,
+            93
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            65,
+            92,
+            67,
+            93
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -11
+      ]
+    },
+    {
+      "name": "Striped coat tail",
+      "from": [
+        -3.5,
+        23,
+        1
+      ],
+      "to": [
+        -0.5,
+        35,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        34,
+        1
+      ],
+      "uuid": "c79b4b10-a103-4acd-9339-c573a1ac005c",
+      "faces": {
+        "north": {
+          "uv": [
+            57,
+            1,
+            60,
+            13
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            62,
+            1,
+            64,
+            13
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            66,
+            1,
+            69,
+            13
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            71,
+            1,
+            73,
+            13
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            110,
+            79,
+            113,
+            81
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            115,
+            79,
+            118,
+            81
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        13,
+        0,
+        11
+      ]
+    },
+    {
+      "name": "Scarlet tail lining",
+      "from": [
+        -3.5,
+        24,
+        2.5
+      ],
+      "to": [
+        -0.5,
+        34,
+        3.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        34,
+        1
+      ],
+      "uuid": "a903b111-63e2-4f47-a2fd-217fafadb746",
+      "faces": {
+        "north": {
+          "uv": [
+            121,
+            1,
+            124,
+            11
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            126,
+            1,
+            127,
+            11
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1,
+            25,
+            4,
+            35
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            6,
+            25,
+            7,
+            35
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            69,
+            92,
+            72,
+            93
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            74,
+            92,
+            77,
+            93
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        13,
+        0,
+        11
+      ]
+    },
+    {
+      "name": "Rolled pale lapel",
+      "from": [
+        1.5,
+        38,
+        -3.25
+      ],
+      "to": [
+        3.5,
+        44,
+        -2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        44,
+        -3
+      ],
+      "uuid": "dfd5387c-372a-43cc-bbf1-619084338b8f",
+      "faces": {
+        "north": {
+          "uv": [
+            72,
+            37,
+            74,
+            43
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            76,
+            37,
+            77,
+            43
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            79,
+            37,
+            81,
+            43
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            83,
+            37,
+            84,
+            43
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            79,
+            92,
+            81,
+            93
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            83,
+            92,
+            85,
+            93
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        11
+      ]
+    },
+    {
+      "name": "Striped coat tail",
+      "from": [
+        1.5,
+        23,
+        1
+      ],
+      "to": [
+        4.5,
+        35,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        34,
+        1
+      ],
+      "uuid": "25a8a412-90fa-4e8b-adb2-9733dee5426d",
+      "faces": {
+        "north": {
+          "uv": [
+            75,
+            1,
+            78,
+            13
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            1,
+            82,
+            13
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            84,
+            1,
+            87,
+            13
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            89,
+            1,
+            91,
+            13
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            120,
+            79,
+            123,
+            81
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1,
+            84,
+            4,
+            86
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        13,
+        0,
+        -11
+      ]
+    },
+    {
+      "name": "Scarlet tail lining",
+      "from": [
+        1.5,
+        24,
+        2.5
+      ],
+      "to": [
+        4.5,
+        34,
+        3.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        34,
+        1
+      ],
+      "uuid": "88abc15e-9843-4dbd-83fa-fb953d9a7249",
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            25,
+            12,
+            35
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            14,
+            25,
+            15,
+            35
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            17,
+            25,
+            20,
+            35
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            22,
+            25,
+            23,
+            35
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            87,
+            92,
+            90,
+            93
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            92,
+            92,
+            95,
+            93
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        13,
+        0,
+        -11
+      ]
+    },
+    {
+      "name": "Neck",
+      "from": [
+        -1.5,
+        43.25,
+        -1.25
+      ],
+      "to": [
+        1.5,
+        46.25,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        35,
+        0
+      ],
+      "uuid": "9018f4ac-8a9a-4431-803c-2dd41499afa4",
+      "faces": {
+        "north": {
+          "uv": [
+            54,
+            68,
+            57,
+            71
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            59,
+            68,
+            62,
+            71
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            68,
+            67,
+            71
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            69,
+            68,
+            72,
+            71
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            74,
+            68,
+            77,
+            71
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            79,
+            68,
+            82,
+            71
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Face",
+      "from": [
+        -3.5,
+        45,
+        -3.25
+      ],
+      "to": [
+        3.5,
+        52,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        44.5,
+        0
+      ],
+      "uuid": "a836ed79-e1c9-448b-9ebb-34cefc0955ba",
+      "faces": {
+        "north": {
+          "uv": [
+            111,
+            25,
+            118,
+            32
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            120,
+            25,
+            126,
+            32
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1,
+            37,
+            8,
+            44
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            10,
+            37,
+            16,
+            44
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            86,
+            37,
+            93,
+            43
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            95,
+            37,
+            102,
+            43
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Nose",
+      "from": [
+        -0.5,
+        47,
+        -4
+      ],
+      "to": [
+        0.5,
+        49,
+        -3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        44.5,
+        0
+      ],
+      "uuid": "16478c1b-c030-4650-a7c5-14c3eb98d99a",
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            84,
+            7,
+            86
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            84,
+            10,
+            86
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            84,
+            13,
+            86
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15,
+            84,
+            16,
+            86
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            97,
+            92,
+            98,
+            93
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            100,
+            92,
+            101,
+            93
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ear",
+      "from": [
+        -4.0,
+        47,
+        -0.75
+      ],
+      "to": [
+        -3.0,
+        49,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        44.5,
+        0
+      ],
+      "uuid": "6efc9e1a-a09a-479d-a4b3-abd52e2e3694",
+      "faces": {
+        "north": {
+          "uv": [
+            18,
+            84,
+            19,
+            86
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            21,
+            84,
+            23,
+            86
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            25,
+            84,
+            26,
+            86
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            28,
+            84,
+            30,
+            86
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            84,
+            33,
+            86
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            35,
+            84,
+            36,
+            86
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ear",
+      "from": [
+        3.0,
+        47,
+        -0.75
+      ],
+      "to": [
+        4.0,
+        49,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        44.5,
+        0
+      ],
+      "uuid": "c2f79670-b5f5-4ba8-87dc-8c0738749b45",
+      "faces": {
+        "north": {
+          "uv": [
+            38,
+            84,
+            39,
+            86
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            41,
+            84,
+            43,
+            86
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            45,
+            84,
+            46,
+            86
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            84,
+            50,
+            86
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            52,
+            84,
+            53,
+            86
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            55,
+            84,
+            56,
+            86
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Sculpted hair crown",
+      "from": [
+        -3.75,
+        50.5,
+        -3.25
+      ],
+      "to": [
+        3.25,
+        52.5,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        44.5,
+        0
+      ],
+      "uuid": "f7d5b5e4-3164-4b18-8397-93caed82dde1",
+      "faces": {
+        "up": {
+          "uv": [
+            104,
+            37,
+            111,
+            43
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            113,
+            37,
+            120,
+            43
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            58,
+            84,
+            65,
+            86
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            67,
+            84,
+            73,
+            86
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            75,
+            84,
+            82,
+            86
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            84,
+            84,
+            90,
+            86
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Comb line",
+      "from": [
+        -3.75,
+        46.75,
+        2
+      ],
+      "to": [
+        3.25,
+        51.75,
+        4
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        44.5,
+        0
+      ],
+      "uuid": "bedc8b84-5f6d-43b4-a1e5-235ffae0657b",
+      "faces": {
+        "north": {
+          "uv": [
+            95,
+            46,
+            102,
+            51
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            104,
+            46,
+            106,
+            51
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            108,
+            46,
+            115,
+            51
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            117,
+            46,
+            119,
+            51
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            92,
+            84,
+            99,
+            86
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            101,
+            84,
+            108,
+            86
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Silver temple sweep",
+      "from": [
+        -3.5,
+        48.5,
+        -3.5
+      ],
+      "to": [
+        -1.5,
+        50.5,
+        -1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        44.5,
+        0
+      ],
+      "uuid": "c7b52fbc-d095-437b-b04e-a26ad2abfefb",
+      "faces": {
+        "north": {
+          "uv": [
+            110,
+            84,
+            112,
+            86
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            114,
+            84,
+            116,
+            86
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            118,
+            84,
+            120,
+            86
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            122,
+            84,
+            124,
+            86
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1,
+            88,
+            3,
+            90
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5,
+            88,
+            7,
+            90
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Silver temple sweep",
+      "from": [
+        1.5,
+        48.5,
+        -3.5
+      ],
+      "to": [
+        3.5,
+        50.5,
+        -1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        44.5,
+        0
+      ],
+      "uuid": "a5b05418-3a5f-4889-bd04-907f7156faac",
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            88,
+            11,
+            90
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13,
+            88,
+            15,
+            90
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            17,
+            88,
+            19,
+            90
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            21,
+            88,
+            23,
+            90
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            25,
+            88,
+            27,
+            90
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            29,
+            88,
+            31,
+            90
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Wide brim",
+      "from": [
+        -5.5,
+        51,
+        -4.5
+      ],
+      "to": [
+        5.5,
+        52,
+        4.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        51,
+        0
+      ],
+      "uuid": "62444257-86d2-4069-ae4c-d477d21992f1",
+      "faces": {
+        "up": {
+          "uv": [
+            45,
+            25,
+            56,
+            34
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            58,
+            25,
+            69,
+            34
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            103,
+            92,
+            114,
+            93
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            116,
+            92,
+            125,
+            93
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1,
+            96,
+            12,
+            97
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14,
+            96,
+            23,
+            97
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -7
+      ]
+    },
+    {
+      "name": "Pinched crown",
+      "from": [
+        -3.5,
+        52,
+        -3
+      ],
+      "to": [
+        3.5,
+        57,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        51,
+        0
+      ],
+      "uuid": "f3988d3a-5225-4c78-9298-93d126f9d7c5",
+      "faces": {
+        "up": {
+          "uv": [
+            1,
+            46,
+            8,
+            52
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            10,
+            46,
+            17,
+            52
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            1,
+            54,
+            8,
+            59
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            10,
+            54,
+            16,
+            59
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            18,
+            54,
+            25,
+            59
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            27,
+            54,
+            33,
+            59
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -7
+      ]
+    },
+    {
+      "name": "Crown lip",
+      "from": [
+        -4,
+        57,
+        -3.5
+      ],
+      "to": [
+        4,
+        58,
+        3.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        51,
+        0
+      ],
+      "uuid": "66cc23f3-26c3-43d8-af4f-3dd6c1b423eb",
+      "faces": {
+        "up": {
+          "uv": [
+            18,
+            37,
+            26,
+            44
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            28,
+            37,
+            36,
+            44
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            25,
+            96,
+            33,
+            97
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            35,
+            96,
+            42,
+            97
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            44,
+            96,
+            52,
+            97
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            54,
+            96,
+            61,
+            97
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -7
+      ]
+    },
+    {
+      "name": "Scarlet hatband",
+      "from": [
+        -4,
+        52,
+        -3.5
+      ],
+      "to": [
+        4,
+        53,
+        3.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        51,
+        0
+      ],
+      "uuid": "2d6c2b59-b62d-4f0a-8356-359c875789bb",
+      "faces": {
+        "up": {
+          "uv": [
+            38,
+            37,
+            46,
+            44
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            37,
+            56,
+            44
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            63,
+            96,
+            71,
+            97
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            73,
+            96,
+            80,
+            97
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            82,
+            96,
+            90,
+            97
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            92,
+            96,
+            99,
+            97
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -7
+      ]
+    },
+    {
+      "name": "Feather quill",
+      "from": [
+        2.75,
+        53,
+        2
+      ],
+      "to": [
+        3.75,
+        59,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        3,
+        53,
+        2
+      ],
+      "uuid": "80ca09bf-0313-46aa-82d2-4c745c9a63cd",
+      "faces": {
+        "north": {
+          "uv": [
+            19,
+            46,
+            20,
+            52
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            22,
+            46,
+            23,
+            52
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            25,
+            46,
+            26,
+            52
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            28,
+            46,
+            29,
+            52
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            101,
+            96,
+            102,
+            97
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            104,
+            96,
+            105,
+            97
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        18,
+        0,
+        -26
+      ]
+    },
+    {
+      "name": "Feather vane",
+      "from": [
+        3,
+        55,
+        2
+      ],
+      "to": [
+        5,
+        60,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        3,
+        53,
+        2
+      ],
+      "uuid": "6b524706-c9af-4450-af9f-c6877c51580c",
+      "faces": {
+        "north": {
+          "uv": [
+            35,
+            54,
+            37,
+            59
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            39,
+            54,
+            40,
+            59
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            42,
+            54,
+            44,
+            59
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            46,
+            54,
+            47,
+            59
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            107,
+            96,
+            109,
+            97
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            111,
+            96,
+            113,
+            97
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        18,
+        0,
+        -26
+      ]
+    },
+    {
+      "name": "Upper sleeve",
+      "from": [
+        -5.75,
+        35,
+        -1.25
+      ],
+      "to": [
+        -2.75,
+        44,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        43,
+        0
+      ],
+      "uuid": "05752bd3-a06b-432b-a501-e6d3ee9d4e1c",
+      "faces": {
+        "north": {
+          "uv": [
+            71,
+            25,
+            74,
+            34
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            76,
+            25,
+            79,
+            34
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            81,
+            25,
+            84,
+            34
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            86,
+            25,
+            89,
+            34
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            84,
+            68,
+            87,
+            71
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            89,
+            68,
+            92,
+            71
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower sleeve",
+      "from": [
+        -5.75,
+        30,
+        -1.5
+      ],
+      "to": [
+        -2.75,
+        35,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        35,
+        0
+      ],
+      "uuid": "93abfb7a-e54f-445b-9a16-f4ac726bdb6d",
+      "faces": {
+        "north": {
+          "uv": [
+            49,
+            54,
+            52,
+            59
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            54,
+            54,
+            57,
+            59
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            59,
+            54,
+            62,
+            59
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            54,
+            67,
+            59
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            94,
+            68,
+            97,
+            71
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            99,
+            68,
+            102,
+            71
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Turned wrist cuff",
+      "from": [
+        -6.25,
+        30,
+        -2.25
+      ],
+      "to": [
+        -2.25,
+        32,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        35,
+        0
+      ],
+      "uuid": "736f85fd-395a-4e34-b44d-9814d6ec646a",
+      "faces": {
+        "up": {
+          "uv": [
+            10,
+            68,
+            14,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            68,
+            20,
+            72
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            33,
+            88,
+            37,
+            90
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            39,
+            88,
+            43,
+            90
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            45,
+            88,
+            49,
+            90
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            51,
+            88,
+            55,
+            90
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hand",
+      "from": [
+        -5.75,
+        28,
+        -1.5
+      ],
+      "to": [
+        -2.75,
+        30,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        30,
+        0
+      ],
+      "uuid": "ad815f7b-f53e-4322-ad0c-fa63bd997de7",
+      "faces": {
+        "up": {
+          "uv": [
+            104,
+            68,
+            107,
+            71
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            109,
+            68,
+            112,
+            71
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            57,
+            88,
+            60,
+            90
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            62,
+            88,
+            65,
+            90
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            67,
+            88,
+            70,
+            90
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            72,
+            88,
+            75,
+            90
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Thumb",
+      "from": [
+        -3.75,
+        29,
+        -2.25
+      ],
+      "to": [
+        -2.75,
+        31,
+        -1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        30,
+        0
+      ],
+      "uuid": "2c7423f8-cdf4-421c-8e3f-da70dd6eddfb",
+      "faces": {
+        "north": {
+          "uv": [
+            77,
+            88,
+            78,
+            90
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            88,
+            81,
+            90
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            83,
+            88,
+            84,
+            90
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            86,
+            88,
+            87,
+            90
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            115,
+            96,
+            116,
+            97
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            118,
+            96,
+            119,
+            97
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper trouser",
+      "from": [
+        -3.5,
+        28,
+        -1.75
+      ],
+      "to": [
+        -0.5,
+        34,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        33,
+        0
+      ],
+      "uuid": "c6ae6092-f2be-468b-b5f6-d05a1c1f8fd3",
+      "faces": {
+        "north": {
+          "uv": [
+            31,
+            46,
+            34,
+            52
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            36,
+            46,
+            40,
+            52
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            42,
+            46,
+            45,
+            52
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            47,
+            46,
+            51,
+            52
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            22,
+            68,
+            25,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            27,
+            68,
+            30,
+            72
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower trouser",
+      "from": [
+        -3.5,
+        23,
+        -1.5
+      ],
+      "to": [
+        -0.5,
+        28,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        28,
+        0
+      ],
+      "uuid": "9908b961-6bd8-474b-aa5c-f99e406fd6ce",
+      "faces": {
+        "north": {
+          "uv": [
+            69,
+            54,
+            72,
+            59
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            74,
+            54,
+            77,
+            59
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            79,
+            54,
+            82,
+            59
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            84,
+            54,
+            87,
+            59
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            114,
+            68,
+            117,
+            71
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            119,
+            68,
+            122,
+            71
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stage boot",
+      "from": [
+        -3.75,
+        21.25,
+        -3
+      ],
+      "to": [
+        -0.75,
+        24.25,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "uuid": "fd3859e8-2f0c-400f-86bd-d536b498a1bc",
+      "faces": {
+        "up": {
+          "uv": [
+            89,
+            54,
+            92,
+            59
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            94,
+            54,
+            97,
+            59
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            124,
+            68,
+            127,
+            71
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            74,
+            6,
+            77
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            74,
+            11,
+            77
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            13,
+            74,
+            18,
+            77
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lacquered stilt shaft",
+      "from": [
+        -3,
+        0,
+        0.5
+      ],
+      "to": [
+        -1,
+        22,
+        2.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "uuid": "2ec8a938-ba62-4d9a-a808-66e8184102b9",
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            1,
+            3,
+            23
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            5,
+            1,
+            7,
+            23
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            1,
+            11,
+            23
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            13,
+            1,
+            15,
+            23
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            89,
+            88,
+            91,
+            90
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            93,
+            88,
+            95,
+            90
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ivory side inlay",
+      "from": [
+        -2.5,
+        4,
+        0.25
+      ],
+      "to": [
+        -1.5,
+        18,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "uuid": "1eeccbe9-304c-4f14-a1a5-6ceced680c88",
+      "faces": {
+        "north": {
+          "uv": [
+            33,
+            1,
+            34,
+            15
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            36,
+            1,
+            37,
+            15
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            39,
+            1,
+            40,
+            15
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            42,
+            1,
+            43,
+            15
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            121,
+            96,
+            122,
+            97
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            124,
+            96,
+            125,
+            97
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Broad stilt ferrule",
+      "from": [
+        -3.5,
+        0,
+        0
+      ],
+      "to": [
+        -0.5,
+        3,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "uuid": "23fc575b-5399-49f1-96f5-cdb2202b5170",
+      "faces": {
+        "north": {
+          "uv": [
+            20,
+            74,
+            23,
+            77
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            25,
+            74,
+            28,
+            77
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            30,
+            74,
+            33,
+            77
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            35,
+            74,
+            38,
+            77
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            40,
+            74,
+            43,
+            77
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            45,
+            74,
+            48,
+            77
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stirrup foot plate",
+      "from": [
+        -3.5,
+        20,
+        -3
+      ],
+      "to": [
+        -0.5,
+        21,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "uuid": "1d15a055-10a1-4954-8180-d1c84236f04c",
+      "faces": {
+        "up": {
+          "uv": [
+            53,
+            46,
+            56,
+            52
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            58,
+            46,
+            61,
+            52
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            1,
+            99,
+            4,
+            100
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            6,
+            99,
+            12,
+            100
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14,
+            99,
+            17,
+            100
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            19,
+            99,
+            25,
+            100
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stilt binding",
+      "from": [
+        -3.5,
+        8,
+        -0.25
+      ],
+      "to": [
+        -0.5,
+        9,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "uuid": "c0e1bae3-3672-4959-9b56-70d926638e24",
+      "faces": {
+        "up": {
+          "uv": [
+            50,
+            74,
+            53,
+            77
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            55,
+            74,
+            58,
+            77
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            27,
+            99,
+            30,
+            100
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            99,
+            35,
+            100
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            37,
+            99,
+            40,
+            100
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            42,
+            99,
+            45,
+            100
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stilt binding",
+      "from": [
+        -3.5,
+        17,
+        -0.25
+      ],
+      "to": [
+        -0.5,
+        18,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "uuid": "3ea75bf0-70a5-4126-8f61-9a7317540e2e",
+      "faces": {
+        "up": {
+          "uv": [
+            60,
+            74,
+            63,
+            77
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            65,
+            74,
+            68,
+            77
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            47,
+            99,
+            50,
+            100
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            52,
+            99,
+            55,
+            100
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            57,
+            99,
+            60,
+            100
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            62,
+            99,
+            65,
+            100
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stilt binding",
+      "from": [
+        -3.5,
+        22,
+        -0.25
+      ],
+      "to": [
+        -0.5,
+        23,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "uuid": "7311ce2c-97aa-49a6-89e4-4c2702d4a2ba",
+      "faces": {
+        "up": {
+          "uv": [
+            70,
+            74,
+            73,
+            77
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            75,
+            74,
+            78,
+            77
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            67,
+            99,
+            70,
+            100
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            72,
+            99,
+            75,
+            100
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            77,
+            99,
+            80,
+            100
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            82,
+            99,
+            85,
+            100
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Leather knee splint",
+      "from": [
+        -2.5,
+        24,
+        1
+      ],
+      "to": [
+        -1.5,
+        29,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        28,
+        0
+      ],
+      "uuid": "35973973-f7a6-4b4d-8503-c487f0a68483",
+      "faces": {
+        "north": {
+          "uv": [
+            99,
+            54,
+            100,
+            59
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            102,
+            54,
+            104,
+            59
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            106,
+            54,
+            107,
+            59
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            109,
+            54,
+            111,
+            59
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            97,
+            88,
+            98,
+            90
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            100,
+            88,
+            101,
+            90
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stilt knee clasp",
+      "from": [
+        -3,
+        26,
+        -2
+      ],
+      "to": [
+        -1,
+        27,
+        -1
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        28,
+        0
+      ],
+      "uuid": "ba95624d-835b-4b5b-affa-032c8ee0b364",
+      "faces": {
+        "north": {
+          "uv": [
+            87,
+            99,
+            89,
+            100
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            91,
+            99,
+            92,
+            100
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            94,
+            99,
+            96,
+            100
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            98,
+            99,
+            99,
+            100
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            101,
+            99,
+            103,
+            100
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            105,
+            99,
+            107,
+            100
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper sleeve",
+      "from": [
+        2.75,
+        35,
+        -1.25
+      ],
+      "to": [
+        5.75,
+        44,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        43,
+        0
+      ],
+      "uuid": "955f2395-2bdc-42f9-95e8-a507941b576e",
+      "faces": {
+        "north": {
+          "uv": [
+            91,
+            25,
+            94,
+            34
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            96,
+            25,
+            99,
+            34
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            101,
+            25,
+            104,
+            34
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            106,
+            25,
+            109,
+            34
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            74,
+            83,
+            77
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            85,
+            74,
+            88,
+            77
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower sleeve",
+      "from": [
+        2.75,
+        30,
+        -1.5
+      ],
+      "to": [
+        5.75,
+        35,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        35,
+        0
+      ],
+      "uuid": "998a7eea-3644-47f0-b82d-03f37adcfa3b",
+      "faces": {
+        "north": {
+          "uv": [
+            113,
+            54,
+            116,
+            59
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            118,
+            54,
+            121,
+            59
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            123,
+            54,
+            126,
+            59
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1,
+            61,
+            4,
+            66
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            90,
+            74,
+            93,
+            77
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            95,
+            74,
+            98,
+            77
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Turned wrist cuff",
+      "from": [
+        2.25,
+        30,
+        -2.25
+      ],
+      "to": [
+        6.25,
+        32,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        35,
+        0
+      ],
+      "uuid": "0b05aa64-6cba-426d-bc03-76c3be2e3265",
+      "faces": {
+        "up": {
+          "uv": [
+            32,
+            68,
+            36,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            38,
+            68,
+            42,
+            72
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            103,
+            88,
+            107,
+            90
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            109,
+            88,
+            113,
+            90
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            115,
+            88,
+            119,
+            90
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            121,
+            88,
+            125,
+            90
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hand",
+      "from": [
+        2.75,
+        28,
+        -1.5
+      ],
+      "to": [
+        5.75,
+        30,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        30,
+        0
+      ],
+      "uuid": "33aa8aa0-db64-42ff-9e79-64696a72cc7f",
+      "faces": {
+        "up": {
+          "uv": [
+            100,
+            74,
+            103,
+            77
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            105,
+            74,
+            108,
+            77
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            1,
+            92,
+            4,
+            94
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            6,
+            92,
+            9,
+            94
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            11,
+            92,
+            14,
+            94
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            92,
+            19,
+            94
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Thumb",
+      "from": [
+        2.75,
+        29,
+        -2.25
+      ],
+      "to": [
+        3.75,
+        31,
+        -1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        30,
+        0
+      ],
+      "uuid": "dcc65ee4-e94a-4047-b232-71d3e0836186",
+      "faces": {
+        "north": {
+          "uv": [
+            21,
+            92,
+            22,
+            94
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            24,
+            92,
+            25,
+            94
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            27,
+            92,
+            28,
+            94
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            30,
+            92,
+            31,
+            94
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            109,
+            99,
+            110,
+            100
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            112,
+            99,
+            113,
+            100
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper trouser",
+      "from": [
+        0.5,
+        28,
+        -1.75
+      ],
+      "to": [
+        3.5,
+        34,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        33,
+        0
+      ],
+      "uuid": "75480e03-7f30-4b57-a38c-be846be6c638",
+      "faces": {
+        "north": {
+          "uv": [
+            63,
+            46,
+            66,
+            52
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            68,
+            46,
+            72,
+            52
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            74,
+            46,
+            77,
+            52
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            79,
+            46,
+            83,
+            52
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            44,
+            68,
+            47,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            49,
+            68,
+            52,
+            72
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower trouser",
+      "from": [
+        0.5,
+        23,
+        -1.5
+      ],
+      "to": [
+        3.5,
+        28,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        28,
+        0
+      ],
+      "uuid": "3e6fc09d-7467-46bc-a824-efbc1407fb7c",
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            61,
+            9,
+            66
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11,
+            61,
+            14,
+            66
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            61,
+            19,
+            66
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            21,
+            61,
+            24,
+            66
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            110,
+            74,
+            113,
+            77
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            115,
+            74,
+            118,
+            77
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stage boot",
+      "from": [
+        0.25,
+        21.25,
+        -3
+      ],
+      "to": [
+        3.25,
+        24.25,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "uuid": "9e9ff3d4-14cf-4b2d-b557-2ca35473b98a",
+      "faces": {
+        "up": {
+          "uv": [
+            26,
+            61,
+            29,
+            66
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            31,
+            61,
+            34,
+            66
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            120,
+            74,
+            123,
+            77
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            79,
+            6,
+            82
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            79,
+            11,
+            82
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            13,
+            79,
+            18,
+            82
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lacquered stilt shaft",
+      "from": [
+        1,
+        0,
+        0.5
+      ],
+      "to": [
+        3,
+        22,
+        2.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "uuid": "f1600fdd-1a08-4cc4-a548-afca5b4fc58c",
+      "faces": {
+        "north": {
+          "uv": [
+            17,
+            1,
+            19,
+            23
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            21,
+            1,
+            23,
+            23
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            25,
+            1,
+            27,
+            23
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            29,
+            1,
+            31,
+            23
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            33,
+            92,
+            35,
+            94
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            37,
+            92,
+            39,
+            94
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ivory side inlay",
+      "from": [
+        1.5,
+        4,
+        0.25
+      ],
+      "to": [
+        2.5,
+        18,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "uuid": "8bcfcdc7-e5bd-4cef-a10f-f7858d2604ea",
+      "faces": {
+        "north": {
+          "uv": [
+            45,
+            1,
+            46,
+            15
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            1,
+            49,
+            15
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            51,
+            1,
+            52,
+            15
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            54,
+            1,
+            55,
+            15
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            115,
+            99,
+            116,
+            100
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            118,
+            99,
+            119,
+            100
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Broad stilt ferrule",
+      "from": [
+        0.5,
+        0,
+        0
+      ],
+      "to": [
+        3.5,
+        3,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "uuid": "1639c3e2-2b50-468e-8097-84880af167dd",
+      "faces": {
+        "north": {
+          "uv": [
+            20,
+            79,
+            23,
+            82
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            25,
+            79,
+            28,
+            82
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            30,
+            79,
+            33,
+            82
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            35,
+            79,
+            38,
+            82
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            40,
+            79,
+            43,
+            82
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            45,
+            79,
+            48,
+            82
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stirrup foot plate",
+      "from": [
+        0.5,
+        20,
+        -3
+      ],
+      "to": [
+        3.5,
+        21,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "uuid": "2c70ccb3-23ef-4d65-aa90-1232cf71848f",
+      "faces": {
+        "up": {
+          "uv": [
+            85,
+            46,
+            88,
+            52
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            90,
+            46,
+            93,
+            52
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            121,
+            99,
+            124,
+            100
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            102,
+            7,
+            103
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            102,
+            12,
+            103
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14,
+            102,
+            20,
+            103
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stilt binding",
+      "from": [
+        0.5,
+        8,
+        -0.25
+      ],
+      "to": [
+        3.5,
+        9,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "uuid": "405e630b-1c5c-4b5b-9cdf-819a0fac7670",
+      "faces": {
+        "up": {
+          "uv": [
+            50,
+            79,
+            53,
+            82
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            55,
+            79,
+            58,
+            82
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            22,
+            102,
+            25,
+            103
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            27,
+            102,
+            30,
+            103
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            102,
+            35,
+            103
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            37,
+            102,
+            40,
+            103
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stilt binding",
+      "from": [
+        0.5,
+        17,
+        -0.25
+      ],
+      "to": [
+        3.5,
+        18,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "uuid": "131f50f9-e8c2-44a5-8578-92f51bda762b",
+      "faces": {
+        "up": {
+          "uv": [
+            60,
+            79,
+            63,
+            82
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            65,
+            79,
+            68,
+            82
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            42,
+            102,
+            45,
+            103
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            47,
+            102,
+            50,
+            103
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            52,
+            102,
+            55,
+            103
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            57,
+            102,
+            60,
+            103
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stilt binding",
+      "from": [
+        0.5,
+        22,
+        -0.25
+      ],
+      "to": [
+        3.5,
+        23,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "uuid": "ce37482f-5650-4578-a174-015cd38429ee",
+      "faces": {
+        "up": {
+          "uv": [
+            70,
+            79,
+            73,
+            82
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            75,
+            79,
+            78,
+            82
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            62,
+            102,
+            65,
+            103
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            67,
+            102,
+            70,
+            103
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            72,
+            102,
+            75,
+            103
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            77,
+            102,
+            80,
+            103
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Leather knee splint",
+      "from": [
+        1.5,
+        24,
+        1
+      ],
+      "to": [
+        2.5,
+        29,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        28,
+        0
+      ],
+      "uuid": "79fc5905-3019-4159-9eae-50c7f3bafdb3",
+      "faces": {
+        "north": {
+          "uv": [
+            36,
+            61,
+            37,
+            66
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            39,
+            61,
+            41,
+            66
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            43,
+            61,
+            44,
+            66
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            46,
+            61,
+            48,
+            66
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            41,
+            92,
+            42,
+            94
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            44,
+            92,
+            45,
+            94
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stilt knee clasp",
+      "from": [
+        1,
+        26,
+        -2
+      ],
+      "to": [
+        3,
+        27,
+        -1
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        28,
+        0
+      ],
+      "uuid": "b79000c9-3eaa-4eb5-9a14-272dbeeec2d1",
+      "faces": {
+        "north": {
+          "uv": [
+            82,
+            102,
+            84,
+            103
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            86,
+            102,
+            87,
+            103
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            89,
+            102,
+            91,
+            103
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            93,
+            102,
+            94,
+            103
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            96,
+            102,
+            98,
+            103
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            100,
+            102,
+            102,
+            103
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Bone coat clasp",
+      "type": "cube",
+      "uuid": "edb628a1-d205-475d-b29e-3f2bbe081361",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        35,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            121,
+            13,
+            124,
+            15
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            126,
+            13,
+            127,
+            15
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            93,
+            14,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            98,
+            14,
+            99,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            101,
+            14,
+            104,
+            15
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            106,
+            14,
+            109,
+            15
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -1.5,
+        42,
+        -3.75
+      ],
+      "to": [
+        1.5,
+        44,
+        -2.75
+      ]
+    },
+    {
+      "name": "Bone feather socket",
+      "type": "cube",
+      "uuid": "a7c04daf-8647-4f95-9db9-d1c8bbde8262",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        51,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            111,
+            14,
+            113,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            115,
+            14,
+            117,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            57,
+            15,
+            59,
+            17
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            61,
+            15,
+            63,
+            17
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            65,
+            15,
+            67,
+            17
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            69,
+            15,
+            71,
+            17
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        2.5,
+        52.5,
+        1
+      ],
+      "to": [
+        4.5,
+        54.5,
+        3
+      ]
+    },
+    {
+      "name": "Riveted stilt splint",
+      "type": "cube",
+      "uuid": "1b85b9be-53a1-4590-bbb5-accd29393c18",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        23,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            73,
+            15,
+            74,
+            22
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            76,
+            15,
+            77,
+            22
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            79,
+            15,
+            80,
+            22
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            82,
+            15,
+            83,
+            22
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            85,
+            15,
+            86,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            88,
+            15,
+            89,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -2.5,
+        17,
+        -0.75
+      ],
+      "to": [
+        -1.5,
+        24,
+        0.25
+      ]
+    },
+    {
+      "name": "Riveted stilt splint",
+      "type": "cube",
+      "uuid": "2795c63c-3327-44fd-a371-16a1ff74852a",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        23,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            122,
+            34,
+            123,
+            41
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            125,
+            34,
+            126,
+            41
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            122,
+            43,
+            123,
+            50
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            125,
+            43,
+            126,
+            50
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            33,
+            17,
+            34,
+            18
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            36,
+            17,
+            37,
+            18
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        1.5,
+        17,
+        -0.75
+      ],
+      "to": [
+        2.5,
+        24,
+        0.25
+      ]
+    }
+  ],
+  "outliner": [
+    {
+      "name": "Root",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "uuid": "ab837e2f-ce40-4edd-99a6-7309ba4bf641",
+      "children": [
+        {
+          "name": "Waist",
+          "origin": [
+            0,
+            33,
+            0
+          ],
+          "uuid": "cc1b5e77-10c1-4b97-8927-3ae20228aeef",
+          "children": [
+            {
+              "name": "Chest",
+              "origin": [
+                0,
+                35,
+                0
+              ],
+              "uuid": "a1acf0ac-d310-46fd-9d1c-3d637c37d7f6",
+              "children": [
+                "957535ba-7519-4d8a-94eb-825ab8371eed",
+                "294b568e-9ee8-4397-a1d6-d41137adb014",
+                "b03caef9-5583-488a-9939-bb45e20740fb",
+                "25328e2d-346e-4227-8b67-2ff052056170",
+                "dfd5387c-372a-43cc-bbf1-619084338b8f",
+                {
+                  "name": "Head",
+                  "origin": [
+                    0,
+                    44.5,
+                    0
+                  ],
+                  "uuid": "5d399ee6-9d67-4dfb-b46b-43a913d0a3b7",
+                  "children": [
+                    "a836ed79-e1c9-448b-9ebb-34cefc0955ba",
+                    "16478c1b-c030-4650-a7c5-14c3eb98d99a",
+                    "6efc9e1a-a09a-479d-a4b3-abd52e2e3694",
+                    "c2f79670-b5f5-4ba8-87dc-8c0738749b45",
+                    "f7d5b5e4-3164-4b18-8397-93caed82dde1",
+                    "bedc8b84-5f6d-43b4-a1e5-235ffae0657b",
+                    "c7b52fbc-d095-437b-b04e-a26ad2abfefb",
+                    "a5b05418-3a5f-4889-bd04-907f7156faac",
+                    {
+                      "name": "Top Hat",
+                      "origin": [
+                        0,
+                        51,
+                        0
+                      ],
+                      "uuid": "5697ca77-1bd1-40a3-86fa-421ca78235ea",
+                      "children": [
+                        "62444257-86d2-4069-ae4c-d477d21992f1",
+                        "f3988d3a-5225-4c78-9298-93d126f9d7c5",
+                        "66cc23f3-26c3-43d8-af4f-3dd6c1b423eb",
+                        "2d6c2b59-b62d-4f0a-8356-359c875789bb",
+                        "80ca09bf-0313-46aa-82d2-4c745c9a63cd",
+                        "6b524706-c9af-4450-af9f-c6877c51580c",
+                        "a7c04daf-8647-4f95-9db9-d1c8bbde8262"
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                "9018f4ac-8a9a-4431-803c-2dd41499afa4",
+                {
+                  "name": "Left shoulder",
+                  "origin": [
+                    -4.25,
+                    43,
+                    0
+                  ],
+                  "uuid": "9dadce1a-2954-425f-abcb-a4e2eb2dfb66",
+                  "children": [
+                    "05752bd3-a06b-432b-a501-e6d3ee9d4e1c",
+                    {
+                      "name": "Left elbow",
+                      "origin": [
+                        -4.25,
+                        35,
+                        0
+                      ],
+                      "uuid": "c588237a-b8bd-40ed-939f-aa3067d97407",
+                      "children": [
+                        "93abfb7a-e54f-445b-9a16-f4ac726bdb6d",
+                        "736f85fd-395a-4e34-b44d-9814d6ec646a",
+                        {
+                          "name": "Left hand",
+                          "origin": [
+                            -4.25,
+                            30,
+                            0
+                          ],
+                          "uuid": "ea9e4e99-10ee-4b7a-a6b1-51119317b42c",
+                          "children": [
+                            "ad815f7b-f53e-4322-ad0c-fa63bd997de7",
+                            "2c7423f8-cdf4-421c-8e3f-da70dd6eddfb"
+                          ],
+                          "export": true,
+                          "isOpen": false
+                        }
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                {
+                  "name": "Right shoulder",
+                  "origin": [
+                    4.25,
+                    43,
+                    0
+                  ],
+                  "uuid": "12753bbd-45d0-4bd5-ae3b-ebf3fbce60c6",
+                  "children": [
+                    "955f2395-2bdc-42f9-95e8-a507941b576e",
+                    {
+                      "name": "Right elbow",
+                      "origin": [
+                        4.25,
+                        35,
+                        0
+                      ],
+                      "uuid": "62eb1ccd-5e68-4428-b428-c3bf2df1ee0a",
+                      "children": [
+                        "998a7eea-3644-47f0-b82d-03f37adcfa3b",
+                        "0b05aa64-6cba-426d-bc03-76c3be2e3265",
+                        {
+                          "name": "Right hand",
+                          "origin": [
+                            4.25,
+                            30,
+                            0
+                          ],
+                          "uuid": "a731f09a-691b-41e3-9883-583c4fe3eb08",
+                          "children": [
+                            "33aa8aa0-db64-42ff-9e79-64696a72cc7f",
+                            "dcc65ee4-e94a-4047-b232-71d3e0836186"
+                          ],
+                          "export": true,
+                          "isOpen": false
+                        }
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                "edb628a1-d205-475d-b29e-3f2bbe081361"
+              ],
+              "export": true,
+              "isOpen": false
+            },
+            "d76fd4f4-3ed5-4dab-993a-05140ee40ce4",
+            "c79b4b10-a103-4acd-9339-c573a1ac005c",
+            "a903b111-63e2-4f47-a2fd-217fafadb746",
+            "25a8a412-90fa-4e8b-adb2-9733dee5426d",
+            "88abc15e-9843-4dbd-83fa-fb953d9a7249",
+            {
+              "name": "Left hip",
+              "origin": [
+                -2,
+                33,
+                0
+              ],
+              "uuid": "d1500351-e2e5-4105-98ad-6daab5eaf906",
+              "children": [
+                "c6ae6092-f2be-468b-b5f6-d05a1c1f8fd3",
+                {
+                  "name": "Left knee",
+                  "origin": [
+                    -2,
+                    28,
+                    0
+                  ],
+                  "uuid": "773f974f-54d5-4696-a44d-5cbeec2ca323",
+                  "children": [
+                    "9908b961-6bd8-474b-aa5c-f99e406fd6ce",
+                    {
+                      "name": "Left ankle",
+                      "origin": [
+                        -2,
+                        23,
+                        0
+                      ],
+                      "uuid": "ae141853-eae3-4007-8699-e6ce49244b46",
+                      "children": [
+                        "fd3859e8-2f0c-400f-86bd-d536b498a1bc",
+                        "2ec8a938-ba62-4d9a-a808-66e8184102b9",
+                        "1eeccbe9-304c-4f14-a1a5-6ceced680c88",
+                        "23fc575b-5399-49f1-96f5-cdb2202b5170",
+                        "1d15a055-10a1-4954-8180-d1c84236f04c",
+                        "c0e1bae3-3672-4959-9b56-70d926638e24",
+                        "3ea75bf0-70a5-4126-8f61-9a7317540e2e",
+                        "7311ce2c-97aa-49a6-89e4-4c2702d4a2ba",
+                        "1b85b9be-53a1-4590-bbb5-accd29393c18"
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    },
+                    "35973973-f7a6-4b4d-8503-c487f0a68483",
+                    "ba95624d-835b-4b5b-affa-032c8ee0b364"
+                  ],
+                  "export": true,
+                  "isOpen": false
+                }
+              ],
+              "export": true,
+              "isOpen": false
+            },
+            {
+              "name": "Right hip",
+              "origin": [
+                2,
+                33,
+                0
+              ],
+              "uuid": "ea040316-c066-4829-85ad-be33da16a428",
+              "children": [
+                "75480e03-7f30-4b57-a38c-be846be6c638",
+                {
+                  "name": "Right knee",
+                  "origin": [
+                    2,
+                    28,
+                    0
+                  ],
+                  "uuid": "ca298235-b6d4-4b75-9290-365b3ad1de7a",
+                  "children": [
+                    "3e6fc09d-7467-46bc-a824-efbc1407fb7c",
+                    {
+                      "name": "Right ankle",
+                      "origin": [
+                        2,
+                        23,
+                        0
+                      ],
+                      "uuid": "00d9477f-4800-49b4-85b1-5a265da46556",
+                      "children": [
+                        "9e9ff3d4-14cf-4b2d-b557-2ca35473b98a",
+                        "f1600fdd-1a08-4cc4-a548-afca5b4fc58c",
+                        "8bcfcdc7-e5bd-4cef-a10f-f7858d2604ea",
+                        "1639c3e2-2b50-468e-8097-84880af167dd",
+                        "2c70ccb3-23ef-4d65-aa90-1232cf71848f",
+                        "405e630b-1c5c-4b5b-9cdf-819a0fac7670",
+                        "131f50f9-e8c2-44a5-8578-92f51bda762b",
+                        "ce37482f-5650-4578-a174-015cd38429ee",
+                        "2795c63c-3327-44fd-a371-16a1ff74852a"
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    },
+                    "79fc5905-3019-4159-9eae-50c7f3bafdb3",
+                    "b79000c9-3eaa-4eb5-9a14-272dbeeec2d1"
+                  ],
+                  "export": true,
+                  "isOpen": false
+                }
+              ],
+              "export": true,
+              "isOpen": false
+            }
+          ],
+          "export": true,
+          "isOpen": false
+        }
+      ],
+      "export": true,
+      "isOpen": false
+    }
+  ],
+  "textures": [
+    {
+      "name": "stilt_walker.png",
+      "relative_path": "stilt_walker.png",
+      "mode": "bitmap",
+      "id": "0",
+      "uuid": "7d1a3c62-b018-430b-b8d7-e4c4570ca543",
+      "width": 128,
+      "height": 128,
+      "uv_width": 128,
+      "uv_height": 128,
+      "saved": true,
+      "visible": true,
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAI1ElEQVR4nO2deWwUVRjA35YlUo5uS0sPaAtIy1raQqtFFJZDLdA/IEqrBAtsiBoTAS0QjirEGK1RQiLEhGiMCaZiIVoVIyENFIjYEsQDmlDK2ZbuyrZQKAXUgpU1M9OZnZmd+9rjfb+keee815355nvve9fY1hRP8yOE0Ljk4YSD2q/dRVaGr9xPQ2aS+BDlXr7Wg3y9vaTflT2OiSOYkJwQkjwERL40h0M0v1S8kutmD45FUsRIpgJRjz3U/wBgLudv3Wb83r6/SDd9yDAmDjQA5oAAYA4IQAihO2pq07VeJ4Tdc+MfToTVYe+Dm8hMEtNGonAljdWLV5Ou9TohQANgjn1mziiOfW51uCRnoqk/sPNWt6nlRzqgATAHxgGiHGd8XMCPAn4aO62KaawON3d1WzIUDAgDGiDKmVv5Aum2tnei1tYu0l/89BQmHQTAYkqWzOI8ECfvgUhRf6QJOZMdpP99dzHpVlfXk66bF961faeNcKuQm5zsEyPqBeCl9WXMjXHybpQz2REU5t/YjfOpB6aXHPer5ANZ9cazkg/EasAKwBxGA4RqPcD8klmSb4xeNmwu0/XGnT59WVX+goIJeqpDRQuV/W63u9ivubztGDUBVpMjI7hyD0QpowsXccqp3L5TfSE4CIDcjaqUCe9Ztyms2myjCbkAGKXqAZ0C8HPLddLNSIy1NAyEFmY6mH4wVofDnQKdnbpwJ+SzgQDmfYBwJyfK+yi2D2bMNbWXmxc72NDyGvJyFec9daZZcz2zUkZKrvEPdZx79UrSndhzNuh/v5AwiXQ7PNQeATEqN6+ywUgg5tjl1o2z0ZKeF5tIuqe7AtJ49u87pDtp6AgmriAlQVE+lKfsh3m8VxHuLM/uJ12fj2tx+ToDU/CWaYDcBQ60ZffzpGsFGemjEQ7savmX/OP7lWKZADTv70VVy2pJFzCO99bOQ+fPXQzyC5GWRllgbMJSA9CqXw5Q8wg1fvENqngyGeVPm4xa646SfiEItc9vCiw1A4k3v3l/raK8nDZfAlzUvBCzh1AP05eahBp+OYM++biGDLum5SHUcozKVJjD5E9LTRIsxzIBIN78RUvmou/3HkJnv1b2hquB0Aa4CoSLeOgCHTwlhKUG0AKuD18vlgkAbeaRfpSgOV+Dgrpw0AZjFlcoHqFsqf6MM9iXlZDJ+O1y68bZ6E0HMBwKfrPxUFSPpUcCYotaXvxoq83urlhABoRMBLpD0Tw8X7KCnuvtommbphb41Y7Jvy6TXtPWoa68beuRlYztFx/r+ONUi+Jy7uSIr0huPN6EjADmAjDHbsSYcgNSZreHio6rnZbWNzY5Mha7EIAGwBxNZiAxpizUZwAib1kbRwMoGUUSG1M2a3yePT0cifgMelHkFncYogHExovV5DF6AIY9MKSVzNGpyFL6eyVn4LSQmaH/PqjqA6gdUxYCtEH4g8Wi0OmlKyJ0MOpTQ0pxDRXf3WT/+LhXJGlEYFHlr/IDL7nxwcexpSAbuu/1CaZJHeL8nchBya02G2ok4hLjRQ9HLskKHAlCbz4pK5wcdAMKJ00WrV/qoGa5vEL1C1G2tjKofSfUPOH3eKj7nZGRKar+lV5T7i6XFH4wAzEHBABzQAAwB4tOIO4UKB0ICqdFlmoOPFaTNxzr9wx04My+RlYDhNMqGjUHHqvJGyn1W7W/EZqAECFnnlmFna/+u2/1oKR4rt1ZOLAhk5+HcKXSab9QnuaugTL8foTi4tA7KxczU7dZIsO3WQPTupy0b6nj3AiIt7Du0j3GRo9LGiJqyzdcbCfj6I848eNo+14J7DrusscLBsehOQ8H7uWJS9cY/3NF1Me6aJ7IEl7PL0f/IIfmDaZ1JxtgcyjuQBMQJnh7uB/SUEpqkr69ljAOgDkgAJjDaQLoDpsUcnmMKANH0hO0rSOkVmtqBzQA5tiqli7zm32ejZgpxEerKdST+ohqM1SPCdvNixdCzV4I+jwiPoRZqgT6nkuVQZh8QumgATDHHg2m0DCLl/xFE6ABMAcEAHPs0WAKgVEZJQKgla07tsnOrB2sP6Aq3qhrlXBQ5/V1J5UcmyGMreRxl+z5AG9XvsIJ/9T4u2T+/zp7FJkyZpVbtXRO0P4G9oYWtXGPsg5bktre3dRxV9H/xzbblN4fqXuj9L6wzXEa6ANgTlQ0AYB6M9t7gzqpDQQAI9idbNoPTQDmRKUGKKqoCov1dnp77XWlDQbXGxxn+3DJQsNOCcvPn4nMouao+M3IT/KrnmwyIl+RMzviev2Ve3/kvBzQBGCOXaqHmJ44IiiOfjuE8vfFXmHiLno8pJudkaE5rvwplxG/EVu8As9IVACEeohs+HFC+fOzxjJxU1l+I+IA9Qg9o32/cfNAE4A5UWkFhAKXxKocpfmOsDa5GAG9aUSqswgaAHOgE4g50AnEHOgD6GDLV7sjfsRRcD0Aez7dTNiHKLLn2ZUcWKmmPPax62Kna82YPkUwD30su1i61jL0HP/OPwmMXZeSMHtrOnQCMQcEAHNAADDHVlNd45dqi/S2N3z45S+dF1hvZ/bHItra/iTd8ePHGBKnhM7jhzhh/umhU51jBWceN771GrLi+FzQAJgDAoA5IACYY4+53cFp59KH8du+c6Qb46DixjmofFduUvmIMJmvicrHXHtbeP55Zh63b3Cy9ktNbeTL8YmaPifH/4Rc20DbTrvoBPU7CD7fd1S0nHd55QSt4GHKiUGHO32i5SwvLWb8uayxix+OqfvUnlZAA2AOCADmROxcwML6A5rG4feUrjCk/nqDyhmzuAKFEtumNRtM/XZwuOJS+Tlbq+hyTmT8dS0XGP+61dRJqmJ9jtkzHhNMG9U3SLC82iPUCwRNAOaAAGCObUf5M5Y0AX0PhiKc6OrXdoRrbgp3KpyttvlNgRJV70q9F1THmprDMB0MUEATgDmmNAGg7o1R93RP3UxAA2AOCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAECE8j/he0JoaBC6ywAAAABJRU5ErkJggg=="
+    }
+  ]
+}

@@ -8,8 +8,8 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * The purifier on fire (design revision R1): the body's fire anchors and the burn of its growths. The anchors are the
- * generator's table ({@code putriciel.py}, emitted into {@link PutricielModel}): seventy named points on the staff,
- * the censers, the back colony, the shoulders and arms, the crown, the chest and the hem, each with an outward
+ * generator's table ({@code putriciel_vestment.py}, emitted into {@link PutricielModel}): named points on the staff,
+ * the censer, the back colony, the shoulders and arms, the crown, the chest and the hem, each with an outward
  * normal, a steady-burn tongue size, a region and a kindle order. {@link PutricielAnimState#fireAnchors()} returns
  * this frame's, posed and moving; the world geometry stands its flames on them and reads their fire from
  * {@link PutricielBodyFireRules#anchor} with {@link Anchor#bodyRegion()}, {@link Anchor#place()} and

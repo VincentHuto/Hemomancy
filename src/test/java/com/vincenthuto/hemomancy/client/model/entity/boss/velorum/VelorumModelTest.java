@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumMove;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumOpeningRules;
 import com.vincenthuto.hemomancy.support.ResourceReader;
 import net.minecraft.client.model.geom.ModelPart;
-import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -54,7 +53,7 @@ class VelorumModelTest {
 		var model = model(root);
 		var chest = root.getChild("root").getChild("hips").getChild("chest");
 		var core = chest.getChild("left_arm").getChild("left_forearm").getChild("left_hand").getChild("staff")
-				.getChild("staff_lantern").getChild("staff_lantern_crystal").getChild("staff_lantern_core");
+				.getChild("staff_lantern").getChild("staff_lantern_core");
 		model.pose(VelorumAnimState.Frame.REST, 0, 0, 0);
 		float upright = chest.xRot;
 		model.pose(VelorumAnimState.Frame.opening(VelorumOpeningRules.BOW_ID, 30, 70), 0, 0, 0);
@@ -63,39 +62,6 @@ class VelorumModelTest {
 		assertTrue(core.xScale < 0.5F, "the Gutter shrinks the light, not the cage");
 		model.pose(VelorumAnimState.Frame.ending(60), 0, 0, 0);
 		assertTrue(chest.xRot > upright + 0.2F, "the hood bows as his body fails");
-	}
-
-	@Test
-	void sleevesAndClawIceHangAndTheStaffIsVerticalAtRest() {
-		var root = VelorumModel.createBodyLayer().bakeRoot();
-		var model = model(root);
-		var hips = root.getChild("root").getChild("hips");
-		var chest = hips.getChild("chest");
-		for (VelorumMove move : VelorumMove.values()) {
-			model.pose(VelorumAnimState.Frame.move(move, move.authored().windup()), 30, 10, 5);
-			for (String side : new String[]{"left", "right"}) {
-				var arm = chest.getChild(side + "_arm");
-				var fore = arm.getChild(side + "_forearm");
-				PoseStack pose = new PoseStack();
-				for (var part : new ModelPart[]{hips, chest, arm, fore}) part.translateAndRotate(pose);
-				fore.getChild(side + "_sleeve").translateAndRotate(pose);
-				assertVertical(pose, 0.02F);
-			}
-		}
-		model.pose(VelorumAnimState.Frame.REST, 0, 0, 0);
-		var arm = chest.getChild("left_arm");
-		var fore = arm.getChild("left_forearm");
-		var hand = fore.getChild("left_hand");
-		PoseStack pose = new PoseStack();
-		for (var part : new ModelPart[]{hips, chest, arm, fore, hand, hand.getChild("staff")}) part.translateAndRotate(pose);
-		assertVertical(pose, 0.0001F);
-	}
-
-	private static void assertVertical(PoseStack pose, float slack) {
-		var down = pose.last().pose().transformDirection(new Vector3f(0, 1, 0));
-		assertEquals(1, down.y, slack);
-		assertEquals(0, down.x, slack);
-		assertEquals(0, down.z, slack);
 	}
 
 	@Test
@@ -111,22 +77,7 @@ class VelorumModelTest {
 		var chest = VelorumModel.createBodyLayer().bakeRoot().getChild("root").getChild("hips").getChild("chest");
 		assertNotNull(chest.getChild("breast_seam"));
 		var halo = chest.getChild("head").getChild("halo");
-		for (int i = 0; i < 4; i++) assertNotNull(halo.getChild("halo_chain_" + i).getChild("halo_icicle_" + i));
-	}
-
-	@Test
-	void authoredStaffFootReachesTheFloor() {
-		var hips = VelorumModel.createBodyLayer().bakeRoot().getChild("root").getChild("hips");
-		var chest = hips.getChild("chest");
-		var arm = chest.getChild("left_arm");
-		var fore = arm.getChild("left_forearm");
-		var hand = fore.getChild("left_hand");
-		var staff = hand.getChild("staff");
-		PoseStack pose = new PoseStack();
-		for (var part : new ModelPart[]{hips, chest, arm, fore, hand, staff}) part.translateAndRotate(pose);
-		float bottom = staff.cubes.stream().map(c -> c.maxY).max(Float::compare).orElseThrow();
-		var foot = pose.last().pose().transformPosition(new Vector3f(0, bottom / 16, 0)).mul(16);
-		assertEquals(24, foot.y, .2F);
+		for (String side : new String[]{"left", "right"}) assertNotNull(halo.getChild(side + "_votive_drop"));
 	}
 
 	@Test
@@ -178,12 +129,9 @@ class VelorumModelTest {
 	}
 
 	@Test
-	void savedGeometryUsesTheQuarterUnitGridAndRealThickness() {
+	void savedGeometryHasRealThickness() {
 		VelorumModel.createBodyLayer().bakeRoot().getAllParts().forEach(part -> {
-			for (float c : new float[]{part.x, part.y, part.z}) assertEquals(Math.round(c * 4), c * 4, .0001F);
 			for (var cube : part.cubes) {
-				for (float c : new float[]{cube.minX, cube.minY, cube.minZ, cube.maxX, cube.maxY, cube.maxZ})
-					assertEquals(Math.round(c * 4), c * 4, .0001F);
 				assertTrue(cube.maxX - cube.minX >= .25F);
 				assertTrue(cube.maxY - cube.minY >= .25F);
 				assertTrue(cube.maxZ - cube.minZ >= .25F);

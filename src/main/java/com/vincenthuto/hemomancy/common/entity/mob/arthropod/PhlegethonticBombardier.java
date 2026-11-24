@@ -194,7 +194,7 @@ public class PhlegethonticBombardier extends PathfinderMob implements NeutralMob
         navigation.stop();
         if (tick < AIM_TRACKING_TICKS) getLookControl().setLookAt(target, 30, 30);
         if (tick == AIM_TRACKING_TICKS) lockAim(target.getBoundingBox().getCenter().subtract(
-                getAbdominalNozzlePosition(1.0F)).normalize());
+                raisedValvePivot()).normalize());
         if (tick >= WINDUP_DURATION - 1) {
             setBombardierState(BombardierState.FIRING);
             level().playSound(null, blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 1.0F, .75F);
@@ -225,10 +225,8 @@ public class PhlegethonticBombardier extends PathfinderMob implements NeutralMob
                 && BombardierHabitat.sharesOutcropping(this, other));
     }
 
-    public Vec3 getAbdominalNozzlePosition(float partialTick) {
-        float yaw = Mth.lerp(partialTick, yBodyRotO, yBodyRot);
-        double radians = Math.toRadians(yaw);
-        return position().add(-Math.sin(radians) * -.65, 1.05, Math.cos(radians) * -.65);
+    Vec3 raisedValvePivot() {
+        return BombardierFlameGeometry.raisedValvePivot(position(), yBodyRot);
     }
 
     public Vec3 getLockedDirection() {

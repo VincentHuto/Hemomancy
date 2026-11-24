@@ -31,17 +31,15 @@
 	/** A spring's trail never turns a part further than this (a body snapped round by a teleport settles from it). */
 	static final float TRAIL_LIMIT = 0.7F;
 	/** The grip slides along the shaft at most this far either way while the heel is planted, model units. */
-	static final float GRIP_SLIDE = 8.0F;
 	/** The floor, in model units (y grows downward), and how far above it cloth comes to rest. */
 	static final float FLOOR = 24.0F, CLOTH_CLEARANCE = 0.25F;
 	/** How far the hanging lanterns hang below their chains' last links, model units. */
-	static final float SIDE_GAP = 4.0F, PENDANT_GAP = 4.0F;
 	/** The hour counted on his fingers: once every 200 ticks they fold one at a time and open together. */
 	static final float COUNT_PERIOD = 200.0F;
 	/** The crystals' slow turn, radians a tick. */
 	static final float SPIN = 0.006F;
 	/** The Shadow Step: how deep he sinks (blocks), enough that the lantern's cage goes under last. */
-	public static final float STEP_DEPTH = 3.0F;
+	public static final float STEP_DEPTH = 4.85F;
 	/** The Shadow Step's authored length, which the phase-3 card replays over its own 50 ticks. */
 	static final float STEP_LENGTH = 52.0F, CARD_LENGTH = 50.0F;
 	/** A relit Eclipse's jolt runs this long over whatever plays next (the Guttering Lantern). */
@@ -112,7 +110,8 @@
 		a[LOOK] = 1.0F;
 		a[CALM] = 1.0F - 0.6F * hour;
 		float keeping = congregation * (1.0F - hour);
-		a[R_ARM_X] += -0.14F - 0.06F * keeping - 0.3F * hour;
+		a[R_ARM_X] += -0.38F - 0.06F * keeping - 0.3F * hour;
+		a[R_FORE] -= 1.35F;
 		a[R_FORE_Z] += 0.12F * hour;
 		a[FINGERS] -= 0.25F * keeping;
 		a[L_ARM_Z] -= 0.12F * congregation;
@@ -885,8 +884,8 @@
 	static void failing(float[] a, float t) {
 		float hood = HemoEasing.ramp(t, 16, 40);
 		a[R_ARM_X] += catmullRom(t, 0, 0, 3, -0.04F, 9, 0.1F, 14, 0.3F, 16, 0.38F, 20, 0.31F, 26, 0.33F);
-		a[R_ARM_Z] += catmullRom(t, 0, 0, 3, 0.03F, 10, -0.35F, 15, -0.85F, 16.5F, -0.95F, 20, -0.88F, 26, -0.9F);
-		a[R_FORE_Z] += catmullRom(t, 0, 0, 4, 0, 12, -0.7F, 16, -1.3F, 20, -1.2F, 26, -1.25F);
+		a[R_ARM_Z] += catmullRom(t, 0, 0, 4, 0.06F, 16, -0.17F, 26, -0.09F);
+		a[R_FORE] += catmullRom(t, 0, 0, 4, -0.07F, 16, 1.42F, 26, 1.35F);
 		a[R_HAND] += catmullRom(t, 0, 0, 8, 0, 16, 0.45F, 26, 0.4F);
 		a[FINGERS] += catmullRom(t, 0, 0, 6, 0, 16, -0.7F, 30, -0.55F);
 		a[HEAD] += 0.6F * hood;
@@ -975,63 +974,23 @@
 
 	// ---------------------------------------------------------------- laying it on the rig
 
-	private ModelPart[] fingers, fingerTips, sideLinks, pendantLinks, waistLinks, mantles, trains, robes, icicles;
-	private ModelPart[][] haloLinks;
-	private ModelPart[] haloChains;
+	private ModelPart[] mantles, robes, votives;
 	private Quaternionf[] mantleRest, robeRest;
-	private Quaternionf stoleLeftRest, stoleRightRest, veilRest, bodyRest, headRest;
-	/** The staff's length from the grip to its heel, and where the heel stands at rest (model units). */
+	private Quaternionf bodyRest;
 	float staffLength = Float.NaN;
 	final org.joml.Vector3f staffFootRest = new org.joml.Vector3f();
 
-	/** Finds the parts the pass works through once, and measures the staff and the cloth at rest. */
 	private void bind() {
-		fingers = new ModelPart[4];
-		fingerTips = new ModelPart[4];
-		for (int i = 0; i < 4; i++) {
-			fingers[i] = rightHand.getChild("right_finger_" + i);
-			fingerTips[i] = fingers[i].getChild("right_finger_" + i + "_tip");
-		}
-		sideLinks = links(sideChain, "side_chain", 10);
-		pendantLinks = links(pendantChain, "pendant_chain", 9);
-		waistLinks = links(waistChain, "waist_chain", 7);
-		haloChains = new ModelPart[4];
-		haloLinks = new ModelPart[4][];
-		icicles = new ModelPart[4];
-		for (int i = 0; i < 4; i++) {
-			haloChains[i] = halo.getChild("halo_chain_" + i);
-			haloLinks[i] = links(haloChains[i], "halo_chain_" + i, 2 + i % 2);
-			icicles[i] = haloChains[i].getChild("halo_icicle_" + i);
-		}
-		mantles = new ModelPart[9];
-		trains = new ModelPart[9];
-		mantleRest = new Quaternionf[9];
-		for (int i = 0; i < 9; i++) {
-			mantles[i] = chest.getChild("mantle_panel_" + i);
-			trains[i] = mantles[i].getChild("mantle_panel_" + i + "_train");
-			mantleRest[i] = rotation(mantles[i]);
-		}
-		robes = new ModelPart[16];
-		robeRest = new Quaternionf[16];
-		for (int i = 0; i < 16; i++) {
-			robes[i] = hips.getChild("robe_panel_" + i);
-			robeRest[i] = rotation(robes[i]);
-		}
-		stoleLeftRest = rotation(leftStole);
-		stoleRightRest = rotation(rightStole);
-		veilRest = rotation(backVeil);
+		mantles = new ModelPart[]{leftMantleFall, rightMantleFall};
+		robes = new ModelPart[]{leftSplitHabit, rightSplitHabit, frontTabard};
+		votives = new ModelPart[]{leftVotiveDrop, rightVotiveDrop};
+		mantleRest = java.util.Arrays.stream(mantles).map(part -> rotation(part)).toArray(Quaternionf[]::new);
+		robeRest = java.util.Arrays.stream(robes).map(part -> rotation(part)).toArray(Quaternionf[]::new);
 		bodyRest = rotation(hips, chest);
-		headRest = rotation(hips, chest, head);
-		float length = 0.0F;
-		for (ModelPart.Cube cube : staff.cubes) length = Math.max(length, cube.maxY);
-		staffLength = length;
-		staffFootRest.set(world(new org.joml.Vector3f(0, length, 0), root, hips, chest, leftArm, leftForearm, leftHand, staff));
-	}
-
-	private static ModelPart[] links(ModelPart chain, String name, int count) {
-		ModelPart[] links = new ModelPart[count];
-		for (int i = 0; i < count; i++) links[i] = chain.getChild(name + "_link_" + i);
-		return links;
+		staffLength = staff.cubes.stream().map(cube -> cube.maxY).max(Float::compare).orElseThrow();
+		staffFootRest.set(world(new org.joml.Vector3f(0, staffLength, 0), root, hips, chest,
+				leftArm, leftForearm, leftHand, staff));
+		staffFootRest.y = FLOOR;
 	}
 
 	/**
@@ -1047,33 +1006,32 @@
 		float shudder = a[SHUDDER] * (Mth.sin(age * 2.3F) * 0.6F + Mth.sin(age * 3.7F + 1.3F) * 0.4F) * 0.035F;
 		float tremor = a[TREMOR] * (Mth.sin(age * 2.09F) * 0.7F + Mth.sin(age * 3.3F + 0.6F) * 0.3F);
 		hips.xRot += a[HIP_X];
-		hips.yRot += a[HIP_Y];
-		hips.zRot += a[HIP_Z];
+		hips.yRot -= a[HIP_Y];
+		hips.zRot -= a[HIP_Z];
 		hips.y += a[SINK] - inhale * 0.08F;
 		chest.xRot += a[BOW] + a[LAG_SPINE] + inhale * 0.0105F + shudder;
-		chest.yRot += a[TWIST];
-		chest.zRot += a[LEAN] + shudder * 0.4F;
+		chest.yRot -= a[TWIST];
+		chest.zRot -= a[LEAN] + shudder * 0.4F;
 		head.xRot += a[HEAD] + a[LAG_HEAD_X] - inhale * 0.006F + Mth.clamp(pitch, -15.0F, 15.0F) * DEG * 0.5F * look;
-		head.yRot += a[HEAD_TURN] + a[LAG_HEAD_Y] + Mth.clamp(yaw, -25.0F, 25.0F) * DEG * look;
-		head.zRot += a[HEAD_ROLL];
+		head.yRot += -a[HEAD_TURN] - a[LAG_HEAD_Y] + Mth.clamp(yaw, -25.0F, 25.0F) * DEG * look;
+		head.zRot -= a[HEAD_ROLL];
 		rightArm.xRot += a[R_ARM_X] + tremor;
-		rightArm.yRot += a[R_ARM_Y];
-		rightArm.zRot += a[R_ARM_Z] + tremor * 0.4F;
+		rightArm.yRot -= a[R_ARM_Y];
+		rightArm.zRot -= a[R_ARM_Z] + tremor * 0.4F;
 		rightForearm.xRot += a[R_FORE] + a[LAG_FORE];
-		rightForearm.zRot += a[R_FORE_Z];
+		rightForearm.zRot -= a[R_FORE_Z];
 		rightHand.xRot += a[R_HAND] + a[LAG_FORE] * 0.5F;
-		rightHand.zRot += a[R_HAND_Z];
+		rightHand.zRot -= a[R_HAND_Z];
 		leftArm.xRot += a[L_ARM_X];
-		leftArm.yRot += a[L_ARM_Y];
-		leftArm.zRot += a[L_ARM_Z];
+		leftArm.yRot -= a[L_ARM_Y];
+		leftArm.zRot -= a[L_ARM_Z];
 		leftForearm.xRot += a[L_FORE];
-		leftForearm.zRot += a[L_FORE_Z];
+		leftForearm.zRot -= a[L_FORE_Z];
 		leftHand.xRot += a[L_HAND];
 		claw(a);
-		monasticHood.xRot -= a[HOOD];
-		cowlLeft.xRot -= a[HOOD] * 0.6F;
-		cowlRight.xRot -= a[HOOD] * 0.6F;
-		halo.zRot += a[HALO_TURN] + a[HALO_RING];
+		leftCowlLappet.xRot -= a[HOOD] * 0.6F;
+		rightCowlLappet.xRot -= a[HOOD] * 0.6F;
+		halo.zRot -= a[HALO_TURN] + a[HALO_RING];
 		halo.xRot += a[HALO_TILT];
 		halo.y += a[HALO_SLACK] * 1.5F;
 		staffPose(a);
@@ -1081,21 +1039,10 @@
 		lanterns(a, spin);
 	}
 
-	/**
-	 * The crooked hand: a curl (positive closes, negative opens and splays), the overlap's trailing fingers, the hour or
-	 * a fist closing a finger at a time, the thumb with them.
-	 */
 	private void claw(float[] a) {
-		for (int i = 0; i < 4; i++) {
-			float fold = HemoEasing.smoothstep(Mth.clamp(a[CLENCH] - i, 0.0F, 1.0F)) * 0.8F;
-			float curl = a[FINGERS] + a[LAG_FINGERS] + fold;
-			float bend = curl > 0.0F ? curl * 0.5F : curl * 1.1F;
-			fingers[i].xRot -= bend * (1.0F + i * 0.06F);
-			fingers[i].zRot += curl < 0.0F ? curl * (i - 1.5F) * 0.12F : 0.0F;
-			fingerTips[i].xRot -= Math.max(-0.9F, bend) * 0.8F;
-		}
-		float thumb = a[FINGERS] + HemoEasing.smoothstep(Mth.clamp(a[CLENCH] - 3.0F, 0.0F, 1.0F)) * 0.8F;
-		rightThumb.xRot -= thumb > 0.0F ? thumb * 0.5F : thumb * 0.8F;
+		float curl = a[FINGERS] + a[LAG_FINGERS];
+		heldFirstFingers.xRot -= curl * 0.55F + HemoEasing.smoothstep(Mth.clamp(a[CLENCH] / 2.0F, 0, 1)) * 0.7F;
+		heldLastFingers.xRot -= curl * 0.75F + HemoEasing.smoothstep(Mth.clamp((a[CLENCH] - 2.0F) / 2.0F, 0, 1)) * 0.7F;
 	}
 
 	/**
@@ -1109,75 +1056,54 @@
 		Quaternionf hand = rotation(hips, chest, leftArm, leftForearm, leftHand);
 		org.joml.Vector3f grip = world(new org.joml.Vector3f(staff.x, staff.y, staff.z), root, hips, chest, leftArm,
 				leftForearm, leftHand);
-		org.joml.Vector3f foot = new org.joml.Vector3f(staffFootRest).add(a[FOOT_X], Math.min(1.5F, a[FOOT_Y]), a[FOOT_Z]);
+		org.joml.Vector3f foot = new org.joml.Vector3f(staffFootRest).add(-a[FOOT_X], Math.min(1.5F, a[FOOT_Y]), a[FOOT_Z]);
 		org.joml.Vector3f planted = foot.sub(grip, new org.joml.Vector3f());
 		float span = planted.length();
 		if (span > 1.0E-4F) planted.div(span);
 		else planted.set(0, 1, 0);
-		org.joml.Vector3f free = new org.joml.Vector3f(0, 1, 0).rotateZ(a[STAFF_Z]).rotateX(a[STAFF_X]).rotateY(a[STAFF_Y]);
+		org.joml.Vector3f free = new org.joml.Vector3f(0, 1, 0).rotateZ(-a[STAFF_Z]).rotateX(a[STAFF_X]).rotateY(-a[STAFF_Y]);
 		org.joml.Vector3f axis = free.lerp(planted, plant, new org.joml.Vector3f());
 		if (axis.lengthSquared() < 1.0E-6F) axis.set(planted);
 		axis.normalize();
 		Quaternionf pole = new Quaternionf().rotationTo(0, 1, 0, axis.x, axis.y, axis.z);
 		setRotationFromMatrix(staff, new Quaternionf(hand).conjugate().mul(pole).get(new Matrix3f()));
-		float slide = HemoEasing.lerp(-a[GRIP], Mth.clamp(span - staffLength, -GRIP_SLIDE, GRIP_SLIDE), plant);
+		float slide = HemoEasing.lerp(-a[GRIP], span - staffLength, plant);
 		org.joml.Vector3f along = new Quaternionf(hand).conjugate().transform(new org.joml.Vector3f(axis).mul(slide));
 		staff.x += along.x;
 		staff.y += along.y;
 		staff.z += along.z;
-		Quaternionf plumb = rotation(hips, chest, leftArm, leftForearm, leftHand, staff).conjugate();
-		setRotationFromMatrix(pendantChain, plumb.mul(swing(a[PENDANT_X], a[PENDANT_Z])).get(new Matrix3f()));
-		bend(pendantLinks, pendantLantern, PENDANT_GAP, a[PENDANT_BEND_X], a[PENDANT_BEND_Z]);
 	}
 
-	/** The chains, the cloth and the hanging ice: plumb or partly plumb, swinging off what carries them. */
 	private void hang(float[] a, float age, float calm) {
-		float idle = calm * 0.5F;
 		Quaternionf body = rotation(hips, chest);
-		Quaternionf bodyPlumb = new Quaternionf(body).conjugate();
-		setRotationFromMatrix(sideChain, new Quaternionf(bodyPlumb).mul(swing(a[SIDE_X] + a[SIDE_SWING_X]
-				+ Mth.sin(age * 0.055F + 0.8F) * 0.025F * idle, a[SIDE_Z] + a[SIDE_SWING_Z])).get(new Matrix3f()));
-		bend(sideLinks, sideLantern, SIDE_GAP, a[SIDE_BEND_X], a[SIDE_BEND_Z]);
-		setRotationFromMatrix(waistChain, new Quaternionf(bodyPlumb).mul(swing(a[WAIST_X] + Mth.sin(age * 0.06F) * 0.02F
-				* idle, a[WAIST_Z])).get(new Matrix3f()));
-		bend(waistLinks, null, 0.0F, a[WAIST_X] * 0.5F, a[WAIST_Z] * 0.5F);
-		if (halo.visible) {
-			Quaternionf crownPlumb = rotation(hips, chest, head, halo).conjugate();
-			float slack = HemoEasing.clamp01(a[HALO_SLACK]);
-			for (int i = 0; i < 4; i++) {
-				float idleSwing = Mth.sin(age * 0.04F + i) * 0.03F * idle;
-				setRotationFromMatrix(haloChains[i], new Quaternionf(crownPlumb).mul(swing(a[HALO_SWING_X] * (1.0F + i * 0.1F)
-						+ slack * 0.15F, a[HALO_SWING_Z] * (1.0F + i * 0.08F) + idleSwing)).get(new Matrix3f()));
-				bend(haloLinks[i], icicles[i], 0.0F, a[HALO_SWING_X] * 0.5F, a[HALO_SWING_Z] * 0.5F);
-			}
+		Quaternionf hip = rotation(hips);
+		float under = Math.max(0.0F, a[UNDER]);
+		for (int i = 0; i < mantles.length; i++) {
+			float flutter = Mth.sin(age * 0.08F - i) * 0.035F * calm;
+			drape(mantles[i], body, bodyRest, mantleRest[i], 0.75F, a[MANTLE_X] + flutter, -a[MANTLE_Z]);
+			floor(mantles[i], clothLength(mantles[i]), under, root, hips, chest, mantles[i]);
 		}
-		// the cloth: mostly hanging as it hung at rest whatever the body does, swinging off it, heaped on the floor
-		Quaternionf hipsNow = rotation(hips);
-		for (int i = 0; i < 9; i++) {
-			float flutter = Mth.sin(age * 0.05F - i * 0.65F) * 0.014F * idle;
-			drape(mantles[i], body, bodyRest, mantleRest[i], 0.75F, a[MANTLE_X] + flutter, a[MANTLE_Z]);
-			trains[i].xRot += Mth.sin(age * 0.055F - i * 0.65F - 1.0F) * 0.02F * idle + Math.max(0.0F, a[MANTLE_X]) * 0.3F;
+		for (int i = 0; i < robes.length; i++) {
+			float flutter = Mth.sin(age * 0.07F - i) * 0.028F * calm;
+			drape(robes[i], hip, new Quaternionf(), robeRest[i], 0.65F, a[ROBE_X] * 0.7F + flutter, -a[ROBE_Z]);
+			floor(robes[i], clothLength(robes[i]), under, root, hips, robes[i]);
 		}
-		for (int i = 0; i < 16; i++) {
-			float angle = i * Mth.TWO_PI / 16.0F;
-			float flutter = Mth.sin(age * 0.05F - i * 0.7F) * 0.012F * idle;
-			drape(robes[i], hipsNow, new Quaternionf(), robeRest[i], 0.85F, a[ROBE_X] * (0.6F + 0.4F * Mth.cos(angle))
-					+ flutter, a[ROBE_Z]);
+		float slack = HemoEasing.clamp01(a[HALO_SLACK]);
+		Quaternionf crown = rotation(hips, chest, head, halo).conjugate();
+		for (int i = 0; i < votives.length; i++) {
+			float sway = Mth.sin(age * 0.055F + i) * 0.026F * calm;
+			setRotationFromMatrix(votives[i], new Quaternionf(crown)
+					.mul(swing(a[HALO_SWING_X] + slack * 0.15F, -a[HALO_SWING_Z] + sway)).get(new Matrix3f()));
 		}
-		drape(leftStole, body, bodyRest, stoleLeftRest, 0.6F, a[STOLE_X], a[STOLE_Z]);
-		drape(rightStole, body, bodyRest, stoleRightRest, 0.6F, a[STOLE_X], a[STOLE_Z]);
-		drape(backVeil, rotation(hips, chest, head), headRest, veilRest, 0.5F, a[VEIL_X] + Mth.sin(age * 0.055F) * 0.02F
-				* idle, 0.0F);
-		heap(Math.max(0.0F, a[UNDER]));
-		// the sleeves and the claw's ice hang plumb, swinging off the arms
-		setRotationFromMatrix(rightSleeve, rotation(hips, chest, rightArm, rightForearm).conjugate()
-				.mul(swing(a[SLEEVE_RX], a[SLEEVE_RZ])).get(new Matrix3f()));
-		setRotationFromMatrix(leftSleeve, rotation(hips, chest, leftArm, leftForearm).conjugate()
-				.mul(swing(a[SLEEVE_LX], a[SLEEVE_LZ])).get(new Matrix3f()));
-		setRotationFromMatrix(clawIce, rotation(hips, chest, rightArm, rightForearm, rightHand).conjugate()
-				.mul(swing(a[SLEEVE_RX] * 0.5F, a[SLEEVE_RZ] * 0.5F)).get(new Matrix3f()));
-		setRotationFromMatrix(knottedCordTails, rotation(hips, knottedCord).conjugate().mul(swing(a[CORD_X], a[CORD_Z]))
-				.get(new Matrix3f()));
+		Quaternionf plumb = rotation(hips, chest, leftArm, leftForearm, leftHand, staff, staffLantern).conjugate();
+		setRotationFromMatrix(lanternPendant, plumb.mul(swing(a[SIDE_X] + a[SIDE_SWING_X] + a[PENDANT_X],
+				-a[SIDE_Z] - a[SIDE_SWING_Z] - a[PENDANT_Z])).get(new Matrix3f()));
+	}
+
+	private static float clothLength(ModelPart panel) {
+		float length = 0.0F;
+		for (ModelPart.Cube cube : panel.cubes) length = Math.max(length, cube.maxY);
+		return length;
 	}
 
 	/**
@@ -1190,16 +1116,6 @@
 		Quaternionf hung = new Quaternionf(parentRest).mul(authored);
 		Quaternionf world = swing(swingX, swingZ).mul(carried.slerp(hung, share));
 		setRotationFromMatrix(part, new Quaternionf(parentNow).conjugate().mul(world).get(new Matrix3f()));
-	}
-
-	/**
-	 * The trains and the robe come to rest on the floor instead of passing through it: each folds outward to meet it.
-	 * Sinking into the dark ({@code under}, model units), the floor rises up his body: the cloth heaps on the surface
-	 * and is drawn under after him, a panel whose root has gone under following it down.
-	 */
-	private void heap(float under) {
-		for (int i = 0; i < 9; i++) floor(trains[i], 12.0F, under, root, hips, chest, mantles[i], trains[i]);
-		for (int i = 0; i < 16; i++) floor(robes[i], 12.0F + (i % 3) * 0.5F, under, root, hips, robes[i]);
 	}
 
 	private static void floor(ModelPart part, float length, float under, ModelPart... chain) {
@@ -1215,56 +1131,20 @@
 		part.xRot += Math.max(0.0F, needed - current);
 	}
 
-	/** The crystals turn by {@code spin}; the lights scale (the Gutter shrinks the light, never the cage); the icicles. */
 	private void lanterns(float[] a, float spin) {
-		staffLanternCrystal.yRot += spin;
-		pendantLanternCrystal.yRot -= spin * 0.8F;
-		sideLanternCrystal.yRot += spin * 0.65F;
-		// the light shrinks to a point in the Gutter and goes out only in the Eclipse
+		staffLanternCore.yRot += spin;
 		float core = Mth.clamp(a[CORE], 0.0F, 1.4F);
 		staffLanternCore.xScale = staffLanternCore.yScale = staffLanternCore.zScale = Math.max(0.02F, core);
 		staffLanternCore.visible = core > 0.02F;
-		float side = Mth.clamp(a[SIDE_CORE], 0.0F, 1.5F);
-		sideLanternCore.xScale = sideLanternCore.yScale = sideLanternCore.zScale = Math.max(0.02F, side);
-		sideLanternCore.visible = side > 0.02F;
 		float grow = Math.max(0.0F, a[ICICLE]);
-		for (int i = 0; i < 4; i++) {
-			ModelPart icicle = icicles[i];
-			icicle.xRot += a[ICICLE_TILT] * (i % 2 == 0 ? 1.0F : -1.0F);
-			icicle.zRot += a[ICICLE_TILT] * 0.4F * (i < 2 ? 1.0F : -1.0F);
-			icicle.xScale = icicle.yScale = icicle.zScale = grow;
-			icicle.visible = grow > 0.02F;
-		}
+		poseVotiveGlass(leftVotiveGlass, grow, a[ICICLE_TILT]);
+		poseVotiveGlass(rightVotiveGlass, grow, -a[ICICLE_TILT]);
 	}
 
-	/**
-	 * Curves a hanging chain: each link turns a little more than the one above it and hangs from the end of it, the
-	 * pendant riding {@code gap} below the last. Zero bend leaves the links as authored.
-	 */
-	private static void bend(ModelPart[] links, ModelPart pendant, float gap, float bendX, float bendZ) {
-		float x = 0, y = 0, z = 0;
-		int n = links.length;
-		float ax = 0, az = 0;
-		for (int i = 0; i < n; i++) {
-			float share = (i + 1.0F) / n;
-			ax = bendX * share;
-			az = bendZ * share;
-			ModelPart link = links[i];
-			link.x = x;
-			link.y = y;
-			link.z = z;
-			if (i % 2 == 0) link.xRot += ax;
-			link.zRot += az;
-			x -= 1.5F * Mth.sin(az);
-			y += 1.5F * Mth.cos(ax) * Mth.cos(az);
-			z += 1.5F * Mth.sin(ax);
-		}
-		if (pendant == null) return;
-		pendant.x = x - gap * Mth.sin(az);
-		pendant.y = y + gap * Mth.cos(ax) * Mth.cos(az);
-		pendant.z = z + gap * Mth.sin(ax);
-		pendant.xRot += bendX;
-		pendant.zRot += bendZ;
+	private static void poseVotiveGlass(ModelPart glass, float grow, float tilt) {
+		glass.xRot += tilt;
+		glass.xScale = glass.yScale = glass.zScale = grow;
+		glass.visible = grow > 0.02F;
 	}
 
 	/** A rotation in the world: the bottom of a hanging part swung back by {@code x}, toward his right by {@code z}. */
@@ -1296,12 +1176,11 @@
 	}
 
 	public org.joml.Vector3f[] lanterns() {
-		return new org.joml.Vector3f[]{
-				point(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm, leftHand, staff, staffLantern,
-						staffLanternCrystal),
-				point(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm, leftHand, staff, pendantChain,
-						pendantLantern, pendantLanternCrystal),
-				point(new org.joml.Vector3f(), root, hips, chest, sideChain, sideLantern, sideLanternCrystal)};
+		org.joml.Vector3f core = point(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm,
+				leftHand, staff, staffLantern, staffLanternCore);
+		org.joml.Vector3f pendant = point(new org.joml.Vector3f(0, 0.37F, 0), root, hips, chest, leftArm,
+				leftForearm, leftHand, staff, staffLantern, lanternPendant);
+		return new org.joml.Vector3f[]{core, pendant};
 	}
 
 	private static org.joml.Vector3f point(org.joml.Vector3f at, ModelPart... chain) {

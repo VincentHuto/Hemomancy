@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
-/** Emissive eyes, lung folds, throat, coil cracks and torch, banked at rest and flaring with the breath. */
+/** Emissive eyes, lung folds, throat and torch, banked at rest and flaring with the breath. */
 public class CinderBellowsGlowLayer extends RenderLayer<CinderBellowsEntity, CinderBellowsModel> {
 	private static final RenderType GLOW =
 			RenderType.eyes(Hemomancy.rloc("textures/entity/puppeteer_summon/cinder_bellows_glow.png"));

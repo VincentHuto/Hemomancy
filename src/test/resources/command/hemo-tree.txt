@@ -43,7 +43,11 @@ hemo permission2
     get executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
     set permission0
+      apotheos executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
       <degree:integer(0, 8)> executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      silent executes permission0
         <player:entity(single=true, playersOnly=true)> executes permission0
   fane permission0
     preview permission0

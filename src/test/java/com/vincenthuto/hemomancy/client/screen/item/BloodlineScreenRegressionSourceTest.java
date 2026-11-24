@@ -39,7 +39,7 @@ public final class BloodlineScreenRegressionSourceTest {
 		assertNotContains("founding fane cannot fall back to solo owner", harbingerRites,
 				"? bloodline.getLeaderUUID() : caster.getUUID()");
 		assertContains("founding fane validates bloodline before activation", bloodCraftPacket,
-				"canStartFoundingFane(serverPlayer, centerPos)");
+				"canStartFoundingFane(a.player(), a.center())");
 		assertContains("founding fane activation rejects missing bloodline", bloodCraftPacket,
 				"bloodline == null || !bloodline.isValid()");
 		assertContains("founding fane activation requires progenitor", bloodCraftPacket,
@@ -51,7 +51,7 @@ public final class BloodlineScreenRegressionSourceTest {
 		assertContains("founding fane validation rejects an already-active fane", foundingFaneGate,
 				"hasActiveFane(player, bloodline.getLeaderUUID())");
 		assertContains("cardinal activation validates the recipe-authored Focus medium", bloodCraftPacket,
-				"focusMediumMatches(sLevel, centerPos, recipe)");
+				"focusMediumMatches(a.level(), a.center(), a.recipe())");
 		assertNotContains("founding fane no longer searches for loose catalysts", bloodCraftPacket,
 				"hasCatalystWithinMatch");
 		assertNotContains("activation does not consume the seated medium", bloodCraftPacket,

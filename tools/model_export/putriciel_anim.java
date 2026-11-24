@@ -11,9 +11,7 @@
 	// arms reach their targets, the staff is one pole planted or swung, and the censers hang on real pendulums.
 
 	private static final float DEG = Mth.DEG_TO_RAD;
-	/** The chest's generated rest pitch, which the look's hunch replaces. */
-	private static final float REST_HUNCH = 18.0F;
-	private static final int ROBE_PANELS = 14;
+	private static final float FLOOR_Y = 24.0F;
 
 	static final int BOW = 0, TWIST = 1, LEAN = 2, CROUCH = 3, HIP_X = 4, HIP_TWIST = 5, HIP_SWAY = 6, STEP_L = 7,
 			STEP_R = 8, LIFT_L = 9, LIFT_R = 10, KNEEL = 11, KNEEL_BOTH = 12, TIPTOE = 13, HEAD = 14, HEAD_TURN = 15,
@@ -38,15 +36,12 @@
 	static final float CENSER_LIMIT = 1.45F;
 	/** Spring slots: the censers' pendulums (x and z each). */
 	private static final int PENDULUM = 30;
-	/**
-	 * Where the Offering holds the hand, model units: the palm at the brow, 0.7 blocks ahead and 2.45 up as the server's
-	 * absolution aim reads it ({@code PutricielEntity.PALM_FORWARD}, {@code PALM_UP}); the palm is 1.28 above the hand.
-	 */
-	static final org.joml.Vector3f OFFER_HAND = new org.joml.Vector3f(0.47F, 5.25F, -5.7F);
-	/** Where the hand lays the palm on the floor ahead of the kneeling body, model units. */
-	static final org.joml.Vector3f FLOOR_HAND = new org.joml.Vector3f(-4.5F, 23.4F, -8.0F);
-	/** Where a fouled censer lies, model units: on the floor ahead of the staff's swing. */
-	static final org.joml.Vector3f STUCK_AT = new org.joml.Vector3f(4.0F, 24.0F, -14.0F);
+	/** The Offering palm meets the server's aim in world space. */
+	static final org.joml.Vector3f OFFER_HAND = new org.joml.Vector3f(0.25F,
+			FLOOR_Y - (float) PutricielEntity.PALM_UP * PutricielGait.BLOCK + 0.15F,
+			-(float) PutricielEntity.PALM_FORWARD * PutricielGait.BLOCK + 0.4F);
+	private static final org.joml.Vector3f FLOOR_HAND = new org.joml.Vector3f(4.5F, 23.2F, -10.8F);
+	private static final org.joml.Vector3f STUCK_AT = new org.joml.Vector3f(-5.0F, FLOOR_Y, -16.0F);
 
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
@@ -642,7 +637,7 @@
 	static void offering(float[] a, float t, float length) {
 		float down = HemoEasing.window(t, 0, 8, length - 8, length - 1);
 		float held = HemoEasing.window(t, 4, 12, length - 10, length - 2);
-		a[KNEEL] += down;
+		a[KNEEL] += down * 0.65F;
 		a[CROUCH] += HemoEasing.pulse(t - 7, 1.0F, 6.0F) * 0.4F;
 		a[PALM_OFFER] += held;
 		a[R_ARM_X] -= 1.15F * held;
@@ -832,78 +827,34 @@
 
 	// ---------------------------------------------------------------- laying it on the rig
 
-	private ModelPart[] sacParts, backShelves, hemShelves, shoulderShelves, crownSpires, growthMushrooms, rotDrips, robes,
-			rootTrails, offeringFingers, offeringTips;
-	private ModelPart[][] vestLinks;
-	private float[][] vestRest;
-	/** The staff's length from the grip to its iron foot, and where that foot stands at rest (model units). */
+	private ModelPart[] sporeNodules, backShelves, crosses, offeringFingers;
+	private ModelPart[][] sporeChains;
 	float staffLength = Float.NaN;
 	final org.joml.Vector3f staffFootRest = new org.joml.Vector3f();
-	/** The legs' contact depth at rest (the soles on the floor), each censer chain's length, each robe panel's. */
-	private float restContact;
-	private final float[] chainLength = new float[2];
-	private final float[] robeLength = new float[ROBE_PANELS];
-	private float footRestL, footRestR;
-	/** The longest offering drip's reach below the hand, model units. */
-	private float dripLength;
-	/** The generated fire tables' parts (revision R1): each anchor's chain, each growth, its ancestors and its tree, each region's. */
+	private float chainLength;
 	private ModelPart[][] anchorChains, growthChains, growthTrees, regionParts;
 	private ModelPart[] growthPartList, allParts;
-	/** Each rot drip's growth (its mushroom), as an index into the growth table. */
-	private final int[] dripGrowth = new int[4];
-	/** This frame's fire scale of each growth part. */
-	private final float[] growthBurn = new float[GROWTH_COUNT];
 
-	/** Finds the parts the pass works through once, and measures the rig at rest. */
+	/** Resolves the animated branches and measures the staff and pendant at rest. */
 	private void bind() {
-		sacParts = new ModelPart[]{spore0, spore1, spore2, spore3, shoulderSpore, hemSpore, backSpore0, backSpore1};
-		backShelves = new ModelPart[11];
-		for (int i = 0; i < 11; i++) backShelves[i] = backColony.getChild("back_shelf_" + i);
-		hemShelves = new ModelPart[6];
-		for (int i = 0; i < 6; i++) hemShelves[i] = hips.getChild("hem_shelf_" + i);
-		shoulderShelves = new ModelPart[8];
-		for (int i = 0; i < 3; i++) shoulderShelves[i] = chest.getChild("left_shoulder_shelf_" + i);
-		for (int i = 0; i < 5; i++) shoulderShelves[3 + i] = chest.getChild("right_shoulder_shelf_" + i);
-		crownSpires = new ModelPart[6];
-		for (int i = 0; i < 6; i++) crownSpires[i] = crown.getChild("crown_spire_" + i);
-		growthMushrooms = new ModelPart[4];
-		rotDrips = new ModelPart[4];
-		for (int i = 0; i < 4; i++) {
-			growthMushrooms[i] = backColony.getChild("growth_mushroom_" + i);
-			rotDrips[i] = backColony.getChild("rot_drip_" + i);
-		}
-		robes = new ModelPart[ROBE_PANELS];
-		for (int i = 0; i < ROBE_PANELS; i++) {
-			robes[i] = hips.getChild("robe_panel_" + i);
-			float length = 0.0F;
-			for (ModelPart.Cube cube : robes[i].cubes) length = Math.max(length, cube.maxY);
-			robeLength[i] = length;
-		}
-		rootTrails = new ModelPart[8];
-		for (int i = 0; i < 8; i++) rootTrails[i] = groundRoots.getChild("root_trail_" + i);
-		offeringFingers = new ModelPart[4];
-		offeringTips = new ModelPart[4];
-		for (int i = 0; i < 4; i++) {
-			offeringFingers[i] = rightHand.getChild("offering_finger_" + i);
-			offeringTips[i] = offeringFingers[i].getChild("offering_finger_" + i + "_tip");
-		}
-		vestLinks = new ModelPart[][]{links(leftVestmentChain, "left_vestment_chain", 9),
-				links(rightVestmentChain, "right_vestment_chain", 7)};
-		vestRest = new float[2][];
-		for (int c = 0; c < 2; c++) {
-			vestRest[c] = new float[vestLinks[c].length];
-			for (int i = 0; i < vestLinks[c].length; i++) vestRest[c][i] = vestLinks[c][i].getInitialPose().y;
-		}
-		chainLength[0] = censerLeft.getInitialPose().y;
-		chainLength[1] = censerRight.getInitialPose().y;
+		sporeNodules = new ModelPart[]{backSpore0, backSpore1, backSpore2, backSpore3};
+		backShelves = new ModelPart[]{backShelf0, backShelf1, backShelf2, backShelf3, backShelf4,
+				backShelf5, backShelf6, backShelf7, backShelf8, backShelf9};
+		crosses = new ModelPart[]{cross1, cross2, cross3, cross4, cross5};
+		offeringFingers = new ModelPart[]{offeringFinger0, offeringFinger1, offeringFinger2, offeringFinger3};
+		sporeChains = new ModelPart[][]{
+				{root, hips, chest, backColony, backShelf0, boxHighRightBracketCap, sporePoint0},
+				{root, hips, chest, backColony, backShelf2, boxOuterRightFanCap, sporePoint1},
+				{root, hips, chest, backColony, backShelf4, boxRearRosetteUpperCap, sporePoint2},
+				{root, hips, chest, backColony, backShelf6, boxSleeveSeamGrowthCap, sporePoint3},
+				{root, hips, chest, backColony, backSpore0, boxSporeNodule1, sporePoint4},
+				{root, hips, chest, backColony, backSpore1, boxSporeNodule2, sporePoint5},
+				{root, hips, chest, backColony, backSpore2, boxSporeNodule3, sporePoint6},
+				{root, hips, chest, backColony, backSpore3, boxSporeNodule4, sporePoint7}};
+		chainLength = censerBowl.getInitialPose().y;
 		staffLength = staffFoot.getInitialPose().y;
-		staffFootRest.set(world(new org.joml.Vector3f(0, staffLength, 0), root, hips, chest, leftArm, leftForearm, leftHand,
-				staff));
-		restContact = Math.max(PutricielGait.contact(hips.xRot + leftThigh.xRot, leftShin.xRot),
-				PutricielGait.contact(hips.xRot + rightThigh.xRot, rightShin.xRot));
-		for (ModelPart.Cube cube : offeringDrips.cubes) dripLength = Math.max(dripLength, cube.maxY);
-		footRestL = leftFoot.xRot;
-		footRestR = rightFoot.xRot;
+		staffFootRest.set(world(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm,
+				leftHand, staff, staffFoot));
 		anchorChains = anchorChains();
 		growthChains = growthChains();
 		growthTrees = growthTrees();
@@ -911,13 +862,6 @@
 		growthPartList = new ModelPart[GROWTH_COUNT];
 		for (int i = 0; i < GROWTH_COUNT; i++) growthPartList[i] = growthTrees[i][0];
 		allParts = root.getAllParts().toArray(ModelPart[]::new);
-		for (int i = 0; i < 4; i++) dripGrowth[i] = PutricielFireAnchors.growthIndex("growth_mushroom_" + i);
-	}
-
-	private static ModelPart[] links(ModelPart chain, String name, int count) {
-		ModelPart[] links = new ModelPart[count];
-		for (int i = 0; i < count; i++) links[i] = chain.getChild(name + "_link_" + i);
-		return links;
 	}
 
 	/** Lays the channels on the rig, then the additive layers: the growths, the face, the cloth and what hangs. */
@@ -932,12 +876,13 @@
 		hips.zRot += a[HIP_SWAY];
 		float drop = legs(a);
 		// the spine and the hood, the hood trailing the chest
-		chest.xRot += (look.hunchDegrees() - REST_HUNCH) * DEG + a[BOW] + a[LAG_SPINE] - jolt;
+		float hunch = (look.hunchDegrees() - PutricielVisualRules.HUNCH_FIRE) * DEG * 0.5F;
+		chest.xRot += hunch + a[BOW] + a[LAG_SPINE] - jolt;
 		chest.yRot += a[TWIST];
 		chest.zRot += a[LEAN] + shake;
 		float follow = m.endingTime() >= 0.0F ? 0.0F : 1.0F - 0.6F * HemoEasing.clamp01(a[KNEEL_BOTH]);
 		float range = HemoEasing.lerp(25.0F, 35.0F, m.fire());
-		head.xRot += a[HEAD] + a[LAG_HEAD_X] + Mth.clamp(pitch, -20, 20) * DEG * follow - jolt * 1.2F;
+		head.xRot += -hunch * 0.55F + a[HEAD] + a[LAG_HEAD_X] + Mth.clamp(pitch, -20, 20) * DEG * follow - jolt * 1.2F;
 		head.yRot += Mth.clamp(yaw, -range, range) * DEG * follow + a[HEAD_TURN] + a[LAG_HEAD_Y];
 		head.zRot += a[HEAD_ROLL] + a[LAG_HEAD_Z] - chest.zRot * 0.5F;
 		// the arms, then each hand to its target
@@ -956,7 +901,7 @@
 		censerPose(a, m);
 		growths(a, m.riseGrowth() * (1.0F + 0.2F * Math.max(0.0F, a[BLOOM])), age);
 		burn(m);
-		face(look.face(), a);
+		veil.xRot -= a[HOOD] * 0.18F + a[CROWN_JIG] * 0.15F;
 		drape(a, age, drop);
 	}
 
@@ -981,19 +926,22 @@
 		leftShin.xRot = kneeL;
 		rightThigh.xRot = thighR;
 		rightShin.xRot = kneeR;
-		float contact = Math.max(PutricielGait.contact(hips.xRot + thighL, kneeL),
-				PutricielGait.contact(hips.xRot + thighR, kneeR));
-		float drop = restContact - contact;
 		float tiptoe = HemoEasing.clamp01(a[TIPTOE]);
-		hips.y += drop - tiptoe * 1.1F;
-		hips.z -= k * 1.0F;
-		// the soles stay flat on the floor; a kneeling leg lays its instep on the floor behind the knee; a lifted
-		// foot's toes droop
-		float flatL = footRestL - (hips.xRot + thighL + kneeL - restThighL - restKneeL) + liftL * 0.35F + tiptoe * 0.7F;
-		float flatR = footRestR - (hips.xRot + thighR + kneeR - restThighR - restKneeR) + liftR * 0.35F + tiptoe * 0.7F;
+		hips.z -= k;
+		float flatL = -(hips.xRot + thighL + kneeL) + liftL * 0.35F + tiptoe * 0.7F;
+		float flatR = -(hips.xRot + thighR + kneeR) + liftR * 0.35F + tiptoe * 0.7F;
 		leftFoot.xRot = HemoEasing.lerp(flatL, Mth.PI - (hips.xRot + thighL + kneeL), kb);
 		rightFoot.xRot = HemoEasing.lerp(flatR, Mth.PI - (hips.xRot + thighR + kneeR), Math.max(k, kb));
+		float contact = Math.max(contact(leftThigh, leftShin, leftFoot), contact(rightThigh, rightShin, rightFoot));
+		float drop = FLOOR_Y - contact;
+		hips.y += drop - tiptoe * 1.1F;
 		return Math.max(0.0F, drop);
+	}
+
+	private float contact(ModelPart thigh, ModelPart shin, ModelPart foot) {
+		float sole = world(new org.joml.Vector3f(0, PutricielGait.SOLE, 0), root, hips, thigh, shin, foot).y;
+		float knee = world(new org.joml.Vector3f(), root, hips, thigh, shin).y + PutricielGait.KNEE_PAD;
+		return Math.max(sole, knee);
 	}
 
 	/**
@@ -1076,23 +1024,11 @@
 		Quaternionf carried = rotation(hips, chest, rightArm, rightForearm);
 		setRotationFromMatrix(rightHand, carried.conjugate().mul(target).get(new Matrix3f()));
 		float curl = a[FINGERS] + a[LAG_FINGERS];
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < offeringFingers.length; i++) {
 			offeringFingers[i].xRot -= curl * (0.7F + i * 0.08F);
 			offeringFingers[i].yRot += curl < 0.0F ? curl * (i - 1.5F) * 0.15F : 0.0F;
-			offeringTips[i].xRot -= Math.max(-0.2F, curl) * 0.6F;
 		}
 		offeringThumb.zRot -= Math.max(-0.3F, curl) * 0.4F;
-		// the drips run long and hang plumb, swinging after the arm; pressed at the floor they run down into it
-		float drips = Math.max(0.3F, 1.0F + a[DRIPS] * 0.6F + Mth.sin(age * 0.12F) * 0.04F);
-		float floor = HemoEasing.clamp01(a[PALM_FLOOR]);
-		if (floor > 0.0F && dripLength > 0.0F) {
-			float hand = world(new org.joml.Vector3f(), root, hips, chest, rightArm, rightForearm, rightHand).y;
-			drips = HemoEasing.lerp(drips, Math.max(drips, (24.0F - hand) / dripLength), floor);
-		}
-		offeringDrips.yScale = drips;
-		Quaternionf plumb = rotation(hips, chest, rightArm, rightForearm, rightHand).conjugate()
-				.mul(new Quaternionf().rotationZYX(a[DRIP_Z], 0, a[DRIP_X]));
-		setRotationFromMatrix(offeringDrips, plumb.get(new Matrix3f()));
 	}
 
 	/**
@@ -1132,60 +1068,45 @@
 		return head.negate();
 	}
 
-	/**
-	 * The censers on their chains: each chain hangs on a pendulum carried in the world (the anchor at the staff head
-	 * moves with the staff, the walk and the turn; the censer lags it and swings past when it stops), tilted by what the
-	 * move asks: flung out along the swung staff, swung out round the turning staff, the left one whirled and thrown,
-	 * or fouled in the floor ahead. The links stay straight under the censer's weight.
-	 */
+	/** The censer hangs plumb, lags its pivot and swings out on a cast or down on a fouled chain. */
 	private void censerPose(float[] a, PutricielAnimState m) {
 		Quaternionf headRotation = rotation(hips, chest, leftArm, leftForearm, leftHand, staff, staffHead);
-		org.joml.Vector3f crownAt = world(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm, leftHand, staff,
-				staffHead);
+		org.joml.Vector3f headAt = world(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm,
+				leftHand, staff, staffHead);
 		org.joml.Vector3f grip = world(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm, leftHand, staff);
-		float hx = crownAt.x - grip.x, hz = crownAt.z - grip.z, along = Mth.sqrt(hx * hx + hz * hz);
+		org.joml.Vector3f pivot = world(new org.joml.Vector3f(censerChain.x, censerChain.y, censerChain.z),
+				root, hips, chest, leftArm, leftForearm, leftHand, staff, staffHead);
 		float yaw = m.bodyYawRadians();
 		float cos = Mth.cos(yaw), sin = Mth.sin(yaw);
-		for (int i = 0; i < 2; i++) {
-			ModelPart chain = i == 0 ? staffChainLeft : staffChainRight;
-			float length = Math.max(1.0F, chainLength[i]);
-			org.joml.Vector3f pivot = world(new org.joml.Vector3f(chain.x, chain.y, chain.z), root, hips, chest, leftArm,
-					leftForearm, leftHand, staff, staffHead);
-			// the pendulum: the anchor into the world's frame (the renderer's mirror and the body's yaw, then its
-			// position), the bob lagging it
-			float wx = (float) (cos * pivot.x + sin * pivot.z + m.worldX());
-			float wz = (float) (sin * pivot.x - cos * pivot.z + m.worldZ());
-			int slot = PENDULUM + i * 2;
-			float bx = m.follow(slot, wx, 0.28F, 0.16F), bz = m.follow(slot + 1, wz, 0.28F, 0.16F);
-			float dx = bx - wx, dz = bz - wz;
-			if (dx * dx + dz * dz > 9.0F * length * length) {
-				m.reset(slot, wx);
-				m.reset(slot + 1, wz);
-				dx = dz = 0.0F;
-			}
-			// back into the model's frame (the same mirror, its own inverse)
-			float ox = cos * dx + sin * dz, oz = sin * dx - cos * dz;
-			org.joml.Vector3f down = new org.joml.Vector3f(ox, length, oz);
-			// flung out along the swung staff
-			if (along > 1.0E-3F) down.add(hx / along * tan(a[CENSER_FLING]) * length, 0, hz / along * tan(a[CENSER_FLING]) * length);
-			// swung out round the staff's own axis
-			float rx = pivot.x - crownAt.x, rz = pivot.z - crownAt.z, radial = Mth.sqrt(rx * rx + rz * rz);
-			float out = a[CENSER_OUT] + (i == 0 ? a[CAST] : 0.0F);
-			if (radial > 1.0E-3F) down.add(rx / radial * tan(out) * length, 0, rz / radial * tan(out) * length);
-			if (i == 0) {
-				// thrown at the quarry, ahead and a little down
-				float thrown = HemoEasing.clamp01(a[CAST_THROW]);
-				down.lerp(new org.joml.Vector3f(0, length * 0.35F, -length), thrown);
-			} else {
-				// fouled in the floor ahead
-				float stuck = HemoEasing.clamp01(a[STUCK]);
-				org.joml.Vector3f toward = new org.joml.Vector3f(STUCK_AT).sub(pivot);
-				if (toward.lengthSquared() > 1.0E-4F) down.lerp(toward.normalize(length), stuck);
-			}
-			clampTilt(down, CENSER_LIMIT);
-			down.normalize();
-			Quaternionf hang = new Quaternionf().rotationTo(0, 1, 0, down.x, down.y, down.z);
-			setRotationFromMatrix(chain, new Quaternionf(headRotation).conjugate().mul(hang).get(new Matrix3f()));
+		float wx = (float) (cos * pivot.x + sin * pivot.z + m.worldX());
+		float wz = (float) (sin * pivot.x - cos * pivot.z + m.worldZ());
+		float dx = m.follow(PENDULUM, wx, 0.28F, 0.16F) - wx;
+		float dz = m.follow(PENDULUM + 1, wz, 0.28F, 0.16F) - wz;
+		if (dx * dx + dz * dz > 9.0F * chainLength * chainLength) {
+			m.reset(PENDULUM, wx);
+			m.reset(PENDULUM + 1, wz);
+			dx = dz = 0.0F;
+		}
+		org.joml.Vector3f down = new org.joml.Vector3f(cos * dx + sin * dz, chainLength, sin * dx - cos * dz);
+		swingCenser(down, headAt.x - grip.x, headAt.z - grip.z, a[CENSER_FLING]);
+		swingCenser(down, pivot.x - headAt.x, pivot.z - headAt.z, a[CENSER_OUT] + a[CAST]);
+		down.lerp(new org.joml.Vector3f(0, chainLength * 0.35F, -chainLength), HemoEasing.clamp01(a[CAST_THROW]));
+		float stuck = HemoEasing.clamp01(a[STUCK]);
+		if (stuck > 0.0F) {
+			org.joml.Vector3f toward = new org.joml.Vector3f(STUCK_AT).sub(pivot);
+			if (toward.lengthSquared() > 1.0E-4F) down.lerp(toward.normalize(chainLength), stuck);
+		}
+		clampTilt(down, CENSER_LIMIT);
+		down.normalize();
+		Quaternionf hang = new Quaternionf().rotationTo(0, 1, 0, down.x, down.y, down.z);
+		setRotationFromMatrix(censerChain, headRotation.conjugate().mul(hang).get(new Matrix3f()));
+	}
+
+	private void swingCenser(org.joml.Vector3f down, float x, float z, float angle) {
+		float distance = Mth.sqrt(x * x + z * z);
+		if (distance > 1.0E-3F) {
+			float push = tan(angle) * chainLength / distance;
+			down.add(x * push, 0, z * push);
 		}
 	}
 
@@ -1203,48 +1124,26 @@
 		down.set(down.x / horizontal * h, v, down.z / horizontal * h);
 	}
 
-	/**
-	 * The growths at {@code scale} (1 in the rot, 0.35 burnt in the fire, regrowing past 1, unfurling through the
-	 * rise): the sacs swell by their channels and wobble, split and slack when spent; the shelves flex with the colony
-	 * and wobble; the mushrooms and the crown's spires sway; the drips hang plumb and swing.
-	 */
+	/** The colony ripples into a volley and relaxes after shedding spores. */
 	private void growths(float[] a, float scale, float age) {
 		float spent = HemoEasing.clamp01(a[SAC_SPENT]);
-		for (int i = 0; i < 8; i++) {
-			ModelPart sac = sacParts[i];
-			float swell = Math.max(-0.4F, a[SAC + i]);
+		for (int i = 0; i < sporeNodules.length; i++) {
+			ModelPart nodule = sporeNodules[i];
+			float swell = Math.max(-0.4F, (a[SAC + i] + a[SAC + i + 4]) * 0.5F);
 			float wobble = a[SAC_JIG] * (i % 2 == 0 ? 0.06F : -0.05F);
-			float wide = (1.0F + swell * 0.6F + wobble) * (1.0F - spent * 0.3F);
-			float tall = (1.0F + swell * 0.3F - wobble) * (1.0F - spent * 0.45F);
-			sac.xScale = sac.zScale = wide * scale;
-			sac.yScale = tall * scale;
+			nodule.xScale = nodule.zScale = (1.0F + swell * 0.6F + wobble) * (1.0F - spent * 0.3F) * scale;
+			nodule.yScale = (1.0F + swell * 0.3F - wobble) * (1.0F - spent * 0.45F) * scale;
 		}
 		for (int i = 0; i < backShelves.length; i++) {
 			ModelPart shelf = backShelves[i];
-			shelf.xRot += a[COLONY] * (0.6F + 0.2F * (i % 3)) + a[COLONY_JIG] * (i % 2 == 0 ? 1.0F : -0.6F);
+			float pulse = Mth.sin(age * 0.07F - i * 0.64F) * 0.015F;
+			shelf.xRot += pulse + a[COLONY] * (0.45F + 0.17F * (i % 3))
+					+ a[COLONY_JIG] * (i % 2 == 0 ? 0.8F : -0.55F);
 			shelf.xScale = shelf.yScale = shelf.zScale = scale;
 		}
-		for (int i = 0; i < hemShelves.length; i++) {
-			hemShelves[i].xRot += a[COLONY] * 0.3F + a[COLONY_JIG] * (i % 2 == 0 ? 0.7F : -0.5F);
-			hemShelves[i].xScale = hemShelves[i].yScale = hemShelves[i].zScale = scale;
+		for (int i = 0; i < crosses.length; i++) {
+			crosses[i].zRot += a[CROWN_JIG] * (i % 2 == 0 ? 0.2F : -0.15F);
 		}
-		for (int i = 0; i < shoulderShelves.length; i++) shoulderShelves[i].xRot += a[COLONY_JIG] * (i % 2 == 0 ? 0.5F : -0.4F);
-		for (int i = 0; i < 4; i++) {
-			ModelPart mushroom = growthMushrooms[i];
-			mushroom.xScale = mushroom.zScale = scale;
-			mushroom.yScale = scale + Mth.sin(age * 0.045F + i) * 0.025F;
-			mushroom.zRot += a[COLONY_JIG] * (i % 2 == 0 ? 0.5F : -0.5F);
-			ModelPart drip = rotDrips[i];
-			drip.yScale = (0.8F + (Mth.sin(age * 0.08F - i * 1.3F) + 1.0F) * 0.2F) * scale;
-			drip.xRot += a[COLONY_JIG] * 0.6F + a[DRIP_X] * 0.4F;
-		}
-		for (ModelPart part : new ModelPart[]{crownMushroom, shoulderMushroom, backMushroom, headShelfLeft, headShelfRight}) {
-			part.xScale = part.yScale = part.zScale = scale;
-		}
-		crownMushroom.zRot += a[CROWN_JIG];
-		backMushroom.zRot += a[COLONY_JIG] * 0.6F;
-		shoulderMushroom.zRot += a[COLONY_JIG] * -0.5F;
-		for (int i = 0; i < crownSpires.length; i++) crownSpires[i].zRot += a[CROWN_JIG] * (i % 2 == 0 ? 0.35F : -0.3F);
 	}
 
 	/**
@@ -1258,14 +1157,12 @@
 		var moment = m.fireMoment();
 		for (int i = 0; i < GROWTH_COUNT; i++) {
 			float g = PutricielFireAnchors.growth(i, moment);
-			growthBurn[i] = g;
 			if (g == 1.0F) continue;
 			ModelPart part = growthPartList[i];
 			part.xScale *= g;
 			part.yScale *= g;
 			part.zScale *= g;
 		}
-		for (int i = 0; i < rotDrips.length; i++) if (dripGrowth[i] >= 0) rotDrips[i].yScale *= growthBurn[dripGrowth[i]];
 	}
 
 	// ---------------------------------------------------------------- the fire on the body (revision R1)
@@ -1340,97 +1237,37 @@
 		return (int) (Mth.clamp(alpha, 0.0F, 1.0F) * 255.0F) << 24 | 0xFFFFFF;
 	}
 
-	/** The purifier's face pushed forward through the hollow, the face vines burning back or parting with the hood. */
-	private void face(float face, float[] a) {
-		purifierFace.z -= face * 1.0F;
-		faceVines.yScale = 1.0F - face * 0.8F;
-		faceVines.xRot -= face * 0.3F + a[HOOD] * 0.45F - a[CROWN_JIG] * 0.5F;
-	}
-
-	/**
-	 * The cloth and what hangs: the vestment chains plumb off the chest and bending as they swing, the mantles, the
-	 * robe panels following the thighs, flaring as the hips sink so they heap on the floor and trailing the walk, and
-	 * the ground roots dragging round after a turn or pulled taut.
-	 */
+	/** The rear panels lag the walk and flare off the floor on kneels. */
 	private void drape(float[] a, float age, float drop) {
-		Quaternionf chestPlumb = rotation(hips, chest).conjugate();
-		for (int c = 0; c < 2; c++) {
-			ModelPart chain = c == 0 ? leftVestmentChain : rightVestmentChain;
-			float idle = Mth.sin(age * 0.07F + c) * 0.04F;
-			Quaternionf swing = new Quaternionf().rotationZYX(a[VEST_Z] * (1.0F + c * 0.1F) + idle, 0, a[VEST_X] * (1.0F + c * 0.12F));
-			setRotationFromMatrix(chain, new Quaternionf(chestPlumb).mul(swing).get(new Matrix3f()));
-			bend(vestLinks[c], vestRest[c], a[VEST_BEND_X], a[VEST_BEND_Z]);
-		}
-		leftMantle.xRot += a[MANTLE] + Mth.sin(age * 0.07F) * 0.018F;
-		rightMantle.xRot += a[MANTLE] * 0.9F + Mth.sin(age * 0.07F + 1.4F) * 0.018F;
+		leftMantle.xRot += a[MANTLE] + Mth.sin(age * 0.07F) * 0.012F;
+		rightMantle.xRot += a[MANTLE] * 0.9F + Mth.sin(age * 0.07F + 1.4F) * 0.012F;
 		leftMantle.zRot -= Math.max(0.0F, a[SPREAD]) * 0.15F;
 		rightMantle.zRot += Math.max(0.0F, a[SPREAD]) * 0.15F;
-		float height = 24.0F - hips.getInitialPose().y;
-		for (int i = 0; i < ROBE_PANELS; i++) {
-			float angle = i * Mth.TWO_PI / ROBE_PANELS;
-			float out = Mth.cos(angle);
-			ModelPart thigh = Mth.sin(angle) >= 0.0F ? leftThigh : rightThigh;
-			float stride = (thigh.xRot - thigh.getInitialPose().xRot) * out * (Math.abs(out) > 0.5F ? 0.7F : 0.4F);
-			float flare = Math.max(0.0F, acos((height - drop) / robeLength[i]) - acos(height / robeLength[i]));
-			float trailing = a[ROBE_X] * out + a[ROBE_Z] * Mth.sin(angle);
-			robes[i].xRot += Mth.clamp(stride, -0.6F, 0.6F) + flare + Math.max(-0.15F, trailing)
-					+ Mth.sin(age * 0.07F - i * 0.7F) * (0.018F + Math.abs(a[SHAKE]) * 0.04F);
-		}
-		groundRoots.yRot += a[ROOT_DRAG];
-		float taut = a[ROOTS];
-		for (int i = 0; i < rootTrails.length; i++) {
-			rootTrails[i].xRot -= Math.max(0.0F, taut) * 0.12F;
-			rootTrails[i].zScale = Math.max(0.5F, 1.0F - taut * 0.3F);
-			rootTrails[i].yRot += Mth.sin(age * 0.05F + i) * 0.03F;
-		}
+		cape.xRot += -Mth.clamp(drop * 0.038F + a[ROBE_X] * 0.35F, -0.17F, 0.62F)
+				+ Mth.sin(age * 0.08F) * 0.022F;
+		cape.zRot += a[ROBE_Z] * 0.24F;
+		capeLeft.xRot += a[VEST_BEND_X] * 0.3F + Mth.sin(age * .09F) * .025F;
+		capeRight.xRot += a[VEST_BEND_X] * 0.25F + Mth.sin(age * .09F - .9F) * .025F;
+		capeLeft.zRot += a[VEST_BEND_Z] * 0.25F;
+		capeRight.zRot += a[VEST_BEND_Z] * 0.25F;
 	}
 
-	/**
-	 * Curves a hanging chain: each link turns a little more than the one above it and hangs from the end of it. Zero
-	 * bend leaves the links as authored.
-	 */
-	private static void bend(ModelPart[] links, float[] rest, float bendX, float bendZ) {
-		float x = 0, y = 0, z = 0;
-		int n = links.length;
-		for (int i = 0; i < n; i++) {
-			float share = (i + 1.0F) / n;
-			float ax = bendX * share, az = bendZ * share;
-			ModelPart link = links[i];
-			link.x = x;
-			link.y = y;
-			link.z = z;
-			if (i % 2 == 0) link.xRot += ax;
-			link.zRot += az;
-			float step = i + 1 < n ? rest[i + 1] - rest[i] : rest[i] - (i > 0 ? rest[i - 1] : 0.0F);
-			x -= step * Mth.sin(az);
-			y += step * Mth.cos(ax) * Mth.cos(az);
-			z += step * Mth.sin(ax);
-		}
-	}
-
-	private static float acos(float cosine) {
-		return (float) Math.acos(Mth.clamp(cosine, -1.0F, 1.0F));
-	}
-
-	public org.joml.Vector3f core() { return point(0, 0, -.2F, root, hips, chest); }
-	public org.joml.Vector3f palm() { return point(0, -.08F, 0, root, hips, chest, rightArm, rightForearm, rightHand); }
-	public org.joml.Vector3f faceAnchor() { return point(0, 0, -.05F, root, hips, chest, head, purifierFace); }
+	public org.joml.Vector3f core() { return point(0, -.48F, -.2F, root, hips, chest); }
+	public org.joml.Vector3f palm() { return point(0, -.025F, -.025F, root, hips, chest, rightArm, rightForearm, rightHand); }
+	public org.joml.Vector3f faceAnchor() { return point(0, 0, 0, root, hips, chest, head, faceAnchor); }
 	public org.joml.Vector3f staffFootPoint() { return point(0, 0, 0, root, hips, chest, leftArm, leftForearm, leftHand, staff, staffFoot); }
 	public org.joml.Vector3f staffHeadPoint() { return point(0, 0, 0, root, hips, chest, leftArm, leftForearm, leftHand, staff, staffHead); }
 	public org.joml.Vector3f[] sacPoints() {
-		return new org.joml.Vector3f[]{point(0, 0, 0, root, hips, chest, sporeCluster, spore0),
-				point(0, 0, 0, root, hips, chest, sporeCluster, spore1),
-				point(0, 0, 0, root, hips, chest, sporeCluster, spore2),
-				point(0, 0, 0, root, hips, chest, sporeCluster, spore3),
-				point(0, 0, 0, root, hips, chest, rightArm, shoulderSpore),
-				point(0, 0, 0, root, hips, hemSpore),
-				point(0, 0, 0, root, hips, chest, backColony, backSpore0),
-				point(0, 0, 0, root, hips, chest, backColony, backSpore1)};
+		org.joml.Vector3f[] points = new org.joml.Vector3f[sporeChains.length];
+		for (int i = 0; i < points.length; i++) points[i] = point(0, 0, 0, sporeChains[i]);
+		return points;
 	}
+
 	public org.joml.Vector3f[] censers() {
-		return new org.joml.Vector3f[]{point(0, -.08F, 0, root, hips, chest, leftArm, leftForearm, leftHand, staff, staffHead, staffChainLeft, censerLeft),
-				point(0, -.08F, 0, root, hips, chest, leftArm, leftForearm, leftHand, staff, staffHead, staffChainRight, censerRight)};
+		return new org.joml.Vector3f[]{point(0, 0, 0, root, hips, chest, leftArm, leftForearm, leftHand, staff,
+				staffHead, censerChain, censerBowl)};
 	}
+
 	private static org.joml.Vector3f point(float x, float y, float z, ModelPart... parts) {
 		PoseStack pose = new PoseStack();
 		for (ModelPart part : parts) part.translateAndRotate(pose);

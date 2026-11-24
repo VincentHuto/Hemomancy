@@ -9,8 +9,8 @@ import com.vincenthuto.hemomancy.common.util.HemoEasing;
  * purifier's face, the hunch, and the burst kinds the {@code PUTRICIEL_OFFERING} visual channel carries.
  */
 public final class PutricielVisualRules {
-	/** Render scale: the rig is generated at 0.7 so the atlas lands at 16 px per block (2 px a unit x 16 / 2.0). */
-	public static final float SCALE = 2.0F;
+	/** Fits the authored 39-unit silhouette to the existing 3.25-block encounter height. */
+	public static final float SCALE = 4.0F / 3.0F;
 	public static final int BURST_TICKS = 32, REST_TICKS = 40;
 	/** Burst kinds, carried as the visual packet's count. */
 	public static final int ROT_IMPACT = 1, FIRE_IMPACT = 2, ABSOLVE = 3, IGNITE = 4, EMBER = 5, SCORCH = 6, REST = 7,

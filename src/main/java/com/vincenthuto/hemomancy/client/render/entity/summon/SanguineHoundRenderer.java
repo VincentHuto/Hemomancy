@@ -25,6 +25,12 @@ public class SanguineHoundRenderer extends MobRenderer<SanguineHoundEntity, Sang
 	}
 
 	@Override
+	protected void scale(SanguineHoundEntity entity, PoseStack poseStack, float partialTick) {
+		// The authoring rig uses a larger grid to keep the bridles and joints at whole texels.
+		poseStack.scale(0.60F, 0.60F, 0.60F);
+	}
+
+	@Override
 	protected float getBob(SanguineHoundEntity entity, float partialTick) {
 		return entity.getTailAngle();
 	}

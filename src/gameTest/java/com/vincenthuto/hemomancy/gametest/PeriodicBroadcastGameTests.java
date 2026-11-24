@@ -170,6 +170,33 @@ public final class PeriodicBroadcastGameTests {
 		}
 	}
 
+	/** FX-14: the rite list goes to a viewer again only when what it would show has changed. */
+	@GameTest(template = "empty", timeoutTicks = 40, batch = "periodic_broadcast_rite")
+	public static void riteSyncSendsAnUnchangedListOnce(GameTestHelper helper) {
+		try (CapturedPlayer viewer = CapturedPlayer.create(helper)) {
+			ServerLevel level = helper.getLevel();
+			BlockPos center = helper.absolutePos(new BlockPos(1, 1, 1));
+			viewer.player.setPos(Vec3.atCenterOf(center).add(4.0D, 0.0D, 0.0D));
+			viewer.joinLevel();
+			ActiveCardinalRite rite = new ActiveCardinalRite(java.util.UUID.randomUUID(), center,
+					Hemomancy.rloc("cardinal_rite/still_waters"), 200, 3);
+			var saved = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level);
+			saved.startRite(rite);
+			try {
+				int before = viewer.sent(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncActiveRites.class).size();
+				CardinalRiteSync.syncActiveRites(level);
+				int first = viewer.sent(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncActiveRites.class).size();
+				CardinalRiteSync.syncActiveRites(level);
+				int second = viewer.sent(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncActiveRites.class).size();
+				helper.assertTrue(first == before + 1, "a list with a new rite in it was not sent");
+				helper.assertTrue(second == first, "the same list was sent again");
+			} finally {
+				saved.removeRite(rite.getPlayerUUID());
+			}
+			helper.succeed();
+		}
+	}
+
 	private static int blackHearts(CapturedPlayer viewer, ServerPlayer owner) {
 		return (int) viewer.sent(ManipulationVisualPacket.class).stream()
 				.filter(packet -> packet.form() == ManipulationVisuals.Form.BLACK_HEART && packet.entityId() == owner.getId())

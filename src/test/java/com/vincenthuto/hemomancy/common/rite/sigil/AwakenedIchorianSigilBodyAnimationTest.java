@@ -3,37 +3,51 @@ package com.vincenthuto.hemomancy.common.rite.sigil;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class AwakenedIchorianSigilBodyAnimationTest {
-	@Test
-	void bodyContinuesBreathingAndShiftingBetweenFlightPositions() {
-		ResourceLocation reservoir = ResourceLocation.parse("hemomancy:reservoir");
-		var first = AwakenedIchorianSigilBodyAnimation.pose(reservoir, 50.0F, 0.04F);
-		var later = AwakenedIchorianSigilBodyAnimation.pose(reservoir, 61.0F, 0.04F);
+	private static final List<String> KNOWN = List.of(
+			"reservoir", "bastion", "hematic_lattice", "mnemonic",
+			"suture", "shunt", "seal", "cage", "lens");
 
-		assertNotEquals(first, later);
-		assertNotEquals(first.scaleY(), later.scaleY());
-		assertNotEquals(first.offsetY(), later.offsetY());
+	@Test
+	void everyHoveringFormKeepsBreathing() {
+		for (String id : KNOWN) {
+			ResourceLocation sigil = ResourceLocation.parse("hemomancy:" + id);
+			var first = AwakenedIchorianSigilBodyAnimation.pose(sigil, 50.0F);
+			var later = AwakenedIchorianSigilBodyAnimation.pose(sigil, 61.0F);
+
+			assertNotEquals(first, later, id + " froze at rest");
+			assertNotEquals(first.scaleY(), later.scaleY(), id + " stopped breathing");
+			assertNotEquals(first.offsetY(), later.offsetY(), id + " stopped drifting");
+		}
 	}
 
 	@Test
 	void differentSigilsDoNotMoveLikeOneRepeatedPuppet() {
 		var reservoir = AwakenedIchorianSigilBodyAnimation.pose(
-				ResourceLocation.parse("hemomancy:reservoir"), 80.0F, 0.06F);
+				ResourceLocation.parse("hemomancy:reservoir"), 80.0F);
 		var lens = AwakenedIchorianSigilBodyAnimation.pose(
-				ResourceLocation.parse("hemomancy:lens"), 80.0F, 0.06F);
+				ResourceLocation.parse("hemomancy:lens"), 80.0F);
 
 		assertNotEquals(reservoir, lens);
 	}
 
 	@Test
+	void theShuntIsLivelierThanTheSeal() {
+		assertTrue(offsetRange("shunt") > offsetRange("seal"),
+				"the shunt's quickness and the seal's stillness carry into the idle");
+	}
+
+	@Test
 	void secondaryMotionRemainsOrganicAndReadable() {
-		for (String id : new String[] {"reservoir", "bastion", "suture", "shunt", "lens"}) {
+		for (String id : KNOWN) {
 			for (int age = 0; age < 240; age++) {
 				var pose = AwakenedIchorianSigilBodyAnimation.pose(
-						ResourceLocation.parse("hemomancy:" + id), age, 0.08F);
+						ResourceLocation.parse("hemomancy:" + id), age);
 				assertTrue(Math.abs(pose.offsetX()) <= 0.12F);
 				assertTrue(Math.abs(pose.offsetY()) <= 0.12F);
 				assertTrue(Math.abs(pose.offsetZ()) <= 0.12F);
@@ -42,5 +56,17 @@ final class AwakenedIchorianSigilBodyAnimationTest {
 				assertTrue(pose.scaleZ() >= 0.85F && pose.scaleZ() <= 1.15F);
 			}
 		}
+	}
+
+	private static float offsetRange(String id) {
+		float min = Float.POSITIVE_INFINITY;
+		float max = Float.NEGATIVE_INFINITY;
+		for (int age = 0; age < 200; age++) {
+			float x = AwakenedIchorianSigilBodyAnimation.pose(
+					ResourceLocation.parse("hemomancy:" + id), age).offsetX();
+			min = Math.min(min, x);
+			max = Math.max(max, x);
+		}
+		return max - min;
 	}
 }

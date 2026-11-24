@@ -28,10 +28,10 @@ final class MnemonistThreadLayer extends RenderLayer<MnemonistPuppetEntity, Mnem
 	private static final ResourceLocation WHITE = ResourceLocation.withDefaultNamespace("textures/misc/white.png");
 	private static final int SEGMENTS = 18;
 	private static final float PIXEL = 1.0F / 16.0F;
-	// Body-space centre of the spool's wound core, where every thread pays out.
-	private static final float SPOOL_Y = 3.5F;
-	private static final float SPOOL_Z = 3.5F;
-	private static final float SPOOL_RADIUS = 1.5F;
+	// Centre of the wound core relative to the spool pivot, where every thread pays out.
+	private static final float SPOOL_Y = 0.0F;
+	private static final float SPOOL_Z = 2.0F;
+	private static final float SPOOL_RADIUS = 2.0F;
 	private static final float ROOT_RADIUS = 0.36F * PIXEL;
 	private static final float TIP_RADIUS = 0.07F * PIXEL;
 	private static final float GLOW_SCALE = 2.6F;
@@ -50,7 +50,7 @@ final class MnemonistThreadLayer extends RenderLayer<MnemonistPuppetEntity, Mnem
 		Motion motion = Motion.of(entity, partialTick, limbSwingAmount);
 
 		poseStack.pushPose();
-		getParentModel().body.translateAndRotate(poseStack);
+		getParentModel().translateToSpool(poseStack);
 		PoseStack.Pose pose = poseStack.last();
 		VertexConsumer core = buffer.getBuffer(RenderType.entityCutoutNoCull(WHITE));
 		int overlay = LivingEntityRenderer.getOverlayCoords(entity, 0.0F);
@@ -69,7 +69,9 @@ final class MnemonistThreadLayer extends RenderLayer<MnemonistPuppetEntity, Mnem
 
 	private record Motion(float trail, float lash, float spasm, float slack) {
 		static Motion of(MnemonistPuppetEntity entity, float partialTick, float limbSwingAmount) {
-			float lash = Mth.sin(entity.getAttackAnim(partialTick) * Mth.PI);
+			float encore = Mth.clamp(entity.encoreAnimationAge(partialTick) / MnemonistPuppetEntity.ENCORE_POSE_TICKS, 0, 1);
+			float lash = Mth.sin(Math.max(0, entity.getAttackAnim(partialTick)) * Mth.PI);
+			lash = Math.max(lash, Mth.sin(encore * Mth.PI));
 			float spasm = entity.hurtTime > 0 ? (entity.hurtTime - partialTick) / Math.max(1, entity.hurtDuration) : 0.0F;
 			float slack = entity.deathTime > 0 ? Math.min(1.0F, (entity.deathTime + partialTick) / 20.0F) : 0.0F;
 			return new Motion(Math.min(1.0F, limbSwingAmount), lash, Math.max(0.0F, spasm), slack);

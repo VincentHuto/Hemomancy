@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import com.google.gson.JsonParser;
+import com.vincenthuto.hemomancy.client.model.entity.mob.animal.VenousStriderModel;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -36,9 +37,27 @@ class PeacockSpiderAndVampireBatModelTextureTest {
 		assertUvFit("PeacockSpiderModel.bbmodel", "peacock_spider/model_peacock_spider.png", false);
 		// The bat's wings, ears and tail web are flat panels cut to shape, so transparency inside a UV island is the art.
 		assertUvFit("VampireBatModel.bbmodel", "vampire_bat/model_vampire_bat.png", true);
-		// So are the doe's ears and the strider's crest and primaries.
+		// So are the doe's ears.
 		assertUvFit("CrimsonDoeModel.bbmodel", "crimson_doe/model_crimson_doe.png", true);
-		assertUvFit("VenousStriderModel.bbmodel", "venous_strider/model_venous_strider.png", true);
+		assertUvFit("VenousStriderModel.bbmodel", "venous_strider/model_venous_strider.png", false);
+	}
+
+	@Test
+	void venousStriderBakesWithTheHeronRig() {
+		var model = new VenousStriderModel(VenousStriderModel.createBodyLayer().bakeRoot());
+		var root = model.root();
+		var body = root.getChild("body");
+		var base = body.getChild("neck_base");
+		var fold = base.getChild("neck_fold");
+		var upper = fold.getChild("neck_upper");
+		var head = upper.getChild("head");
+		assertEquals(29.25F, 24.0F - (root.y + body.y + base.y + fold.y + upper.y + head.y));
+		for (String side : new String[]{"left", "right"}) {
+			var leg = root.getChild(side + "_leg");
+			var hock = leg.getChild(side + "_hock");
+			var foot = hock.getChild(side + "_foot");
+			assertEquals(0.5F, 24.0F - (root.y + leg.y + hock.y + foot.y));
+		}
 	}
 
 	@Test

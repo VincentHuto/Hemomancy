@@ -120,3 +120,73 @@ def build(texture_id, model_name, parts, java, shade, palette, glow=None, varian
     output.write_text(json.dumps(model, indent=2) + '\n', encoding='utf-8')
     print(f'{model_name}: {len(parts)} joints, {len(model["elements"])} cubes, {ATLAS}px atlas')
     return output
+
+
+def blockbench_mesh_source(model, mesh_name, project_name, script_name, joint_name, detail_name):
+    elements = {cube['uuid']: cube for cube in model['elements']}
+    lines = []
+    f = lambda values: ', '.join(f'{v:.9g}F' for v in values)
+
+    def offset(point, pivot):
+        x, y, z = (a - b for a, b in zip(point, pivot))
+        return x, -y, z
+
+    def part(name, parent, node, parent_pivot, cubes):
+        pivot = node['origin']
+        x, y, z = node.get('rotation', (0, 0, 0))
+        rotation = tuple(map(math.radians, (-x, y, -z)))
+        pose = (f'PartPose.offsetAndRotation({f((*offset(pivot, parent_pivot), *rotation))})'
+                if any(rotation) else f'PartPose.offset({f(offset(pivot, parent_pivot))})')
+        lines.append(f'        PartDefinition {name} = {parent}.addOrReplaceChild("{name}",')
+        lines.append('                CubeListBuilder.create()')
+        for cube in cubes:
+            a, b = cube['from'], cube['to']
+            u, v = cube['uv_offset']
+            size = tuple(hi - lo for lo, hi in zip(a, b))
+            bounds = offset((a[0], b[1], a[2]), pivot)
+            lines.append(f'                        .texOffs({u}, {v}).addBox({f((*bounds, *size))})')
+        lines[-1] += f', {pose});'
+
+    def visit(group, parent, parent_pivot):
+        name = 'root' if parent == 'mesh.getRoot()' else joint_name(group['name'])
+        cubes = [elements[node] for node in group['children'] if isinstance(node, str)]
+        details = []
+        attached = []
+        for index, cube in enumerate(cubes):
+            child = detail_name(name, index, cube)
+            if child is None and any(cube.get('rotation', ())):
+                child = f'{name}_detail_{index}'
+            if child is None:
+                attached.append(cube)
+            else:
+                details.append((child, cube))
+        part(name, parent, group, parent_pivot, attached)
+        for child, cube in details:
+            part(child, name, cube, group['origin'], [cube])
+        for node in group['children']:
+            if isinstance(node, dict):
+                visit(node, name, group['origin'])
+
+    root, = model['outliner']
+    visit(root, 'mesh.getRoot()', (0, 24, 0))
+    w, h = (model['resolution'][axis] for axis in ('width', 'height'))
+    geometry = '\n'.join(lines)
+    return f'''package com.vincenthuto.hemomancy.client.model.entity.summon;
+
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+
+/** Generated from {project_name} by tools/circus/{script_name}. */
+final class {mesh_name} {{
+    private {mesh_name}() {{}}
+
+    static LayerDefinition createBodyLayer() {{
+        MeshDefinition mesh = new MeshDefinition();
+{geometry}
+        return LayerDefinition.create(mesh, {w}, {h});
+    }}
+}}
+'''

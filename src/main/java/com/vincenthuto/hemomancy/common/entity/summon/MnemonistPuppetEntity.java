@@ -45,6 +45,9 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 	/** Its ordeal moves' poses ({@code OrdealMnemonistMoves}): an entity event per move, timed by the model from its arrival. */
 	private static final byte ORDEAL_MOVE_EVENT = 80;
 	private static final int ORDEAL_MOVES = 4;
+	private static final byte ENCORE_EVENT = ORDEAL_MOVE_EVENT + ORDEAL_MOVES + 1;
+	public static final int ENCORE_POSE_TICKS = 14;
+	private int encoreAnimationStart = -ENCORE_POSE_TICKS;
 	private int ordealMove = -1;
 	private int ordealMoveStart;
 
@@ -99,11 +102,17 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 		return tickCount - ordealMoveStart + partialTick;
 	}
 
+	public float encoreAnimationAge(float partialTick) {
+		return tickCount - encoreAnimationStart + partialTick;
+	}
+
 	@Override
 	public void handleEntityEvent(byte id) {
 		if (id >= ORDEAL_MOVE_EVENT && id <= ORDEAL_MOVE_EVENT + ORDEAL_MOVES) {
 			ordealMove = id - ORDEAL_MOVE_EVENT == ORDEAL_MOVES ? -1 : id - ORDEAL_MOVE_EVENT;
 			ordealMoveStart = tickCount;
+		} else if (id == ENCORE_EVENT) {
+			encoreAnimationStart = tickCount;
 		} else {
 			super.handleEntityEvent(id);
 		}
@@ -196,6 +205,7 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
             if (target.hurt(level().damageSources().indirectMagic(this, this), damage))
                 com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController.replay(this, target, memory.attackerId());
         });
+		if (!isTrueSelf()) serverLevel.broadcastEntityEvent(this, ENCORE_EVENT);
 		playReplayEffects(serverLevel, target);
 		return true;
 	}

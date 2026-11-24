@@ -1,7 +1,8 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:founding_fane",
   "bloodCost": 0,
-  "riteType": "greater",
+  "riteType": "grand",
   "purpose": "world",
   "required_degree": 5,
   "riteName": "Rite of the Founding Fane",

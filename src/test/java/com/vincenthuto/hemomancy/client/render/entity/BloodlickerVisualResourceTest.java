@@ -1,69 +1,58 @@
 package com.vincenthuto.hemomancy.client.render.entity;
 
+import com.google.gson.JsonParser;
+import com.vincenthuto.hemomancy.client.model.entity.mob.animal.BloodlickerModel;
+import net.minecraft.client.model.geom.ModelPart;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BloodlickerVisualResourceTest {
-	private static final Path SOURCE_ROOT = Path.of("src/main/java/com/vincenthuto/hemomancy");
-	private static final Path TEXTURE = Path.of(
-			"src/main/resources/assets/hemomancy/textures/entity/bloodlicker/model_bloodlicker.png");
+	private static final Path PROJECT = Path.of("docs/art/bloodlicker/bloodlicker_redesign.bbmodel");
+	private static final Path ASSETS = Path.of("src/main/resources/assets/hemomancy");
+	private static final String TEXTURE = "textures/entity/bloodlicker/model_bloodlicker.png";
 
 	@Test
-	void bloodlickerUsesItsOwnHunchedHumanoidModel() throws IOException {
-		String renderer = read("client/render/entity/mob/animal/BloodlickerRenderer.java");
-		String model = read("client/model/entity/mob/animal/BloodlickerModel.java");
-		String layers = read("client/event/LayerEvents.java");
-
-		assertTrue(renderer.contains("BloodlickerModel"), "renderer must not reuse the leech model");
-		assertTrue(renderer.contains("textures/entity/bloodlicker/model_bloodlicker.png"),
-				"renderer must use the dedicated texture");
-		assertTrue(layers.contains("BloodlickerModel.LAYER_LOCATION"), "custom model layer must be registered");
-		assertTrue(model.contains("\"abdomen\""), "model needs a separately animated distended abdomen");
-		assertTrue(model.contains("\"tongue\""), "model needs the signature long tongue");
-		assertTrue(model.contains("\"hair\""), "model needs a hanging hair curtain");
-		assertTrue(model.contains("\"left_arm\"") && model.contains("\"right_arm\""),
-				"model needs long humanoid forelimbs");
-		assertTrue(model.contains("\"left_leg\"") && model.contains("\"right_leg\""),
-				"model needs crouched humanoid hind limbs");
-	}
-
-	@Test
-	void bloodlickerTextureIsACompleteDedicatedSkin() throws IOException {
-		assertTrue(Files.isRegularFile(TEXTURE), "dedicated Bloodlicker texture is missing");
-		BufferedImage image = ImageIO.read(TEXTURE.toFile());
-		assertEquals(128, image.getWidth());
-		assertEquals(128, image.getHeight());
-
-		int opaquePixels = 0;
-		int darkFleshPixels = 0;
-		int bloodPixels = 0;
-		for (int y = 0; y < image.getHeight(); y++) {
-			for (int x = 0; x < image.getWidth(); x++) {
-				int argb = image.getRGB(x, y);
-				int alpha = argb >>> 24;
-				if (alpha < 128) continue;
-				opaquePixels++;
-				int red = (argb >>> 16) & 0xFF;
-				int green = (argb >>> 8) & 0xFF;
-				int blue = argb & 0xFF;
-				if (red < 100 && green < 90 && blue < 90) darkFleshPixels++;
-				if (red > 90 && red > green * 2 && red > blue * 3 / 2) bloodPixels++;
+	void runtimeTextureMatchesTheBlockbenchAtlas() throws Exception {
+		var project = JsonParser.parseString(Files.readString(PROJECT)).getAsJsonObject();
+		String embedded = project.getAsJsonArray("textures").get(0).getAsJsonObject().get("source").getAsString();
+		assertArrayEquals(Base64.getDecoder().decode(embedded.split(",", 2)[1]),
+				Files.readAllBytes(ASSETS.resolve(TEXTURE)));
+		var atlas = ImageIO.read(ASSETS.resolve(TEXTURE).toFile());
+		int wings = 0;
+		for (var item : project.getAsJsonArray("elements")) {
+			var cube = item.getAsJsonObject();
+			if (!cube.get("name").getAsString().equals("Wing membrane")) continue;
+			wings++;
+			var uv = cube.getAsJsonObject("faces").getAsJsonObject("north").getAsJsonArray("uv");
+			int visible = 0;
+			int cutout = 0;
+			for (int y = uv.get(1).getAsInt(); y < uv.get(3).getAsInt(); y++) {
+				for (int x = uv.get(0).getAsInt(); x < uv.get(2).getAsInt(); x++) {
+					if ((atlas.getRGB(x, y) >>> 24) == 0) cutout++;
+					else visible++;
+				}
 			}
+			assertTrue(visible > 0 && cutout > 0);
 		}
-		assertTrue(opaquePixels > 2_000, "texture atlas should contain a complete painted skin");
-		assertTrue(darkFleshPixels > 1_000, "skin should be dominated by corpse-dark flesh and hair");
-		assertTrue(bloodPixels > 300, "abdomen and tongue need a visible blood-red material");
+		assertEquals(2, wings);
 	}
 
-	private static String read(String relativePath) throws IOException {
-		return Files.readString(SOURCE_ROOT.resolve(relativePath)).replace("\r\n", "\n");
+	@Test
+	void nativeRigCanAnimateBothWingsAndAllSixLegs() {
+		ModelPart thorax = new BloodlickerModel().root().getChild("thorax");
+		assertTrue(thorax.hasChild("crop"));
+		assertTrue(thorax.getChild("head").hasChild("siphon"));
+		for (String side : new String[]{"left", "right"}) {
+			assertTrue(thorax.hasChild(side + "_wing"));
+			assertTrue(thorax.getChild(side + "_arm").hasChild(side + "_forearm"));
+			assertTrue(thorax.hasChild(side + "_middle_leg"));
+			assertTrue(thorax.getChild(side + "_hind_leg").hasChild(side + "_hind_shin"));
+		}
 	}
 }

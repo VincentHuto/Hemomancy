@@ -31,8 +31,10 @@ public final class MycelialLanternScreenPerformanceResourceTest {
                 "speckleParams = new int[48][5];");
         assertContains("mycelial lantern should scissor its animated background", screen,
                 "gfx.enableScissor(gx, gy, gx + gw, gy + gh);");
+        assertContains("mycelial lantern should keep its animation behind the bell's glass", screen,
+                "renderFungalBackground(gfx, gx + BELL_X0, gy + BELL_Y0, BELL_X1 - BELL_X0, BELL_Y1 - BELL_Y0);");
         assertContains("mycelial lantern should use simple constant-cost borders", screen,
-                "ScreenDrawUtils.drawBevelBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT, BORDER_RED, BORDER_YELLOW, BORDER_INNER);");
+                "ScreenDrawUtils.drawBevelBorder(gfx, rx, ry, RIM_X1 - RIM_X0, RIM_Y1 - RIM_Y0, IRON_LIGHT, IRON_DARK);");
         assertNotContains("mycelial lantern should not draw per-pixel gradient borders every frame", screen,
                 "drawGradientBorder");
         assertNotContains("mycelial lantern should not flash a square glow around the culture slot", screen,

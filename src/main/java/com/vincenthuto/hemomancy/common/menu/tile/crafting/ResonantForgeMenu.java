@@ -20,6 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResonantForgeMenu extends HemoContainerMenu {
+    /**
+     * Slot places on the screen's drawing of the machine as the worker sees it: the hammer bay side-on at the left
+     * (pattern drum at the back, anvil under the head, the finished-work tray between them), the grinder bay
+     * face-on at the right (tool rest at the stone's inner rim, recording drum above, the cut cylinder beside it).
+     */
+    public static final int WIDTH = 232, INVENTORY_TOP = 150;
+    public static final int[] ANVIL_SLOT = {76, 64}, PATTERN_SLOT = {16, 46}, HAMMERED_SLOT = {54, 100};
+    public static final int[] REST_SLOT = {148, 82}, RECORD_SLOT = {160, 44}, GROUND_SLOT = {148, 102}, CUT_SLOT = {206, 44};
     private final ResonantForgeBlockEntity forge;
     private final ContainerData data;
 
@@ -32,14 +40,14 @@ public class ResonantForgeMenu extends HemoContainerMenu {
         super(ContainerInit.resonant_forge.get(), id);
         this.forge = forge;
         this.data = data;
-        addSlot(input(forge, ResonantForgeBlockEntity.APPLICATION_ITEM, 25, 47, false));
-        addSlot(input(forge, ResonantForgeBlockEntity.APPLICATION_CYLINDER, 54, 47, true));
-        addSlot(output(forge, ResonantForgeBlockEntity.APPLICATION_OUTPUT, 83, 47));
-        addSlot(input(forge, ResonantForgeBlockEntity.GRINDING_ITEM, 137, 40, false));
-        addSlot(input(forge, ResonantForgeBlockEntity.GRINDING_CYLINDER, 166, 40, true));
-        addSlot(output(forge, ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT, 137, 66));
-        addSlot(output(forge, ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT, 166, 66));
-        addPlayerInventory(inventory, 29, 144);
+        addSlot(input(forge, ResonantForgeBlockEntity.APPLICATION_ITEM, ANVIL_SLOT[0], ANVIL_SLOT[1], false));
+        addSlot(input(forge, ResonantForgeBlockEntity.APPLICATION_CYLINDER, PATTERN_SLOT[0], PATTERN_SLOT[1], true));
+        addSlot(output(forge, ResonantForgeBlockEntity.APPLICATION_OUTPUT, HAMMERED_SLOT[0], HAMMERED_SLOT[1]));
+        addSlot(input(forge, ResonantForgeBlockEntity.GRINDING_ITEM, REST_SLOT[0], REST_SLOT[1], false));
+        addSlot(input(forge, ResonantForgeBlockEntity.GRINDING_CYLINDER, RECORD_SLOT[0], RECORD_SLOT[1], true));
+        addSlot(output(forge, ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT, GROUND_SLOT[0], GROUND_SLOT[1]));
+        addSlot(output(forge, ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT, CUT_SLOT[0], CUT_SLOT[1]));
+        addPlayerInventory(inventory, (WIDTH - 162) / 2, INVENTORY_TOP + 8);
         addDataSlots(data);
     }
 

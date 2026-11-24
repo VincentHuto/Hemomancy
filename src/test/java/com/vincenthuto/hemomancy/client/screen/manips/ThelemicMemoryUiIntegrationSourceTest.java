@@ -26,23 +26,25 @@ public final class ThelemicMemoryUiIntegrationSourceTest {
         require(!radialItem.contains("left - 2, y"), "radial reserve meter must not use vertical side bars");
         require(reliquary.contains("drawVascularSectionSlots"), "Reliquary must render fixed vascular section targets");
         require(reliquary.contains("cycleVascularSection"), "vascular section targets must select Thelemic memories");
-        require(reliquary.contains("preparedThelemicIcons"), "Reliquary must show prepared tinctures in temper groups");
+        require(reliquary.contains("memory.section() != node.section"), "Reliquary must group prepared tinctures by vascular section");
         require(reliquary.contains("reserveTicks(memory) > 0"), "Reliquary must hide tinctures without reserve");
         require(reliquary.contains("MemoryEquipRules.nextPreparedInSection(preparedThelemicMemories, current, section)"),
                 "vascular sections must cycle only prepared tinctures");
         require(reliquary.contains("tinctureStackFor(assigned)"),
                 "vascular sections must display the selected tincture icon");
         require(reliquary.contains("equippedNames.contains(MemorySlotRef.thelemicMemory(icon.memory).storageKey())"),
-                "selected tinctures must be highlighted in their temper groups");
+                "selected tinctures must be highlighted on the prepared rack");
         require(!reliquary.contains("vascularSectionStack"), "Reliquary must not use the debug vascular gauge");
         require(reliquary.contains("draggingThelemicMemory"),
-                "prepared tinctures must drag into the mnemonic wheel");
+                "prepared tinctures must be draggable");
         require(reliquary.contains("memory.section() == draggingThelemicMemory.section()"),
                 "dropping a tincture must replace only its associated vascular section");
-        require(reliquary.contains("int equipRadius = currentBrainRadius - scaled(10)"),
-                "equipped Noetic memories must use the larger outer ring");
-        require(reliquary.contains("(2.0 * Math.PI) / EnumVeinSections.values().length"),
-                "vascular sections must use the smaller inner ring");
+        require(reliquary.contains("equippedIcons.add(new ManipIcon(manip, ix, iy, currentIconSize, manip.getTend()))"),
+                "equipped Noetic memories must sit in sockets on the relic");
+        require(reliquary.contains("VascularNode[] VASCULAR_NODES"),
+                "vascular sockets must share anatomical positions with the plate");
+        require(reliquary.contains("getHoveredSection(mouseX, mouseY) == memory.section()"),
+                "a tincture dropped on its own section's socket must equip it");
     }
 
     private static void require(boolean condition, String message) {

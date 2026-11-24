@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -37,7 +38,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class BarbedUrchinEntity extends AbstractFish {
-	public final AnimationState idleAnimationState = new AnimationState();
+	private float visualPuff = Float.NaN;
+	private float previousVisualPuff;
 
 	private static final EntityDataAccessor<Integer> PUFF_STATE = SynchedEntityData.defineId(BarbedUrchinEntity.class,
 			EntityDataSerializers.INT);
@@ -63,6 +65,11 @@ public class BarbedUrchinEntity extends AbstractFish {
 
 	public int getPuffState() {
 		return this.entityData.get(PUFF_STATE);
+	}
+
+	public float getVisualPuff(float partialTick) {
+		return Float.isNaN(visualPuff) ? Mth.clamp(getPuffState(), 0, 2)
+				: Mth.lerp(Mth.clamp(partialTick, 0.0F, 1.0F), previousVisualPuff, visualPuff);
 	}
 
 	public void setPuffState(int pPuffState) {
@@ -147,8 +154,12 @@ public class BarbedUrchinEntity extends AbstractFish {
 
 	public void tick() {
 		if (this.level().isClientSide()) {
-			this.idleAnimationState.startIfStopped(this.tickCount);
-
+			float target = Mth.clamp(getPuffState(), 0, 2);
+			if (Float.isNaN(visualPuff)) {
+				visualPuff = target;
+			}
+			previousVisualPuff = visualPuff;
+			visualPuff = Mth.approach(visualPuff, target, target > visualPuff ? 0.25F : 0.125F);
 		}
 
 		if (!this.level().isClientSide && this.isAlive() && this.isEffectiveAi()) {

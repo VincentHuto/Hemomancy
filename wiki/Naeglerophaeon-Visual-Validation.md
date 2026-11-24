@@ -1,26 +1,16 @@
 # Naeglerophaeon axonal swimmer validation
 
-The current model replaces the older eye-and-perch design. It has a maroon core, seven luminous
-orbs, twelve 12-block ivory tendrils, translucent red webs, and a 30-block crimson capture tail.
-Three disjoint pulse slots limit axonal activity to three short tendrils; tail nodes stay lit.
-Geometry is sampled by arc length, with transported frames and 32/64-block detail reductions.
-The core retains its 1.8 by 1.6 collision box; culling includes the full tail.
+The runtime rig comes from `models/entity/bbmodel/NaeglerophaeonRedesign.bbmodel` in the
+Hemomancy assets. Run `python tools/model_export/export_naeglerophaeon.py` after editing its
+embedded texture or rig. It exports the geometry and both atlases. The authored pose uses
+one texel per model unit.
 
-## Combat phases (2026-10-09 overhaul)
-
-The fight is now two phases plus an Overload finale; see `docs/HEMOMANCY_REFERENCE.md`.
-Each move has its own Blockbench pose in `NaeglerophaeonBlockModel`:
-- lunge flare/tuck;
-- lash coil and rolling starburst;
-- nova cocoon and radial release;
-- conduction reach;
-- transition shake;
-- dive/emerge body scaling (the boss is invisible in transit);
-- the Overload inverted umbrella, with a writhing tail and a steady-node strobe that climbs on each 30-tick pulse, plus client tail bolts.
-
-Phase-two core light is tinted violet. Drained bodies swap to
-`textures/entity/naeglerophaeon_cube_palette_drained.png` (a desaturated copy of the cube palette). They skip the emissive
-pass, draw former light organs in the opaque pass, and have no tip sparks.
+The core has seven emissive ganglia. Twelve jointed arms carry the crimson membranes and
+conduct pulses to the animated tips. The hooked axon keeps its authored silhouette at rest,
+unfurls to the shared weak point on the victim, and curls back on release. The rig also
+poses for the lunge, lash, volley, nova, conduction, phase transition, dive and emergence.
+During Overload the body inverts and light climbs the hanging axon. Drained bodies use the
+desaturated atlas, twitch gently and skip the emissive pass.
 
 ## Automated checks
 
@@ -31,9 +21,9 @@ Commands:
 ./gradlew.bat runNaeglerophaeonGameTestServer
 ```
 
-The focused JVM suite covers finite geometry, the 4,000-quad ceiling, curve lengths and node
-spacing, pulse uniqueness/order/terminal sparks, both detail reductions, outward sphere normals,
-shared grip coordinates, history resets, release interpolation and resource/combat contracts.
+The focused JVM suite sends the animated rig through its render passes and checks finite vertices,
+the 4,000-quad ceiling, web and light separation, the lunge and dive poses, pulse timing, shared
+grip coordinates, release interpolation, turn-history resets and resource/combat contracts.
 
 The dedicated server suite covers gradual capture and terminal damage, actual multipart damage,
 core interruption, victim removal, capture misses, obstruction during lightning windup and pulling,
@@ -70,10 +60,11 @@ The review player has regeneration and may retain resistance from the disposable
 amounts are verified on the dedicated server, rather than inferred from this assisted client.
 No quantitative frame-time benchmark is claimed.
 
-## Art
-
-The editable 64x64 tissue atlas is `textures/entity/naeglerophaeon.png`. The built-in imagegen
-source and export details were recorded in `tools/model_export/naeglerophaeon-tissue-prompt.txt`, which is no longer in the tree.
+The 2026-11-19 redesign review captured idle, grab, release, phase transition, Overload and
+Drained in the native client. `naeglerophaeon-redesign-front.png`, `membrane-phase-3.png`,
+`naeglerophaeon-redesign-finale.png` and `membrane-phase-18.png` show the new rig.
+All 26 focused JVM tests passed. The dedicated run passed 59 of 60 GameTests. Its remaining
+Axonal Transduction test expects 150 mL on entry, while the fixture's dry cast costs 187.5 mL.
 
 ## Overhaul review status: 2026-10-09
 

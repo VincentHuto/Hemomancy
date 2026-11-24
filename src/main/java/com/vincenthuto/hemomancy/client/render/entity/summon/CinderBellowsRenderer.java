@@ -31,10 +31,12 @@ public class CinderBellowsRenderer extends MobRenderer<CinderBellowsEntity, Cind
 		if (PuppeteerSummonRenderHelper.shouldSkipRender(entity)) {
 			return;
 		}
-		CinderBreathFlames.emit(entity, partialTicks);
 		poseStack.pushPose();
 		PuppeteerSummonRenderHelper.applyDismissalScale(entity, partialTicks, poseStack);
 		super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
 		poseStack.popPose();
+		if (entity.getBreathCycle() > 0) {
+			CinderBreathFlames.emit(entity, partialTicks, getModel().breathOutlet(entity, partialTicks));
+		}
 	}
 }

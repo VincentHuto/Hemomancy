@@ -20,7 +20,8 @@ import javax.annotation.Nullable;
  *
  * <p>A rite's kind follows from its saved state and its recipe, in the order the constants are declared: a
  * Succession, a station upgrade or a Working craft is known by its own state or recipe id; a Puppeteer trial by its
- * recipe; a legacy or Unstained rite without an interactive ceremony counts down; every other rite is a ceremony.
+ * recipe; an Unstained rite counts down in still water; a legacy rite without an interactive ceremony counts down;
+ * every other rite is a ceremony.
  */
 public enum RiteKind {
 	/** A bloodline successor is made or restored; it runs its own fixed course and ends itself. */
@@ -87,6 +88,17 @@ public enum RiteKind {
 		}
 
 		@Override
+		boolean escrowedItsOfferings() {
+			return true;
+		}
+
+		/** A station's consecration waits on its owner's kit and circuits, not on a timer. */
+		@Override
+		boolean guttersOutUntouched() {
+			return false;
+		}
+
+		@Override
 		boolean complete(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
 			boolean completed = StationUpgradeRites.complete(level, rite);
 			if (completed) CardinalRiteSavedData.get(level.getServer().overworld()).deliverRecovery(caster);
@@ -130,6 +142,16 @@ public enum RiteKind {
 
 		@Override
 		boolean holdsOnlyItsStructure(ActiveCardinalRite rite) {
+			return true;
+		}
+
+		@Override
+		boolean escrowedItsOfferings() {
+			return true;
+		}
+
+		@Override
+		boolean swallowsItsSubject() {
 			return true;
 		}
 
@@ -191,7 +213,23 @@ public enum RiteKind {
 		}
 	},
 
-	/** A legacy or Unstained rite without an interactive ceremony: it counts down to its resolution. */
+	/**
+	 * An Unstained rite: it counts down to its resolution in still water. It never binds its caster in blood, raises
+	 * no daemon and keeps its own presentation.
+	 */
+	UNSTAINED {
+		@Override
+		boolean matches(ActiveCardinalRite rite, @Nullable CardinalRiteRecipe recipe) {
+			return recipe != null && recipe.isUnstained();
+		}
+
+		@Override
+		boolean bindsInBlood() {
+			return false;
+		}
+	},
+
+	/** A legacy rite without an interactive ceremony, or one whose recipe is gone: it counts down to its resolution. */
 	COUNTDOWN {
 		@Override
 		boolean matches(ActiveCardinalRite rite, @Nullable CardinalRiteRecipe recipe) {
@@ -236,7 +274,7 @@ public enum RiteKind {
 		return CEREMONY;
 	}
 
-	/** A legacy or Unstained rite, or one whose recipe is gone, counts down rather than running a ceremony. */
+	/** An Unstained or legacy rite, or one whose recipe is gone, counts down rather than running a ceremony. */
 	static boolean countsDown(ActiveCardinalRite rite, @Nullable CardinalRiteRecipe recipe) {
 		return rite.getPhase() == CardinalRitePhase.COUNTDOWN || recipe == null || !recipe.hasInteractiveCeremony();
 	}
@@ -275,6 +313,29 @@ public enum RiteKind {
 		return rite.puppeteerTrial().isManifested();
 	}
 
+	/**
+	 * Whether the rite binds its caster in blood and speaks in it: the leash bleeds a caster who strays, a daemon rises,
+	 * its phases, anchors and rings are announced, and its ending is a blood-rite beat. Only an Unstained rite does not.
+	 */
+	boolean bindsInBlood() {
+		return true;
+	}
+
+	/** Whether its offerings were escrowed at activation, so its procession takes nothing from the braziers. */
+	boolean escrowedItsOfferings() {
+		return false;
+	}
+
+	/** Whether its finale carries the offerings into its built subject and swallows it, instead of merging a daemon. */
+	boolean swallowsItsSubject() {
+		return false;
+	}
+
+	/** Whether a consecration left untouched for {@code CONSECRATION_TIMEOUT_TICKS} gutters out and collapses. */
+	boolean guttersOutUntouched() {
+		return true;
+	}
+
 	/** Whether a finale that cannot resolve is held in a still interval before any offering is drawn. */
 	boolean holdsBeforeFinale() {
 		return true;
@@ -304,7 +365,7 @@ public enum RiteKind {
 	}
 
 	void advanceCeremony(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		CardinalRiteOrdealEngine.tick(level, caster, rite, recipe);
+		CardinalRiteOrdealEngine.tick(this, level, caster, rite, recipe);
 	}
 
 	/**

@@ -38,6 +38,29 @@ final class ActiveRiteRoleSyncPacketTest {
 	}
 
 	@Test
+	void packetRoundTripsSigilSegmentIdentityAndStage() {
+		var segment = new ActiveRiteData.SigilSegment(1, 64.1, 2, 3, 65.1, 2,
+				0xAA1122, "hemomancy:reservoir@0", 2, 5, true);
+		var entry = new ActiveRiteData.RiteEntry(BlockPos.ZERO, 3, 0,
+				ResourceLocation.parse("hemomancy:sigil_sync_test"), false,
+				"CONSECRATION", 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, "",
+				List.of(), List.of(segment), List.of());
+		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+
+		PacketSyncActiveRites.encode(buffer, new PacketSyncActiveRites(List.of(entry)));
+		var decoded = PacketSyncActiveRites.decode(buffer).entries().getFirst().getSigilSegments();
+
+		assertEquals(List.of(segment), decoded);
+		var copy = decoded.getFirst();
+		assertEquals("hemomancy:reservoir@0", copy.sigilKey());
+		assertEquals(2, copy.linkIndex());
+		assertEquals(5, copy.linkCount());
+		assertEquals(true, copy.awakened());
+		assertEquals(64.1, copy.startY(), 0.0);
+		assertEquals(0xAA1122, copy.color());
+	}
+
+	@Test
 	void legacyBlobConstructorFallsBackToJointRole() {
 		var blob = new ActiveRiteData.SanguineBlob(0, 0, 0, 0.1F, 0, 1L);
 

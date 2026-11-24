@@ -1,11 +1,14 @@
-"""Rebuild the Marrow Juggler's connected Java rig, painted atlas and portable BBModel.
+"""Bake the physical Juggler from its Blockbench project.
 
-Geometry, materials and animation live here; puppet_rig.py packs UVs, writes the Java model,
-exports the Blockbench file and paints the atlas so all three stay in step.
+The legacy anatomy and palette below are the base of the separate Chamber true-self rig.
 """
-from puppet_rig import ROOT, BBMODELS, build as build_rig, noise, front_edge, back_edge
+import base64
+import json
+
+from puppet_rig import ASSETS, BBMODELS, MODELS, ROOT, TEXTURES, blockbench_mesh_source, noise, front_edge, back_edge
 
 MODEL = BBMODELS / 'MarrowSpitterModel.bbmodel'
+PROJECT = ROOT / 'docs/art/marrow_juggler/MarrowJuggler.bbmodel'
 PALETTE = ['#17121a', '#2d1f2a', '#4b2232', '#74283a', '#a3384a', '#d0625e',
            '#8a7a6c', '#b8a48a', '#e4d4b4', '#f6ead2', '#6b6470', '#643a40']
 # 11 is hematic iron (its shadow reuses 1): blood-side fittings are never brass, bronze or copper.
@@ -140,109 +143,73 @@ def shade(material, side, px, py, w, h, gx, gy):
     raise ValueError('Unknown material ' + material)
 
 
-JAVA = r'''package com.vincenthuto.hemomancy.client.model.entity.summon;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.summon.MarrowSpitterEntity;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.util.Mth;
-import org.joml.Vector3f;
-
-// Authored by tools/circus/build_marrow_juggler.py; regenerate the model, atlas and BBModel together.
-public class MarrowSpitterModel extends EntityModel<MarrowSpitterEntity> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Hemomancy.rloc("marrow_spitter"), "main");
-    private final ModelPart root, body, hood;
-    private final ModelPart[] arms = new ModelPart[6], forearms = new ModelPart[6], hands = new ModelPart[6];
-    private final ModelPart[] knives = new ModelPart[3];
-    private final ModelPart[] hems;
-
-    public MarrowSpitterModel(ModelPart bakedRoot) {
-        root = bakedRoot.getChild("root");
-        body = root.getChild("body");
-        hood = body.getChild("hood");
-        for (int i = 0; i < arms.length; i++) {
-            arms[i] = body.getChild("arm_" + i);
-            forearms[i] = arms[i].getChild("forearm_" + i);
-            hands[i] = forearms[i].getChild("hand_" + i);
-        }
-        for (int i = 0; i < knives.length; i++) knives[i] = body.getChild("knife_" + i);
-        ModelPart skirt = body.getChild("skirt");
-        hems = new ModelPart[]{skirt.getChild("front_left"), skirt.getChild("front_right"),
-                skirt.getChild("rear_left"), skirt.getChild("rear_right"),
-                skirt.getChild("side_left"), skirt.getChild("side_right"), skirt.getChild("sash")};
-    }
-
-    public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        /* GEOMETRY */
-    }
-
-    @Override
-    public void setupAnim(MarrowSpitterEntity entity, float limbSwing, float limbSwingAmount,
-            float age, float yaw, float pitch) {
-        setupPose(limbSwingAmount, age, yaw, pitch);
-    }
-
-    /** Poses the connected rig for both runtime rendering and authoring previews. */
-    public void setupPose(float movement, float age, float yaw, float pitch) {
-        root.getAllParts().forEach(ModelPart::resetPose);
-        root.y += -.75F + Mth.sin(age * .07F) * .35F;
-        body.zRot += Mth.sin(age * .045F) * .025F;
-        body.xRot += Mth.clamp(movement, 0, 1) * .06F;
-        hood.yRot += Mth.clamp(yaw, -40, 40) * Mth.DEG_TO_RAD * .6F;
-        hood.xRot += Mth.clamp(pitch, -25, 25) * Mth.DEG_TO_RAD * .4F;
-        for (int i = 0; i < hems.length; i++) {
-            hems[i].xRot += Mth.sin(age * .065F + i * 1.1F) * .045F;
-        }
-        for (int i = 0; i < arms.length; i++) {
-            int pair = i / 2;
-            float side = i % 2 == 0 ? -1 : 1;
-            float phase = age * .13F + pair * Mth.TWO_PI / 3;
-            arms[i].zRot -= side * Mth.sin(phase) * .1F;
-            arms[i].xRot += Mth.cos(phase + i % 2 * Mth.PI) * .08F;
-            forearms[i].xRot -= Mth.cos(phase + i % 2 * Mth.PI) * .12F;
-            hands[i].xRot += Mth.sin(phase) * .1F;
-        }
-        for (int i = 0; i < knives.length; i++) {
-            float phase = age * .13F + i * Mth.TWO_PI / 3;
-            float t = (1 - Mth.cos(phase)) * .5F;
-            float arc = Mth.sin(phase);
-            Vector3f left = palm(i * 2);
-            Vector3f right = palm(i * 2 + 1);
-            ModelPart knife = knives[i];
-            knife.x = Mth.lerp(t, left.x, right.x);
-            knife.y = Mth.lerp(t, left.y, right.y) - arc * arc * (7 + i * 1.5F);
-            knife.z = Mth.lerp(t, left.z, right.z);
-            knife.zRot = phase * 2;
-        }
-    }
-
-    private Vector3f palm(int index) {
-        PoseStack pose = new PoseStack();
-        arms[index].translateAndRotate(pose);
-        forearms[index].translateAndRotate(pose);
-        hands[index].translateAndRotate(pose);
-        // The knife pivot is its grip, so catching follows the bent hand exactly.
-        return pose.last().pose().transformPosition(new Vector3f(0, .75F / 16, 0)).mul(16);
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack pose, VertexConsumer consumer, int light, int overlay, int color) {
-        root.render(pose, consumer, light, overlay, color);
-    }
+JOINTS = {
+    'Suspended frame': 'body',
+    'Doublet and shoulder yoke': 'chest',
+    'Slumped velvet cowl': 'hood',
+    'Comedy • porcelain mask': 'mask_comedy',
+    'Tragedy • porcelain mask': 'mask_tragedy',
+    'Split coattails': 'skirt',
+    'Left foretail': 'front_left',
+    'Right foretail': 'front_right',
+    'Left side gore': 'side_left',
+    'Right side gore': 'side_right',
+    'Left train': 'rear_left',
+    'Right train': 'rear_right',
+    'Six articulated arms': 'arms',
+    'Airborne daggers': 'props',
+    'High dagger': 'knife_0',
+    'Caught dagger': 'knife_1',
+    'Falling dagger': 'knife_2',
 }
-'''
+ARM_NAMES = ('Left upper', 'Right upper', 'Left middle', 'Right middle', 'Left lower', 'Right lower')
+for index, label in enumerate(ARM_NAMES):
+    for suffix, joint in (('mount', 'mount'), ('shoulder', 'arm'), ('elbow', 'forearm'), ('wrist', 'hand')):
+        JOINTS[f'{label} {suffix}'] = f'{joint}_{index}'
+
+
+def prepare_runtime_rig(model):
+    root, = model['outliner']
+    props = next(group for group in root['children'] if group['name'] == 'Airborne daggers')
+
+    def prepare(group, arm_index=None):
+        label = group['name']
+        if label.endswith(' wrist'):
+            arm_index = ARM_NAMES.index(label.removesuffix(' wrist'))
+        if label in ('Index', 'Middle', 'Ring'):
+            group['name'] = f'{label.lower()}_{arm_index}'
+        for node in group['children'][:]:
+            if not isinstance(node, dict):
+                continue
+            if node['name'] == 'Caught dagger':
+                # The authored grip is parented to the right wrist. In-game all daggers
+                # must be independently movable so each can travel between both wrists.
+                group['children'].remove(node)
+                props['children'].append(node)
+            else:
+                prepare(node, arm_index)
+
+    prepare(root)
+
+
+def mesh_source(model):
+    prepare_runtime_rig(model)
+    return blockbench_mesh_source(
+        model, 'MarrowSpitterMesh', PROJECT.name, 'build_marrow_juggler.py',
+        lambda label: JOINTS.get(label, label), lambda arm, index, cube: None)
 
 
 def build():
-    return build_rig('marrow_spitter', 'MarrowSpitterModel', anatomy(), JAVA, shade, PALETTE)
+    data = PROJECT.read_bytes()
+    model = json.loads(data)
+    texture, = model['textures']
+    png = base64.b64decode(texture['source'].split(',', 1)[1], validate=True)
+    if png != PROJECT.with_name(texture['name']).read_bytes():
+        raise ValueError('The Juggler project and standalone atlas must contain the same PNG')
+    (MODELS / 'MarrowSpitterMesh.java').write_text(mesh_source(model), encoding='utf-8')
+    MODEL.write_bytes(data)
+    (ASSETS / TEXTURES / 'marrow_spitter.png').write_bytes(png)
+    return MODEL
 
 
 if __name__ == '__main__':

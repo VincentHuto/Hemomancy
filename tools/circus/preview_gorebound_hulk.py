@@ -4,7 +4,7 @@ import json
 import shutil
 import sys
 import urllib.request
-from build_gorebound_hulk import MODEL, ROOT
+from build_gorebound_hulk import MODEL, ROOT, joint_name
 from serve_rig_preview import serve
 
 POSE = '''function pose(view,c,move){
@@ -17,18 +17,24 @@ POSE = '''function pose(view,c,move){
   for(const side of ['left','right']){p(side+'_arm').rotation.x=-lift;p(side+'_fist').position.y-=lift*4}
   return;
  }
- let lift=Math.max(0,Math.min(1,windup/8));lift=lift*lift*(3-2*lift);
- const recovery=Math.min(1,strike*2.5),impact=Math.sin(strike*Math.PI);
- p('chest').rotation.x+=lift*.18-impact*.14;
- p('jaw').rotation.x-=Math.sin(time*.09)*.025+lift*.05;
+ const liftStep=Math.min(1,windup/8),lift=liftStep*liftStep*(3-2*liftStep);
+ const raised=windup>0?lift:strike>0?1-Math.min(1,strike/.28):0;
+ const follow=4*strike*(1-strike),stride=move*(1-.8*Math.max(raised,follow));
+ const step=time*.6662;
+ p('chest').rotation.x-=Math.sin(age*.12)*.022-raised*.22+follow*.24;
+ p('chest').rotation.z-=Math.cos(step)*stride*.065;
+ p('head').rotation.x-=raised*.12;
+ p('jaw').rotation.x-=Math.sin(age*.09)*.025+raised*.10+follow*.07;
  for(let i=0;i<2;i++){
-  const side=i===0?'left':'right',sign=i===0?-1:1,gait=Math.cos(time*.6662+i*Math.PI)*move;
-  p(side+'_thigh').rotation.x=-gait*.45;p(side+'_shin').rotation.x=-Math.max(0,-gait)*.55;
-  p(side+'_foot').rotation.x=gait*.45+Math.max(0,-gait)*.55;
+  const side=i===0?'left':'right',sign=i===0?1:-1,gait=Math.cos(step+i*Math.PI)*stride;
+  const bend=Math.max(0,-gait)*.52;
+  p(side+'_thigh').rotation.x-=gait*.36;p(side+'_shin').rotation.x-=bend;
+  p(side+'_foot').rotation.x+=gait*.36+bend;
   const arm=p(side+'_arm'),forearm=p(side+'_forearm');
-  arm.rotation.x+=lift*1.1;forearm.rotation.x+=lift*.65;
-  if(windup<=0&&strike>0){arm.rotation.x=1.25*(1-recovery)+arm.rotation.x*recovery;forearm.rotation.x=.85*(1-recovery)+forearm.rotation.x*recovery}
-  arm.rotation.x+=gait*.12*(1-lift);arm.rotation.z+=sign*lift*.12;p(side+'_hand').rotation.x+=lift*.12;
+  arm.rotation.x+=raised*1.40+gait*.20-follow*.26;
+  arm.rotation.z+=sign*raised*.13;
+  forearm.rotation.x+=raised*.55-follow*.27;
+  p(side+'_hand').rotation.x+=raised*.12-follow*.16;
  }
 }
 '''
@@ -43,6 +49,15 @@ def main():
         if previous.exists(): shutil.copyfile(previous, module)
         else: urllib.request.urlretrieve('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js', module)
     models = {'after': json.loads(MODEL.read_text(encoding='utf-8'))}
+
+    def name_joints(group):
+        for child in group['children']:
+            if isinstance(child, dict):
+                child['name'] = joint_name(child['name'])
+                name_joints(child)
+
+    root, = models['after']['outliner']
+    name_joints(root)
     before = output / 'before/GoreboundHulkModel.bbmodel'
     if before.exists(): models['before'] = json.loads(before.read_text(encoding='utf-8'))
     template = Path(__file__).with_name('cinder_bellows_preview.html').read_text(encoding='utf-8')

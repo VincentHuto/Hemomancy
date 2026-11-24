@@ -13,25 +13,52 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
+import com.vincenthuto.hemomancy.common.util.LastSent;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * What clients see of the active Cardinal Rites in a level: each rite's boundary, anchors, sigils, checklist and
  * guidance, sent every half second and on every change by {@link HarbingerCardinalRiteEvents}. A viewer is sent the
- * rites within {@link #VIEW_RANGE} blocks and the rites it casts or helps; once it has been sent an empty list, no
- * further empty list goes to it (FX-14). Only the caster and its allies see the bloodline pool a rite can draw on.
+ * rites within {@link #VIEW_RANGE} blocks and the rites it casts or helps, and only when that list differs from the
+ * last one it was sent (FX-14). Only the caster and its allies see the bloodline pool a rite can draw on.
  */
 public final class CardinalRiteSync {
 	/** A full anchor's orb sits half sunk in its sore, just above the floor block's top. */
 	private static final double ANCHOR_ORB_Y = 1.06D;
 	/** How far from a rite's centre a viewer who is not its caster or ally still sees it. */
 	public static final double VIEW_RANGE = 128.0D;
-	/** Viewers whose last rite list was empty. Session state, cleared through TransientServerStateEvents. */
-	private static final Set<UUID> SENT_EMPTY = ConcurrentHashMap.newKeySet();
+	/** The rite list each viewer was last sent. Session state, cleared through TransientServerStateEvents. */
+	private static final LastSent<Fingerprint> SENT = new LastSent<>();
+
+	/** A sent rite list, compared byte for byte as it was encoded. */
+	private record Fingerprint(byte[] bytes) {
+		static Fingerprint of(PacketSyncActiveRites packet) {
+			FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+			try {
+				PacketSyncActiveRites.encode(buf, packet);
+				byte[] bytes = new byte[buf.readableBytes()];
+				buf.readBytes(bytes);
+				return new Fingerprint(bytes);
+			} finally {
+				buf.release();
+			}
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			return other instanceof Fingerprint fingerprint && Arrays.equals(bytes, fingerprint.bytes);
+		}
+
+		@Override
+		public int hashCode() {
+			return Arrays.hashCode(bytes);
+		}
+	}
 
 	private CardinalRiteSync() {
 	}
@@ -41,16 +68,16 @@ public final class CardinalRiteSync {
 		for (ActiveCardinalRite rite : CardinalRiteSavedData.get(level).getActiveRites().values()) {
 			if (sees(rite, viewer)) entries.add(toClientEntry(level, rite, mayReadPool(rite, viewer)));
 		}
-		if (entries.isEmpty()) SENT_EMPTY.add(viewer.getUUID());
-		else SENT_EMPTY.remove(viewer.getUUID());
-		return new PacketSyncActiveRites(entries);
+		PacketSyncActiveRites packet = new PacketSyncActiveRites(entries);
+		SENT.changed(viewer, Fingerprint.of(packet));
+		return packet;
 	}
 
 	/**
 	 * Each viewer is sent the rites it sees, and only the caster and its allies see the bloodline pool the rite can
 	 * draw on.
 	 */
-	static void syncActiveRites(ServerLevel level) {
+	public static void syncActiveRites(ServerLevel level) {
 		List<ActiveCardinalRite> rites = new ArrayList<>(CardinalRiteSavedData.get(level).getActiveRites().values());
 		ActiveRiteData.RiteEntry[] shared = new ActiveRiteData.RiteEntry[rites.size()];
 		ActiveRiteData.RiteEntry[] revealed = new ActiveRiteData.RiteEntry[rites.size()];
@@ -67,12 +94,8 @@ public final class CardinalRiteSync {
 					entries.add(shared[i]);
 				}
 			}
-			if (entries.isEmpty()) {
-				if (!SENT_EMPTY.add(viewer.getUUID())) continue;
-			} else {
-				SENT_EMPTY.remove(viewer.getUUID());
-			}
-			PacketHandler.sendToPlayer(viewer, new PacketSyncActiveRites(entries));
+			PacketSyncActiveRites packet = new PacketSyncActiveRites(entries);
+			if (SENT.changed(viewer, Fingerprint.of(packet))) PacketHandler.sendToPlayer(viewer, packet);
 		}
 	}
 
@@ -83,11 +106,11 @@ public final class CardinalRiteSync {
 	}
 
 	public static void logout(net.minecraft.world.entity.player.Player player) {
-		SENT_EMPTY.remove(player.getUUID());
+		SENT.forget(player);
 	}
 
 	public static void clearSessionState() {
-		SENT_EMPTY.clear();
+		SENT.clear();
 	}
 
 	private static boolean mayReadPool(ActiveCardinalRite rite, ServerPlayer viewer) {
@@ -437,13 +460,17 @@ public final class CardinalRiteSync {
 			ServerLevel level, ActiveCardinalRite rite) {
 		java.util.List<ActiveRiteData.SigilSegment> result = new java.util.ArrayList<>();
 		for (CardinalRiteInteractionHandler.SigilPlacement placement
-				: CardinalRiteInteractionHandler.activeSigils(level, rite)) {
+				: CardinalRiteInteractionHandler.groundSigils(level, rite)) {
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
 			if (sigil == null) continue;
 			int completed = rite.getSigilProgress().getOrDefault(placement.progressKey(), 0);
-			for (CardinalRiteSigilProgress.Connection connection
-					: CardinalRiteSigilProgress.completedConnections(sigil, completed)) {
-				result.add(toClientSigilSegment(level, rite, placement, connection, sigil.color()));
+			int linkCount = CardinalRiteSigilProgress.completedConnections(sigil, sigil.nodes().size()).size();
+			boolean awakened = rite.isSigilAwakened(placement.progressKey());
+			java.util.List<CardinalRiteSigilProgress.Connection> connections =
+					CardinalRiteSigilProgress.completedConnections(sigil, completed);
+			for (int linkIndex = 0; linkIndex < connections.size(); linkIndex++) {
+				result.add(toClientSigilSegment(level, rite, placement, connections.get(linkIndex),
+						sigil.color(), linkIndex, linkCount, awakened));
 			}
 		}
 		return java.util.List.copyOf(result);
@@ -452,7 +479,8 @@ public final class CardinalRiteSync {
 	private static ActiveRiteData.SigilSegment toClientSigilSegment(
 			ServerLevel level, ActiveCardinalRite rite,
 			CardinalRiteInteractionHandler.SigilPlacement placement,
-			CardinalRiteSigilProgress.Connection connection, int color) {
+			CardinalRiteSigilProgress.Connection connection, int color,
+			int linkIndex, int linkCount, boolean awakened) {
 		IchorianSigilDefinition.Node start = connection.start();
 		IchorianSigilDefinition.Node end = connection.end();
 		BlockPos base = rite.getCenterPos().offset(0, placement.y(), 0);
@@ -469,6 +497,6 @@ public final class CardinalRiteSync {
 				rite.getCenterPos().getX() + 0.5D + placement.x() + end.x(),
 				endSurface.getY() + 0.10D,
 				rite.getCenterPos().getZ() + 0.5D + placement.z() + end.z(),
-				color);
+				color, placement.progressKey(), linkIndex, linkCount, awakened);
 	}
 }

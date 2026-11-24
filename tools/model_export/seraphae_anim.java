@@ -31,7 +31,7 @@
 	private ModelPart[] robes;
 	private float[] robeLength;
 	private float[][] robeOut;
-	private ModelPart[] leftLinks, rightLinks, waistLinks;
+	private ModelPart[] leftLinks, rightLinks, waistLinks, leftWingLinks, rightWingLinks;
 	private List<NervePart> nerveParts;
 	private java.util.IdentityHashMap<ModelPart, NervePart> nerveIndex;
 
@@ -40,32 +40,31 @@
 		trunks = new ModelPart[6][];
 		branches = new ModelPart[6][];
 		tips = new ModelPart[6][];
-		String[] names = {"upper", "middle", "lower"};
 		for (int side = 0; side < 2; side++) {
-			ModelPart wing = side == 0 ? leftWing : rightWing;
+			ModelPart wing = side == 0 ? leftNerveWing : rightNerveWing;
 			String prefix = side == 0 ? "left" : "right";
+			String[] regions = {"ascending", "lateral", "descending"};
 			for (int place = 0; place < 3; place++) {
 				List<ModelPart> chain = new java.util.ArrayList<>();
 				List<ModelPart> forks = new java.util.ArrayList<>();
-				String stem = prefix + "_trunk_" + names[place];
-				ModelPart segment = wing.getChild(stem + "_0");
-				chain.add(segment);
-				for (int i = 1; segment.hasChild(stem + "_" + i); i++) {
-					segment = segment.getChild(stem + "_" + i);
+				String stem = prefix + "_nerve_" + (place + 1);
+				ModelPart segment = wing.getChild(prefix + "_" + regions[place] + "_nerve");
+				int index = side * 3 + place;
+				for (int i = 1; segment.hasChild(stem + "_trunk_" + i); i++) {
+					segment = segment.getChild(stem + "_trunk_" + i);
 					chain.add(segment);
+					if (segment.hasChild(stem + "_branch_" + (i - 1))) {
+						forks.add(segment.getChild(stem + "_branch_" + (i - 1)));
+					}
 				}
-				for (int i = 0; i < chain.size(); i++) {
-					forks.add(chain.get(i).getChild(stem + "_" + i + "_branch_a"));
-					forks.add(chain.get(i).getChild(stem + "_" + i + "_branch_b"));
-				}
-				trunks[side * 3 + place] = chain.toArray(new ModelPart[0]);
-				branches[side * 3 + place] = forks.toArray(new ModelPart[0]);
-				ModelPart tip = segment.getChild(stem + "_tip");
-				tips[side * 3 + place] = new ModelPart[]{tip, tip.getChild(stem + "_tip_0"), tip.getChild(stem + "_tip_1"),
-						tip.getChild(stem + "_tip_2"), tip.getChild(stem + "_tip_3")};
+				trunks[index] = chain.toArray(ModelPart[]::new);
+				branches[index] = forks.toArray(ModelPart[]::new);
+				tips[index] = new ModelPart[]{segment.getChild(stem + "_terminal_1"),
+						segment.getChild(stem + "_terminal_2"), segment.getChild(stem + "_terminal_3")};
 			}
 		}
-		robes = new ModelPart[]{robePanel0, robePanel1, robePanel2, robePanel3, robePanel4, robePanel5, gownFront};
+		robes = new ModelPart[]{frontLeft, frontRight, outerLeft, outerRight, trainLeft, trainRight,
+				leftLining, rightLining, centralStole};
 		robeLength = new float[robes.length];
 		robeOut = new float[robes.length][];
 		for (int i = 0; i < robes.length; i++) {
@@ -73,9 +72,11 @@
 			float x = robes[i].x, z = robes[i].z, length = (float) Math.sqrt(x * x + z * z);
 			robeOut[i] = length < 1.0E-4F ? new float[]{0, -1} : new float[]{x / length, z / length};
 		}
-		leftLinks = links(leftChain, "left_chain", 7);
-		rightLinks = links(rightChain, "right_chain", 7);
-		waistLinks = links(waistChain, "waist_chain", 6);
+		leftLinks = links(leftWristChain, "left_wrist_chain", 4);
+		rightLinks = links(rightWristChain, "right_wrist_chain", 5);
+		waistLinks = links(girdleChain, "girdle_chain", 5);
+		leftWingLinks = links(leftWingChain, "left_wing_chain", 3);
+		rightWingLinks = links(rightWingChain, "right_wing_chain", 3);
 		nerveParts = List.of(
 /*NERVE_TABLE*/
 		);
@@ -85,7 +86,7 @@
 
 	private static ModelPart[] links(ModelPart chain, String name, int count) {
 		ModelPart[] links = new ModelPart[count];
-		for (int i = 0; i < count; i++) links[i] = chain.getChild(name + "_link_" + i);
+		for (int i = 0; i < count; i++) links[i] = chain.getChild(name + "_" + (i + 1));
 		return links;
 	}
 
@@ -734,7 +735,7 @@
 	 * through, then rises back.
 	 */
 	/** The deepest the plant sinks her, in model units (three quarters of a block). */
-	static final float PLANT_REACH = 6.0F;
+	static final float PLANT_REACH = 12.0F;
 
 	static void healedGround(float[] a, float t, float aim) {
 		a[PLANT] += catmullRom(t, 0, 0, 22, 0, 26, 0.45F, 28, 0.95F, 29, 1.0F, 36, 1.0F, 42, 0.4F, 48, 0, 52, 0);
@@ -1120,7 +1121,7 @@
 		root.getAllParts().forEach(ModelPart::resetPose);
 		float jitter = a[JITTER], tremor = a[TREMOR], flinch = a[FLINCH];
 		// the whole of her: her hover and a turn about her own axis
-		root.y -= a[LIFT];
+		root.y -= a[LIFT] * 2.0F;
 		root.yRot += a[TURN];
 		// the torso from the waist, the head trailing it
 		body.xRot += a[LEAN] - a[ARCH] * 0.45F - flinch * 0.4F + shake(age, 1, jitter) + tremble(age, 1, tremor);
@@ -1145,14 +1146,18 @@
 		poseLegs(a, age);
 		poseCloth(a, age);
 		// the irons' chains: the wrists' only while slipped, all hanging plumb and swinging
-		leftChain.visible = slipped(restraints, SeraphaeRestraint.LEFT_WRIST);
-		rightChain.visible = slipped(restraints, SeraphaeRestraint.RIGHT_WRIST);
+		leftWristChain.visible = slipped(restraints, SeraphaeRestraint.LEFT_WRIST);
+		rightWristChain.visible = slipped(restraints, SeraphaeRestraint.RIGHT_WRIST);
 		Quaternionf chest = rotation(body);
-		hangChain(leftChain, leftLinks, new Quaternionf(chest).mul(rotation(leftArm)).mul(rotation(leftForearm)),
-				room(root, body, leftArm, leftForearm, leftChain), a, age, 0.0F);
-		hangChain(rightChain, rightLinks, new Quaternionf(chest).mul(rotation(rightArm)).mul(rotation(rightForearm)),
-				room(root, body, rightArm, rightForearm, rightChain), a, age, 0.6F);
-		hangChain(waistChain, waistLinks, chest, room(root, body, waistChain), a, age, 1.3F);
+		hangChain(leftWristChain, leftLinks, new Quaternionf(chest).mul(rotation(leftArm)).mul(rotation(leftForearm)),
+				room(root, body, leftArm, leftForearm, leftWristChain), a, age, 0.0F);
+		hangChain(rightWristChain, rightLinks, new Quaternionf(chest).mul(rotation(rightArm)).mul(rotation(rightForearm)),
+				room(root, body, rightArm, rightForearm, rightWristChain), a, age, 0.6F);
+		hangChain(girdleChain, waistLinks, chest, room(root, body, girdleChain), a, age, 1.3F);
+		hangChain(leftWingChain, leftWingLinks, new Quaternionf(chest).mul(rotation(leftNerveWing)),
+				room(root, body, leftNerveWing, leftWingChain), a, age, 1.7F);
+		hangChain(rightWingChain, rightWingLinks, new Quaternionf(chest).mul(rotation(rightNerveWing)),
+				room(root, body, rightNerveWing, rightWingChain), a, age, 2.1F);
 	}
 
 	private static boolean slipped(int restraints, SeraphaeRestraint restraint) {
@@ -1178,8 +1183,8 @@
 		float fore = a[armCh(left, A_FORE)], wrist = a[armCh(left, A_WRIST)], open = a[armCh(left, A_HAND)];
 		float cross = a[WRISTS_CROSS];
 		ModelPart arm = left ? leftArm : rightArm, forearm = left ? leftForearm : rightForearm;
-		ModelPart hand = left ? leftHand : rightHand, fingers = left ? leftFingers : rightFingers;
-		ModelPart thumb = left ? leftThumb : rightThumb, mantle = left ? leftMantle : rightMantle;
+		ModelPart hand = left ? leftHand : rightHand;
+		ModelPart thumb = left ? leftThumb : rightThumb;
 		arm.xRot -= raise + cross * 1.1F + shake(age, 5 + sign, jitter) + tremble(age, 5 + sign, tremor);
 		arm.zRot -= sign * (out - cross * 0.9F);
 		forearm.xRot -= fore + cross * 0.5F + a[left ? LAG_FORE_L : LAG_FORE_R];
@@ -1187,18 +1192,18 @@
 		hand.xRot += wrist - a[left ? LAG_HAND_L : LAG_HAND_R] + shake(age, 8 + sign, jitter);
 		hand.yRot += sign * twist * 0.6F;
 		// open spreads the fingers back and the thumb out; closed curls them toward the palm
-		fingers.xRot += -Math.max(0.0F, open) * 0.35F + Math.max(0.0F, -open) * 1.4F + tremble(age, 9 + sign, tremor);
+		float curl = -Math.max(0.0F, open) * 0.35F + Math.max(0.0F, -open) * 1.4F;
+		for (int i = 1; i <= 4; i++) {
+			ModelPart finger = hand.getChild((left ? "left" : "right") + "_finger_" + i);
+			finger.xRot += curl + tremble(age, 9 + i + sign, tremor);
+			finger.zRot += (2.5F - i) * Math.max(0.0F, open) * 0.13F;
+		}
 		thumb.zRot += sign * (Math.max(0.0F, open) * 0.35F - Math.max(0.0F, -open) * 0.4F);
-		// the shoulder linen follows the arm a little
-		mantle.zRot -= sign * Mth.clamp(out, -0.5F, 1.2F) * 0.3F;
-		mantle.xRot -= Mth.clamp(raise, -1.0F, 1.6F) * 0.25F;
 	}
 
-	/** The palm's model y (feet at 24, larger is lower) through the posed rig. */
+	/** The model-space height of the palm, with positive Y down. */
 	float palm(boolean left) {
-		Vector3f at = left ? point(new Vector3f(0.25F / 16F, 1.0F / 16F, 0), root, body, leftArm, leftForearm, leftHand, leftFingers)
-				: point(new Vector3f(0.25F / 16F, 1.0F / 16F, 0), root, body, rightArm, rightForearm, rightHand, rightFingers);
-		return at.y * 16.0F;
+		return handPoint(left).y * 16.0F;
 	}
 
 	/**
@@ -1213,7 +1218,7 @@
 		float fold = a[wingCh(left, W_FOLD)], spread = a[wingCh(left, W_SPREAD)], fan = a[wingCh(left, W_TIPS)];
 		float sweep = a[wingCh(left, W_SWEEP)] + a[left ? WING_LAG_L : WING_LAG_R];
 		float raise = a[wingCh(left, W_RAISE)] + a[left ? WING_DROP_L : WING_DROP_R];
-		ModelPart plexus = left ? leftWing : rightWing;
+		ModelPart plexus = left ? leftNerveWing : rightNerveWing;
 		plexus.yRot += sign * (sweep - fold * 0.4F);
 		plexus.zRot -= sign * raise;
 		plexus.xRot += shake(age, 10 + side, jitter) + tremble(age, 10 + side, tremor);
@@ -1224,7 +1229,12 @@
 			float tRaise = a[TRUNK_RAISE + index] + spread * (1 - place) * 0.38F - fold * FOLD_RAISE[place];
 			float curl = a[TRUNK_CURL + index] + fold * 0.45F;
 			float lagForward = a[TRUNK_LAG + index], lagUp = a[TRUNK_DROP + index];
-			ModelPart first = chain[0];
+			ModelPart first = plexus.getChild((left ? "left" : "right")
+					+ switch (place) {
+						case 0 -> "_ascending_nerve";
+						case 1 -> "_lateral_nerve";
+						default -> "_descending_nerve";
+					});
 			Quaternionf rest = new Quaternionf().rotationZYX(first.zRot, first.yRot, first.xRot);
 			setRotation(first, new Quaternionf().rotationZYX(-sign * tRaise, sign * tSweep, 0).mul(rest));
 			float since = SeraphaeNerveFlashRules.sinceIdle(seed, index, age);
@@ -1244,9 +1254,11 @@
 				branch.zRot += (i % 2 == 0 ? 1.0F : -1.0F) * (Math.max(-0.4F, spread) * 0.12F + Math.max(0.0F, fan) * 0.08F);
 			}
 			ModelPart[] tipFan = tips[index];
-			tipFan[0].xRot += -lagForward * 0.6F - curl * 0.2F;
 			float open = fan + spread * 0.3F + twitch * 4.0F;
-			for (int k = 1; k < tipFan.length; k++) tipFan[k].zRot += (k - 2.5F) * 0.3F * open;
+			for (int k = 0; k < tipFan.length; k++) {
+				tipFan[k].xRot += -lagForward * 0.6F - curl * 0.2F;
+				tipFan[k].zRot += sign * (k - 1) * 0.3F * open;
+			}
 		}
 	}
 
@@ -1256,12 +1268,12 @@
 	 */
 	private void poseLegs(float[] a, float age) {
 		float kneel = a[KNEEL], trail = a[TRAIL] + a[LEG_LAG];
-		float hip = root.y + leftLeg.y;
+		float hip = point(new Vector3f(), root, body, shreddedVestments, leftLeg).y * 16.0F;
 		for (int side = 0; side < 2; side++) {
 			ModelPart leg = side == 0 ? leftLeg : rightLeg, shin = side == 0 ? leftShin : rightShin;
 			leg.xRot += -kneel * 1.0F + trail * 0.35F + Mth.sin(age * 0.04F + side) * 0.03F;
 			shin.xRot += kneel * 1.9F + Math.max(0.0F, trail) * 0.25F;
-			float fold = SeraphaeHover.foldToClear(leg.xRot, shin.xRot, SeraphaeHover.FLOOR - hip);
+			float fold = SeraphaeHover.foldToClear(body.xRot + leg.xRot, shin.xRot, SeraphaeHover.FLOOR - hip);
 			leg.xRot -= fold * SeraphaeHover.THIGH_SHARE;
 			shin.xRot += fold;
 		}
@@ -1287,21 +1299,21 @@
 			Quaternionf swing = new Quaternionf().rotationZYX(a[ROBE_Z] * (1.0F + i * 0.08F), 0, a[ROBE_X] + wave);
 			Quaternionf world = new Quaternionf(swing).mul(hang).mul(rest);
 			if (oz < 0.0F && kneeTilt > 0.0F) world = new Quaternionf().rotationX(-kneeTilt * -oz).mul(world);
-			Vector3f pivot = chest.transform(new Vector3f(panel.x, panel.y, panel.z)).add(body.x, body.y + root.y, body.z);
+			Vector3f pivot = chest.transform(new Vector3f(panel.x + shreddedVestments.x, panel.y + shreddedVestments.y, panel.z + shreddedVestments.z)).add(body.x, body.y + root.y, body.z);
 			Vector3f hangs = world.transform(new Vector3f(0, 1, 0));
 			float flare = SeraphaeHover.flare(hangs.y, -(ox * hangs.x + oz * hangs.z), SeraphaeHover.FLOOR - pivot.y,
 					robeLength[i]);
 			if (flare > 0.0F) world = new Quaternionf().rotationAxis(flare, oz, 0, -ox).mul(world);
 			setRotation(panel, new Quaternionf(unchest).mul(world));
 		}
-		leftVeilTail.xRot += a[VEIL_X] + Mth.sin(age * .065F - 1) * .04F;
-		rightVeilTail.xRot += a[VEIL_X] * 1.1F + Mth.sin(age * .065F) * .04F;
-		leftVeilTail.zRot += a[VEIL_Z];
-		rightVeilTail.zRot += a[VEIL_Z];
-		leftHairLock.xRot += a[HAIR] + Mth.sin(age * .052F) * .03F;
-		rightHairLock.xRot += a[HAIR] * 0.9F - Mth.sin(age * .052F + .5F) * .03F;
-		halo.xRot += a[HALO_X];
-		halo.zRot += a[HALO_Z] + Mth.sin(age * .045F) * .02F;
+		for (int i = 1; i <= 4; i++) {
+			ModelPart tail = nursesVeil.getChild("veil_tail_" + i);
+			tail.xRot += a[VEIL_X] * (0.9F + i * 0.05F) + Mth.sin(age * .065F - i) * .04F;
+			tail.zRot += a[VEIL_Z];
+		}
+		nursesVeil.xRot += a[HAIR] * 0.3F;
+		segmentedBoneHalo.xRot += a[HALO_X];
+		segmentedBoneHalo.zRot += a[HALO_Z] + Mth.sin(age * .045F) * .02F;
 	}
 
 	/** How far below a part's pivot the floor lies, model units, through the posed rig. */
@@ -1325,9 +1337,9 @@
 		for (int i = 0; i < links.length; i++) {
 			ModelPart link = links[i];
 			float rest = link.yRot;
-			if (!lying && y + LINK > room - SeraphaeHover.CLEARANCE) lying = true;
+			if (!lying && y + LINK_HEIGHT > room - SeraphaeHover.CLEARANCE) lying = true;
 			if (lying) {
-				y = Math.min(y, room - SeraphaeHover.CLEARANCE - 0.5F);
+				y = Math.min(y, room - SeraphaeHover.CLEARANCE - 1.0F);
 				link.x = x;
 				link.y = y;
 				link.z = z;
@@ -1349,7 +1361,8 @@
 	}
 
 	/** A chain link's pitch, model units. */
-	private static final float LINK = 2.0F;
+	private static final float LINK = 3.04F;
+	private static final float LINK_HEIGHT = 4.0F;
 
 	/** The rotation a part applies, as a quaternion. */
 	private static Quaternionf rotation(ModelPart part) {
@@ -1384,7 +1397,7 @@
 		parts();
 		switch (region) {
 			case BODY -> root.render(poses, consumer, light, overlay, color);
-			case CHEST -> walk(root, poses, consumer, light, overlay, part -> part == body ? color : 0);
+			case CHEST -> walk(root, poses, consumer, light, overlay, part -> part == unclosingEye ? color : 0);
 			case ARMS -> {
 				java.util.Set<ModelPart> arms = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
 				arms.addAll(leftArm.getAllParts().toList());
@@ -1417,40 +1430,45 @@
 	}
 
 	public Vector3f wristShackle(boolean left) {
-		return left ? point(new Vector3f(), root, body, leftArm, leftForearm, leftWristShackle)
-				: point(new Vector3f(), root, body, rightArm, rightForearm, rightWristShackle);
+		return point(new Vector3f(0, 9.0F / 16F, -2.2F / 16F), root, body,
+				left ? leftArm : rightArm, left ? leftForearm : rightForearm);
 	}
 
 	public Vector3f wingShackle(boolean left) {
-		return left ? point(new Vector3f(), root, body, leftWing, leftWingShackle)
-				: point(new Vector3f(), root, body, rightWing, rightWingShackle);
+		return point(new Vector3f(0, 1.0F / 16F, 4.0F / 16F), root, body, left ? leftNerveWing : rightNerveWing);
 	}
 
 	public Vector3f waistPoint() {
-		return point(new Vector3f(), root, body, waistShackle);
+		return point(new Vector3f(0, 0, -5.8F / 16F), root, body);
 	}
 
 	public Vector3f heartPoint() {
-		return point(new Vector3f(0, -6.75F / 16F, -2.5F / 16F), root, body);
+		return point(new Vector3f(0, 0, -2.0F / 16F), root, body, unclosingEye);
 	}
 
 	public Vector3f handPoint(boolean left) {
-		return left ? point(new Vector3f(0, 2.5F / 16F, 0), root, body, leftArm, leftForearm, leftHand, leftFingers)
-				: point(new Vector3f(0, 2.5F / 16F, 0), root, body, rightArm, rightForearm, rightHand, rightFingers);
+		return point(new Vector3f(0, 2.0F / 16F, -0.8F / 16F), root, body,
+				left ? leftArm : rightArm, left ? leftForearm : rightForearm, left ? leftHand : rightHand);
 	}
 
-	/** The tip fan of trunk {@code index} (0..2 left, 3..5 right), through its jointed segments. */
+	/** The middle dendrite of the selected trunk, following every bend back to the wing root. */
 	public Vector3f tipPoint(int index) {
 		parts();
-		ModelPart wing = index < 3 ? leftWing : rightWing;
+		ModelPart wing = index < 3 ? leftNerveWing : rightNerveWing;
+		String region = switch (index % 3) {
+			case 0 -> "_ascending_nerve";
+			case 1 -> "_lateral_nerve";
+			default -> "_descending_nerve";
+		};
+		ModelPart wrapper = wing.getChild((index < 3 ? "left" : "right") + region);
 		ModelPart[] chain = trunks[index];
-		ModelPart[] all = new ModelPart[3 + chain.length + 1];
-		all[0] = root;
-		all[1] = body;
-		all[2] = wing;
-		System.arraycopy(chain, 0, all, 3, chain.length);
-		all[all.length - 1] = tips[index][0];
-		return point(new Vector3f(0, DENDRITE_REACH, 0), all);
+		ModelPart[] path = new ModelPart[5 + chain.length];
+		path[0] = root;
+		path[1] = body;
+		path[2] = wing;
+		path[3] = wrapper;
+		System.arraycopy(chain, 0, path, 4, chain.length);
+		ModelPart tip = tips[index][1];
+		path[path.length - 1] = tip;
+		return point(new Vector3f(0, tip.cubes.getFirst().maxY / 16.0F, 0), path);
 	}
-
-	private static final float DENDRITE_REACH = 2F / 16F;

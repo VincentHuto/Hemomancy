@@ -1,7 +1,8 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:hematic_unbinding",
   "bloodCost": 0,
-  "riteType": "greater",
+  "riteType": "lesser",
   "purpose": "bond",
   "required_degree": 5,
   "riteName": "Rite of Hematic Unbinding",

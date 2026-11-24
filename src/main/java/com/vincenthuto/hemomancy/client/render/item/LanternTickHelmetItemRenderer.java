@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.render.item;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.LanternTickModel;
 import com.vincenthuto.hemomancy.client.render.armor.ArmorItemDisplayTransformHelper;
 
@@ -14,13 +13,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class LanternTickHelmetItemRenderer extends BlockEntityWithoutLevelRenderer {
-	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/lantern_tick/model_lantern_tick.png");
 	private static final float MODEL_CENTER_Y = -20.0F / 16.0F;
 	private static final float GUI_HELMET_SCALE = 0.56F;
 	private static final float HELD_HELMET_SCALE = 0.40F;
@@ -46,8 +43,10 @@ public class LanternTickHelmetItemRenderer extends BlockEntityWithoutLevelRender
 		applyHelmetItemTransform(context, poseStack);
 		poseStack.translate(0.0D, MODEL_CENTER_Y, 0.08D);
 
-		VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-		this.model.renderToBuffer(poseStack, consumer, Math.max(light, 0x00F000F0), OverlayTexture.NO_OVERLAY, -1);
+		VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(LanternTickModel.TEXTURE));
+		this.model.setupHelmetPose(0.0F);
+		this.model.renderToBuffer(poseStack, consumer, light, OverlayTexture.NO_OVERLAY, -1);
+		this.model.renderLantern(poseStack, buffer);
 		poseStack.popPose();
 	}
 

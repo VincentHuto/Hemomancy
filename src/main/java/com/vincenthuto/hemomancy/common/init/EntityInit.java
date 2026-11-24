@@ -845,6 +845,10 @@ public class EntityInit {
             "crimson_doe",
             () -> EntityType.Builder.of(CrimsonDoeEntity::new, MobCategory.CREATURE)
                     .sized(0.9F, 1.4F).build(Hemomancy.rloc("crimson_doe").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<SanguineRamEntity>> sanguine_ram = ENTITY_TYPES.register(
+            "sanguine_ram",
+            () -> EntityType.Builder.of(SanguineRamEntity::new, MobCategory.CREATURE)
+                    .sized(0.9F, 1.5F).build(Hemomancy.rloc("sanguine_ram").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<VerdigrisMothEntity>> verdigris_moth = ENTITY_TYPES.register(
             "verdigris_moth",
@@ -1296,6 +1300,7 @@ public class EntityInit {
         event.put(EntityInit.mycophant.get(), MycophantEntity.setAttributes().build());
         event.put(EntityInit.desiccant.get(), DesiccantEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
+        event.put(EntityInit.sanguine_ram.get(), SanguineRamEntity.createAttributes().build());
         event.put(EntityInit.verdigris_moth.get(), VerdigrisMothEntity.setAttributes().build());
         event.put(EntityInit.choir_keeper.get(), ChoirKeeperEntity.setAttributes().build());
         event.put(osteophage.get(), OsteophageEntity.setAttributes().build());

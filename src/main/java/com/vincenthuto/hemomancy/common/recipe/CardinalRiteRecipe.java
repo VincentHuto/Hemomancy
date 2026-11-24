@@ -65,6 +65,7 @@ public class CardinalRiteRecipe extends StationRecipe {
 	protected PuppeteerTrial puppeteerTrial;
 	protected com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose purpose;
 	protected com.vincenthuto.hemomancy.common.rite.CardinalRiteDaemonFinale daemonFinale;
+	protected ResourceLocation completionEffect;
 	protected boolean special;
 	protected MultiblockPattern subject;
 	protected int subjectFeedMl;
@@ -272,6 +273,15 @@ public class CardinalRiteRecipe extends StationRecipe {
 
 	public void setDaemonFinale(com.vincenthuto.hemomancy.common.rite.CardinalRiteDaemonFinale daemonFinale) {
 		this.daemonFinale = daemonFinale;
+	}
+
+	/** The completion effect this rite runs as it resolves ({@code completion_effect}), or null for none. */
+	public ResourceLocation getCompletionEffect() {
+		return completionEffect;
+	}
+
+	public void setCompletionEffect(ResourceLocation completionEffect) {
+		this.completionEffect = completionEffect;
 	}
 
 	/** The structure a Working craft swallows, or null for every other rite. */

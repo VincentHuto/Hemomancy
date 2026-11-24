@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumDevotee
 import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumDevoteeModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumModel;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
-import com.vincenthuto.hemomancy.client.render.entity.boss.SaintRiseRender;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintRise;
 import com.vincenthuto.hemomancy.client.render.layer.mob.VelorumFrostGlowLayer;
 import com.vincenthuto.hemomancy.common.block.harbinger.decoration.FrozenDevoteeBlock;
 import com.vincenthuto.hemomancy.common.entity.boss.BossFootprint;
@@ -46,7 +46,7 @@ import java.util.WeakHashMap;
 
 /**
  * Velorum's body: the generated rig posed by its Java tracks, the frost glow layer over it, and the anchors (core, claw,
- * breast seam, the staff's heel, three lanterns) recorded each frame for the world geometry that hangs off them, with
+ * breast seam, the staff's heel, the lantern and pendant) recorded each frame for the world geometry that hangs off them, with
  * the staff lantern, the heel, the claw and the side lantern kept as world-space trails in {@link VelorumAnimState}
  * (the Cruor Javelins leave from {@code lanternAt}, the Gloam Cuts from {@code clawAt}).
  *
@@ -98,9 +98,8 @@ public class VelorumRenderer extends MobRenderer<VelorumEntity, VelorumModel<Vel
 
 	@Override
 	protected void scale(VelorumEntity entity, PoseStack poseStack, float partialTick) {
-		SaintRiseRender.sink(poseStack, entity, partialTick);
 		// the Shadow Step: down through the liquid dark (the pose is flipped here, so down is +Y)
-		float under = VelorumAnimState.of(entity).under(entity, partialTick);
+		float under = renderDepth(entity, partialTick);
 		if (under > 0.0F) poseStack.translate(0.0F, under, 0.0F);
 	}
 
@@ -112,6 +111,7 @@ public class VelorumRenderer extends MobRenderer<VelorumEntity, VelorumModel<Vel
 	@Override
 	public boolean shouldRender(VelorumEntity entity, Frustum frustum, double x, double y, double z) {
 		if (super.shouldRender(entity, frustum, x, y, z)) return true;
+		if (entity.shouldRender(x, y, z) && frustum.isVisible(entity.getBoundingBoxForCulling().inflate(2.0D, 3.0D, 2.0D))) return true;
 		// the shades and the Eclipse's shapes stand far from his body
 		int move = entity.view().moveId();
 		return move == VelorumMove.PROCESSION.id() || move == VelorumMove.ECLIPSE.id()
@@ -130,7 +130,7 @@ public class VelorumRenderer extends MobRenderer<VelorumEntity, VelorumModel<Vel
 			entity.hurtTime = hurt;
 		}
 		VelorumAnimState state = VelorumAnimState.of(entity);
-		float under = state.under(entity, partial);
+		float under = renderDepth(entity, partial);
 		float bodyYaw = Mth.rotLerp(partial, entity.yBodyRotO, entity.yBodyRot);
 		Vec3[] lanterns = java.util.Arrays.stream(model.lanterns()).map(point -> offset(point, bodyYaw, under))
 				.toArray(Vec3[]::new);
@@ -142,6 +142,11 @@ public class VelorumRenderer extends MobRenderer<VelorumEntity, VelorumModel<Vel
 		float now = AnimationTime.gameTime(entity.level(), partial);
 		procession(entity, origin, now, partial, poses, buffers);
 		eclipse(entity, state, origin, now, partial, poses, buffers);
+	}
+
+	private static float renderDepth(VelorumEntity entity, float partial) {
+		return SaintRise.depth(entity.riseTime(partial), VelorumModel.STEP_DEPTH)
+				+ VelorumAnimState.of(entity).under(entity, partial);
 	}
 
 	private static Vec3 offset(Vector3f point, float yaw, float under) {

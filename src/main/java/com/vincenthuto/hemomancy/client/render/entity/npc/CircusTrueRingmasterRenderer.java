@@ -28,7 +28,7 @@ public class CircusTrueRingmasterRenderer extends MobRenderer<CircusRingmasterEn
 			RenderType.eyes(Hemomancy.rloc("textures/entity/npc/harbinger/circus/circus_true_ringmaster_glow.png"));
 
 	public CircusTrueRingmasterRenderer(EntityRendererProvider.Context context) {
-		super(context, new CircusTrueRingmasterModel(context.bakeLayer(CircusTrueRingmasterModel.LAYER_LOCATION)), 0.45F);
+		super(context, new CircusTrueRingmasterModel(), 0.45F);
 		addLayer(new EyesLayer<>(this) {
 			@Override
 			public RenderType renderType() {

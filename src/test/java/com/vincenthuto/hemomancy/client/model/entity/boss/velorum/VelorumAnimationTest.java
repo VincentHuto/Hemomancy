@@ -125,7 +125,7 @@ class VelorumAnimationTest {
 		strike(rig, VelorumMove.VEINS_OF_FROST, () -> rig.model().claw());
 		strike(rig, VelorumMove.GLOAM_CUTS, () -> rig.model().claw());
 		strike(rig, VelorumMove.HOLLOW_TOLL, () -> rig.model().heel());
-		strike(rig, VelorumMove.HANGING_LANTERN, () -> rig.model().lanterns()[2]);
+		strike(rig, VelorumMove.HANGING_LANTERN, () -> rig.model().lanterns()[1]);
 	}
 
 	private static void strike(Rigged rig, VelorumMove move, java.util.function.Supplier<Vector3f> limb) {
@@ -222,7 +222,7 @@ class VelorumAnimationTest {
 		Rigged rig = Rigged.of();
 		rig.model().pose(frame(VelorumMove.ECLIPSE, 100.0F), 0.0F, 0.0F, 0.0F);
 		ModelPart core = rig.part("hips", "chest", "left_arm", "left_forearm", "left_hand", "staff", "staff_lantern",
-				"staff_lantern_crystal", "staff_lantern_core");
+				"staff_lantern_core");
 		assertFalse(core.visible, "the lantern is out");
 		rig.model().pose(VelorumAnimState.Frame.REST, 0.0F, 0.0F, 0.0F);
 		assertTrue(core.visible, "and lit at rest");
@@ -252,16 +252,19 @@ class VelorumAnimationTest {
 		for (VelorumAnimState.Frame f : List.of(VelorumAnimState.Frame.opening(VelorumOpeningRules.BOW_ID, 30.0F, 70),
 				VelorumAnimState.Frame.ending(120.0F), frame(VelorumMove.HOLLOW_TOLL, 25.5F))) {
 			rig.model().pose(f, 0.0F, 0.0F, 0.0F);
-			for (int i = 0; i < 16; i++) {
-				float tip = tip(12.0F + (i % 3) * 0.5F, rig.part("hips"), rig.part("hips", "robe_panel_" + i));
-				assertTrue(tip <= FLOOR + 0.05F, "robe panel " + i + " rests on the floor at " + f.track());
+			for (String name : new String[]{"left_split_habit", "right_split_habit", "front_tabard"}) {
+				var panel = rig.part("hips", name);
+				assertTrue(tip(length(panel), rig.part("hips"), panel) <= FLOOR + 0.05F, name);
 			}
-			for (int i = 0; i < 9; i++) {
-				float tip = tip(12.0F, rig.part("hips"), rig.part("hips", "chest"), rig.part("hips", "chest", "mantle_panel_" + i),
-						rig.part("hips", "chest", "mantle_panel_" + i, "mantle_panel_" + i + "_train"));
-				assertTrue(tip <= FLOOR + 0.05F, "mantle train " + i + " rests on the floor at " + f.track());
+			for (String side : new String[]{"left", "right"}) {
+				var panel = rig.part("hips", "chest", side + "_mantle_fall");
+				assertTrue(tip(length(panel), rig.part("hips"), rig.part("hips", "chest"), panel) <= FLOOR + 0.05F, side);
 			}
 		}
+	}
+
+	private static float length(ModelPart part) {
+		return part.cubes.stream().map(cube -> cube.maxY).max(Float::compare).orElseThrow();
 	}
 
 	private static float tip(float length, ModelPart... chain) {
@@ -273,7 +276,7 @@ class VelorumAnimationTest {
 	@Test
 	void theSplinterCrownsIciclesFallAndGrowBack() {
 		Rigged rig = Rigged.of();
-		ModelPart icicle = rig.part("hips", "chest", "head", "halo", "halo_chain_0", "halo_icicle_0");
+		ModelPart icicle = rig.part("hips", "chest", "head", "halo", "left_votive_drop", "left_votive_glass");
 		rig.model().pose(frame(VelorumMove.SPLINTER_CROWN, 30.0F), 0.0F, 0.0F, 0.0F);
 		assertFalse(icicle.visible, "snapped free at the commit");
 		rig.model().pose(frame(VelorumMove.SPLINTER_CROWN, 44.0F), 0.0F, 0.0F, 0.0F);

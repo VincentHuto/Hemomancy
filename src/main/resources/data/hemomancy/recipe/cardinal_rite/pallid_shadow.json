@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:pallid_shadow",
   "bloodCost": 0,
   "riteType": "grand",
   "purpose": "world",

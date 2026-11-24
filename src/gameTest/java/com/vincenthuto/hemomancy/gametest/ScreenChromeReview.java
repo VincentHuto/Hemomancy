@@ -9,8 +9,22 @@ import com.vincenthuto.hemomancy.client.screen.item.LedgerScreen;
 import com.vincenthuto.hemomancy.client.screen.item.VascularStatusScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SSCScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryPrimingRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSkills;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity;
 import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.TemperamentViewMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
@@ -19,9 +33,13 @@ import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuPr
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
@@ -38,6 +56,7 @@ import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -93,8 +112,7 @@ public final class ScreenChromeReview {
                             HeartNodeScreenScenes.sampleScreenState(BlockPos.ZERO, java.util.UUID.nameUUIDFromBytes(new byte[] {7}), false))),
             Scene.client("succession_residents", com.vincenthuto.hemomancy.client.screen.item.SuccessionResidentsScreen.class,
                     () -> new com.vincenthuto.hemomancy.client.screen.item.SuccessionResidentsScreen(null)),
-            new Scene("synaptic_loadout", com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen.class,
-                    () -> com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen.openScreen(BlockPos.ZERO), null, null),
+            Scene.client("synaptic_loadout", SynapticLoadoutScreen.class, () -> new SynapticLoadoutScreen(BlockPos.ZERO)),
             Scene.server("temperament_view", "item.TemperamentViewScreen", p -> p.openMenu(new TemperamentViewMenuProvider())),
             Scene.server("scrying_diagnostics", "item.ScryingDiagnosticsScreen", p -> p.openMenu(new ScryingDiagnosticsMenuProvider())),
             Scene.server("vascular_view", "item.VascularViewScreen", p -> p.openMenu(new VascularViewMenuProvider())),
@@ -113,7 +131,13 @@ public final class ScreenChromeReview {
             block("mycelial_crucible", "tile.crafting.MycelialCrucibleScreen", BlockInit.mycelial_crucible),
             block("mycelial_lantern", "tile.crafting.MycelialLanternScreen", BlockInit.mycelial_lantern),
             block("enzymatic_scriptorium", "tile.crafting.EnzymaticScriptoriumScreen", BlockInit.enzymatic_scriptorium),
+            Scene.server("enzymatic_scriptorium_stocked", "tile.crafting.EnzymaticScriptoriumScreen",
+                    ScreenChromeReview::placeStockedScriptorium, ScreenChromeReview::openStockedScriptorium),
             block("resonant_forge", "tile.crafting.ResonantForgeScreen", BlockInit.resonant_forge),
+            Scene.server("resonant_forge_precision", "tile.crafting.ResonantForgeScreen",
+                    p -> placeLoadedForge(p, 1), ScreenChromeReview::openStockedScriptorium),
+            Scene.server("resonant_forge_masterwork", "tile.crafting.ResonantForgeScreen",
+                    p -> placeLoadedForge(p, 2), ScreenChromeReview::openStockedScriptorium),
             block("clairaudiograph", "tile.functional.ClairaudiographScreen", BlockInit.clairaudiograph),
             block("phlebotomists_cabinet", "tile.functional.PhlebotomistsCabinetScreen", BlockInit.phlebotomists_cabinet),
             Scene.server("specimen_vessel", "tile.functional.SpecimenVesselScreen", ScreenChromeReview::placeVessel,
@@ -123,7 +147,10 @@ public final class ScreenChromeReview {
             // A full pool greys the Donate button (PT-42).
             new Scene("bloodline_pool_full", BloodlinePoolScreen.class, ScreenChromeReview::openFullPool, null, null),
             // The leader's petition row (PT-35).
-            new Scene("ledger_petitions", LedgerScreen.class, ScreenChromeReview::openLedgerWithPetitions, null, null));
+            new Scene("ledger_petitions", LedgerScreen.class, ScreenChromeReview::openLedgerWithPetitions, null, null),
+            stockedSynapticLoadouts(),
+            // Last of all: it teaches the reviewer every memory, so the Reliquary's drawers, sockets and veins fill.
+            stockedReliquary());
 
     private static void reviewLine() {
         Minecraft minecraft = Minecraft.getInstance();
@@ -241,6 +268,7 @@ public final class ScreenChromeReview {
         captured = true;
         try {
             capture(screen, current.name);
+            if (current.name.equals("synaptic_loadout_stocked")) checkSynapticNavigation(screen);
         } catch (RuntimeException e) {
             Hemomancy.LOGGER.error("SCREEN_CHROME_REVIEW {} failed", current.name, e);
         }
@@ -276,6 +304,98 @@ public final class ScreenChromeReview {
         Hemomancy.LOGGER.info("SCREEN_CHROME_REVIEW captured {}", name);
     }
 
+    private static void checkSynapticNavigation(Screen screen) {
+        EditBox name = screen.children().stream().filter(EditBox.class::isInstance).map(EditBox.class::cast)
+                .findFirst().orElseThrow();
+        Button save = synapticButton(screen, "overwrite");
+        Button apply = synapticButton(screen, "apply");
+        Button empty = synapticButton(screen, "numbered_pattern", 3);
+        Button locked = synapticButton(screen, "numbered_pattern", 7);
+        if (!name.getValue().equals("Long Descent") || !apply.active || locked.active) {
+            throw new IllegalStateException("Expected the Distributor's saved slot and a locked seventh socket");
+        }
+        clickWidget(screen, locked);
+        clickWidget(screen, save);
+        if (!name.getValue().equals("Long Descent") || !save.getMessage().equals(synapticLabel("confirm"))) {
+            throw new IllegalStateException("Locked slot accepted input or overwrite skipped confirmation");
+        }
+        clickWidget(screen, empty);
+        if (!name.getValue().equals("Loadout 3") || apply.active || !save.getMessage().equals(synapticLabel("save"))) {
+            throw new IllegalStateException("Selecting an empty socket did not clear the overwrite prompt");
+        }
+        clickWidget(screen, name);
+        screen.keyPressed(GLFW.GLFW_KEY_LEFT, 0, 0);
+        if (!name.getValue().equals("Loadout 3") || apply.active) {
+            throw new IllegalStateException("The name field did not keep the cursor key");
+        }
+        clickWidget(screen, synapticButton(screen, "numbered_pattern", 2));
+        if (!name.getValue().equals("Long Descent") || !apply.active) {
+            throw new IllegalStateException("The saved slot did not restore its preview and controls");
+        }
+        Hemomancy.LOGGER.info("SCREEN_CHROME_REVIEW checked synaptic slot selection and overwrite confirmation");
+    }
+
+    private static Button synapticButton(Screen screen, String key, Object... args) {
+        Component label = synapticLabel(key, args);
+        return screen.children().stream().filter(Button.class::isInstance).map(Button.class::cast)
+                .filter(button -> button.getMessage().equals(label)).findFirst().orElseThrow();
+    }
+
+    private static Component synapticLabel(String key, Object... args) {
+        return Component.translatable("screen.hemomancy.synaptic_loadout." + key, args);
+    }
+
+    private static void clickWidget(Screen screen, AbstractWidget widget) {
+        screen.mouseClicked(widget.getX() + widget.getWidth() / 2.0, widget.getY() + widget.getHeight() / 2.0,
+                GLFW.GLFW_MOUSE_BUTTON_LEFT);
+    }
+
+    private static Scene stockedSynapticLoadouts() {
+        return Scene.server("synaptic_loadout_stocked", "tile.functional.SynapticLoadoutScreen", player -> {
+            BlockPos pos = anchor.relative(Direction.SOUTH, 2);
+            player.serverLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
+            if (player.serverLevel().getBlockEntity(pos) instanceof DendriticDistributorBlockEntity distributor) {
+                distributor.setSelectedSlot(1);
+            }
+
+            var known = HemoCapabilityAccess.getKnownManipulations(player);
+            String heart = MemorySlotRef.thelemicMemory(ThelemicMemory.SECOND_PULSE).storageKey();
+            String legs = MemorySlotRef.thelemicMemory(ThelemicMemory.COURSING_LEGS).storageKey();
+            known.setEquippedManipNames(List.of("blood_shot", "blood_rush", "hemorrhage", heart));
+            known.setSelectedMemoryRef(MemorySlotRef.manipulation("blood_shot"));
+            known.setLoadout(1, ManipulationLoadout.of("Long Descent", legs,
+                    List.of("sanguine_mending", "glacial_grasp", legs, "deadly_gaze", "hematic_flare"), 1));
+            known.setLoadout(3, ManipulationLoadout.of("Close Quarters", "hemorrhage", List.of("hemorrhage", heart), 3));
+            KnownManipulationEvents.syncPlayerEvent(player);
+
+            var skills = HemoCapabilityAccess.getSkillProgress(player);
+            skills.setSkill(SkillPointInit.skill_synaptic_memory, EnumSkillStates.UNLOCKED, 2);
+            PacketHandler.sendToPlayer(player, new PacketSyncSkills(skills.toSyncTag()));
+        }, player -> {
+            BlockPos pos = anchor.relative(Direction.SOUTH, 2);
+            Minecraft.getInstance().execute(() -> SynapticLoadoutScreen.openScreen(pos));
+        });
+    }
+
+    /** Fills the drawers and tincture rack, with both memory types carried and one free socket. */
+    private static Scene stockedReliquary() {
+        Scene plain = block("mnemonic_reliquary_stocked", "tile.functional.MnemonicReliquaryScreen", BlockInit.mnemonic_reliquary);
+        return new Scene(plain.name(), plain.screen(), null, player -> {
+            for (var manipulation : ManipulationInit.MANIPS_TYPE_REGISTRY)
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper
+                        .grantCreativeMemory(player, manipulation, null);
+            var known = HemoCapabilityAccess.getKnownManipulations(player);
+            var thelemic = HemoCapabilityAccess.thelemicMemory(player);
+            for (ThelemicMemory memory : ThelemicMemory.values())
+                thelemic.learnAndAddReserve(memory, ThelemicMemoryPrimingRules.TICKS_PER_DOSE);
+            known.setEquippedManipNames(List.of(ManipulationInit.blood_shot.get().getName(),
+                    MemorySlotRef.thelemicMemory(ThelemicMemory.SECOND_PULSE).storageKey()));
+            ThelemicMemoryEvents.sync(player);
+            com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents.syncPlayerEvent(player);
+            plain.prepare().accept(player);
+        }, plain.server());
+    }
+
     private static Scene block(String name, String screenClass, Supplier<? extends Block> block) {
         BlockPos[] pos = new BlockPos[1];
         return Scene.server(name, screenClass, player -> {
@@ -290,6 +410,61 @@ public final class ScreenChromeReview {
             if (player.containerMenu == player.inventoryMenu && level.getBlockEntity(pos[0]) instanceof MenuProvider provider)
                 player.openMenu(provider, pos[0]);
         });
+    }
+
+    /** An Eightfold Scriptorium with stocked jars, a sword on the book and three doses metered into the feed. */
+    private static void placeStockedScriptorium(ServerPlayer player) {
+        var level = player.serverLevel();
+        BlockPos pos = anchor.relative(Direction.SOUTH, 2);
+        level.setBlockAndUpdate(pos.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(pos, BlockInit.enzymatic_scriptorium.get().defaultBlockState()
+                .setValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE, 1));
+        if (level.getBlockEntity(pos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity station) {
+            var tempers = com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.values();
+            int[] stock = {64, 40, 12, 0, 30, 8, 52, 20};
+            for (int i = 0; i < 8; i++)
+                if (stock[i] > 0)
+                    station.setItem(i, new ItemStack(com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament
+                            .EnumBloodTemper.getRepEnzyme(tempers[i]), stock[i]));
+            station.setItem(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity.ITEM,
+                    new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
+            station.setItem(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity.LAPIS,
+                    new ItemStack(net.minecraft.world.item.Items.LAPIS_LAZULI, 9));
+            station.select(0);
+            station.select(0);
+            station.select(6);
+            station.getBloodCapability().setBloodVolume(1200);
+            com.vincenthuto.hemomancy.common.util.BlockEntitySync.markAndSync(station);
+        }
+    }
+
+    /** A Resonant Forge at the given stage with a pickaxe on the anvil, an enchanted sword at the rest and blood in the trough. */
+    private static void placeLoadedForge(ServerPlayer player, int stage) {
+        var level = player.serverLevel();
+        BlockPos pos = anchor.relative(Direction.SOUTH, 2);
+        level.setBlockAndUpdate(pos.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+        level.removeBlock(pos, false);
+        level.setBlockAndUpdate(pos, BlockInit.resonant_forge.get().defaultBlockState()
+                .setValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty.STAGE, stage));
+        if (level.getBlockEntity(pos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity forge) {
+            forge.setItem(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity.APPLICATION_ITEM,
+                    new ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE));
+            ItemStack sword = new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD);
+            level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                    .getHolder(net.minecraft.world.item.enchantment.Enchantments.SHARPNESS)
+                    .ifPresent(sharpness -> sword.enchant(sharpness, 3));
+            forge.setItem(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity.GRINDING_ITEM, sword);
+            forge.setItem(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity.GRINDING_CYLINDER,
+                    new ItemStack(ItemInit.wax_cylinder.get()));
+            forge.getBloodCapability().setBloodVolume(600 + 300 * stage);
+            com.vincenthuto.hemomancy.common.util.BlockEntitySync.markAndSync(forge);
+        }
+    }
+
+    private static void openStockedScriptorium(ServerPlayer player) {
+        BlockPos pos = anchor.relative(Direction.SOUTH, 2);
+        if (player.serverLevel().getBlockEntity(pos) instanceof MenuProvider provider)
+            player.openMenu(provider, pos);
     }
 
     /** RV-60: a Specimen Vat south of the reviewer keeping a cow at 64 Vigor over a 345 mL buffer. */

@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantLastBroodRu
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantState;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.util.Map;
@@ -63,6 +64,9 @@ public final class MycophantAnimState {
 
 	private final Vector3f aim = new Vector3f();
 	private boolean hasAim;
+	private int focalTick = Integer.MIN_VALUE;
+	private Vec3 siphonMouth;
+	private Vec3 gazeEye;
 
 	private int signature = Integer.MIN_VALUE;
 	private float blendStart = -1000.0F;
@@ -74,6 +78,20 @@ public final class MycophantAnimState {
 
 	public static MycophantAnimState of(MycophantEntity entity) {
 		return STATES.computeIfAbsent(entity, e -> new MycophantAnimState());
+	}
+
+	void focalPoints(int tick, Vec3 mouth, Vec3 eye) {
+		this.focalTick = tick;
+		this.siphonMouth = mouth;
+		this.gazeEye = eye;
+	}
+
+	public Vec3 siphonMouth(int tick) {
+		return tick == focalTick ? siphonMouth : null;
+	}
+
+	public Vec3 gazeEye(int tick) {
+		return tick == focalTick ? gazeEye : null;
 	}
 
 	/** Advances to this frame. Safe to call more than once per frame (the renderer and the model both do). */

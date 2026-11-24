@@ -64,6 +64,23 @@ class AnimationTimeGuardrailTest {
 			"client/screen/tile/crafting/MorphlingIncubatorScreen.java",
 			"client/screen/tile/functional/MnemonicReliquaryScreen.java");
 
+	/** A-4: a rite's client clocks (beat ages, boundary growth, the escalation weather, its heartbeat) stop with the world. */
+	@Test
+	void riteClientClocksStandStillUnderFreeze() {
+		for (String[] tick : new String[][] {
+				{ "client/data/CardinalRiteEventClientState.java", "public static void tick(" },
+				{ "client/render/world/zone/RiteSpaceMotes.java", "public static void tick(" },
+				{ "client/sound/RiteSoundBed.java", "public static void tick(" },
+				{ "client/event/ClientTickEvents.java", "public static void onClientTickPost(" } }) {
+			SourceAssertions.assertContains(tick[0] + " stops under /tick freeze", SourceAssertions.methodBody(
+					SourceAssertions.readMainJava(tick[0]), tick[1]), "AnimationTime.worldTicks()");
+		}
+		String clientTick = SourceAssertions.methodBody(SourceAssertions.readMainJava("client/event/ClientTickEvents.java"),
+				"public static void onClientTickPost(");
+		SourceAssertions.assertContains("boundaries grow only while the world ticks", SourceAssertions.section(clientTick,
+				"AnimationTime.worldTicks()", "RiteSoundBed.tick("), "ActiveRiteClientData.tick();");
+	}
+
 	@Test
 	void clientTimeComesFromAnimationTime() throws IOException {
 		assertEquals(Set.of(), matching(RAW, "client/", "mixin/"), "use AnimationTime for the partial tick and animation time");

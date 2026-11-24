@@ -1,61 +1,52 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
-import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFootprintResolver;
-import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilFacing;
 import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilMotion;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import org.joml.Vector3f;
 
 import java.util.Optional;
 import java.util.UUID;
 
 /**
- * A completed ichorian inscription that peels upright and circles its rite.
+ * A completed ichorian inscription that peels upright and hovers over its own pattern, turning slowly in place.
  */
 public final class AwakenedIchorianSigilEntity extends Entity {
 	private static final EntityDataAccessor<String> SIGIL_ID =
 			SynchedEntityData.defineId(AwakenedIchorianSigilEntity.class, EntityDataSerializers.STRING);
-	private static final EntityDataAccessor<BlockPos> RITE_CENTER =
-			SynchedEntityData.defineId(AwakenedIchorianSigilEntity.class, EntityDataSerializers.BLOCK_POS);
-	private static final EntityDataAccessor<Float> ORBIT_RADIUS =
-			SynchedEntityData.defineId(AwakenedIchorianSigilEntity.class, EntityDataSerializers.FLOAT);
-	private static final EntityDataAccessor<Float> STARTING_ANGLE =
-			SynchedEntityData.defineId(AwakenedIchorianSigilEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Optional<UUID>> RITE_CASTER =
 			SynchedEntityData.defineId(AwakenedIchorianSigilEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private static final EntityDataAccessor<Boolean> FULLY_PEELED =
 			SynchedEntityData.defineId(AwakenedIchorianSigilEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Vector3f> HOVER =
+			SynchedEntityData.defineId(AwakenedIchorianSigilEntity.class, EntityDataSerializers.VECTOR3);
+	private static final EntityDataAccessor<Float> TURN_PHASE =
+			SynchedEntityData.defineId(AwakenedIchorianSigilEntity.class, EntityDataSerializers.FLOAT);
 
 	private double originX;
 	private double originY;
 	private double originZ;
+	/** Kept in doubles on the server; the synced {@link #HOVER} is a float copy for clients. */
+	private double hoverX;
+	private double hoverY;
+	private double hoverZ;
 	private int motionAge;
+	/** Saved before the form hovered: it has no point to hold, so it leaves on its first server tick. */
+	private boolean discardOnTick;
 	private double clientLerpX;
 	private double clientLerpY;
 	private double clientLerpZ;
 	private int clientLerpSteps;
-	private float previousRenderFacingYaw;
-	private float renderFacingYaw;
-	private float previousRenderFacingPitch;
-	private float renderFacingPitch;
-	private float previousRenderBankRoll;
-	private float renderBankRoll;
-	private float previousRenderMovementSpeed;
-	private float renderMovementSpeed;
 
 	public AwakenedIchorianSigilEntity(EntityType<? extends AwakenedIchorianSigilEntity> type, Level level) {
 		super(type, level);
@@ -63,21 +54,30 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 		setNoGravity(true);
 	}
 
-	public void initialize(UUID caster, ResourceLocation sigilId, BlockPos riteCenter,
-			double originX, double originY, double originZ, float orbitRadius, float startingAngle) {
+	public void initialize(UUID caster, ResourceLocation sigilId,
+			double originX, double originY, double originZ,
+			AwakenedIchorianSigilMotion.Position hover, float turnPhase) {
 		entityData.set(RITE_CASTER, Optional.of(caster));
 		entityData.set(SIGIL_ID, sigilId.toString());
-		entityData.set(RITE_CENTER, riteCenter.immutable());
-		entityData.set(ORBIT_RADIUS, orbitRadius);
-		entityData.set(STARTING_ANGLE, startingAngle);
+		entityData.set(TURN_PHASE, turnPhase);
 		this.originX = originX;
 		this.originY = originY;
 		this.originZ = originZ;
+		setHover(hover.x(), hover.y(), hover.z());
 		setPos(originX, originY, originZ);
+	}
+
+	/** False for a tag saved before the form hovered (it has only the old orbit keys). */
+	public static boolean hasHover(CompoundTag tag) {
+		return AwakenedIchorianSigilMotion.hasSavedHover(tag);
 	}
 
 	public ResourceLocation getSigilId() {
 		return ResourceLocation.tryParse(entityData.get(SIGIL_ID));
+	}
+
+	public Vector3f getHover() {
+		return new Vector3f(entityData.get(HOVER));
 	}
 
 	public float getPeelProgress(float partialTick) {
@@ -85,20 +85,10 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 		return AwakenedIchorianSigilMotion.peelProgress(Math.round(tickCount + partialTick));
 	}
 
+	/** Minecraft yaw of the slow turn in place. */
 	public float getRenderFacingYaw(float partialTick) {
-		return Mth.rotLerp(partialTick, previousRenderFacingYaw, renderFacingYaw);
-	}
-
-	public float getRenderFacingPitch(float partialTick) {
-		return Mth.lerp(partialTick, previousRenderFacingPitch, renderFacingPitch);
-	}
-
-	public float getRenderBankRoll(float partialTick) {
-		return Mth.lerp(partialTick, previousRenderBankRoll, renderBankRoll);
-	}
-
-	public float getRenderMovementSpeed(float partialTick) {
-		return Mth.lerp(partialTick, previousRenderMovementSpeed, renderMovementSpeed);
+		return AwakenedIchorianSigilMotion.turnYaw(getSigilId(), entityData.get(TURN_PHASE),
+				tickCount + partialTick);
 	}
 
 	public AABB getAnatomyRenderBounds() {
@@ -108,11 +98,10 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		builder.define(SIGIL_ID, "hemomancy:reservoir");
-		builder.define(RITE_CENTER, BlockPos.ZERO);
-		builder.define(ORBIT_RADIUS, 2.0F);
-		builder.define(STARTING_ANGLE, 0.0F);
 		builder.define(RITE_CASTER, Optional.empty());
 		builder.define(FULLY_PEELED, false);
+		builder.define(HOVER, new Vector3f());
+		builder.define(TURN_PHASE, 0.0F);
 	}
 
 	@Override
@@ -122,6 +111,10 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 		setNoGravity(true);
 		if (level().isClientSide) {
 			tickClientInterpolation();
+			return;
+		}
+		if (discardOnTick) {
+			discard();
 			return;
 		}
 		motionAge++;
@@ -140,26 +133,9 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 			discard();
 			return;
 		}
-		if (tickCount == 1 || tickCount % 20 == 0) {
-			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(server, rite.getRecipeId());
-			float footprintRadius = CardinalRiteFootprintResolver.radius(rite, recipe);
-			entityData.set(ORBIT_RADIUS,
-					CardinalRiteFootprintRules.awakenedSigilOrbitRadius(footprintRadius));
-		}
 
-		BlockPos center = entityData.get(RITE_CENTER);
 		AwakenedIchorianSigilMotion.Position target = AwakenedIchorianSigilMotion.position(
-				getSigilId(),
-				originX, originY, originZ,
-				center.getX() + 0.5D, center.getY() + 2.5D, center.getZ() + 0.5D,
-				entityData.get(ORBIT_RADIUS), entityData.get(STARTING_ANGLE), motionAge);
-		AwakenedIchorianSigilFacing.Orientation travelFacing =
-				AwakenedIchorianSigilFacing.update(
-						new AwakenedIchorianSigilFacing.Orientation(
-								getYRot(), getXRot(), 0.0F),
-						target.x() - getX(), target.y() - getY(), target.z() - getZ(), 1.0F);
-		setYRot(travelFacing.yaw());
-		setXRot(travelFacing.pitch());
+				originX, originY, originZ, hoverX, hoverY, hoverZ, motionAge);
 		setPos(target.x(), target.y(), target.z());
 		setDeltaMovement(0.0D, 0.0D, 0.0D);
 	}
@@ -177,51 +153,32 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 	}
 
 	private void tickClientInterpolation() {
-		previousRenderFacingYaw = renderFacingYaw;
-		previousRenderFacingPitch = renderFacingPitch;
-		previousRenderBankRoll = renderBankRoll;
-		previousRenderMovementSpeed = renderMovementSpeed;
-		if (clientLerpSteps <= 0) {
-			renderBankRoll *= 0.82F;
-			renderMovementSpeed *= 0.86F;
-			return;
-		}
-		double previousX = getX();
-		double previousY = getY();
-		double previousZ = getZ();
+		if (clientLerpSteps <= 0) return;
 		AwakenedIchorianSigilMotion.Position next = AwakenedIchorianSigilMotion.smoothStep(
 				new AwakenedIchorianSigilMotion.Position(getX(), getY(), getZ()),
 				new AwakenedIchorianSigilMotion.Position(clientLerpX, clientLerpY, clientLerpZ),
 				clientLerpSteps);
 		setPos(next.x(), next.y(), next.z());
-		double dx = next.x() - previousX;
-		double dy = next.y() - previousY;
-		double dz = next.z() - previousZ;
-		AwakenedIchorianSigilFacing.Orientation orientation =
-				AwakenedIchorianSigilFacing.update(
-						new AwakenedIchorianSigilFacing.Orientation(
-								renderFacingYaw, renderFacingPitch, renderBankRoll),
-						dx, dy, dz, 1.0F);
-		renderFacingYaw = orientation.yaw();
-		renderFacingPitch = orientation.pitch();
-		renderBankRoll = orientation.roll();
-		setYRot(renderFacingYaw);
-		setXRot(renderFacingPitch);
-		float measuredSpeed = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
-		renderMovementSpeed = Mth.lerp(0.35F, renderMovementSpeed, measuredSpeed);
 		clientLerpSteps--;
+	}
+
+	private void setHover(double x, double y, double z) {
+		hoverX = x;
+		hoverY = y;
+		hoverZ = z;
+		entityData.set(HOVER, new Vector3f((float) x, (float) y, (float) z));
 	}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundTag tag) {
 		entityData.set(SIGIL_ID, tag.getString("SigilId"));
-		entityData.set(RITE_CENTER, BlockPos.of(tag.getLong("RiteCenter")));
-		entityData.set(ORBIT_RADIUS, tag.getFloat("OrbitRadius"));
-		entityData.set(STARTING_ANGLE, tag.getFloat("StartingAngle"));
 		if (tag.hasUUID("RiteCaster")) entityData.set(RITE_CASTER, Optional.of(tag.getUUID("RiteCaster")));
 		originX = tag.getDouble("OriginX");
 		originY = tag.getDouble("OriginY");
 		originZ = tag.getDouble("OriginZ");
+		discardOnTick = !hasHover(tag);
+		setHover(tag.getDouble("HoverX"), tag.getDouble("HoverY"), tag.getDouble("HoverZ"));
+		entityData.set(TURN_PHASE, tag.getFloat("TurnPhase"));
 		motionAge = Math.max(0, tag.getInt("MotionAge"));
 		entityData.set(FULLY_PEELED, motionAge >= AwakenedIchorianSigilMotion.PEEL_TICKS);
 		noPhysics = true;
@@ -231,13 +188,14 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 	@Override
 	protected void addAdditionalSaveData(CompoundTag tag) {
 		tag.putString("SigilId", entityData.get(SIGIL_ID));
-		tag.putLong("RiteCenter", entityData.get(RITE_CENTER).asLong());
-		tag.putFloat("OrbitRadius", entityData.get(ORBIT_RADIUS));
-		tag.putFloat("StartingAngle", entityData.get(STARTING_ANGLE));
 		entityData.get(RITE_CASTER).ifPresent(caster -> tag.putUUID("RiteCaster", caster));
 		tag.putDouble("OriginX", originX);
 		tag.putDouble("OriginY", originY);
 		tag.putDouble("OriginZ", originZ);
+		tag.putDouble("HoverX", hoverX);
+		tag.putDouble("HoverY", hoverY);
+		tag.putDouble("HoverZ", hoverZ);
+		tag.putFloat("TurnPhase", entityData.get(TURN_PHASE));
 		tag.putInt("MotionAge", motionAge);
 	}
 }

@@ -22,6 +22,11 @@ public final class CinderBreathFlames {
 
     /** Emits at most once per game tick per Bellows; safe to call from every render frame. */
     public static void emit(CinderBellowsEntity bellows, float partialTicks) {
+        emit(bellows, partialTicks, bellows.getEyePosition(partialTicks)
+                .add(bellows.getViewVector(partialTicks).scale(.7)));
+    }
+
+    public static void emit(CinderBellowsEntity bellows, float partialTicks, Vec3 mouth) {
         if (!(bellows.level() instanceof ClientLevel level) || bellows.isInvisible()) return;
         if (world != level) { LAST_TICK.clear(); world = level; }
         int cycle = bellows.getBreathCycle();
@@ -30,7 +35,6 @@ public final class CinderBreathFlames {
         if (LAST_TICK.get(bellows.getId()) == now) return;
         LAST_TICK.put(bellows.getId(), now);
         Vec3 aim = bellows.getViewVector(partialTicks);
-        Vec3 mouth = bellows.getEyePosition(partialTicks).add(aim.scale(.7));
         switch (CinderBellowsRules.phase(cycle)) {
             // A few banked wisps gather at the mouth while it draws breath.
             case INHALE -> { if (cycle % 5 == 0) ThermalParticles.emit(mouth, aim.scale(-1), false, 1, true); }

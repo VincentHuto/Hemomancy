@@ -27,7 +27,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SeraphaeModelTest {
     private static final Path ASSETS = ResourceReader.path("assets/hemomancy");
-    private static final String[] TRUNKS = {"upper", "middle", "lower"};
+    private static final String[] TRUNKS = {"ascending", "lateral", "descending"};
+
+    @Test
+    void unclosingEyeIsModeledAndFollowsTheChest() {
+        var layer = SeraphaeModel.createBodyLayer().bakeRoot();
+        var model = new SeraphaeModel<>(layer);
+        var body = model.root().getChild("body");
+        assertEquals(4, body.getChild("unclosing_eye").cubes.size());
+        model.pose(new SeraphaePose(), 0, 0, 0, 0, 1);
+        Vector3f rest = model.heartPoint();
+        model.pose(new SeraphaePose().set(SeraphaePose.LEAN, .6F), 0, 0, 0, 0, 1);
+        assertTrue(rest.distance(model.heartPoint()) > .1F);
+    }
 
     @Test
     void texelDensityIsSixteenPerBlockAtHerRenderScale() {
@@ -38,37 +50,26 @@ class SeraphaeModelTest {
     void eachWingIsANerveTreeOfThreeJointedTrunksWithBranchesAndTips() {
         ModelPart body = SeraphaeModel.createBodyLayer().bakeRoot().getChild("root").getChild("body");
         for (String side : new String[]{"left", "right"}) {
-            ModelPart wing = body.getChild(side + "_wing");
-            assertTrue(wing.hasChild(side + "_wing_shackle"), side + " wing-root locator");
-            for (String trunk : TRUNKS) {
-                String stem = side + "_trunk_" + trunk;
-                ModelPart segment = wing.getChild(stem + "_0");
-                int segments = 1;
-                while (segment.hasChild(stem + "_" + segments)) {
-                    assertTrue(segment.hasChild(stem + "_" + (segments - 1) + "_branch_a"));
-                    assertTrue(segment.hasChild(stem + "_" + (segments - 1) + "_branch_b"));
-                    segment = segment.getChild(stem + "_" + segments);
-                    segments++;
+            ModelPart wing = body.getChild(side + "_nerve_wing");
+            for (int lane = 0; lane < TRUNKS.length; lane++) {
+                String stem = side + "_nerve_" + (lane + 1);
+                ModelPart segment = wing.getChild(side + "_" + TRUNKS[lane] + "_nerve");
+                int expected = side.equals("left") && lane == 2 ? 5 : 4;
+                for (int i = 1; i <= expected; i++) {
+                    segment = segment.getChild(stem + "_trunk_" + i);
+                    if (i > 1) {
+                        var fork = segment.getChild(stem + "_branch_" + (i - 1));
+                        assertFalse(fork.getChild(stem + "_dendrite_" + (i - 1)).cubes.isEmpty());
+                    }
                 }
-                int expected = side.equals("right") && trunk.equals("lower") ? 4 : 3;
-                assertEquals(expected, segments, stem + " segments (the right lower trunk keeps its kink)");
-                ModelPart tip = segment.getChild(stem + "_tip");
-                for (int k = 0; k < 4; k++) assertFalse(tip.getChild(stem + "_tip_" + k).cubes.isEmpty(), "dendrite " + k);
+                assertFalse(segment.hasChild(stem + "_trunk_" + (expected + 1)));
+                for (int k = 1; k <= 3; k++)
+                    assertFalse(segment.getChild(stem + "_terminal_" + k).cubes.isEmpty());
             }
         }
-        float left = length(body.getChild("left_wing"), "left_trunk_middle");
-        float right = length(body.getChild("right_wing"), "right_trunk_middle");
-        assertEquals(3.0F, left - right, 1.0E-4F, "the right wing's middle trunk is three shorter");
-    }
-
-    private static float length(ModelPart wing, String stem) {
-        float total = 0;
-        ModelPart segment = wing.getChild(stem + "_0");
-        for (int i = 1; ; i++) {
-            total += segment.cubes.get(0).maxY - segment.cubes.get(0).minY;
-            if (!segment.hasChild(stem + "_" + i)) return total;
-            segment = segment.getChild(stem + "_" + i);
-        }
+        var model = new SeraphaeModel<>(SeraphaeModel.createBodyLayer().bakeRoot());
+        assertTrue(Math.abs(model.tipPoint(1).x) < Math.abs(model.tipPoint(4).x),
+                "the regrown middle trunk keeps its shorter reach");
     }
 
     @Test
@@ -88,11 +89,13 @@ class SeraphaeModelTest {
     void nerveTipsLagTheRootOnTheirWave() {
         var layer = SeraphaeModel.createBodyLayer().bakeRoot();
         var model = new SeraphaeModel<>(layer);
-        ModelPart wing = layer.getChild("root").getChild("body").getChild("left_wing");
+        ModelPart wing = layer.getChild("root").getChild("body").getChild("left_nerve_wing").getChild("left_lateral_nerve");
         model.pose(new SeraphaePose(), 45, 0, 0, 0, 7);
-        float root = wing.getChild("left_trunk_middle_0").xRot;
-        float next = wing.getChild("left_trunk_middle_0").getChild("left_trunk_middle_1").xRot;
-        assertNotEquals(root, next, 1.0E-4F, "segments move on a delayed wave, not as one rigid sheet");
+        var first = wing.getChild("left_nerve_2_trunk_1");
+        var next = first.getChild("left_nerve_2_trunk_2");
+        float rootWave = first.xRot - first.getInitialPose().xRot;
+        float nextWave = next.xRot - next.getInitialPose().xRot;
+        assertNotEquals(rootWave, nextWave, 1.0E-4F, "segments move on a delayed wave");
     }
 
     @Test
@@ -124,9 +127,9 @@ class SeraphaeModelTest {
             model.pose(pose, tick * 2.3F, 12, 5, packed, 2);
             var arm = body.getChild("left_arm");
             var forearm = arm.getChild("left_forearm");
-            var chain = forearm.getChild("left_chain");
+            var chain = forearm.getChild("left_wrist_chain");
             assertTrue(chain.visible);
-            assertFalse(body.getChild("right_arm").getChild("right_forearm").getChild("right_chain").visible);
+            assertFalse(body.getChild("right_arm").getChild("right_forearm").getChild("right_wrist_chain").visible);
             PoseStack stack = new PoseStack();
             for (var part : new ModelPart[]{model.root(), body, arm, forearm, chain}) part.translateAndRotate(stack);
             Vector3f down = stack.last().pose().transformDirection(new Vector3f(0, 1, 0));
@@ -135,14 +138,14 @@ class SeraphaeModelTest {
     }
 
     @Test
-    void cubesAndPivotsStayOnTheHalfUnitGrid() {
+    void cubesAndJointPivotsAreFiniteAndNondegenerate() {
         var root = SeraphaeModel.createBodyLayer().bakeRoot();
         root.getAllParts().forEach(part -> {
             for (float coordinate : new float[]{part.x, part.y, part.z})
-                assertEquals(Math.round(coordinate * 2), coordinate * 2, .0001F);
+                assertTrue(Float.isFinite(coordinate));
             for (var cube : part.cubes) {
                 for (float coordinate : new float[]{cube.minX, cube.minY, cube.minZ, cube.maxX, cube.maxY, cube.maxZ})
-                    assertEquals(Math.round(coordinate * 2), coordinate * 2, .0001F);
+                    assertTrue(Float.isFinite(coordinate));
                 assertTrue(cube.maxX - cube.minX >= .5F);
                 assertTrue(cube.maxY - cube.minY >= .5F);
                 assertTrue(cube.maxZ - cube.minZ >= .5F);
@@ -396,17 +399,20 @@ class SeraphaeModelTest {
             a[SeraphaePose.LIFT] = -sink;
             model.pose(a, 0, 0, 0, 0, 1);
             ModelPart body = model.root().getChild("body");
+            ModelPart skirt = body.getChild("shredded_vestments");
             for (String side : new String[]{"left", "right"}) {
-                ModelPart leg = model.root().getChild(side + "_leg");
-                Vector3f sole = model.point(new Vector3f(0, 5.5F / 16F, 0), model.root(), leg, leg.getChild(side + "_shin"));
+                ModelPart leg = skirt.getChild(side + "_leg");
+                Vector3f sole = model.point(new Vector3f(0, 10F / 16F, 0), model.root(), body, skirt,
+                        leg, leg.getChild(side + "_shin"));
                 assertTrue(sole.y * 16 <= SeraphaeHover.FLOOR, side + " sole over the floor at sink " + sink + ": " + sole.y * 16);
             }
-            for (int i = 0; i < 6; i++) {
-                ModelPart panel = body.getChild("robe_panel_" + i);
+            for (String name : List.of("front_left", "front_right", "outer_left", "outer_right", "train_left",
+                    "train_right", "left_lining", "right_lining", "central_stole")) {
+                ModelPart panel = skirt.getChild(name);
                 float length = 0;
                 for (var cube : panel.cubes) length = Math.max(length, cube.maxY);
-                Vector3f hem = model.point(new Vector3f(0, length / 16F, 0), model.root(), body, panel);
-                assertTrue(hem.y * 16 <= SeraphaeHover.FLOOR + 0.3F, "panel " + i + " hem at sink " + sink + ": " + hem.y * 16);
+                Vector3f hem = model.point(new Vector3f(0, length / 16F, 0), model.root(), body, skirt, panel);
+                assertTrue(hem.y * 16 <= SeraphaeHover.FLOOR + 0.3F, "panel " + name + " hem at sink " + sink + ": " + hem.y * 16);
             }
         }
     }

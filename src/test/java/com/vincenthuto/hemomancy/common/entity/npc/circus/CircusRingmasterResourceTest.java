@@ -15,77 +15,59 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CircusRingmasterResourceTest {
 	private static final Path RESOURCES = Path.of("src/main/resources/assets/hemomancy");
-	private static final Path MODEL = RESOURCES.resolve(
-			"models/entity/bbmodel/npc/harbinger/circus/CircusRingmasterModel.bbmodel");
+	private static final Path MODELS = RESOURCES.resolve("models/entity/bbmodel/npc/harbinger/circus");
 	private static final Path TEXTURES = RESOURCES.resolve("textures/entity/npc/harbinger/circus");
 
 	@Test
-	void ringmasterShipsWithRightHandedScaleCoherentAssets() throws Exception {
-		Path texturePath = TEXTURES.resolve("ringmaster.png");
-		Path glowPath = TEXTURES.resolve("ringmaster_glow.png");
-		assertTrue(Files.isRegularFile(texturePath));
-		assertTrue(Files.isRegularFile(glowPath));
-		assertTrue(Files.isRegularFile(MODEL));
+	void bothFormsShipWithTheirAuthoredFaceUvsAndRightHandedStaff() throws Exception {
+		verifyForm("CircusRingmasterModel", "ringmaster", "Ringmaster \u2022 Base Form", false);
+		verifyForm("CircusTrueRingmasterModel", "circus_true_ringmaster", "Ringmaster \u2022 True Self", true);
+	}
 
-		BufferedImage texture = ImageIO.read(texturePath.toFile());
-		BufferedImage glow = ImageIO.read(glowPath.toFile());
-		assertNotNull(texture);
-		assertNotNull(glow);
-		assertEquals(128, texture.getWidth());
-		assertEquals(128, texture.getHeight());
-		assertEquals(128, glow.getWidth());
-		assertEquals(128, glow.getHeight());
+	private static void verifyForm(String modelName, String textureName, String rootName, boolean hasTethers)
+			throws Exception {
+		BufferedImage texture = ImageIO.read(TEXTURES.resolve(textureName + ".png").toFile());
+		BufferedImage glow = ImageIO.read(TEXTURES.resolve(textureName + "_glow.png").toFile());
+		assertEquals(256, texture.getWidth());
+		assertEquals(256, texture.getHeight());
+		assertEquals(256, glow.getWidth());
+		assertEquals(256, glow.getHeight());
 
-		JsonObject model = JsonParser.parseString(Files.readString(MODEL)).getAsJsonObject();
-		assertEquals(128, model.getAsJsonObject("resolution").get("width").getAsInt());
-		assertEquals(128, model.getAsJsonObject("resolution").get("height").getAsInt());
+		JsonObject model = JsonParser.parseString(Files.readString(MODELS.resolve(modelName + ".bbmodel"))).getAsJsonObject();
+		assertEquals(256, model.getAsJsonObject("resolution").get("width").getAsInt());
+		assertEquals(256, model.getAsJsonObject("resolution").get("height").getAsInt());
 
 		Map<String, JsonObject> groups = new HashMap<>();
 		collectGroups(model.getAsJsonArray("outliner"), groups);
-		for (String name : Set.of("head", "top_hat", "body", "right_arm", "left_arm", "right_leg",
-				"left_leg", "right_calf", "left_calf", "living_staff", "staff_topper",
-				"blood_core")) {
+		for (String name : Set.of(rootName, "Head", "Top hat", "Chest", "Pelvis", "Right wrist",
+				"Left wrist", "Right knee", "Left knee", "Conductor staff")) {
 			assertTrue(groups.containsKey(name), "missing editable group " + name);
 		}
-		assertEquals(5.0D, groups.get("right_arm").getAsJsonArray("origin").get(0).getAsDouble(), 0.001D);
-		assertEquals(-5.0D, groups.get("left_arm").getAsJsonArray("origin").get(0).getAsDouble(), 0.001D);
+		assertEquals(hasTethers, groups.containsKey("Three tethers"));
+		String staff = groups.get("Conductor staff").get("uuid").getAsString();
+		assertTrue(containsGroup(groups.get("Right wrist"), staff));
+		assertFalse(containsGroup(groups.get("Left wrist"), staff));
 
-		String rightArm = groups.get("right_arm").get("uuid").getAsString();
-		String leftArm = groups.get("left_arm").get("uuid").getAsString();
-		String staff = groups.get("living_staff").get("uuid").getAsString();
-		JsonObject rightOutliner = outlinerGroup(model, rightArm);
-		JsonObject leftOutliner = outlinerGroup(model, leftArm);
-		assertTrue(containsGroup(rightOutliner, staff), "staff must be nested beneath Blockbench right_arm");
-		assertFalse(containsGroup(leftOutliner, staff), "staff must not be nested beneath Blockbench left_arm");
-
-		boolean[][] usedUv = new boolean[128][128];
-		boolean[][] emissiveUv = new boolean[128][128];
-		double minY = Double.POSITIVE_INFINITY;
-		double maxY = Double.NEGATIVE_INFINITY;
+		boolean[][] usedUv = new boolean[256][256];
 		for (JsonElement entry : model.getAsJsonArray("elements")) {
-			JsonObject element = entry.getAsJsonObject();
-			minY = Math.min(minY, element.getAsJsonArray("from").get(1).getAsDouble());
-			maxY = Math.max(maxY, element.getAsJsonArray("to").get(1).getAsDouble());
-			markFaces(element, usedUv);
-			String name = element.get("name").getAsString();
-			if (name.startsWith("head_0_0_") || name.startsWith("blood_core")) markFaces(element, emissiveUv);
+			markFaces(entry.getAsJsonObject(), usedUv);
 		}
-		assertTrue(minY >= 0.0D, "model geometry must not extend below its feet");
-		assertTrue(maxY <= 38.0D, "hat and staff must stay within the planned player-scale silhouette");
-		assertPaintFits(texture, usedUv, "ringmaster.png");
-		assertPaintFits(glow, emissiveUv, "ringmaster_glow.png");
-
-		String source = source("client/model/entity/npc/CircusRingmasterModel.java");
-		assertTrue(source.contains("PartDefinition staff = rightArm.addOrReplaceChild(\"living_staff\""));
-		assertFalse(source.contains("leftArm.addOrReplaceChild(\"living_staff\""));
-		assertTrue(source.contains("staffTopper = rightArm.getChild(\"living_staff\").getChild(\"staff_topper\")"));
-		assertTrue(source.contains("LayerDefinition.create(mesh, 128, 128)"));
-		assertFalse(source.contains("addBoxPart("));
+		assertPaintFits(texture, usedUv, textureName);
+		assertPaintFits(glow, usedUv, textureName + "_glow");
+		var source = model.getAsJsonArray("textures").get(0).getAsJsonObject().get("source").getAsString();
+		var embedded = ImageIO.read(new java.io.ByteArrayInputStream(
+				java.util.Base64.getDecoder().decode(source.substring(source.indexOf(',') + 1))));
+		for (int y = 0; y < 256; y++) {
+			for (int x = 0; x < 256; x++) {
+				assertEquals(embedded.getRGB(x, y), texture.getRGB(x, y));
+				if (usedUv[y][x]) assertEquals(255, texture.getRGB(x, y) >>> 24);
+				if (glow.getRGB(x, y) >>> 24 != 0) assertEquals(texture.getRGB(x, y), glow.getRGB(x, y));
+			}
+		}
 	}
 
 	private static void collectGroups(Iterable<JsonElement> nodes, Map<String, JsonObject> groups) {
@@ -93,17 +75,8 @@ class CircusRingmasterResourceTest {
 			if (!node.isJsonObject()) continue;
 			JsonObject group = node.getAsJsonObject();
 			groups.put(group.get("name").getAsString(), group);
-			if (group.has("children")) collectGroups(group.getAsJsonArray("children"), groups);
+			collectGroups(group.getAsJsonArray("children"), groups);
 		}
-	}
-
-	private static JsonObject outlinerGroup(JsonObject model, String uuid) {
-		for (JsonElement entry : model.getAsJsonArray("outliner")) {
-			if (entry.isJsonObject() && uuid.equals(entry.getAsJsonObject().get("uuid").getAsString())) {
-				return entry.getAsJsonObject();
-			}
-		}
-		throw new AssertionError("missing outliner group " + uuid);
 	}
 
 	private static boolean containsGroup(JsonElement node, String uuid) {
@@ -124,9 +97,19 @@ class CircusRingmasterResourceTest {
 			int top = (int) Math.floor(Math.min(uv.get(1).getAsDouble(), uv.get(3).getAsDouble()));
 			int right = (int) Math.ceil(Math.max(uv.get(0).getAsDouble(), uv.get(2).getAsDouble()));
 			int bottom = (int) Math.ceil(Math.max(uv.get(1).getAsDouble(), uv.get(3).getAsDouble()));
-			assertTrue(left >= 0 && top >= 0 && right <= 128 && bottom <= 128,
+			assertTrue(left >= 0 && top >= 0 && right <= 256 && bottom <= 256,
 					element.get("name").getAsString() + " has out-of-bounds UVs");
-			for (int y = top; y < bottom; y++) for (int x = left; x < right; x++) used[y][x] = true;
+			String side = face.getKey();
+			boolean cap = side.equals("up") || side.equals("down");
+			int widthAxis = side.equals("east") || side.equals("west") ? 2 : 0;
+			assertEquals(extent(element, widthAxis), right - left);
+			assertEquals(extent(element, cap ? 2 : 1), bottom - top);
+			for (int y = top; y < bottom; y++) {
+				for (int x = left; x < right; x++) {
+					assertFalse(used[y][x], "overlapping UV at " + x + "," + y);
+					used[y][x] = true;
+				}
+			}
 		}
 	}
 
@@ -141,7 +124,8 @@ class CircusRingmasterResourceTest {
 		assertTrue(painted > 0, name + " must contain painted pixels");
 	}
 
-	private static String source(String relativePath) throws Exception {
-		return Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/" + relativePath));
+	private static double extent(JsonObject element, int axis) {
+		return element.getAsJsonArray("to").get(axis).getAsDouble()
+				- element.getAsJsonArray("from").get(axis).getAsDouble();
 	}
 }

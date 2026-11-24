@@ -3,184 +3,178 @@ package com.vincenthuto.hemomancy.client.model.entity.boss.phlegethosoma;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaBreachRules;
 import com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaEntity.Action;
 import com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaSwimmingRules;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.*;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.util.Mth;
 
-/** Articulated blood-fluke ribbon: every joint carries the following body sections. */
+import java.util.List;
+
+/** Animates the articulated sucker, muscular body, mantle and ribbon tail. */
 public final class PhlegethosomaModel extends EntityModel<PhlegethosomaEntity> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("phlegethosoma"), "main");
+
     private final ModelPart root;
+    private final List<ModelPart> parts;
     private final ModelPart head;
-    private final ModelPart mouth;
-    private final ModelPart[] segments = new ModelPart[PhlegethosomaSwimmingRules.SEGMENTS];
+    private final ModelPart sucker;
+    private final ModelPart upperLip;
+    private final ModelPart lowerLip;
+    private final ModelPart bloodSac;
+    private final ModelPart[] joints = new ModelPart[PhlegethosomaSwimmingRules.SEGMENTS];
+    private final ModelPart[] leftFrills = new ModelPart[9];
+    private final ModelPart[] rightFrills = new ModelPart[9];
 
     public PhlegethosomaModel(ModelPart baked) {
-        root = baked.getChild("root");
+        root = baked.getChild("arterial_fluke");
+        parts = root.getAllParts().toList();
         head = root.getChild("head");
-        mouth = head.getChild("mouth");
-        ModelPart parent = root;
-        for (int i = 0; i < segments.length; i++) {
-            segments[i] = parent.getChild("segment_" + i);
-            parent = segments[i];
+        sucker = head.getChild("oral_sucker");
+        upperLip = sucker.getChild("upper_lip");
+        lowerLip = sucker.getChild("lower_lip");
+        joints[0] = root.getChild("forebody");
+        joints[1] = joints[0].getChild("crop");
+        bloodSac = joints[1].getChild("blood_sac");
+        for (int i = 1; i <= 8; i++) {
+            joints[i + 1] = joints[i].getChild("swim_segment_0" + i);
+        }
+        joints[10] = joints[9].getChild("ribbon_tail");
+        joints[11] = joints[10].getChild("ribbon_tip");
+        for (int i = 0; i < leftFrills.length; i++) {
+            leftFrills[i] = joints[i + 1].getChild("left_frill");
+            rightFrills[i] = joints[i + 1].getChild("right_frill");
         }
     }
 
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot().addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0, 18.5F, 0));
-        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(144, 0).addBox(-10.00F, -5.00F, -6.00F, 20.00F, 10.00F, 12.00F).texOffs(144, 0).addBox(-8.00F, -6.00F, -8.00F, 16.00F, 12.00F, 8.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition mouth = head.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(0, 128).addBox(-7.00F, -4.50F, -1.00F, 14.00F, 9.00F, 2.00F), PartPose.offset(0.00F, 0.00F, -10.00F));
-        mouth.addOrReplaceChild("upper_lip", CubeListBuilder.create().texOffs(144, 40).addBox(-6.00F, -6.00F, -2.00F, 12.00F, 2.00F, 3.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        mouth.addOrReplaceChild("lower_lip", CubeListBuilder.create().texOffs(144, 40).addBox(-6.00F, 4.00F, -2.00F, 12.00F, 2.00F, 3.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        mouth.addOrReplaceChild("left_lip", CubeListBuilder.create().texOffs(144, 40).addBox(-9.00F, -3.00F, -2.00F, 3.00F, 6.00F, 3.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        mouth.addOrReplaceChild("right_lip", CubeListBuilder.create().texOffs(144, 40).addBox(6.00F, -3.00F, -2.00F, 3.00F, 6.00F, 3.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        mouth.addOrReplaceChild("lip_corner_7", CubeListBuilder.create().texOffs(144, 40).addBox(-1.50F, -1.50F, -1.75F, 3.00F, 3.00F, 3.00F), PartPose.offset(-6.50F, -3.75F, 0.00F));
-        mouth.addOrReplaceChild("lip_corner_8", CubeListBuilder.create().texOffs(144, 40).addBox(-1.50F, -1.50F, -1.75F, 3.00F, 3.00F, 3.00F), PartPose.offset(-6.50F, 3.75F, 0.00F));
-        mouth.addOrReplaceChild("lip_corner_9", CubeListBuilder.create().texOffs(144, 40).addBox(-1.50F, -1.50F, -1.75F, 3.00F, 3.00F, 3.00F), PartPose.offset(6.50F, -3.75F, 0.00F));
-        mouth.addOrReplaceChild("lip_corner_10", CubeListBuilder.create().texOffs(144, 40).addBox(-1.50F, -1.50F, -1.75F, 3.00F, 3.00F, 3.00F), PartPose.offset(6.50F, 3.75F, 0.00F));
-        mouth.addOrReplaceChild("upper_rasp_0", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(-5.00F, -4.00F, -1.50F));
-        mouth.addOrReplaceChild("lower_rasp_0", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(-5.00F, 2.00F, -1.50F));
-        mouth.addOrReplaceChild("upper_rasp_1", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(-3.00F, -4.00F, -1.50F));
-        mouth.addOrReplaceChild("lower_rasp_1", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(-3.00F, 2.00F, -1.50F));
-        mouth.addOrReplaceChild("upper_rasp_2", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(-1.00F, -4.00F, -1.50F));
-        mouth.addOrReplaceChild("lower_rasp_2", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(-1.00F, 2.00F, -1.50F));
-        mouth.addOrReplaceChild("upper_rasp_3", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(1.00F, -4.00F, -1.50F));
-        mouth.addOrReplaceChild("lower_rasp_3", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(1.00F, 2.00F, -1.50F));
-        mouth.addOrReplaceChild("upper_rasp_4", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(3.00F, -4.00F, -1.50F));
-        mouth.addOrReplaceChild("lower_rasp_4", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(3.00F, 2.00F, -1.50F));
-        mouth.addOrReplaceChild("upper_rasp_5", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(5.00F, -4.00F, -1.50F));
-        mouth.addOrReplaceChild("lower_rasp_5", CubeListBuilder.create().texOffs(224, 0).addBox(-0.50F, 0.00F, -1.25F, 1.00F, 2.00F, 2.00F), PartPose.offset(5.00F, 2.00F, -1.50F));
-        mouth.addOrReplaceChild("left_rasp_0", CubeListBuilder.create().texOffs(224, 0).addBox(0.00F, -0.50F, -1.00F, 2.00F, 1.00F, 2.00F), PartPose.offset(-6.50F, -2.00F, -1.50F));
-        mouth.addOrReplaceChild("left_rasp_1", CubeListBuilder.create().texOffs(224, 0).addBox(0.00F, -0.50F, -1.00F, 2.00F, 1.00F, 2.00F), PartPose.offset(-6.50F, 0.00F, -1.50F));
-        mouth.addOrReplaceChild("left_rasp_2", CubeListBuilder.create().texOffs(224, 0).addBox(0.00F, -0.50F, -1.00F, 2.00F, 1.00F, 2.00F), PartPose.offset(-6.50F, 2.00F, -1.50F));
-        mouth.addOrReplaceChild("right_rasp_0", CubeListBuilder.create().texOffs(224, 0).addBox(0.00F, -0.50F, -1.00F, 2.00F, 1.00F, 2.00F), PartPose.offset(4.50F, -2.00F, -1.50F));
-        mouth.addOrReplaceChild("right_rasp_1", CubeListBuilder.create().texOffs(224, 0).addBox(0.00F, -0.50F, -1.00F, 2.00F, 1.00F, 2.00F), PartPose.offset(4.50F, 0.00F, -1.50F));
-        mouth.addOrReplaceChild("right_rasp_2", CubeListBuilder.create().texOffs(224, 0).addBox(0.00F, -0.50F, -1.00F, 2.00F, 1.00F, 2.00F), PartPose.offset(4.50F, 2.00F, -1.50F));
-        head.addOrReplaceChild("ventral_sucker", CubeListBuilder.create().texOffs(144, 96).addBox(-6.00F, 4.50F, -2.00F, 12.00F, 1.00F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment0 = root.addOrReplaceChild("segment_0", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 4.50F));
-        segment0.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 0).addBox(-8.50F, -4.50F, -1.00F, 17.00F, 9.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment0.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-4.25F, 4.25F, -0.50F, 8.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment0.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -5.00F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment0.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-12.00F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment0.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(8.25F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment1 = segment0.addOrReplaceChild("segment_1", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment1.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 24).addBox(-9.00F, -5.00F, -1.00F, 18.00F, 10.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment1.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-4.50F, 4.75F, -0.50F, 9.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment1.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -5.50F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment1.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-12.50F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment1.addOrReplaceChild("blood_vesicle_-1", CubeListBuilder.create().texOffs(64, 32).addBox(-10.00F, -1.00F, 2.00F, 2.00F, 3.00F, 4.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment1.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(8.75F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment1.addOrReplaceChild("blood_vesicle_1", CubeListBuilder.create().texOffs(64, 32).addBox(8.00F, -1.00F, 2.00F, 2.00F, 3.00F, 4.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment2 = segment1.addOrReplaceChild("segment_2", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment2.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 48).addBox(-9.00F, -5.00F, -1.00F, 18.00F, 10.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment2.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-4.50F, 4.75F, -0.50F, 9.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment2.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -5.50F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment2.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-12.50F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment2.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(8.75F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment3 = segment2.addOrReplaceChild("segment_3", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment3.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 0).addBox(-8.50F, -4.75F, -1.00F, 17.00F, 9.50F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment3.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-4.25F, 4.50F, -0.50F, 8.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment3.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -5.25F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment3.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-12.00F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment3.addOrReplaceChild("blood_vesicle_-1", CubeListBuilder.create().texOffs(64, 32).addBox(-9.50F, -1.00F, 2.00F, 2.00F, 3.00F, 4.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment3.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(8.25F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment3.addOrReplaceChild("blood_vesicle_1", CubeListBuilder.create().texOffs(64, 32).addBox(7.50F, -1.00F, 2.00F, 2.00F, 3.00F, 4.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment4 = segment3.addOrReplaceChild("segment_4", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment4.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 24).addBox(-8.00F, -4.50F, -1.00F, 16.00F, 9.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment4.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-4.00F, 4.25F, -0.50F, 8.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment4.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -5.00F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment4.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-11.50F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment4.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(7.75F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment5 = segment4.addOrReplaceChild("segment_5", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment5.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 48).addBox(-7.50F, -4.25F, -1.00F, 15.00F, 8.50F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment5.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-3.75F, 4.00F, -0.50F, 7.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment5.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -4.75F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment5.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-11.00F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment5.addOrReplaceChild("blood_vesicle_-1", CubeListBuilder.create().texOffs(64, 32).addBox(-8.50F, -1.00F, 2.00F, 2.00F, 3.00F, 4.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment5.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(7.25F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment5.addOrReplaceChild("blood_vesicle_1", CubeListBuilder.create().texOffs(64, 32).addBox(6.50F, -1.00F, 2.00F, 2.00F, 3.00F, 4.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment6 = segment5.addOrReplaceChild("segment_6", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment6.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 0).addBox(-6.75F, -4.00F, -1.00F, 13.50F, 8.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment6.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-3.50F, 3.75F, -0.50F, 6.75F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment6.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -4.50F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment6.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-10.25F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment6.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(6.50F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment7 = segment6.addOrReplaceChild("segment_7", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment7.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 24).addBox(-6.00F, -3.50F, -1.00F, 12.00F, 7.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment7.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-3.00F, 3.25F, -0.50F, 6.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment7.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -4.00F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment7.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-9.50F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment7.addOrReplaceChild("blood_vesicle_-1", CubeListBuilder.create().texOffs(64, 32).addBox(-7.00F, -1.00F, 2.00F, 2.00F, 3.00F, 4.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment7.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(5.75F, 0.50F, -0.50F, 3.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment7.addOrReplaceChild("blood_vesicle_1", CubeListBuilder.create().texOffs(64, 32).addBox(5.00F, -1.00F, 2.00F, 2.00F, 3.00F, 4.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment8 = segment7.addOrReplaceChild("segment_8", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment8.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 48).addBox(-5.00F, -3.00F, -1.00F, 10.00F, 6.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment8.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-2.50F, 2.75F, -0.50F, 5.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment8.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -3.50F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment8.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-7.00F, 0.50F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment8.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(4.75F, 0.50F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment9 = segment8.addOrReplaceChild("segment_9", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment9.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 0).addBox(-4.00F, -2.50F, -1.00F, 8.00F, 5.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment9.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-2.00F, 2.25F, -0.50F, 4.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment9.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -3.00F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment9.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-6.00F, 0.50F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment9.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(3.75F, 0.50F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment10 = segment9.addOrReplaceChild("segment_10", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment10.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 24).addBox(-3.00F, -2.00F, -1.00F, 6.00F, 4.00F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment10.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-1.50F, 1.75F, -0.50F, 3.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment10.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -2.50F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment10.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-5.00F, 0.50F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment10.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(2.75F, 0.50F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        PartDefinition segment11 = segment10.addOrReplaceChild("segment_11", CubeListBuilder.create(), PartPose.offset(0.00F, 0.00F, 9.50F));
-        segment11.addOrReplaceChild("flesh", CubeListBuilder.create().texOffs(0, 48).addBox(-2.00F, -1.25F, -1.00F, 4.00F, 2.50F, 11.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment11.addOrReplaceChild("ventral_band", CubeListBuilder.create().texOffs(64, 0).addBox(-1.00F, 1.00F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment11.addOrReplaceChild("artery", CubeListBuilder.create().texOffs(112, 0).addBox(-0.75F, -1.75F, -0.50F, 1.50F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment11.addOrReplaceChild("frill_-1", CubeListBuilder.create().texOffs(0, 88).addBox(-4.00F, 0.50F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment11.addOrReplaceChild("frill_1", CubeListBuilder.create().texOffs(0, 88).addBox(1.75F, 0.50F, -0.50F, 2.00F, 0.50F, 10.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        segment11.addOrReplaceChild("tail_ribbon", CubeListBuilder.create().texOffs(0, 88).addBox(-1.50F, -0.50F, 8.00F, 3.00F, 1.00F, 13.00F).texOffs(112, 0).addBox(-0.50F, -0.75F, 8.00F, 1.00F, 0.50F, 12.00F), PartPose.offset(0.00F, 0.00F, 0.00F));
-        return LayerDefinition.create(mesh, 256, 256);
+        return PhlegethosomaMesh.createLayer();
     }
 
     @Override
     public void setupAnim(PhlegethosomaEntity entity, float limbSwing, float limbAmount, float age,
                           float yaw, float pitch) {
-        root.getAllParts().forEach(ModelPart::resetPose);
+        parts.forEach(ModelPart::resetPose);
         float partial = age - entity.tickCount;
-        float attackTime = entity.animationTime(partial);
-        float movement = (entity.isIchorSwimming() || entity.isBreachAttack()) ? entity.swimAmount() : Math.min(.6F, limbAmount * 2);
-        if (entity.action() == PhlegethosomaEntity.Action.LUNGE && attackTime >= 20 && attackTime < 28) movement = 1;
-        root.xRot = (entity.isIchorSwimming() || entity.isBreachAttack()) ? entity.swimPitch() : 0;
-        root.y += entity.isIchorSwimming() ? Mth.sin(age * .17F) * .5F : 0;
-        if (entity.introTime() >= 0) head.xRot = -.15F * Mth.sin(entity.introTime() / (float) PhlegethosomaCombatRules.INTRO_TICKS * Mth.PI);
-        head.yRot = Mth.clamp(yaw * Mth.DEG_TO_RAD, -.3F, .3F);
-        for (int i = 0; i < segments.length; i++) {
-            ModelPart segment = segments[i];
-            segment.yRot = PhlegethosomaSwimmingRules.segmentYaw(i, age, movement);
-            segment.xRot = Mth.sin(age * .25F - i * .6F) * .025F * movement;
-            ModelPart flesh = segment.getChild("flesh");
-            if (entity.swollen() && i >= 1 && i <= 4) {
-                flesh.xScale = 1.12F;
-                flesh.yScale = 1.20F + Mth.sin(age * .18F - i) * .03F;
-            }
-            if (entity.phase() == 3) {
-                flesh.yScale *= .88F;
-                for (String side : new String[]{"frill_-1", "frill_1"})
-                    segment.getChild(side).zRot = Mth.sin(age * .5F - i) * .12F;
-            }
+        float time = entity.animationTime(partial);
+        Action action = entity.action();
+        boolean swimming = entity.isIchorSwimming();
+        boolean swimmingPose = swimming || entity.isBreachAttack();
+        boolean ruptured = entity.phase() == 3;
+        float movement = swimmingPose ? Mth.clamp(entity.swimAmount(), 0, 1) : Mth.clamp(limbAmount * 2, 0, .6F);
+        float followThrough = 1 - ease(entity.deathTime / 20F);
+        float thrust = switch (action) {
+            case LUNGE -> pulse(time, 14, 20, 28, 39);
+            case BREACH -> 1 - ease(time / PhlegethosomaBreachRules.TIMELINE.active());
+            default -> 0;
+        };
+
+        root.xRot = swimmingPose ? entity.swimPitch() : 0;
+        if (swimming) {
+            root.y += Mth.sin(age * .17F) * .4F * followThrough;
         }
-        boolean suction = entity.action() == PhlegethosomaEntity.Action.SUCTION_WINDUP
-                || entity.action() == PhlegethosomaEntity.Action.SUCTION_ACTIVE;
-        mouth.xScale = suction || entity.action() == PhlegethosomaEntity.Action.BREACH ? 1.25F : 1;
-        mouth.yScale = suction || entity.action() == PhlegethosomaEntity.Action.BREACH ? 1.35F : 1;
-        if (entity.action() == PhlegethosomaEntity.Action.LATCH_ATTACK) mouth.z = -10 - Mth.sin(Math.min(attackTime,30)/30*Mth.PI)*3;
-        if (entity.action() == PhlegethosomaEntity.Action.STAGGERED) head.zRot = Mth.sin(attackTime * .8F) * .12F;
+        boolean tracking = action == Action.DORMANT || action == Action.SEEKING || action == Action.RECOVERY;
+        float headAim = Mth.clamp(yaw * Mth.DEG_TO_RAD, -.28F, .28F);
+        head.yRot = tracking ? headAim + head.yRot * .65F * (1 - movement) : 0;
+        head.xRot *= tracking ? 1 - movement : 0;
         head.xRot += Mth.sin(entity.hurtTime * .6F) * .1F;
-        if (entity.deathTime > 0) root.zRot = Math.min(1, entity.deathTime / 20F) * .9F;
+        if (entity.introTime() >= 0) {
+            float rise = Mth.clamp((entity.introTime() + partial) / PhlegethosomaCombatRules.INTRO_TICKS, 0, 1);
+            head.xRot -= Mth.sin(rise * Mth.PI) * .32F;
+            joints[0].xRot -= Mth.sin(rise * Mth.PI) * .1F;
+        }
+
+        swim(age, movement, thrust, followThrough, ruptured);
+        feed(action, time, age, entity.phase(), entity.swollen(), followThrough);
+    }
+
+    private void swim(float age, float movement, float thrust, float followThrough, boolean ruptured) {
+        float restCurve = (1 - movement * .83F) * (1 - thrust * .96F);
+        for (int i = 0; i < joints.length; i++) {
+            ModelPart joint = joints[i];
+            // Blend two fixed-frequency waves so changing swim speed cannot jump the phase.
+            float idleWave = PhlegethosomaSwimmingRules.segmentYaw(i, age, 0);
+            float swimWave = PhlegethosomaSwimmingRules.segmentYaw(i, age, 1);
+            joint.yRot = joint.yRot * restCurve
+                    + Mth.lerp(movement, idleWave, swimWave) * (1 - thrust * .8F) * followThrough;
+            joint.xRot = joint.xRot * (1 - thrust)
+                    + Mth.sin(age * .25F - i * .6F) * .035F * movement * followThrough;
+        }
+        for (int i = 0; i < leftFrills.length; i++) {
+            float frequency = ruptured ? .52F : .3F;
+            float flutter = (ruptured ? .17F : .05F) + movement * .11F;
+            leftFrills[i].zRot = Mth.sin(age * frequency - i * .68F) * flutter * followThrough;
+            rightFrills[i].zRot = -Mth.sin(age * frequency - i * .68F + .45F) * flutter * followThrough;
+        }
+    }
+
+    private void feed(Action action, float time, float age, int phase, boolean swollen, float followThrough) {
+        float swell = phase == 3 ? -.08F : swollen ? .17F : .02F;
+        float pressure = Mth.sin(age * .18F) * (swollen ? .042F : .017F) * followThrough;
+        float gape = 0;
+        float reach = 0;
+
+        switch (action) {
+            case SUCTION_WINDUP -> {
+                gape = .9F * ease(time / PhlegethosomaCombatRules.suction(phase).windup());
+                pressure += gape * .07F;
+            }
+            case SUCTION_ACTIVE -> {
+                int duration = PhlegethosomaCombatRules.suction(phase).active();
+                gape = (.9F + Mth.sin(time * .5F) * .08F) * (1 - ease((time - duration + 8) / 8));
+                reach = .8F * gape;
+                pressure += gape * .08F;
+            }
+            case LATCH_ATTACK -> {
+                float lunge = pulse(time, 3, 15, 21, 36);
+                gape = .65F * pulse(time, 2, 11, 12, 15) - .6F * pulse(time, 12, 15, 20, 29);
+                reach = lunge * 2.1F;
+                head.xRot -= lunge * .08F;
+            }
+            case CLOT_SPIT -> {
+                gape = .9F * pulse(time, 8, 20, 22, 33);
+                pressure += .12F * pulse(time, 0, 16, 19, 22);
+                reach = gape;
+            }
+            case ICHOR_SPRAY -> {
+                gape = .75F * pulse(time, 12, 24, 36, 48);
+                pressure += .13F * pulse(time, 0, 20, 23, 36) - .07F * pulse(time, 24, 36, 38, 50);
+                reach = gape * .9F;
+            }
+            case DIVE -> gape = -.25F * ease(time / 12);
+            case BREACH -> {
+                gape = .85F * pulse(time, 0, 5, 13, PhlegethosomaBreachRules.TIMELINE.active());
+                reach = gape * 1.2F;
+            }
+            case LUNGE -> gape = .7F * pulse(time, 12, 20, 28, 36);
+            case STAGGERED -> {
+                head.zRot += Mth.sin(time * .8F) * .18F * (1 - ease(time / PhlegethosomaCombatRules.STAGGER_TICKS));
+                gape = -.25F * pulse(time, 0, 6, 12, 24);
+            }
+            default -> { }
+        }
+
+        bloodSac.xScale = 1 + (swell + pressure) * .65F;
+        bloodSac.yScale = 1 + swell + pressure;
+        sucker.z -= reach;
+        sucker.xScale = 1 + gape * .13F;
+        sucker.yScale = 1 + gape * .14F;
+        upperLip.y -= gape * .42F;
+        lowerLip.y += gape * .55F;
+    }
+
+    private static float pulse(float time, float start, float peak, float hold, float end) {
+        return ease((time - start) / (peak - start)) * (1 - ease((time - hold) / (end - hold)));
+    }
+
+    private static float ease(float progress) {
+        float t = Mth.clamp(progress, 0, 1);
+        return t * t * (3 - 2 * t);
     }
 
     @Override

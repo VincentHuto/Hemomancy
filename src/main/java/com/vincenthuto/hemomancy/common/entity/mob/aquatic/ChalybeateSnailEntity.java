@@ -54,6 +54,9 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 	private int harvestCooldownTicks;
 	/** Client-only: the foot turns onto the vent it climbs. */
 	private final WallClimbPose climbPose = new WallClimbPose(state -> state.is(CLIMBABLE_VENT_BLOCKS));
+	private float previousWithdrawal;
+	private float withdrawal;
+	private boolean withdrawalInitialized;
 
 	public ChalybeateSnailEntity(EntityType<? extends ChalybeateSnailEntity> type, Level level) {
 		super(type, level);
@@ -86,6 +89,11 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 
 	public boolean isRetracted() {
 		return ChalybeateSnailRetractionRules.shouldRenderRetracted(this.entityData.get(RETRACTED), this.retractTicks);
+	}
+
+	public float withdrawal(float partialTick) {
+		return this.withdrawalInitialized ? Mth.lerp(partialTick, this.previousWithdrawal, this.withdrawal)
+				: this.isRetracted() ? 1.0F : 0.0F;
 	}
 
 	private void setRetracted(boolean retracted) {
@@ -197,6 +205,13 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 	public void tick() {
 		super.tick();
 		if (this.level().isClientSide()) {
+			float target = this.isRetracted() ? 1.0F : 0.0F;
+			if (!this.withdrawalInitialized) {
+				this.withdrawal = target;
+				this.withdrawalInitialized = true;
+			}
+			this.previousWithdrawal = this.withdrawal;
+			this.withdrawal = Mth.approach(this.withdrawal, target, target == 1.0F ? 0.2F : 0.1F);
 			// Turn onto the vent only while rising; client motion is interpolated, so read the position change.
 			boolean rising = this.getY() - this.yo > 0.002D;
 			this.climbPose.tick(this, this.isInWater() && !this.isRetracted() && !this.onGround() && rising);

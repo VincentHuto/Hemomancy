@@ -6,11 +6,23 @@ import net.minecraft.client.model.geom.ModelPart;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GoreboundHulkRigTest {
+    @Test
+    void runtimeUsesTheApprovedPortableProjectAndAtlas() throws Exception {
+        var art = Path.of("docs/art/gorebound_hulk");
+        var assets = Path.of("src/main/resources/assets/hemomancy");
+        assertEquals(-1, Files.mismatch(art.resolve("GoreboundHulk.bbmodel"),
+                assets.resolve("models/entity/bbmodel/GoreboundHulkModel.bbmodel")));
+        assertEquals(-1, Files.mismatch(art.resolve("gorebound_hulk.png"),
+                assets.resolve("textures/entity/puppeteer_summon/gorebound_hulk.png")));
+    }
+
     @Test
     void handsBindingsAndBootsFollowTheirLimbJoints() {
         var root = GoreboundHulkModel.createBodyLayer().bakeRoot().getChild("root");
@@ -23,7 +35,7 @@ class GoreboundHulkRigTest {
             assertTrue(forearm.getChild(side + "_hand").hasChild(side + "_thumb"));
             assertTrue(pelvis.getChild(side + "_thigh").getChild(side + "_shin").hasChild(side + "_foot"));
         }
-        assertTrue(chest.getChild("neck").getChild("head").hasChild("jaw"));
+        assertTrue(chest.getChild("head").hasChild("jaw"));
     }
 
     @Test
@@ -42,12 +54,12 @@ class GoreboundHulkRigTest {
             var foot = shin.getChild(side + "_foot");
             model.setupPose(0, 0, 20, 0, 0, 0, 0);
             Vector3f fistBefore = point(new Vector3f(0, 1.5F, 0), root, pelvis, chest, arm, forearm, hand);
-            Vector3f soleBefore = point(new Vector3f(0, 2, 0), root, pelvis, thigh, shin, foot);
+            Vector3f soleBefore = point(new Vector3f(0, 3, 0), root, pelvis, thigh, shin, foot);
             model.setupPose(0, 0, 20, 0, 0, 9, 0);
             Vector3f fistAfter = point(new Vector3f(0, 1.5F, 0), root, pelvis, chest, arm, forearm, hand);
-            Vector3f soleAfter = point(new Vector3f(0, 2, 0), root, pelvis, thigh, shin, foot);
+            Vector3f soleAfter = point(new Vector3f(0, 3, 0), root, pelvis, thigh, shin, foot);
             assertTrue(fistAfter.y < fistBefore.y - 6, side + " fist must rise with the elbow");
-            assertEquals(24, soleAfter.y, .0001F);
+            assertEquals(24, soleAfter.y, .25F, "The outward hip stance keeps the boot near the floor");
             assertEquals(0, soleBefore.distance(soleAfter), .0001F);
         }
     }

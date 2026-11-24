@@ -1,7 +1,8 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:possession_rite",
   "bloodCost": 0,
-  "riteType": "lesser",
+  "riteType": "grand",
   "purpose": "bond",
   "required_degree": 8,
   "special": true,

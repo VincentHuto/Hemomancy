@@ -6,6 +6,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.level.GameType;
@@ -24,12 +25,14 @@ import java.util.UUID;
  * With hemomancy.animalModelReview=&lt;entity id&gt;, frames one walking animal standing, walking, fleeing and standing at
  * night, each from several sides, into its review directory's screenshots. A water animal gets a flooded arena and
  * floats at its surface; hemomancy.animalModelReview.floor names another floor block. Run with crimsonDoeReviewClient,
- * venousStriderReviewClient, hemojellyReviewClient or myelinBorerReviewClient; drop
+ * venousStriderReviewClient, hemojellyReviewClient or myelinBorerReviewClient. Fungling and Hunter Fungus
+ * reviews add a melee-swing scene. Drop
  * {"op":"create","name":"AnimalReview","seed":12345} after startup. Excluded from release jars.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class AnimalModelClientReview {
     private static final String[] SCENES = {"stand", "walk", "flee", "night"};
+    private static final String[] FUNGAL_SCENES = {"stand", "walk", "flee", "night", "strike"};
     /** Camera offset from the animal: x, y, z. */
     private static final double[][] VIEWS = {{-2.2, 0.5, -2.2}, {3, 0.1, 0}, {1.8, 0.8, 2.4}, {0, 0.3, -3}};
     /** A water animal is framed from below the surface three times and once from above it. */
@@ -51,19 +54,23 @@ public final class AnimalModelClientReview {
         mc.options.hideGui = true;
         var server = mc.getSingleplayerServer();
         UUID uuid = mc.player.getUUID();
+        String[] scenes = id.equals("fungling") || id.equals("hunter_fungus") ? FUNGAL_SCENES : SCENES;
         int span = SETTLE + VIEWS.length * PER_VIEW;
         int scene = ticks / span, local = ticks++ % span;
-        if (scene >= SCENES.length) {
+        if (scene >= scenes.length) {
             mc.stop();
             return;
         }
-        if (local == 0) server.execute(() -> setup(server, uuid, id, SCENES[scene]));
-        if (actor != null && local % STEER_EVERY == 0) server.execute(() -> steer(SCENES[scene], local / STEER_EVERY));
+        String sceneName = scenes[scene];
+        if (local == 0) server.execute(() -> setup(server, uuid, id, sceneName));
+        if (actor != null && local % STEER_EVERY == 0) server.execute(() -> steer(sceneName, local / STEER_EVERY));
         if (local < SETTLE) return;
         int view = (local - SETTLE) / PER_VIEW, shot = (local - SETTLE) % PER_VIEW;
         if (actor != null && shot % 2 == 0)
             server.execute(() -> camera(server, uuid, (actor instanceof WaterAnimal ? WATER_VIEWS : VIEWS)[view]));
-        if (shot == PER_VIEW - 2) Screenshot.grab(mc.gameDirectory, id + "-" + SCENES[scene] + "-" + view + ".png",
+        if (sceneName.equals("strike") && shot == PER_VIEW - 5)
+            server.execute(() -> actor.swing(InteractionHand.MAIN_HAND));
+        if (shot == PER_VIEW - 2) Screenshot.grab(mc.gameDirectory, id + "-" + sceneName + "-" + view + ".png",
                 mc.getMainRenderTarget(), message -> {});
     }
 
@@ -91,7 +98,7 @@ public final class AnimalModelClientReview {
         }
         animal.setPersistenceRequired();
         animal.setInvulnerable(true);
-        animal.setNoAi(scene.equals("stand") || scene.equals("night"));
+        animal.setNoAi(scene.equals("stand") || scene.equals("night") || scene.equals("strike"));
         animal.setPos(Vec3.atBottomCenterOf(arena.west(8).above(water ? WATER_DEPTH - 1 : 0)));
         level.addFreshEntity(animal);
         actor = animal;

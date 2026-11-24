@@ -473,7 +473,7 @@ public final class VelorumAnimState {
 		attachments(core, claw, seam, lanterns);
 		this.heel = heel;
 		if (lanterns.length > 0) lanternTrail.record(age, origin.add(lanterns[0]));
-		if (lanterns.length > 2) sideTrail.record(age, origin.add(lanterns[2]));
+		if (lanterns.length > 1) sideTrail.record(age, origin.add(lanterns[1]));
 		heelTrail.record(age, origin.add(heel));
 		clawTrail.record(age, origin.add(claw));
 	}
@@ -493,7 +493,7 @@ public final class VelorumAnimState {
 		return clawTrail.at(age);
 	}
 
-	/** Where the side lantern (the Hanging Lantern's) was in the world at {@code age}, or null outside the kept frames. */
+	/** Where the staff pendant (the Hanging Lantern's anchor) was in the world at {@code age}, or null outside the kept frames. */
 	public Vec3 sideLanternAt(float age) {
 		return sideTrail.at(age);
 	}

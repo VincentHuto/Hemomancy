@@ -23,6 +23,12 @@ public class MarrowSpitterRenderer extends MobRenderer<MarrowSpitterEntity, Marr
 	}
 
 	@Override
+	protected void scale(MarrowSpitterEntity entity, PoseStack poseStack, float partialTick) {
+		// Keep the masks within the height of the existing body while the hands fan out.
+		poseStack.scale(0.82F, 0.82F, 0.82F);
+	}
+
+	@Override
 	public void render(MarrowSpitterEntity entity, float entityYaw, float partialTicks,
 					   PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
 		if (PuppeteerSummonRenderHelper.shouldSkipRender(entity)) {

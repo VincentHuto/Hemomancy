@@ -18,8 +18,8 @@ import net.minecraft.util.Mth;
 
 public class HemojellyRenderer extends MobRenderer<HemojellyEntity, HemojellyModel> {
 
-	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/hemojelly/model_hemojelly.png");
-	private static final RenderType GLOW = RenderType.eyes(Hemomancy.rloc("textures/entity/hemojelly/model_hemojelly_glow.png"));
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/hemojelly/hemojelly_man_o_war.png");
+	private static final RenderType GLOW = RenderType.eyes(Hemomancy.rloc("textures/entity/hemojelly/hemojelly_man_o_war_glow.png"));
 
 	public HemojellyRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new HemojellyModel(renderManagerIn.bakeLayer(HemojellyModel.LAYER_LOCATION)), 0.4F);
@@ -31,7 +31,7 @@ public class HemojellyRenderer extends MobRenderer<HemojellyEntity, HemojellyMod
 		return TEXTURE;
 	}
 
-	/** The heart and the stinging beads brighten with each beat, and flare while it holds prey. */
+	/** The stinging beads pulse as the colony drifts and brighten while it holds prey. */
 	private static final class GlowLayer extends RenderLayer<HemojellyEntity, HemojellyModel> {
 		GlowLayer(RenderLayerParent<HemojellyEntity, HemojellyModel> parent) {
 			super(parent);

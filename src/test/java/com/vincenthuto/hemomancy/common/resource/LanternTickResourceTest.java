@@ -2,11 +2,17 @@ package com.vincenthuto.hemomancy.common.resource;
 
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
+import java.util.Base64;
+import javax.imageio.ImageIO;
+import com.google.gson.JsonParser;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class LanternTickResourceTest {
 	private static final Path ROOT = Path.of("src/main/resources");
@@ -66,7 +72,7 @@ public final class LanternTickResourceTest {
 	private static void assertResources() throws IOException {
 		assertJsonExists(ASSETS.resolve("models/item/lantern_tick_helmet.json"));
 		assertJsonExists(ASSETS.resolve("models/item/spawn_egg_lantern_tick.json"));
-		assertFileExists(ASSETS.resolve("textures/entity/lantern_tick/model_lantern_tick.png"));
+		assertTextureAtlas();
 		assertJsonExists(DATA.resolve("loot_table/entities/lantern_tick.json"));
 		assertJsonExists(DATA.resolve("neoforge/biome_modifier/add_lantern_tick.json"));
 		assertJsonExists(DATA.resolve("tags/worldgen/biome/lantern_tick_spawnlist.json"));
@@ -74,6 +80,36 @@ public final class LanternTickResourceTest {
 				"hemomancy:lantern_tick_helmet");
 		assertContains("spawn modifier uses lantern tick", read(DATA.resolve("neoforge/biome_modifier/add_lantern_tick.json")),
 				"hemomancy:lantern_tick");
+	}
+
+	private static void assertTextureAtlas() throws IOException {
+		Path dir = ASSETS.resolve("textures/entity/lantern_tick");
+		Path basePath = dir.resolve("model_lantern_tick.png");
+		var base = ImageIO.read(basePath.toFile());
+		var glow = ImageIO.read(dir.resolve("model_lantern_tick_glow.png").toFile());
+		assertEquals(128, base.getWidth());
+		assertEquals(128, base.getHeight());
+		assertEquals(base.getWidth(), glow.getWidth());
+		assertEquals(base.getHeight(), glow.getHeight());
+		int lit = 0;
+		for (int y = 0; y < glow.getHeight(); y++) {
+			for (int x = 0; x < glow.getWidth(); x++) {
+				int pixel = glow.getRGB(x, y);
+				if ((pixel >>> 24) != 0) {
+					assertEquals(base.getRGB(x, y), pixel);
+					int red = (pixel >>> 16) & 255;
+					int green = (pixel >>> 8) & 255;
+					assertTrue(red > green * 1.6F, "Only the red lantern tissue emits");
+					lit++;
+				}
+			}
+		}
+		assertTrue(lit > 0);
+		var model = JsonParser.parseString(read(ASSETS.resolve("models/entity/bbmodel/LanternTickModel.bbmodel")))
+				.getAsJsonObject();
+		String embedded = model.getAsJsonArray("textures").get(0).getAsJsonObject().get("source").getAsString();
+		assertArrayEquals(Files.readAllBytes(basePath),
+				Base64.getDecoder().decode(embedded.substring(embedded.indexOf(',') + 1)));
 	}
 
 	private static void assertJsonExists(Path path) throws IOException {

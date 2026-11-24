@@ -7,7 +7,7 @@ import java.util.UUID;
 /**
  * Two-activation warning gate for permanently dissolving a bloodline. The first activation only warns and takes no
  * offering; a second inside the window starts the rite. The window is session state, cleared by
- * {@code TransientServerStateEvents} when a server starts and stops.
+ * {@code TransientServerStateEvents} when a server starts and stops and when its leader logs out.
  */
 public final class HematicUnbindingRules {
 	public static final long CONFIRMATION_TICKS = 12_000L;
@@ -41,6 +41,11 @@ public final class HematicUnbindingRules {
 
 	public static void clearSessionState() {
 		WARNINGS.clear();
+	}
+
+	/** A leader who leaves loses the open window; their next activation warns again. */
+	public static void logout(UUID leader) {
+		WARNINGS.remove(leader);
 	}
 
 	private record Warning(UUID bloodline, long expiresAt) {

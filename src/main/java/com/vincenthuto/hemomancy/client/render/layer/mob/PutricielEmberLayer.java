@@ -20,7 +20,7 @@ import net.minecraft.util.Mth;
  * phase, so no fire texel ever shows outside the cleansing interval, the Embering's first ticks and the ending.
  */
 public class PutricielEmberLayer<T extends PutricielEntity> extends RenderLayer<T, PutricielModel<T>> {
-	private static final RenderType EMBERS = RenderType.eyes(Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_embers.png"));
+	private static final RenderType EMBERS = RenderType.eyes(Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_vestment_embers.png"));
 
 	public PutricielEmberLayer(RenderLayerParent<T, PutricielModel<T>> parent) {
 		super(parent);

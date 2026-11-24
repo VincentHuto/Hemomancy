@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.LanternTickModel;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.Minecraft;
@@ -12,7 +11,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -21,7 +19,6 @@ public class LanternTickHelmetLayer<T extends LivingEntity, M extends HumanoidMo
 	private static final float HEAD_Y_OFFSET = -1.25F;
 	private static final float HEAD_Z_OFFSET = -0.02F;
 	private static final float HEAD_SCALE = 0.56F;
-	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/lantern_tick/model_lantern_tick.png");
 	private static final Lazy<LanternTickModel> CACHED_MODEL = Lazy.of(
 			() -> new LanternTickModel(
 					Minecraft.getInstance().getEntityModels().bakeLayer(LanternTickModel.LAYER_LOCATION)));
@@ -40,9 +37,11 @@ public class LanternTickHelmetLayer<T extends LivingEntity, M extends HumanoidMo
 		this.getParentModel().head.translateAndRotate(poseStack);
 		poseStack.translate(0.0F, HEAD_Y_OFFSET, HEAD_Z_OFFSET);
 		poseStack.scale(HEAD_SCALE, HEAD_SCALE, HEAD_SCALE);
-		VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-		CACHED_MODEL.get().renderToBuffer(poseStack, consumer, Math.max(packedLight, 0x00F000F0),
-				OverlayTexture.NO_OVERLAY, -1);
+		LanternTickModel model = CACHED_MODEL.get();
+		model.setupHelmetPose(ageInTicks);
+		VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(LanternTickModel.TEXTURE));
+		model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		model.renderLantern(poseStack, buffer);
 		poseStack.popPose();
 	}
 }

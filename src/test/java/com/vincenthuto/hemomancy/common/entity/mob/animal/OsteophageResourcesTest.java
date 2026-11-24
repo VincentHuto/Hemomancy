@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.animal;
 import com.google.gson.*;
 import org.junit.jupiter.api.Test;
 import java.nio.file.*;
+import javax.imageio.ImageIO;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,28 +29,49 @@ class OsteophageResourcesTest {
 
     @Test void editableRigUsesConnectedWingsValidUvsAndQuarterGridGeometry() throws Exception {
         var model = json("assets/hemomancy/models/entity/bbmodel/Osteophage.bbmodel");
+        var texture = ROOT.resolve("assets/hemomancy/textures/entity/osteophage.png");
+        var atlas = ImageIO.read(texture.toFile());
+        assertEquals(128, atlas.getHeight());
+        assertArrayEquals(Files.readAllBytes(texture), Base64.getDecoder().decode(
+                model.getAsJsonArray("textures").get(0).getAsJsonObject().get("source").getAsString().split(",", 2)[1]));
         var cubes = new HashSet<String>();
         for (var element : model.getAsJsonArray("elements")) {
             var cube = element.getAsJsonObject(); assertTrue(cubes.add(cube.get("uuid").getAsString()));
             for (String key : List.of("from", "to", "origin")) for (var coordinate : cube.getAsJsonArray(key))
                 assertEquals(Math.rint(coordinate.getAsDouble()*4), coordinate.getAsDouble()*4, "Geometry must lie on the quarter grid");
-            for (int i=0; i<3; i++) assertTrue(cube.getAsJsonArray("to").get(i).getAsDouble()-cube.getAsJsonArray("from").get(i).getAsDouble() >= .25);
+            var dimensions = new double[3];
+            for (int i = 0; i < 3; i++) {
+                dimensions[i] = cube.getAsJsonArray("to").get(i).getAsDouble()
+                        - cube.getAsJsonArray("from").get(i).getAsDouble();
+                assertTrue(dimensions[i] >= .25);
+            }
             for (var face : cube.getAsJsonObject("faces").entrySet()) {
                 var uv = face.getValue().getAsJsonObject().getAsJsonArray("uv");
-                for (int i=0; i<4; i++) assertTrue(uv.get(i).getAsDouble() >= 0 && uv.get(i).getAsDouble() <= 256, "UV outside atlas");
+                for (int i = 0; i < 4; i++) {
+                    double value = uv.get(i).getAsDouble();
+                    assertTrue(value >= 0 && value <= (i % 2 == 0 ? atlas.getWidth() : atlas.getHeight()), "UV outside atlas");
+                }
+                String side = face.getKey();
+                boolean horizontal = side.equals("up") || side.equals("down");
+                boolean lateral = side.equals("east") || side.equals("west");
+                assertEquals(dimensions[lateral ? 2 : 0], Math.abs(uv.get(2).getAsDouble() - uv.get(0).getAsDouble()));
+                assertEquals(dimensions[horizontal ? 2 : 1], Math.abs(uv.get(3).getAsDouble() - uv.get(1).getAsDouble()));
             }
         }
         var references = new ArrayList<String>(); var groups = new HashMap<String, JsonObject>();
         collect(model.getAsJsonArray("outliner"), references, groups);
         assertEquals(cubes.size(), references.size()); assertEquals(cubes, new HashSet<>(references));
-        for (String side : List.of("left", "right")) {
-            assertTrue(groups.get(side+"_wing").getAsJsonArray("children").asList().stream().anyMatch(n -> n.isJsonObject() && n.getAsJsonObject().get("name").getAsString().equals(side+"_forearm")));
-            assertTrue(groups.get(side+"_forearm").getAsJsonArray("children").asList().stream().anyMatch(n -> n.isJsonObject() && n.getAsJsonObject().get("name").getAsString().equals(side+"_primaries")));
+        for (String side : List.of("L", "R")) {
+            assertChild(groups.get("wing_" + side), "forewing_" + side);
+            assertChild(groups.get("forewing_" + side), "handwing_" + side);
+            assertChild(groups.get("leg_" + side), "foot_" + side);
         }
-        var ids = groups.values().stream().map(g -> g.get("uuid").getAsString()).toList();
-        for (var animation : model.getAsJsonArray("animations")) for (var target : animation.getAsJsonObject().getAsJsonObject("animators").entrySet())
-            assertTrue(ids.contains(target.getKey()));
-        assertTrue(Files.size(ROOT.resolve("assets/hemomancy/textures/entity/osteophage.png")) > 0);
+        assertChild(groups.get("head"), "jaw");
+    }
+
+    private static void assertChild(JsonObject parent, String name) {
+        assertTrue(parent.getAsJsonArray("children").asList().stream().anyMatch(node -> node.isJsonObject()
+                && node.getAsJsonObject().get("name").getAsString().equals(name)), name);
     }
 
     private void collect(JsonArray nodes, List<String> cubes, Map<String, JsonObject> groups) {

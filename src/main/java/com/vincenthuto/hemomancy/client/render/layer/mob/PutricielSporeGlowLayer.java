@@ -18,7 +18,7 @@ import net.minecraft.util.Mth;
  * dark. Cream and green only; it fades out as the char rises, so the burned growths never glow.
  */
 public class PutricielSporeGlowLayer<T extends PutricielEntity> extends RenderLayer<T, PutricielModel<T>> {
-	private static final RenderType GLOW = RenderType.eyes(Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_glow.png"));
+	private static final RenderType GLOW = RenderType.eyes(Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_vestment_glow.png"));
 
 	public PutricielSporeGlowLayer(RenderLayerParent<T, PutricielModel<T>> parent) {
 		super(parent);

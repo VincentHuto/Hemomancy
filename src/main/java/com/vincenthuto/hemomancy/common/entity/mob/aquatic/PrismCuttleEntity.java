@@ -100,7 +100,11 @@ public class PrismCuttleEntity extends WaterAnimal {
 	}
 
 	public boolean isFlashing() {
-		return this.entityData.get(FLASH_TICKS) > 0;
+		return this.flashTicksRemaining() > 0;
+	}
+
+	public int flashTicksRemaining() {
+		return this.entityData.get(FLASH_TICKS);
 	}
 
 	@Override

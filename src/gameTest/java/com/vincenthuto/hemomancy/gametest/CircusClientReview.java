@@ -497,7 +497,7 @@ public final class CircusClientReview {
 			PlaythroughSites.installStructure(level, structure, pavilionBox(siteB));
 			String only = System.getProperty("hemomancy.circusReview.only", "");
 			List<String> wanted = only.isBlank() ? List.of() : Arrays.asList(only.split(","));
-			for (Scene scene : List.of(new Performers(), new Puppets(), new Lanterns(), new Perception(),
+			for (Scene scene : List.of(new Performers(), new Puppets(), new Bellows(), new Lanterns(), new Perception(),
 					new ChamberFinale(null), new ChamberFinale(com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending.KILLED),
 					new ChamberFinale(com.vincenthuto.hemomancy.common.encounter.ordeal.finale.FinaleRules.Ending.ABSORBED), new Kit(), new Pavilion(), new Sites())) {
 				if (wanted.isEmpty() || wanted.contains(scene.name())) SCENES.add(scene);
@@ -936,6 +936,39 @@ public final class CircusClientReview {
 			for (Mob mob : MarionetteCrossbarItem.activeSummonsForOwner(player)) mob.discard();
 			clearArena(player.serverLevel());
 			player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+		}
+	}
+
+	private static final class Bellows extends Scene {
+		private com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity puppet;
+
+		String name() { return "bellows"; }
+
+		int maxTicks() { return 125; }
+
+		void start(ServerPlayer player) {
+			ServerLevel level = player.serverLevel();
+			clearArena(level);
+			nightVision(player, true);
+			command(player, "time set 6000");
+			Vec3 mark = at(arena, 20.5, 1, 20.5);
+			place(player, mark.add(2, 1, 5), mark.add(0, 1.05, 0));
+			puppet = EntityInit.cinder_bellows.get().create(level);
+			puppet.hemomancy$setTrialSummon(true);
+			puppet.setNoAi(true);
+			puppet.setInvulnerable(true);
+			puppet.moveTo(mark.x, mark.y, mark.z, 0, 0);
+			level.addFreshEntity(puppet);
+			setCam("bellows-breath", () -> new Fixed(mark.add(1.9, 1.5, 3.25), mark.add(0, 1, 0.7)));
+		}
+
+		boolean tick(ServerPlayer player, int t) {
+			puppet.setDemonstrationCycle(t < 12 || t >= 112 ? 0 : t - 11);
+			return t >= 120;
+		}
+
+		void end(ServerPlayer player) {
+			puppet.discard();
 		}
 	}
 

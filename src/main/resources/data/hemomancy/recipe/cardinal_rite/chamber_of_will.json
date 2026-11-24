@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:chamber_of_will",
   "bloodCost": 0,
   "riteType": "grand",
   "purpose": "self",

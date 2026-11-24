@@ -1,126 +1,78 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.animal;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.ScarletSerpentEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.ScarletSerpentSlitherRules;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
-public class ScarletSerpentModel extends EntityModel<ScarletSerpentEntity> {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			Hemomancy.rloc("scarlet_serpent"), "main");
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-	private static final int SEGMENT_COUNT = 9;
+public final class ScarletSerpentModel extends HierarchicalModel<ScarletSerpentEntity> {
+    private final ModelPart serpent = ScarletSerpentMesh.createRoot();
+    private final ModelPart root = new ModelPart(List.of(), Map.of("scarlet_serpent", serpent));
+    private final ModelPart neck = serpent.getChild("raised_neck");
+    private final ModelPart head = neck.getChild("head");
+    private final ModelPart jaw = head.getChild("lower_jaw");
+    private final ModelPart collar = neck.getChild("hood_collar");
+    private final ModelPart leftHood = collar.getChild("left_hood_hinge");
+    private final ModelPart rightHood = collar.getChild("right_hood_hinge");
+    private final List<ModelPart> segments = new ArrayList<>();
 
-	private final ModelPart head;
-	private final ModelPart neck;
-	private final ModelPart leftHood;
-	private final ModelPart rightHood;
-	private final ModelPart tail;
-	private final ModelPart[] segments = new ModelPart[SEGMENT_COUNT];
+    public ScarletSerpentModel() {
+        ModelPart parent = serpent.getChild("body_chain");
+        for (int i = 1; i <= ScarletSerpentSlitherRules.BODY_SEGMENT_COUNT; i++) {
+            parent = parent.getChild("body_" + (i < 10 ? "0" : "") + i);
+            segments.add(parent);
+        }
+    }
 
-	public ScarletSerpentModel(ModelPart root) {
-		this.head = root.getChild("head");
-		this.neck = root.getChild("neck");
-		this.leftHood = this.head.getChild("left_hood");
-		this.rightHood = this.head.getChild("right_hood");
-		this.segments[0] = root.getChild("segment_0");
-		for (int i = 1; i < SEGMENT_COUNT; i++) {
-			this.segments[i] = this.segments[i - 1].getChild("segment_" + i);
-		}
-		this.tail = this.segments[SEGMENT_COUNT - 1].getChild("tail");
-	}
+    @Override
+    public ModelPart root() {
+        return root;
+    }
 
-	public static LayerDefinition createBodyLayer() {
-		MeshDefinition meshDefinition = new MeshDefinition();
-		PartDefinition root = meshDefinition.getRoot();
+    @Override
+    public void setupAnim(ScarletSerpentEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+                          float netHeadYaw, float headPitch) {
+        float partialTick = Mth.clamp(ageInTicks - entity.tickCount, 0.0F, 1.0F);
+        pose(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch,
+                entity.getHoodProgress(partialTick), Math.max(0.0F, entity.getStrikeProgress(partialTick)));
+    }
 
-		root.addOrReplaceChild("neck", CubeListBuilder.create()
-						.texOffs(0, 12).addBox(-1.5F, -1.0F, -2.0F, 3.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 22.0F, -8.0F));
+    void pose(float swing, float swingAmount, float age, float yaw, float pitch, float hood, float strike) {
+        serpent.getAllParts().forEach(ModelPart::resetPose);
+        float movement = smoothStep(Mth.clamp(swingAmount / .36F, 0.0F, 1.0F));
+        float flare = smoothStep(hood);
+        float display = Math.max(flare, strike);
+        float coil = display * (1.0F - .75F * movement);
+        float step = swing * .85F + age * .09F;
+        float lunge = strike * strike;
+        float sway = Mth.sin(step + .35F);
+        float low = 1.0F - display;
 
-		PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
-						.texOffs(0, 0).addBox(-2.0F, -1.5F, -4.0F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
-						.texOffs(16, 0).addBox(-1.0F, -0.5F, -6.0F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 21.75F, -11.0F));
-		head.addOrReplaceChild("left_hood", CubeListBuilder.create()
-						.texOffs(28, 0).addBox(0.0F, -4.0F, -1.0F, 0.0F, 8.0F, 5.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(2.0F, 0.0F, -2.0F));
-		head.addOrReplaceChild("right_hood", CubeListBuilder.create()
-						.texOffs(38, 0).addBox(0.0F, -4.0F, -1.0F, 0.0F, 8.0F, 5.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(-2.0F, 0.0F, -2.0F));
+        neck.xRot += low * .78F + .21F * lunge + Mth.sin(age * .19F) * .025F * display;
+        neck.yRot += sway * Mth.lerp(movement, .04F, .12F);
+        head.yRot += Mth.clamp(yaw, -55.0F, 55.0F) * Mth.DEG_TO_RAD * .43F;
+        head.xRot += Mth.clamp(pitch, -35.0F, 35.0F) * Mth.DEG_TO_RAD * .33F - low * .48F - lunge * .12F;
+        jaw.xRot = Mth.lerp(display, .02F, jaw.xRot) + lunge * .24F;
+        leftHood.yRot -= low * 1.37F;
+        rightHood.yRot += low * 1.37F;
+        leftHood.zRot += low * .19F + display * sway * .02F;
+        rightHood.zRot -= low * .19F + display * sway * .02F;
 
-		PartDefinition segment0 = root.addOrReplaceChild("segment_0", CubeListBuilder.create()
-						.texOffs(0, 20).addBox(-2.0F, -1.0F, -2.0F, 4.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 22.5F, -5.0F));
-		PartDefinition segment1 = segment0.addOrReplaceChild("segment_1", CubeListBuilder.create()
-						.texOffs(0, 26).addBox(-2.0F, -1.0F, -2.0F, 4.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 3.25F));
-		PartDefinition segment2 = segment1.addOrReplaceChild("segment_2", CubeListBuilder.create()
-						.texOffs(0, 32).addBox(-2.0F, -1.0F, -2.0F, 4.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 3.25F));
-		PartDefinition segment3 = segment2.addOrReplaceChild("segment_3", CubeListBuilder.create()
-						.texOffs(0, 38).addBox(-1.75F, -1.0F, -2.0F, 3.5F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 3.25F));
-		PartDefinition segment4 = segment3.addOrReplaceChild("segment_4", CubeListBuilder.create()
-						.texOffs(0, 20).addBox(-1.75F, -1.0F, -2.0F, 3.5F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 3.25F));
-		PartDefinition segment5 = segment4.addOrReplaceChild("segment_5", CubeListBuilder.create()
-						.texOffs(0, 26).addBox(-1.75F, -1.0F, -2.0F, 3.5F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 3.25F));
-		PartDefinition segment6 = segment5.addOrReplaceChild("segment_6", CubeListBuilder.create()
-						.texOffs(0, 32).addBox(-1.5F, -0.75F, -2.0F, 3.0F, 1.5F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 3.25F));
-		PartDefinition segment7 = segment6.addOrReplaceChild("segment_7", CubeListBuilder.create()
-						.texOffs(0, 38).addBox(-1.5F, -0.75F, -2.0F, 3.0F, 1.5F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 3.25F));
-		PartDefinition segment8 = segment7.addOrReplaceChild("segment_8", CubeListBuilder.create()
-						.texOffs(0, 20).addBox(-1.5F, -0.75F, -2.0F, 3.0F, 1.5F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 3.25F));
+        float wave = Mth.lerp(movement, .16F, 1.0F);
+        for (int i = 0; i < segments.size(); i++) {
+            ModelPart segment = segments.get(i);
+            segment.yRot = segment.yRot * coil + ScarletSerpentSlitherRules.segmentLocalYaw(i, step, wave);
+        }
+        // Lift the last joint slightly. Pitch farther up the chain would carry the tail through the ground.
+        segments.getLast().xRot += ScarletSerpentSlitherRules.segmentLocalPitch(segments.size() - 1, step, wave);
+    }
 
-		segment8.addOrReplaceChild("tail", CubeListBuilder.create()
-						.texOffs(24, 22).addBox(-1.0F, -0.5F, 0.0F, 2.0F, 1.0F, 6.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 2.0F));
-
-		return LayerDefinition.create(meshDefinition, 64, 64);
-	}
-
-	@Override
-	public void setupAnim(ScarletSerpentEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
-			float netHeadYaw, float headPitch) {
-		float movement = Math.max(limbSwingAmount, entity.isHoodFlared() ? 0.15F : 0.05F);
-		float waveTime = limbSwing * 0.9F + ageInTicks * 0.08F;
-		float strike = entity.getStrikeProgress(0.0F);
-		float hood = entity.isHoodFlared() ? 1.0F : 0.0F;
-
-		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F) * 0.35F;
-		this.head.xRot = headPitch * ((float) Math.PI / 180F) * 0.25F - strike * 0.45F;
-		this.neck.xRot = -strike * 0.25F;
-		this.neck.yRot = Mth.sin(waveTime + 0.35F) * 0.08F * movement;
-		this.leftHood.yRot = Mth.lerp(hood, -0.2F, 0.9F);
-		this.rightHood.yRot = Mth.lerp(hood, 0.2F, -0.9F);
-		this.leftHood.zRot = Mth.lerp(hood, 0.0F, -0.12F);
-		this.rightHood.zRot = Mth.lerp(hood, 0.0F, 0.12F);
-
-		for (int i = 0; i < SEGMENT_COUNT; i++) {
-			ModelPart segment = this.segments[i];
-			segment.yRot = ScarletSerpentSlitherRules.segmentLocalYaw(i, waveTime, movement);
-			segment.xRot = ScarletSerpentSlitherRules.segmentLocalPitch(i, waveTime, movement);
-		}
-		this.tail.yRot = ScarletSerpentSlitherRules.tailLocalYaw(waveTime, movement);
-	}
-
-	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-			int packedColor) {
-		this.neck.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
-		this.head.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
-		this.segments[0].render(poseStack, buffer, packedLight, packedOverlay, packedColor);
-	}
+    private static float smoothStep(float value) {
+        return value * value * (3.0F - 2.0F * value);
+    }
 }

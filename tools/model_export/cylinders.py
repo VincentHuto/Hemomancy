@@ -18,77 +18,44 @@ DISPLAY = {
     'firstperson_righthand': {'rotation': [0, 30, 0], 'translation': [0, 2, 0]},
 }
 
-# The left 12x6 pixels are the recording surface. The right four columns
-# wrap the collars. Below those tiles, an 8x8 stamp maps across each end.
-ART = {
-    'wax_cylinder': (
-        'a85b23 c77a28 de9838 f1b94f f8d575 754121 483027 9a582b',
-        (
-            '3323344333222332',
-            '2233433322333443',
-            '2333332233323443',
-            '3322223333222332',
-            '2223333222331221',
-            '1122222332221221',
-        ),
-        (
-            '11233211',
-            '12344321',
-            '23455432',
-            '34566543',
-            '34566543',
-            '23455432',
-            '12344321',
-            '11233211',
-        ),
-        ('1', '4'),
-    ),
-    'ambergris_cylinder': (
-        '652c2c 8d4236 b46748 d7915c efbc7d 381f29 221924 6e5360 9b7578',
-        (
-            '2334454332247857',
-            '3433543323435875',
-            '3324322434325695',
-            '2312234553435695',
-            '3223434332235875',
-            '2122331223126756',
-        ),
-        (
-            '66788766',
-            '67899876',
-            '78344387',
-            '89577598',
-            '89577598',
-            '78344387',
-            '67899876',
-            '66788766',
-        ),
-        ('1', '5'),
-    ),
-    'corpse_wax_cylinder': (
-        '663635 9e5d55 888363 a9a582 d0c9a4 e9dfba 3c262b 70514d c7a582',
-        (
-            '5566544554438538',
-            '4555445643519658',
-            '4335455421136758',
-            '3445112224456588',
-            '3112443544558758',
-            '2144334433438987',
-        ),
-        (
-            '88344388',
-            '83466438',
-            '34788743',
-            '46877864',
-            '46877864',
-            '34788743',
-            '83466438',
-            '88344388',
-        ),
-        ('7', '6'),
-    ),
+# Atlas layout: the left 12x6 pixels are the recording surface (rows run around
+# the circumference, top edge to bottom edge), the right four columns wrap the
+# collars, and an 8x8 stamp below them maps across each end. Rows 0 and 5 sit at
+# the silhouette, so they carry the shadow and rows 1-2 the sheen.
+MEDIA = {
+    'wax_cylinder': {
+        # Turned honey wax: a soft sheen, a few drip specks, darker turned shoulders.
+        'body': ['a8661f', 'e4a640', 'f6cd6a', 'e9b04c', 'd9952f', 'a8661f'],
+        'speck': 'fbe08a', 'vein': None,
+        'collar': ['7a4418', 'b8762a', 'd9952f', 'b8762a', '7a4418', '5e3412'],
+        'collar_mark': None,
+        'cap': ['b8762a', 'd9952f', 'e9b04c', '7a4418', '2a1608'],
+    },
+    'ambergris_cylinder': {
+        # Mottled Mnemonic Ambergris set in hematic-iron collars with a red rivet.
+        'body': ['6a4632', 'a8784e', 'd4a66a', 'c08e5c', '966a46', '6a4632'],
+        'speck': 'e8c890', 'vein': '4a2e2a',
+        'collar': ['1e161a', '4c3e44', '5e4e56', '3a2e34', '2a2026', '160f12'],
+        'collar_mark': ('9a1820', 'rivet'),
+        'cap': ['3a2e34', '5e4e56', 'c08e5c', '966a46', '160f12'],
+    },
+    'corpse_wax_cylinder': {
+        # Pressed adipocere, greasy and pale, stitched into hematic-iron cuffs.
+        'body': ['8a7e60', 'd6cca6', 'ece2be', 'd8ce9e', 'bdb38c', '8a7e60'],
+        'speck': 'e4d690', 'vein': None,
+        'collar': ['1e161a', '4c3e44', '5e4e56', '3a2e34', '2a2026', '160f12'],
+        'collar_mark': ('d8cfb0', 'stitch'),
+        'cap': ['3a2e34', '5e4e56', 'ece2be', 'bdb38c', '2a1a14'],
+    },
 }
 
+
+def rgb(hex_value):
+    return tuple(bytes.fromhex(hex_value))
+
+
+def shade(color, amount):
+    return tuple(max(0, min(255, round(channel * amount))) for channel in color)
 # Each section gives its x bounds, radius and side UV tile. Keep the maximum
 # radius at 2.5 and the spindle length at 11 pixels for the two machine mounts.
 BODY = [0, 0, 12, 6]
@@ -113,17 +80,63 @@ PROFILES = {
 
 
 def atlas(medium, recorded):
-    colors, side, cap, (groove, highlight) = ART[medium]
-    palette = [tuple(bytes.fromhex(rgb)) for rgb in colors.split()]
-    image = Image.new('RGB', (16, 16), palette[0])
-    for y, row in enumerate(side):
-        for x, ink in enumerate(row):
-            if recorded and x in (2, 5, 8, 10):
-                ink = groove if y < 5 else highlight
-            image.putpixel((x, y), palette[int(ink) - 1])
-    for y, row in enumerate(cap, 8):
-        for x, ink in enumerate(row):
-            image.putpixel((x, y), palette[int(ink) - 1])
+    art = MEDIA[medium]
+    rng = np.random.default_rng(sum(map(ord, medium)))
+    image = Image.new('RGB', (16, 16), rgb(art['body'][0]))
+    # Recording surface: one shaded row per band of the circumference, lightly mottled.
+    for y, base in enumerate(art['body']):
+        for x in range(12):
+            color = shade(rgb(base), 1 + rng.uniform(-.03, .03))
+            if 1 <= y <= 4 and rng.random() < .035:
+                color = rgb(art['speck'])
+            image.putpixel((x, y), color)
+    if art['vein']:
+        # A few short veins wandering along the body.
+        for start, row in ((2, 3), (8, 2)):
+            for step in range(3):
+                image.putpixel((start + step, min(5, max(0, row + (step == 1) - (step == 2)))), rgb(art['vein']))
+    if medium == 'corpse_wax_cylinder':
+        # The pressed seam along the top, stitched shut.
+        for x in range(12):
+            if x % 3 == 1:
+                image.putpixel((x, 0), rgb('d8cfb0'))
+    if recorded:
+        # Fine grooves cut round the body by the stylus, each with a lit land beside it.
+        for y in range(6):
+            for x in range(1, 12):
+                if x % 2 == 1:
+                    image.putpixel((x, y), shade(rgb(art['body'][y]), .74))
+                elif 1 <= y <= 2:
+                    image.putpixel((x, y), shade(rgb(art['body'][y]), 1.1))
+    # Collar tile: turned or iron bands, with rivets or cross-stitching.
+    for y, base in enumerate(art['collar']):
+        for x in range(12, 16):
+            image.putpixel((x, y), shade(rgb(base), 1.08 if x == 13 else .9 if x == 15 else 1))
+    if art['collar_mark']:
+        mark, kind = art['collar_mark']
+        if kind == 'rivet':
+            for x, y in ((13, 2), (15, 4)):
+                image.putpixel((x, y), rgb(mark))
+                image.putpixel((x - 1, y), shade(rgb(mark), .6))
+        else:
+            for x, y in ((12, 1), (14, 1), (13, 2), (12, 3), (14, 3), (13, 4)):
+                image.putpixel((x, y), rgb(mark))
+    # End stamp: outer rim, body, inner ring and the mandrel bore at the centre.
+    rim, body, light, ring, bore = (rgb(value) for value in art['cap'])
+    for y in range(8):
+        for x in range(8):
+            distance = max(abs(x - 3.5), abs(y - 3.5)) + .35 * min(abs(x - 3.5), abs(y - 3.5))
+            if distance > 3.6:
+                color = shade(rim, .8)
+            elif distance > 3:
+                color = rim
+            elif distance > 2.2:
+                color = light if x + y < 7 else body
+            elif distance > 1.3:
+                color = ring
+            else:
+                color = bore
+            image.putpixel((x, y + 8), color)
     return image
 
 

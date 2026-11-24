@@ -14,13 +14,19 @@ public class MnemonistPuppetRenderer extends MobRenderer<MnemonistPuppetEntity, 
 			Hemomancy.rloc("textures/entity/puppeteer_summon/mnemonist_puppet.png");
 
 	public MnemonistPuppetRenderer(EntityRendererProvider.Context context) {
-		super(context, new MnemonistPuppetModel(context.bakeLayer(MnemonistPuppetModel.LAYER_LOCATION)), 0.45F);
+		super(context, new MnemonistPuppetModel(), 0.45F);
 		addLayer(new MnemonistThreadLayer(this));
 	}
 
 	@Override
 	public ResourceLocation getTextureLocation(MnemonistPuppetEntity entity) {
 		return TEXTURE;
+	}
+
+	@Override
+	protected void scale(MnemonistPuppetEntity entity, PoseStack stack, float partialTick) {
+		// Keep the taller sculpt at the ordinary puppet's established size.
+		stack.scale(0.75F, 0.75F, 0.75F);
 	}
 
 	@Override

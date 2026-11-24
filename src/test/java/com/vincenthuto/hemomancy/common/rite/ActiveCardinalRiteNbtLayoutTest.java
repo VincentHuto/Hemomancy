@@ -134,7 +134,7 @@ final class ActiveCardinalRiteNbtLayoutTest {
 		CompoundTag old = new CompoundTag();
 		old.putUUID("PlayerUUID", CASTER);
 		old.putLong("CenterPos", CENTER.asLong());
-		old.putString("RecipeId", "hemomancy:cardinal_rite/monolithic_script");
+		old.putString("RecipeId", "hemomancy:cardinal_rite/palimpsest");
 		old.putInt("TotalTicks", 600);
 		old.putInt("RemainingTicks", 240);
 		old.putInt("RiteSize", 5);

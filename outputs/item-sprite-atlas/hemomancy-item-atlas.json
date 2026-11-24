@@ -1,0 +1,4415 @@
+{
+  "image": "hemomancy-item-atlas.png",
+  "width": 1536,
+  "height": 1344,
+  "tileWidth": 48,
+  "tileHeight": 48,
+  "coordinateOrigin": "top-left",
+  "items": {
+    "hemomancy:absolution_dagger": {
+      "name": "Absolution Dagger",
+      "x": 0,
+      "y": 0
+    },
+    "hemomancy:active_befouling_ash": {
+      "name": "Active Befouling Ash",
+      "x": 48,
+      "y": 0
+    },
+    "hemomancy:active_smouldering_ash": {
+      "name": "Active Smouldering Ash",
+      "x": 96,
+      "y": 0
+    },
+    "hemomancy:aculeate_vitriol": {
+      "name": "Aculeate Vitriol",
+      "x": 144,
+      "y": 0
+    },
+    "hemomancy:adipocere": {
+      "name": "Adipocere",
+      "x": 192,
+      "y": 0
+    },
+    "hemomancy:adipocere_crust": {
+      "name": "Adipocere Crust",
+      "x": 240,
+      "y": 0
+    },
+    "hemomancy:ahaematic_colloid": {
+      "name": "item.hemomancy.ahaematic_unidentified",
+      "x": 288,
+      "y": 0
+    },
+    "hemomancy:altar_of_cleansing": {
+      "name": "Altar of Cleansing",
+      "x": 336,
+      "y": 0
+    },
+    "hemomancy:ambergris_cylinder": {
+      "name": "Ambergris Cylinder",
+      "x": 384,
+      "y": 0
+    },
+    "hemomancy:annettas_absolution_dagger": {
+      "name": "Annetta's Absolution Dagger",
+      "x": 432,
+      "y": 0
+    },
+    "hemomancy:annettas_sanguis_lancea": {
+      "name": "§oAnnettas Sanguis Lancea§4",
+      "x": 480,
+      "y": 0
+    },
+    "hemomancy:antecedent_vessel": {
+      "name": "Ancient Sample Vessel",
+      "x": 528,
+      "y": 0
+    },
+    "hemomancy:antiphonomyces_resonans": {
+      "name": "Antiphonomyces resonans",
+      "x": 576,
+      "y": 0
+    },
+    "hemomancy:assumed_limb_fitting": {
+      "name": "Assumed Limb Fitting",
+      "x": 624,
+      "y": 0
+    },
+    "hemomancy:axonal_slate": {
+      "name": "Axonal Slate",
+      "x": 672,
+      "y": 0
+    },
+    "hemomancy:barbed_blade": {
+      "name": "Barbed Blade",
+      "x": 720,
+      "y": 0
+    },
+    "hemomancy:barbed_boots": {
+      "name": "Barbed Boots",
+      "x": 768,
+      "y": 0
+    },
+    "hemomancy:barbed_chestplate": {
+      "name": "Barbed Chestplate",
+      "x": 816,
+      "y": 0
+    },
+    "hemomancy:barbed_fitting": {
+      "name": "Barbed Fitting",
+      "x": 864,
+      "y": 0
+    },
+    "hemomancy:barbed_helm": {
+      "name": "Barbed Helm",
+      "x": 912,
+      "y": 0
+    },
+    "hemomancy:barbed_leggings": {
+      "name": "Barbed Leggings",
+      "x": 960,
+      "y": 0
+    },
+    "hemomancy:barbed_shield": {
+      "name": "Barbed Shield",
+      "x": 1008,
+      "y": 0
+    },
+    "hemomancy:barbed_splinter": {
+      "name": "Barbed Splinter",
+      "x": 1056,
+      "y": 0
+    },
+    "hemomancy:befouling_ash_trail": {
+      "name": "Befouling Ash",
+      "x": 1104,
+      "y": 0
+    },
+    "hemomancy:bell_sleeper": {
+      "name": "Bell Sleeper",
+      "x": 1152,
+      "y": 0
+    },
+    "hemomancy:blank_mask": {
+      "name": "Blank Mask",
+      "x": 1200,
+      "y": 0
+    },
+    "hemomancy:bleeding_bulb": {
+      "name": "Bleeding Bulb",
+      "x": 1248,
+      "y": 0
+    },
+    "hemomancy:bleeding_heart": {
+      "name": "Bleeding Heart",
+      "x": 1296,
+      "y": 0
+    },
+    "hemomancy:blood_absorption": {
+      "name": "Blood Absorption",
+      "x": 1344,
+      "y": 0
+    },
+    "hemomancy:blood_basin": {
+      "name": "Blood Basin",
+      "x": 1392,
+      "y": 0
+    },
+    "hemomancy:blood_bolt": {
+      "name": "Blood Bolt",
+      "x": 1440,
+      "y": 0
+    },
+    "hemomancy:blood_crystal": {
+      "name": "Blood Crystal",
+      "x": 1488,
+      "y": 0
+    },
+    "hemomancy:blood_crystal_shard": {
+      "name": "Blood Crystal Shard",
+      "x": 0,
+      "y": 48
+    },
+    "hemomancy:blood_echo_inscription": {
+      "name": "Blood Echo Inscription",
+      "x": 48,
+      "y": 48
+    },
+    "hemomancy:blood_gourd_black": {
+      "name": "Black Blood Gourd",
+      "x": 96,
+      "y": 48
+    },
+    "hemomancy:blood_gourd_red": {
+      "name": "Red Blood Gourd",
+      "x": 144,
+      "y": 48
+    },
+    "hemomancy:blood_gourd_white": {
+      "name": "White Blood Gourd",
+      "x": 192,
+      "y": 48
+    },
+    "hemomancy:blood_gutter": {
+      "name": "Blood Gutter",
+      "x": 240,
+      "y": 48
+    },
+    "hemomancy:blood_lust_boots": {
+      "name": "Blood Lust Boots",
+      "x": 288,
+      "y": 48
+    },
+    "hemomancy:blood_lust_chest": {
+      "name": "Blood Lust Chest",
+      "x": 336,
+      "y": 48
+    },
+    "hemomancy:blood_lust_helm": {
+      "name": "Blood Lust Helm",
+      "x": 384,
+      "y": 48
+    },
+    "hemomancy:blood_lust_helm_grinning": {
+      "name": "Blood Lust Grinning Mask",
+      "x": 432,
+      "y": 48
+    },
+    "hemomancy:blood_lust_helm_lodestone": {
+      "name": "Blood Lust Lodestone Faceplate",
+      "x": 480,
+      "y": 48
+    },
+    "hemomancy:blood_lust_helm_tengu": {
+      "name": "Blood Lust Helm Tengu",
+      "x": 528,
+      "y": 48
+    },
+    "hemomancy:blood_lust_helm_velorum": {
+      "name": "Blood Lust Velorum Mask",
+      "x": 576,
+      "y": 48
+    },
+    "hemomancy:blood_lust_legs": {
+      "name": "Blood Lust Legs",
+      "x": 624,
+      "y": 48
+    },
+    "hemomancy:blood_projection": {
+      "name": "Blood Projection",
+      "x": 672,
+      "y": 48
+    },
+    "hemomancy:blood_rock": {
+      "name": "Blood Rock",
+      "x": 720,
+      "y": 48
+    },
+    "hemomancy:blood_scorched_scab": {
+      "name": "Blood-Scorched Scab",
+      "x": 768,
+      "y": 48
+    },
+    "hemomancy:blood_stained_stone": {
+      "name": "Blood Stained Stone",
+      "x": 816,
+      "y": 48
+    },
+    "hemomancy:blood_thrall_effigy": {
+      "name": "Blood Thrall Effigy",
+      "x": 864,
+      "y": 48
+    },
+    "hemomancy:blood_wood_bark": {
+      "name": "Blood Wood Bark",
+      "x": 912,
+      "y": 48
+    },
+    "hemomancy:blood_wood_button": {
+      "name": "Blood Wood Button",
+      "x": 960,
+      "y": 48
+    },
+    "hemomancy:blood_wood_door": {
+      "name": "Blood Wood Door",
+      "x": 1008,
+      "y": 48
+    },
+    "hemomancy:blood_wood_fence": {
+      "name": "Blood Wood Fence",
+      "x": 1056,
+      "y": 48
+    },
+    "hemomancy:blood_wood_fence_gate": {
+      "name": "Blood Wood Fence Gate",
+      "x": 1104,
+      "y": 48
+    },
+    "hemomancy:blood_wood_hanging_sign": {
+      "name": "Blood Wood Hanging Sign",
+      "x": 1152,
+      "y": 48
+    },
+    "hemomancy:blood_wood_leaves": {
+      "name": "Blood Wood Leaves",
+      "x": 1200,
+      "y": 48
+    },
+    "hemomancy:blood_wood_log": {
+      "name": "Blood Wood Log",
+      "x": 1248,
+      "y": 48
+    },
+    "hemomancy:blood_wood_planks": {
+      "name": "Blood Wood Planks",
+      "x": 1296,
+      "y": 48
+    },
+    "hemomancy:blood_wood_pressure_plate": {
+      "name": "Blood Wood Pressure Plate",
+      "x": 1344,
+      "y": 48
+    },
+    "hemomancy:blood_wood_sign": {
+      "name": "Blood Wood Sign",
+      "x": 1392,
+      "y": 48
+    },
+    "hemomancy:blood_wood_slab": {
+      "name": "Blood Wood Slab",
+      "x": 1440,
+      "y": 48
+    },
+    "hemomancy:blood_wood_stairs": {
+      "name": "Blood Wood Stairs",
+      "x": 1488,
+      "y": 48
+    },
+    "hemomancy:blood_wood_trapdoor": {
+      "name": "Blood Wood Trapdoor",
+      "x": 0,
+      "y": 96
+    },
+    "hemomancy:bloody_flask": {
+      "name": "Bloody Flask",
+      "x": 48,
+      "y": 96
+    },
+    "hemomancy:bloody_jug": {
+      "name": "Bloody Jug",
+      "x": 96,
+      "y": 96
+    },
+    "hemomancy:bloody_vial": {
+      "name": "Bloody Vial",
+      "x": 144,
+      "y": 96
+    },
+    "hemomancy:bog_body": {
+      "name": "Bog Body",
+      "x": 192,
+      "y": 96
+    },
+    "hemomancy:bog_iron": {
+      "name": "Bog Iron",
+      "x": 240,
+      "y": 96
+    },
+    "hemomancy:bone_brick_slab": {
+      "name": "Bone Brick Slab",
+      "x": 288,
+      "y": 96
+    },
+    "hemomancy:bone_brick_stairs": {
+      "name": "Bone Brick Stairs",
+      "x": 336,
+      "y": 96
+    },
+    "hemomancy:bone_brick_wall": {
+      "name": "Bone Brick Wall",
+      "x": 384,
+      "y": 96
+    },
+    "hemomancy:bone_bricks": {
+      "name": "Bone Bricks",
+      "x": 432,
+      "y": 96
+    },
+    "hemomancy:bone_outgrowth": {
+      "name": "Bone Outgrowth",
+      "x": 480,
+      "y": 96
+    },
+    "hemomancy:bone_worm_colony": {
+      "name": "Bone Worm Colony",
+      "x": 528,
+      "y": 96
+    },
+    "hemomancy:book_of_observances": {
+      "name": "Book of Observances",
+      "x": 576,
+      "y": 96
+    },
+    "hemomancy:bound_mnemonic_remnant": {
+      "name": "Bound Mnemonic Remnant",
+      "x": 624,
+      "y": 96
+    },
+    "hemomancy:brine_sealed_letter": {
+      "name": "Brine-Sealed Letter",
+      "x": 672,
+      "y": 96
+    },
+    "hemomancy:calcified_erythrocoral": {
+      "name": "Calcified Erythrocoral",
+      "x": 720,
+      "y": 96
+    },
+    "hemomancy:calcified_hyphae": {
+      "name": "Calcified Hyphae",
+      "x": 768,
+      "y": 96
+    },
+    "hemomancy:cardinal_focus": {
+      "name": "Cardinal Focus",
+      "x": 816,
+      "y": 96
+    },
+    "hemomancy:catalyst_feeder": {
+      "name": "Catalyst Feeder",
+      "x": 864,
+      "y": 96
+    },
+    "hemomancy:centrifugal_governor_kit": {
+      "name": "Centrifugal Governor Kit",
+      "x": 912,
+      "y": 96
+    },
+    "hemomancy:chalybeate_sclerite": {
+      "name": "Chalybeate Sclerite",
+      "x": 960,
+      "y": 96
+    },
+    "hemomancy:chamber_of_will_teleporter": {
+      "name": "Chamber of Will Teleporter",
+      "x": 1008,
+      "y": 96
+    },
+    "hemomancy:chapel_focus": {
+      "name": "Chapel Focus",
+      "x": 1056,
+      "y": 96
+    },
+    "hemomancy:charm_of_vascularium": {
+      "name": "Charm Of Vascularium",
+      "x": 1104,
+      "y": 96
+    },
+    "hemomancy:charred_bookshelf": {
+      "name": "Charred Bookshelf",
+      "x": 1152,
+      "y": 96
+    },
+    "hemomancy:charred_log": {
+      "name": "Charred Log",
+      "x": 1200,
+      "y": 96
+    },
+    "hemomancy:charred_planks": {
+      "name": "Charred Planks",
+      "x": 1248,
+      "y": 96
+    },
+    "hemomancy:charred_planks_slab": {
+      "name": "Charred Plank Slab",
+      "x": 1296,
+      "y": 96
+    },
+    "hemomancy:charred_planks_stairs": {
+      "name": "Charred Plank Stairs",
+      "x": 1344,
+      "y": 96
+    },
+    "hemomancy:chiseled_bone_bricks": {
+      "name": "Chiseled Bone Bricks",
+      "x": 1392,
+      "y": 96
+    },
+    "hemomancy:chiseled_hematic_iron_block": {
+      "name": "Chiseled Hematic Iron Block",
+      "x": 1440,
+      "y": 96
+    },
+    "hemomancy:chiseled_polished_venous_stone": {
+      "name": "Chiseled Polished Venous Stone",
+      "x": 1488,
+      "y": 96
+    },
+    "hemomancy:chitinite_arm_banner": {
+      "name": "Chitinite Arm Banner",
+      "x": 0,
+      "y": 144
+    },
+    "hemomancy:chitinite_block": {
+      "name": "Chitinite Tile",
+      "x": 48,
+      "y": 144
+    },
+    "hemomancy:chitinite_boots": {
+      "name": "Chitinite Boots",
+      "x": 96,
+      "y": 144
+    },
+    "hemomancy:chitinite_chestplate": {
+      "name": "Chitinite Chestplate",
+      "x": 144,
+      "y": 144
+    },
+    "hemomancy:chitinite_fitting": {
+      "name": "Chitinite Fitting",
+      "x": 192,
+      "y": 144
+    },
+    "hemomancy:chitinite_helm": {
+      "name": "Chitinite Helm",
+      "x": 240,
+      "y": 144
+    },
+    "hemomancy:chitinite_leggings": {
+      "name": "Chitinite Leggings",
+      "x": 288,
+      "y": 144
+    },
+    "hemomancy:chitinite_mace": {
+      "name": "Chitinite Mace",
+      "x": 336,
+      "y": 144
+    },
+    "hemomancy:chitinite_shield": {
+      "name": "Chitinite Shield",
+      "x": 384,
+      "y": 144
+    },
+    "hemomancy:chitinous_husk": {
+      "name": "Chitinous Husk",
+      "x": 432,
+      "y": 144
+    },
+    "hemomancy:chromatic_sublimate": {
+      "name": "Chromatic Sublimate",
+      "x": 480,
+      "y": 144
+    },
+    "hemomancy:cinder_bellows_frame": {
+      "name": "Cinder Bellows Frame",
+      "x": 528,
+      "y": 144
+    },
+    "hemomancy:circus_bellows_stand": {
+      "name": "Bellows Stand",
+      "x": 576,
+      "y": 144
+    },
+    "hemomancy:circus_canvas": {
+      "name": "Striped Big-Top Canvas",
+      "x": 624,
+      "y": 144
+    },
+    "hemomancy:circus_cookpot": {
+      "name": "Cookhouse Pot",
+      "x": 672,
+      "y": 144
+    },
+    "hemomancy:circus_costume_rack": {
+      "name": "Costume Rack",
+      "x": 720,
+      "y": 144
+    },
+    "hemomancy:circus_crossbar_rig": {
+      "name": "Hanging Crossbar Rig",
+      "x": 768,
+      "y": 144
+    },
+    "hemomancy:circus_curtain": {
+      "name": "Circus Curtain",
+      "x": 816,
+      "y": 144
+    },
+    "hemomancy:circus_fire_pit": {
+      "name": "Ember Pit",
+      "x": 864,
+      "y": 144
+    },
+    "hemomancy:circus_footlight": {
+      "name": "Crimson Footlight",
+      "x": 912,
+      "y": 144
+    },
+    "hemomancy:circus_gallery_rail": {
+      "name": "Gallery Rail",
+      "x": 960,
+      "y": 144
+    },
+    "hemomancy:circus_guy_stake": {
+      "name": "Guy Stake",
+      "x": 1008,
+      "y": 144
+    },
+    "hemomancy:circus_hound_hoop": {
+      "name": "Hound Hoop",
+      "x": 1056,
+      "y": 144
+    },
+    "hemomancy:circus_king_pole": {
+      "name": "King Pole",
+      "x": 1104,
+      "y": 144
+    },
+    "hemomancy:circus_knife_wheel": {
+      "name": "Knife Wheel",
+      "x": 1152,
+      "y": 144
+    },
+    "hemomancy:circus_laced_canvas": {
+      "name": "Laced Big-Top Canvas",
+      "x": 1200,
+      "y": 144
+    },
+    "hemomancy:circus_loft_record": {
+      "name": "Loft Rigging Log",
+      "x": 1248,
+      "y": 144
+    },
+    "hemomancy:circus_net": {
+      "name": "Rigging Net",
+      "x": 1296,
+      "y": 144
+    },
+    "hemomancy:circus_pelt_drape": {
+      "name": "Pelt Drape",
+      "x": 1344,
+      "y": 144
+    },
+    "hemomancy:circus_pennant_line": {
+      "name": "Pennant Line",
+      "x": 1392,
+      "y": 144
+    },
+    "hemomancy:circus_plinth": {
+      "name": "Procession Plinth",
+      "x": 1440,
+      "y": 144
+    },
+    "hemomancy:circus_podium": {
+      "name": "Ringmaster's Podium",
+      "x": 1488,
+      "y": 144
+    },
+    "hemomancy:circus_prompt_table": {
+      "name": "Prompt-Book Table",
+      "x": 0,
+      "y": 192
+    },
+    "hemomancy:circus_quarter_pole": {
+      "name": "Quarter Pole",
+      "x": 48,
+      "y": 192
+    },
+    "hemomancy:circus_quarters_record": {
+      "name": "Quarters Ledger",
+      "x": 96,
+      "y": 192
+    },
+    "hemomancy:circus_ring_curb": {
+      "name": "Ring Curb",
+      "x": 144,
+      "y": 192
+    },
+    "hemomancy:circus_sawdust": {
+      "name": "Ring Sawdust",
+      "x": 192,
+      "y": 192
+    },
+    "hemomancy:circus_seating": {
+      "name": "Seating Tier",
+      "x": 240,
+      "y": 192
+    },
+    "hemomancy:circus_spindle_rack": {
+      "name": "Spindle Rack",
+      "x": 288,
+      "y": 192
+    },
+    "hemomancy:circus_stage_record": {
+      "name": "Troupe Stage Bill",
+      "x": 336,
+      "y": 192
+    },
+    "hemomancy:circus_stilt_rack": {
+      "name": "Stilt Rack",
+      "x": 384,
+      "y": 192
+    },
+    "hemomancy:circus_target_board": {
+      "name": "Target Board",
+      "x": 432,
+      "y": 192
+    },
+    "hemomancy:circus_ticket_window": {
+      "name": "Ticket Window",
+      "x": 480,
+      "y": 192
+    },
+    "hemomancy:circus_trapeze": {
+      "name": "Trapeze",
+      "x": 528,
+      "y": 192
+    },
+    "hemomancy:circus_trophy": {
+      "name": "Bone and Thread Trophy",
+      "x": 576,
+      "y": 192
+    },
+    "hemomancy:circus_trunk": {
+      "name": "Costume Trunk",
+      "x": 624,
+      "y": 192
+    },
+    "hemomancy:circus_valance": {
+      "name": "Scalloped Valance",
+      "x": 672,
+      "y": 192
+    },
+    "hemomancy:circus_wagon_panel": {
+      "name": "Painted Wagon Panel",
+      "x": 720,
+      "y": 192
+    },
+    "hemomancy:circus_wagon_wheel": {
+      "name": "Wagon Wheel",
+      "x": 768,
+      "y": 192
+    },
+    "hemomancy:circus_wainscot": {
+      "name": "Lacquered Wainscot",
+      "x": 816,
+      "y": 192
+    },
+    "hemomancy:circus_waybill": {
+      "name": "Scarlet Waybill",
+      "x": 864,
+      "y": 192
+    },
+    "hemomancy:circus_weight_frame": {
+      "name": "Weight Frame",
+      "x": 912,
+      "y": 192
+    },
+    "hemomancy:circus_wrecked_panel": {
+      "name": "Wrecked Wagon Panel",
+      "x": 960,
+      "y": 192
+    },
+    "hemomancy:clairaudiograph": {
+      "name": "Clairaudiograph",
+      "x": 1008,
+      "y": 192
+    },
+    "hemomancy:cleansed_blood_crystal_shard": {
+      "name": "Cleansed Blood Crystal Shard",
+      "x": 1056,
+      "y": 192
+    },
+    "hemomancy:cleansed_sanguine_glass": {
+      "name": "Cleansed Sanguine Glass",
+      "x": 1104,
+      "y": 192
+    },
+    "hemomancy:cleansed_sanguine_pane": {
+      "name": "Cleansed Sanguine Pane",
+      "x": 1152,
+      "y": 192
+    },
+    "hemomancy:cleansed_stone": {
+      "name": "Cleansed Stone",
+      "x": 1200,
+      "y": 192
+    },
+    "hemomancy:cleansing_hemolymph": {
+      "name": "Cleansing Hemolymph",
+      "x": 1248,
+      "y": 192
+    },
+    "hemomancy:clotting_lattice": {
+      "name": "Clotting Lattice",
+      "x": 1296,
+      "y": 192
+    },
+    "hemomancy:conscious_mass": {
+      "name": "Conscious Mass",
+      "x": 1344,
+      "y": 192
+    },
+    "hemomancy:consecrated_bloodwell": {
+      "name": "Consecrated Bloodwell",
+      "x": 1392,
+      "y": 192
+    },
+    "hemomancy:consecrated_copper_ingot": {
+      "name": "Consecrated Copper Ingot",
+      "x": 1440,
+      "y": 192
+    },
+    "hemomancy:consecrated_syringe": {
+      "name": "Consecrated Syringe",
+      "x": 1488,
+      "y": 192
+    },
+    "hemomancy:containment_anchor_block": {
+      "name": "Dormant Containment Anchor",
+      "x": 0,
+      "y": 240
+    },
+    "hemomancy:cooked_pelagic_herring": {
+      "name": "Cooked Pelagic Herring",
+      "x": 48,
+      "y": 240
+    },
+    "hemomancy:cooked_venison": {
+      "name": "Cooked Venison",
+      "x": 96,
+      "y": 240
+    },
+    "hemomancy:corpse_wax_cylinder": {
+      "name": "Corpse Wax Cylinder",
+      "x": 144,
+      "y": 240
+    },
+    "hemomancy:cortical_crown": {
+      "name": "Cortical Crown",
+      "x": 192,
+      "y": 240
+    },
+    "hemomancy:cortical_folds": {
+      "name": "Cortical Folds",
+      "x": 240,
+      "y": 240
+    },
+    "hemomancy:covenant_mantle": {
+      "name": "Covenant Mantle",
+      "x": 288,
+      "y": 240
+    },
+    "hemomancy:covenant_throne": {
+      "name": "Covenant Throne",
+      "x": 336,
+      "y": 240
+    },
+    "hemomancy:cracked_bone_bricks": {
+      "name": "Cracked Bone Bricks",
+      "x": 384,
+      "y": 240
+    },
+    "hemomancy:cracked_polished_venous_stone_bricks": {
+      "name": "Cracked Polished Venous Stone Bricks",
+      "x": 432,
+      "y": 240
+    },
+    "hemomancy:crimson_flames": {
+      "name": "Crimson Flames",
+      "x": 480,
+      "y": 240
+    },
+    "hemomancy:crimson_lacquer": {
+      "name": "Crimson Lacquer",
+      "x": 528,
+      "y": 240
+    },
+    "hemomancy:crimson_vestment_fitting": {
+      "name": "Crimson Vestment Fitting",
+      "x": 576,
+      "y": 240
+    },
+    "hemomancy:crude_memory_blood_rush": {
+      "name": "Crude Memory: Blood Rush",
+      "x": 624,
+      "y": 240
+    },
+    "hemomancy:crude_memory_blood_shot": {
+      "name": "Crude Memory: Blood Shot",
+      "x": 672,
+      "y": 240
+    },
+    "hemomancy:crude_memory_deadly_gaze": {
+      "name": "Crude Memory: Deadly Gaze",
+      "x": 720,
+      "y": 240
+    },
+    "hemomancy:crude_memory_glacial_grasp": {
+      "name": "Crude Memory: Glacial Grasp",
+      "x": 768,
+      "y": 240
+    },
+    "hemomancy:crude_memory_hematic_flare": {
+      "name": "Crude Memory: Hematic Flare",
+      "x": 816,
+      "y": 240
+    },
+    "hemomancy:crude_memory_hemorrhage": {
+      "name": "Crude Memory: Hemorrhage",
+      "x": 864,
+      "y": 240
+    },
+    "hemomancy:crude_memory_sanguine_ignition": {
+      "name": "Crude Memory: Sanguine Ignition",
+      "x": 912,
+      "y": 240
+    },
+    "hemomancy:crude_memory_sanguine_mending": {
+      "name": "Crude Memory: Sanguine Mending",
+      "x": 960,
+      "y": 240
+    },
+    "hemomancy:crude_memory_void_shroud": {
+      "name": "Crude Memory: Void Shroud",
+      "x": 1008,
+      "y": 240
+    },
+    "hemomancy:cryostroma_perdurans": {
+      "name": "Cryostroma Perdurans",
+      "x": 1056,
+      "y": 240
+    },
+    "hemomancy:cured_clay_jug": {
+      "name": "Cured Clay Jug",
+      "x": 1104,
+      "y": 240
+    },
+    "hemomancy:current_strand": {
+      "name": "Current Strand",
+      "x": 1152,
+      "y": 240
+    },
+    "hemomancy:current_tissue": {
+      "name": "Current Tissue",
+      "x": 1200,
+      "y": 240
+    },
+    "hemomancy:curved_horn": {
+      "name": "Curved Horn",
+      "x": 1248,
+      "y": 240
+    },
+    "hemomancy:cuttlefish_chromatophores": {
+      "name": "Chromatophores",
+      "x": 1296,
+      "y": 240
+    },
+    "hemomancy:dark_lacquer_planks": {
+      "name": "Dark Lacquer Planks",
+      "x": 1344,
+      "y": 240
+    },
+    "hemomancy:dark_lacquer_planks_slab": {
+      "name": "Dark Lacquer Plank Slab",
+      "x": 1392,
+      "y": 240
+    },
+    "hemomancy:dark_lacquer_planks_stairs": {
+      "name": "Dark Lacquer Plank Stairs",
+      "x": 1440,
+      "y": 240
+    },
+    "hemomancy:debug_showcase": {
+      "name": "Debug Showcase",
+      "x": 1488,
+      "y": 240
+    },
+    "hemomancy:dendrite_growth": {
+      "name": "Dendrite Growth",
+      "x": 0,
+      "y": 288
+    },
+    "hemomancy:dendritic_distributor": {
+      "name": "Dendritic Distributor",
+      "x": 48,
+      "y": 288
+    },
+    "hemomancy:desert_husk_effigy": {
+      "name": "Desert Husk Effigy",
+      "x": 96,
+      "y": 288
+    },
+    "hemomancy:devils_tooth": {
+      "name": "Devil's Tooth",
+      "x": 144,
+      "y": 288
+    },
+    "hemomancy:dictation_table": {
+      "name": "Dictation Table",
+      "x": 192,
+      "y": 288
+    },
+    "hemomancy:downfall_seal": {
+      "name": "Downfall Seal",
+      "x": 240,
+      "y": 288
+    },
+    "hemomancy:draught_of_still_mercy": {
+      "name": "Draught of Still Mercy",
+      "x": 288,
+      "y": 288
+    },
+    "hemomancy:draught_of_still_waters": {
+      "name": "Draught of Still Waters",
+      "x": 336,
+      "y": 288
+    },
+    "hemomancy:dried_gourd": {
+      "name": "Dried Gourd",
+      "x": 384,
+      "y": 288
+    },
+    "hemomancy:dried_leech": {
+      "name": "Dried Leech",
+      "x": 432,
+      "y": 288
+    },
+    "hemomancy:drudge_electrode": {
+      "name": "Drudge Electrode",
+      "x": 480,
+      "y": 288
+    },
+    "hemomancy:drudge_submission_device": {
+      "name": "Drudge Submission Device",
+      "x": 528,
+      "y": 288
+    },
+    "hemomancy:druse_heart": {
+      "name": "Druse Heart",
+      "x": 576,
+      "y": 288
+    },
+    "hemomancy:dura_membrane": {
+      "name": "Dura Membrane",
+      "x": 624,
+      "y": 288
+    },
+    "hemomancy:earthen_vein": {
+      "name": "Earthen Vein",
+      "x": 672,
+      "y": 288
+    },
+    "hemomancy:edacious_blood_lust_boots": {
+      "name": "Edacious Bloodlust Boots",
+      "x": 720,
+      "y": 288
+    },
+    "hemomancy:edacious_blood_lust_chest": {
+      "name": "Edacious Bloodlust Chest",
+      "x": 768,
+      "y": 288
+    },
+    "hemomancy:edacious_blood_lust_helm": {
+      "name": "Edacious Bloodlust Helmet",
+      "x": 816,
+      "y": 288
+    },
+    "hemomancy:edacious_blood_lust_legs": {
+      "name": "Edacious Bloodlust Leggings",
+      "x": 864,
+      "y": 288
+    },
+    "hemomancy:emberpod": {
+      "name": "Emberpod",
+      "x": 912,
+      "y": 288
+    },
+    "hemomancy:engram_block": {
+      "name": "Engram Block",
+      "x": 960,
+      "y": 288
+    },
+    "hemomancy:engram_stamp": {
+      "name": "Engram Stamp",
+      "x": 1008,
+      "y": 288
+    },
+    "hemomancy:enthralling_filament": {
+      "name": "Enthralling Filament",
+      "x": 1056,
+      "y": 288
+    },
+    "hemomancy:enzymatic_scriptorium": {
+      "name": "Enzymatic Scriptorium",
+      "x": 1104,
+      "y": 288
+    },
+    "hemomancy:enzyme_primer": {
+      "name": "Enzyme Primer",
+      "x": 1152,
+      "y": 288
+    },
+    "hemomancy:erythrocoral_block": {
+      "name": "Erythrocoral Block",
+      "x": 1200,
+      "y": 288
+    },
+    "hemomancy:erythrocoral_fan": {
+      "name": "Erythrocoral Fan",
+      "x": 1248,
+      "y": 288
+    },
+    "hemomancy:erythrocoral_fragment": {
+      "name": "Erythrocoral Fragment",
+      "x": 1296,
+      "y": 288
+    },
+    "hemomancy:erythrocoral_tendril": {
+      "name": "Erythrocoral Tendril",
+      "x": 1344,
+      "y": 288
+    },
+    "hemomancy:erythrocytic_dirt": {
+      "name": "Erythrocytic Dirt",
+      "x": 1392,
+      "y": 288
+    },
+    "hemomancy:erythrocytic_mycelium": {
+      "name": "Erythrocytic Mycelium",
+      "x": 1440,
+      "y": 288
+    },
+    "hemomancy:escharian_scyphus": {
+      "name": "Escharian Scyphus",
+      "x": 1488,
+      "y": 288
+    },
+    "hemomancy:faded_memory": {
+      "name": "Faded Memory",
+      "x": 0,
+      "y": 336
+    },
+    "hemomancy:fargone_proboscis": {
+      "name": "Fargone Proboscis",
+      "x": 48,
+      "y": 336
+    },
+    "hemomancy:ferric_binder": {
+      "name": "Ferric Binder",
+      "x": 96,
+      "y": 336
+    },
+    "hemomancy:ferric_enzyme": {
+      "name": "Ferric Enzyme",
+      "x": 144,
+      "y": 336
+    },
+    "hemomancy:ferric_spores": {
+      "name": "Ferric Spores",
+      "x": 192,
+      "y": 336
+    },
+    "hemomancy:fervent_enzyme": {
+      "name": "Fervent Enzyme",
+      "x": 240,
+      "y": 336
+    },
+    "hemomancy:fervent_husk": {
+      "name": "§oFervent Husk§4",
+      "x": 288,
+      "y": 336
+    },
+    "hemomancy:fervent_spores": {
+      "name": "Fervent Spores",
+      "x": 336,
+      "y": 336
+    },
+    "hemomancy:fold_veil": {
+      "name": "Fold Veil",
+      "x": 384,
+      "y": 336
+    },
+    "hemomancy:foul_paste": {
+      "name": "Foul Paste",
+      "x": 432,
+      "y": 336
+    },
+    "hemomancy:fractionating_rotor_kit": {
+      "name": "Fractionating Rotor Kit",
+      "x": 480,
+      "y": 336
+    },
+    "hemomancy:frigid_enzyme": {
+      "name": "Frigid Enzyme",
+      "x": 528,
+      "y": 336
+    },
+    "hemomancy:frigid_spores": {
+      "name": "Frigid Spores",
+      "x": 576,
+      "y": 336
+    },
+    "hemomancy:frozen_cruor": {
+      "name": "Frozen Cruor",
+      "x": 624,
+      "y": 336
+    },
+    "hemomancy:frozen_devotee": {
+      "name": "Frozen Devotee",
+      "x": 672,
+      "y": 336
+    },
+    "hemomancy:frozen_drip": {
+      "name": "Frozen Drip",
+      "x": 720,
+      "y": 336
+    },
+    "hemomancy:fruiting_infected_cap": {
+      "name": "Fruiting Infected Cap",
+      "x": 768,
+      "y": 336
+    },
+    "hemomancy:fruiting_lure": {
+      "name": "Fruiting Lure",
+      "x": 816,
+      "y": 336
+    },
+    "hemomancy:fungal_gill": {
+      "name": "Fungal Gill",
+      "x": 864,
+      "y": 336
+    },
+    "hemomancy:fungal_implantation_pylon": {
+      "name": "Fungal Implantation Pylon",
+      "x": 912,
+      "y": 336
+    },
+    "hemomancy:fungal_podium": {
+      "name": "Fungal Podium",
+      "x": 960,
+      "y": 336
+    },
+    "hemomancy:fungal_spine": {
+      "name": "Fungal Spine",
+      "x": 1008,
+      "y": 336
+    },
+    "hemomancy:ganglion_cluster": {
+      "name": "Ganglion Cluster",
+      "x": 1056,
+      "y": 336
+    },
+    "hemomancy:ganglion_matter": {
+      "name": "Ganglion Matter",
+      "x": 1104,
+      "y": 336
+    },
+    "hemomancy:ganglionic_harness": {
+      "name": "Ganglionic Harness",
+      "x": 1152,
+      "y": 336
+    },
+    "hemomancy:ghastly_alembic": {
+      "name": "Ghastly Alembic",
+      "x": 1200,
+      "y": 336
+    },
+    "hemomancy:ghost_pipe": {
+      "name": "Ghost Pipe",
+      "x": 1248,
+      "y": 336
+    },
+    "hemomancy:giant_tube_worm_colony": {
+      "name": "Giant Tube Worm Colony",
+      "x": 1296,
+      "y": 336
+    },
+    "hemomancy:gilded_venous_stone": {
+      "name": "Gilded Venous Stone",
+      "x": 1344,
+      "y": 336
+    },
+    "hemomancy:glowroot": {
+      "name": "Glowroot",
+      "x": 1392,
+      "y": 336
+    },
+    "hemomancy:gore_wound_harpoon": {
+      "name": "Gore-Wound Harpoon",
+      "x": 1440,
+      "y": 336
+    },
+    "hemomancy:gorebound_yoke": {
+      "name": "Gorebound Yoke",
+      "x": 1488,
+      "y": 336
+    },
+    "hemomancy:gourd": {
+      "name": "Gourd",
+      "x": 0,
+      "y": 384
+    },
+    "hemomancy:gourd_seeds": {
+      "name": "Gourd Seeds",
+      "x": 48,
+      "y": 384
+    },
+    "hemomancy:gourd_slice": {
+      "name": "Gourd Slice",
+      "x": 96,
+      "y": 384
+    },
+    "hemomancy:gourd_stew": {
+      "name": "Gourd Stew",
+      "x": 144,
+      "y": 384
+    },
+    "hemomancy:gourdvine_tap": {
+      "name": "Gourdvine Tap",
+      "x": 192,
+      "y": 384
+    },
+    "hemomancy:grinning_mask": {
+      "name": "Grinning Mask",
+      "x": 240,
+      "y": 384
+    },
+    "hemomancy:hallowed_residuum_fragment_hemorath": {
+      "name": "Fragment of Hallowed Residuum (Hemorath)",
+      "x": 288,
+      "y": 384
+    },
+    "hemomancy:hallowed_residuum_fragment_putriciel": {
+      "name": "Fragment of Hallowed Residuum (Putriciel)",
+      "x": 336,
+      "y": 384
+    },
+    "hemomancy:hallowed_residuum_fragment_seraphae": {
+      "name": "Fragment of Hallowed Residuum (Seraphae)",
+      "x": 384,
+      "y": 384
+    },
+    "hemomancy:hallowed_residuum_fragment_velorum": {
+      "name": "Fragment of Hallowed Residuum (Velorum)",
+      "x": 432,
+      "y": 384
+    },
+    "hemomancy:hallowed_residuum_hemorath": {
+      "name": "Hallowed Residuum of Hemorath",
+      "x": 480,
+      "y": 384
+    },
+    "hemomancy:hallowed_residuum_putriciel": {
+      "name": "Hallowed Residuum of Putriciel",
+      "x": 528,
+      "y": 384
+    },
+    "hemomancy:hallowed_residuum_seraphae": {
+      "name": "Hallowed Residuum of Seraphae",
+      "x": 576,
+      "y": 384
+    },
+    "hemomancy:hallowed_residuum_velorum": {
+      "name": "Hallowed Residuum of Velorum",
+      "x": 624,
+      "y": 384
+    },
+    "hemomancy:hanging_icicle": {
+      "name": "Hanging Icicle",
+      "x": 672,
+      "y": 384
+    },
+    "hemomancy:harbinger_assignment_ledger": {
+      "name": "Harbinger Assignment Ledger",
+      "x": 720,
+      "y": 384
+    },
+    "hemomancy:harbinger_escritoire": {
+      "name": "Harbinger Escritoire",
+      "x": 768,
+      "y": 384
+    },
+    "hemomancy:harbinger_lodestone": {
+      "name": "Harbinger Lodestone",
+      "x": 816,
+      "y": 384
+    },
+    "hemomancy:healed_calcite": {
+      "name": "Healed Calcite",
+      "x": 864,
+      "y": 384
+    },
+    "hemomancy:healed_quartz_bricks": {
+      "name": "Healed Quartz Bricks",
+      "x": 912,
+      "y": 384
+    },
+    "hemomancy:heart_node": {
+      "name": "Heart-Node",
+      "x": 960,
+      "y": 384
+    },
+    "hemomancy:heart_pattern": {
+      "name": "Heart Pattern",
+      "x": 1008,
+      "y": 384
+    },
+    "hemomancy:heartwood_bark": {
+      "name": "Heartwood Bark",
+      "x": 1056,
+      "y": 384
+    },
+    "hemomancy:heartwood_button": {
+      "name": "Heartwood Button",
+      "x": 1104,
+      "y": 384
+    },
+    "hemomancy:heartwood_core": {
+      "name": "Heartwood Core",
+      "x": 1152,
+      "y": 384
+    },
+    "hemomancy:heartwood_door": {
+      "name": "Heartwood Door",
+      "x": 1200,
+      "y": 384
+    },
+    "hemomancy:heartwood_fence": {
+      "name": "Heartwood Fence",
+      "x": 1248,
+      "y": 384
+    },
+    "hemomancy:heartwood_fence_gate": {
+      "name": "Heartwood Fence Gate",
+      "x": 1296,
+      "y": 384
+    },
+    "hemomancy:heartwood_hanging_sign": {
+      "name": "Heartwood Hanging Sign",
+      "x": 1344,
+      "y": 384
+    },
+    "hemomancy:heartwood_log": {
+      "name": "Heartwood Log",
+      "x": 1392,
+      "y": 384
+    },
+    "hemomancy:heartwood_planks": {
+      "name": "Heartwood Planks",
+      "x": 1440,
+      "y": 384
+    },
+    "hemomancy:heartwood_pressure_plate": {
+      "name": "Heartwood Pressure Plate",
+      "x": 1488,
+      "y": 384
+    },
+    "hemomancy:heartwood_sign": {
+      "name": "Heartwood Sign",
+      "x": 0,
+      "y": 432
+    },
+    "hemomancy:heartwood_slab": {
+      "name": "Heartwood Slab",
+      "x": 48,
+      "y": 432
+    },
+    "hemomancy:heartwood_stairs": {
+      "name": "Heartwood Stairs",
+      "x": 96,
+      "y": 432
+    },
+    "hemomancy:heartwood_trapdoor": {
+      "name": "Heartwood Trapdoor",
+      "x": 144,
+      "y": 432
+    },
+    "hemomancy:hematic_algal_crust": {
+      "name": "Hematic Algal Crust",
+      "x": 192,
+      "y": 432
+    },
+    "hemomancy:hematic_armature": {
+      "name": "Hematic Armature",
+      "x": 240,
+      "y": 432
+    },
+    "hemomancy:hematic_cleats": {
+      "name": "Hematic Cleats",
+      "x": 288,
+      "y": 432
+    },
+    "hemomancy:hematic_condenser_kit": {
+      "name": "Hematic Condenser Kit",
+      "x": 336,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_bars": {
+      "name": "Hematic Iron Bars",
+      "x": 384,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_block": {
+      "name": "Hematic Iron Block",
+      "x": 432,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_boots": {
+      "name": "Hematic Iron Boots",
+      "x": 480,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_chain": {
+      "name": "Hematic Iron Chain",
+      "x": 528,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_chestplate": {
+      "name": "Hematic Iron Chestplate",
+      "x": 576,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_door": {
+      "name": "Hematic Iron Door",
+      "x": 624,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_helm": {
+      "name": "Hematic Iron Helm",
+      "x": 672,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_knapper": {
+      "name": "Hematic Iron Knapper",
+      "x": 720,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_leggings": {
+      "name": "Hematic Iron Leggings",
+      "x": 768,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_ore": {
+      "name": "Hematic Iron Ore",
+      "x": 816,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_pillar": {
+      "name": "Hematic Iron Pillar",
+      "x": 864,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_plating": {
+      "name": "Hematic Iron Plating",
+      "x": 912,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_plating_slab": {
+      "name": "Hematic Iron Plating Slab",
+      "x": 960,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_plating_stairs": {
+      "name": "Hematic Iron Plating Stairs",
+      "x": 1008,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_plating_wall": {
+      "name": "Hematic Iron Plating Wall",
+      "x": 1056,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_powder": {
+      "name": "Hematic Iron Powder",
+      "x": 1104,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_scrap": {
+      "name": "Hematic Iron Scrap",
+      "x": 1152,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_sword": {
+      "name": "Hematic Iron Sword",
+      "x": 1200,
+      "y": 432
+    },
+    "hemomancy:hematic_iron_trapdoor": {
+      "name": "Hematic Iron Trapdoor",
+      "x": 1248,
+      "y": 432
+    },
+    "hemomancy:hematic_lantern": {
+      "name": "Hematic Lantern",
+      "x": 1296,
+      "y": 432
+    },
+    "hemomancy:hematic_memory": {
+      "name": "§oHematic Memory§4",
+      "x": 1344,
+      "y": 432
+    },
+    "hemomancy:hematic_microscope": {
+      "name": "Hematic Microscope",
+      "x": 1392,
+      "y": 432
+    },
+    "hemomancy:hematic_stake": {
+      "name": "Hematic Stake",
+      "x": 1440,
+      "y": 432
+    },
+    "hemomancy:hematic_suture_needle": {
+      "name": "Hematic Suture Needle",
+      "x": 1488,
+      "y": 432
+    },
+    "hemomancy:hematic_suture_node": {
+      "name": "Hematic Suture Node",
+      "x": 0,
+      "y": 480
+    },
+    "hemomancy:hemolymphopoda_headpiece": {
+      "name": "Hemolymphopoda Headpiece",
+      "x": 48,
+      "y": 480
+    },
+    "hemomancy:hemolytic_plating": {
+      "name": "Hemolytic Plating",
+      "x": 96,
+      "y": 480
+    },
+    "hemomancy:hemolytic_plating_block": {
+      "name": "Hemolytic Plating Block",
+      "x": 144,
+      "y": 480
+    },
+    "hemomancy:hemolytic_solution": {
+      "name": "Hemolytic Solution",
+      "x": 192,
+      "y": 480
+    },
+    "hemomancy:hemolytic_vial": {
+      "name": "Hemolytic Vial",
+      "x": 240,
+      "y": 480
+    },
+    "hemomancy:hemorath_rib": {
+      "name": "Rib Reliquary",
+      "x": 288,
+      "y": 480
+    },
+    "hemomancy:hemorrhagic_crust": {
+      "name": "Hemorrhagic Crust",
+      "x": 336,
+      "y": 480
+    },
+    "hemomancy:holdfast_root_mass": {
+      "name": "Holdfast Root Mass",
+      "x": 384,
+      "y": 480
+    },
+    "hemomancy:house_marker": {
+      "name": "House Marker of the Giving Light",
+      "x": 432,
+      "y": 480
+    },
+    "hemomancy:humoral_barometer": {
+      "name": "Humoral Barometer",
+      "x": 480,
+      "y": 480
+    },
+    "hemomancy:hydra_crown": {
+      "name": "Hydra Crown",
+      "x": 528,
+      "y": 480
+    },
+    "hemomancy:hyphae": {
+      "name": "Hyphae",
+      "x": 576,
+      "y": 480
+    },
+    "hemomancy:hyphae_block": {
+      "name": "Hyphae Block",
+      "x": 624,
+      "y": 480
+    },
+    "hemomancy:hyphal_substrate": {
+      "name": "Hyphal Substrate",
+      "x": 672,
+      "y": 480
+    },
+    "hemomancy:immature_fungal_scar": {
+      "name": "Immature Fungal Scar Culture",
+      "x": 720,
+      "y": 480
+    },
+    "hemomancy:impaled_procession_record": {
+      "name": "Carousel Maker's Plate",
+      "x": 768,
+      "y": 480
+    },
+    "hemomancy:incandescent_enzyme": {
+      "name": "Incandescent Enzyme",
+      "x": 816,
+      "y": 480
+    },
+    "hemomancy:incandescent_spores": {
+      "name": "Incandescent Spores",
+      "x": 864,
+      "y": 480
+    },
+    "hemomancy:infected_cap": {
+      "name": "Infected Cap",
+      "x": 912,
+      "y": 480
+    },
+    "hemomancy:infected_fungus": {
+      "name": "Infected Fungus",
+      "x": 960,
+      "y": 480
+    },
+    "hemomancy:infected_stem": {
+      "name": "Infected Stem",
+      "x": 1008,
+      "y": 480
+    },
+    "hemomancy:infested_venous_stone": {
+      "name": "Infested Venous Stone",
+      "x": 1056,
+      "y": 480
+    },
+    "hemomancy:infested_wood": {
+      "name": "Infested Wood",
+      "x": 1104,
+      "y": 480
+    },
+    "hemomancy:iron_brazier": {
+      "name": "Iron Brazier",
+      "x": 1152,
+      "y": 480
+    },
+    "hemomancy:kindled_tissue": {
+      "name": "Kindled Tissue",
+      "x": 1200,
+      "y": 480
+    },
+    "hemomancy:lantern_tick_helmet": {
+      "name": "Lantern Tick Helmet",
+      "x": 1248,
+      "y": 480
+    },
+    "hemomancy:laughing_mask": {
+      "name": "Laughing Mask",
+      "x": 1296,
+      "y": 480
+    },
+    "hemomancy:lethean_brew": {
+      "name": "Lethean Brew",
+      "x": 1344,
+      "y": 480
+    },
+    "hemomancy:lethean_chalice": {
+      "name": "Lethean Chalice",
+      "x": 1392,
+      "y": 480
+    },
+    "hemomancy:lethean_dew": {
+      "name": "Lethean Dew",
+      "x": 1440,
+      "y": 480
+    },
+    "hemomancy:lethean_poppy": {
+      "name": "Lethean Poppy",
+      "x": 1488,
+      "y": 480
+    },
+    "hemomancy:lethean_poppy_wreath": {
+      "name": "Lethean Poppy Wreath",
+      "x": 0,
+      "y": 528
+    },
+    "hemomancy:liber_immaculatus": {
+      "name": "Liber Immaculatus",
+      "x": 48,
+      "y": 528
+    },
+    "hemomancy:liber_sanguinum": {
+      "name": "Liber Sanguinium",
+      "x": 96,
+      "y": 528
+    },
+    "hemomancy:lidless_door": {
+      "name": "Lidless Door",
+      "x": 144,
+      "y": 528
+    },
+    "hemomancy:listening_scar": {
+      "name": "Inert Listening Scar Housing",
+      "x": 192,
+      "y": 528
+    },
+    "hemomancy:litany_stone": {
+      "name": "Litany Stone",
+      "x": 240,
+      "y": 528
+    },
+    "hemomancy:living_axe": {
+      "name": "§oLiving Axe§4",
+      "x": 288,
+      "y": 528
+    },
+    "hemomancy:living_baghnakh": {
+      "name": "§oLiving Baghnakh§4",
+      "x": 336,
+      "y": 528
+    },
+    "hemomancy:living_blade": {
+      "name": "§oLiving Blade§4",
+      "x": 384,
+      "y": 528
+    },
+    "hemomancy:living_crossbow": {
+      "name": "§oLiving Crossbow§4",
+      "x": 432,
+      "y": 528
+    },
+    "hemomancy:living_flail": {
+      "name": "§oLiving Flail§4",
+      "x": 480,
+      "y": 528
+    },
+    "hemomancy:living_pickaxe": {
+      "name": "§oLiving Pickaxe§4",
+      "x": 528,
+      "y": 528
+    },
+    "hemomancy:living_sickle": {
+      "name": "§oLiving Sickle§4",
+      "x": 576,
+      "y": 528
+    },
+    "hemomancy:living_spear": {
+      "name": "§oLiving Spear§4",
+      "x": 624,
+      "y": 528
+    },
+    "hemomancy:living_staff": {
+      "name": "§oLiving Staff§4",
+      "x": 672,
+      "y": 528
+    },
+    "hemomancy:living_syringe": {
+      "name": "§oLiving Syringe§4",
+      "x": 720,
+      "y": 528
+    },
+    "hemomancy:living_torch": {
+      "name": "§oLiving Torch§4",
+      "x": 768,
+      "y": 528
+    },
+    "hemomancy:living_weapon_graft": {
+      "name": "Blade Graft",
+      "x": 816,
+      "y": 528
+    },
+    "hemomancy:lodestone_faceplate": {
+      "name": "Lodestone Faceplate",
+      "x": 864,
+      "y": 528
+    },
+    "hemomancy:marimo_heart": {
+      "name": "Marimo's Heart",
+      "x": 912,
+      "y": 528
+    },
+    "hemomancy:marimo_moss": {
+      "name": "Marimo Moss",
+      "x": 960,
+      "y": 528
+    },
+    "hemomancy:marionette_crossbar": {
+      "name": "Marionette Crossbar",
+      "x": 1008,
+      "y": 528
+    },
+    "hemomancy:marrow_crown": {
+      "name": "Crown of Sacred Marrow",
+      "x": 1056,
+      "y": 528
+    },
+    "hemomancy:marrow_plume": {
+      "name": "Marrow Plume",
+      "x": 1104,
+      "y": 528
+    },
+    "hemomancy:marrow_spitter_carriage": {
+      "name": "Marrow Juggler Carriage",
+      "x": 1152,
+      "y": 528
+    },
+    "hemomancy:mason_effigy": {
+      "name": "Mason's Effigy",
+      "x": 1200,
+      "y": 528
+    },
+    "hemomancy:masons_respite_map": {
+      "name": "Masons Respite Map",
+      "x": 1248,
+      "y": 528
+    },
+    "hemomancy:master_cam_kit": {
+      "name": "Master Cam Kit",
+      "x": 1296,
+      "y": 528
+    },
+    "hemomancy:memory_absolute_stillness": {
+      "name": "§oMemory Absolute Stillness§4",
+      "x": 1344,
+      "y": 528
+    },
+    "hemomancy:memory_activation_potential": {
+      "name": "§oMemory Activation Potential§4",
+      "x": 1392,
+      "y": 528
+    },
+    "hemomancy:memory_axonal_transduction": {
+      "name": "§oMemory Axonal Transduction§4",
+      "x": 1440,
+      "y": 528
+    },
+    "hemomancy:memory_black_veil_covenant": {
+      "name": "§oMemory Black Veil Covenant§4",
+      "x": 1488,
+      "y": 528
+    },
+    "hemomancy:memory_blackhearted": {
+      "name": "§oMemory Blackhearted§4",
+      "x": 0,
+      "y": 576
+    },
+    "hemomancy:memory_blood_aneurysm": {
+      "name": "§oMemory Blood Aneurysm§4",
+      "x": 48,
+      "y": 576
+    },
+    "hemomancy:memory_blood_binding": {
+      "name": "§oMemory Blood Binding§4",
+      "x": 96,
+      "y": 576
+    },
+    "hemomancy:memory_blood_cloud": {
+      "name": "§oMemory Blood Cloud§4",
+      "x": 144,
+      "y": 576
+    },
+    "hemomancy:memory_blood_eclipse": {
+      "name": "§oMemory Blood Eclipse§4",
+      "x": 192,
+      "y": 576
+    },
+    "hemomancy:memory_blood_lash": {
+      "name": "§oMemory Blood Lash§4",
+      "x": 240,
+      "y": 576
+    },
+    "hemomancy:memory_blood_lattice": {
+      "name": "§oMemory Blood Lattice§4",
+      "x": 288,
+      "y": 576
+    },
+    "hemomancy:memory_blood_needle": {
+      "name": "§oMemory Blood Needle§4",
+      "x": 336,
+      "y": 576
+    },
+    "hemomancy:memory_blood_needle_fan": {
+      "name": "§oMemory Blood Needle Fan§4",
+      "x": 384,
+      "y": 576
+    },
+    "hemomancy:memory_blood_needle_lance": {
+      "name": "§oMemory Blood Needle Lance§4",
+      "x": 432,
+      "y": 576
+    },
+    "hemomancy:memory_blood_rush": {
+      "name": "§oMemory Blood Rush§4",
+      "x": 480,
+      "y": 576
+    },
+    "hemomancy:memory_blood_shot": {
+      "name": "§oMemory Blood Shot§4",
+      "x": 528,
+      "y": 576
+    },
+    "hemomancy:memory_bloom_of_rot": {
+      "name": "§oMemory Bloom Of Rot§4",
+      "x": 576,
+      "y": 576
+    },
+    "hemomancy:memory_canopy_mortis": {
+      "name": "§oMemory Canopy Mortis§4",
+      "x": 624,
+      "y": 576
+    },
+    "hemomancy:memory_carrion_communion": {
+      "name": "§oMemory Carrion Communion§4",
+      "x": 672,
+      "y": 576
+    },
+    "hemomancy:memory_cauterizing_rebuke": {
+      "name": "§oMemory Cauterizing Rebuke§4",
+      "x": 720,
+      "y": 576
+    },
+    "hemomancy:memory_chain_blood_binding": {
+      "name": "§oMemory Chain Blood Binding§4",
+      "x": 768,
+      "y": 576
+    },
+    "hemomancy:memory_conductive_mark": {
+      "name": "§oMemory Conductive Mark§4",
+      "x": 816,
+      "y": 576
+    },
+    "hemomancy:memory_crimson_coronation": {
+      "name": "§oMemory Crimson Coronation§4",
+      "x": 864,
+      "y": 576
+    },
+    "hemomancy:memory_crimson_flame_conjuration": {
+      "name": "§oMemory Crimson Flame Conjuration§4",
+      "x": 912,
+      "y": 576
+    },
+    "hemomancy:memory_crimson_tithe": {
+      "name": "§oMemory Crimson Tithe§4",
+      "x": 960,
+      "y": 576
+    },
+    "hemomancy:memory_cruor_javelin": {
+      "name": "§oMemory Cruor Javelin§4",
+      "x": 1008,
+      "y": 576
+    },
+    "hemomancy:memory_cryogenic_pulse": {
+      "name": "§oMemory Cryogenic Pulse§4",
+      "x": 1056,
+      "y": 576
+    },
+    "hemomancy:memory_deadly_gaze": {
+      "name": "§oMemory Deadly Gaze§4",
+      "x": 1104,
+      "y": 576
+    },
+    "hemomancy:memory_eclipse_well": {
+      "name": "§oMemory Eclipse Well§4",
+      "x": 1152,
+      "y": 576
+    },
+    "hemomancy:memory_endless_hour": {
+      "name": "§oMemory Endless Hour§4",
+      "x": 1200,
+      "y": 576
+    },
+    "hemomancy:memory_expansive_blood_cloud": {
+      "name": "§oMemory Expansive Blood Cloud§4",
+      "x": 1248,
+      "y": 576
+    },
+    "hemomancy:memory_expulsive_updraft": {
+      "name": "§oMemory Expulsive Updraft§4",
+      "x": 1296,
+      "y": 576
+    },
+    "hemomancy:memory_exsanguinate": {
+      "name": "§oMemory Exsanguinate§4",
+      "x": 1344,
+      "y": 576
+    },
+    "hemomancy:memory_ferric_rampart": {
+      "name": "§oMemory Ferric Rampart§4",
+      "x": 1392,
+      "y": 576
+    },
+    "hemomancy:memory_ferric_spikes": {
+      "name": "§oMemory Ferric Spikes§4",
+      "x": 1440,
+      "y": 576
+    },
+    "hemomancy:memory_fruiting_contagion": {
+      "name": "§oMemory Fruiting Contagion§4",
+      "x": 1488,
+      "y": 576
+    },
+    "hemomancy:memory_funeral_bell": {
+      "name": "§oMemory Funeral Bell§4",
+      "x": 0,
+      "y": 624
+    },
+    "hemomancy:memory_furnace_veins": {
+      "name": "§oMemory Furnace Veins§4",
+      "x": 48,
+      "y": 624
+    },
+    "hemomancy:memory_glacial_grasp": {
+      "name": "§oMemory Glacial Grasp§4",
+      "x": 96,
+      "y": 624
+    },
+    "hemomancy:memory_glacial_rampart": {
+      "name": "§oMemory Glacial Rampart§4",
+      "x": 144,
+      "y": 624
+    },
+    "hemomancy:memory_gloam_laceration": {
+      "name": "§oMemory Gloam Laceration§4",
+      "x": 192,
+      "y": 624
+    },
+    "hemomancy:memory_grave_debt": {
+      "name": "§oMemory Grave Debt§4",
+      "x": 240,
+      "y": 624
+    },
+    "hemomancy:memory_guided_blood_shot": {
+      "name": "§oMemory Guided Blood Shot§4",
+      "x": 288,
+      "y": 624
+    },
+    "hemomancy:memory_hematic_beacon": {
+      "name": "§oMemory Hematic Beacon§4",
+      "x": 336,
+      "y": 624
+    },
+    "hemomancy:memory_hematic_flare": {
+      "name": "§oMemory Hematic Flare§4",
+      "x": 384,
+      "y": 624
+    },
+    "hemomancy:memory_hematic_hewing": {
+      "name": "§oMemory Hematic Hewing§4",
+      "x": 432,
+      "y": 624
+    },
+    "hemomancy:memory_hematic_impressment": {
+      "name": "§oMemory Hematic Impressment§4",
+      "x": 480,
+      "y": 624
+    },
+    "hemomancy:memory_hematic_mortar": {
+      "name": "§oMemory Hematic Mortar§4",
+      "x": 528,
+      "y": 624
+    },
+    "hemomancy:memory_hematic_rebuke": {
+      "name": "§oMemory Hematic Rebuke§4",
+      "x": 576,
+      "y": 624
+    },
+    "hemomancy:memory_hematic_riposte": {
+      "name": "§oMemory Hematic Riposte§4",
+      "x": 624,
+      "y": 624
+    },
+    "hemomancy:memory_hemolymphal_pulse": {
+      "name": "§oMemory Hemolymphal Pulse§4",
+      "x": 672,
+      "y": 624
+    },
+    "hemomancy:memory_hemorrhage": {
+      "name": "§oMemory Hemorrhage§4",
+      "x": 720,
+      "y": 624
+    },
+    "hemomancy:memory_insatiable_hunger": {
+      "name": "§oMemory Insatiable Hunger§4",
+      "x": 768,
+      "y": 624
+    },
+    "hemomancy:memory_iron_choir": {
+      "name": "§oMemory Iron Choir§4",
+      "x": 816,
+      "y": 624
+    },
+    "hemomancy:memory_iron_retort": {
+      "name": "§oMemory Iron Retort§4",
+      "x": 864,
+      "y": 624
+    },
+    "hemomancy:memory_ironhearted": {
+      "name": "§oMemory Ironhearted§4",
+      "x": 912,
+      "y": 624
+    },
+    "hemomancy:memory_lignum_mortis": {
+      "name": "§oMemory Lignum Mortis§4",
+      "x": 960,
+      "y": 624
+    },
+    "hemomancy:memory_lingering_blood_binding": {
+      "name": "§oMemory Lingering Blood Binding§4",
+      "x": 1008,
+      "y": 624
+    },
+    "hemomancy:memory_living_circuit": {
+      "name": "§oMemory Living Circuit§4",
+      "x": 1056,
+      "y": 624
+    },
+    "hemomancy:memory_living_land": {
+      "name": "§oMemory Living Land§4",
+      "x": 1104,
+      "y": 624
+    },
+    "hemomancy:memory_lode_draw": {
+      "name": "§oMemory Lode Draw§4",
+      "x": 1152,
+      "y": 624
+    },
+    "hemomancy:memory_lodestone_collapse": {
+      "name": "§oMemory Lodestone Collapse§4",
+      "x": 1200,
+      "y": 624
+    },
+    "hemomancy:memory_lumen_suture": {
+      "name": "§oMemory Lumen Suture§4",
+      "x": 1248,
+      "y": 624
+    },
+    "hemomancy:memory_of_vesper": {
+      "name": "Memory of Vesper",
+      "x": 1296,
+      "y": 624
+    },
+    "hemomancy:memory_osseous_bloom": {
+      "name": "§oMemory Osseous Bloom§4",
+      "x": 1344,
+      "y": 624
+    },
+    "hemomancy:memory_penumbral_drift": {
+      "name": "§oMemory Penumbral Drift§4",
+      "x": 1392,
+      "y": 624
+    },
+    "hemomancy:memory_phoenix_debt": {
+      "name": "§oMemory Phoenix Debt§4",
+      "x": 1440,
+      "y": 624
+    },
+    "hemomancy:memory_prismatic_reproof": {
+      "name": "§oMemory Prismatic Reproof§4",
+      "x": 1488,
+      "y": 624
+    },
+    "hemomancy:memory_pursuing_blood_cloud": {
+      "name": "§oMemory Pursuing Blood Cloud§4",
+      "x": 0,
+      "y": 672
+    },
+    "hemomancy:memory_pyretic_forge": {
+      "name": "§oMemory Pyretic Forge§4",
+      "x": 48,
+      "y": 672
+    },
+    "hemomancy:memory_radiant_wake": {
+      "name": "§oMemory Radiant Wake§4",
+      "x": 96,
+      "y": 672
+    },
+    "hemomancy:memory_rimebound_sentence": {
+      "name": "§oMemory Rimebound Sentence§4",
+      "x": 144,
+      "y": 672
+    },
+    "hemomancy:memory_sanguine_halo": {
+      "name": "§oMemory Sanguine Halo§4",
+      "x": 192,
+      "y": 672
+    },
+    "hemomancy:memory_sanguine_ignition": {
+      "name": "§oMemory Sanguine Ignition§4",
+      "x": 240,
+      "y": 672
+    },
+    "hemomancy:memory_sanguine_magnetism": {
+      "name": "§oMemory Sanguine Magnetism§4",
+      "x": 288,
+      "y": 672
+    },
+    "hemomancy:memory_sanguine_marionette": {
+      "name": "§oMemory Sanguine Marionette§4",
+      "x": 336,
+      "y": 672
+    },
+    "hemomancy:memory_sanguine_mending": {
+      "name": "§oMemory Sanguine Mending§4",
+      "x": 384,
+      "y": 672
+    },
+    "hemomancy:memory_sanguine_tempest": {
+      "name": "§oMemory Sanguine Tempest§4",
+      "x": 432,
+      "y": 672
+    },
+    "hemomancy:memory_sanguine_ward": {
+      "name": "§oMemory Sanguine Ward§4",
+      "x": 480,
+      "y": 672
+    },
+    "hemomancy:memory_scalding_updraft": {
+      "name": "§oMemory Scalding Updraft§4",
+      "x": 528,
+      "y": 672
+    },
+    "hemomancy:memory_searing_lash": {
+      "name": "§oMemory Searing Lash§4",
+      "x": 576,
+      "y": 672
+    },
+    "hemomancy:memory_soaring_updraft": {
+      "name": "§oMemory Soaring Updraft§4",
+      "x": 624,
+      "y": 672
+    },
+    "hemomancy:memory_sovereign_instinct": {
+      "name": "§oMemory Sovereign Instinct§4",
+      "x": 672,
+      "y": 672
+    },
+    "hemomancy:memory_summon_avatar": {
+      "name": "§oMemory Summon Avatar§4",
+      "x": 720,
+      "y": 672
+    },
+    "hemomancy:memory_summon_avatar_armor": {
+      "name": "§oMemory Summon Avatar Armor§4",
+      "x": 768,
+      "y": 672
+    },
+    "hemomancy:memory_summon_avatar_arms": {
+      "name": "§oMemory Summon Avatar Arms§4",
+      "x": 816,
+      "y": 672
+    },
+    "hemomancy:memory_summon_avatar_complete": {
+      "name": "§oMemory Summon Avatar Complete§4",
+      "x": 864,
+      "y": 672
+    },
+    "hemomancy:memory_summon_avatar_legs": {
+      "name": "§oMemory Summon Avatar Legs§4",
+      "x": 912,
+      "y": 672
+    },
+    "hemomancy:memory_suspended_updraft": {
+      "name": "§oMemory Suspended Updraft§4",
+      "x": 960,
+      "y": 672
+    },
+    "hemomancy:memory_synaptic_jolt": {
+      "name": "§oMemory Synaptic Jolt§4",
+      "x": 1008,
+      "y": 672
+    },
+    "hemomancy:memory_synaptic_storm": {
+      "name": "§oMemory Synaptic Storm§4",
+      "x": 1056,
+      "y": 672
+    },
+    "hemomancy:memory_tendon_line": {
+      "name": "§oMemory Tendon Line§4",
+      "x": 1104,
+      "y": 672
+    },
+    "hemomancy:memory_thread": {
+      "name": "Memory Thread",
+      "x": 1152,
+      "y": 672
+    },
+    "hemomancy:memory_thread_ripper": {
+      "name": "§oMemory Thread Ripper§4",
+      "x": 1200,
+      "y": 672
+    },
+    "hemomancy:memory_umbral_rend": {
+      "name": "§oMemory Umbral Rend§4",
+      "x": 1248,
+      "y": 672
+    },
+    "hemomancy:memory_umbral_reversal": {
+      "name": "§oMemory Umbral Reversal§4",
+      "x": 1296,
+      "y": 672
+    },
+    "hemomancy:memory_umbral_step": {
+      "name": "§oMemory Umbral Step§4",
+      "x": 1344,
+      "y": 672
+    },
+    "hemomancy:memory_unclosing_eye": {
+      "name": "§oMemory Unclosing Eye§4",
+      "x": 1392,
+      "y": 672
+    },
+    "hemomancy:memory_vascular_dowsing": {
+      "name": "§oMemory Vascular Dowsing§4",
+      "x": 1440,
+      "y": 672
+    },
+    "hemomancy:memory_venous_cling": {
+      "name": "§oMemory Venous Cling§4",
+      "x": 1488,
+      "y": 672
+    },
+    "hemomancy:memory_vital_effusion": {
+      "name": "§oMemory Vital Effusion§4",
+      "x": 0,
+      "y": 720
+    },
+    "hemomancy:memory_vitric_combustion": {
+      "name": "§oMemory Vitric Combustion§4",
+      "x": 48,
+      "y": 720
+    },
+    "hemomancy:memory_void_shroud": {
+      "name": "§oMemory Void Shroud§4",
+      "x": 96,
+      "y": 720
+    },
+    "hemomancy:memory_white_verdict": {
+      "name": "§oMemory White Verdict§4",
+      "x": 144,
+      "y": 720
+    },
+    "hemomancy:memory_worked_lignum": {
+      "name": "§oMemory Worked Lignum§4",
+      "x": 192,
+      "y": 720
+    },
+    "hemomancy:messenger_buoy": {
+      "name": "Messenger Buoy",
+      "x": 240,
+      "y": 720
+    },
+    "hemomancy:mind_spike": {
+      "name": "Mind Spike",
+      "x": 288,
+      "y": 720
+    },
+    "hemomancy:mnemonic_ambergris": {
+      "name": "Mnemonic Ambergris",
+      "x": 336,
+      "y": 720
+    },
+    "hemomancy:mnemonic_ambergris_block": {
+      "name": "Mnemonic Ambergris Block",
+      "x": 384,
+      "y": 720
+    },
+    "hemomancy:mnemonic_blueprint": {
+      "name": "Mnemonic Blueprint",
+      "x": 432,
+      "y": 720
+    },
+    "hemomancy:mnemonic_candle": {
+      "name": "Mnemonic Candle",
+      "x": 480,
+      "y": 720
+    },
+    "hemomancy:mnemonic_folio": {
+      "name": "Mnemonic Folio",
+      "x": 528,
+      "y": 720
+    },
+    "hemomancy:mnemonic_reliquary": {
+      "name": "Mnemonic Reliquary",
+      "x": 576,
+      "y": 720
+    },
+    "hemomancy:mnemonist_cradle": {
+      "name": "Mnemonist Cradle",
+      "x": 624,
+      "y": 720
+    },
+    "hemomancy:monolith_fragment": {
+      "name": "Monolith Fragment",
+      "x": 672,
+      "y": 720
+    },
+    "hemomancy:monolith_imbued_cloth": {
+      "name": "Monolith Imbued Cloth",
+      "x": 720,
+      "y": 720
+    },
+    "hemomancy:monolithic_cornerstone": {
+      "name": "Monolithic Cornerstone",
+      "x": 768,
+      "y": 720
+    },
+    "hemomancy:monolithic_frame_fitting": {
+      "name": "Monolithic Frame Fitting",
+      "x": 816,
+      "y": 720
+    },
+    "hemomancy:morphic_tonic": {
+      "name": "Morphic Tonic",
+      "x": 864,
+      "y": 720
+    },
+    "hemomancy:morphling_cradle": {
+      "name": "Morphling Cradle",
+      "x": 912,
+      "y": 720
+    },
+    "hemomancy:morphling_dead_mans_rope": {
+      "name": "Dead Man's Rope Morphling",
+      "x": 960,
+      "y": 720
+    },
+    "hemomancy:morphling_holdfast": {
+      "name": "Holdfast Morphling",
+      "x": 1008,
+      "y": 720
+    },
+    "hemomancy:morphling_hushbell": {
+      "name": "Hushbell Morphling",
+      "x": 1056,
+      "y": 720
+    },
+    "hemomancy:morphling_incubator": {
+      "name": "Morphling Incubator",
+      "x": 1104,
+      "y": 720
+    },
+    "hemomancy:morphling_ink_cap": {
+      "name": "Ink Cap Morphling",
+      "x": 1152,
+      "y": 720
+    },
+    "hemomancy:morphling_jar": {
+      "name": "Morphling Jar",
+      "x": 1200,
+      "y": 720
+    },
+    "hemomancy:morphling_kinbud": {
+      "name": "Kinbud Morphling",
+      "x": 1248,
+      "y": 720
+    },
+    "hemomancy:morphling_marrowplume": {
+      "name": "Marrowplume Morphling",
+      "x": 1296,
+      "y": 720
+    },
+    "hemomancy:morphling_mermaids_purse": {
+      "name": "Mermaid's Purse Morphling",
+      "x": 1344,
+      "y": 720
+    },
+    "hemomancy:morphling_polyp": {
+      "name": "Morphling Polyp",
+      "x": 1392,
+      "y": 720
+    },
+    "hemomancy:morphling_sunburst": {
+      "name": "Sunburst Morphling",
+      "x": 1440,
+      "y": 720
+    },
+    "hemomancy:mortal_display": {
+      "name": "Mortal Display",
+      "x": 1488,
+      "y": 720
+    },
+    "hemomancy:mourning_mask": {
+      "name": "Mourning Mask",
+      "x": 0,
+      "y": 768
+    },
+    "hemomancy:mycelial_crucible": {
+      "name": "Mycelial Crucible",
+      "x": 48,
+      "y": 768
+    },
+    "hemomancy:mycelial_lantern": {
+      "name": "Mycelial Lantern",
+      "x": 96,
+      "y": 768
+    },
+    "hemomancy:mycelial_synapse": {
+      "name": "Mycelial Synapse",
+      "x": 144,
+      "y": 768
+    },
+    "hemomancy:mycelium_erythrocytic_dirt": {
+      "name": "Pale Mycelial Dirt",
+      "x": 192,
+      "y": 768
+    },
+    "hemomancy:mycophant_tendril": {
+      "name": "Mycophant Tendril",
+      "x": 240,
+      "y": 768
+    },
+    "hemomancy:myelin_sheath": {
+      "name": "Myelin Sheath",
+      "x": 288,
+      "y": 768
+    },
+    "hemomancy:naeglerophaeon_ganglion": {
+      "name": "Naeglerophaeon Ganglion",
+      "x": 336,
+      "y": 768
+    },
+    "hemomancy:nerve_bundle": {
+      "name": "Nerve Bundle",
+      "x": 384,
+      "y": 768
+    },
+    "hemomancy:nerve_fiber": {
+      "name": "Nerve Fiber",
+      "x": 432,
+      "y": 768
+    },
+    "hemomancy:nest_cup": {
+      "name": "Nest Cup",
+      "x": 480,
+      "y": 768
+    },
+    "hemomancy:neural_tissue": {
+      "name": "Neural Tissue",
+      "x": 528,
+      "y": 768
+    },
+    "hemomancy:neurotic_enzyme": {
+      "name": "Neurotic Enzyme",
+      "x": 576,
+      "y": 768
+    },
+    "hemomancy:neurotic_spores": {
+      "name": "Neurotic Spores",
+      "x": 624,
+      "y": 768
+    },
+    "hemomancy:noctifly_agaric": {
+      "name": "Noctifly Agaric",
+      "x": 672,
+      "y": 768
+    },
+    "hemomancy:oculiflora_reticularis": {
+      "name": "Oculiflora Reticularis",
+      "x": 720,
+      "y": 768
+    },
+    "hemomancy:offering_stand": {
+      "name": "Offering Stand",
+      "x": 768,
+      "y": 768
+    },
+    "hemomancy:opened_niche": {
+      "name": "Opened Niche",
+      "x": 816,
+      "y": 768
+    },
+    "hemomancy:orb_of_perspective": {
+      "name": "Orb of Perspective",
+      "x": 864,
+      "y": 768
+    },
+    "hemomancy:organic_prism": {
+      "name": "Organic Prism",
+      "x": 912,
+      "y": 768
+    },
+    "hemomancy:ossuary_clock": {
+      "name": "Ossuary Clock",
+      "x": 960,
+      "y": 768
+    },
+    "hemomancy:packed_ash": {
+      "name": "Packed Ash",
+      "x": 1008,
+      "y": 768
+    },
+    "hemomancy:pale_distillate": {
+      "name": "The Pale Distillate",
+      "x": 1056,
+      "y": 768
+    },
+    "hemomancy:pale_humor_flask": {
+      "name": "Pale Humor Flask",
+      "x": 1104,
+      "y": 768
+    },
+    "hemomancy:pale_silver_bars": {
+      "name": "Pale Silver Bars",
+      "x": 1152,
+      "y": 768
+    },
+    "hemomancy:pale_silver_bell": {
+      "name": "Pale Silver Bell",
+      "x": 1200,
+      "y": 768
+    },
+    "hemomancy:pale_silver_bells": {
+      "name": "Silver Bell Cluster",
+      "x": 1248,
+      "y": 768
+    },
+    "hemomancy:pale_silver_block": {
+      "name": "Pale Silver Block",
+      "x": 1296,
+      "y": 768
+    },
+    "hemomancy:pale_silver_ingot": {
+      "name": "Pale Silver Ingot",
+      "x": 1344,
+      "y": 768
+    },
+    "hemomancy:palimpsest_burin": {
+      "name": "Palimpsest Burin",
+      "x": 1392,
+      "y": 768
+    },
+    "hemomancy:pallid_icon": {
+      "name": "Icon of Our Lady",
+      "x": 1440,
+      "y": 768
+    },
+    "hemomancy:pallid_infusion": {
+      "name": "Pallid Infusion",
+      "x": 1488,
+      "y": 768
+    },
+    "hemomancy:pallid_lantern": {
+      "name": "Pallid Lantern",
+      "x": 0,
+      "y": 816
+    },
+    "hemomancy:pallid_retort": {
+      "name": "Pallid Retort",
+      "x": 48,
+      "y": 816
+    },
+    "hemomancy:pallid_silver_chain": {
+      "name": "Pallid Silver Chain",
+      "x": 96,
+      "y": 816
+    },
+    "hemomancy:petrified_follower": {
+      "name": "Petrified Follower",
+      "x": 144,
+      "y": 816
+    },
+    "hemomancy:phantasmal_blood_lust_boots": {
+      "name": "Phantasmal Bloodlust Boots",
+      "x": 192,
+      "y": 816
+    },
+    "hemomancy:phantasmal_blood_lust_chest": {
+      "name": "Phantasmal Bloodlust Chest",
+      "x": 240,
+      "y": 816
+    },
+    "hemomancy:phantasmal_blood_lust_helm": {
+      "name": "Phantasmal Bloodlust Helmet",
+      "x": 288,
+      "y": 816
+    },
+    "hemomancy:phantasmal_blood_lust_legs": {
+      "name": "Phantasmal Bloodlust Leggings",
+      "x": 336,
+      "y": 816
+    },
+    "hemomancy:phlebotomists_cabinet": {
+      "name": "Phlebotomist's Cabinet",
+      "x": 384,
+      "y": 816
+    },
+    "hemomancy:phlebotomists_field_case": {
+      "name": "Phlebotomist's Field Case",
+      "x": 432,
+      "y": 816
+    },
+    "hemomancy:planting_basin": {
+      "name": "Planting Basin",
+      "x": 480,
+      "y": 816
+    },
+    "hemomancy:pointed_blood_scorched_scab": {
+      "name": "Pointed Blood-Scorched Scab",
+      "x": 528,
+      "y": 816
+    },
+    "hemomancy:polished_venous_stone": {
+      "name": "Polished Venous Stone",
+      "x": 576,
+      "y": 816
+    },
+    "hemomancy:polished_venous_stone_brick_slab": {
+      "name": "Polished Venous Stone Brick Slab",
+      "x": 624,
+      "y": 816
+    },
+    "hemomancy:polished_venous_stone_brick_stairs": {
+      "name": "Polished Venous Stone Brick Stairs",
+      "x": 672,
+      "y": 816
+    },
+    "hemomancy:polished_venous_stone_brick_wall": {
+      "name": "Polished Venous Stone Brick Wall",
+      "x": 720,
+      "y": 816
+    },
+    "hemomancy:polished_venous_stone_bricks": {
+      "name": "Polished Venous Stone Bricks",
+      "x": 768,
+      "y": 816
+    },
+    "hemomancy:polished_venous_stone_slab": {
+      "name": "Polished Venous Stone Slab",
+      "x": 816,
+      "y": 816
+    },
+    "hemomancy:polished_venous_stone_stairs": {
+      "name": "Polished Venous Stone Stairs",
+      "x": 864,
+      "y": 816
+    },
+    "hemomancy:polished_venous_stone_wall": {
+      "name": "Polished Venous Stone Wall",
+      "x": 912,
+      "y": 816
+    },
+    "hemomancy:precision_governor_kit": {
+      "name": "Precision Governor Kit",
+      "x": 960,
+      "y": 816
+    },
+    "hemomancy:prismatic_boots": {
+      "name": "Prismatic Boots",
+      "x": 1008,
+      "y": 816
+    },
+    "hemomancy:prismatic_chestplate": {
+      "name": "Prismatic Chestplate",
+      "x": 1056,
+      "y": 816
+    },
+    "hemomancy:prismatic_fitting": {
+      "name": "Prismatic Fitting",
+      "x": 1104,
+      "y": 816
+    },
+    "hemomancy:prismatic_helm": {
+      "name": "Prismatic Helm",
+      "x": 1152,
+      "y": 816
+    },
+    "hemomancy:prismatic_leggings": {
+      "name": "Prismatic Leggings",
+      "x": 1200,
+      "y": 816
+    },
+    "hemomancy:puffball_fungus": {
+      "name": "Puffball Fungus",
+      "x": 1248,
+      "y": 816
+    },
+    "hemomancy:pulse_pylon": {
+      "name": "Pulse Pylon",
+      "x": 1296,
+      "y": 816
+    },
+    "hemomancy:puppeteers_spindle": {
+      "name": "Puppeteer's Spindle",
+      "x": 1344,
+      "y": 816
+    },
+    "hemomancy:puppeteers_wool": {
+      "name": "Puppeteer's Wool",
+      "x": 1392,
+      "y": 816
+    },
+    "hemomancy:putrivora_resolvens": {
+      "name": "Putrivora Resolvens",
+      "x": 1440,
+      "y": 816
+    },
+    "hemomancy:qliphoth_pome": {
+      "name": "Qliphoth Pome",
+      "x": 1488,
+      "y": 816
+    },
+    "hemomancy:qliphoth_seed": {
+      "name": "Qliphoth Seed",
+      "x": 0,
+      "y": 864
+    },
+    "hemomancy:queens_physogastrism": {
+      "name": "Queen's Physogastrism",
+      "x": 48,
+      "y": 864
+    },
+    "hemomancy:radiant_healed_quartz": {
+      "name": "Radiant Healed Quartz",
+      "x": 96,
+      "y": 864
+    },
+    "hemomancy:rafflesia": {
+      "name": "Rafflesia",
+      "x": 144,
+      "y": 864
+    },
+    "hemomancy:ravenous_heartwood": {
+      "name": "Ravenous Heartwood",
+      "x": 192,
+      "y": 864
+    },
+    "hemomancy:raw_pelagic_herring": {
+      "name": "Raw Pelagic Herring",
+      "x": 240,
+      "y": 864
+    },
+    "hemomancy:raw_venison": {
+      "name": "Raw Venison",
+      "x": 288,
+      "y": 864
+    },
+    "hemomancy:recollection_hemorath": {
+      "name": "Recollection of Hemorath",
+      "x": 336,
+      "y": 864
+    },
+    "hemomancy:recollection_putriciel": {
+      "name": "Recollection of Putriciel",
+      "x": 384,
+      "y": 864
+    },
+    "hemomancy:recollection_seraphae": {
+      "name": "Recollection of Seraphae",
+      "x": 432,
+      "y": 864
+    },
+    "hemomancy:recollection_velorum": {
+      "name": "Recollection of Velorum",
+      "x": 480,
+      "y": 864
+    },
+    "hemomancy:recycled_enzyme": {
+      "name": "Recycled Enzyme",
+      "x": 528,
+      "y": 864
+    },
+    "hemomancy:relay_chart": {
+      "name": "Relay Chart",
+      "x": 576,
+      "y": 864
+    },
+    "hemomancy:relay_marker": {
+      "name": "Relay Marker",
+      "x": 624,
+      "y": 864
+    },
+    "hemomancy:reliquary_sconce": {
+      "name": "Reliquary Sconce",
+      "x": 672,
+      "y": 864
+    },
+    "hemomancy:resonant_forge": {
+      "name": "Resonant Forge",
+      "x": 720,
+      "y": 864
+    },
+    "hemomancy:rhizovitta_communis": {
+      "name": "Rhizovitta Communis",
+      "x": 768,
+      "y": 864
+    },
+    "hemomancy:rime_lantern": {
+      "name": "Rime Lantern",
+      "x": 816,
+      "y": 864
+    },
+    "hemomancy:rimed_deepslate_brick_slab": {
+      "name": "Rimed Deepslate Brick Slab",
+      "x": 864,
+      "y": 864
+    },
+    "hemomancy:rimed_deepslate_brick_stairs": {
+      "name": "Rimed Deepslate Brick Stairs",
+      "x": 912,
+      "y": 864
+    },
+    "hemomancy:rimed_deepslate_brick_wall": {
+      "name": "Rimed Deepslate Brick Wall",
+      "x": 960,
+      "y": 864
+    },
+    "hemomancy:rimed_deepslate_bricks": {
+      "name": "Rimed Deepslate Bricks",
+      "x": 1008,
+      "y": 864
+    },
+    "hemomancy:ringmaster_topper": {
+      "name": "Ringmaster's Topper",
+      "x": 1056,
+      "y": 864
+    },
+    "hemomancy:rite_fragment_inscription": {
+      "name": "Rite Fragment Inscription",
+      "x": 1104,
+      "y": 864
+    },
+    "hemomancy:rope_pod": {
+      "name": "Rope Pod",
+      "x": 1152,
+      "y": 864
+    },
+    "hemomancy:rot_pyre": {
+      "name": "Rot Pyre",
+      "x": 1200,
+      "y": 864
+    },
+    "hemomancy:rubricators_quill": {
+      "name": "Rubricator's Quill",
+      "x": 1248,
+      "y": 864
+    },
+    "hemomancy:ruinous_enzyme": {
+      "name": "Ruinous Enzyme",
+      "x": 1296,
+      "y": 864
+    },
+    "hemomancy:ruinous_spores": {
+      "name": "Ruinous Spores",
+      "x": 1344,
+      "y": 864
+    },
+    "hemomancy:runic_motif_paper": {
+      "name": "Runic Motif Paper",
+      "x": 1392,
+      "y": 864
+    },
+    "hemomancy:saint_relic_hemorath": {
+      "name": "Hemorath's Rib",
+      "x": 1440,
+      "y": 864
+    },
+    "hemomancy:saint_relic_putriciel": {
+      "name": "Putriciel's Blighted Heart",
+      "x": 1488,
+      "y": 864
+    },
+    "hemomancy:saint_relic_seraphae": {
+      "name": "Seraphae's Bound Eye",
+      "x": 0,
+      "y": 912
+    },
+    "hemomancy:saint_relic_velorum": {
+      "name": "Velorum's Frozen Tongue",
+      "x": 48,
+      "y": 912
+    },
+    "hemomancy:saint_sarcophagus": {
+      "name": "Saint Sarcophagus",
+      "x": 96,
+      "y": 912
+    },
+    "hemomancy:salt_stained_timber": {
+      "name": "Salt-Stained Timber",
+      "x": 144,
+      "y": 912
+    },
+    "hemomancy:salt_stained_voyager_log": {
+      "name": "Salt-Stained Voyager Log",
+      "x": 192,
+      "y": 912
+    },
+    "hemomancy:sanguine_athanor_kit": {
+      "name": "Sanguine Athanor Kit",
+      "x": 240,
+      "y": 912
+    },
+    "hemomancy:sanguine_blob": {
+      "name": "Sanguine Blob",
+      "x": 288,
+      "y": 912
+    },
+    "hemomancy:sanguine_condenser": {
+      "name": "Sanguine Condenser",
+      "x": 336,
+      "y": 912
+    },
+    "hemomancy:sanguine_conduit": {
+      "name": "Sanguine Conduit",
+      "x": 384,
+      "y": 912
+    },
+    "hemomancy:sanguine_formation": {
+      "name": "Sanguine Formation",
+      "x": 432,
+      "y": 912
+    },
+    "hemomancy:sanguine_glass": {
+      "name": "Sanguine Glass",
+      "x": 480,
+      "y": 912
+    },
+    "hemomancy:sanguine_hound_bridle": {
+      "name": "Sanguine Hound Bridle",
+      "x": 528,
+      "y": 912
+    },
+    "hemomancy:sanguine_monolith": {
+      "name": "Sanguine Monolith",
+      "x": 576,
+      "y": 912
+    },
+    "hemomancy:sanguine_omen": {
+      "name": "Sanguine Omen",
+      "x": 624,
+      "y": 912
+    },
+    "hemomancy:sanguine_pane": {
+      "name": "Sanguine Pane",
+      "x": 672,
+      "y": 912
+    },
+    "hemomancy:sanguine_quintessence": {
+      "name": "Sanguine Quintessence",
+      "x": 720,
+      "y": 912
+    },
+    "hemomancy:sanguine_salve": {
+      "name": "Sanguine Salve",
+      "x": 768,
+      "y": 912
+    },
+    "hemomancy:sanguine_vigil": {
+      "name": "Sanguine Vigil",
+      "x": 816,
+      "y": 912
+    },
+    "hemomancy:sanguis_lancea": {
+      "name": "§oSanguis Lancea§4",
+      "x": 864,
+      "y": 912
+    },
+    "hemomancy:saprovitta_vestigium": {
+      "name": "Saprovitta vestigium",
+      "x": 912,
+      "y": 912
+    },
+    "hemomancy:sarcodes": {
+      "name": "Sarcodes",
+      "x": 960,
+      "y": 912
+    },
+    "hemomancy:scale_grip": {
+      "name": "Scale Grip",
+      "x": 1008,
+      "y": 912
+    },
+    "hemomancy:scar_anvil": {
+      "name": "Scar of the Anvil",
+      "x": 1056,
+      "y": 912
+    },
+    "hemomancy:scar_blank": {
+      "name": "Blank Scar",
+      "x": 1104,
+      "y": 912
+    },
+    "hemomancy:scar_blight": {
+      "name": "Scar of Blight",
+      "x": 1152,
+      "y": 912
+    },
+    "hemomancy:scar_blood_honed": {
+      "name": "Blood-Honed Scar",
+      "x": 1200,
+      "y": 912
+    },
+    "hemomancy:scar_chimera": {
+      "name": "Scar of the Chimera",
+      "x": 1248,
+      "y": 912
+    },
+    "hemomancy:scar_corona": {
+      "name": "Scar of the Corona",
+      "x": 1296,
+      "y": 912
+    },
+    "hemomancy:scar_crucible": {
+      "name": "Scar of the Crucible",
+      "x": 1344,
+      "y": 912
+    },
+    "hemomancy:scar_descendence": {
+      "name": "Scar of Descendence",
+      "x": 1392,
+      "y": 912
+    },
+    "hemomancy:scar_eye": {
+      "name": "Scar of the Eye",
+      "x": 1440,
+      "y": 912
+    },
+    "hemomancy:scar_feral": {
+      "name": "Scar of the Feral",
+      "x": 1488,
+      "y": 912
+    },
+    "hemomancy:scar_flux": {
+      "name": "Scar of Flux",
+      "x": 0,
+      "y": 960
+    },
+    "hemomancy:scar_glacier": {
+      "name": "Scar of the Glacier",
+      "x": 48,
+      "y": 960
+    },
+    "hemomancy:scar_halo": {
+      "name": "Scar of the Halo",
+      "x": 96,
+      "y": 960
+    },
+    "hemomancy:scar_heart": {
+      "name": "Scar of the Heart",
+      "x": 144,
+      "y": 960
+    },
+    "hemomancy:scar_marrow": {
+      "name": "Scar of Marrow",
+      "x": 192,
+      "y": 960
+    },
+    "hemomancy:scar_moon": {
+      "name": "Scar of the Moon",
+      "x": 240,
+      "y": 960
+    },
+    "hemomancy:scar_oblivion": {
+      "name": "Scar of Oblivion",
+      "x": 288,
+      "y": 960
+    },
+    "hemomancy:scar_pattern": {
+      "name": "Scar Pattern",
+      "x": 336,
+      "y": 960
+    },
+    "hemomancy:scar_phoenix": {
+      "name": "Scar of the Phoenix",
+      "x": 384,
+      "y": 960
+    },
+    "hemomancy:scar_pyre": {
+      "name": "Scar of the Pyre",
+      "x": 432,
+      "y": 960
+    },
+    "hemomancy:scar_rime": {
+      "name": "Scar of Rime",
+      "x": 480,
+      "y": 960
+    },
+    "hemomancy:scar_shade": {
+      "name": "Scar of the Shade",
+      "x": 528,
+      "y": 960
+    },
+    "hemomancy:scar_sol": {
+      "name": "Scar of Sol",
+      "x": 576,
+      "y": 960
+    },
+    "hemomancy:scar_station": {
+      "name": "Cerebral Scarring Station",
+      "x": 624,
+      "y": 960
+    },
+    "hemomancy:scar_thorn": {
+      "name": "Scar of the Thorn",
+      "x": 672,
+      "y": 960
+    },
+    "hemomancy:scar_transcendence": {
+      "name": "Scar of Transcendence",
+      "x": 720,
+      "y": 960
+    },
+    "hemomancy:scar_veil": {
+      "name": "Scar of the Veil",
+      "x": 768,
+      "y": 960
+    },
+    "hemomancy:scar_wither": {
+      "name": "Scar of Withering",
+      "x": 816,
+      "y": 960
+    },
+    "hemomancy:scarlet_gorget": {
+      "name": "Scarlet Gorget",
+      "x": 864,
+      "y": 960
+    },
+    "hemomancy:scarlet_vanity": {
+      "name": "Scarlet Vanity",
+      "x": 912,
+      "y": 960
+    },
+    "hemomancy:sclerite_block": {
+      "name": "Sclerite Cladding",
+      "x": 960,
+      "y": 960
+    },
+    "hemomancy:sclerotic_oleum": {
+      "name": "Sclerotic Oleum",
+      "x": 1008,
+      "y": 960
+    },
+    "hemomancy:sclerotium_shell": {
+      "name": "Sclerotium Shell",
+      "x": 1056,
+      "y": 960
+    },
+    "hemomancy:scout_field_notes": {
+      "name": "Scout's Field Notes",
+      "x": 1104,
+      "y": 960
+    },
+    "hemomancy:scrying_dish": {
+      "name": "Scrying Dish",
+      "x": 1152,
+      "y": 960
+    },
+    "hemomancy:scrying_podium": {
+      "name": "Scrying Podium",
+      "x": 1200,
+      "y": 960
+    },
+    "hemomancy:sealed_niche": {
+      "name": "Sealed Niche",
+      "x": 1248,
+      "y": 960
+    },
+    "hemomancy:self_reflection_mirror": {
+      "name": "Self Reflection Mirror",
+      "x": 1296,
+      "y": 960
+    },
+    "hemomancy:semi_sentient_construct": {
+      "name": "Semi Sentient Construct",
+      "x": 1344,
+      "y": 960
+    },
+    "hemomancy:serpent_scale": {
+      "name": "Serpent Scale",
+      "x": 1392,
+      "y": 960
+    },
+    "hemomancy:sheolic_blood_lust_boots": {
+      "name": "Sheolic Bloodlust Boots",
+      "x": 1440,
+      "y": 960
+    },
+    "hemomancy:sheolic_blood_lust_chest": {
+      "name": "Sheolic Bloodlust Chest",
+      "x": 1488,
+      "y": 960
+    },
+    "hemomancy:sheolic_blood_lust_helm": {
+      "name": "Sheolic Bloodlust Helmet",
+      "x": 0,
+      "y": 1008
+    },
+    "hemomancy:sheolic_blood_lust_legs": {
+      "name": "Sheolic Bloodlust Leggings",
+      "x": 48,
+      "y": 1008
+    },
+    "hemomancy:silent_archon_boots": {
+      "name": "Silent Archon Treads",
+      "x": 96,
+      "y": 1008
+    },
+    "hemomancy:silent_archon_chestplate": {
+      "name": "Silent Archon Hauberk",
+      "x": 144,
+      "y": 1008
+    },
+    "hemomancy:silent_archon_helm": {
+      "name": "Silent Archon Veil",
+      "x": 192,
+      "y": 1008
+    },
+    "hemomancy:silent_archon_leggings": {
+      "name": "Silent Archon Chausses",
+      "x": 240,
+      "y": 1008
+    },
+    "hemomancy:silthmere_glaive": {
+      "name": "Silthmere Glaive",
+      "x": 288,
+      "y": 1008
+    },
+    "hemomancy:silver_chalice": {
+      "name": "Silver Chalice",
+      "x": 336,
+      "y": 1008
+    },
+    "hemomancy:sinew_cord": {
+      "name": "Sinew Cord",
+      "x": 384,
+      "y": 1008
+    },
+    "hemomancy:smouldering_ash_trail": {
+      "name": "Smouldering Ash",
+      "x": 432,
+      "y": 1008
+    },
+    "hemomancy:sodden_mud_bricks": {
+      "name": "Sodden Mud Bricks",
+      "x": 480,
+      "y": 1008
+    },
+    "hemomancy:somatic_loom": {
+      "name": "Somatic Loom",
+      "x": 528,
+      "y": 1008
+    },
+    "hemomancy:somnolent_seat": {
+      "name": "Somnolent Seat",
+      "x": 576,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_abhorrent_thought": {
+      "name": "Spawn Egg Abhorrent Thought",
+      "x": 624,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_antibody": {
+      "name": "Antibody Spawn Egg",
+      "x": 672,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_barbed_urchin": {
+      "name": "Spawn Egg Barbed Urchin",
+      "x": 720,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_blood_drunk_puppeteer": {
+      "name": "Spawn Egg Blood Drunk Puppeteer",
+      "x": 768,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_blood_lantern_jelly": {
+      "name": "Blood Lantern Jelly Spawn Egg",
+      "x": 816,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_bloody_belly_comb_jelly": {
+      "name": "Bloody-Belly Comb Jelly Spawn Egg",
+      "x": 864,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_bog_revenant": {
+      "name": "Bog Revenant Spawn Egg",
+      "x": 912,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_brined_votary": {
+      "name": "Brined Votary Spawn Egg",
+      "x": 960,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_chalybeate_snail": {
+      "name": "Chalybeate Snail Spawn Egg",
+      "x": 1008,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_chitinite": {
+      "name": "Spawn Egg Chitinite",
+      "x": 1056,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_chiton": {
+      "name": "Chiton Spawn Egg",
+      "x": 1104,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_choir_keeper": {
+      "name": "Choir Keeper Spawn Egg",
+      "x": 1152,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_chthonian": {
+      "name": "Spawn Egg Chthonian",
+      "x": 1200,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_chthonian_queen": {
+      "name": "Spawn Egg Chthonian Queen",
+      "x": 1248,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_circus_acrobat": {
+      "name": "Acrobat Spawn Egg",
+      "x": 1296,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_circus_beast_tamer": {
+      "name": "Beast Tamer Spawn Egg",
+      "x": 1344,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_circus_fire_eater": {
+      "name": "Fire Breather Spawn Egg",
+      "x": 1392,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_circus_knife_thrower": {
+      "name": "Dagger Thrower Spawn Egg",
+      "x": 1440,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_circus_ringmaster": {
+      "name": "Ringmaster Spawn Egg",
+      "x": 1488,
+      "y": 1008
+    },
+    "hemomancy:spawn_egg_circus_stilt_walker": {
+      "name": "Stilt Walker Spawn Egg",
+      "x": 0,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_circus_strongman": {
+      "name": "Strongman Spawn Egg",
+      "x": 48,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_circus_threadkeeper": {
+      "name": "Threadkeeper Spawn Egg",
+      "x": 96,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_circus_understudy": {
+      "name": "Retired Understudy Spawn Egg",
+      "x": 144,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_arbor": {
+      "name": "Arbor Spawn Egg",
+      "x": 192,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_bellwarden": {
+      "name": "Bellwarden Spawn Egg",
+      "x": 240,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_braced_elder": {
+      "name": "Braced Elder Spawn Egg",
+      "x": 288,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_edge_swimmer": {
+      "name": "Edge-swimmer Spawn Egg",
+      "x": 336,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_gardener": {
+      "name": "Gardener Spawn Egg",
+      "x": 384,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_head_tender": {
+      "name": "Head-tender Spawn Egg",
+      "x": 432,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_host": {
+      "name": "Host Spawn Egg",
+      "x": 480,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_kindled_elder": {
+      "name": "Kindled Elder Spawn Egg",
+      "x": 528,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_lamp_colony": {
+      "name": "Lamp-colony Spawn Egg",
+      "x": 576,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_lightkeeper": {
+      "name": "Lightkeeper Spawn Egg",
+      "x": 624,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_linesman": {
+      "name": "Linesman Spawn Egg",
+      "x": 672,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_marrow_tender": {
+      "name": "Marrow-tender Spawn Egg",
+      "x": 720,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_nursery_tender": {
+      "name": "Nursery Tender Spawn Egg",
+      "x": 768,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_offering_bearer": {
+      "name": "Offering-bearer Spawn Egg",
+      "x": 816,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_rooted_elder": {
+      "name": "Rooted Elder Spawn Egg",
+      "x": 864,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_sleeper": {
+      "name": "Sleeper Spawn Egg",
+      "x": 912,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_tidewarden": {
+      "name": "Tidewarden Spawn Egg",
+      "x": 960,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_court_veiled_resident": {
+      "name": "Veiled Resident Spawn Egg",
+      "x": 1008,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_crimson_doe": {
+      "name": "Crimson Doe Spawn Egg",
+      "x": 1056,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_desiccant": {
+      "name": "Desiccant Spawn Egg",
+      "x": 1104,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_enthralled_doll": {
+      "name": "Spawn Egg Enthralled Doll",
+      "x": 1152,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_erythromycelium_eruptus": {
+      "name": "Spawn Egg Eruptor",
+      "x": 1200,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_excoriated": {
+      "name": "Excoriated Spawn Egg",
+      "x": 1248,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_facsimile_bat": {
+      "name": "Bat Facsimile Spawn Egg",
+      "x": 1296,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_facsimile_blaze": {
+      "name": "Blaze Facsimile Spawn Egg",
+      "x": 1344,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_facsimile_donkey": {
+      "name": "Donkey Facsimile Spawn Egg",
+      "x": 1392,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_facsimile_enderman": {
+      "name": "Enderman Facsimile Spawn Egg",
+      "x": 1440,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_facsimile_golem": {
+      "name": "Golem Facsimile Spawn Egg",
+      "x": 1488,
+      "y": 1056
+    },
+    "hemomancy:spawn_egg_facsimile_horse": {
+      "name": "Horse Facsimile Spawn Egg",
+      "x": 0,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_facsimile_spider": {
+      "name": "Spider Facsimile Spawn Egg",
+      "x": 48,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_facsimile_wolf": {
+      "name": "Wolf Facsimile Spawn Egg",
+      "x": 96,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_fargone": {
+      "name": "Spawn Egg Fargone",
+      "x": 144,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_fervent_chitinite": {
+      "name": "Spawn Egg Fervent Chitinite",
+      "x": 192,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_fungling": {
+      "name": "Spawn Egg Fungling",
+      "x": 240,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_gorebound_hulk": {
+      "name": "Spawn Egg Gorebound Hulk",
+      "x": 288,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_hagfish": {
+      "name": "Hagfish Spawn Egg",
+      "x": 336,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_harbinger_alchemist": {
+      "name": "Harbinger Alchemist Spawn Egg",
+      "x": 384,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_harbinger_artificer": {
+      "name": "Hematic Artificer Spawn Egg",
+      "x": 432,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_harbinger_cicatrix_anchorite": {
+      "name": "Cicatrix Anchorite Spawn Egg",
+      "x": 480,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_harbinger_hermit": {
+      "name": "Harbinger Hermit Spawn Egg",
+      "x": 528,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_harbinger_mnemonist": {
+      "name": "Harbinger Mnemonist Spawn Egg",
+      "x": 576,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_harbinger_vicar": {
+      "name": "Harbinger Vicar Spawn Egg",
+      "x": 624,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_harbinger_votary_wayfarer": {
+      "name": "Harbinger Votary Wayfarer Spawn Egg",
+      "x": 672,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_harbinger_voyager": {
+      "name": "Harbinger Voyager Spawn Egg",
+      "x": 720,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_hematic_burrower": {
+      "name": "Hematic Burrower Spawn Egg",
+      "x": 768,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_hemojelly": {
+      "name": "Hemojelly Spawn Egg",
+      "x": 816,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_hemolymphopoda": {
+      "name": "Hemolymphopoda Spawn Egg",
+      "x": 864,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_hunter_fungus": {
+      "name": "Hunter Fungus Spawn Egg",
+      "x": 912,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_ice_fish": {
+      "name": "Ice Fish Spawn Egg",
+      "x": 960,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_lantern_tick": {
+      "name": "Lantern Tick Spawn Egg",
+      "x": 1008,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_leech": {
+      "name": "Spawn Egg Leech",
+      "x": 1056,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_luminal_cicada": {
+      "name": "Luminal Cicada Spawn Egg",
+      "x": 1104,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_lump_of_thought": {
+      "name": "Spawn Egg Lump Of Thought",
+      "x": 1152,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_marrow_spitter": {
+      "name": "Spawn Egg Marrow Juggler",
+      "x": 1200,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_mnemonic_whale": {
+      "name": "Mnemonic Whale Spawn Egg",
+      "x": 1248,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_mnemonist_puppet": {
+      "name": "Spawn Egg Mnemonist Puppet",
+      "x": 1296,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_morphling_polyp": {
+      "name": "Spawn Egg Morphling Polyp",
+      "x": 1344,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_mortarbound": {
+      "name": "Mortarbound Spawn Egg",
+      "x": 1392,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_myelin_borer": {
+      "name": "Myelin Borer Spawn Egg",
+      "x": 1440,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_naeglerophaeon": {
+      "name": "Naeglerophaeon Spawn Egg",
+      "x": 1488,
+      "y": 1104
+    },
+    "hemomancy:spawn_egg_osteophage": {
+      "name": "Osteophage Vulture Spawn Egg",
+      "x": 0,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_peacock_spider": {
+      "name": "Peacock Jumping Spider Spawn Egg",
+      "x": 48,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_pelagic_herring": {
+      "name": "Pelagic Herring Spawn Egg",
+      "x": 96,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_phlegethontic_bombardier": {
+      "name": "Phlegethontic Bombardier Spawn Egg",
+      "x": 144,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_phlegethosoma": {
+      "name": "Phlegethosoma Spawn Egg",
+      "x": 192,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_prism_cuttle": {
+      "name": "Prism Cuttle Spawn Egg",
+      "x": 240,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_pyrosome": {
+      "name": "Pyrosome Spawn Egg",
+      "x": 288,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_sanguine_hound": {
+      "name": "Spawn Egg Sanguine Hound",
+      "x": 336,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_sanguine_ram": {
+      "name": "Sanguine Ram Spawn Egg",
+      "x": 384,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_scarlet_mummer": {
+      "name": "Spawn Egg Scarlet Mummer",
+      "x": 432,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_scarlet_serpent": {
+      "name": "Scarlet Serpent Spawn Egg",
+      "x": 480,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_siphonophore": {
+      "name": "Siphonophore Spawn Egg",
+      "x": 528,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_thirster": {
+      "name": "Spawn Egg Thirster",
+      "x": 576,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_tooth_pecks": {
+      "name": "Spawn Egg Tooth Pecks",
+      "x": 624,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_unstained_acolyte": {
+      "name": "Unstained Acolyte Spawn Egg",
+      "x": 672,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_unstained_guardian": {
+      "name": "Unstained Guardian Spawn Egg",
+      "x": 720,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_unstained_scout": {
+      "name": "Unstained Scout Spawn Egg",
+      "x": 768,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_unstained_zealot": {
+      "name": "Unstained Zealot Spawn Egg",
+      "x": 816,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_vampire_bat": {
+      "name": "Vampire Bat Spawn Egg",
+      "x": 864,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_vampire_squid": {
+      "name": "Vampire Squid Spawn Egg",
+      "x": 912,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_veinwing_vulture": {
+      "name": "Spawn Egg Veinwing Vulture",
+      "x": 960,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_venom_rib_centipede": {
+      "name": "Venom-Rib Centipede Spawn Egg",
+      "x": 1008,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_venous_strider": {
+      "name": "Venous Strider Spawn Egg",
+      "x": 1056,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_verdigris_moth": {
+      "name": "Verdigris Moth Spawn Egg",
+      "x": 1104,
+      "y": 1152
+    },
+    "hemomancy:spawn_egg_will": {
+      "name": "Rogue Will Spawn Egg",
+      "x": 1152,
+      "y": 1152
+    },
+    "hemomancy:specimen_jar": {
+      "name": "Specimen Jar",
+      "x": 1200,
+      "y": 1152
+    },
+    "hemomancy:specimen_vat": {
+      "name": "Specimen Vat",
+      "x": 1248,
+      "y": 1152
+    },
+    "hemomancy:spider_husk_effigy": {
+      "name": "Spider Husk Effigy",
+      "x": 1296,
+      "y": 1152
+    },
+    "hemomancy:spore_sac": {
+      "name": "Spore Sac",
+      "x": 1344,
+      "y": 1152
+    },
+    "hemomancy:spore_shelf": {
+      "name": "Spore Shelf",
+      "x": 1392,
+      "y": 1152
+    },
+    "hemomancy:sporite_crystal": {
+      "name": "Sporite Crystal",
+      "x": 1440,
+      "y": 1152
+    },
+    "hemomancy:sporitic_thurible": {
+      "name": "Sporitic Thurible",
+      "x": 1488,
+      "y": 1152
+    },
+    "hemomancy:stained_church_map": {
+      "name": "Stained Church Map",
+      "x": 0,
+      "y": 1200
+    },
+    "hemomancy:stillwater_condenser": {
+      "name": "Stillwater Condenser",
+      "x": 48,
+      "y": 1200
+    },
+    "hemomancy:stinkhorn_fungus": {
+      "name": "Stinkhorn Fungus",
+      "x": 96,
+      "y": 1200
+    },
+    "hemomancy:stripped_blood_wood_bark": {
+      "name": "Stripped Blood Wood Bark",
+      "x": 144,
+      "y": 1200
+    },
+    "hemomancy:stripped_blood_wood_log": {
+      "name": "Stripped Blood Wood Log",
+      "x": 192,
+      "y": 1200
+    },
+    "hemomancy:stripped_heartwood_bark": {
+      "name": "Stripped Heartwood Bark",
+      "x": 240,
+      "y": 1200
+    },
+    "hemomancy:stripped_heartwood_log": {
+      "name": "Stripped Heartwood Log",
+      "x": 288,
+      "y": 1200
+    },
+    "hemomancy:structure_scanner": {
+      "name": "Structure Scanner",
+      "x": 336,
+      "y": 1200
+    },
+    "hemomancy:structure_spawner": {
+      "name": "Structure Spawner",
+      "x": 384,
+      "y": 1200
+    },
+    "hemomancy:sunburst_bloom": {
+      "name": "Sunburst Bloom",
+      "x": 432,
+      "y": 1200
+    },
+    "hemomancy:sunburst_crust": {
+      "name": "Sunburst Crust",
+      "x": 480,
+      "y": 1200
+    },
+    "hemomancy:sunburst_frond": {
+      "name": "Sunburst Frond",
+      "x": 528,
+      "y": 1200
+    },
+    "hemomancy:sunburst_lamp": {
+      "name": "Sunburst Lamp",
+      "x": 576,
+      "y": 1200
+    },
+    "hemomancy:suspended_blood_crystal": {
+      "name": "Suspended Blood Crystal",
+      "x": 624,
+      "y": 1200
+    },
+    "hemomancy:suspended_cleansed_blood_crystal": {
+      "name": "Suspended Cleansed Blood Crystal",
+      "x": 672,
+      "y": 1200
+    },
+    "hemomancy:suspended_vivianite": {
+      "name": "Suspended Vivianite",
+      "x": 720,
+      "y": 1200
+    },
+    "hemomancy:swollen_leech": {
+      "name": "Swollen Leech",
+      "x": 768,
+      "y": 1200
+    },
+    "hemomancy:synaptic_node": {
+      "name": "Synaptic Node",
+      "x": 816,
+      "y": 1200
+    },
+    "hemomancy:synaptic_step": {
+      "name": "Synaptic Step",
+      "x": 864,
+      "y": 1200
+    },
+    "hemomancy:tainted_harvest": {
+      "name": "Tainted Harvest",
+      "x": 912,
+      "y": 1200
+    },
+    "hemomancy:tainted_meat": {
+      "name": "Tainted Meat",
+      "x": 960,
+      "y": 1200
+    },
+    "hemomancy:talaromyces_minus": {
+      "name": "Talaromyces Minus",
+      "x": 1008,
+      "y": 1200
+    },
+    "hemomancy:tears_of_silthmere": {
+      "name": "Tears of Silthmere",
+      "x": 1056,
+      "y": 1200
+    },
+    "hemomancy:telson": {
+      "name": "Telson",
+      "x": 1104,
+      "y": 1200
+    },
+    "hemomancy:tengu_mask": {
+      "name": "Tengu Mask",
+      "x": 1152,
+      "y": 1200
+    },
+    "hemomancy:terrestrial_speculum": {
+      "name": "Terrestrial Speculum",
+      "x": 1200,
+      "y": 1200
+    },
+    "hemomancy:tidepool_anemone": {
+      "name": "Tidepool Anemone",
+      "x": 1248,
+      "y": 1200
+    },
+    "hemomancy:tincture_carrion_metabolism": {
+      "name": "Tincture of Carrion Metabolism",
+      "x": 1296,
+      "y": 1200
+    },
+    "hemomancy:tincture_coursing_legs": {
+      "name": "Tincture of Coursing Legs",
+      "x": 1344,
+      "y": 1200
+    },
+    "hemomancy:tincture_enduring_viscera": {
+      "name": "Tincture of Enduring Viscera",
+      "x": 1392,
+      "y": 1200
+    },
+    "hemomancy:tincture_hushed_gait": {
+      "name": "Tincture of Hushed Gait",
+      "x": 1440,
+      "y": 1200
+    },
+    "hemomancy:tincture_laboring_arms": {
+      "name": "Tincture of Laboring Arms",
+      "x": 1488,
+      "y": 1200
+    },
+    "hemomancy:tincture_predatory_eyes": {
+      "name": "Tincture of Predatory Eyes",
+      "x": 0,
+      "y": 1248
+    },
+    "hemomancy:tincture_sanguine_fists": {
+      "name": "Tincture of Sanguine Fists",
+      "x": 48,
+      "y": 1248
+    },
+    "hemomancy:tincture_second_pulse": {
+      "name": "Tincture of the Second Pulse",
+      "x": 96,
+      "y": 1248
+    },
+    "hemomancy:titration_bandolier": {
+      "name": "Titration Bandolier",
+      "x": 144,
+      "y": 1248
+    },
+    "hemomancy:toxicognath": {
+      "name": "Toxicognath",
+      "x": 192,
+      "y": 1248
+    },
+    "hemomancy:troupe_rigging": {
+      "name": "Troupe Rigging",
+      "x": 240,
+      "y": 1248
+    },
+    "hemomancy:umbral_enzyme": {
+      "name": "Umbral Enzyme",
+      "x": 288,
+      "y": 1248
+    },
+    "hemomancy:umbral_spores": {
+      "name": "Umbral Spores",
+      "x": 336,
+      "y": 1248
+    },
+    "hemomancy:unsigned_ancestral_ledger": {
+      "name": "Unsigned Ancestral Ledger",
+      "x": 384,
+      "y": 1248
+    },
+    "hemomancy:unstained_boots": {
+      "name": "Unstained Boots",
+      "x": 432,
+      "y": 1248
+    },
+    "hemomancy:unstained_chestplate": {
+      "name": "Unstained Chestplate",
+      "x": 480,
+      "y": 1248
+    },
+    "hemomancy:unstained_helm": {
+      "name": "Unstained Helm",
+      "x": 528,
+      "y": 1248
+    },
+    "hemomancy:unstained_leggings": {
+      "name": "Unstained Leggings",
+      "x": 576,
+      "y": 1248
+    },
+    "hemomancy:unstained_podium": {
+      "name": "Unstained Podium",
+      "x": 624,
+      "y": 1248
+    },
+    "hemomancy:unstained_shield": {
+      "name": "Unstained Shield",
+      "x": 672,
+      "y": 1248
+    },
+    "hemomancy:unstained_warhammer": {
+      "name": "Unstained Warhammer",
+      "x": 720,
+      "y": 1248
+    },
+    "hemomancy:vacant_effigy": {
+      "name": "Vacant Effigy",
+      "x": 768,
+      "y": 1248
+    },
+    "hemomancy:vascular_poultice": {
+      "name": "Vascular Poultice",
+      "x": 816,
+      "y": 1248
+    },
+    "hemomancy:vascular_status_gauge": {
+      "name": "Vascular Status Gauge",
+      "x": 864,
+      "y": 1248
+    },
+    "hemomancy:vein_node": {
+      "name": "Vein Node",
+      "x": 912,
+      "y": 1248
+    },
+    "hemomancy:vein_spider": {
+      "name": "Vein Spider",
+      "x": 960,
+      "y": 1248
+    },
+    "hemomancy:veins_pattern": {
+      "name": "Veins Pattern",
+      "x": 1008,
+      "y": 1248
+    },
+    "hemomancy:veinwing_harness": {
+      "name": "Veinwing Harness",
+      "x": 1056,
+      "y": 1248
+    },
+    "hemomancy:velorum_mask": {
+      "name": "Velorum Mask",
+      "x": 1104,
+      "y": 1248
+    },
+    "hemomancy:venous_basin": {
+      "name": "Venous Basin",
+      "x": 1152,
+      "y": 1248
+    },
+    "hemomancy:venous_pinion": {
+      "name": "Venous Pinion",
+      "x": 1200,
+      "y": 1248
+    },
+    "hemomancy:venous_stone": {
+      "name": "Venous Stone",
+      "x": 1248,
+      "y": 1248
+    },
+    "hemomancy:venous_stone_slab": {
+      "name": "Venous Stone Slab",
+      "x": 1296,
+      "y": 1248
+    },
+    "hemomancy:venous_stone_stairs": {
+      "name": "Venous Stone Stairs",
+      "x": 1344,
+      "y": 1248
+    },
+    "hemomancy:venous_stone_wall": {
+      "name": "Venous Stone Wall",
+      "x": 1392,
+      "y": 1248
+    },
+    "hemomancy:venous_strider_sabatons": {
+      "name": "Venous Strider Sabatons",
+      "x": 1440,
+      "y": 1248
+    },
+    "hemomancy:vent_offering_basin": {
+      "name": "Vent Offering Basin",
+      "x": 1488,
+      "y": 1248
+    },
+    "hemomancy:verdigris_lattice": {
+      "name": "Verdigris Lattice",
+      "x": 0,
+      "y": 1296
+    },
+    "hemomancy:vestment_of_the_final_molt": {
+      "name": "Vestment of the Final Molt",
+      "x": 48,
+      "y": 1296
+    },
+    "hemomancy:vial_centrifuge": {
+      "name": "Vial Centrifuge",
+      "x": 96,
+      "y": 1296
+    },
+    "hemomancy:vial_rack": {
+      "name": "Vial Rack",
+      "x": 144,
+      "y": 1296
+    },
+    "hemomancy:vicars_consecration_kit": {
+      "name": "Armature Consecration Kit",
+      "x": 192,
+      "y": 1296
+    },
+    "hemomancy:virid_salis_trail": {
+      "name": "Virid Salis",
+      "x": 240,
+      "y": 1296
+    },
+    "hemomancy:vitality_chalice": {
+      "name": "Vitality Chalice",
+      "x": 288,
+      "y": 1296
+    },
+    "hemomancy:vivacious_enzyme": {
+      "name": "Vivacious Enzyme",
+      "x": 336,
+      "y": 1296
+    },
+    "hemomancy:vivacious_spores": {
+      "name": "Vivacious Spores",
+      "x": 384,
+      "y": 1296
+    },
+    "hemomancy:vivianite_cluster": {
+      "name": "Vivianite Cluster",
+      "x": 432,
+      "y": 1296
+    },
+    "hemomancy:vivianite_glass": {
+      "name": "Vivianite Glass",
+      "x": 480,
+      "y": 1296
+    },
+    "hemomancy:vivianite_pane": {
+      "name": "Vivianite Pane",
+      "x": 528,
+      "y": 1296
+    },
+    "hemomancy:vivianite_scalpel": {
+      "name": "Vivianite Scalpel",
+      "x": 576,
+      "y": 1296
+    },
+    "hemomancy:wax_cylinder": {
+      "name": "Wax Cylinder",
+      "x": 624,
+      "y": 1296
+    },
+    "hemomancy:witness_stone": {
+      "name": "Witness Stone",
+      "x": 672,
+      "y": 1296
+    },
+    "hemomancy:worn_vow_fitting": {
+      "name": "Worn Vow Fitting",
+      "x": 720,
+      "y": 1296
+    },
+    "hemomancy:zombie_husk_effigy": {
+      "name": "Zombie Husk Effigy",
+      "x": 768,
+      "y": 1296
+    }
+  }
+}

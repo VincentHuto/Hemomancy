@@ -44,29 +44,34 @@ public final class LuminalCicadaResourceTest {
 		Path texture = RESOURCES.resolve("assets/hemomancy/textures/entity/luminal_cicada/luminal_cicada.png");
 		if (!Files.exists(texture)) throw new AssertionError("Missing " + texture);
 		BufferedImage image = ImageIO.read(texture.toFile());
-		if (image == null || image.getWidth() != 64 || image.getHeight() != 64) {
-			throw new AssertionError("Luminal Cicada texture must be a 64x64 PNG");
+		if (image == null || image.getWidth() != 128 || image.getHeight() != 128) {
+			throw new AssertionError("Luminal Cicada texture must be a 128x128 PNG");
 		}
-		for (int y = 0; y < 64; y++) {
-			for (int x = 0; x < 64; x++) {
-				if (!isUsedUv(x, y) && (image.getRGB(x, y) >>> 24) != 0) {
-					throw new AssertionError("Luminal Cicada paints unused UV space at " + x + "," + y);
+		var project = JsonParser.parseString(resource(
+				"assets/hemomancy/models/entity/bbmodel/LuminalCicadaModel.bbmodel")).getAsJsonObject();
+		boolean[][] used = new boolean[128][128];
+		for (var element : project.getAsJsonArray("elements")) {
+			var faces = element.getAsJsonObject().getAsJsonObject("faces");
+			for (var face : faces.entrySet()) {
+				var uv = face.getValue().getAsJsonObject().getAsJsonArray("uv");
+				int u = uv.get(0).getAsInt(), v = uv.get(1).getAsInt();
+				int endU = uv.get(2).getAsInt(), endV = uv.get(3).getAsInt();
+				for (int y = Math.min(v, endV); y < Math.max(v, endV); y++) {
+					for (int x = Math.min(u, endU); x < Math.max(u, endU); x++) {
+						if (used[y][x]) throw new AssertionError("Overlapping cicada UV at " + x + "," + y);
+						used[y][x] = true;
+					}
 				}
 			}
 		}
-		if ((image.getRGB(8, 25) >>> 24) != 255 || (image.getRGB(23, 41) >>> 24) != 255) {
-			throw new AssertionError("Luminal Cicada body and lantern UVs must be opaque");
+		for (int y = 0; y < 128; y++) {
+			for (int x = 0; x < 128; x++) {
+				int expectedAlpha = used[y][x] ? 255 : 0;
+				if ((image.getRGB(x, y) >>> 24) != expectedAlpha) {
+					throw new AssertionError("Incorrect cicada texture coverage at " + x + "," + y);
+				}
+			}
 		}
-	}
-
-	private static boolean isUsedUv(int x, int y) {
-		return in(x, y, 8, 0, 24, 8) || in(x, y, 8, 9, 24, 17)
-				|| in(x, y, 0, 20, 22, 30) || in(x, y, 0, 32, 40, 40)
-				|| in(x, y, 20, 40, 42, 44);
-	}
-
-	private static boolean in(int x, int y, int left, int top, int right, int bottom) {
-		return x >= left && x < right && y >= top && y < bottom;
 	}
 
 	private static String source(String path) throws IOException {

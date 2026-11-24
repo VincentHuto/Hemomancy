@@ -33,6 +33,9 @@ def reviewClients = [
     bookKitPeerClient: [dir: 'build/book-kit-peer/book-kit-client', user: 'BookKitPeer', size: [1000, 800],
                         props: ['hemomancy.bookKitReview': 'true']],
     scriptoriumReviewClient: [dir: 'build/scriptorium-client', user: 'ScriptoriumReview', driver: false, size: review],
+    // The three Vial Centrifuge menus: unbalanced load, balanced load, mid-spin (CentrifugeClientReview)
+    centrifugeReviewClient: [dir: 'build/centrifuge-client-review', user: 'CentrifugeReview', size: review,
+                             props: ['hemomancy.centrifugeReview': 'true']],
     // A stocked Morphling Incubator, Mycelial Crucibles and Lanterns from fixed poses (FungalStationClientReview)
     fungalStationReviewClient: [dir: 'build/fungal-station-client-review', user: 'FungalStation', size: review,
                                 props: ['hemomancy.fungalStationReview': 'true']],
@@ -101,14 +104,21 @@ def reviewClients = [
     // The Vampire Bat cruising, hunting a wounded mob and roosting, from several sides (VampireBatClientReview)
     vampireBatReviewClient: [dir: 'build/vampire-bat-review', user: 'BatReview', size: review,
                              props: ['hemomancy.vampireBatReview': 'true']],
+    choirKeeperModelReviewClient: [dir: 'build/choir-keeper-model-review', user: 'ChoirReview', size: review,
+                                  props: ['hemomancy.choirKeeperReview': 'true']],
     // The Crimson Troupe filmed as frame sequences: performer telegraphs, puppets, the pavilion at night, perception, both finales (CircusClientReview)
     circusReviewClient: [dir: 'build/circus-review', user: 'CircusReview', memory: ['2G', '6G'], size: review,
                          props: ['hemomancy.circusReview': 'true', 'hemomancy.circusReview.only': gradleOr('circusReviewOnly', '')]],
+    // Every Hemomancy Mob, one three-quarter still each (BestiaryModelReview)
+    bestiaryReviewClient: [dir: 'build/bestiary-review', user: 'BestiaryReview', size: review,
+                           props: ['hemomancy.bestiaryReview': 'true']],
     // One animal standing, walking, fleeing and at night, from several sides (AnimalModelClientReview)
     crimsonDoeReviewClient: [dir: 'build/crimson-doe-review', user: 'AnimalReview', size: review,
                              props: ['hemomancy.animalModelReview': 'crimson_doe']],
     funglingReviewClient: [dir: 'build/fungling-review', user: 'AnimalReview', size: review,
                            props: ['hemomancy.animalModelReview': 'fungling']],
+    hunterFungusReviewClient: [dir: 'build/hunter-fungus-review', user: 'AnimalReview', size: review,
+                               props: ['hemomancy.animalModelReview': 'hunter_fungus']],
     venousStriderReviewClient: [dir: 'build/venous-strider-review', user: 'AnimalReview', size: review,
                                 props: ['hemomancy.animalModelReview': 'venous_strider']],
     hemojellyReviewClient: [dir: 'build/hemojelly-review', user: 'AnimalReview', size: review,
@@ -250,6 +260,10 @@ def reviewClients = [
                          props: ['hemomancy.lessonReview': 'true']],
     faneGroundReviewClient: [dir: 'build/fane-ground-review', user: 'FaneGroundReview', size: review,
                              props: ['hemomancy.faneGroundReview': 'true']],
+    // Ichorian Sigil gouges open, completing and awake, on flat and stepped ground, by night and two at once
+    // (SigilGougeClientReview); drop {"op":"create","name":"SigilGouge","seed":"1"} after startup
+    sigilGougeReviewClient: [dir: 'build/sigil-gouge-client-review', user: 'SigilGouge', size: review,
+                             props: ['hemomancy.sigilGougeReview': 'true']],
     vanityMirrorReviewClient: [dir: 'build/vanity-mirror-review', user: 'VanityReview', size: review,
                                props: ['hemomancy.vanityMirrorReview': 'true']],
     heartwoodTreeReviewClient: [dir: 'build/heartwood-tree-review', user: 'HeartwoodReview', size: review,

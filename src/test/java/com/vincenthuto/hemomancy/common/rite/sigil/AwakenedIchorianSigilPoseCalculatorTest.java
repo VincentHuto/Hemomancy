@@ -74,9 +74,9 @@ final class AwakenedIchorianSigilPoseCalculatorTest {
 		IchorianSigilDefinition definition = definition(
 				IchorianSigilAnatomy.Style.OPTIC_STALK_VEIL, 4);
 		var early = AwakenedIchorianSigilPoseCalculator.calculate(
-				definition, 40.0F, 40.0F, 0.0F);
+				definition, 40.0F, 40.0F);
 		var later = AwakenedIchorianSigilPoseCalculator.calculate(
-				definition, 40.0F, 70.0F, 0.0F);
+				definition, 40.0F, 70.0F);
 
 		assertEquals(1.0F, early.migration(), 0.0001F);
 		assertEquals(1.0F, later.migration(), 0.0001F);
@@ -100,62 +100,68 @@ final class AwakenedIchorianSigilPoseCalculatorTest {
 	}
 
 	@Test
-	void movementAnimatesIndividualNodesInsteadOfDraggingTheRigAsOnePiece() {
-		IchorianSigilDefinition definition = definition(
-				IchorianSigilAnatomy.Style.ARTERIAL_FORK, 4);
-		var idle = AwakenedIchorianSigilPoseCalculator.calculate(definition, 72.0F, 0.0F);
-		var moving = AwakenedIchorianSigilPoseCalculator.calculate(definition, 72.0F, 0.08F);
+	void everyKnownSigilKeepsMovingWhileItHovers() {
+		for (String id : List.of("reservoir", "bastion", "hematic_lattice", "mnemonic",
+				"suture", "shunt", "seal", "cage", "lens")) {
+			IchorianSigilDefinition definition = definition(
+					ResourceLocation.parse("hemomancy:" + id), IchorianSigilAnatomy.Style.ARTERIAL_FORK, 3);
+			var early = AwakenedIchorianSigilPoseCalculator.calculate(definition, 72.0F);
+			var later = AwakenedIchorianSigilPoseCalculator.calculate(definition, 95.0F);
 
-		Vec3 firstShift = moving.landmarks().get(0).position()
-				.subtract(idle.landmarks().get(0).position());
-		Vec3 secondShift = moving.landmarks().get(1).position()
-				.subtract(idle.landmarks().get(1).position());
-
-		assertTrue(firstShift.lengthSqr() > 0.000001D);
-		assertTrue(secondShift.lengthSqr() > 0.000001D);
-		assertNotEquals(firstShift, secondShift,
-				"joint phases should bend vessels rather than translate the entire rig");
-	}
-
-	@Test
-	void nodeArticulationRemainsSubtleAtFlightSpeed() {
-		IchorianSigilDefinition definition = definition(
-				IchorianSigilAnatomy.Style.OPTIC_STALK_VEIL, 5);
-		var idle = AwakenedIchorianSigilPoseCalculator.calculate(definition, 90.0F, 0.0F);
-		var moving = AwakenedIchorianSigilPoseCalculator.calculate(definition, 90.0F, 0.12F);
-
-		for (int index = 0; index < moving.landmarks().size(); index++) {
-			assertTrue(moving.landmarks().get(index).position()
-					.distanceTo(idle.landmarks().get(index).position()) <= 0.12D);
+			for (int index = 0; index < early.landmarks().size(); index++) {
+				assertNotEquals(early.landmarks().get(index).position(),
+						later.landmarks().get(index).position(), id + " froze at rest");
+			}
 		}
 	}
 
 	@Test
-	void flightJointsSweepThroughBroadSmoothArcsInsteadOfVibratingInPlace() {
+	void theShuntSweepsWiderThanTheSeal() {
+		assertTrue(landmarkRange("shunt") > landmarkRange("seal"),
+				"the shunt's quickness and the seal's stillness carry into the idle");
+	}
+
+	@Test
+	void idleJointsSweepSmoothlyInsteadOfVibratingInPlace() {
 		IchorianSigilDefinition definition = definition(
 				IchorianSigilAnatomy.Style.ARTERIAL_FORK, 3);
-		double minShiftX = Double.POSITIVE_INFINITY;
-		double maxShiftX = Double.NEGATIVE_INFINITY;
-		Vec3 previousShift = null;
+		Vec3 previous = null;
 		for (int age = 40; age <= 160; age++) {
-			var idle = AwakenedIchorianSigilPoseCalculator.calculate(definition, age, 0.0F);
-			var moving = AwakenedIchorianSigilPoseCalculator.calculate(definition, age, 0.08F);
-			Vec3 shift = moving.landmarks().get(2).position()
-					.subtract(idle.landmarks().get(2).position());
-			minShiftX = Math.min(minShiftX, shift.x);
-			maxShiftX = Math.max(maxShiftX, shift.x);
-			if (previousShift != null) {
-				assertTrue(shift.distanceTo(previousShift) < 0.008D,
+			Vec3 position = AwakenedIchorianSigilPoseCalculator.calculate(definition, age)
+					.landmarks().get(2).position();
+			if (previous != null) {
+				assertTrue(position.distanceTo(previous) < 0.03D,
 						"adjacent joint poses must remain smooth");
 			}
-			previousShift = shift;
+			previous = position;
 		}
-
-		assertTrue(maxShiftX - minShiftX > 0.075D,
+		assertTrue(landmarkRange(definition) > 0.075D,
 				"joint should visibly shift through space instead of trembling in place");
 	}
 
+	private static double landmarkRange(String id) {
+		return landmarkRange(definition(ResourceLocation.parse("hemomancy:" + id),
+				IchorianSigilAnatomy.Style.ARTERIAL_FORK, 3));
+	}
+
+	private static double landmarkRange(IchorianSigilDefinition definition) {
+		double min = Double.POSITIVE_INFINITY;
+		double max = Double.NEGATIVE_INFINITY;
+		for (int age = 40; age < 240; age++) {
+			double x = AwakenedIchorianSigilPoseCalculator.calculate(definition, age)
+					.landmarks().get(2).position().x;
+			min = Math.min(min, x);
+			max = Math.max(max, x);
+		}
+		return max - min;
+	}
+
 	private static IchorianSigilDefinition definition(
+			IchorianSigilAnatomy.Style style, int tier) {
+		return definition(ResourceLocation.parse("hemomancy:test_" + style.name().toLowerCase()), style, tier);
+	}
+
+	private static IchorianSigilDefinition definition(ResourceLocation id,
 			IchorianSigilAnatomy.Style style, int tier) {
 		var nodes = List.of(
 				new IchorianSigilDefinition.Node(-1, 0),
@@ -172,7 +178,7 @@ final class AwakenedIchorianSigilPoseCalculatorTest {
 								IchorianSigilAnatomy.Role.VALVE, 0.11F)),
 				List.of(new IchorianSigilAnatomy.Vessel(1, 2, 0.06F)),
 				List.of(new IchorianSigilAnatomy.Membrane(0, 1, 2)));
-		return new IchorianSigilDefinition(ResourceLocation.parse("hemomancy:test_" + style.name().toLowerCase()),
+		return new IchorianSigilDefinition(id,
 				IchorianSigilDefinition.Kind.SUPPORT, tier, 0, "Test", "Test", 0, 0,
 				nodes, List.of(), Optional.of(anatomy));
 	}

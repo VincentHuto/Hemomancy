@@ -28,373 +28,101 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 	protected final ModelPart root;
 	protected final ModelPart hips;
 	protected final ModelPart chest;
-	protected final ModelPart leftStole;
+	protected final ModelPart head;
+	protected final ModelPart browJewel;
+	protected final ModelPart leftCowlLappet;
+	protected final ModelPart rightCowlLappet;
+	protected final ModelPart halo;
+	protected final ModelPart leftHaloArch0;
+	protected final ModelPart leftHaloArch1;
+	protected final ModelPart leftHaloArch2;
+	protected final ModelPart leftHaloArch3;
+	protected final ModelPart leftOuterArch0;
+	protected final ModelPart leftOuterArch1;
+	protected final ModelPart leftOuterArch2;
+	protected final ModelPart leftVotiveDrop;
+	protected final ModelPart leftVotiveGlass;
+	protected final ModelPart rightHaloArch0;
+	protected final ModelPart rightHaloArch1;
+	protected final ModelPart rightHaloArch2;
+	protected final ModelPart rightHaloArch3;
+	protected final ModelPart rightOuterArch0;
+	protected final ModelPart rightOuterArch1;
+	protected final ModelPart rightOuterArch2;
+	protected final ModelPart rightVotiveDrop;
+	protected final ModelPart rightVotiveGlass;
+	protected final ModelPart breastSeam;
+	protected final ModelPart rightMantleFall;
 	protected final ModelPart leftArm;
 	protected final ModelPart leftForearm;
 	protected final ModelPart leftHand;
-	protected final ModelPart leftFinger0;
-	protected final ModelPart leftFinger0Tip;
-	protected final ModelPart leftFinger1;
-	protected final ModelPart leftFinger1Tip;
-	protected final ModelPart leftFinger2;
-	protected final ModelPart leftFinger2Tip;
-	protected final ModelPart leftFinger3;
-	protected final ModelPart leftFinger3Tip;
-	protected final ModelPart leftThumb;
-	protected final ModelPart leftSleeve;
-	protected final ModelPart rightStole;
+	protected final ModelPart staff;
+	protected final ModelPart staffLantern;
+	protected final ModelPart lanternPendant;
+	protected final ModelPart staffLanternCore;
+	protected final ModelPart leftMantleFall;
 	protected final ModelPart rightArm;
 	protected final ModelPart rightForearm;
 	protected final ModelPart rightHand;
-	protected final ModelPart rightFinger0;
-	protected final ModelPart rightFinger0Tip;
-	protected final ModelPart rightFinger1;
-	protected final ModelPart rightFinger1Tip;
-	protected final ModelPart rightFinger2;
-	protected final ModelPart rightFinger2Tip;
-	protected final ModelPart rightFinger3;
-	protected final ModelPart rightFinger3Tip;
-	protected final ModelPart rightThumb;
-	protected final ModelPart rightSleeve;
-	protected final ModelPart clawIce;
-	protected final ModelPart pectoralChains;
-	protected final ModelPart chestLink00;
-	protected final ModelPart chestLink01;
-	protected final ModelPart chestLink02;
-	protected final ModelPart chestLink03;
-	protected final ModelPart chestLink04;
-	protected final ModelPart chestLink05;
-	protected final ModelPart chestLink06;
-	protected final ModelPart waistChain;
-	protected final ModelPart waistChainLink0;
-	protected final ModelPart waistChainLink1;
-	protected final ModelPart waistChainLink2;
-	protected final ModelPart waistChainLink3;
-	protected final ModelPart waistChainLink4;
-	protected final ModelPart waistChainLink5;
-	protected final ModelPart waistChainLink6;
-	protected final ModelPart breastSeam;
-	protected final ModelPart breastReliquary;
-	protected final ModelPart sideChain;
-	protected final ModelPart sideChainLink0;
-	protected final ModelPart sideChainLink1;
-	protected final ModelPart sideChainLink2;
-	protected final ModelPart sideChainLink3;
-	protected final ModelPart sideChainLink4;
-	protected final ModelPart sideChainLink5;
-	protected final ModelPart sideChainLink6;
-	protected final ModelPart sideChainLink7;
-	protected final ModelPart sideChainLink8;
-	protected final ModelPart sideChainLink9;
-	protected final ModelPart sideLantern;
-	protected final ModelPart sideLanternCrystal;
-	protected final ModelPart sideLanternCore;
-	protected final ModelPart head;
-	protected final ModelPart backVeil;
-	protected final ModelPart faceVeil;
-	protected final ModelPart veilStrip0;
-	protected final ModelPart veilStrip1;
-	protected final ModelPart veilStrip2;
-	protected final ModelPart veilStrip3;
-	protected final ModelPart veilStrip4;
-	protected final ModelPart veilStrip5;
-	protected final ModelPart veilStrip6;
-	protected final ModelPart veilStrip7;
-	protected final ModelPart veilStrip8;
-	protected final ModelPart cowlRight;
-	protected final ModelPart cowlLeft;
-	protected final ModelPart monasticHood;
-	protected final ModelPart knottedCord;
-	protected final ModelPart knottedCordTails;
-	protected final ModelPart halo;
-	protected final ModelPart haloSegment0;
-	protected final ModelPart haloSegment1;
-	protected final ModelPart haloSegment2;
-	protected final ModelPart haloSegment3;
-	protected final ModelPart haloSegment4;
-	protected final ModelPart haloSegment5;
-	protected final ModelPart haloSegment6;
-	protected final ModelPart haloSegment7;
-	protected final ModelPart haloSegment8;
-	protected final ModelPart haloSegment9;
-	protected final ModelPart haloSegment10;
-	protected final ModelPart haloSegment11;
-	protected final ModelPart haloSegment12;
-	protected final ModelPart haloSegment13;
-	protected final ModelPart haloSegment14;
-	protected final ModelPart haloSegment15;
-	protected final ModelPart haloSegment16;
-	protected final ModelPart haloSegment17;
-	protected final ModelPart haloSegment18;
-	protected final ModelPart haloSegment19;
-	protected final ModelPart haloChain0;
-	protected final ModelPart haloChain0Link0;
-	protected final ModelPart haloChain0Link1;
-	protected final ModelPart haloIcicle0;
-	protected final ModelPart haloChain1;
-	protected final ModelPart haloChain1Link0;
-	protected final ModelPart haloChain1Link1;
-	protected final ModelPart haloChain1Link2;
-	protected final ModelPart haloIcicle1;
-	protected final ModelPart haloChain2;
-	protected final ModelPart haloChain2Link0;
-	protected final ModelPart haloChain2Link1;
-	protected final ModelPart haloIcicle2;
-	protected final ModelPart haloChain3;
-	protected final ModelPart haloChain3Link0;
-	protected final ModelPart haloChain3Link1;
-	protected final ModelPart haloChain3Link2;
-	protected final ModelPart haloIcicle3;
-	protected final ModelPart robePanel0;
-	protected final ModelPart robePanel1;
-	protected final ModelPart robePanel2;
-	protected final ModelPart robePanel3;
-	protected final ModelPart robePanel4;
-	protected final ModelPart robePanel5;
-	protected final ModelPart robePanel6;
-	protected final ModelPart robePanel7;
-	protected final ModelPart robePanel8;
-	protected final ModelPart robePanel9;
-	protected final ModelPart robePanel10;
-	protected final ModelPart robePanel11;
-	protected final ModelPart robePanel12;
-	protected final ModelPart robePanel13;
-	protected final ModelPart robePanel14;
-	protected final ModelPart robePanel15;
-	protected final ModelPart mantlePanel0;
-	protected final ModelPart mantlePanel0Train;
-	protected final ModelPart mantlePanel1;
-	protected final ModelPart mantlePanel1Train;
-	protected final ModelPart mantlePanel2;
-	protected final ModelPart mantlePanel2Train;
-	protected final ModelPart mantlePanel3;
-	protected final ModelPart mantlePanel3Train;
-	protected final ModelPart mantlePanel4;
-	protected final ModelPart mantlePanel4Train;
-	protected final ModelPart mantlePanel5;
-	protected final ModelPart mantlePanel5Train;
-	protected final ModelPart mantlePanel6;
-	protected final ModelPart mantlePanel6Train;
-	protected final ModelPart mantlePanel7;
-	protected final ModelPart mantlePanel7Train;
-	protected final ModelPart mantlePanel8;
-	protected final ModelPart mantlePanel8Train;
-	protected final ModelPart hemFrost;
-	protected final ModelPart frostTrail0;
-	protected final ModelPart frostTrail1;
-	protected final ModelPart frostTrail2;
-	protected final ModelPart frostTrail3;
-	protected final ModelPart frostTrail4;
-	protected final ModelPart frostTrail5;
-	protected final ModelPart frostTrail6;
-	protected final ModelPart frostTrail7;
-	protected final ModelPart frostTrail8;
-	protected final ModelPart frostTrail9;
-	protected final ModelPart frostTrail10;
-	protected final ModelPart frostTrail11;
-	protected final ModelPart staff;
-	protected final ModelPart staffLantern;
-	protected final ModelPart staffLanternCrystal;
-	protected final ModelPart staffLanternCore;
-	protected final ModelPart pendantChain;
-	protected final ModelPart pendantChainLink0;
-	protected final ModelPart pendantChainLink1;
-	protected final ModelPart pendantChainLink2;
-	protected final ModelPart pendantChainLink3;
-	protected final ModelPart pendantChainLink4;
-	protected final ModelPart pendantChainLink5;
-	protected final ModelPart pendantChainLink6;
-	protected final ModelPart pendantChainLink7;
-	protected final ModelPart pendantChainLink8;
-	protected final ModelPart pendantLantern;
-	protected final ModelPart pendantLanternCrystal;
-	protected final ModelPart pendantLanternCore;
+	protected final ModelPart heldFirstFingers;
+	protected final ModelPart heldLastFingers;
+	protected final ModelPart shoulderCruor;
+	protected final ModelPart shoulderCruorSpire;
+	protected final ModelPart rightLeg;
+	protected final ModelPart rightSplitHabit;
+	protected final ModelPart leftLeg;
+	protected final ModelPart leftSplitHabit;
+	protected final ModelPart frontTabard;
 
 	public VelorumModel(ModelPart root) {
 		this.root = root.getChild("root");
 		this.hips = this.root.getChild("hips");
 		this.chest = this.hips.getChild("chest");
-		this.leftStole = this.chest.getChild("left_stole");
+		this.head = this.chest.getChild("head");
+		this.browJewel = this.head.getChild("brow_jewel");
+		this.leftCowlLappet = this.head.getChild("left_cowl_lappet");
+		this.rightCowlLappet = this.head.getChild("right_cowl_lappet");
+		this.halo = this.head.getChild("halo");
+		this.leftHaloArch0 = this.halo.getChild("left_halo_arch_0");
+		this.leftHaloArch1 = this.halo.getChild("left_halo_arch_1");
+		this.leftHaloArch2 = this.halo.getChild("left_halo_arch_2");
+		this.leftHaloArch3 = this.halo.getChild("left_halo_arch_3");
+		this.leftOuterArch0 = this.halo.getChild("left_outer_arch_0");
+		this.leftOuterArch1 = this.halo.getChild("left_outer_arch_1");
+		this.leftOuterArch2 = this.halo.getChild("left_outer_arch_2");
+		this.leftVotiveDrop = this.halo.getChild("left_votive_drop");
+		this.leftVotiveGlass = this.leftVotiveDrop.getChild("left_votive_glass");
+		this.rightHaloArch0 = this.halo.getChild("right_halo_arch_0");
+		this.rightHaloArch1 = this.halo.getChild("right_halo_arch_1");
+		this.rightHaloArch2 = this.halo.getChild("right_halo_arch_2");
+		this.rightHaloArch3 = this.halo.getChild("right_halo_arch_3");
+		this.rightOuterArch0 = this.halo.getChild("right_outer_arch_0");
+		this.rightOuterArch1 = this.halo.getChild("right_outer_arch_1");
+		this.rightOuterArch2 = this.halo.getChild("right_outer_arch_2");
+		this.rightVotiveDrop = this.halo.getChild("right_votive_drop");
+		this.rightVotiveGlass = this.rightVotiveDrop.getChild("right_votive_glass");
+		this.breastSeam = this.chest.getChild("breast_seam");
+		this.rightMantleFall = this.chest.getChild("right_mantle_fall");
 		this.leftArm = this.chest.getChild("left_arm");
 		this.leftForearm = this.leftArm.getChild("left_forearm");
 		this.leftHand = this.leftForearm.getChild("left_hand");
-		this.leftFinger0 = this.leftHand.getChild("left_finger_0");
-		this.leftFinger0Tip = this.leftFinger0.getChild("left_finger_0_tip");
-		this.leftFinger1 = this.leftHand.getChild("left_finger_1");
-		this.leftFinger1Tip = this.leftFinger1.getChild("left_finger_1_tip");
-		this.leftFinger2 = this.leftHand.getChild("left_finger_2");
-		this.leftFinger2Tip = this.leftFinger2.getChild("left_finger_2_tip");
-		this.leftFinger3 = this.leftHand.getChild("left_finger_3");
-		this.leftFinger3Tip = this.leftFinger3.getChild("left_finger_3_tip");
-		this.leftThumb = this.leftHand.getChild("left_thumb");
-		this.leftSleeve = this.leftForearm.getChild("left_sleeve");
-		this.rightStole = this.chest.getChild("right_stole");
+		this.staff = this.leftHand.getChild("staff");
+		this.staffLantern = this.staff.getChild("staff_lantern");
+		this.lanternPendant = this.staffLantern.getChild("lantern_pendant");
+		this.staffLanternCore = this.staffLantern.getChild("staff_lantern_core");
+		this.leftMantleFall = this.chest.getChild("left_mantle_fall");
 		this.rightArm = this.chest.getChild("right_arm");
 		this.rightForearm = this.rightArm.getChild("right_forearm");
 		this.rightHand = this.rightForearm.getChild("right_hand");
-		this.rightFinger0 = this.rightHand.getChild("right_finger_0");
-		this.rightFinger0Tip = this.rightFinger0.getChild("right_finger_0_tip");
-		this.rightFinger1 = this.rightHand.getChild("right_finger_1");
-		this.rightFinger1Tip = this.rightFinger1.getChild("right_finger_1_tip");
-		this.rightFinger2 = this.rightHand.getChild("right_finger_2");
-		this.rightFinger2Tip = this.rightFinger2.getChild("right_finger_2_tip");
-		this.rightFinger3 = this.rightHand.getChild("right_finger_3");
-		this.rightFinger3Tip = this.rightFinger3.getChild("right_finger_3_tip");
-		this.rightThumb = this.rightHand.getChild("right_thumb");
-		this.rightSleeve = this.rightForearm.getChild("right_sleeve");
-		this.clawIce = this.rightHand.getChild("claw_ice");
-		this.pectoralChains = this.chest.getChild("pectoral_chains");
-		this.chestLink00 = this.pectoralChains.getChild("chest_link_0_0");
-		this.chestLink01 = this.pectoralChains.getChild("chest_link_0_1");
-		this.chestLink02 = this.pectoralChains.getChild("chest_link_0_2");
-		this.chestLink03 = this.pectoralChains.getChild("chest_link_0_3");
-		this.chestLink04 = this.pectoralChains.getChild("chest_link_0_4");
-		this.chestLink05 = this.pectoralChains.getChild("chest_link_0_5");
-		this.chestLink06 = this.pectoralChains.getChild("chest_link_0_6");
-		this.waistChain = this.chest.getChild("waist_chain");
-		this.waistChainLink0 = this.waistChain.getChild("waist_chain_link_0");
-		this.waistChainLink1 = this.waistChain.getChild("waist_chain_link_1");
-		this.waistChainLink2 = this.waistChain.getChild("waist_chain_link_2");
-		this.waistChainLink3 = this.waistChain.getChild("waist_chain_link_3");
-		this.waistChainLink4 = this.waistChain.getChild("waist_chain_link_4");
-		this.waistChainLink5 = this.waistChain.getChild("waist_chain_link_5");
-		this.waistChainLink6 = this.waistChain.getChild("waist_chain_link_6");
-		this.breastSeam = this.chest.getChild("breast_seam");
-		this.breastReliquary = this.chest.getChild("breast_reliquary");
-		this.sideChain = this.chest.getChild("side_chain");
-		this.sideChainLink0 = this.sideChain.getChild("side_chain_link_0");
-		this.sideChainLink1 = this.sideChain.getChild("side_chain_link_1");
-		this.sideChainLink2 = this.sideChain.getChild("side_chain_link_2");
-		this.sideChainLink3 = this.sideChain.getChild("side_chain_link_3");
-		this.sideChainLink4 = this.sideChain.getChild("side_chain_link_4");
-		this.sideChainLink5 = this.sideChain.getChild("side_chain_link_5");
-		this.sideChainLink6 = this.sideChain.getChild("side_chain_link_6");
-		this.sideChainLink7 = this.sideChain.getChild("side_chain_link_7");
-		this.sideChainLink8 = this.sideChain.getChild("side_chain_link_8");
-		this.sideChainLink9 = this.sideChain.getChild("side_chain_link_9");
-		this.sideLantern = this.sideChain.getChild("side_lantern");
-		this.sideLanternCrystal = this.sideLantern.getChild("side_lantern_crystal");
-		this.sideLanternCore = this.sideLanternCrystal.getChild("side_lantern_core");
-		this.head = this.chest.getChild("head");
-		this.backVeil = this.head.getChild("back_veil");
-		this.faceVeil = this.head.getChild("face_veil");
-		this.veilStrip0 = this.faceVeil.getChild("veil_strip_0");
-		this.veilStrip1 = this.faceVeil.getChild("veil_strip_1");
-		this.veilStrip2 = this.faceVeil.getChild("veil_strip_2");
-		this.veilStrip3 = this.faceVeil.getChild("veil_strip_3");
-		this.veilStrip4 = this.faceVeil.getChild("veil_strip_4");
-		this.veilStrip5 = this.faceVeil.getChild("veil_strip_5");
-		this.veilStrip6 = this.faceVeil.getChild("veil_strip_6");
-		this.veilStrip7 = this.faceVeil.getChild("veil_strip_7");
-		this.veilStrip8 = this.faceVeil.getChild("veil_strip_8");
-		this.cowlRight = this.head.getChild("cowl_right");
-		this.cowlLeft = this.head.getChild("cowl_left");
-		this.monasticHood = this.head.getChild("monastic_hood");
-		this.knottedCord = this.hips.getChild("knotted_cord");
-		this.knottedCordTails = this.knottedCord.getChild("knotted_cord_tails");
-		this.halo = this.head.getChild("halo");
-		this.haloSegment0 = this.halo.getChild("halo_segment_0");
-		this.haloSegment1 = this.halo.getChild("halo_segment_1");
-		this.haloSegment2 = this.halo.getChild("halo_segment_2");
-		this.haloSegment3 = this.halo.getChild("halo_segment_3");
-		this.haloSegment4 = this.halo.getChild("halo_segment_4");
-		this.haloSegment5 = this.halo.getChild("halo_segment_5");
-		this.haloSegment6 = this.halo.getChild("halo_segment_6");
-		this.haloSegment7 = this.halo.getChild("halo_segment_7");
-		this.haloSegment8 = this.halo.getChild("halo_segment_8");
-		this.haloSegment9 = this.halo.getChild("halo_segment_9");
-		this.haloSegment10 = this.halo.getChild("halo_segment_10");
-		this.haloSegment11 = this.halo.getChild("halo_segment_11");
-		this.haloSegment12 = this.halo.getChild("halo_segment_12");
-		this.haloSegment13 = this.halo.getChild("halo_segment_13");
-		this.haloSegment14 = this.halo.getChild("halo_segment_14");
-		this.haloSegment15 = this.halo.getChild("halo_segment_15");
-		this.haloSegment16 = this.halo.getChild("halo_segment_16");
-		this.haloSegment17 = this.halo.getChild("halo_segment_17");
-		this.haloSegment18 = this.halo.getChild("halo_segment_18");
-		this.haloSegment19 = this.halo.getChild("halo_segment_19");
-		this.haloChain0 = this.halo.getChild("halo_chain_0");
-		this.haloChain0Link0 = this.haloChain0.getChild("halo_chain_0_link_0");
-		this.haloChain0Link1 = this.haloChain0.getChild("halo_chain_0_link_1");
-		this.haloIcicle0 = this.haloChain0.getChild("halo_icicle_0");
-		this.haloChain1 = this.halo.getChild("halo_chain_1");
-		this.haloChain1Link0 = this.haloChain1.getChild("halo_chain_1_link_0");
-		this.haloChain1Link1 = this.haloChain1.getChild("halo_chain_1_link_1");
-		this.haloChain1Link2 = this.haloChain1.getChild("halo_chain_1_link_2");
-		this.haloIcicle1 = this.haloChain1.getChild("halo_icicle_1");
-		this.haloChain2 = this.halo.getChild("halo_chain_2");
-		this.haloChain2Link0 = this.haloChain2.getChild("halo_chain_2_link_0");
-		this.haloChain2Link1 = this.haloChain2.getChild("halo_chain_2_link_1");
-		this.haloIcicle2 = this.haloChain2.getChild("halo_icicle_2");
-		this.haloChain3 = this.halo.getChild("halo_chain_3");
-		this.haloChain3Link0 = this.haloChain3.getChild("halo_chain_3_link_0");
-		this.haloChain3Link1 = this.haloChain3.getChild("halo_chain_3_link_1");
-		this.haloChain3Link2 = this.haloChain3.getChild("halo_chain_3_link_2");
-		this.haloIcicle3 = this.haloChain3.getChild("halo_icicle_3");
-		this.robePanel0 = this.hips.getChild("robe_panel_0");
-		this.robePanel1 = this.hips.getChild("robe_panel_1");
-		this.robePanel2 = this.hips.getChild("robe_panel_2");
-		this.robePanel3 = this.hips.getChild("robe_panel_3");
-		this.robePanel4 = this.hips.getChild("robe_panel_4");
-		this.robePanel5 = this.hips.getChild("robe_panel_5");
-		this.robePanel6 = this.hips.getChild("robe_panel_6");
-		this.robePanel7 = this.hips.getChild("robe_panel_7");
-		this.robePanel8 = this.hips.getChild("robe_panel_8");
-		this.robePanel9 = this.hips.getChild("robe_panel_9");
-		this.robePanel10 = this.hips.getChild("robe_panel_10");
-		this.robePanel11 = this.hips.getChild("robe_panel_11");
-		this.robePanel12 = this.hips.getChild("robe_panel_12");
-		this.robePanel13 = this.hips.getChild("robe_panel_13");
-		this.robePanel14 = this.hips.getChild("robe_panel_14");
-		this.robePanel15 = this.hips.getChild("robe_panel_15");
-		this.mantlePanel0 = this.chest.getChild("mantle_panel_0");
-		this.mantlePanel0Train = this.mantlePanel0.getChild("mantle_panel_0_train");
-		this.mantlePanel1 = this.chest.getChild("mantle_panel_1");
-		this.mantlePanel1Train = this.mantlePanel1.getChild("mantle_panel_1_train");
-		this.mantlePanel2 = this.chest.getChild("mantle_panel_2");
-		this.mantlePanel2Train = this.mantlePanel2.getChild("mantle_panel_2_train");
-		this.mantlePanel3 = this.chest.getChild("mantle_panel_3");
-		this.mantlePanel3Train = this.mantlePanel3.getChild("mantle_panel_3_train");
-		this.mantlePanel4 = this.chest.getChild("mantle_panel_4");
-		this.mantlePanel4Train = this.mantlePanel4.getChild("mantle_panel_4_train");
-		this.mantlePanel5 = this.chest.getChild("mantle_panel_5");
-		this.mantlePanel5Train = this.mantlePanel5.getChild("mantle_panel_5_train");
-		this.mantlePanel6 = this.chest.getChild("mantle_panel_6");
-		this.mantlePanel6Train = this.mantlePanel6.getChild("mantle_panel_6_train");
-		this.mantlePanel7 = this.chest.getChild("mantle_panel_7");
-		this.mantlePanel7Train = this.mantlePanel7.getChild("mantle_panel_7_train");
-		this.mantlePanel8 = this.chest.getChild("mantle_panel_8");
-		this.mantlePanel8Train = this.mantlePanel8.getChild("mantle_panel_8_train");
-		this.hemFrost = this.root.getChild("hem_frost");
-		this.frostTrail0 = this.hemFrost.getChild("frost_trail_0");
-		this.frostTrail1 = this.hemFrost.getChild("frost_trail_1");
-		this.frostTrail2 = this.hemFrost.getChild("frost_trail_2");
-		this.frostTrail3 = this.hemFrost.getChild("frost_trail_3");
-		this.frostTrail4 = this.hemFrost.getChild("frost_trail_4");
-		this.frostTrail5 = this.hemFrost.getChild("frost_trail_5");
-		this.frostTrail6 = this.hemFrost.getChild("frost_trail_6");
-		this.frostTrail7 = this.hemFrost.getChild("frost_trail_7");
-		this.frostTrail8 = this.hemFrost.getChild("frost_trail_8");
-		this.frostTrail9 = this.hemFrost.getChild("frost_trail_9");
-		this.frostTrail10 = this.hemFrost.getChild("frost_trail_10");
-		this.frostTrail11 = this.hemFrost.getChild("frost_trail_11");
-		this.staff = this.leftHand.getChild("staff");
-		this.staffLantern = this.staff.getChild("staff_lantern");
-		this.staffLanternCrystal = this.staffLantern.getChild("staff_lantern_crystal");
-		this.staffLanternCore = this.staffLanternCrystal.getChild("staff_lantern_core");
-		this.pendantChain = this.staff.getChild("pendant_chain");
-		this.pendantChainLink0 = this.pendantChain.getChild("pendant_chain_link_0");
-		this.pendantChainLink1 = this.pendantChain.getChild("pendant_chain_link_1");
-		this.pendantChainLink2 = this.pendantChain.getChild("pendant_chain_link_2");
-		this.pendantChainLink3 = this.pendantChain.getChild("pendant_chain_link_3");
-		this.pendantChainLink4 = this.pendantChain.getChild("pendant_chain_link_4");
-		this.pendantChainLink5 = this.pendantChain.getChild("pendant_chain_link_5");
-		this.pendantChainLink6 = this.pendantChain.getChild("pendant_chain_link_6");
-		this.pendantChainLink7 = this.pendantChain.getChild("pendant_chain_link_7");
-		this.pendantChainLink8 = this.pendantChain.getChild("pendant_chain_link_8");
-		this.pendantLantern = this.pendantChain.getChild("pendant_lantern");
-		this.pendantLanternCrystal = this.pendantLantern.getChild("pendant_lantern_crystal");
-		this.pendantLanternCore = this.pendantLanternCrystal.getChild("pendant_lantern_core");
+		this.heldFirstFingers = this.rightHand.getChild("held_first_fingers");
+		this.heldLastFingers = this.rightHand.getChild("held_last_fingers");
+		this.shoulderCruor = this.rightArm.getChild("shoulder_cruor");
+		this.shoulderCruorSpire = this.rightArm.getChild("shoulder_cruor_spire");
+		this.rightLeg = this.hips.getChild("right_leg");
+		this.rightSplitHabit = this.hips.getChild("right_split_habit");
+		this.leftLeg = this.hips.getChild("left_leg");
+		this.leftSplitHabit = this.hips.getChild("left_split_habit");
+		this.frontTabard = this.hips.getChild("front_tabard");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -404,868 +132,201 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 		PartDefinition root = mesh.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.ZERO);
 
 		PartDefinition hips = root.addOrReplaceChild("hips", CubeListBuilder.create()
-				.texOffs(0, 0).addBox(-3.0F, -1.0F, -2.25F, 6.0F, 8.0F, 4.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 10.0F, 0.0F));
+				.texOffs(0, 0).addBox(-4.5F, -1.15F, -3.5F, 9.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(33, 0).addBox(-2.7F, -1.8F, -4.2F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(38, 0).addBox(-2.6F, -0.4F, -4.0F, 1.0F, 5.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.0F, 0.0F));
 
 		PartDefinition chest = hips.addOrReplaceChild("chest", CubeListBuilder.create()
-				.texOffs(22, 0).addBox(-3.5F, -6.0F, -2.5F, 7.0F, 12.0F, 5.0F, new CubeDeformation(0.0F))
-				.texOffs(47, 0).addBox(-2.5F, -6.5F, -2.75F, 5.0F, 1.0F, 5.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -8.0F, 0.0F, 0.0175F, 0.0F, 0.0F));
-
-		chest.addOrReplaceChild("left_stole", CubeListBuilder.create()
-				.texOffs(69, 0).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 16.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(73, 0).addBox(-0.5F, 15.0F, -0.5F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(76, 0).addBox(-0.5F, 16.25F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(78, 0).addBox(-0.25F, 15.0F, -0.5F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(81, 0).addBox(-0.25F, 17.25F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(83, 0).addBox(0.0F, 15.0F, -0.5F, 0.5F, 3.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(86, 0).addBox(0.0F, 18.25F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.75F, -6.0F, -2.75F, 0.0F, 0.0F, -0.1396F));
-
-		PartDefinition leftArm = chest.addOrReplaceChild("left_arm", CubeListBuilder.create()
-				.texOffs(88, 0).addBox(-1.5F, -1.0F, -1.75F, 3.0F, 3.0F, 3.5F, new CubeDeformation(0.0F))
-				.texOffs(102, 0).addBox(-0.75F, 1.0F, -0.75F, 1.5F, 6.5F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(109, 0).addBox(-1.75F, -0.75F, -2.0F, 3.5F, 1.0F, 4.0F, new CubeDeformation(0.0F))
-				.texOffs(125, 0).addBox(-1.75F, 0.0F, -2.0F, 3.5F, 0.5F, 0.75F, new CubeDeformation(0.0F))
-				.texOffs(135, 0).addBox(-1.75F, 0.5F, -2.25F, 0.5F, 0.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(138, 0).addBox(-1.75F, 1.25F, -2.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(140, 0).addBox(-1.75F, 1.25F, -2.0F, 3.5F, 0.5F, 0.75F, new CubeDeformation(0.0F))
-				.texOffs(150, 0).addBox(-0.25F, 0.5F, -2.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(153, 0).addBox(-0.25F, 1.75F, -2.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(155, 0).addBox(-1.75F, 2.5F, -2.0F, 3.5F, 0.5F, 0.75F, new CubeDeformation(0.0F))
-				.texOffs(165, 0).addBox(1.25F, 0.5F, -2.25F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(168, 0).addBox(1.25F, 2.25F, -2.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(170, 0).addBox(-2.0F, -0.5F, -1.75F, 4.0F, 2.0F, 3.5F, new CubeDeformation(0.0F))
-				.texOffs(186, 0).addBox(-2.0F, -0.75F, -1.75F, 4.0F, 0.25F, 3.5F, new CubeDeformation(0.0F))
-				.texOffs(202, 0).addBox(-2.0F, 1.5F, -1.75F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(205, 0).addBox(-1.0F, 1.5F, -1.75F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(208, 0).addBox(0.0F, 1.5F, -1.75F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(211, 0).addBox(1.0F, 1.5F, -1.75F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.5F, -5.25F, 0.0F, -0.0873F, 0.0F, -0.6632F));
-
-		PartDefinition leftForearm = leftArm.addOrReplaceChild("left_forearm", CubeListBuilder.create()
-				.texOffs(214, 0).addBox(-0.75F, -0.5F, -0.5F, 0.5F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(218, 0).addBox(0.25F, -0.5F, -0.5F, 0.5F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(222, 0).addBox(-1.0F, 5.5F, -0.75F, 2.0F, 0.75F, 1.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.2618F, 0.0F, -1.4835F));
-
-		PartDefinition leftHand = leftForearm.addOrReplaceChild("left_hand", CubeListBuilder.create()
-				.texOffs(230, 0).addBox(-1.0F, -0.5F, -0.5F, 2.0F, 2.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.1745F, 0.0F, 0.0F));
-
-		PartDefinition leftFinger0 = leftHand.addOrReplaceChild("left_finger_0", CubeListBuilder.create()
-				.texOffs(237, 0).addBox(-0.25F, -0.25F, -0.25F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.75F, 1.5F, -0.25F, -1.309F, 0.0F, 0.0F));
-
-		leftFinger0.addOrReplaceChild("left_finger_0_tip", CubeListBuilder.create()
-				.texOffs(240, 0).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.25F, 0.0F, -1.5708F, 0.0F, 0.0F));
-
-		PartDefinition leftFinger1 = leftHand.addOrReplaceChild("left_finger_1", CubeListBuilder.create()
-				.texOffs(243, 0).addBox(-0.25F, -0.25F, -0.25F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.25F, 1.5F, -0.25F, -1.309F, 0.0F, 0.0F));
-
-		leftFinger1.addOrReplaceChild("left_finger_1_tip", CubeListBuilder.create()
-				.texOffs(246, 0).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.25F, 0.0F, -1.5708F, 0.0F, 0.0F));
-
-		PartDefinition leftFinger2 = leftHand.addOrReplaceChild("left_finger_2", CubeListBuilder.create()
-				.texOffs(249, 0).addBox(-0.25F, -0.25F, -0.25F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.25F, 1.5F, -0.25F, -1.309F, 0.0F, 0.0F));
-
-		leftFinger2.addOrReplaceChild("left_finger_2_tip", CubeListBuilder.create()
-				.texOffs(252, 0).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.25F, 0.0F, -1.5708F, 0.0F, 0.0F));
-
-		PartDefinition leftFinger3 = leftHand.addOrReplaceChild("left_finger_3", CubeListBuilder.create()
-				.texOffs(0, 18).addBox(-0.25F, -0.25F, -0.25F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.75F, 1.5F, -0.25F, -1.309F, 0.0F, 0.0F));
-
-		leftFinger3.addOrReplaceChild("left_finger_3_tip", CubeListBuilder.create()
-				.texOffs(3, 18).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.25F, 0.0F, -1.5708F, 0.0F, 0.0F));
-
-		leftHand.addOrReplaceChild("left_thumb", CubeListBuilder.create()
-				.texOffs(6, 18).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0F, 0.0F, 0.0F, -0.6109F, 0.0F, -0.7854F));
-
-		leftForearm.addOrReplaceChild("left_sleeve", CubeListBuilder.create()
-				.texOffs(9, 18).addBox(-2.25F, 0.0F, -0.5F, 0.75F, 7.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(13, 18).addBox(-2.25F, 7.0F, -0.5F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(16, 18).addBox(-2.25F, 6.5F, -0.75F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(19, 18).addBox(-2.25F, 8.25F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(21, 18).addBox(-1.5F, 0.0F, -0.25F, 0.75F, 10.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(25, 18).addBox(-1.5F, 10.0F, -0.25F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(28, 18).addBox(-0.75F, 0.0F, -0.5F, 0.75F, 8.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(32, 18).addBox(-0.75F, 8.0F, -0.5F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(35, 18).addBox(-0.75F, 7.5F, -0.75F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(38, 18).addBox(-0.75F, 9.25F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(40, 18).addBox(0.0F, 0.0F, -0.25F, 0.75F, 11.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(44, 18).addBox(0.0F, 11.0F, -0.25F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(47, 18).addBox(0.75F, 0.0F, -0.5F, 0.75F, 9.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(51, 18).addBox(0.75F, 9.0F, -0.5F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(54, 18).addBox(0.75F, 8.5F, -0.75F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(57, 18).addBox(0.75F, 10.25F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(59, 18).addBox(1.5F, 0.0F, -0.25F, 0.75F, 7.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(63, 18).addBox(1.5F, 7.0F, -0.25F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 3.5F, 0.5F, -0.0951F, -0.2722F, 2.1688F));
-
-		chest.addOrReplaceChild("right_stole", CubeListBuilder.create()
-				.texOffs(66, 18).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 16.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(70, 18).addBox(-0.5F, 15.0F, -0.5F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(73, 18).addBox(-0.5F, 16.25F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(75, 18).addBox(-0.25F, 15.0F, -0.5F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(78, 18).addBox(-0.25F, 17.25F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(80, 18).addBox(0.0F, 15.0F, -0.5F, 0.5F, 3.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(83, 18).addBox(0.0F, 18.25F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.75F, -6.0F, -2.75F, 0.0F, 0.0F, 0.1396F));
-
-		PartDefinition rightArm = chest.addOrReplaceChild("right_arm", CubeListBuilder.create()
-				.texOffs(85, 18).addBox(-1.5F, -1.0F, -1.75F, 3.0F, 3.0F, 3.5F, new CubeDeformation(0.0F))
-				.texOffs(99, 18).addBox(-0.75F, 1.0F, -0.75F, 1.5F, 6.5F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(106, 18).addBox(-1.75F, -0.75F, -2.0F, 3.5F, 1.0F, 4.0F, new CubeDeformation(0.0F))
-				.texOffs(122, 18).addBox(-1.75F, 0.0F, -2.0F, 3.5F, 0.5F, 0.75F, new CubeDeformation(0.0F))
-				.texOffs(132, 18).addBox(-1.75F, 0.5F, -2.25F, 0.5F, 0.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(135, 18).addBox(-1.75F, 1.25F, -2.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(137, 18).addBox(-1.75F, 1.25F, -2.0F, 3.5F, 0.5F, 0.75F, new CubeDeformation(0.0F))
-				.texOffs(147, 18).addBox(-0.25F, 0.5F, -2.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(150, 18).addBox(-0.25F, 1.75F, -2.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(152, 18).addBox(-1.75F, 2.5F, -2.0F, 3.5F, 0.5F, 0.75F, new CubeDeformation(0.0F))
-				.texOffs(162, 18).addBox(1.25F, 0.5F, -2.25F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(165, 18).addBox(1.25F, 2.25F, -2.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(167, 18).addBox(-2.0F, -0.5F, -1.75F, 4.0F, 2.0F, 3.5F, new CubeDeformation(0.0F))
-				.texOffs(183, 18).addBox(-2.0F, -0.75F, -1.75F, 4.0F, 0.25F, 3.5F, new CubeDeformation(0.0F))
-				.texOffs(199, 18).addBox(-2.0F, 1.5F, -1.75F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(202, 18).addBox(-1.0F, 1.5F, -1.75F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(205, 18).addBox(0.0F, 1.5F, -1.75F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(208, 18).addBox(1.0F, 1.5F, -1.75F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.5F, -5.25F, 0.0F, -0.0873F, 0.0F, 0.9599F));
-
-		PartDefinition rightForearm = rightArm.addOrReplaceChild("right_forearm", CubeListBuilder.create()
-				.texOffs(211, 18).addBox(-0.75F, -0.5F, -0.5F, 0.5F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(215, 18).addBox(0.25F, -0.5F, -0.5F, 0.5F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(219, 18).addBox(-1.0F, 5.5F, -0.75F, 2.0F, 0.75F, 1.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.2618F, 0.0F, 1.5708F));
-
-		PartDefinition rightHand = rightForearm.addOrReplaceChild("right_hand", CubeListBuilder.create()
-				.texOffs(227, 18).addBox(-1.0F, -0.5F, -0.5F, 2.0F, 2.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.1745F, 0.0F, 0.2618F));
-
-		PartDefinition rightFinger0 = rightHand.addOrReplaceChild("right_finger_0", CubeListBuilder.create()
-				.texOffs(234, 18).addBox(-0.25F, -0.25F, -0.25F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.75F, 1.5F, -0.25F, -0.3142F, 0.0F, -0.3403F));
-
-		rightFinger0.addOrReplaceChild("right_finger_0_tip", CubeListBuilder.create()
-				.texOffs(237, 18).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.75F, 0.0F, -0.5585F, 0.0F, 0.0F));
-
-		PartDefinition rightFinger1 = rightHand.addOrReplaceChild("right_finger_1", CubeListBuilder.create()
-				.texOffs(240, 18).addBox(-0.25F, -0.25F, -0.25F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.25F, 1.5F, -0.25F, -0.3142F, 0.0F, -0.1134F));
-
-		rightFinger1.addOrReplaceChild("right_finger_1_tip", CubeListBuilder.create()
-				.texOffs(243, 18).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.5F, 0.0F, -0.5585F, 0.0F, 0.0F));
-
-		PartDefinition rightFinger2 = rightHand.addOrReplaceChild("right_finger_2", CubeListBuilder.create()
-				.texOffs(246, 18).addBox(-0.25F, -0.25F, -0.25F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.25F, 1.5F, -0.25F, -0.3142F, 0.0F, 0.1134F));
-
-		rightFinger2.addOrReplaceChild("right_finger_2_tip", CubeListBuilder.create()
-				.texOffs(249, 18).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.75F, 0.0F, -0.5585F, 0.0F, 0.0F));
-
-		PartDefinition rightFinger3 = rightHand.addOrReplaceChild("right_finger_3", CubeListBuilder.create()
-				.texOffs(252, 18).addBox(-0.25F, -0.25F, -0.25F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.75F, 1.5F, -0.25F, -0.3142F, 0.0F, 0.3403F));
-
-		rightFinger3.addOrReplaceChild("right_finger_3_tip", CubeListBuilder.create()
-				.texOffs(0, 36).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, 0.0F, -0.5585F, 0.0F, 0.0F));
-
-		rightHand.addOrReplaceChild("right_thumb", CubeListBuilder.create()
-				.texOffs(3, 36).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0F, 0.0F, 0.0F, -0.6109F, 0.0F, 0.7854F));
-
-		rightForearm.addOrReplaceChild("right_sleeve", CubeListBuilder.create()
-				.texOffs(6, 36).addBox(-2.25F, 0.0F, -0.5F, 0.75F, 7.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(10, 36).addBox(-2.25F, 7.0F, -0.5F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(13, 36).addBox(-2.25F, 6.5F, -0.75F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(16, 36).addBox(-2.25F, 8.25F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(18, 36).addBox(-1.5F, 0.0F, -0.25F, 0.75F, 10.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(22, 36).addBox(-1.5F, 10.0F, -0.25F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(25, 36).addBox(-0.75F, 0.0F, -0.5F, 0.75F, 8.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(29, 36).addBox(-0.75F, 8.0F, -0.5F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(32, 36).addBox(-0.75F, 7.5F, -0.75F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(35, 36).addBox(-0.75F, 9.25F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(37, 36).addBox(0.0F, 0.0F, -0.25F, 0.75F, 11.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(41, 36).addBox(0.0F, 11.0F, -0.25F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(44, 36).addBox(0.75F, 0.0F, -0.5F, 0.75F, 9.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(48, 36).addBox(0.75F, 9.0F, -0.5F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(51, 36).addBox(0.75F, 8.5F, -0.75F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(54, 36).addBox(0.75F, 10.25F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(56, 36).addBox(1.5F, 0.0F, -0.25F, 0.75F, 7.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(60, 36).addBox(1.5F, 7.0F, -0.25F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 3.5F, 0.5F, -0.186F, 0.2192F, -2.5608F));
-
-		rightHand.addOrReplaceChild("claw_ice", CubeListBuilder.create()
-				.texOffs(63, 36).addBox(-1.25F, 0.0F, -0.75F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(66, 36).addBox(-1.25F, 1.75F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(68, 36).addBox(-0.25F, 0.0F, -0.75F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(71, 36).addBox(-0.25F, 2.5F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(73, 36).addBox(0.75F, 0.0F, -0.75F, 0.5F, 3.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(76, 36).addBox(0.75F, 3.25F, -0.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.5F, 0.0F, -0.3579F, 0.2706F, -2.8644F));
-
-		PartDefinition pectoralChains = chest.addOrReplaceChild("pectoral_chains", CubeListBuilder.create(), PartPose.ZERO);
-
-		pectoralChains.addOrReplaceChild("chest_link_0_0", CubeListBuilder.create(), PartPose.offsetAndRotation(-3.0F, -4.0F, -3.0F, 0.0F, 0.0F, 0.7854F));
-
-		pectoralChains.addOrReplaceChild("chest_link_0_1", CubeListBuilder.create(), PartPose.offsetAndRotation(-2.0F, -3.5F, -3.0F, 0.0F, 0.0F, 0.5236F));
-
-		pectoralChains.addOrReplaceChild("chest_link_0_2", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.0F, -2.75F, -3.0F, 0.0F, 0.0F, 0.2618F));
-
-		pectoralChains.addOrReplaceChild("chest_link_0_3", CubeListBuilder.create(), PartPose.offset(0.0F, -2.25F, -3.0F));
-
-		pectoralChains.addOrReplaceChild("chest_link_0_4", CubeListBuilder.create(), PartPose.offsetAndRotation(1.0F, -2.75F, -3.0F, 0.0F, 0.0F, -0.2618F));
-
-		pectoralChains.addOrReplaceChild("chest_link_0_5", CubeListBuilder.create(), PartPose.offsetAndRotation(2.0F, -3.5F, -3.0F, 0.0F, 0.0F, -0.5236F));
-
-		pectoralChains.addOrReplaceChild("chest_link_0_6", CubeListBuilder.create(), PartPose.offsetAndRotation(3.0F, -4.0F, -3.0F, 0.0F, 0.0F, -0.7854F));
-
-		PartDefinition waistChain = chest.addOrReplaceChild("waist_chain", CubeListBuilder.create(), PartPose.offset(0.0F, 4.0F, -3.0F));
-
-		waistChain.addOrReplaceChild("waist_chain_link_0", CubeListBuilder.create()
-				.texOffs(78, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(81, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(84, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(88, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		waistChain.addOrReplaceChild("waist_chain_link_1", CubeListBuilder.create()
-				.texOffs(92, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(95, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(98, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(102, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		waistChain.addOrReplaceChild("waist_chain_link_2", CubeListBuilder.create()
-				.texOffs(106, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(109, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(112, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(116, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, 0.0F));
-
-		waistChain.addOrReplaceChild("waist_chain_link_3", CubeListBuilder.create()
-				.texOffs(120, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(123, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(126, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(130, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		waistChain.addOrReplaceChild("waist_chain_link_4", CubeListBuilder.create()
-				.texOffs(134, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(137, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(140, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(144, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 6.0F, 0.0F));
-
-		waistChain.addOrReplaceChild("waist_chain_link_5", CubeListBuilder.create()
-				.texOffs(148, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(151, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(154, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(158, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		waistChain.addOrReplaceChild("waist_chain_link_6", CubeListBuilder.create()
-				.texOffs(162, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(165, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(168, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(172, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 9.0F, 0.0F));
-
-		chest.addOrReplaceChild("breast_seam", CubeListBuilder.create()
-				.texOffs(176, 36).addBox(-1.75F, -0.25F, -0.25F, 1.5F, 0.25F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(181, 36).addBox(-0.5F, 0.0F, -0.25F, 1.25F, 0.25F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(185, 36).addBox(0.5F, 0.25F, -0.25F, 1.25F, 0.25F, 0.25F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.5F, -2.5F));
-
-		chest.addOrReplaceChild("breast_reliquary", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, 3.5F, -3.5F, 0.0F, 0.0F, 0.7854F));
-
-		PartDefinition sideChain = chest.addOrReplaceChild("side_chain", CubeListBuilder.create(), PartPose.offset(-5.0F, -5.5F, 1.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_0", CubeListBuilder.create()
-				.texOffs(189, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(192, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(195, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(199, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		sideChain.addOrReplaceChild("side_chain_link_1", CubeListBuilder.create()
-				.texOffs(203, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(206, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(209, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(213, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_2", CubeListBuilder.create()
-				.texOffs(217, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(220, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(223, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(227, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, 0.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_3", CubeListBuilder.create()
-				.texOffs(231, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(234, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(237, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(241, 36).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_4", CubeListBuilder.create()
-				.texOffs(245, 36).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(248, 36).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(251, 36).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(0, 49).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 6.0F, 0.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_5", CubeListBuilder.create()
-				.texOffs(4, 49).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(7, 49).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(10, 49).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(14, 49).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_6", CubeListBuilder.create()
-				.texOffs(18, 49).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(21, 49).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(24, 49).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(28, 49).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 9.0F, 0.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_7", CubeListBuilder.create()
-				.texOffs(32, 49).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(35, 49).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(38, 49).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(42, 49).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_8", CubeListBuilder.create()
-				.texOffs(46, 49).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(49, 49).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(52, 49).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(56, 49).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 12.0F, 0.0F));
-
-		sideChain.addOrReplaceChild("side_chain_link_9", CubeListBuilder.create()
-				.texOffs(60, 49).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(63, 49).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(66, 49).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(70, 49).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 13.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		PartDefinition sideLantern = sideChain.addOrReplaceChild("side_lantern", CubeListBuilder.create()
-				.texOffs(74, 49).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 0.5F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(87, 49).addBox(-1.5F, -3.5F, -1.5F, 3.0F, 0.5F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(100, 49).addBox(-1.25F, -3.5F, -1.25F, 0.25F, 3.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(102, 49).addBox(-1.25F, -3.5F, 1.0F, 0.25F, 3.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(104, 49).addBox(1.0F, -3.5F, -1.25F, 0.25F, 3.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(106, 49).addBox(1.0F, -3.5F, 1.0F, 0.25F, 3.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(108, 49).addBox(-1.25F, -4.0F, -1.25F, 2.5F, 0.5F, 2.5F, new CubeDeformation(0.0F))
-				.texOffs(119, 49).addBox(-0.75F, -4.5F, -0.75F, 1.5F, 0.5F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(126, 49).addBox(-0.25F, -6.5F, -0.25F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(129, 49).addBox(-1.0F, -6.0F, -0.25F, 2.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(135, 49).addBox(-1.5F, 0.5F, -1.5F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(138, 49).addBox(-1.5F, 1.75F, -1.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(140, 49).addBox(1.0F, 0.5F, -1.5F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(143, 49).addBox(1.0F, 2.25F, -1.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(145, 49).addBox(-1.5F, 0.5F, 1.0F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(148, 49).addBox(-1.5F, 2.75F, 1.0F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(150, 49).addBox(1.0F, 0.5F, 1.0F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(153, 49).addBox(1.0F, 3.25F, 1.0F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 19.0F, 0.0F));
-
-		PartDefinition sideLanternCrystal = sideLantern.addOrReplaceChild("side_lantern_crystal", CubeListBuilder.create()
-				.texOffs(155, 49).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.75F, 0.0F, 0.0F, 0.7854F, 0.2618F));
-
-		sideLanternCrystal.addOrReplaceChild("side_lantern_core", CubeListBuilder.create()
-				.texOffs(160, 49).addBox(-0.25F, -1.5F, -0.25F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
+				.texOffs(43, 0).addBox(-4.0F, -14.0F, -3.0F, 8.0F, 17.0F, 6.0F, new CubeDeformation(0.0F))
+				.texOffs(72, 0).addBox(-5.0F, -13.25F, -3.6F, 10.0F, 4.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(107, 0).addBox(-3.0F, -15.75F, -3.15F, 6.0F, 3.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.0F, 0.0F));
 
 		PartDefinition head = chest.addOrReplaceChild("head", CubeListBuilder.create()
-				.texOffs(163, 49).addBox(-2.25F, -5.5F, -1.75F, 4.5F, 6.0F, 3.5F, new CubeDeformation(0.0F))
-				.texOffs(180, 49).addBox(-2.75F, -6.5F, -2.25F, 5.5F, 1.0F, 4.5F, new CubeDeformation(0.0F))
-				.texOffs(201, 49).addBox(-2.0F, -7.0F, -1.75F, 4.0F, 0.5F, 3.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -8.0F, -0.5F, 0.0698F, 0.0F, 0.0F));
+				.texOffs(132, 0).addBox(-3.5F, -8.5F, -3.75F, 7.0F, 9.0F, 6.0F, new CubeDeformation(0.0F))
+				.texOffs(159, 0).addBox(-5.0F, -10.5F, -4.75F, 10.0F, 3.0F, 9.0F, new CubeDeformation(0.0F))
+				.texOffs(198, 0).addBox(-5.0F, -8.25F, 1.75F, 10.0F, 8.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(225, 0).addBox(-5.0F, -7.75F, -4.75F, 2.0F, 7.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 24).addBox(3.0F, -7.75F, -4.75F, 2.0F, 7.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(19, 24).addBox(-3.5F, -0.75F, -4.25F, 7.0F, 2.0F, 4.0F, new CubeDeformation(0.0F))
+				.texOffs(42, 24).addBox(-5.0F, -9.25F, -5.25F, 10.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(65, 24).addBox(-1.5F, -9.5F, -5.75F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -14.0F, -0.25F));
 
-		head.addOrReplaceChild("back_veil", CubeListBuilder.create()
-				.texOffs(217, 49).addBox(-2.5F, -5.75F, 1.75F, 0.75F, 9.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(221, 49).addBox(-2.5F, 3.25F, 1.75F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(224, 49).addBox(-1.75F, -5.75F, 1.75F, 0.75F, 10.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(228, 49).addBox(-1.75F, 4.25F, 1.75F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(231, 49).addBox(-1.0F, -5.75F, 1.75F, 0.75F, 9.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(235, 49).addBox(-1.0F, 3.25F, 1.75F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(238, 49).addBox(-0.25F, -5.75F, 1.75F, 0.75F, 10.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(242, 49).addBox(-0.25F, 4.25F, 1.75F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(245, 49).addBox(0.5F, -5.75F, 1.75F, 0.75F, 9.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(249, 49).addBox(0.5F, 3.25F, 1.75F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(252, 49).addBox(1.25F, -5.75F, 1.75F, 0.75F, 10.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(0, 61).addBox(1.25F, 4.25F, 1.75F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(3, 61).addBox(2.0F, -5.75F, 1.75F, 0.75F, 9.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(7, 61).addBox(2.0F, 3.25F, 1.75F, 0.25F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
+		head.addOrReplaceChild("brow_jewel", CubeListBuilder.create()
+				.texOffs(88, 24).addBox(-1.0F, -1.0F, -0.7F, 2.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -8.0F, -5.55F, 0.0F, 0.0F, -0.7854F));
 
-		PartDefinition faceVeil = head.addOrReplaceChild("face_veil", CubeListBuilder.create(), PartPose.ZERO);
+		head.addOrReplaceChild("left_cowl_lappet", CubeListBuilder.create()
+				.texOffs(95, 24).addBox(-1.0F, -0.5F, -0.65F, 2.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.25F, -7.0F, -4.55F, 0.0F, 0.0F, -0.1047F));
 
-		faceVeil.addOrReplaceChild("veil_strip_0", CubeListBuilder.create(), PartPose.offsetAndRotation(-2.75F, -5.75F, -2.5F, 0.0F, 0.0F, 0.1047F));
+		head.addOrReplaceChild("right_cowl_lappet", CubeListBuilder.create()
+				.texOffs(102, 24).addBox(-1.0F, -0.5F, -0.65F, 2.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.25F, -7.0F, -4.55F, 0.0F, 0.0F, 0.1047F));
 
-		faceVeil.addOrReplaceChild("veil_strip_1", CubeListBuilder.create(), PartPose.offsetAndRotation(-2.0F, -5.75F, -2.75F, 0.0F, 0.0F, 0.0785F));
+		PartDefinition halo = head.addOrReplaceChild("halo", CubeListBuilder.create()
+				.texOffs(109, 24).addBox(-7.5F, 9.5F, -0.75F, 15.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(144, 24).addBox(-2.0F, -18.0F, -1.5F, 4.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(159, 24).addBox(-1.0F, -20.5F, -1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(168, 24).addBox(11.0F, -5.0F, -1.7F, 4.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(183, 24).addBox(12.0F, -3.0F, -2.2F, 2.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(190, 24).addBox(-15.0F, -5.0F, -1.7F, 4.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(205, 24).addBox(-14.0F, -3.0F, -2.2F, 2.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -9.0F, 6.25F));
 
-		faceVeil.addOrReplaceChild("veil_strip_2", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.25F, -5.75F, -2.5F, 0.0F, 0.0F, 0.0524F));
+		halo.addOrReplaceChild("left_halo_arch_0", CubeListBuilder.create()
+				.texOffs(212, 24).addBox(-1.5F, -5.5F, -1.0F, 3.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.5F, -13.5F, 0.0F, 0.0F, 0.0F, 2.0779F));
 
-		faceVeil.addOrReplaceChild("veil_strip_3", CubeListBuilder.create(), PartPose.offsetAndRotation(-0.5F, -5.75F, -2.75F, 0.0F, 0.0F, 0.0262F));
+		halo.addOrReplaceChild("left_halo_arch_1", CubeListBuilder.create()
+				.texOffs(223, 24).addBox(-1.5F, -4.0F, -1.0F, 3.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(11.0F, -8.0F, 0.09F, 0.0F, 0.0F, 2.5536F));
 
-		faceVeil.addOrReplaceChild("veil_strip_4", CubeListBuilder.create(), PartPose.offset(0.25F, -5.75F, -2.5F));
+		halo.addOrReplaceChild("left_halo_arch_2", CubeListBuilder.create()
+				.texOffs(234, 24).addBox(-1.5F, -5.0F, -1.0F, 3.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(13.0F, -0.5F, 0.0F, 0.0F, 0.0F, -3.1416F));
 
-		faceVeil.addOrReplaceChild("veil_strip_5", CubeListBuilder.create(), PartPose.offsetAndRotation(1.0F, -5.75F, -2.75F, 0.0F, 0.0F, -0.0262F));
+		halo.addOrReplaceChild("left_halo_arch_3", CubeListBuilder.create()
+				.texOffs(245, 24).addBox(-1.5F, -5.0F, -1.0F, 3.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(10.0F, 7.25F, 0.09F, 0.0F, 0.0F, -2.3962F));
 
-		faceVeil.addOrReplaceChild("veil_strip_6", CubeListBuilder.create(), PartPose.offsetAndRotation(1.75F, -5.75F, -2.5F, 0.0F, 0.0F, -0.0524F));
+		halo.addOrReplaceChild("left_outer_arch_0", CubeListBuilder.create()
+				.texOffs(0, 39).addBox(-0.5F, -5.0F, -1.0F, 1.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(8.0F, -14.5F, 0.75F, 0.0F, 0.0F, 1.9296F));
 
-		faceVeil.addOrReplaceChild("veil_strip_7", CubeListBuilder.create(), PartPose.offsetAndRotation(2.5F, -5.75F, -2.75F, 0.0F, 0.0F, -0.0785F));
+		halo.addOrReplaceChild("left_outer_arch_1", CubeListBuilder.create()
+				.texOffs(7, 39).addBox(-0.5F, -4.5F, -1.0F, 1.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, -9.5F, 0.84F, 0.0F, 0.0F, 2.6224F));
 
-		faceVeil.addOrReplaceChild("veil_strip_8", CubeListBuilder.create(), PartPose.offsetAndRotation(3.25F, -5.75F, -2.5F, 0.0F, 0.0F, -0.1047F));
+		halo.addOrReplaceChild("left_outer_arch_2", CubeListBuilder.create()
+				.texOffs(14, 39).addBox(-0.5F, -3.0F, -1.0F, 1.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(16.0F, -3.5F, 0.75F, 0.0F, 0.0F, -3.1416F));
 
-		head.addOrReplaceChild("cowl_right", CubeListBuilder.create()
-				.texOffs(10, 61).addBox(-0.5F, -0.5F, -2.0F, 1.0F, 10.0F, 4.0F, new CubeDeformation(0.0F))
-				.texOffs(21, 61).addBox(-0.5F, 9.5F, 0.0F, 0.5F, 2.5F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, -5.0F, 0.0F, -0.0698F, 0.0F, 0.1571F));
+		PartDefinition leftVotiveDrop = halo.addOrReplaceChild("left_votive_drop", CubeListBuilder.create()
+				.texOffs(21, 39).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(13.0F, 3.0F, -1.7F));
 
-		head.addOrReplaceChild("cowl_left", CubeListBuilder.create()
-				.texOffs(27, 61).addBox(-0.5F, -0.5F, -2.0F, 1.0F, 10.0F, 4.0F, new CubeDeformation(0.0F))
-				.texOffs(38, 61).addBox(-0.5F, 9.5F, 0.0F, 0.5F, 2.5F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.5F, -5.0F, 0.0F, -0.0698F, 0.0F, -0.1571F));
+		leftVotiveDrop.addOrReplaceChild("left_votive_glass", CubeListBuilder.create()
+				.texOffs(32, 39).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 2.0F, 0.2F));
 
-		head.addOrReplaceChild("monastic_hood", CubeListBuilder.create()
-				.texOffs(44, 61).addBox(-3.0F, -4.5F, -2.75F, 6.0F, 1.5F, 5.5F, new CubeDeformation(0.0F))
-				.texOffs(68, 61).addBox(-3.0F, -3.0F, -2.75F, 1.0F, 7.0F, 5.0F, new CubeDeformation(0.0F))
-				.texOffs(81, 61).addBox(2.0F, -3.0F, -2.75F, 1.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.0F, 0.5F));
+		halo.addOrReplaceChild("right_halo_arch_0", CubeListBuilder.create()
+				.texOffs(41, 39).addBox(-1.5F, -5.5F, -1.0F, 3.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.5F, -13.5F, 0.0F, 0.0F, 0.0F, -2.0779F));
 
-		PartDefinition knottedCord = hips.addOrReplaceChild("knotted_cord", CubeListBuilder.create()
-				.texOffs(94, 61).addBox(-3.0F, -0.25F, -0.25F, 6.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(108, 61).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.0F, -2.75F));
+		halo.addOrReplaceChild("right_halo_arch_1", CubeListBuilder.create()
+				.texOffs(52, 39).addBox(-1.5F, -4.0F, -1.0F, 3.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-11.0F, -8.0F, 0.09F, 0.0F, 0.0F, -2.5536F));
 
-		knottedCord.addOrReplaceChild("knotted_cord_tails", CubeListBuilder.create()
-				.texOffs(113, 61).addBox(-0.75F, 0.0F, -0.25F, 0.5F, 6.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(116, 61).addBox(0.25F, 0.0F, -0.25F, 0.5F, 7.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.5F, 0.0F));
+		halo.addOrReplaceChild("right_halo_arch_2", CubeListBuilder.create()
+				.texOffs(63, 39).addBox(-1.5F, -5.0F, -1.0F, 3.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-13.0F, -0.5F, 0.0F, 0.0F, 0.0F, -3.1416F));
 
-		PartDefinition halo = head.addOrReplaceChild("halo", CubeListBuilder.create(), PartPose.offset(0.0F, -3.5F, 3.0F));
+		halo.addOrReplaceChild("right_halo_arch_3", CubeListBuilder.create()
+				.texOffs(74, 39).addBox(-1.5F, -5.0F, -1.0F, 3.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-10.0F, 7.25F, 0.09F, 0.0F, 0.0F, 2.3962F));
 
-		halo.addOrReplaceChild("halo_segment_0", CubeListBuilder.create()
-				.texOffs(119, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -7.25F, 0.0F));
+		halo.addOrReplaceChild("right_outer_arch_0", CubeListBuilder.create()
+				.texOffs(85, 39).addBox(-0.5F, -5.0F, -1.0F, 1.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-8.0F, -14.5F, 0.75F, 0.0F, 0.0F, -1.9296F));
 
-		halo.addOrReplaceChild("halo_segment_1", CubeListBuilder.create()
-				.texOffs(126, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.25F, -7.0F, 0.0F, 0.0F, 0.0F, 0.3142F));
+		halo.addOrReplaceChild("right_outer_arch_1", CubeListBuilder.create()
+				.texOffs(92, 39).addBox(-0.5F, -4.5F, -1.0F, 1.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-14.0F, -9.5F, 0.84F, 0.0F, 0.0F, -2.6224F));
 
-		halo.addOrReplaceChild("halo_segment_2", CubeListBuilder.create()
-				.texOffs(133, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.25F, -5.75F, 0.0F, 0.0F, 0.0F, 0.6283F));
+		halo.addOrReplaceChild("right_outer_arch_2", CubeListBuilder.create()
+				.texOffs(99, 39).addBox(-0.5F, -3.0F, -1.0F, 1.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-16.0F, -3.5F, 0.75F, 0.0F, 0.0F, -3.1416F));
 
-		halo.addOrReplaceChild("halo_segment_3", CubeListBuilder.create()
-				.texOffs(140, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.75F, -4.25F, 0.0F, 0.0F, 0.0F, 0.9425F));
+		PartDefinition rightVotiveDrop = halo.addOrReplaceChild("right_votive_drop", CubeListBuilder.create()
+				.texOffs(106, 39).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-13.0F, 3.0F, -1.7F));
 
-		halo.addOrReplaceChild("halo_segment_4", CubeListBuilder.create()
-				.texOffs(147, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(7.0F, -2.25F, 0.0F, 0.0F, 0.0F, 1.2566F));
+		rightVotiveDrop.addOrReplaceChild("right_votive_glass", CubeListBuilder.create()
+				.texOffs(117, 39).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 2.0F, 0.2F));
 
-		halo.addOrReplaceChild("halo_segment_5", CubeListBuilder.create()
-				.texOffs(154, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(7.25F, 0.0F, 0.0F, 0.0F, 0.0F, 1.5708F));
+		chest.addOrReplaceChild("breast_seam", CubeListBuilder.create()
+				.texOffs(74, 24).addBox(-1.5F, -1.5F, -0.55F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(83, 24).addBox(-0.5F, -0.5F, -1.15F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -9.0F, -3.1F, 0.0F, 0.0F, -0.7854F));
 
-		halo.addOrReplaceChild("halo_segment_6", CubeListBuilder.create()
-				.texOffs(161, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(7.0F, 2.25F, 0.0F, 0.0F, 0.0F, 1.885F));
+		chest.addOrReplaceChild("right_mantle_fall", CubeListBuilder.create()
+				.texOffs(198, 39).addBox(-3.15F, 0.0F, 0.1F, 5.0F, 21.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(211, 39).addBox(-3.15F, 21.0F, 0.12F, 4.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(222, 39).addBox(-3.15F, 26.6F, 0.17F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(227, 39).addBox(-0.15F, 26.6F, 0.17F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.1F, -11.0F, 2.75F, 0.1745F, -0.2793F, 0.0698F));
 
-		halo.addOrReplaceChild("halo_segment_7", CubeListBuilder.create()
-				.texOffs(168, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.75F, 4.25F, 0.0F, 0.0F, 0.0F, 2.1991F));
+		PartDefinition leftArm = chest.addOrReplaceChild("left_arm", CubeListBuilder.create()
+				.texOffs(0, 69).addBox(-2.3F, -2.0F, -3.35F, 5.0F, 4.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(25, 69).addBox(-2.1F, 0.25F, -2.35F, 4.0F, 9.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.7F, -10.75F, -0.25F, 0.0F, 0.0F, 0.0698F));
 
-		halo.addOrReplaceChild("halo_segment_8", CubeListBuilder.create()
-				.texOffs(175, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.25F, 5.75F, 0.0F, 0.0F, 0.0F, 2.5133F));
+		PartDefinition leftForearm = leftArm.addOrReplaceChild("left_forearm", CubeListBuilder.create()
+				.texOffs(44, 69).addBox(-1.9F, -0.75F, -2.8F, 4.0F, 10.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(63, 69).addBox(-1.85F, 10.48F, -2.78F, 2.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(70, 69).addBox(-1.8F, 9.36F, -2.48F, 3.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.2F, 7.75F, 0.25F, -0.4887F, 0.0F, 0.0349F));
 
-		halo.addOrReplaceChild("halo_segment_9", CubeListBuilder.create()
-				.texOffs(182, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.25F, 7.0F, 0.0F, 0.0F, 0.0F, 2.8274F));
-
-		halo.addOrReplaceChild("halo_segment_10", CubeListBuilder.create()
-				.texOffs(189, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.25F, 0.0F, 0.0F, 0.0F, 3.1416F));
-
-		halo.addOrReplaceChild("halo_segment_11", CubeListBuilder.create()
-				.texOffs(196, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.25F, 7.0F, 0.0F, 0.0F, 0.0F, 3.4558F));
-
-		halo.addOrReplaceChild("halo_segment_12", CubeListBuilder.create()
-				.texOffs(203, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.25F, 5.75F, 0.0F, 0.0F, 0.0F, 3.7699F));
-
-		halo.addOrReplaceChild("halo_segment_13", CubeListBuilder.create()
-				.texOffs(210, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.75F, 4.25F, 0.0F, 0.0F, 0.0F, 4.0841F));
-
-		halo.addOrReplaceChild("halo_segment_14", CubeListBuilder.create()
-				.texOffs(217, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-7.0F, 2.25F, 0.0F, 0.0F, 0.0F, 4.3982F));
-
-		halo.addOrReplaceChild("halo_segment_15", CubeListBuilder.create()
-				.texOffs(224, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-7.25F, 0.0F, 0.0F, 0.0F, 0.0F, 4.7124F));
-
-		halo.addOrReplaceChild("halo_segment_16", CubeListBuilder.create()
-				.texOffs(231, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-7.0F, -2.25F, 0.0F, 0.0F, 0.0F, 5.0265F));
-
-		halo.addOrReplaceChild("halo_segment_17", CubeListBuilder.create()
-				.texOffs(238, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.75F, -4.25F, 0.0F, 0.0F, 0.0F, 5.3407F));
-
-		halo.addOrReplaceChild("halo_segment_18", CubeListBuilder.create()
-				.texOffs(245, 61).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.25F, -5.75F, 0.0F, 0.0F, 0.0F, 5.6549F));
-
-		halo.addOrReplaceChild("halo_segment_19", CubeListBuilder.create()
-				.texOffs(0, 76).addBox(-1.25F, -0.25F, -0.25F, 2.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.25F, -7.0F, 0.0F, 0.0F, 0.0F, 5.969F));
-
-		PartDefinition haloChain0 = halo.addOrReplaceChild("halo_chain_0", CubeListBuilder.create(), PartPose.offset(-7.25F, 0.0F, 0.0F));
-
-		haloChain0.addOrReplaceChild("halo_chain_0_link_0", CubeListBuilder.create()
-				.texOffs(7, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(10, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(13, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(17, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		haloChain0.addOrReplaceChild("halo_chain_0_link_1", CubeListBuilder.create()
-				.texOffs(21, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(24, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(27, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(31, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		haloChain0.addOrReplaceChild("halo_icicle_0", CubeListBuilder.create()
-				.texOffs(35, 76).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(38, 76).addBox(-0.25F, 1.25F, -0.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, 0.0F));
-
-		PartDefinition haloChain1 = halo.addOrReplaceChild("halo_chain_1", CubeListBuilder.create(), PartPose.offset(-5.0F, 0.0F, 0.0F));
-
-		haloChain1.addOrReplaceChild("halo_chain_1_link_0", CubeListBuilder.create()
-				.texOffs(40, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(43, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(46, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(50, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		haloChain1.addOrReplaceChild("halo_chain_1_link_1", CubeListBuilder.create()
-				.texOffs(54, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(57, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(60, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(64, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		haloChain1.addOrReplaceChild("halo_chain_1_link_2", CubeListBuilder.create()
-				.texOffs(68, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(71, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(74, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(78, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, 0.0F));
-
-		haloChain1.addOrReplaceChild("halo_icicle_1", CubeListBuilder.create()
-				.texOffs(82, 76).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(85, 76).addBox(-0.25F, 2.25F, -0.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 4.5F, 0.0F));
-
-		PartDefinition haloChain2 = halo.addOrReplaceChild("halo_chain_2", CubeListBuilder.create(), PartPose.offset(5.0F, 0.0F, 0.0F));
-
-		haloChain2.addOrReplaceChild("halo_chain_2_link_0", CubeListBuilder.create()
-				.texOffs(87, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(90, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(93, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(97, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		haloChain2.addOrReplaceChild("halo_chain_2_link_1", CubeListBuilder.create()
-				.texOffs(101, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(104, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(107, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(111, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		haloChain2.addOrReplaceChild("halo_icicle_2", CubeListBuilder.create()
-				.texOffs(115, 76).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(118, 76).addBox(-0.25F, 1.25F, -0.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, 0.0F));
-
-		PartDefinition haloChain3 = halo.addOrReplaceChild("halo_chain_3", CubeListBuilder.create(), PartPose.offset(7.25F, 0.0F, 0.0F));
-
-		haloChain3.addOrReplaceChild("halo_chain_3_link_0", CubeListBuilder.create()
-				.texOffs(120, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(123, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(126, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(130, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		haloChain3.addOrReplaceChild("halo_chain_3_link_1", CubeListBuilder.create()
-				.texOffs(134, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(137, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(140, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(144, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		haloChain3.addOrReplaceChild("halo_chain_3_link_2", CubeListBuilder.create()
-				.texOffs(148, 76).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(151, 76).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(154, 76).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(158, 76).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, 0.0F));
-
-		haloChain3.addOrReplaceChild("halo_icicle_3", CubeListBuilder.create()
-				.texOffs(162, 76).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(165, 76).addBox(-0.25F, 2.25F, -0.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 4.5F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_0", CubeListBuilder.create()
-				.texOffs(167, 76).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(174, 76).addBox(-1.25F, 11.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 2.0F, 0.1396F, 0.0F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_1", CubeListBuilder.create()
-				.texOffs(178, 76).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(185, 76).addBox(-1.25F, 11.5F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.25F, 0.0F, 1.75F, 0.1396F, 0.3927F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_2", CubeListBuilder.create()
-				.texOffs(189, 76).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 13.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(196, 76).addBox(-1.25F, 12.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, 0.0F, 1.5F, 0.1396F, 0.7854F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_3", CubeListBuilder.create()
-				.texOffs(200, 76).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(207, 76).addBox(-1.25F, 11.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.75F, 0.0F, 0.75F, 0.1396F, 1.1781F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_4", CubeListBuilder.create()
-				.texOffs(211, 76).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(218, 76).addBox(-1.25F, 11.5F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.0F, 0.0F, 0.0F, 0.1396F, 1.5708F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_5", CubeListBuilder.create()
-				.texOffs(222, 76).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 13.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(229, 76).addBox(-1.25F, 12.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.75F, 0.0F, -0.75F, 0.1396F, 1.9635F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_6", CubeListBuilder.create()
-				.texOffs(233, 76).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(240, 76).addBox(-1.25F, 11.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, 0.0F, -1.5F, 0.1396F, 2.3562F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_7", CubeListBuilder.create()
-				.texOffs(244, 76).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(251, 76).addBox(-1.25F, 11.5F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.25F, 0.0F, -1.75F, 0.1396F, 2.7489F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_8", CubeListBuilder.create()
-				.texOffs(0, 91).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 13.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(7, 91).addBox(-1.25F, 12.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, -2.0F, 0.1396F, 3.1416F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_9", CubeListBuilder.create()
-				.texOffs(11, 91).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(18, 91).addBox(-1.25F, 11.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.25F, 0.0F, -1.75F, 0.1396F, 3.5343F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_10", CubeListBuilder.create()
-				.texOffs(22, 91).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(29, 91).addBox(-1.25F, 11.5F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, 0.0F, -1.5F, 0.1396F, 3.927F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_11", CubeListBuilder.create()
-				.texOffs(33, 91).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 13.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(40, 91).addBox(-1.25F, 12.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.75F, 0.0F, -0.75F, 0.1396F, 4.3197F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_12", CubeListBuilder.create()
-				.texOffs(44, 91).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(51, 91).addBox(-1.25F, 11.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.0F, 0.0F, 0.0F, 0.1396F, 4.7124F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_13", CubeListBuilder.create()
-				.texOffs(55, 91).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(62, 91).addBox(-1.25F, 11.5F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.75F, 0.0F, 0.75F, 0.1396F, 5.1051F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_14", CubeListBuilder.create()
-				.texOffs(66, 91).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 13.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(73, 91).addBox(-1.25F, 12.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, 0.0F, 1.5F, 0.1396F, 5.4978F, 0.0F));
-
-		hips.addOrReplaceChild("robe_panel_15", CubeListBuilder.create()
-				.texOffs(77, 91).addBox(-1.25F, -1.0F, -0.25F, 2.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(84, 91).addBox(-1.25F, 11.0F, -0.25F, 0.75F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.25F, 0.0F, 1.75F, 0.1396F, 5.8905F, 0.0F));
-
-		PartDefinition mantlePanel0 = chest.addOrReplaceChild("mantle_panel_0", CubeListBuilder.create()
-				.texOffs(88, 91).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(96, 91).addBox(-1.25F, 11.0F, -0.5F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(99, 91).addBox(-1.25F, 13.75F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.5F, -5.5F, -0.25F, 0.2094F, -1.6581F, 0.0F));
-
-		mantlePanel0.addOrReplaceChild("mantle_panel_0_train", CubeListBuilder.create()
-				.texOffs(101, 91).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(110, 91).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(113, 91).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(116, 91).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition mantlePanel1 = chest.addOrReplaceChild("mantle_panel_1", CubeListBuilder.create()
-				.texOffs(119, 91).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.25F, -5.5F, 0.75F, 0.2094F, -1.2435F, 0.0F));
-
-		mantlePanel1.addOrReplaceChild("mantle_panel_1_train", CubeListBuilder.create()
-				.texOffs(127, 91).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(136, 91).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(139, 91).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(142, 91).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition mantlePanel2 = chest.addOrReplaceChild("mantle_panel_2", CubeListBuilder.create()
-				.texOffs(145, 91).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(153, 91).addBox(-1.25F, 11.0F, -0.5F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(156, 91).addBox(-1.25F, 13.75F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, -5.5F, 1.75F, 0.2094F, -0.829F, 0.0F));
-
-		mantlePanel2.addOrReplaceChild("mantle_panel_2_train", CubeListBuilder.create()
-				.texOffs(158, 91).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(167, 91).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(170, 91).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(173, 91).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition mantlePanel3 = chest.addOrReplaceChild("mantle_panel_3", CubeListBuilder.create()
-				.texOffs(176, 91).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.5F, -5.5F, 2.25F, 0.2094F, -0.4145F, 0.0F));
-
-		mantlePanel3.addOrReplaceChild("mantle_panel_3_train", CubeListBuilder.create()
-				.texOffs(184, 91).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(193, 91).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(196, 91).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(199, 91).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition mantlePanel4 = chest.addOrReplaceChild("mantle_panel_4", CubeListBuilder.create()
-				.texOffs(202, 91).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(210, 91).addBox(-1.25F, 11.0F, -0.5F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(213, 91).addBox(-1.25F, 13.75F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -5.5F, 2.5F, 0.2094F, 0.0F, 0.0F));
-
-		mantlePanel4.addOrReplaceChild("mantle_panel_4_train", CubeListBuilder.create()
-				.texOffs(215, 91).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(224, 91).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(227, 91).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(230, 91).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition mantlePanel5 = chest.addOrReplaceChild("mantle_panel_5", CubeListBuilder.create()
-				.texOffs(233, 91).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.5F, -5.5F, 2.25F, 0.2094F, 0.4145F, 0.0F));
-
-		mantlePanel5.addOrReplaceChild("mantle_panel_5_train", CubeListBuilder.create()
-				.texOffs(241, 91).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(250, 91).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(253, 91).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(0, 109).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition mantlePanel6 = chest.addOrReplaceChild("mantle_panel_6", CubeListBuilder.create()
-				.texOffs(3, 109).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(11, 109).addBox(-1.25F, 11.0F, -0.5F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(14, 109).addBox(-1.25F, 13.75F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.5F, -5.5F, 1.75F, 0.2094F, 0.829F, 0.0F));
-
-		mantlePanel6.addOrReplaceChild("mantle_panel_6_train", CubeListBuilder.create()
-				.texOffs(16, 109).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(25, 109).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(28, 109).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(31, 109).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition mantlePanel7 = chest.addOrReplaceChild("mantle_panel_7", CubeListBuilder.create()
-				.texOffs(34, 109).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.25F, -5.5F, 0.75F, 0.2094F, 1.2435F, 0.0F));
-
-		mantlePanel7.addOrReplaceChild("mantle_panel_7_train", CubeListBuilder.create()
-				.texOffs(42, 109).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(51, 109).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(54, 109).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(57, 109).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition mantlePanel8 = chest.addOrReplaceChild("mantle_panel_8", CubeListBuilder.create()
-				.texOffs(60, 109).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 16.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(68, 109).addBox(-1.25F, 11.0F, -0.5F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(71, 109).addBox(-1.25F, 13.75F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.5F, -5.5F, -0.25F, 0.2094F, 1.6581F, 0.0F));
-
-		mantlePanel8.addOrReplaceChild("mantle_panel_8_train", CubeListBuilder.create()
-				.texOffs(73, 109).addBox(-1.75F, 0.0F, 0.0F, 3.5F, 12.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(82, 109).addBox(-1.0F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(85, 109).addBox(-0.25F, 5.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(88, 109).addBox(0.5F, 5.0F, 0.0F, 0.5F, 1.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 15.5F, 0.0F, 0.2094F, 0.0F, 0.0F));
-
-		PartDefinition hemFrost = root.addOrReplaceChild("hem_frost", CubeListBuilder.create(), PartPose.offset(0.0F, 23.5F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_0", CubeListBuilder.create()
-				.texOffs(91, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 4.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_1", CubeListBuilder.create()
-				.texOffs(98, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.5F, 0.0F, 3.5F, 0.0F, 0.5236F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_2", CubeListBuilder.create()
-				.texOffs(107, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.25F, 0.0F, 2.0F, 0.0F, 1.0472F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_3", CubeListBuilder.create()
-				.texOffs(118, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.0F, 0.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_4", CubeListBuilder.create()
-				.texOffs(125, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.25F, 0.0F, -2.0F, 0.0F, 2.0944F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_5", CubeListBuilder.create()
-				.texOffs(134, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.5F, 0.0F, -3.5F, 0.0F, 2.618F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_6", CubeListBuilder.create()
-				.texOffs(145, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, -4.0F, 0.0F, 3.1416F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_7", CubeListBuilder.create()
-				.texOffs(152, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, 0.0F, -3.5F, 0.0F, 3.6652F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_8", CubeListBuilder.create()
-				.texOffs(161, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.25F, 0.0F, -2.0F, 0.0F, 4.1888F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_9", CubeListBuilder.create()
-				.texOffs(172, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.0F, 0.0F, 0.0F, 0.0F, 4.7124F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_10", CubeListBuilder.create()
-				.texOffs(179, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.25F, 0.0F, 2.0F, 0.0F, 5.236F, 0.0F));
-
-		hemFrost.addOrReplaceChild("frost_trail_11", CubeListBuilder.create()
-				.texOffs(188, 109).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, 0.0F, 3.5F, 0.0F, 5.7596F, 0.0F));
+		PartDefinition leftHand = leftForearm.addOrReplaceChild("left_hand", CubeListBuilder.create()
+				.texOffs(85, 69).addBox(-1.55F, -1.05F, -1.7F, 3.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(-0.5F, 10.55F, -0.5F));
 
 		PartDefinition staff = leftHand.addOrReplaceChild("staff", CubeListBuilder.create()
-				.texOffs(199, 109).addBox(-0.5F, -15.0F, -0.5F, 1.0F, 41.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(204, 109).addBox(-1.0F, 25.25F, -1.0F, 2.0F, 0.75F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(213, 109).addBox(-0.75F, -13.0F, -0.75F, 1.5F, 0.75F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(220, 109).addBox(-0.75F, -8.0F, -0.75F, 1.5F, 0.75F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(227, 109).addBox(-0.75F, -3.0F, -0.75F, 1.5F, 0.75F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(234, 109).addBox(-0.75F, 3.0F, -0.75F, 1.5F, 0.75F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(241, 109).addBox(-0.75F, 9.0F, -0.75F, 1.5F, 0.75F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(248, 109).addBox(-0.75F, 24.5F, -0.75F, 1.5F, 0.75F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(0, 152).addBox(-0.25F, -5.0F, -0.25F, 4.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.0F, -1.0F, -0.2021F, -0.4148F, 2.205F));
+				.texOffs(120, 99).addBox(-0.75F, -23.8F, -0.55F, 2.0F, 46.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(129, 99).addBox(-1.25F, 18.9F, -1.05F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(142, 99).addBox(-1.0F, -3.5F, -0.8F, 3.0F, 6.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(155, 99).addBox(-1.25F, -22.3F, -1.05F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(168, 99).addBox(-1.3F, 4.55F, -1.1F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(181, 99).addBox(-1.3F, -12.8F, -1.1F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.05F, 1.75F, -1.0F, 0.4887F, 0.0F, -0.2618F));
 
 		PartDefinition staffLantern = staff.addOrReplaceChild("staff_lantern", CubeListBuilder.create()
-				.texOffs(10, 152).addBox(-2.25F, 0.0F, -2.25F, 4.5F, 0.5F, 4.5F, new CubeDeformation(0.0F))
-				.texOffs(29, 152).addBox(-2.25F, -5.5F, -2.25F, 4.5F, 0.5F, 4.5F, new CubeDeformation(0.0F))
-				.texOffs(48, 152).addBox(-2.0F, -5.5F, -2.0F, 0.25F, 5.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(50, 152).addBox(-2.0F, -5.5F, 1.75F, 0.25F, 5.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(52, 152).addBox(1.75F, -5.5F, -2.0F, 0.25F, 5.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(54, 152).addBox(1.75F, -5.5F, 1.75F, 0.25F, 5.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(56, 152).addBox(-2.0F, -6.0F, -2.0F, 4.0F, 0.5F, 4.0F, new CubeDeformation(0.0F))
-				.texOffs(73, 152).addBox(-1.5F, -6.5F, -1.5F, 3.0F, 0.5F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(86, 152).addBox(-0.25F, -8.5F, -0.25F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(89, 152).addBox(-1.0F, -8.0F, -0.25F, 2.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(95, 152).addBox(-2.25F, 0.5F, -2.25F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(98, 152).addBox(-2.25F, 1.75F, -2.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(100, 152).addBox(1.75F, 0.5F, -2.25F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(103, 152).addBox(1.75F, 2.25F, -2.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(105, 152).addBox(-2.25F, 0.5F, 1.75F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(108, 152).addBox(-2.25F, 2.75F, 1.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(110, 152).addBox(1.75F, 0.5F, 1.75F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(113, 152).addBox(1.75F, 3.25F, 1.75F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(115, 152).addBox(-2.25F, -5.0F, -0.25F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(118, 152).addBox(-2.25F, -2.75F, -0.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(120, 152).addBox(-2.25F, -7.5F, -0.25F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(123, 152).addBox(1.75F, -5.0F, -0.25F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(126, 152).addBox(1.75F, -2.75F, -0.25F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(128, 152).addBox(1.75F, -7.5F, -0.25F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -13.0F, 0.0F));
+				.texOffs(194, 99).addBox(-3.4F, -1.5F, -3.1F, 7.0F, 2.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(223, 99).addBox(-3.9F, -10.25F, -3.6F, 8.0F, 2.0F, 8.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 148).addBox(-2.4F, -12.25F, -2.1F, 5.0F, 2.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(21, 148).addBox(-1.4F, -14.25F, -1.1F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(34, 148).addBox(-0.4F, -16.25F, -0.1F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(39, 148).addBox(-2.9F, -9.0F, -2.6F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(44, 148).addBox(-2.9F, -9.0F, 2.4F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(49, 148).addBox(2.1F, -9.0F, -2.6F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(54, 148).addBox(2.1F, -9.0F, 2.4F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(59, 148).addBox(-1.4F, -3.5F, -1.0F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(72, 148).addBox(-3.75F, -0.75F, -3.45F, 8.0F, 1.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.2F, -22.3F, 0.55F));
 
-		PartDefinition staffLanternCrystal = staffLantern.addOrReplaceChild("staff_lantern_crystal", CubeListBuilder.create()
-				.texOffs(131, 152).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -2.75F, 0.0F, 0.0F, 0.7854F, 0.2618F));
+		staffLantern.addOrReplaceChild("lantern_pendant", CubeListBuilder.create()
+				.texOffs(105, 148).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(110, 148).addBox(-1.0F, 4.5F, -0.9F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(3.1F, -0.5F, 0.8F));
 
-		staffLanternCrystal.addOrReplaceChild("staff_lantern_core", CubeListBuilder.create()
-				.texOffs(136, 152).addBox(-0.25F, -1.5F, -0.25F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
+		staffLantern.addOrReplaceChild("staff_lantern_core", CubeListBuilder.create()
+				.texOffs(119, 148).addBox(-1.0F, -3.0F, -1.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.1F, -5.0F, 0.5F, 0.0F, 0.7854F, 0.0F));
 
-		PartDefinition pendantChain = staff.addOrReplaceChild("pendant_chain", CubeListBuilder.create(), PartPose.offset(3.5F, -5.0F, 0.0F));
+		chest.addOrReplaceChild("left_mantle_fall", CubeListBuilder.create()
+				.texOffs(165, 69).addBox(-1.85F, 0.0F, 0.1F, 5.0F, 27.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(178, 69).addBox(-0.85F, 26.6F, 0.12F, 4.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(189, 69).addBox(-0.85F, 32.2F, 0.17F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(194, 69).addBox(2.15F, 32.2F, 0.17F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.1F, -11.0F, 2.75F, 0.1745F, 0.2793F, -0.0698F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_0", CubeListBuilder.create()
-				.texOffs(139, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(142, 152).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(145, 152).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(149, 152).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
+		PartDefinition rightArm = chest.addOrReplaceChild("right_arm", CubeListBuilder.create()
+				.texOffs(199, 69).addBox(-2.7F, -2.0F, -3.35F, 5.0F, 4.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(224, 69).addBox(-1.7F, 0.25F, -2.35F, 4.0F, 9.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.7F, -10.75F, -0.25F, 0.0F, 0.0F, -0.0698F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_1", CubeListBuilder.create()
-				.texOffs(153, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(156, 152).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(159, 152).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(163, 152).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
+		PartDefinition rightForearm = rightArm.addOrReplaceChild("right_forearm", CubeListBuilder.create()
+				.texOffs(0, 99).addBox(-1.9F, -0.75F, -2.8F, 4.0F, 10.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(19, 99).addBox(0.15F, 10.48F, -2.78F, 2.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(26, 99).addBox(-1.8F, 9.36F, -2.48F, 3.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2F, 7.75F, 0.25F, 0.0F, 0.0F, -0.0349F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_2", CubeListBuilder.create()
-				.texOffs(167, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(170, 152).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(173, 152).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(177, 152).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, 0.0F));
+		PartDefinition rightHand = rightForearm.addOrReplaceChild("right_hand", CubeListBuilder.create()
+				.texOffs(41, 99).addBox(-1.55F, -1.05F, -1.7F, 3.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.5F, 10.55F, -0.5F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_3", CubeListBuilder.create()
-				.texOffs(181, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(184, 152).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(187, 152).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(191, 152).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
+		rightHand.addOrReplaceChild("held_first_fingers", CubeListBuilder.create()
+				.texOffs(54, 99).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-0.55F, 3.15F, -0.6F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_4", CubeListBuilder.create()
-				.texOffs(195, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(198, 152).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(201, 152).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(205, 152).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 6.0F, 0.0F));
+		rightHand.addOrReplaceChild("held_last_fingers", CubeListBuilder.create()
+				.texOffs(63, 99).addBox(-0.5F, 0.0F, -1.0F, 1.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(1.0F, 3.15F, -0.4F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_5", CubeListBuilder.create()
-				.texOffs(209, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(212, 152).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(215, 152).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(219, 152).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
+		rightArm.addOrReplaceChild("shoulder_cruor", CubeListBuilder.create()
+				.texOffs(70, 99).addBox(-2.15F, -4.0F, -1.65F, 2.0F, 6.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(81, 99).addBox(-3.5F, -2.5F, -2.15F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.95F, -1.25F, -0.75F, 0.0F, 0.0F, 0.3316F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_6", CubeListBuilder.create()
-				.texOffs(223, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(226, 152).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(229, 152).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(233, 152).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 9.0F, 0.0F));
+		rightArm.addOrReplaceChild("shoulder_cruor_spire", CubeListBuilder.create()
+				.texOffs(90, 99).addBox(-0.75F, -5.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(99, 99).addBox(-0.25F, -7.25F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.65F, -2.0F, 0.55F, 0.0698F, 0.0F, 0.4189F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_7", CubeListBuilder.create()
-				.texOffs(237, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(240, 152).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(243, 152).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(247, 152).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.5F, 0.0F, 0.0F, 1.5708F, 0.0F));
+		hips.addOrReplaceChild("right_leg", CubeListBuilder.create()
+				.texOffs(126, 39).addBox(-1.5F, 0.0F, -1.75F, 3.0F, 25.0F, 4.0F, new CubeDeformation(0.0F))
+				.texOffs(141, 39).addBox(-1.8F, 22.4F, -3.25F, 4.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.05F, 0.0F, 0.0F, 0.0F, 0.0F, 0.014F));
 
-		pendantChain.addOrReplaceChild("pendant_chain_link_8", CubeListBuilder.create()
-				.texOffs(251, 152).addBox(-0.75F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(0, 159).addBox(0.5F, 0.0F, -0.25F, 0.25F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(3, 159).addBox(-0.5F, 0.0F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(7, 159).addBox(-0.5F, 1.5F, -0.25F, 1.0F, 0.25F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 12.0F, 0.0F));
+		hips.addOrReplaceChild("right_split_habit", CubeListBuilder.create()
+				.texOffs(162, 39).addBox(-2.5F, 0.0F, -1.35F, 5.0F, 15.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(177, 39).addBox(-0.6F, 15.4F, -1.32F, 3.0F, 4.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(188, 39).addBox(-0.45F, 19.6F, -1.27F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(193, 39).addBox(-2.4F, 15.4F, -1.26F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.4F, 0.0F, -2.0F, -0.0524F, 0.0F, 0.0611F));
 
-		PartDefinition pendantLantern = pendantChain.addOrReplaceChild("pendant_lantern", CubeListBuilder.create()
-				.texOffs(11, 159).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 0.5F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(24, 159).addBox(-1.5F, -3.5F, -1.5F, 3.0F, 0.5F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(37, 159).addBox(-1.25F, -3.5F, -1.25F, 0.25F, 3.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(39, 159).addBox(-1.25F, -3.5F, 1.0F, 0.25F, 3.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(41, 159).addBox(1.0F, -3.5F, -1.25F, 0.25F, 3.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(43, 159).addBox(1.0F, -3.5F, 1.0F, 0.25F, 3.5F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(45, 159).addBox(-1.25F, -4.0F, -1.25F, 2.5F, 0.5F, 2.5F, new CubeDeformation(0.0F))
-				.texOffs(56, 159).addBox(-0.75F, -4.5F, -0.75F, 1.5F, 0.5F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(63, 159).addBox(-0.25F, -6.5F, -0.25F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(66, 159).addBox(-1.0F, -6.0F, -0.25F, 2.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(72, 159).addBox(-1.5F, 0.5F, -1.5F, 0.5F, 1.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(75, 159).addBox(-1.5F, 1.75F, -1.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(77, 159).addBox(1.0F, 0.5F, -1.5F, 0.5F, 1.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(80, 159).addBox(1.0F, 2.25F, -1.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(82, 159).addBox(-1.5F, 0.5F, 1.0F, 0.5F, 2.25F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(85, 159).addBox(-1.5F, 2.75F, 1.0F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F))
-				.texOffs(87, 159).addBox(1.0F, 0.5F, 1.0F, 0.5F, 2.75F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(90, 159).addBox(1.0F, 3.25F, 1.0F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 17.5F, 0.0F));
+		hips.addOrReplaceChild("left_leg", CubeListBuilder.create()
+				.texOffs(98, 69).addBox(-1.5F, 0.0F, -1.75F, 3.0F, 25.0F, 4.0F, new CubeDeformation(0.0F))
+				.texOffs(113, 69).addBox(-1.8F, 22.4F, -3.25F, 4.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.05F, 0.0F, 0.0F, 0.0F, 0.0F, -0.014F));
 
-		PartDefinition pendantLanternCrystal = pendantLantern.addOrReplaceChild("pendant_lantern_crystal", CubeListBuilder.create()
-				.texOffs(92, 159).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.75F, 0.0F, 0.0F, 0.7854F, 0.2618F));
+		hips.addOrReplaceChild("left_split_habit", CubeListBuilder.create()
+				.texOffs(134, 69).addBox(-2.5F, 0.0F, -1.35F, 5.0F, 11.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(149, 69).addBox(-2.15F, 11.2F, -1.32F, 3.0F, 4.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(160, 69).addBox(-2.0F, 15.4F, -1.27F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.4F, 0.0F, -2.0F, -0.0524F, 0.0F, -0.0611F));
 
-		pendantLanternCrystal.addOrReplaceChild("pendant_lantern_core", CubeListBuilder.create()
-				.texOffs(97, 159).addBox(-0.25F, -1.5F, -0.25F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
+		hips.addOrReplaceChild("front_tabard", CubeListBuilder.create()
+				.texOffs(104, 99).addBox(-1.65F, 0.0F, -0.55F, 3.0F, 15.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(113, 99).addBox(-1.55F, 15.4F, -0.52F, 2.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, -3.5F, -0.0698F, 0.0F, 0.0611F));
 
 		return LayerDefinition.create(meshdefinition, 256, 256);
 	}
@@ -1307,17 +368,15 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 	/** A spring's trail never turns a part further than this (a body snapped round by a teleport settles from it). */
 	static final float TRAIL_LIMIT = 0.7F;
 	/** The grip slides along the shaft at most this far either way while the heel is planted, model units. */
-	static final float GRIP_SLIDE = 8.0F;
 	/** The floor, in model units (y grows downward), and how far above it cloth comes to rest. */
 	static final float FLOOR = 24.0F, CLOTH_CLEARANCE = 0.25F;
 	/** How far the hanging lanterns hang below their chains' last links, model units. */
-	static final float SIDE_GAP = 4.0F, PENDANT_GAP = 4.0F;
 	/** The hour counted on his fingers: once every 200 ticks they fold one at a time and open together. */
 	static final float COUNT_PERIOD = 200.0F;
 	/** The crystals' slow turn, radians a tick. */
 	static final float SPIN = 0.006F;
 	/** The Shadow Step: how deep he sinks (blocks), enough that the lantern's cage goes under last. */
-	public static final float STEP_DEPTH = 3.0F;
+	public static final float STEP_DEPTH = 4.85F;
 	/** The Shadow Step's authored length, which the phase-3 card replays over its own 50 ticks. */
 	static final float STEP_LENGTH = 52.0F, CARD_LENGTH = 50.0F;
 	/** A relit Eclipse's jolt runs this long over whatever plays next (the Guttering Lantern). */
@@ -1388,7 +447,8 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 		a[LOOK] = 1.0F;
 		a[CALM] = 1.0F - 0.6F * hour;
 		float keeping = congregation * (1.0F - hour);
-		a[R_ARM_X] += -0.14F - 0.06F * keeping - 0.3F * hour;
+		a[R_ARM_X] += -0.38F - 0.06F * keeping - 0.3F * hour;
+		a[R_FORE] -= 1.35F;
 		a[R_FORE_Z] += 0.12F * hour;
 		a[FINGERS] -= 0.25F * keeping;
 		a[L_ARM_Z] -= 0.12F * congregation;
@@ -2161,8 +1221,8 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 	static void failing(float[] a, float t) {
 		float hood = HemoEasing.ramp(t, 16, 40);
 		a[R_ARM_X] += catmullRom(t, 0, 0, 3, -0.04F, 9, 0.1F, 14, 0.3F, 16, 0.38F, 20, 0.31F, 26, 0.33F);
-		a[R_ARM_Z] += catmullRom(t, 0, 0, 3, 0.03F, 10, -0.35F, 15, -0.85F, 16.5F, -0.95F, 20, -0.88F, 26, -0.9F);
-		a[R_FORE_Z] += catmullRom(t, 0, 0, 4, 0, 12, -0.7F, 16, -1.3F, 20, -1.2F, 26, -1.25F);
+		a[R_ARM_Z] += catmullRom(t, 0, 0, 4, 0.06F, 16, -0.17F, 26, -0.09F);
+		a[R_FORE] += catmullRom(t, 0, 0, 4, -0.07F, 16, 1.42F, 26, 1.35F);
 		a[R_HAND] += catmullRom(t, 0, 0, 8, 0, 16, 0.45F, 26, 0.4F);
 		a[FINGERS] += catmullRom(t, 0, 0, 6, 0, 16, -0.7F, 30, -0.55F);
 		a[HEAD] += 0.6F * hood;
@@ -2251,63 +1311,23 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 
 	// ---------------------------------------------------------------- laying it on the rig
 
-	private ModelPart[] fingers, fingerTips, sideLinks, pendantLinks, waistLinks, mantles, trains, robes, icicles;
-	private ModelPart[][] haloLinks;
-	private ModelPart[] haloChains;
+	private ModelPart[] mantles, robes, votives;
 	private Quaternionf[] mantleRest, robeRest;
-	private Quaternionf stoleLeftRest, stoleRightRest, veilRest, bodyRest, headRest;
-	/** The staff's length from the grip to its heel, and where the heel stands at rest (model units). */
+	private Quaternionf bodyRest;
 	float staffLength = Float.NaN;
 	final org.joml.Vector3f staffFootRest = new org.joml.Vector3f();
 
-	/** Finds the parts the pass works through once, and measures the staff and the cloth at rest. */
 	private void bind() {
-		fingers = new ModelPart[4];
-		fingerTips = new ModelPart[4];
-		for (int i = 0; i < 4; i++) {
-			fingers[i] = rightHand.getChild("right_finger_" + i);
-			fingerTips[i] = fingers[i].getChild("right_finger_" + i + "_tip");
-		}
-		sideLinks = links(sideChain, "side_chain", 10);
-		pendantLinks = links(pendantChain, "pendant_chain", 9);
-		waistLinks = links(waistChain, "waist_chain", 7);
-		haloChains = new ModelPart[4];
-		haloLinks = new ModelPart[4][];
-		icicles = new ModelPart[4];
-		for (int i = 0; i < 4; i++) {
-			haloChains[i] = halo.getChild("halo_chain_" + i);
-			haloLinks[i] = links(haloChains[i], "halo_chain_" + i, 2 + i % 2);
-			icicles[i] = haloChains[i].getChild("halo_icicle_" + i);
-		}
-		mantles = new ModelPart[9];
-		trains = new ModelPart[9];
-		mantleRest = new Quaternionf[9];
-		for (int i = 0; i < 9; i++) {
-			mantles[i] = chest.getChild("mantle_panel_" + i);
-			trains[i] = mantles[i].getChild("mantle_panel_" + i + "_train");
-			mantleRest[i] = rotation(mantles[i]);
-		}
-		robes = new ModelPart[16];
-		robeRest = new Quaternionf[16];
-		for (int i = 0; i < 16; i++) {
-			robes[i] = hips.getChild("robe_panel_" + i);
-			robeRest[i] = rotation(robes[i]);
-		}
-		stoleLeftRest = rotation(leftStole);
-		stoleRightRest = rotation(rightStole);
-		veilRest = rotation(backVeil);
+		mantles = new ModelPart[]{leftMantleFall, rightMantleFall};
+		robes = new ModelPart[]{leftSplitHabit, rightSplitHabit, frontTabard};
+		votives = new ModelPart[]{leftVotiveDrop, rightVotiveDrop};
+		mantleRest = java.util.Arrays.stream(mantles).map(part -> rotation(part)).toArray(Quaternionf[]::new);
+		robeRest = java.util.Arrays.stream(robes).map(part -> rotation(part)).toArray(Quaternionf[]::new);
 		bodyRest = rotation(hips, chest);
-		headRest = rotation(hips, chest, head);
-		float length = 0.0F;
-		for (ModelPart.Cube cube : staff.cubes) length = Math.max(length, cube.maxY);
-		staffLength = length;
-		staffFootRest.set(world(new org.joml.Vector3f(0, length, 0), root, hips, chest, leftArm, leftForearm, leftHand, staff));
-	}
-
-	private static ModelPart[] links(ModelPart chain, String name, int count) {
-		ModelPart[] links = new ModelPart[count];
-		for (int i = 0; i < count; i++) links[i] = chain.getChild(name + "_link_" + i);
-		return links;
+		staffLength = staff.cubes.stream().map(cube -> cube.maxY).max(Float::compare).orElseThrow();
+		staffFootRest.set(world(new org.joml.Vector3f(0, staffLength, 0), root, hips, chest,
+				leftArm, leftForearm, leftHand, staff));
+		staffFootRest.y = FLOOR;
 	}
 
 	/**
@@ -2323,33 +1343,32 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 		float shudder = a[SHUDDER] * (Mth.sin(age * 2.3F) * 0.6F + Mth.sin(age * 3.7F + 1.3F) * 0.4F) * 0.035F;
 		float tremor = a[TREMOR] * (Mth.sin(age * 2.09F) * 0.7F + Mth.sin(age * 3.3F + 0.6F) * 0.3F);
 		hips.xRot += a[HIP_X];
-		hips.yRot += a[HIP_Y];
-		hips.zRot += a[HIP_Z];
+		hips.yRot -= a[HIP_Y];
+		hips.zRot -= a[HIP_Z];
 		hips.y += a[SINK] - inhale * 0.08F;
 		chest.xRot += a[BOW] + a[LAG_SPINE] + inhale * 0.0105F + shudder;
-		chest.yRot += a[TWIST];
-		chest.zRot += a[LEAN] + shudder * 0.4F;
+		chest.yRot -= a[TWIST];
+		chest.zRot -= a[LEAN] + shudder * 0.4F;
 		head.xRot += a[HEAD] + a[LAG_HEAD_X] - inhale * 0.006F + Mth.clamp(pitch, -15.0F, 15.0F) * DEG * 0.5F * look;
-		head.yRot += a[HEAD_TURN] + a[LAG_HEAD_Y] + Mth.clamp(yaw, -25.0F, 25.0F) * DEG * look;
-		head.zRot += a[HEAD_ROLL];
+		head.yRot += -a[HEAD_TURN] - a[LAG_HEAD_Y] + Mth.clamp(yaw, -25.0F, 25.0F) * DEG * look;
+		head.zRot -= a[HEAD_ROLL];
 		rightArm.xRot += a[R_ARM_X] + tremor;
-		rightArm.yRot += a[R_ARM_Y];
-		rightArm.zRot += a[R_ARM_Z] + tremor * 0.4F;
+		rightArm.yRot -= a[R_ARM_Y];
+		rightArm.zRot -= a[R_ARM_Z] + tremor * 0.4F;
 		rightForearm.xRot += a[R_FORE] + a[LAG_FORE];
-		rightForearm.zRot += a[R_FORE_Z];
+		rightForearm.zRot -= a[R_FORE_Z];
 		rightHand.xRot += a[R_HAND] + a[LAG_FORE] * 0.5F;
-		rightHand.zRot += a[R_HAND_Z];
+		rightHand.zRot -= a[R_HAND_Z];
 		leftArm.xRot += a[L_ARM_X];
-		leftArm.yRot += a[L_ARM_Y];
-		leftArm.zRot += a[L_ARM_Z];
+		leftArm.yRot -= a[L_ARM_Y];
+		leftArm.zRot -= a[L_ARM_Z];
 		leftForearm.xRot += a[L_FORE];
-		leftForearm.zRot += a[L_FORE_Z];
+		leftForearm.zRot -= a[L_FORE_Z];
 		leftHand.xRot += a[L_HAND];
 		claw(a);
-		monasticHood.xRot -= a[HOOD];
-		cowlLeft.xRot -= a[HOOD] * 0.6F;
-		cowlRight.xRot -= a[HOOD] * 0.6F;
-		halo.zRot += a[HALO_TURN] + a[HALO_RING];
+		leftCowlLappet.xRot -= a[HOOD] * 0.6F;
+		rightCowlLappet.xRot -= a[HOOD] * 0.6F;
+		halo.zRot -= a[HALO_TURN] + a[HALO_RING];
 		halo.xRot += a[HALO_TILT];
 		halo.y += a[HALO_SLACK] * 1.5F;
 		staffPose(a);
@@ -2357,21 +1376,10 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 		lanterns(a, spin);
 	}
 
-	/**
-	 * The crooked hand: a curl (positive closes, negative opens and splays), the overlap's trailing fingers, the hour or
-	 * a fist closing a finger at a time, the thumb with them.
-	 */
 	private void claw(float[] a) {
-		for (int i = 0; i < 4; i++) {
-			float fold = HemoEasing.smoothstep(Mth.clamp(a[CLENCH] - i, 0.0F, 1.0F)) * 0.8F;
-			float curl = a[FINGERS] + a[LAG_FINGERS] + fold;
-			float bend = curl > 0.0F ? curl * 0.5F : curl * 1.1F;
-			fingers[i].xRot -= bend * (1.0F + i * 0.06F);
-			fingers[i].zRot += curl < 0.0F ? curl * (i - 1.5F) * 0.12F : 0.0F;
-			fingerTips[i].xRot -= Math.max(-0.9F, bend) * 0.8F;
-		}
-		float thumb = a[FINGERS] + HemoEasing.smoothstep(Mth.clamp(a[CLENCH] - 3.0F, 0.0F, 1.0F)) * 0.8F;
-		rightThumb.xRot -= thumb > 0.0F ? thumb * 0.5F : thumb * 0.8F;
+		float curl = a[FINGERS] + a[LAG_FINGERS];
+		heldFirstFingers.xRot -= curl * 0.55F + HemoEasing.smoothstep(Mth.clamp(a[CLENCH] / 2.0F, 0, 1)) * 0.7F;
+		heldLastFingers.xRot -= curl * 0.75F + HemoEasing.smoothstep(Mth.clamp((a[CLENCH] - 2.0F) / 2.0F, 0, 1)) * 0.7F;
 	}
 
 	/**
@@ -2385,75 +1393,54 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 		Quaternionf hand = rotation(hips, chest, leftArm, leftForearm, leftHand);
 		org.joml.Vector3f grip = world(new org.joml.Vector3f(staff.x, staff.y, staff.z), root, hips, chest, leftArm,
 				leftForearm, leftHand);
-		org.joml.Vector3f foot = new org.joml.Vector3f(staffFootRest).add(a[FOOT_X], Math.min(1.5F, a[FOOT_Y]), a[FOOT_Z]);
+		org.joml.Vector3f foot = new org.joml.Vector3f(staffFootRest).add(-a[FOOT_X], Math.min(1.5F, a[FOOT_Y]), a[FOOT_Z]);
 		org.joml.Vector3f planted = foot.sub(grip, new org.joml.Vector3f());
 		float span = planted.length();
 		if (span > 1.0E-4F) planted.div(span);
 		else planted.set(0, 1, 0);
-		org.joml.Vector3f free = new org.joml.Vector3f(0, 1, 0).rotateZ(a[STAFF_Z]).rotateX(a[STAFF_X]).rotateY(a[STAFF_Y]);
+		org.joml.Vector3f free = new org.joml.Vector3f(0, 1, 0).rotateZ(-a[STAFF_Z]).rotateX(a[STAFF_X]).rotateY(-a[STAFF_Y]);
 		org.joml.Vector3f axis = free.lerp(planted, plant, new org.joml.Vector3f());
 		if (axis.lengthSquared() < 1.0E-6F) axis.set(planted);
 		axis.normalize();
 		Quaternionf pole = new Quaternionf().rotationTo(0, 1, 0, axis.x, axis.y, axis.z);
 		setRotationFromMatrix(staff, new Quaternionf(hand).conjugate().mul(pole).get(new Matrix3f()));
-		float slide = HemoEasing.lerp(-a[GRIP], Mth.clamp(span - staffLength, -GRIP_SLIDE, GRIP_SLIDE), plant);
+		float slide = HemoEasing.lerp(-a[GRIP], span - staffLength, plant);
 		org.joml.Vector3f along = new Quaternionf(hand).conjugate().transform(new org.joml.Vector3f(axis).mul(slide));
 		staff.x += along.x;
 		staff.y += along.y;
 		staff.z += along.z;
-		Quaternionf plumb = rotation(hips, chest, leftArm, leftForearm, leftHand, staff).conjugate();
-		setRotationFromMatrix(pendantChain, plumb.mul(swing(a[PENDANT_X], a[PENDANT_Z])).get(new Matrix3f()));
-		bend(pendantLinks, pendantLantern, PENDANT_GAP, a[PENDANT_BEND_X], a[PENDANT_BEND_Z]);
 	}
 
-	/** The chains, the cloth and the hanging ice: plumb or partly plumb, swinging off what carries them. */
 	private void hang(float[] a, float age, float calm) {
-		float idle = calm * 0.5F;
 		Quaternionf body = rotation(hips, chest);
-		Quaternionf bodyPlumb = new Quaternionf(body).conjugate();
-		setRotationFromMatrix(sideChain, new Quaternionf(bodyPlumb).mul(swing(a[SIDE_X] + a[SIDE_SWING_X]
-				+ Mth.sin(age * 0.055F + 0.8F) * 0.025F * idle, a[SIDE_Z] + a[SIDE_SWING_Z])).get(new Matrix3f()));
-		bend(sideLinks, sideLantern, SIDE_GAP, a[SIDE_BEND_X], a[SIDE_BEND_Z]);
-		setRotationFromMatrix(waistChain, new Quaternionf(bodyPlumb).mul(swing(a[WAIST_X] + Mth.sin(age * 0.06F) * 0.02F
-				* idle, a[WAIST_Z])).get(new Matrix3f()));
-		bend(waistLinks, null, 0.0F, a[WAIST_X] * 0.5F, a[WAIST_Z] * 0.5F);
-		if (halo.visible) {
-			Quaternionf crownPlumb = rotation(hips, chest, head, halo).conjugate();
-			float slack = HemoEasing.clamp01(a[HALO_SLACK]);
-			for (int i = 0; i < 4; i++) {
-				float idleSwing = Mth.sin(age * 0.04F + i) * 0.03F * idle;
-				setRotationFromMatrix(haloChains[i], new Quaternionf(crownPlumb).mul(swing(a[HALO_SWING_X] * (1.0F + i * 0.1F)
-						+ slack * 0.15F, a[HALO_SWING_Z] * (1.0F + i * 0.08F) + idleSwing)).get(new Matrix3f()));
-				bend(haloLinks[i], icicles[i], 0.0F, a[HALO_SWING_X] * 0.5F, a[HALO_SWING_Z] * 0.5F);
-			}
+		Quaternionf hip = rotation(hips);
+		float under = Math.max(0.0F, a[UNDER]);
+		for (int i = 0; i < mantles.length; i++) {
+			float flutter = Mth.sin(age * 0.08F - i) * 0.035F * calm;
+			drape(mantles[i], body, bodyRest, mantleRest[i], 0.75F, a[MANTLE_X] + flutter, -a[MANTLE_Z]);
+			floor(mantles[i], clothLength(mantles[i]), under, root, hips, chest, mantles[i]);
 		}
-		// the cloth: mostly hanging as it hung at rest whatever the body does, swinging off it, heaped on the floor
-		Quaternionf hipsNow = rotation(hips);
-		for (int i = 0; i < 9; i++) {
-			float flutter = Mth.sin(age * 0.05F - i * 0.65F) * 0.014F * idle;
-			drape(mantles[i], body, bodyRest, mantleRest[i], 0.75F, a[MANTLE_X] + flutter, a[MANTLE_Z]);
-			trains[i].xRot += Mth.sin(age * 0.055F - i * 0.65F - 1.0F) * 0.02F * idle + Math.max(0.0F, a[MANTLE_X]) * 0.3F;
+		for (int i = 0; i < robes.length; i++) {
+			float flutter = Mth.sin(age * 0.07F - i) * 0.028F * calm;
+			drape(robes[i], hip, new Quaternionf(), robeRest[i], 0.65F, a[ROBE_X] * 0.7F + flutter, -a[ROBE_Z]);
+			floor(robes[i], clothLength(robes[i]), under, root, hips, robes[i]);
 		}
-		for (int i = 0; i < 16; i++) {
-			float angle = i * Mth.TWO_PI / 16.0F;
-			float flutter = Mth.sin(age * 0.05F - i * 0.7F) * 0.012F * idle;
-			drape(robes[i], hipsNow, new Quaternionf(), robeRest[i], 0.85F, a[ROBE_X] * (0.6F + 0.4F * Mth.cos(angle))
-					+ flutter, a[ROBE_Z]);
+		float slack = HemoEasing.clamp01(a[HALO_SLACK]);
+		Quaternionf crown = rotation(hips, chest, head, halo).conjugate();
+		for (int i = 0; i < votives.length; i++) {
+			float sway = Mth.sin(age * 0.055F + i) * 0.026F * calm;
+			setRotationFromMatrix(votives[i], new Quaternionf(crown)
+					.mul(swing(a[HALO_SWING_X] + slack * 0.15F, -a[HALO_SWING_Z] + sway)).get(new Matrix3f()));
 		}
-		drape(leftStole, body, bodyRest, stoleLeftRest, 0.6F, a[STOLE_X], a[STOLE_Z]);
-		drape(rightStole, body, bodyRest, stoleRightRest, 0.6F, a[STOLE_X], a[STOLE_Z]);
-		drape(backVeil, rotation(hips, chest, head), headRest, veilRest, 0.5F, a[VEIL_X] + Mth.sin(age * 0.055F) * 0.02F
-				* idle, 0.0F);
-		heap(Math.max(0.0F, a[UNDER]));
-		// the sleeves and the claw's ice hang plumb, swinging off the arms
-		setRotationFromMatrix(rightSleeve, rotation(hips, chest, rightArm, rightForearm).conjugate()
-				.mul(swing(a[SLEEVE_RX], a[SLEEVE_RZ])).get(new Matrix3f()));
-		setRotationFromMatrix(leftSleeve, rotation(hips, chest, leftArm, leftForearm).conjugate()
-				.mul(swing(a[SLEEVE_LX], a[SLEEVE_LZ])).get(new Matrix3f()));
-		setRotationFromMatrix(clawIce, rotation(hips, chest, rightArm, rightForearm, rightHand).conjugate()
-				.mul(swing(a[SLEEVE_RX] * 0.5F, a[SLEEVE_RZ] * 0.5F)).get(new Matrix3f()));
-		setRotationFromMatrix(knottedCordTails, rotation(hips, knottedCord).conjugate().mul(swing(a[CORD_X], a[CORD_Z]))
-				.get(new Matrix3f()));
+		Quaternionf plumb = rotation(hips, chest, leftArm, leftForearm, leftHand, staff, staffLantern).conjugate();
+		setRotationFromMatrix(lanternPendant, plumb.mul(swing(a[SIDE_X] + a[SIDE_SWING_X] + a[PENDANT_X],
+				-a[SIDE_Z] - a[SIDE_SWING_Z] - a[PENDANT_Z])).get(new Matrix3f()));
+	}
+
+	private static float clothLength(ModelPart panel) {
+		float length = 0.0F;
+		for (ModelPart.Cube cube : panel.cubes) length = Math.max(length, cube.maxY);
+		return length;
 	}
 
 	/**
@@ -2466,16 +1453,6 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 		Quaternionf hung = new Quaternionf(parentRest).mul(authored);
 		Quaternionf world = swing(swingX, swingZ).mul(carried.slerp(hung, share));
 		setRotationFromMatrix(part, new Quaternionf(parentNow).conjugate().mul(world).get(new Matrix3f()));
-	}
-
-	/**
-	 * The trains and the robe come to rest on the floor instead of passing through it: each folds outward to meet it.
-	 * Sinking into the dark ({@code under}, model units), the floor rises up his body: the cloth heaps on the surface
-	 * and is drawn under after him, a panel whose root has gone under following it down.
-	 */
-	private void heap(float under) {
-		for (int i = 0; i < 9; i++) floor(trains[i], 12.0F, under, root, hips, chest, mantles[i], trains[i]);
-		for (int i = 0; i < 16; i++) floor(robes[i], 12.0F + (i % 3) * 0.5F, under, root, hips, robes[i]);
 	}
 
 	private static void floor(ModelPart part, float length, float under, ModelPart... chain) {
@@ -2491,56 +1468,20 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 		part.xRot += Math.max(0.0F, needed - current);
 	}
 
-	/** The crystals turn by {@code spin}; the lights scale (the Gutter shrinks the light, never the cage); the icicles. */
 	private void lanterns(float[] a, float spin) {
-		staffLanternCrystal.yRot += spin;
-		pendantLanternCrystal.yRot -= spin * 0.8F;
-		sideLanternCrystal.yRot += spin * 0.65F;
-		// the light shrinks to a point in the Gutter and goes out only in the Eclipse
+		staffLanternCore.yRot += spin;
 		float core = Mth.clamp(a[CORE], 0.0F, 1.4F);
 		staffLanternCore.xScale = staffLanternCore.yScale = staffLanternCore.zScale = Math.max(0.02F, core);
 		staffLanternCore.visible = core > 0.02F;
-		float side = Mth.clamp(a[SIDE_CORE], 0.0F, 1.5F);
-		sideLanternCore.xScale = sideLanternCore.yScale = sideLanternCore.zScale = Math.max(0.02F, side);
-		sideLanternCore.visible = side > 0.02F;
 		float grow = Math.max(0.0F, a[ICICLE]);
-		for (int i = 0; i < 4; i++) {
-			ModelPart icicle = icicles[i];
-			icicle.xRot += a[ICICLE_TILT] * (i % 2 == 0 ? 1.0F : -1.0F);
-			icicle.zRot += a[ICICLE_TILT] * 0.4F * (i < 2 ? 1.0F : -1.0F);
-			icicle.xScale = icicle.yScale = icicle.zScale = grow;
-			icicle.visible = grow > 0.02F;
-		}
+		poseVotiveGlass(leftVotiveGlass, grow, a[ICICLE_TILT]);
+		poseVotiveGlass(rightVotiveGlass, grow, -a[ICICLE_TILT]);
 	}
 
-	/**
-	 * Curves a hanging chain: each link turns a little more than the one above it and hangs from the end of it, the
-	 * pendant riding {@code gap} below the last. Zero bend leaves the links as authored.
-	 */
-	private static void bend(ModelPart[] links, ModelPart pendant, float gap, float bendX, float bendZ) {
-		float x = 0, y = 0, z = 0;
-		int n = links.length;
-		float ax = 0, az = 0;
-		for (int i = 0; i < n; i++) {
-			float share = (i + 1.0F) / n;
-			ax = bendX * share;
-			az = bendZ * share;
-			ModelPart link = links[i];
-			link.x = x;
-			link.y = y;
-			link.z = z;
-			if (i % 2 == 0) link.xRot += ax;
-			link.zRot += az;
-			x -= 1.5F * Mth.sin(az);
-			y += 1.5F * Mth.cos(ax) * Mth.cos(az);
-			z += 1.5F * Mth.sin(ax);
-		}
-		if (pendant == null) return;
-		pendant.x = x - gap * Mth.sin(az);
-		pendant.y = y + gap * Mth.cos(ax) * Mth.cos(az);
-		pendant.z = z + gap * Mth.sin(ax);
-		pendant.xRot += bendX;
-		pendant.zRot += bendZ;
+	private static void poseVotiveGlass(ModelPart glass, float grow, float tilt) {
+		glass.xRot += tilt;
+		glass.xScale = glass.yScale = glass.zScale = grow;
+		glass.visible = grow > 0.02F;
 	}
 
 	/** A rotation in the world: the bottom of a hanging part swung back by {@code x}, toward his right by {@code z}. */
@@ -2572,12 +1513,11 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
 	}
 
 	public org.joml.Vector3f[] lanterns() {
-		return new org.joml.Vector3f[]{
-				point(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm, leftHand, staff, staffLantern,
-						staffLanternCrystal),
-				point(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm, leftHand, staff, pendantChain,
-						pendantLantern, pendantLanternCrystal),
-				point(new org.joml.Vector3f(), root, hips, chest, sideChain, sideLantern, sideLanternCrystal)};
+		org.joml.Vector3f core = point(new org.joml.Vector3f(), root, hips, chest, leftArm, leftForearm,
+				leftHand, staff, staffLantern, staffLanternCore);
+		org.joml.Vector3f pendant = point(new org.joml.Vector3f(0, 0.37F, 0), root, hips, chest, leftArm,
+				leftForearm, leftHand, staff, staffLantern, lanternPendant);
+		return new org.joml.Vector3f[]{core, pendant};
 	}
 
 	private static org.joml.Vector3f point(org.joml.Vector3f at, ModelPart... chain) {

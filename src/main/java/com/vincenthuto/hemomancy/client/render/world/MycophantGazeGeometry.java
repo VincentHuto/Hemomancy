@@ -63,7 +63,9 @@ final class MycophantGazeGeometry {
 			double[] at = MycophantVisualRules.gazeEye();
 			Vec3 eye = base.add(right.scale(at[0])).add(0.0D, at[1], 0.0D).add(forward.scale(at[2]));
 			Vec3 end = beamEnd(level, boss, eye, motion.gazeYaw(partial) * Mth.DEG_TO_RAD, partial);
-			draw(poses, vertices, eye.subtract(camera), end.subtract(camera), right, time, boss.getId(), opacity, fray);
+			Vec3 offset = motion.gazeEye(boss.tickCount);
+			Vec3 start = offset == null ? eye : base.add(right.scale(offset.x)).add(0.0D, offset.y, 0.0D).add(forward.scale(offset.z));
+			draw(poses, vertices, start.subtract(camera), end.subtract(camera), right, time, boss.getId(), opacity, fray);
 		}
 	}
 

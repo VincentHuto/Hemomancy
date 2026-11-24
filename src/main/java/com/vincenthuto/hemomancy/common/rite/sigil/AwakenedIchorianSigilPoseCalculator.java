@@ -13,18 +13,13 @@ public final class AwakenedIchorianSigilPoseCalculator {
 
 	public static AwakenedIchorianSigilPose calculate(
 			IchorianSigilDefinition definition, float ageTicks) {
-		return calculate(definition, ageTicks, 0.0F);
+		return calculate(definition, ageTicks, ageTicks);
 	}
 
 	public static AwakenedIchorianSigilPose calculate(
-			IchorianSigilDefinition definition, float ageTicks, float movementSpeed) {
-		return calculate(definition, ageTicks, ageTicks, movementSpeed);
-	}
-
-	public static AwakenedIchorianSigilPose calculate(
-			IchorianSigilDefinition definition, float morphAgeTicks,
-			float animationAgeTicks, float movementSpeed) {
+			IchorianSigilDefinition definition, float morphAgeTicks, float animationAgeTicks) {
 		IchorianSigilAnatomy anatomy = definition.awakenedForm().orElseThrow();
+		float idle = idleArticulation(definition);
 		float detachment = stage(morphAgeTicks, 0, 10);
 		float migration = stage(morphAgeTicks, 6, 32);
 		float quickening = stage(morphAgeTicks, 18, 40);
@@ -44,9 +39,9 @@ public final class AwakenedIchorianSigilPoseCalculator {
 			double offset = wave * anatomy.animation().flex() * quickening * 0.08D;
 			position = position.add(offset * ((source & 1) == 0 ? 1 : -1),
 					offset * roleVertical(landmark.role()), offset * 0.45D);
-			position = position.add(flightArticulation(
+			position = position.add(idleArticulation(
 					anatomy.animation().style(), landmark, animationAgeTicks,
-					movementSpeed, extent).scale(quickening));
+					idle, extent).scale(quickening));
 			float radius = landmark.radius() * radiusScale
 					* (1.0F + wave * anatomy.animation().pulse() * quickening * 0.12F);
 			landmarks.add(new AwakenedIchorianSigilPose.Landmark(
@@ -131,10 +126,14 @@ public final class AwakenedIchorianSigilPoseCalculator {
 		};
 	}
 
-	private static Vec3 flightArticulation(IchorianSigilAnatomy.Style style,
-			IchorianSigilAnatomy.Landmark landmark, float age, float movementSpeed,
+	/** 0..1: how far the limbs drift while the form hovers, in the order of its turn rate (shunt to seal). */
+	private static float idleArticulation(IchorianSigilDefinition definition) {
+		return Mth.clamp(0.3F + AwakenedIchorianSigilMotion.turnRate(definition.id()) * 0.55F, 0.0F, 1.0F);
+	}
+
+	private static Vec3 idleArticulation(IchorianSigilAnatomy.Style style,
+			IchorianSigilAnatomy.Landmark landmark, float age, float activity,
 			float extent) {
-		float activity = Mth.clamp(movementSpeed * 18.0F, 0.0F, 1.0F);
 		if (activity <= 0.0F) return Vec3.ZERO;
 		double roleAmplitude = switch (landmark.role()) {
 			case HOOK, LIMB_TIP, MEMBRANE_TIP -> 1.20D;

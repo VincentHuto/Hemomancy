@@ -343,19 +343,21 @@ public final class MausoleumWardRenderer {
 		int color = 0xFF000000 | KIND_SHEET << 16 | Math.round(press * 255.0F) << 8;
 		double a0 = threshold.min(across), a1 = threshold.max(across);
 		double y0 = threshold.minY, y1 = threshold.maxY;
-		sheetVertex(consumer, pose, along, plane, a0, y0, right, camera, color, inward);
-		sheetVertex(consumer, pose, along, plane, a1, y0, right, camera, color, inward);
-		sheetVertex(consumer, pose, along, plane, a1, y1, right, camera, color, inward);
-		sheetVertex(consumer, pose, along, plane, a0, y1, right, camera, color, inward);
+		// The rune columns run from a wrapped origin, so the sheet's UVs stay small far from spawn (as the faces' do).
+		double uvOrigin = Math.floor(a0 / BlockShellFaces.UV_WRAP) * BlockShellFaces.UV_WRAP;
+		sheetVertex(consumer, pose, along, plane, a0, y0, uvOrigin, right, camera, color, inward);
+		sheetVertex(consumer, pose, along, plane, a1, y0, uvOrigin, right, camera, color, inward);
+		sheetVertex(consumer, pose, along, plane, a1, y1, uvOrigin, right, camera, color, inward);
+		sheetVertex(consumer, pose, along, plane, a0, y1, uvOrigin, right, camera, color, inward);
 	}
 
 	private static void sheetVertex(VertexConsumer consumer, PoseStack.Pose pose, Direction.Axis along, double plane,
-			double acrossAt, double y, int right, Vec3 camera, int color, Direction inward) {
+			double acrossAt, double y, double uvOrigin, int right, Vec3 camera, int color, Direction inward) {
 		double x = along == Direction.Axis.X ? plane : acrossAt;
 		double z = along == Direction.Axis.X ? acrossAt : plane;
 		consumer.addVertex(pose.pose(), (float) (x - camera.x), (float) (y - camera.y), (float) (z - camera.z))
 				.setColor(color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF, color >>> 24)
-				.setUv((float) (acrossAt * right * 0.37), (float) (y * 0.37))
+				.setUv((float) ((acrossAt - uvOrigin) * right * 0.37), (float) (y * 0.37))
 				.setLight(LightTexture.FULL_BRIGHT)
 				.setNormal(pose, -inward.getStepX(), 0.0F, -inward.getStepZ());
 	}

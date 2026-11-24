@@ -12,9 +12,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public final class ExcoriatedRenderer extends MobRenderer<ExcoriatedEntity,ExcoriatedModel> {
-    public static final ResourceLocation TEXTURE=Hemomancy.rloc("textures/entity/excoriated/excoriated.png");
+    public static final ResourceLocation TEXTURE=Hemomancy.rloc("textures/entity/excoriated/ash_hunter.png");
     public ExcoriatedRenderer(EntityRendererProvider.Context context) {
-        super(context,new ExcoriatedModel(context.bakeLayer(ExcoriatedModel.LAYER_LOCATION)),.75F);
+        super(context,new ExcoriatedModel(),.75F);
         addLayer(new RenderLayer<>(this) {
             @Override public void render(PoseStack pose,MultiBufferSource buffers,int light,ExcoriatedEntity entity,
                                           float swing,float amount,float partial,float age,float yaw,float pitch) {

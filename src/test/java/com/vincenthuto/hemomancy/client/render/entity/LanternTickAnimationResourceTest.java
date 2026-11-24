@@ -26,10 +26,10 @@ public final class LanternTickAnimationResourceTest {
 		assertContains("entity exposes leaping state", entity, "ANIMATION_LEAPING");
 		assertContains("entity exposes latched state", entity, "ANIMATION_LATCHED");
 		assertContains("entity exposes bite pulse", entity, "BITE_ANIMATION_TICKS");
-		assertContains("model has abdomen glow part", model, "abdomenGlow");
-		assertContains("model legs roll outward instead of folding in", model, "LEG_OUTWARD_Z_ROT");
-		assertContains("model keeps top abdomen glow above shell", model,
-				"addBox(-3.25F, -4.05F, -2.25F, 6.5F, 0.25F, 9.0F");
+		assertContains("model bakes the new atlas at native texel density", model,
+				"LayerDefinition.create(mesh, 128, 128)");
+		assertContains("gait animates each two-segment leg from the authored pose", model, "outerLegs");
+		assertContains("helmet uses the gripping pose", layer, "setupHelmetPose");
 		assertNotContains("model does not use angler lure part", model, "root.addOrReplaceChild(\"lure\"");
 		assertNotContains("model does not animate a lure stalk", model, "this.lure");
 		assertNotContains("abdomen glow does not rotate into body", model, "abdomenGlow.xRot = Mth.sin");

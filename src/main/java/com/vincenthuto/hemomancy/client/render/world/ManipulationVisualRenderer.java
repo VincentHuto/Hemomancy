@@ -592,6 +592,7 @@ public final class ManipulationVisualRenderer {
         BloodEffectParticles.render(poses,FLOWS,camera,right,up,time);
         BloodFlowEffects.render(poses,FLOWS,camera,right,up,time,partial);
         BloodBindingTendrilRenderer.collect(poses,FLOWS,camera,partial);
+        IchorianSigilFormGeometry.collect(world,poses,FLOWS,camera,right,up,partial);
         StrandRenderer.collect(poses,FLOWS,camera,right,up,time,partial);
         WorkingCraftSwallowGeometry.collect(poses,FLOWS,camera,partial);
         WorldRiteFinaleGeometry.collect(poses,FLOWS,camera,partial);

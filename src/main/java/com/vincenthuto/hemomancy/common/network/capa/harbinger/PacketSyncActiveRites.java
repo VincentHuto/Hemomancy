@@ -83,6 +83,10 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 				buf.writeDouble(segment.endY());
 				buf.writeDouble(segment.endZ());
 				buf.writeInt(segment.color());
+				buf.writeUtf(segment.sigilKey());
+				buf.writeVarInt(segment.linkIndex());
+				buf.writeVarInt(segment.linkCount());
+				buf.writeBoolean(segment.awakened());
 			}
 			buf.writeVarInt(entry.getSanguineBlobs().size());
 			for (ActiveRiteData.SanguineBlob blob : entry.getSanguineBlobs()) {
@@ -175,7 +179,8 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 				sigilSegments.add(new ActiveRiteData.SigilSegment(
 						buf.readDouble(), buf.readDouble(), buf.readDouble(),
 						buf.readDouble(), buf.readDouble(), buf.readDouble(),
-						buf.readInt()));
+						buf.readInt(), buf.readUtf(), buf.readVarInt(), buf.readVarInt(),
+						buf.readBoolean()));
 			}
 			int blobCount = buf.readVarInt();
 			List<ActiveRiteData.SanguineBlob> sanguineBlobs = new ArrayList<>(blobCount);

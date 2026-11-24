@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.client.render.entity.projectile.RecallBarbRenderer;
-import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.PhlegethonticBombardierModel;
-import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ExcoriatedModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.phlegethosoma.PhlegethosomaModel;
 import com.vincenthuto.hemomancy.client.model.entity.morphling.FungalHeadAttachmentModel;
 import com.vincenthuto.hemomancy.client.model.entity.morphling.MorphlingStrainModels;
@@ -15,10 +13,8 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloo
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.AnnettaKnowlesModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.LatentAnnettaInfectionModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.StainedPriestessModel;
-import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheCrownedRefusalModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheEveningStarModel;
-import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.putriciel.PutricielModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumModel;
@@ -70,7 +66,6 @@ public class LayerEvents {
 	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
 		event.registerLayerDefinition(MyelinBorerModel.LAYER_LOCATION, MyelinBorerModel::createBodyLayer);
-		event.registerLayerDefinition(MortarboundModel.LAYER_LOCATION, MortarboundModel::createBodyLayer);
 		event.registerLayerDefinition(AbhorrentThoughtModel.abhorrent_thought, AbhorrentThoughtModel::createBodyLayer);
 		event.registerLayerDefinition(LivingBladeHandTameModel.living_blade_tame,
 				LivingBladeHandTameModel::createLayers);
@@ -112,8 +107,6 @@ public class LayerEvents {
 		event.registerLayerDefinition(IronSpikeModel.iron_spike, IronSpikeModel::createBodyLayer);
 		event.registerLayerDefinition(IronPillarModel.iron_pillar, IronPillarModel::createBodyLayer);
 		event.registerLayerDefinition(PhlegethosomaModel.LAYER_LOCATION, PhlegethosomaModel::createBodyLayer);
-		event.registerLayerDefinition(ExcoriatedModel.LAYER_LOCATION, ExcoriatedModel::createBodyLayer);
-		event.registerLayerDefinition(PhlegethonticBombardierModel.LAYER_LOCATION, PhlegethonticBombardierModel::createBodyLayer);
 		event.registerLayerDefinition(RecallBarbRenderer.LAYER, RecallBarbRenderer::layer);
 		event.registerLayerDefinition(WillModel.LAYER_LOCATION, WillModel::createBodyLayer);
 		event.registerLayerDefinition(BloodGourdModel.blood_gourd, BloodGourdModel::createBodyLayer);
@@ -136,7 +129,6 @@ public class LayerEvents {
 		event.registerLayerDefinition(FargoneModel.LAYER_LOCATION, FargoneModel::createBodyLayer);
 		event.registerLayerDefinition(FunglingModel.LAYER_LOCATION, FunglingModel::createBodyLayer);
 		event.registerLayerDefinition(LeechModel.LAYER_LOCATION, LeechModel::createBodyLayer);
-		event.registerLayerDefinition(BloodlickerModel.LAYER_LOCATION, BloodlickerModel::createBodyLayer);
 		event.registerLayerDefinition(ToothPecksModel.LAYER_LOCATION, ToothPecksModel::createBodyLayer);
 		event.registerLayerDefinition(LumpOfThoughtModel.LAYER_LOCATION, LumpOfThoughtModel::createBodyLayer);
 		event.registerLayerDefinition(BloodDrunkPuppeteerModel.LAYER_LOCATION,BloodDrunkPuppeteerModel::createBodyLayer);
@@ -157,7 +149,6 @@ public class LayerEvents {
 		event.registerLayerDefinition(GoreboundHulkModel.LAYER_LOCATION, GoreboundHulkModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.summon.TrueGoreboundHulkModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.summon.TrueGoreboundHulkModel::createBodyLayer);
-		event.registerLayerDefinition(MnemonistPuppetModel.LAYER_LOCATION, MnemonistPuppetModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.summon.TrueMnemonistPuppetModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.summon.TrueMnemonistPuppetModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueUnderstudyModel.LAYER_LOCATION,
@@ -167,30 +158,23 @@ public class LayerEvents {
 		event.registerLayerDefinition(SanguineHoundModel.LAYER_LOCATION, SanguineHoundModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.summon.TrueSanguineHoundModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.summon.TrueSanguineHoundModel::createBodyLayer);
-		event.registerLayerDefinition(CircusFireEaterModel.LAYER_LOCATION, CircusFireEaterModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueFireEaterModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueFireEaterModel::createBodyLayer);
-		event.registerLayerDefinition(CircusStiltWalkerModel.LAYER_LOCATION, CircusStiltWalkerModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueStiltWalkerModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueStiltWalkerModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.summon.TrueScarletMummerModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.summon.TrueScarletMummerModel::createBodyLayer);
-		event.registerLayerDefinition(CircusAcrobatModel.LAYER_LOCATION, CircusAcrobatModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueAcrobatModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueAcrobatModel::createBodyLayer);
-		event.registerLayerDefinition(CircusKnifeThrowerModel.LAYER_LOCATION, CircusKnifeThrowerModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueKnifeThrowerModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueKnifeThrowerModel::createBodyLayer);
 		event.registerLayerDefinition(CircusCarouselModel.LAYER_LOCATION, CircusCarouselModel::createBodyLayer);
-		event.registerLayerDefinition(CircusRingmasterModel.LAYER_LOCATION, CircusRingmasterModel::createBodyLayer);
 		event.registerLayerDefinition(CircusStrongmanModel.LAYER_LOCATION, CircusStrongmanModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueStrongmanModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueStrongmanModel::createBodyLayer);
 		event.registerLayerDefinition(CircusBeastTamerModel.LAYER_LOCATION, CircusBeastTamerModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueBeastTamerModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueBeastTamerModel::createBodyLayer);
-		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueRingmasterModel.LAYER_LOCATION,
-				com.vincenthuto.hemomancy.client.model.entity.npc.CircusTrueRingmasterModel::createBodyLayer);
 		event.registerLayerDefinition(CircusThreadkeeperModel.LAYER_LOCATION, CircusThreadkeeperModel::createBodyLayer);
 		event.registerLayerDefinition(CircusUnderstudyModel.LAYER_LOCATION, CircusUnderstudyModel::createBodyLayer);
 		event.registerLayerDefinition(PeacockSpiderModel.LAYER_LOCATION, PeacockSpiderModel::createBodyLayer);
@@ -213,10 +197,6 @@ public class LayerEvents {
 		event.registerLayerDefinition(FungalImplantationPylonModel.LAYER_LOCATION,
 				FungalImplantationPylonModel::createBodyLayer);
 		event.registerLayerDefinition(FloatingEyeModel.LAYER_LOCATION, FloatingEyeModel::createBodyLayer);
-		event.registerLayerDefinition(BarbedUrchinModel.LAYER_LOCATION, BarbedUrchinModel::createBodyLayer);
-		event.registerLayerDefinition(BarbedUrchinBigModel.LAYER_LOCATION, BarbedUrchinBigModel::createBodyLayer);
-		event.registerLayerDefinition(BarbedUrchinMidModel.LAYER_LOCATION, BarbedUrchinMidModel::createBodyLayer);
-		event.registerLayerDefinition(ChalybeateSnailModel.LAYER_LOCATION, ChalybeateSnailModel::createBodyLayer);
 		event.registerLayerDefinition(BloodLanternJellyModel.LAYER_LOCATION, BloodLanternJellyModel::createBodyLayer);
         for (var style : com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel.Style.values())
             event.registerLayerDefinition(style.layer(), () -> com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicMeshes.create(style.id));
@@ -232,7 +212,6 @@ public class LayerEvents {
         event.registerLayerDefinition(HunterFungusModel.LAYER_LOCATION, HunterFungusModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
 		event.registerLayerDefinition(LanternTickModel.LAYER_LOCATION, LanternTickModel::createBodyLayer);
-		event.registerLayerDefinition(PrismCuttleModel.LAYER_LOCATION, PrismCuttleModel::createBodyLayer);
 		event.registerLayerDefinition(HematicBurrowerModel.LAYER_LOCATION, HematicBurrowerModel::createBodyLayer);
 		event.registerLayerDefinition(VenomRibCentipedeModel.LAYER_LOCATION, VenomRibCentipedeModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedZealotModel.LAYER_LOCATION, UnstainedZealotModel::createBodyLayer);
@@ -250,7 +229,6 @@ public class LayerEvents {
 		event.registerLayerDefinition(HarbingerVoyagerModel.LAYER_LOCATION, HarbingerVoyagerModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerVotaryWayfarerModel.LAYER_LOCATION,
 				HarbingerVotaryWayfarerModel::createBodyLayer);
-		event.registerLayerDefinition(HemorathModel.LAYER_LOCATION, HemorathModel::createBodyLayer);
 		event.registerLayerDefinition(AnnettaKnowlesModel.LAYER_LOCATION, AnnettaKnowlesModel::createBodyLayer);
 		event.registerLayerDefinition(StainedPriestessModel.LAYER_LOCATION, StainedPriestessModel::createBodyLayer);
 		event.registerLayerDefinition(LatentAnnettaInfectionModel.LAYER_LOCATION, LatentAnnettaInfectionModel::createBodyLayer);
@@ -260,16 +238,10 @@ public class LayerEvents {
 		event.registerLayerDefinition(VesperTheCrownedRefusalModel.LAYER_LOCATION, VesperTheCrownedRefusalModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel.LAYER_LOCATION, com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel::createBodyLayer);
 		event.registerLayerDefinition(VesperTheEveningStarModel.LAYER_LOCATION, VesperTheEveningStarModel::createBodyLayer);
-		event.registerLayerDefinition(MycophantModel.LAYER_LOCATION, MycophantModel::createBodyLayer);
 		event.registerLayerDefinition(SeraphaeModel.LAYER_LOCATION, SeraphaeModel::createBodyLayer);
 		event.registerLayerDefinition(DesiccantModel.LAYER_LOCATION, DesiccantModel::createBodyLayer);
-		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
 		event.registerLayerDefinition(VerdigrisMothModel.LAYER_LOCATION, VerdigrisMothModel::createBodyLayer);
-		event.registerLayerDefinition(ChoirKeeperModel.LAYER_LOCATION, ChoirKeeperModel::createBodyLayer);
-        event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.mob.animal.OsteophageModel.LAYER_LOCATION,
-                com.vincenthuto.hemomancy.client.model.entity.mob.animal.OsteophageMesh::create);
 		event.registerLayerDefinition(LuminalCicadaModel.LAYER_LOCATION, LuminalCicadaModel::createBodyLayer);
-		event.registerLayerDefinition(ScarletSerpentModel.LAYER_LOCATION, ScarletSerpentModel::createBodyLayer);
 		event.registerLayerDefinition(HemojellyModel.LAYER_LOCATION, HemojellyModel::createBodyLayer);
 		event.registerLayerDefinition(VenousStriderModel.LAYER_LOCATION, VenousStriderModel::createBodyLayer);
 

@@ -37,7 +37,7 @@ public final class DesiccantStingSourceTest {
 		assertContains("separate telson model part", model, "private final ModelPart telson");
 		assertContains("telson child", model, "getChild(\"telson\")");
 		assertContains("sting progress drives model", model, "entity.getStingProgress()");
-		assertContains("telson inflates", model, "telson.xScale");
+		assertContains("telson inflates", model, "venomBulb.xScale");
 
 		assertContains("reference documents blood loss", reference, "Blood Loss");
 		assertContains("reference documents blood sap", reference, "250 ml");

@@ -21,8 +21,6 @@ import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -66,18 +64,16 @@ public final class PhantomFigures {
 
 	/** The rigs a phantom can wear, with the texture each was painted for. */
 	public enum Body {
-		UNDERSTUDY(CircusUnderstudyModel.LAYER_LOCATION, CircusUnderstudyModel::new, "circus_understudy"),
-		THREADKEEPER(CircusThreadkeeperModel.LAYER_LOCATION, CircusThreadkeeperModel::new, "circus_threadkeeper"),
-		ACROBAT(CircusAcrobatModel.LAYER_LOCATION, CircusAcrobatModel::new, "acrobat"),
-		KNIFE_THROWER(CircusKnifeThrowerModel.LAYER_LOCATION, CircusKnifeThrowerModel::new, "knife_thrower"),
-		FIRE_EATER(CircusFireEaterModel.LAYER_LOCATION, CircusFireEaterModel::new, "fire_eater");
+		UNDERSTUDY(set -> new CircusUnderstudyModel(set.bakeLayer(CircusUnderstudyModel.LAYER_LOCATION)), "circus_understudy"),
+		THREADKEEPER(set -> new CircusThreadkeeperModel(set.bakeLayer(CircusThreadkeeperModel.LAYER_LOCATION)), "circus_threadkeeper"),
+		ACROBAT(set -> new CircusAcrobatModel(), "acrobat"),
+		KNIFE_THROWER(set -> new CircusKnifeThrowerModel(), "knife_thrower"),
+		FIRE_EATER(set -> new CircusFireEaterModel(), "fire_eater");
 
-		private final ModelLayerLocation layer;
-		private final Function<ModelPart, HumanoidModel<?>> factory;
+		private final Function<EntityModelSet, HumanoidModel<?>> factory;
 		private final ResourceLocation texture;
 
-		Body(ModelLayerLocation layer, Function<ModelPart, HumanoidModel<?>> factory, String texture) {
-			this.layer = layer;
+		Body(Function<EntityModelSet, HumanoidModel<?>> factory, String texture) {
 			this.factory = factory;
 			this.texture = Hemomancy.rloc("textures/entity/npc/harbinger/circus/" + texture + "_0.png");
 		}
@@ -388,7 +384,7 @@ public final class PhantomFigures {
 
 	private static void bake(EntityModelSet set) {
 		Map<Body, HumanoidModel<?>> baked = new EnumMap<>(Body.class);
-		for (Body body : Body.values()) baked.put(body, body.factory.apply(set.bakeLayer(body.layer)));
+		for (Body body : Body.values()) baked.put(body, body.factory.apply(set));
 		models = baked;
 		bakedFrom = set;
 	}

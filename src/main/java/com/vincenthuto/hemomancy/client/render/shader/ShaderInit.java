@@ -85,6 +85,10 @@ public class ShaderInit {
 	public static ShaderHolder FANE_GROUND = new ShaderHolder(Hemomancy.rloc("world/fane_ground"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "FaneColor", "HeartOffset", "PlayerOffset", "FaneLook");
 
+	/** An Ichorian Sigil's links gouged into the ground: the cut, its torn lip, the blood that fills it and its veins. */
+	public static ShaderHolder ICHORIAN_SIGIL_GOUGE = new ShaderHolder(Hemomancy.rloc("world/ichorian_sigil_gouge"),
+			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ColorModulator");
+
 	/** The same ward burning into an Apotheos on hallowed ground, drawn over the player model. */
 	public static ShaderHolder MAUSOLEUM_WARD_BODY = new ShaderHolder(Hemomancy.rloc("world/mausoleum_ward"),
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "WardBody");
@@ -295,6 +299,7 @@ public class ShaderInit {
         registerShader(event, MAUSOLEUM_WARD_BODY.createInstance(provider));
         registerShader(event, HEART_NODE_SPREAD.createInstance(provider));
         registerShader(event, FANE_GROUND.createInstance(provider));
+        registerShader(event, ICHORIAN_SIGIL_GOUGE.createInstance(provider));
         registerShader(event, VESPER_WOUND_DRAW.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));

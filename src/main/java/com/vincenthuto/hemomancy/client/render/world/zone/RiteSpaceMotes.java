@@ -32,7 +32,8 @@ public final class RiteSpaceMotes {
 		Minecraft minecraft = Minecraft.getInstance();
 		ClientLevel level = minecraft.level;
 		LocalPlayer player = minecraft.player;
-		if (level == null || player == null || minecraft.isPaused()) return;
+		if (level == null || player == null
+				|| !com.vincenthuto.hemomancy.client.render.AnimationTime.worldTicks()) return;
 		boolean holdingBound = RiteBound.isRiteBound(player.getMainHandItem()) || RiteBound.isRiteBound(player.getOffhandItem());
 		RandomSource random = level.random;
 		for (RiteSpaceSyncPacket.Space space : RiteSpaceClientData.spaces()) {

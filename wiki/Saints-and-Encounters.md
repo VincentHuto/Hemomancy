@@ -34,7 +34,7 @@ Every Saint fights the same way underneath. Each attack winds up before it lands
 
 A Saint woken by force fights harder, and every Chapel you skipped lends it something of its own: hidden warnings, unpaused attacks, new moves.
 
-The models follow the reconciled lore: Hemorath frail and sunken at rest, swelling only as he fills, with iron erupting through his bone; Seraphae's wings branching nerves, white in the vessels and gold only in the flashes; Putriciel in ivory vestments, olive and mould-green robes, ochre and cream shelves and dark eschar, with no red until the cleansing sets the staff, censers, back and shoulders on fire; Velorum in a plain dark hood and knotted cord, rime and black, with frozen blood on his halo's links and in every blade, spine and slab of ice he raises.
+The models follow the reconciled lore: Hemorath frail and sunken at rest, swelling only as he fills, with iron erupting through his bone; Seraphae in a torn nurse's veil and iron restraints, with a bone halo, the Unclosing Eye in her chest and branching nerve wings. Her vessels shine white and her nerve impulses flash gold. Putriciel in ivory vestments, olive and mould-green robes, ochre and cream shelves and dark eschar, with no red until the cleansing sets the staff, censers, back and shoulders on fire; Velorum in a plain dark hood and knotted cord, rime and black, with frozen blood on his halo's links and in every blade, spine and slab of ice he raises.
 
 ## Annetta Knowles
 

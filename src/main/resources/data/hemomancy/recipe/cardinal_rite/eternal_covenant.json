@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:eternal_covenant",
   "bloodCost": 0,
   "riteType": "greater",
   "purpose": "self",

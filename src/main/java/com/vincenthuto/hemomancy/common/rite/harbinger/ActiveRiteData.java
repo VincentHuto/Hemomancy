@@ -440,10 +440,19 @@ public final class ActiveRiteData {
 		}
 	}
 
+	/**
+	 * One cut link of a sigil's pattern. {@code sigilKey} groups links into one pattern
+	 * ({@code SigilPlacement.progressKey()}), {@code linkIndex} is the link's place in node
+	 * order out of the finished pattern's {@code linkCount}, and {@code awakened} says the
+	 * pattern has closed.
+	 */
 	public record SigilSegment(
 			double startX, double startY, double startZ,
 			double endX, double endY, double endZ,
-			int color) {
+			int color, String sigilKey, int linkIndex, int linkCount, boolean awakened) {
+		public SigilSegment {
+			sigilKey = sigilKey == null ? "" : sigilKey;
+		}
 	}
 
 	public static final class SanguineBlob {

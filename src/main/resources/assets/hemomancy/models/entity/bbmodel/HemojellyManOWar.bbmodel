@@ -1,0 +1,6292 @@
+{
+  "meta": {
+    "format_version": "4.0",
+    "model_format": "modded_entity",
+    "box_uv": true
+  },
+  "name": "HemojellyManOWar",
+  "model_identifier": "HemojellyManOWar",
+  "modded_entity_version": "1.17",
+  "modded_entity_flip_y": true,
+  "visible_box": [
+    2,
+    4,
+    -0.25
+  ],
+  "resolution": {
+    "width": 128,
+    "height": 64
+  },
+  "elements": [
+    {
+      "name": "float_body",
+      "from": [
+        -9,
+        9,
+        -3.5
+      ],
+      "to": [
+        8,
+        13,
+        3.5
+      ],
+      "origin": [
+        0,
+        10,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 1,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "e54296fe-00b1-5c6a-a7d4-ef500c2a8fbd",
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            7,
+            7,
+            11
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            7,
+            7,
+            24,
+            11
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            24,
+            7,
+            31,
+            11
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            31,
+            7,
+            48,
+            11
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            24,
+            7,
+            7,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            41,
+            0,
+            24,
+            7
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "float_shoulder",
+      "from": [
+        -8,
+        13,
+        -2.5
+      ],
+      "to": [
+        7,
+        14,
+        2.5
+      ],
+      "origin": [
+        0,
+        10,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 1,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "5689a4a5-7938-52ff-bcdd-a3f661fe74a7",
+      "uv_offset": [
+        0,
+        12
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            17,
+            5,
+            18
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            5,
+            17,
+            20,
+            18
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            20,
+            17,
+            25,
+            18
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            25,
+            17,
+            40,
+            18
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            20,
+            17,
+            5,
+            12
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            35,
+            12,
+            20,
+            17
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "float_belly",
+      "from": [
+        -7,
+        7,
+        -2
+      ],
+      "to": [
+        6,
+        9,
+        2
+      ],
+      "origin": [
+        0,
+        10,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 1,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "50169d33-8088-56cc-ac95-438d5b1f0fed",
+      "uv_offset": [
+        41,
+        17
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            41,
+            21,
+            45,
+            23
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            45,
+            21,
+            58,
+            23
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            58,
+            21,
+            62,
+            23
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            62,
+            21,
+            75,
+            23
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            58,
+            21,
+            45,
+            17
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            71,
+            17,
+            58,
+            21
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "float_bow",
+      "from": [
+        -10.75,
+        10,
+        -2
+      ],
+      "to": [
+        -7.75,
+        13,
+        2
+      ],
+      "origin": [
+        -9,
+        11,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 1,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "ac945731-e75e-55c1-8a7c-e5226644e71d",
+      "rotation": [
+        0,
+        0,
+        -10
+      ],
+      "uv_offset": [
+        74,
+        9
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            74,
+            13,
+            78,
+            16
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            78,
+            13,
+            81,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            81,
+            13,
+            85,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            85,
+            13,
+            88,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            81,
+            13,
+            78,
+            9
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            84,
+            9,
+            81,
+            13
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "float_stern",
+      "from": [
+        7,
+        10,
+        -2
+      ],
+      "to": [
+        10,
+        12,
+        2
+      ],
+      "origin": [
+        8,
+        11,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 1,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "63431a82-dacb-5555-89dc-1ee5bb48e7ae",
+      "rotation": [
+        0,
+        0,
+        12
+      ],
+      "uv_offset": [
+        109,
+        16
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            109,
+            20,
+            113,
+            22
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            113,
+            20,
+            116,
+            22
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            116,
+            20,
+            120,
+            22
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            120,
+            20,
+            123,
+            22
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            116,
+            20,
+            113,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            119,
+            16,
+            116,
+            20
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "sail_membrane",
+      "from": [
+        -8,
+        11,
+        -0.5
+      ],
+      "to": [
+        6,
+        15,
+        1.5
+      ],
+      "origin": [
+        -1,
+        13,
+        0.5
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 2,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "f030e849-46b7-5475-a721-3696a4c9759b",
+      "rotation": [
+        0,
+        0,
+        -20
+      ],
+      "uv_offset": [
+        76,
+        17
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            76,
+            19,
+            78,
+            23
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            78,
+            19,
+            92,
+            23
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            92,
+            19,
+            94,
+            23
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            94,
+            19,
+            108,
+            23
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            92,
+            19,
+            78,
+            17
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            106,
+            17,
+            92,
+            19
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "ventral_stolon",
+      "from": [
+        -6,
+        6,
+        -1
+      ],
+      "to": [
+        5,
+        8,
+        1
+      ],
+      "origin": [
+        -1,
+        8,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "d20b1c35-bfce-5332-adfd-c51dc806276d",
+      "uv_offset": [
+        0,
+        26
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            28,
+            2,
+            30
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            2,
+            28,
+            13,
+            30
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            13,
+            28,
+            15,
+            30
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            15,
+            28,
+            26,
+            30
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            13,
+            28,
+            2,
+            26
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            24,
+            26,
+            13,
+            28
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "stolon_lobe",
+      "from": [
+        -4,
+        5,
+        -2
+      ],
+      "to": [
+        2,
+        7,
+        2
+      ],
+      "origin": [
+        -1,
+        8,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "90d1373a-e018-596f-b500-8d0fbdee83a5",
+      "uv_offset": [
+        0,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            23,
+            4,
+            25
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            4,
+            23,
+            10,
+            25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            10,
+            23,
+            14,
+            25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14,
+            23,
+            20,
+            25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            10,
+            23,
+            4,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            19,
+            10,
+            23
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_01_01_membrane",
+      "from": [
+        -6.0,
+        2.5,
+        -1.5
+      ],
+      "to": [
+        -4.0,
+        6.5,
+        -0.5
+      ],
+      "origin": [
+        -5,
+        6,
+        -1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "e2bbc203-5d9c-599f-9d8d-851390265776",
+      "rotation": [
+        0,
+        0,
+        -19
+      ],
+      "uv_offset": [
+        109,
+        23
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            109,
+            24,
+            110,
+            28
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            110,
+            24,
+            112,
+            28
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            112,
+            24,
+            113,
+            28
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            113,
+            24,
+            115,
+            28
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            112,
+            24,
+            110,
+            23
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            114,
+            23,
+            112,
+            24
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_01_02_membrane",
+      "from": [
+        -7.0,
+        0.75,
+        -1.5
+      ],
+      "to": [
+        -5.0,
+        3.75,
+        -0.5
+      ],
+      "origin": [
+        -6.0,
+        3.25,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "e459c69c-9910-5646-955a-df40fbb50991",
+      "rotation": [
+        0,
+        0,
+        14
+      ],
+      "uv_offset": [
+        93,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            93,
+            25,
+            94,
+            28
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            94,
+            25,
+            96,
+            28
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            96,
+            25,
+            97,
+            28
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            97,
+            25,
+            99,
+            28
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            96,
+            25,
+            94,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            98,
+            24,
+            96,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_01_03_membrane",
+      "from": [
+        -6.0,
+        -0.25,
+        -1.5
+      ],
+      "to": [
+        -5.0,
+        1.75,
+        -0.5
+      ],
+      "origin": [
+        -5.5,
+        1.25,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "b981b3bd-64ea-586d-ba53-46c288d0f5e8",
+      "rotation": [
+        0,
+        0,
+        30
+      ],
+      "uv_offset": [
+        103,
+        29
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            103,
+            30,
+            104,
+            32
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            104,
+            30,
+            105,
+            32
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            105,
+            30,
+            106,
+            32
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            106,
+            30,
+            107,
+            32
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            105,
+            30,
+            104,
+            29
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            106,
+            29,
+            105,
+            30
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_02_01_membrane",
+      "from": [
+        -4.0,
+        2.5,
+        0.5
+      ],
+      "to": [
+        -2.0,
+        6.5,
+        1.5
+      ],
+      "origin": [
+        -3,
+        6,
+        1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "320f0e19-65bf-5c4c-bc21-f3efb107aac1",
+      "rotation": [
+        0,
+        0,
+        -11
+      ],
+      "uv_offset": [
+        116,
+        23
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            116,
+            24,
+            117,
+            28
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            117,
+            24,
+            119,
+            28
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            119,
+            24,
+            120,
+            28
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            120,
+            24,
+            122,
+            28
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            119,
+            24,
+            117,
+            23
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            121,
+            23,
+            119,
+            24
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_02_02_membrane",
+      "from": [
+        -4.5,
+        -0.5,
+        0.5
+      ],
+      "to": [
+        -2.5,
+        3.5,
+        1.5
+      ],
+      "origin": [
+        -3.5,
+        3.0,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "300422cf-108a-5e19-8ce0-7b3d39bd0ad5",
+      "rotation": [
+        0,
+        0,
+        20
+      ],
+      "uv_offset": [
+        36,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            36,
+            25,
+            37,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            37,
+            25,
+            39,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            39,
+            25,
+            40,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            40,
+            25,
+            42,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            39,
+            25,
+            37,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            41,
+            24,
+            39,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_02_03_membrane",
+      "from": [
+        -3.0,
+        -1.25,
+        0.5
+      ],
+      "to": [
+        -2.0,
+        0.75,
+        1.5
+      ],
+      "origin": [
+        -2.5,
+        0.25,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "a63c368a-d28f-5dd3-8b7b-36f3d38175ae",
+      "rotation": [
+        0,
+        0,
+        29
+      ],
+      "uv_offset": [
+        108,
+        29
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            108,
+            30,
+            109,
+            32
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            109,
+            30,
+            110,
+            32
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            110,
+            30,
+            111,
+            32
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            111,
+            30,
+            112,
+            32
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            110,
+            30,
+            109,
+            29
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            111,
+            29,
+            110,
+            30
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_03_01_membrane",
+      "from": [
+        -2.0,
+        2.5,
+        -1.5
+      ],
+      "to": [
+        0.0,
+        6.5,
+        -0.5
+      ],
+      "origin": [
+        -1,
+        6,
+        -1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "565f5cda-4347-536d-91c0-55f529b3716a",
+      "rotation": [
+        34,
+        0,
+        0
+      ],
+      "uv_offset": [
+        43,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            43,
+            25,
+            44,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            44,
+            25,
+            46,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            46,
+            25,
+            47,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            47,
+            25,
+            49,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            46,
+            25,
+            44,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            24,
+            46,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_03_02_membrane",
+      "from": [
+        -2.0,
+        0.0,
+        -3.25
+      ],
+      "to": [
+        0.0,
+        4.0,
+        -2.25
+      ],
+      "origin": [
+        -1.0,
+        3.5,
+        -2.75
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "b34dcb13-95bf-5f20-a262-0bae7b31d671",
+      "rotation": [
+        -19,
+        0,
+        0
+      ],
+      "uv_offset": [
+        50,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            50,
+            25,
+            51,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            51,
+            25,
+            53,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            53,
+            25,
+            54,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            54,
+            25,
+            56,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            53,
+            25,
+            51,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            55,
+            24,
+            53,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_03_03_membrane",
+      "from": [
+        -1.5,
+        -0.75,
+        -2.25
+      ],
+      "to": [
+        -0.5,
+        1.25,
+        -1.25
+      ],
+      "origin": [
+        -1.0,
+        0.75,
+        -1.75
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "603811d4-ced7-59bb-a56a-c2ce59a26a09",
+      "rotation": [
+        -33,
+        0,
+        0
+      ],
+      "uv_offset": [
+        113,
+        29
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            113,
+            30,
+            114,
+            32
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            114,
+            30,
+            115,
+            32
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            115,
+            30,
+            116,
+            32
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            116,
+            30,
+            117,
+            32
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            115,
+            30,
+            114,
+            29
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            116,
+            29,
+            115,
+            30
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_04_01_membrane",
+      "from": [
+        0.0,
+        2.5,
+        0.5
+      ],
+      "to": [
+        2.0,
+        6.5,
+        1.5
+      ],
+      "origin": [
+        1,
+        6,
+        1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "e9a96e58-3cff-576a-a31a-e85a523a94f9",
+      "rotation": [
+        -24,
+        0,
+        0
+      ],
+      "uv_offset": [
+        57,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            57,
+            25,
+            58,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            58,
+            25,
+            60,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            60,
+            25,
+            61,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            61,
+            25,
+            63,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            60,
+            25,
+            58,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            62,
+            24,
+            60,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_04_02_membrane",
+      "from": [
+        0.0,
+        -0.25,
+        1.75
+      ],
+      "to": [
+        2.0,
+        3.75,
+        2.75
+      ],
+      "origin": [
+        1.0,
+        3.25,
+        2.25
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "813eb1d1-c167-5102-b57f-d6d53fc07ce3",
+      "rotation": [
+        19,
+        0,
+        0
+      ],
+      "uv_offset": [
+        64,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            64,
+            25,
+            65,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            65,
+            25,
+            67,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            67,
+            25,
+            68,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            68,
+            25,
+            70,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            67,
+            25,
+            65,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            69,
+            24,
+            67,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_04_03_membrane",
+      "from": [
+        0.5,
+        -1.0,
+        0.75
+      ],
+      "to": [
+        1.5,
+        1.0,
+        1.75
+      ],
+      "origin": [
+        1.0,
+        0.5,
+        1.25
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "d2941584-0869-5829-bc64-2a5e180a88dd",
+      "rotation": [
+        35,
+        0,
+        0
+      ],
+      "uv_offset": [
+        118,
+        29
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            118,
+            30,
+            119,
+            32
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            119,
+            30,
+            120,
+            32
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            120,
+            30,
+            121,
+            32
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            121,
+            30,
+            122,
+            32
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            120,
+            30,
+            119,
+            29
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            121,
+            29,
+            120,
+            30
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_05_01_membrane",
+      "from": [
+        2.0,
+        3.5,
+        -1.5
+      ],
+      "to": [
+        4.0,
+        7.5,
+        -0.5
+      ],
+      "origin": [
+        3,
+        7,
+        -1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "bdff9b3d-d8d0-5876-814b-d292e77b58a5",
+      "rotation": [
+        0,
+        0,
+        29
+      ],
+      "uv_offset": [
+        71,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            71,
+            25,
+            72,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            72,
+            25,
+            74,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            74,
+            25,
+            75,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            75,
+            25,
+            77,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            74,
+            25,
+            72,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            76,
+            24,
+            74,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_05_02_membrane",
+      "from": [
+        3.5,
+        2.0,
+        -1.5
+      ],
+      "to": [
+        5.5,
+        5.0,
+        -0.5
+      ],
+      "origin": [
+        4.5,
+        4.5,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "3ef1f76f-3a9a-5ba8-a7b6-b05b5dd4c7b5",
+      "rotation": [
+        0,
+        0,
+        9
+      ],
+      "uv_offset": [
+        100,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            100,
+            25,
+            101,
+            28
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            101,
+            25,
+            103,
+            28
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            103,
+            25,
+            104,
+            28
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            104,
+            25,
+            106,
+            28
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            103,
+            25,
+            101,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            105,
+            24,
+            103,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_05_03_membrane",
+      "from": [
+        4.25,
+        1.0,
+        -1.5
+      ],
+      "to": [
+        5.25,
+        3.0,
+        -0.5
+      ],
+      "origin": [
+        4.75,
+        2.5,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "bf99ef9d-65cb-589a-afea-e9357b3ba081",
+      "rotation": [
+        0,
+        0,
+        -26
+      ],
+      "uv_offset": [
+        123,
+        29
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            123,
+            30,
+            124,
+            32
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            124,
+            30,
+            125,
+            32
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            125,
+            30,
+            126,
+            32
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            126,
+            30,
+            127,
+            32
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            125,
+            30,
+            124,
+            29
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            126,
+            29,
+            125,
+            30
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_06_01_membrane",
+      "from": [
+        3.5,
+        3.5,
+        -0.5
+      ],
+      "to": [
+        4.5,
+        7.5,
+        0.5
+      ],
+      "origin": [
+        4,
+        7,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "391cbe26-1e0f-5ab6-a214-2ce090e76ec0",
+      "rotation": [
+        0,
+        0,
+        18
+      ],
+      "uv_offset": [
+        123,
+        23
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            123,
+            24,
+            124,
+            28
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            124,
+            24,
+            125,
+            28
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            125,
+            24,
+            126,
+            28
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            126,
+            24,
+            127,
+            28
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            125,
+            24,
+            124,
+            23
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            126,
+            23,
+            125,
+            24
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_06_02_membrane",
+      "from": [
+        4.5,
+        0.75,
+        -0.5
+      ],
+      "to": [
+        5.5,
+        4.75,
+        0.5
+      ],
+      "origin": [
+        5.0,
+        4.25,
+        0.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "cc90dc2d-9c1f-56cf-a459-dd573d36aee8",
+      "rotation": [
+        0,
+        0,
+        32
+      ],
+      "uv_offset": [
+        78,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            78,
+            25,
+            79,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            79,
+            25,
+            80,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            80,
+            25,
+            81,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            81,
+            25,
+            82,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            25,
+            79,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            81,
+            24,
+            80,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "feeding_polyp_06_03_membrane",
+      "from": [
+        6.0,
+        0.25,
+        -0.5
+      ],
+      "to": [
+        7.0,
+        2.25,
+        0.5
+      ],
+      "origin": [
+        6.5,
+        1.75,
+        0.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 3,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "6edec85b-fedb-589d-9f54-59123050ad2e",
+      "rotation": [
+        0,
+        0,
+        12
+      ],
+      "uv_offset": [
+        32,
+        30
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            32,
+            31,
+            33,
+            33
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            33,
+            31,
+            34,
+            33
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            34,
+            31,
+            35,
+            33
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            35,
+            31,
+            36,
+            33
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            34,
+            31,
+            33,
+            30
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            35,
+            30,
+            34,
+            31
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_01_01_membrane",
+      "from": [
+        -6.5,
+        0.5,
+        -1.5
+      ],
+      "to": [
+        -5.5,
+        7.5,
+        -0.5
+      ],
+      "origin": [
+        -6,
+        7,
+        -1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "dd1ded46-5b2a-5118-a0b2-fa7f6eebbfc8",
+      "rotation": [
+        0,
+        0,
+        -14
+      ],
+      "uv_offset": [
+        74,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            74,
+            1,
+            75,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            75,
+            1,
+            76,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            76,
+            1,
+            77,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            77,
+            1,
+            78,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            76,
+            1,
+            75,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            77,
+            0,
+            76,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_01_02_membrane",
+      "from": [
+        -8.0,
+        -5.25,
+        -1.5
+      ],
+      "to": [
+        -7.0,
+        1.75,
+        -0.5
+      ],
+      "origin": [
+        -7.5,
+        1.25,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "29cc2725-da0f-54fc-ba15-94d07bd2bc0b",
+      "rotation": [
+        0,
+        0,
+        -23
+      ],
+      "uv_offset": [
+        79,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            79,
+            1,
+            80,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            80,
+            1,
+            81,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            81,
+            1,
+            82,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            82,
+            1,
+            83,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            81,
+            1,
+            80,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            82,
+            0,
+            81,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_01_03_membrane",
+      "from": [
+        -10.25,
+        -9.75,
+        -1.5
+      ],
+      "to": [
+        -9.25,
+        -3.75,
+        -0.5
+      ],
+      "origin": [
+        -9.75,
+        -4.25,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "2d6df9c1-2c1b-5bf9-a567-b978906b26b4",
+      "rotation": [
+        0,
+        0,
+        4
+      ],
+      "uv_offset": [
+        114,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            114,
+            1,
+            115,
+            7
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            115,
+            1,
+            116,
+            7
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            116,
+            1,
+            117,
+            7
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            117,
+            1,
+            118,
+            7
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            116,
+            1,
+            115,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            117,
+            0,
+            116,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_01_04_membrane",
+      "from": [
+        -10.0,
+        -13.75,
+        -1.5
+      ],
+      "to": [
+        -9.0,
+        -8.75,
+        -0.5
+      ],
+      "origin": [
+        -9.5,
+        -9.25,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "197278fb-1011-55b5-ad3e-afe1c38e1599",
+      "rotation": [
+        0,
+        0,
+        25
+      ],
+      "uv_offset": [
+        21,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            21,
+            20,
+            22,
+            25
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            22,
+            20,
+            23,
+            25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            23,
+            20,
+            24,
+            25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            24,
+            20,
+            25,
+            25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            23,
+            20,
+            22,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            24,
+            19,
+            23,
+            20
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_01_05_membrane",
+      "from": [
+        -8.25,
+        -14.5,
+        -1.5
+      ],
+      "to": [
+        -7.25,
+        -12.5,
+        -0.5
+      ],
+      "origin": [
+        -7.75,
+        -13.0,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "748e37d1-cc08-55be-a18e-cf4af456a9ac",
+      "rotation": [
+        0,
+        0,
+        36
+      ],
+      "inflate": -0.1875,
+      "uv_offset": [
+        37,
+        30
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            37,
+            31,
+            38,
+            33
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            38,
+            31,
+            39,
+            33
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            39,
+            31,
+            40,
+            33
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            40,
+            31,
+            41,
+            33
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            39,
+            31,
+            38,
+            30
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            40,
+            30,
+            39,
+            31
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_02_01_membrane",
+      "from": [
+        -4.5,
+        -1.5,
+        0.5
+      ],
+      "to": [
+        -3.5,
+        6.5,
+        1.5
+      ],
+      "origin": [
+        -4,
+        6,
+        1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "cab1effb-49ee-503b-b9f9-8477d07161df",
+      "rotation": [
+        0,
+        0,
+        -8
+      ],
+      "uv_offset": [
+        49,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            49,
+            1,
+            50,
+            9
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            50,
+            1,
+            51,
+            9
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            51,
+            1,
+            52,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            52,
+            1,
+            53,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            51,
+            1,
+            50,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            52,
+            0,
+            51,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_02_02_membrane",
+      "from": [
+        -5.5,
+        -8.5,
+        0.5
+      ],
+      "to": [
+        -4.5,
+        -0.5,
+        1.5
+      ],
+      "origin": [
+        -5.0,
+        -1.0,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "58ed5d7b-4d81-5daa-b7e0-eade903981b8",
+      "rotation": [
+        0,
+        0,
+        10
+      ],
+      "uv_offset": [
+        54,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            54,
+            1,
+            55,
+            9
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            55,
+            1,
+            56,
+            9
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            56,
+            1,
+            57,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            57,
+            1,
+            58,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            56,
+            1,
+            55,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            57,
+            0,
+            56,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_02_03_membrane",
+      "from": [
+        -4.25,
+        -14.5,
+        0.5
+      ],
+      "to": [
+        -3.25,
+        -7.5,
+        1.5
+      ],
+      "origin": [
+        -3.75,
+        -8.0,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "fe90861b-7043-518b-8bfa-b42f21cc0562",
+      "rotation": [
+        0,
+        0,
+        21
+      ],
+      "uv_offset": [
+        84,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            84,
+            1,
+            85,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            85,
+            1,
+            86,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            86,
+            1,
+            87,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            87,
+            1,
+            88,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            86,
+            1,
+            85,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            87,
+            0,
+            86,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_02_04_membrane",
+      "from": [
+        -2.0,
+        -20.0,
+        0.5
+      ],
+      "to": [
+        -1.0,
+        -13.0,
+        1.5
+      ],
+      "origin": [
+        -1.5,
+        -13.5,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "e09943ff-f208-5db0-87c9-28795bd52815",
+      "rotation": [
+        0,
+        0,
+        -8
+      ],
+      "uv_offset": [
+        89,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            89,
+            1,
+            90,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            90,
+            1,
+            91,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            91,
+            1,
+            92,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            92,
+            1,
+            93,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            91,
+            1,
+            90,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            92,
+            0,
+            91,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_02_05_membrane",
+      "from": [
+        -2.75,
+        -25.0,
+        0.5
+      ],
+      "to": [
+        -1.75,
+        -19.0,
+        1.5
+      ],
+      "origin": [
+        -2.25,
+        -19.5,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "3929ae1a-be2c-55da-8c77-45535eaf23ad",
+      "rotation": [
+        0,
+        0,
+        -25
+      ],
+      "uv_offset": [
+        119,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            119,
+            1,
+            120,
+            7
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            120,
+            1,
+            121,
+            7
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            121,
+            1,
+            122,
+            7
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            122,
+            1,
+            123,
+            7
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            121,
+            1,
+            120,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            122,
+            0,
+            121,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_02_06_membrane",
+      "from": [
+        -4.75,
+        -26.5,
+        0.5
+      ],
+      "to": [
+        -3.75,
+        -23.5,
+        1.5
+      ],
+      "origin": [
+        -4.25,
+        -24.0,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "1a437edb-f823-5d7d-b8cc-631eb5372a4c",
+      "rotation": [
+        0,
+        0,
+        -42
+      ],
+      "inflate": -0.1875,
+      "uv_offset": [
+        27,
+        26
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            27,
+            27,
+            28,
+            30
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            28,
+            27,
+            29,
+            30
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            29,
+            27,
+            30,
+            30
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            30,
+            27,
+            31,
+            30
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            29,
+            27,
+            28,
+            26
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            30,
+            26,
+            29,
+            27
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_03_01_membrane",
+      "from": [
+        -1.5,
+        -0.5,
+        -1.5
+      ],
+      "to": [
+        -0.5,
+        6.5,
+        -0.5
+      ],
+      "origin": [
+        -1,
+        6,
+        -1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "796bde0a-c68b-5973-a828-747cfdd3fc5d",
+      "rotation": [
+        13,
+        0,
+        0
+      ],
+      "uv_offset": [
+        94,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            94,
+            1,
+            95,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            95,
+            1,
+            96,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            96,
+            1,
+            97,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            97,
+            1,
+            98,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            96,
+            1,
+            95,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            97,
+            0,
+            96,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_03_02_membrane",
+      "from": [
+        -1.5,
+        -5.25,
+        -2.75
+      ],
+      "to": [
+        -0.5,
+        0.75,
+        -1.75
+      ],
+      "origin": [
+        -1.0,
+        0.25,
+        -2.25
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "e595aff0-71f5-5afa-a3d5-47a01338e35b",
+      "rotation": [
+        29,
+        0,
+        0
+      ],
+      "uv_offset": [
+        114,
+        8
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            114,
+            9,
+            115,
+            15
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            115,
+            9,
+            116,
+            15
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            116,
+            9,
+            117,
+            15
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            117,
+            9,
+            118,
+            15
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            116,
+            9,
+            115,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            117,
+            8,
+            116,
+            9
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_03_03_membrane",
+      "from": [
+        -1.5,
+        -11.5,
+        -5.25
+      ],
+      "to": [
+        -0.5,
+        -3.5,
+        -4.25
+      ],
+      "origin": [
+        -1.0,
+        -4.0,
+        -4.75
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "b6066070-466f-5f05-92ba-1fae30499c84",
+      "rotation": [
+        9,
+        0,
+        0
+      ],
+      "uv_offset": [
+        59,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            59,
+            1,
+            60,
+            9
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            60,
+            1,
+            61,
+            9
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            61,
+            1,
+            62,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            62,
+            1,
+            63,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            61,
+            1,
+            60,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            62,
+            0,
+            61,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_03_04_membrane",
+      "from": [
+        -1.5,
+        -15.5,
+        -6.25
+      ],
+      "to": [
+        -0.5,
+        -10.5,
+        -5.25
+      ],
+      "origin": [
+        -1.0,
+        -11.0,
+        -5.75
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "b7c2987a-686e-56db-8bf2-ef4cff155c80",
+      "rotation": [
+        -20,
+        0,
+        0
+      ],
+      "uv_offset": [
+        26,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            26,
+            20,
+            27,
+            25
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            27,
+            20,
+            28,
+            25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            28,
+            20,
+            29,
+            25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            29,
+            20,
+            30,
+            25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            28,
+            20,
+            27,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            29,
+            19,
+            28,
+            20
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_03_05_membrane",
+      "from": [
+        -1.5,
+        -17.25,
+        -5.0
+      ],
+      "to": [
+        -0.5,
+        -14.25,
+        -4.0
+      ],
+      "origin": [
+        -1.0,
+        -14.75,
+        -4.5
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "9999753d-22cd-56be-8964-4e65ecd233ba",
+      "rotation": [
+        -35,
+        0,
+        0
+      ],
+      "inflate": -0.1875,
+      "uv_offset": [
+        93,
+        29
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            93,
+            30,
+            94,
+            33
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            94,
+            30,
+            95,
+            33
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            95,
+            30,
+            96,
+            33
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            96,
+            30,
+            97,
+            33
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            95,
+            30,
+            94,
+            29
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            96,
+            29,
+            95,
+            30
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_04_01_membrane",
+      "from": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "to": [
+        1.5,
+        6.5,
+        1.5
+      ],
+      "origin": [
+        1,
+        6,
+        1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "6b01e9a0-5e95-540d-8e8d-37960f752740",
+      "rotation": [
+        0,
+        0,
+        16
+      ],
+      "uv_offset": [
+        119,
+        8
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            119,
+            9,
+            120,
+            15
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            120,
+            9,
+            121,
+            15
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            121,
+            9,
+            122,
+            15
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            122,
+            9,
+            123,
+            15
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            121,
+            9,
+            120,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            122,
+            8,
+            121,
+            9
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_04_02_membrane",
+      "from": [
+        2.0,
+        -6.25,
+        0.5
+      ],
+      "to": [
+        3.0,
+        1.75,
+        1.5
+      ],
+      "origin": [
+        2.5,
+        1.25,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "7dad487e-a76c-5bfc-8d2b-f1f406e83cd7",
+      "rotation": [
+        0,
+        0,
+        27
+      ],
+      "uv_offset": [
+        64,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            64,
+            1,
+            65,
+            9
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            65,
+            1,
+            66,
+            9
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            66,
+            1,
+            67,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            67,
+            1,
+            68,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            66,
+            1,
+            65,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            67,
+            0,
+            66,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_04_03_membrane",
+      "from": [
+        5.25,
+        -11.5,
+        0.5
+      ],
+      "to": [
+        6.25,
+        -4.5,
+        1.5
+      ],
+      "origin": [
+        5.75,
+        -5.0,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "badb0386-6e9c-5843-bd6e-f3f5f9a9a6ce",
+      "rotation": [
+        0,
+        0,
+        11
+      ],
+      "uv_offset": [
+        99,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            99,
+            1,
+            100,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            100,
+            1,
+            101,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            101,
+            1,
+            102,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            102,
+            1,
+            103,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            101,
+            1,
+            100,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            102,
+            0,
+            101,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_04_04_membrane",
+      "from": [
+        6.5,
+        -17.5,
+        0.5
+      ],
+      "to": [
+        7.5,
+        -10.5,
+        1.5
+      ],
+      "origin": [
+        7.0,
+        -11.0,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "2165aabf-291d-5bc7-ac40-9326fe6ec54a",
+      "rotation": [
+        0,
+        0,
+        -11
+      ],
+      "uv_offset": [
+        104,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            104,
+            1,
+            105,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            105,
+            1,
+            106,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            106,
+            1,
+            107,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            107,
+            1,
+            108,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            106,
+            1,
+            105,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            107,
+            0,
+            106,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_04_05_membrane",
+      "from": [
+        5.25,
+        -20.5,
+        0.5
+      ],
+      "to": [
+        6.25,
+        -16.5,
+        1.5
+      ],
+      "origin": [
+        5.75,
+        -17.0,
+        1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "158dd2bd-2b9b-59a8-b5cf-d8109b06dc96",
+      "rotation": [
+        0,
+        0,
+        -34
+      ],
+      "inflate": -0.1875,
+      "uv_offset": [
+        83,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            83,
+            25,
+            84,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            84,
+            25,
+            85,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            85,
+            25,
+            86,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            86,
+            25,
+            87,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            85,
+            25,
+            84,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            86,
+            24,
+            85,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_05_01_membrane",
+      "from": [
+        2.5,
+        1.5,
+        -1.5
+      ],
+      "to": [
+        3.5,
+        7.5,
+        -0.5
+      ],
+      "origin": [
+        3,
+        7,
+        -1
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "0417c475-1ccb-5b4c-a92e-9f2a3096daed",
+      "rotation": [
+        15,
+        0,
+        0
+      ],
+      "uv_offset": [
+        89,
+        9
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            89,
+            10,
+            90,
+            16
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            90,
+            10,
+            91,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            91,
+            10,
+            92,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            92,
+            10,
+            93,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            91,
+            10,
+            90,
+            9
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            92,
+            9,
+            91,
+            10
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_05_02_membrane",
+      "from": [
+        2.5,
+        -5.25,
+        -2.75
+      ],
+      "to": [
+        3.5,
+        2.75,
+        -1.75
+      ],
+      "origin": [
+        3.0,
+        2.25,
+        -2.25
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "3d4d539f-9317-5345-9fb1-395f0feac96d",
+      "rotation": [
+        -11,
+        0,
+        0
+      ],
+      "uv_offset": [
+        69,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            69,
+            1,
+            70,
+            9
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            70,
+            1,
+            71,
+            9
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            71,
+            1,
+            72,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            72,
+            1,
+            73,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            71,
+            1,
+            70,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            72,
+            0,
+            71,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_05_03_membrane",
+      "from": [
+        2.5,
+        -10.0,
+        -1.5
+      ],
+      "to": [
+        3.5,
+        -4.0,
+        -0.5
+      ],
+      "origin": [
+        3.0,
+        -4.5,
+        -1.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "50089e64-dec1-5bff-8a93-c3558d358174",
+      "rotation": [
+        -26,
+        0,
+        0
+      ],
+      "uv_offset": [
+        94,
+        9
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            94,
+            10,
+            95,
+            16
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            95,
+            10,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            96,
+            10,
+            97,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            97,
+            10,
+            98,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            96,
+            10,
+            95,
+            9
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            97,
+            9,
+            96,
+            10
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_05_04_membrane",
+      "from": [
+        2.5,
+        -12.5,
+        0.75
+      ],
+      "to": [
+        3.5,
+        -8.5,
+        1.75
+      ],
+      "origin": [
+        3.0,
+        -9.0,
+        1.25
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "d5ee85c0-5ec9-519b-8110-0e1c093cb2d2",
+      "rotation": [
+        -35,
+        0,
+        0
+      ],
+      "inflate": -0.1875,
+      "uv_offset": [
+        88,
+        24
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            88,
+            25,
+            89,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            89,
+            25,
+            90,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            90,
+            25,
+            91,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            91,
+            25,
+            92,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            90,
+            25,
+            89,
+            24
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            91,
+            24,
+            90,
+            25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_06_01_membrane",
+      "from": [
+        4.5,
+        1.5,
+        -0.5
+      ],
+      "to": [
+        5.5,
+        7.5,
+        0.5
+      ],
+      "origin": [
+        5,
+        7,
+        0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "15325ef4-b532-587c-b6e0-baf2ae503fac",
+      "rotation": [
+        0,
+        0,
+        24
+      ],
+      "uv_offset": [
+        99,
+        9
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            99,
+            10,
+            100,
+            16
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            100,
+            10,
+            101,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            101,
+            10,
+            102,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            102,
+            10,
+            103,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            101,
+            10,
+            100,
+            9
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            102,
+            9,
+            101,
+            10
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_06_02_membrane",
+      "from": [
+        6.5,
+        -3.0,
+        -0.5
+      ],
+      "to": [
+        7.5,
+        3.0,
+        0.5
+      ],
+      "origin": [
+        7.0,
+        2.5,
+        0.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "5c98146c-b7bf-5344-8930-3e650c323f11",
+      "rotation": [
+        0,
+        0,
+        16
+      ],
+      "uv_offset": [
+        104,
+        9
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            104,
+            10,
+            105,
+            16
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            105,
+            10,
+            106,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            106,
+            10,
+            107,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            107,
+            10,
+            108,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            106,
+            10,
+            105,
+            9
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            107,
+            9,
+            106,
+            10
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_06_03_membrane",
+      "from": [
+        8.0,
+        -8.75,
+        -0.5
+      ],
+      "to": [
+        9.0,
+        -1.75,
+        0.5
+      ],
+      "origin": [
+        8.5,
+        -2.25,
+        0.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "c28e67ea-4981-53ee-9714-06b0fd1ea9a4",
+      "rotation": [
+        0,
+        0,
+        -8
+      ],
+      "uv_offset": [
+        109,
+        0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            109,
+            1,
+            110,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            110,
+            1,
+            111,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            111,
+            1,
+            112,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            112,
+            1,
+            113,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            111,
+            1,
+            110,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            112,
+            0,
+            111,
+            1
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_06_04_membrane",
+      "from": [
+        7.25,
+        -12.75,
+        -0.5
+      ],
+      "to": [
+        8.25,
+        -7.75,
+        0.5
+      ],
+      "origin": [
+        7.75,
+        -8.25,
+        0.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "4ffcbc33-556c-5e44-82df-c97d8b02c51f",
+      "rotation": [
+        0,
+        0,
+        -18
+      ],
+      "uv_offset": [
+        31,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            31,
+            20,
+            32,
+            25
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            32,
+            20,
+            33,
+            25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            33,
+            20,
+            34,
+            25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            34,
+            20,
+            35,
+            25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            33,
+            20,
+            32,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            34,
+            19,
+            33,
+            20
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "capture_tendril_06_05_membrane",
+      "from": [
+        6.0,
+        -14.5,
+        -0.5
+      ],
+      "to": [
+        7.0,
+        -11.5,
+        0.5
+      ],
+      "origin": [
+        6.5,
+        -12.0,
+        0.0
+      ],
+      "box_uv": true,
+      "autouv": 0,
+      "color": 4,
+      "locked": false,
+      "rescale": false,
+      "type": "cube",
+      "uuid": "d3656b9d-e827-5c8e-8a9d-a2af4a846226",
+      "rotation": [
+        0,
+        0,
+        -28
+      ],
+      "inflate": -0.1875,
+      "uv_offset": [
+        98,
+        29
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            98,
+            30,
+            99,
+            33
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            99,
+            30,
+            100,
+            33
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            100,
+            30,
+            101,
+            33
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            101,
+            30,
+            102,
+            33
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            100,
+            30,
+            99,
+            29
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            101,
+            29,
+            100,
+            30
+          ],
+          "texture": 0
+        }
+      }
+    }
+  ],
+  "outliner": [
+    {
+      "name": "root",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "color": 0,
+      "uuid": "54bfebc6-88da-589d-81ec-d1baa69be028",
+      "export": true,
+      "mirror_uv": false,
+      "isOpen": true,
+      "locked": false,
+      "visibility": true,
+      "autouv": 0,
+      "children": [
+        {
+          "name": "surface_float",
+          "origin": [
+            0,
+            10,
+            0
+          ],
+          "color": 1,
+          "uuid": "647f57e9-675b-5b10-9a6e-3f391d41fe10",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": false,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "e54296fe-00b1-5c6a-a7d4-ef500c2a8fbd",
+            "5689a4a5-7938-52ff-bcdd-a3f661fe74a7",
+            "50169d33-8088-56cc-ac95-438d5b1f0fed",
+            "ac945731-e75e-55c1-8a7c-e5226644e71d",
+            "63431a82-dacb-5555-89dc-1ee5bb48e7ae",
+            {
+              "name": "sail_crest",
+              "origin": [
+                -1,
+                13,
+                0.5
+              ],
+              "color": 2,
+              "uuid": "9da8b5e3-288b-574c-afd0-5566913a6c61",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                "f030e849-46b7-5475-a721-3696a4c9759b"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "feeding_colony",
+          "origin": [
+            -1,
+            8,
+            0
+          ],
+          "color": 3,
+          "uuid": "8d211ab8-1b30-5dad-9924-5fbb6015f180",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": false,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "d20b1c35-bfce-5332-adfd-c51dc806276d",
+            "90d1373a-e018-596f-b500-8d0fbdee83a5",
+            {
+              "name": "feeding_polyp_01",
+              "origin": [
+                -5,
+                6,
+                -1
+              ],
+              "color": 3,
+              "uuid": "002b838f-99a0-5270-8478-7f99cb71ec87",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "feeding_polyp_01_01",
+                  "origin": [
+                    -5,
+                    6,
+                    -1
+                  ],
+                  "color": 3,
+                  "uuid": "c3fc0737-08e4-56cc-871f-0d10c42ff353",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "e2bbc203-5d9c-599f-9d8d-851390265776",
+                    {
+                      "name": "feeding_polyp_01_02",
+                      "origin": [
+                        -6.0,
+                        3.25,
+                        -1.0
+                      ],
+                      "color": 3,
+                      "uuid": "2a89c02d-8954-53c1-b22a-bd59171368c1",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "e459c69c-9910-5646-955a-df40fbb50991",
+                        {
+                          "name": "feeding_polyp_01_03",
+                          "origin": [
+                            -5.5,
+                            1.25,
+                            -1.0
+                          ],
+                          "color": 3,
+                          "uuid": "fd8b0b66-4463-5186-a187-dc89d2016ec7",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "b981b3bd-64ea-586d-ba53-46c288d0f5e8"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "feeding_polyp_02",
+              "origin": [
+                -3,
+                6,
+                1
+              ],
+              "color": 3,
+              "uuid": "c553d604-64a6-5793-a246-6a74e6778c8d",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "feeding_polyp_02_01",
+                  "origin": [
+                    -3,
+                    6,
+                    1
+                  ],
+                  "color": 3,
+                  "uuid": "1b0f38a2-5b1c-5832-b978-330f9cf917fc",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "320f0e19-65bf-5c4c-bc21-f3efb107aac1",
+                    {
+                      "name": "feeding_polyp_02_02",
+                      "origin": [
+                        -3.5,
+                        3.0,
+                        1.0
+                      ],
+                      "color": 3,
+                      "uuid": "a3cbbbc7-285b-5669-8a36-47be036f1e95",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "300422cf-108a-5e19-8ce0-7b3d39bd0ad5",
+                        {
+                          "name": "feeding_polyp_02_03",
+                          "origin": [
+                            -2.5,
+                            0.25,
+                            1.0
+                          ],
+                          "color": 3,
+                          "uuid": "a581ccbf-a3c6-500b-b8ca-d35eb6d6ed04",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "a63c368a-d28f-5dd3-8b7b-36f3d38175ae"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "feeding_polyp_03",
+              "origin": [
+                -1,
+                6,
+                -1
+              ],
+              "color": 3,
+              "uuid": "07d04ea2-05a9-5893-818b-19d5f1f4a023",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "feeding_polyp_03_01",
+                  "origin": [
+                    -1,
+                    6,
+                    -1
+                  ],
+                  "color": 3,
+                  "uuid": "308cfa93-6202-5455-b665-01d5a9fe3ee9",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "565f5cda-4347-536d-91c0-55f529b3716a",
+                    {
+                      "name": "feeding_polyp_03_02",
+                      "origin": [
+                        -1.0,
+                        3.5,
+                        -2.75
+                      ],
+                      "color": 3,
+                      "uuid": "ed14558a-2a81-5feb-9280-20e12923689a",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "b34dcb13-95bf-5f20-a262-0bae7b31d671",
+                        {
+                          "name": "feeding_polyp_03_03",
+                          "origin": [
+                            -1.0,
+                            0.75,
+                            -1.75
+                          ],
+                          "color": 3,
+                          "uuid": "d423c5b4-a044-5763-adbf-2e5a34377ad7",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "603811d4-ced7-59bb-a56a-c2ce59a26a09"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "feeding_polyp_04",
+              "origin": [
+                1,
+                6,
+                1
+              ],
+              "color": 3,
+              "uuid": "9f78bc3b-a80d-5a24-8c78-556e429b744d",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "feeding_polyp_04_01",
+                  "origin": [
+                    1,
+                    6,
+                    1
+                  ],
+                  "color": 3,
+                  "uuid": "c7c4fa5b-8023-5f38-805b-577d0d0e8abb",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "e9a96e58-3cff-576a-a31a-e85a523a94f9",
+                    {
+                      "name": "feeding_polyp_04_02",
+                      "origin": [
+                        1.0,
+                        3.25,
+                        2.25
+                      ],
+                      "color": 3,
+                      "uuid": "f58a9ddb-4d1c-5bf0-abc9-47292dcce552",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "813eb1d1-c167-5102-b57f-d6d53fc07ce3",
+                        {
+                          "name": "feeding_polyp_04_03",
+                          "origin": [
+                            1.0,
+                            0.5,
+                            1.25
+                          ],
+                          "color": 3,
+                          "uuid": "fefd476f-81cf-5259-97e1-6bb2bc27b36a",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "d2941584-0869-5829-bc64-2a5e180a88dd"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "feeding_polyp_05",
+              "origin": [
+                3,
+                7,
+                -1
+              ],
+              "color": 3,
+              "uuid": "0da028ca-8783-53f9-b336-2968f0c36d77",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "feeding_polyp_05_01",
+                  "origin": [
+                    3,
+                    7,
+                    -1
+                  ],
+                  "color": 3,
+                  "uuid": "cf359533-b2ad-5014-897d-6d594a12198a",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "bdff9b3d-d8d0-5876-814b-d292e77b58a5",
+                    {
+                      "name": "feeding_polyp_05_02",
+                      "origin": [
+                        4.5,
+                        4.5,
+                        -1.0
+                      ],
+                      "color": 3,
+                      "uuid": "0bf498a2-c210-5b54-8273-6c5d8865096c",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "3ef1f76f-3a9a-5ba8-a7b6-b05b5dd4c7b5",
+                        {
+                          "name": "feeding_polyp_05_03",
+                          "origin": [
+                            4.75,
+                            2.5,
+                            -1.0
+                          ],
+                          "color": 3,
+                          "uuid": "cdf75daf-14b7-5265-b64c-b54db13cfe0b",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "bf99ef9d-65cb-589a-afea-e9357b3ba081"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "feeding_polyp_06",
+              "origin": [
+                4,
+                7,
+                0
+              ],
+              "color": 3,
+              "uuid": "725013fd-9037-547d-ba8d-64b8a276172b",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "feeding_polyp_06_01",
+                  "origin": [
+                    4,
+                    7,
+                    0
+                  ],
+                  "color": 3,
+                  "uuid": "c287cade-2943-5521-b9ab-fef52071c2d8",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "391cbe26-1e0f-5ab6-a214-2ce090e76ec0",
+                    {
+                      "name": "feeding_polyp_06_02",
+                      "origin": [
+                        5.0,
+                        4.25,
+                        0.0
+                      ],
+                      "color": 3,
+                      "uuid": "07b2233d-0990-5d46-b520-ec897d5386ef",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "cc90dc2d-9c1f-56cf-a459-dd573d36aee8",
+                        {
+                          "name": "feeding_polyp_06_03",
+                          "origin": [
+                            6.5,
+                            1.75,
+                            0.0
+                          ],
+                          "color": 3,
+                          "uuid": "24a70549-73ad-50b5-8c6e-ecf2e23c6a8d",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "6edec85b-fedb-589d-9f54-59123050ad2e"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "capture_tendrils",
+          "origin": [
+            0,
+            7,
+            0
+          ],
+          "color": 4,
+          "uuid": "6533505f-6255-5e7b-829d-c0eded41eb2e",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": false,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            {
+              "name": "capture_tendril_01",
+              "origin": [
+                -6,
+                7,
+                -1
+              ],
+              "color": 4,
+              "uuid": "ad39eced-acd8-5cfa-a937-200a0c71f224",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "capture_tendril_01_01",
+                  "origin": [
+                    -6,
+                    7,
+                    -1
+                  ],
+                  "color": 4,
+                  "uuid": "3bae83d1-e7f7-52f9-a0ff-5c9e1b540504",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "dd1ded46-5b2a-5118-a0b2-fa7f6eebbfc8",
+                    {
+                      "name": "capture_tendril_01_02",
+                      "origin": [
+                        -7.5,
+                        1.25,
+                        -1.0
+                      ],
+                      "color": 4,
+                      "uuid": "1248c3f0-3a80-51ce-b892-7c5ab6d7373a",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "29cc2725-da0f-54fc-ba15-94d07bd2bc0b",
+                        {
+                          "name": "capture_tendril_01_03",
+                          "origin": [
+                            -9.75,
+                            -4.25,
+                            -1.0
+                          ],
+                          "color": 4,
+                          "uuid": "31209ef1-12a8-5c44-a257-99e3bb72b052",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "2d6df9c1-2c1b-5bf9-a567-b978906b26b4",
+                            {
+                              "name": "capture_tendril_01_04",
+                              "origin": [
+                                -9.5,
+                                -9.25,
+                                -1.0
+                              ],
+                              "color": 4,
+                              "uuid": "0ee02e9d-ec62-5aa8-acfb-97c6dc363f5b",
+                              "export": true,
+                              "mirror_uv": false,
+                              "isOpen": false,
+                              "locked": false,
+                              "visibility": true,
+                              "autouv": 0,
+                              "children": [
+                                "197278fb-1011-55b5-ad3e-afe1c38e1599",
+                                {
+                                  "name": "capture_tendril_01_05",
+                                  "origin": [
+                                    -7.75,
+                                    -13.0,
+                                    -1.0
+                                  ],
+                                  "color": 4,
+                                  "uuid": "ae84da7b-dae3-56b3-a9ea-fcd23732a27c",
+                                  "export": true,
+                                  "mirror_uv": false,
+                                  "isOpen": false,
+                                  "locked": false,
+                                  "visibility": true,
+                                  "autouv": 0,
+                                  "children": [
+                                    "748e37d1-cc08-55be-a18e-cf4af456a9ac"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "capture_tendril_02",
+              "origin": [
+                -4,
+                6,
+                1
+              ],
+              "color": 4,
+              "uuid": "9f544c8e-954a-5201-b950-9bfa5e27163f",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "capture_tendril_02_01",
+                  "origin": [
+                    -4,
+                    6,
+                    1
+                  ],
+                  "color": 4,
+                  "uuid": "b7b91f6c-1722-5924-a9e1-f3a9caab5500",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "cab1effb-49ee-503b-b9f9-8477d07161df",
+                    {
+                      "name": "capture_tendril_02_02",
+                      "origin": [
+                        -5.0,
+                        -1.0,
+                        1.0
+                      ],
+                      "color": 4,
+                      "uuid": "6f61a9f1-90e7-5e32-8e63-d715e0a7270f",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "58ed5d7b-4d81-5daa-b7e0-eade903981b8",
+                        {
+                          "name": "capture_tendril_02_03",
+                          "origin": [
+                            -3.75,
+                            -8.0,
+                            1.0
+                          ],
+                          "color": 4,
+                          "uuid": "791d29b0-3819-5d91-9010-d1720e676498",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "fe90861b-7043-518b-8bfa-b42f21cc0562",
+                            {
+                              "name": "capture_tendril_02_04",
+                              "origin": [
+                                -1.5,
+                                -13.5,
+                                1.0
+                              ],
+                              "color": 4,
+                              "uuid": "49b24e77-1860-55ab-8acb-f28e579a2427",
+                              "export": true,
+                              "mirror_uv": false,
+                              "isOpen": false,
+                              "locked": false,
+                              "visibility": true,
+                              "autouv": 0,
+                              "children": [
+                                "e09943ff-f208-5db0-87c9-28795bd52815",
+                                {
+                                  "name": "capture_tendril_02_05",
+                                  "origin": [
+                                    -2.25,
+                                    -19.5,
+                                    1.0
+                                  ],
+                                  "color": 4,
+                                  "uuid": "4bb28831-e005-5528-a995-78f0584ca048",
+                                  "export": true,
+                                  "mirror_uv": false,
+                                  "isOpen": false,
+                                  "locked": false,
+                                  "visibility": true,
+                                  "autouv": 0,
+                                  "children": [
+                                    "3929ae1a-be2c-55da-8c77-45535eaf23ad",
+                                    {
+                                      "name": "capture_tendril_02_06",
+                                      "origin": [
+                                        -4.25,
+                                        -24.0,
+                                        1.0
+                                      ],
+                                      "color": 4,
+                                      "uuid": "ab111435-efe1-595c-a862-b618ef4dccfa",
+                                      "export": true,
+                                      "mirror_uv": false,
+                                      "isOpen": false,
+                                      "locked": false,
+                                      "visibility": true,
+                                      "autouv": 0,
+                                      "children": [
+                                        "1a437edb-f823-5d7d-b8cc-631eb5372a4c"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "capture_tendril_03",
+              "origin": [
+                -1,
+                6,
+                -1
+              ],
+              "color": 4,
+              "uuid": "640f9f79-c1f7-5159-967c-4a806d3a3e93",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "capture_tendril_03_01",
+                  "origin": [
+                    -1,
+                    6,
+                    -1
+                  ],
+                  "color": 4,
+                  "uuid": "ddfe4399-1ae2-5cc5-976a-71d0aecc5005",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "796bde0a-c68b-5973-a828-747cfdd3fc5d",
+                    {
+                      "name": "capture_tendril_03_02",
+                      "origin": [
+                        -1.0,
+                        0.25,
+                        -2.25
+                      ],
+                      "color": 4,
+                      "uuid": "fd3cb188-56a8-5389-bf53-403ee0b4b737",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "e595aff0-71f5-5afa-a3d5-47a01338e35b",
+                        {
+                          "name": "capture_tendril_03_03",
+                          "origin": [
+                            -1.0,
+                            -4.0,
+                            -4.75
+                          ],
+                          "color": 4,
+                          "uuid": "f038caa2-cdbd-5f82-b221-b046adac6509",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "b6066070-466f-5f05-92ba-1fae30499c84",
+                            {
+                              "name": "capture_tendril_03_04",
+                              "origin": [
+                                -1.0,
+                                -11.0,
+                                -5.75
+                              ],
+                              "color": 4,
+                              "uuid": "a0f0ed73-93a5-5c3d-84c5-30816e266d4e",
+                              "export": true,
+                              "mirror_uv": false,
+                              "isOpen": false,
+                              "locked": false,
+                              "visibility": true,
+                              "autouv": 0,
+                              "children": [
+                                "b7c2987a-686e-56db-8bf2-ef4cff155c80",
+                                {
+                                  "name": "capture_tendril_03_05",
+                                  "origin": [
+                                    -1.0,
+                                    -14.75,
+                                    -4.5
+                                  ],
+                                  "color": 4,
+                                  "uuid": "86d38cb1-4e3d-530c-b34d-7e864f8a87f7",
+                                  "export": true,
+                                  "mirror_uv": false,
+                                  "isOpen": false,
+                                  "locked": false,
+                                  "visibility": true,
+                                  "autouv": 0,
+                                  "children": [
+                                    "9999753d-22cd-56be-8964-4e65ecd233ba"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "capture_tendril_04",
+              "origin": [
+                1,
+                6,
+                1
+              ],
+              "color": 4,
+              "uuid": "905afa32-8f98-5245-bd86-be7e6c3d5c87",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "capture_tendril_04_01",
+                  "origin": [
+                    1,
+                    6,
+                    1
+                  ],
+                  "color": 4,
+                  "uuid": "84db9e34-f1e7-5bac-9c99-92b523356a12",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "6b01e9a0-5e95-540d-8e8d-37960f752740",
+                    {
+                      "name": "capture_tendril_04_02",
+                      "origin": [
+                        2.5,
+                        1.25,
+                        1.0
+                      ],
+                      "color": 4,
+                      "uuid": "12192dd8-aabb-5cbc-a433-2af899b8da74",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "7dad487e-a76c-5bfc-8d2b-f1f406e83cd7",
+                        {
+                          "name": "capture_tendril_04_03",
+                          "origin": [
+                            5.75,
+                            -5.0,
+                            1.0
+                          ],
+                          "color": 4,
+                          "uuid": "c513f30d-cea8-5ac0-a4d1-5ef08948d664",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "badb0386-6e9c-5843-bd6e-f3f5f9a9a6ce",
+                            {
+                              "name": "capture_tendril_04_04",
+                              "origin": [
+                                7.0,
+                                -11.0,
+                                1.0
+                              ],
+                              "color": 4,
+                              "uuid": "ff930079-e5e5-5c13-995d-bf23075d937b",
+                              "export": true,
+                              "mirror_uv": false,
+                              "isOpen": false,
+                              "locked": false,
+                              "visibility": true,
+                              "autouv": 0,
+                              "children": [
+                                "2165aabf-291d-5bc7-ac40-9326fe6ec54a",
+                                {
+                                  "name": "capture_tendril_04_05",
+                                  "origin": [
+                                    5.75,
+                                    -17.0,
+                                    1.0
+                                  ],
+                                  "color": 4,
+                                  "uuid": "1147de59-abd0-5a04-99b9-3ddaa676d57b",
+                                  "export": true,
+                                  "mirror_uv": false,
+                                  "isOpen": false,
+                                  "locked": false,
+                                  "visibility": true,
+                                  "autouv": 0,
+                                  "children": [
+                                    "158dd2bd-2b9b-59a8-b5cf-d8109b06dc96"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "capture_tendril_05",
+              "origin": [
+                3,
+                7,
+                -1
+              ],
+              "color": 4,
+              "uuid": "a828d935-bd6a-5327-9297-6a0a5c880aa8",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "capture_tendril_05_01",
+                  "origin": [
+                    3,
+                    7,
+                    -1
+                  ],
+                  "color": 4,
+                  "uuid": "6161a8c7-976b-58ce-af35-17ddc8e21a10",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "0417c475-1ccb-5b4c-a92e-9f2a3096daed",
+                    {
+                      "name": "capture_tendril_05_02",
+                      "origin": [
+                        3.0,
+                        2.25,
+                        -2.25
+                      ],
+                      "color": 4,
+                      "uuid": "b8d6fc45-3f40-56c9-a06c-9e7896596e74",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "3d4d539f-9317-5345-9fb1-395f0feac96d",
+                        {
+                          "name": "capture_tendril_05_03",
+                          "origin": [
+                            3.0,
+                            -4.5,
+                            -1.0
+                          ],
+                          "color": 4,
+                          "uuid": "a5392f4f-1ab5-53d2-8aef-b2a9e9816e99",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "50089e64-dec1-5bff-8a93-c3558d358174",
+                            {
+                              "name": "capture_tendril_05_04",
+                              "origin": [
+                                3.0,
+                                -9.0,
+                                1.25
+                              ],
+                              "color": 4,
+                              "uuid": "6de1c966-2e47-5cc0-bcf7-aa45628ccbc9",
+                              "export": true,
+                              "mirror_uv": false,
+                              "isOpen": false,
+                              "locked": false,
+                              "visibility": true,
+                              "autouv": 0,
+                              "children": [
+                                "d5ee85c0-5ec9-519b-8110-0e1c093cb2d2"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "capture_tendril_06",
+              "origin": [
+                5,
+                7,
+                0
+              ],
+              "color": 4,
+              "uuid": "9e49973c-f503-514d-9ef9-2f2d2935c459",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": false,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                {
+                  "name": "capture_tendril_06_01",
+                  "origin": [
+                    5,
+                    7,
+                    0
+                  ],
+                  "color": 4,
+                  "uuid": "69e1f0ee-d050-54f6-a17b-f3ce40481882",
+                  "export": true,
+                  "mirror_uv": false,
+                  "isOpen": false,
+                  "locked": false,
+                  "visibility": true,
+                  "autouv": 0,
+                  "children": [
+                    "15325ef4-b532-587c-b6e0-baf2ae503fac",
+                    {
+                      "name": "capture_tendril_06_02",
+                      "origin": [
+                        7.0,
+                        2.5,
+                        0.0
+                      ],
+                      "color": 4,
+                      "uuid": "2584541e-4e43-5450-8c2b-d531f9b93f00",
+                      "export": true,
+                      "mirror_uv": false,
+                      "isOpen": false,
+                      "locked": false,
+                      "visibility": true,
+                      "autouv": 0,
+                      "children": [
+                        "5c98146c-b7bf-5344-8930-3e650c323f11",
+                        {
+                          "name": "capture_tendril_06_03",
+                          "origin": [
+                            8.5,
+                            -2.25,
+                            0.0
+                          ],
+                          "color": 4,
+                          "uuid": "c177471a-a81c-5e11-a953-e36d4a6df500",
+                          "export": true,
+                          "mirror_uv": false,
+                          "isOpen": false,
+                          "locked": false,
+                          "visibility": true,
+                          "autouv": 0,
+                          "children": [
+                            "c28e67ea-4981-53ee-9714-06b0fd1ea9a4",
+                            {
+                              "name": "capture_tendril_06_04",
+                              "origin": [
+                                7.75,
+                                -8.25,
+                                0.0
+                              ],
+                              "color": 4,
+                              "uuid": "0a731dc0-81dc-5608-ae66-01ef1c7afd84",
+                              "export": true,
+                              "mirror_uv": false,
+                              "isOpen": false,
+                              "locked": false,
+                              "visibility": true,
+                              "autouv": 0,
+                              "children": [
+                                "4ffcbc33-556c-5e44-82df-c97d8b02c51f",
+                                {
+                                  "name": "capture_tendril_06_05",
+                                  "origin": [
+                                    6.5,
+                                    -12.0,
+                                    0.0
+                                  ],
+                                  "color": 4,
+                                  "uuid": "3b2db6cc-1eac-5a89-aaeb-7524aed03576",
+                                  "export": true,
+                                  "mirror_uv": false,
+                                  "isOpen": false,
+                                  "locked": false,
+                                  "visibility": true,
+                                  "autouv": 0,
+                                  "children": [
+                                    "d3656b9d-e827-5c8e-8a9d-a2af4a846226"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "hemojelly_man_o_war.png",
+      "folder": "textures/entity/hemojelly",
+      "namespace": "hemomancy",
+      "id": "0",
+      "particle": false,
+      "render_mode": "default",
+      "render_sides": "auto",
+      "width": 128,
+      "height": 64,
+      "uv_width": 128,
+      "uv_height": 64,
+      "mode": "bitmap",
+      "visible": true,
+      "saved": true,
+      "uuid": "98f87270-0d8a-5cc0-b2ab-15d199b47d11",
+      "source": "data:image/png;base64,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",
+      "relative_path": "../../../textures/entity/hemojelly/hemojelly_man_o_war.png"
+    }
+  ]
+}

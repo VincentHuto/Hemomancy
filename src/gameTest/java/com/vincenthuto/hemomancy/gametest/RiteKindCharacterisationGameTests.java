@@ -353,7 +353,7 @@ public final class RiteKindCharacterisationGameTests {
 		CapturedPlayer caster = caster(helper, 1);
 		ActiveCardinalRite rite = countdown(helper, caster, 30);
 		CardinalRiteSavedData saved = CardinalRiteSavedData.get(helper.getLevel());
-		assertKind(helper, rite, RiteKind.COUNTDOWN);
+		assertKind(helper, rite, RiteKind.UNSTAINED);
 		helper.startSequence()
 				.thenExecuteAfter(5, () -> helper.assertTrue(rite.getPhase() == CardinalRitePhase.COUNTDOWN
 						&& rite.getRemainingTicks() < 30 && rite.getRemainingTicks() > 0, "A countdown ticks down"))
@@ -564,6 +564,24 @@ public final class RiteKindCharacterisationGameTests {
 			String other = owners.putIfAbsent(icon.getItem(), path);
 			helper.assertTrue(other == null, path + " shares its map icon with " + other);
 		}
+		helper.succeed();
+	}
+
+	/** Every completion effect a recipe names is registered, and every registered effect is named by one rite. */
+	@GameTest(template = ROOM, timeoutTicks = 20, batch = "rite_kind_map_icons")
+	public static void everyNamedCompletionEffectRuns(GameTestHelper helper) {
+		java.util.Set<net.minecraft.resources.ResourceLocation> named = new java.util.HashSet<>();
+		for (CardinalRiteRecipe recipe : CardinalRiteRecipe.getAllRecipes(helper.getLevel())) {
+			net.minecraft.resources.ResourceLocation effect = recipe.getCompletionEffect();
+			if (effect == null) continue;
+			helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.ids()
+					.contains(effect), recipe.getId() + " names the unregistered completion effect " + effect);
+			helper.assertTrue(named.add(effect), effect + " is named by more than one rite");
+		}
+		helper.assertTrue(named.equals(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.ids()),
+				"registered effects no rite names: " + new java.util.TreeSet<>(
+						com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.ids()).stream()
+						.filter(id -> !named.contains(id)).toList());
 		helper.succeed();
 	}
 

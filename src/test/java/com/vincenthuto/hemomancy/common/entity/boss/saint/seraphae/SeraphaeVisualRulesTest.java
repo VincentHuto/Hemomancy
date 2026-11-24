@@ -18,7 +18,7 @@ class SeraphaeVisualRulesTest {
     }
 
     @Test void renderScaleMakesSixteenTexelsPerBlock() {
-        assertEquals(2.0F, SeraphaeVisualRules.MODEL_SCALE);
+        assertEquals(1.0F, SeraphaeVisualRules.MODEL_SCALE);
         assertEquals(16.0F, SeraphaeVisualRules.TEXELS * 16.0F / SeraphaeVisualRules.MODEL_SCALE, 1.0E-4F);
     }
 

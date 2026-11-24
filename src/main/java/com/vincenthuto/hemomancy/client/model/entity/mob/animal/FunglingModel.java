@@ -28,28 +28,28 @@ public final class FunglingModel extends HierarchicalModel<FunglingEntity> {
 	private final Foot rightHind;
 
 	private record Foot(ModelPart foot, ModelPart toe, float sign) {
-		static Foot of(ModelPart body, String prefix, float sign) {
-			ModelPart foot = body.getChild(prefix + "_foot");
-			return new Foot(foot, foot.getChild(prefix + "_toe"), sign);
+		static Foot of(ModelPart body, String position, float sign) {
+			ModelPart foot = body.getChild(position + "_tentacle");
+			return new Foot(foot, foot.getChild(position + "_tip"), sign);
 		}
 
 		void stride(float phase, float amount) {
 			float lift = Math.max(0.0F, Mth.sin(phase)) * amount;
-			foot.yRot += sign * Mth.cos(phase) * 0.5F * amount;
-			foot.zRot -= sign * lift * 0.45F;
-			toe.zRot += sign * lift * 0.5F;
+			foot.yRot += sign * Mth.cos(phase) * 0.33F * amount;
+			foot.zRot -= sign * lift * 0.26F;
+			toe.zRot += sign * lift * 0.32F;
 		}
 	}
 
 	public FunglingModel(ModelPart bakedRoot) {
 		root = bakedRoot.getChild("root");
-		body = root.getChild("body");
+		body = root.getChild("stalk");
 		cap = body.getChild("cap");
 		eye = body.getChild("eye");
-		leftFront = Foot.of(body, "left_front", 1.0F);
-		rightFront = Foot.of(body, "right_front", -1.0F);
-		leftHind = Foot.of(body, "left_hind", 1.0F);
-		rightHind = Foot.of(body, "right_hind", -1.0F);
+		leftFront = Foot.of(body, "front_left", 1.0F);
+		rightFront = Foot.of(body, "front_right", -1.0F);
+		leftHind = Foot.of(body, "hind_left", 1.0F);
+		rightHind = Foot.of(body, "hind_right", -1.0F);
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -84,12 +84,12 @@ public final class FunglingModel extends HierarchicalModel<FunglingEntity> {
 		body.yRot += netHeadYaw * Mth.DEG_TO_RAD * 0.35F;
 		eye.yRot += netHeadYaw * Mth.DEG_TO_RAD * 0.25F;
 		eye.xRot += headPitch * Mth.DEG_TO_RAD * 0.4F;
-		int blink = (entity.tickCount + entity.getId() * 13) % BLINK_PERIOD;
-		if (blink < BLINK_TICKS) eye.yScale = 0.15F;
+		float blink = (ageInTicks + entity.getId() * 13) % BLINK_PERIOD;
+		if (blink < BLINK_TICKS) eye.yScale -= Mth.sin(blink * Mth.PI / BLINK_TICKS) * 0.85F;
 
 		float strike = Mth.sin(attackTime * Mth.PI);
-		body.xRot -= strike * 0.35F;
-		cap.xRot -= strike * 0.45F;
+		body.xRot += strike * 0.31F;
+		cap.xRot += strike * 0.17F;
 		float flinch = entity.hurtTime / 10.0F;
 		cap.yScale -= flinch * 0.18F;
 		cap.xScale += flinch * 0.1F;

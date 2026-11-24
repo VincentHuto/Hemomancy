@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
@@ -35,7 +36,16 @@ final class DegreeSubcommand {
 										IntegerArgumentType.getInteger(ctx, "degree")))
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(ctx -> setDegree(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
-												IntegerArgumentType.getInteger(ctx, "degree"))))));
+										IntegerArgumentType.getInteger(ctx, "degree")))))
+						.then(pathOption("silent", EnumArchonPath.SILENTIUM))
+						.then(pathOption("apotheos", EnumArchonPath.APOTHEOS)));
+	}
+
+	private static LiteralArgumentBuilder<CommandSourceStack> pathOption(String name, EnumArchonPath path) {
+		return Commands.literal(name)
+				.executes(ctx -> setDegree(ctx.getSource(), ctx.getSource().getPlayerOrException(), 8, path))
+				.then(Commands.argument("player", EntityArgument.player())
+						.executes(ctx -> setDegree(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"), 8, path)));
 	}
 
 	private static int getDegree(CommandSourceStack source, ServerPlayer player) {
@@ -53,9 +63,15 @@ final class DegreeSubcommand {
 	}
 
 	private static int setDegree(CommandSourceStack source, ServerPlayer player, int degreeNum) {
-		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
-				;
+		return setDegree(source, player, degreeNum, null);
+	}
+
+	private static int setDegree(CommandSourceStack source, ServerPlayer player, int degreeNum, EnumArchonPath path) {
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		degree.setDegreeNumber(degreeNum);
+		if (path != null) {
+			degree.setArchonPath(path);
+		}
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		boolean resetUnstained = degreeNum > 0 && PathMutualExclusionHelper.resetUnstainedProgress(player);
 		Component title = DegreeTitles.title(degreeNum, degree.getArchonPath());

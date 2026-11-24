@@ -10,7 +10,7 @@ class SeraphaeHoverTest {
     void herNumbersMatchTheServersHoverAndGlide() {
         assertEquals((float) SeraphaeEntity.HOVER, SeraphaeHover.HOVER, 1e-6F);
         assertEquals((float) SeraphaeEntity.GLIDE_SPEED, SeraphaeHover.GLIDE, 1e-6F);
-        assertEquals(24.0F + 0.35F * 8.0F, SeraphaeHover.FLOOR, 1e-5F);
+        assertEquals(24.0F + 0.35F * 16.0F, SeraphaeHover.FLOOR, 1e-5F);
     }
 
     @Test
@@ -42,7 +42,7 @@ class SeraphaeHoverTest {
         float thigh = -0.07F, knee = 0.24F;
         float rest = SeraphaeHover.reach(thigh, knee);
         assertEquals(0.0F, SeraphaeHover.foldToClear(thigh, knee, rest + 1.0F), "room to hang: no fold");
-        for (float room = rest; room > 4.5F; room -= 0.5F) {
+        for (float room = rest; room > 9.0F; room -= 1.0F) {
             float fold = SeraphaeHover.foldToClear(thigh, knee, room);
             assertTrue(fold > 0.0F);
             float reach = SeraphaeHover.reach(thigh - fold * SeraphaeHover.THIGH_SHARE, knee + fold);

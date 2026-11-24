@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:sanguine_attunement",
   "bloodCost": 0,
   "riteType": "minor",
   "purpose": "self",

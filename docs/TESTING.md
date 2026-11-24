@@ -38,6 +38,8 @@ Run one Gradle build at a time. `alphaCheck` was not run in build 2. It wraps th
 | `vanityMirrorReviewClient` (`./gradlew.bat runVanityMirrorReviewClient`) | `build/vanity-mirror-review` |
 | `venousStriderReviewClient` (`./gradlew.bat runVenousStriderReviewClient`) | `build/venous-strider-review` |
 
+**Sigil gouges** (2026-11-19): `sigilGougeReviewClient` (`./gradlew.bat runSigilGougeReviewClient`, `SigilGougeClientReview`) saves into `build/sigil-gouge-client-review`. After the startup line, drop `{"op":"create","name":"SigilGouge","seed":"1"}` (or `{"op":"open","name":"SigilGouge"}` on the reused directory). It lays a sky platform, starts a Sanctified Rite in inscription for an absent caster, feeds the Bastion (flat) and the Reservoir (across a one-block step) through the rite handler's own offer path, logs `SIGIL_GOUGE_REVIEW PASS/FAIL` per check and `SIGIL_GOUGE_REVIEW captured 7`, and writes seven stills: open, completing, awake, low angle, stepped, night and two sigils. It is also the GPU proof for the `ichorian_sigil_gouge` shader ([CARDINAL_RITES.md](CARDINAL_RITES.md)).
+
 **Frozen snapshots.** The three goldens that went stale with the 2026-11-13 Titration Bandolier and tenth Harbinger
 equipment slot were refreshed in the build 2 baseline: `frozen/registry-ids.txt`, `frozen/creative-tab-order.txt` and
 three lines of `dialogue/route-fingerprints.txt`. To cut fresh frozen lists, set `HEMOMANCY_FROZEN_SNAPSHOT_OUT` to a
@@ -59,7 +61,7 @@ Working craft, so a hand projection into its frame is a hint and charges nothing
   13,000,000 blocks from 0, where a float holds a coordinate only to the nearest block. The Will failure was an entity
   lookup whose box overflowed the section index. `GameTestIsolation.ORIGIN_RANGE` now folds the random origin into
   1,000,000 blocks of 0. Real players that far out could meet the same float limits; that is not tested.
-- The optional probe `apotheosritewithoutrescue` (PT-88) fails in most runs and passes now and then.
+- `apotheosritewithoutrescue` (PT-88) failed in most runs until the B25 harness fix (dry anchors first); it is required in the playthrough suite now.
 
 **The GameTest world.** The combined run reuses `build/phlegethontic-gametest/world`, and each suite its own `world`.
 Run `./gradlew.bat cleanGameTestWorlds` at the start of a session, with no GameTest server running, to delete every
@@ -961,7 +963,7 @@ Measured on 2026-10-26: all 4,321 JVM tests passed; all three focused Phlegethos
 The disposable client completed the three-phase review and shutdown. Native screenshots under `build/phlegethosoma-client/screenshots/` show the boss bar, distended crop, ruptured scutes, clot projectiles and revised dark-toothed oral disc. The Blockbench exporter validates 46 parts / 45 cubes; a separate geometry inspection confirms quarter-unit bounds and minimum cube dimensions. The release jar includes the entity class, base texture, glow mask and loot table. Natural spawning frequency, unassisted Survival balance and two-client multiplayer remain unverified.
 
 
-The subsequent serpentine-swimmer correction supersedes the broad plated model above. Rebuild its rig and atlas with `python tools/model_export/phlegethosoma.py`, then export/check with `tools/model_export/java_model_to_bbmodel.mjs`. `PhlegethosomaSwimmingRulesTest` checks elongated exported proportions, travelling-wave motion and bounded pursuit speeds. The focused loaded suite additionally builds an enclosed ichor pool and checks aquatic habitat eligibility, actual pursuit displacement/speed and immunity to fluid damage. The revised review client first presents a dry profile, then removes its platform and records swimming, turns and phase changes in a large ichor pool under `phlegethosoma-swimmer-*.png`. These remain fixture-assisted observations, not natural spawn-frequency or multiplayer acceptance.
+Edit the Arterial Fluke in `assets/hemomancy/models/entity/bbmodel/bosses/PhlegethosomaModel.bbmodel`, then run `python tools/model_export/phlegethosoma.py` to bake the Java mesh and runtime atlases. `PhlegethosomaModelTest` checks the baked joints and the runtime atlas against the embedded Blockbench texture. `PhlegethosomaSwimmingRulesTest` checks the body's proportions, travelling-wave motion and bounded pursuit speeds. The focused loaded suite builds an enclosed ichor pool to check habitat eligibility, pursuit displacement, speed and immunity to fluid damage. The review client starts with a dry profile and then records swimming, attacks and phase changes in an ichor pool under `phlegethosoma-breach-*.png`.
 
 
 Swimmer correction validation, 2026-10-26: `build/phlegethosoma-swimmer-final.log` passes all 4,326 JVM tests, all four focused GameTests, `build`, and `verifyPackagedClientResources`. Model proportion/grid tests check a length-to-width ratio above 4.5, quarter-unit geometry and nonzero cube dimensions. The native tracked review (`build/phlegethosoma-swimmer-tracked.log`) completes dry profile, surface pursuit, turning, all phases and shutdown. Its real actor moves from (505,203.7,504) through (511.37,203.7,506.80) and around the pool; the focused pool test separately asserts pursuit speed above .28 and no more than .61 blocks/tick and displacement above three blocks. The native clip is `build/phlegethosoma-swimming-native.gif`.

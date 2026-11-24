@@ -316,6 +316,8 @@ public final class TransientServerStateEvents {
 		com.vincenthuto.hemomancy.common.manipulation.mortem.BlackheartedEvents.logout(player);
 		com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.logout(player);
 		com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteSync.logout(player);
+		com.vincenthuto.hemomancy.common.rite.harbinger.HematicUnbindingRules.logout(player.getUUID());
+		WorkingCraftRites.logout(player.getUUID());
 		com.vincenthuto.hemomancy.common.manipulation.saint.CanonGiftState.end(player.getUUID());
 	}
 }

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FargoneEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SpecimenJarBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.menagerie.KeptSpecimen;
 import com.vincenthuto.hutoslib.math.Vector3;
+import com.vincenthuto.hemomancy.common.entity.mob.animal.OsteophageEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -200,8 +201,11 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 		AABB bounds = entity.getBoundingBox();
 		float boundsFootprint = (float) Math.max(bounds.getYsize(), Math.max(bounds.getXsize(), bounds.getZsize()));
 		float vanillaFootprint = Math.max(entity.getBbWidth(), entity.getBbHeight());
-		return Math.max(Math.max(boundsFootprint, vanillaFootprint),
-				Math.max(longBodiedVisualLength(entity), broadSpecimenVisualWidth(entity)));
+        float visualFootprint = Math.max(longBodiedVisualLength(entity), broadSpecimenVisualWidth(entity));
+        if (entity instanceof OsteophageEntity bird && bird.isFlying()) {
+            visualFootprint = Math.max(visualFootprint, 4.75F);
+        }
+        return Math.max(Math.max(boundsFootprint, vanillaFootprint), visualFootprint);
 	}
 
 	private static float longBodiedVisualLength(Entity entity) {
@@ -209,7 +213,7 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 	}
 
 	static float longBodiedVisualLength(String path, float width, float height) {
-        if (path.equals("osteophage")) return 2.4F;
+        if (path.equals("osteophage")) return 2.6F;
 		if (path.equals("siphonophore")) return 3.5F;
 		if (path.equals("hagfish")) return 1.8F;
 		if (path.equals("vampire_squid")) return 1.6F;

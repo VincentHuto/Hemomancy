@@ -19,8 +19,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,16 +32,12 @@ import java.util.List;
 final class HemorathMoveGeometry {
 	private static final int TINT = HemorathReliquaryGeometry.TINT, CORE = HemorathReliquaryGeometry.CORE,
 			CLOT = HemorathReliquaryGeometry.CLOT;
-	/** The halo flies about this high above the floor, mid way through its height band. */
-	private static final double HALO_HEIGHT = 1.3D;
-	private static final double HALO_RADIUS = .84D;
-	private static final int HALO_LINKS = 12;
+
 	private static final int DROP_TICKS = 18;
 	private static final double CHEST = HemorathEntity.CHEST_HEIGHT;
 	/** The well streams run thicker than the ending's road home: they are his focal draw. */
 	private static final double STREAM_WIDTH = .24;
-	/** The flying halo's teeth: one spike a link pair, scaled by his patches. */
-	private static final int HALO_TEETH = 8;
+
 
 	private HemorathMoveGeometry() {
 	}
@@ -66,8 +60,8 @@ final class HemorathMoveGeometry {
 		if (!solids && (move == HemorathMove.WELLS_ANSWER || thirst)) {
 			streams(boss, move, moveTime, p, blood, origin, camera, right, up, time, seed, thirst);
 		}
-		if (move == HemorathMove.SPIKED_HALO) {
-			halo(view, moveTime, p, blood, iron, origin, camera, seed, solids);
+		if (!solids && move == HemorathMove.SPIKED_HALO) {
+			haloTrail(view, moveTime, p, blood, origin, camera, seed);
 		}
 	}
 
@@ -172,9 +166,9 @@ final class HemorathMoveGeometry {
 		}
 	}
 
-	/** The Spiked Halo in flight along the path the hit reads, in iron, with a short trail behind it. */
-	private static void halo(SaintMoveView view, float moveTime, PoseStack p, VertexConsumer blood, VertexConsumer iron,
-			Vec3 origin, Vec3 camera, int seed, boolean solids) {
+	/** The blood trail follows the same path as the detached halo mesh. */
+	private static void haloTrail(SaintMoveView view, float moveTime, PoseStack p, VertexConsumer blood,
+			Vec3 origin, Vec3 camera, int seed) {
 		FootprintFrame frame = view.frame();
 		if (frame == null) return;
 		int windup = HemorathMove.SPIKED_HALO.timeline(view.inputs()).windup();
@@ -182,28 +176,6 @@ final class HemorathMoveGeometry {
 		if (age < 0 || age > HemorathHaloPath.FLIGHT_TICKS) return;
 		Vec3 at = world(frame, HemorathHaloPath.at(age)).subtract(origin);
 		double spin = age * .5;
-		int patches = HemorathMove.patches(view.inputs().variant());
-		if (solids) {
-			for (int i = 0; i < HALO_LINKS; i++) {
-				double a = spin + i * Math.PI * 2 / HALO_LINKS;
-				Vec3 offset = new Vec3(Math.cos(a) * HALO_RADIUS, Math.sin(a * 2) * .04, Math.sin(a) * HALO_RADIUS);
-				Vec3 tangent = new Vec3(-Math.sin(a), 0, Math.cos(a));
-				HemorathReliquaryGeometry.link(p, iron, at.add(offset), tangent.scale(.24), new Vec3(0, .1, 0), seed + i);
-			}
-			// teeth: real spikes driven out of the ring's rim, longer the more iron he has grown
-			for (int i = 0; i < HALO_TEETH; i++) {
-				double a = spin + (i + .5) * Math.PI * 2 / HALO_TEETH;
-				Vec3 out = new Vec3(Math.cos(a), 0, Math.sin(a));
-				Vec3 root = at.add(out.scale(HALO_RADIUS * .92));
-				p.pushPose();
-				p.translate(root.x, root.y, root.z);
-				p.mulPose(new Quaternionf().rotationTo(new Vector3f(0, 1, 0), new Vector3f((float) out.x, 0, (float) out.z)));
-				HemorathIronGeometry.spike(p, iron, Vec3.ZERO, new HemorathFissureRules.Spike(0, 0, .5 + .05 * patches, .12, 0, 0,
-						5, i), 1, 1, 0, HemorathIronGeometry.IRON, seed + 50 + i);
-				p.popPose();
-			}
-			return;
-		}
 		List<Vec3> trail = new ArrayList<>();
 		for (int i = 6; i >= 0; i--) trail.add(world(frame, HemorathHaloPath.at(Math.max(0, age - i * .7))).subtract(origin));
 		ribbonPath(p, blood, trail, camera, .04, .34, SLASH, seed, TINT, .8F);
@@ -213,13 +185,13 @@ final class HemorathMoveGeometry {
 		List<Vec3> blur = new ArrayList<>(25);
 		for (int i = 0; i <= 24; i++) {
 			double a = spin + i * Math.PI * 2 / 24;
-			blur.add(at.add(Math.cos(a) * (HALO_RADIUS + .25), 0, Math.sin(a) * (HALO_RADIUS + .25)));
+			blur.add(at.add(Math.cos(a) * (HemorathHaloPath.RIM_RADIUS + .25), 0, Math.sin(a) * (HemorathHaloPath.RIM_RADIUS + .25)));
 		}
 		ribbonPath(p, blood, blur, camera, .13, SLASH, seed + 2, TINT, .5F);
 		for (int i = 0; i < 6; i++) {
 			double phase = (age * .25 + i / 6.0) % 1;
 			double a = spin + i * 1.05;
-			Vec3 fling = at.add(Math.cos(a) * (HALO_RADIUS + .3 + phase), -phase * phase * .6, Math.sin(a) * (HALO_RADIUS + .3 + phase));
+			Vec3 fling = at.add(Math.cos(a) * (HemorathHaloPath.RIM_RADIUS + .3 + phase), -phase * phase * .6, Math.sin(a) * (HemorathHaloPath.RIM_RADIUS + .3 + phase));
 			card(p, blood, fling, right(camera, at), UP_AXIS, .05, .06, FOCUS, seed + 10 + i, TINT, (float) (1 - phase) * .8F);
 		}
 	}
@@ -236,7 +208,7 @@ final class HemorathMoveGeometry {
 	/** A point of the halo's path ({along, right}) in the world, at its flying height. */
 	private static Vec3 world(FootprintFrame frame, double[] local) {
 		double[] f = BossFootprint.Shapes.forward(frame);
-		return new Vec3(frame.origin().x + f[0] * local[0] - f[1] * local[1], frame.floorY() + HALO_HEIGHT,
+		return new Vec3(frame.origin().x + f[0] * local[0] - f[1] * local[1], frame.floorY() + HemorathHaloPath.FLIGHT_HEIGHT,
 				frame.origin().z + f[1] * local[0] + f[0] * local[1]);
 	}
 }

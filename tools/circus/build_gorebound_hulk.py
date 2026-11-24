@@ -1,11 +1,14 @@
-"""Rebuild the Gorebound Hulk's connected Java rig, painted atlas and portable BBModel.
+"""Bake the physical Hulk from its approved Blockbench project.
 
-Geometry, materials and animation live here; puppet_rig.py packs UVs, writes the Java model,
-exports the Blockbench file and paints the atlas so all three stay in step.
+The legacy anatomy, palette and Java template are the base of the separate true-self rig.
 """
-from puppet_rig import ROOT, BBMODELS, build as build_rig, noise, front_edge, back_edge
+import base64
+import json
+
+from puppet_rig import ASSETS, BBMODELS, MODELS, ROOT, TEXTURES, blockbench_mesh_source, noise, front_edge, back_edge
 
 MODEL = BBMODELS / 'GoreboundHulkModel.bbmodel'
+PROJECT = ROOT / 'docs/art/gorebound_hulk/GoreboundHulk.bbmodel'
 PALETTE = ['#17121a', '#2b2229', '#4a4048', '#7d7377', '#4a1d26', '#6f2a33',
            '#9a3b40', '#c45a52', '#e08a6e', '#b9a184', '#e6d5b0', '#3e2b25']
 
@@ -254,8 +257,47 @@ public class GoreboundHulkModel extends EntityModel<GoreboundHulkEntity> {
 '''
 
 
+JOINTS = {
+    'Pelvis': 'pelvis', 'Barrel chest': 'chest', 'Carved skull': 'head', 'Hinged jaw': 'jaw',
+}
+
+LIMB_JOINTS = {
+    'shoulder': 'arm', 'elbow': 'forearm', 'wrist': 'hand',
+    'hip': 'thigh', 'knee': 'shin', 'ankle': 'foot',
+}
+
+
+def joint_name(label):
+    if label in JOINTS:
+        return JOINTS[label]
+    side, joint = label.lower().split(' ', 1)
+    if joint.startswith('finger '):
+        return f'{side}_finger_{int(joint.split()[1]) - 1}'
+    return f'{side}_{LIMB_JOINTS[joint]}'
+
+
+def detail_name(group, index, cube):
+    side = group.split('_')[0]
+    if cube['name'] == 'Iron wrist band':
+        return f'{side}_binding'
+    if cube['name'] == 'Tucked thumb':
+        return f'{side}_thumb'
+    return None
+
+
 def build():
-    return build_rig('gorebound_hulk', 'GoreboundHulkModel', anatomy(), JAVA, shade, PALETTE)
+    data = PROJECT.read_bytes()
+    model = json.loads(data)
+    texture, = model['textures']
+    png = base64.b64decode(texture['source'].split(',', 1)[1], validate=True)
+    if png != PROJECT.with_name(texture['name']).read_bytes():
+        raise ValueError('The Hulk project and standalone atlas must contain the same PNG')
+    source = blockbench_mesh_source(model, 'GoreboundHulkMesh', PROJECT.name,
+                                   'build_gorebound_hulk.py', joint_name, detail_name)
+    (MODELS / 'GoreboundHulkMesh.java').write_text(source, encoding='utf-8')
+    MODEL.write_bytes(data)
+    (ASSETS / TEXTURES / 'gorebound_hulk.png').write_bytes(png)
+    return MODEL
 
 
 if __name__ == '__main__':

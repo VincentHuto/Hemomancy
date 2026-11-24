@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -195,6 +196,7 @@ public class MarrowSpitterEntity extends Skeleton implements SyncedBoundSummon,
         double dx = target.getX() - getX(), dz = target.getZ() - getZ();
         shot.shoot(dx, target.getY(.55) - shot.getY() + Math.sqrt(dx * dx + dz * dz) * .03, dz, 1.7F, 1);
         level().addFreshEntity(shot);
+        swing(InteractionHand.MAIN_HAND);
         level().playSound(null, blockPosition(), SoundEvents.TRIDENT_THROW.value(), SoundSource.HOSTILE, .5F, 1.4F);
     }
 

@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:exsanguination",
   "bloodCost": 0,
   "riteType": "lesser",
   "purpose": "making",

@@ -313,7 +313,7 @@ public class ActiveCardinalRite {
 		altarSealed = true;
 		betweenWaveStillIntervals = hasStillInterval;
 		finalStillInterval = false;
-		if (com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.isRite(recipeId)) {
+		if (feedsStationCircuits()) {
 			setPhase(CardinalRitePhase.STATION_PROJECTION);
 			return true;
 		}
@@ -321,6 +321,11 @@ public class ActiveCardinalRite {
 		else if (hasStillInterval) setPhase(CardinalRitePhase.STILL_INTERVAL);
 		else setPhase(finalePhase());
 		return true;
+	}
+
+	/** Whether the rite feeds a station's circuits after its seal (a station upgrade) instead of facing an ordeal. */
+	private boolean feedsStationCircuits() {
+		return com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId) > 0;
 	}
 
 	public int upgradeBloodNeeded() {
@@ -971,7 +976,7 @@ public class ActiveCardinalRite {
 	/** Openers the sealed rite enters before Culmination, from its shape. */
 	public int ringOpenerCount() {
 		return CardinalRiteRingRules.openerCount(
-				com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.isRite(recipeId), totalWaves,
+				feedsStationCircuits(), totalWaves,
 				altarSealed ? betweenWaveStillIntervals : stillIntervalsPlanned, !offeringItinerary.isEmpty());
 	}
 
@@ -1227,16 +1232,12 @@ public class ActiveCardinalRite {
 		UUID playerUUID = tag.getUUID("PlayerUUID");
 		BlockPos centerPos = BlockPos.of(tag.getLong("CenterPos"));
 		ResourceLocation recipeId = ResourceLocation.parse(tag.getString("RecipeId"));
-		// The D7 Scriptorium rite was renamed from the Monolithic Script to the Rite of the Palimpsest.
-		if (recipeId.getNamespace().equals("hemomancy") && recipeId.getPath().equals("cardinal_rite/monolithic_script"))
-			recipeId = Hemomancy.rloc("cardinal_rite/palimpsest");
 		int totalTicks = tag.getInt("TotalTicks");
 		int riteSize = tag.getInt("RiteSize");
 		ActiveCardinalRite rite = new ActiveCardinalRite(playerUUID, centerPos, recipeId, totalTicks, riteSize);
 		rite.remainingTicks = tag.getInt("RemainingTicks");
 		if (!tag.contains(STATE_VERSION)) return rite;
 
-		boolean removedProfessionPhase = "PROFESSION".equals(tag.getString("Phase"));
 		rite.phase = CardinalRitePhase.byName(tag.getString("Phase"));
 		rite.degree = tag.getInt("Degree");
 		rite.abbreviated = tag.getBoolean("Abbreviated");
@@ -1317,7 +1318,6 @@ public class ActiveCardinalRite {
 				|| !rite.offeringItinerary.isEmpty();
 		rite.returningFromOfferings = tag.getBoolean("ReturningFromOfferings");
 		rite.offeringDwellTicks = tag.getInt("OfferingDwellTicks");
-		if (removedProfessionPhase) rite.phase = rite.finalePhase();
 		if (tag.contains("EscalationFlags")) {
 			rite.escalationMarks = new CardinalRiteEscalation.Marks(tag.getInt("EscalationRings"),
 					tag.getInt("EscalationCircuits"), tag.getInt("EscalationFlags"));

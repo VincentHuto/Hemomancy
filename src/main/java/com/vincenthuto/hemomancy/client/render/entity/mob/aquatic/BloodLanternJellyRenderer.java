@@ -28,7 +28,8 @@ public class BloodLanternJellyRenderer extends MobRenderer<BloodLanternJellyEnti
 	@Override
 	protected RenderType getRenderType(BloodLanternJellyEntity entity, boolean bodyVisible, boolean translucent,
 			boolean glowing) {
-		return RenderType.entityTranslucent(this.getTextureLocation(entity));
+		return bodyVisible ? RenderType.entityTranslucentCull(TEXTURE)
+				: super.getRenderType(entity, false, translucent, glowing);
 	}
 
 	@Override

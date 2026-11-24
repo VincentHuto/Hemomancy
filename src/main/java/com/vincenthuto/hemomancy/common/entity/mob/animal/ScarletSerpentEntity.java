@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -30,6 +31,9 @@ public class ScarletSerpentEntity extends PathfinderMob {
 			ScarletSerpentEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(
 			ScarletSerpentEntity.class, EntityDataSerializers.INT);
+
+	private float hoodProgress;
+	private float previousHoodProgress;
 
 	public ScarletSerpentEntity(EntityType<? extends ScarletSerpentEntity> type, Level level) {
 		super(type, level);
@@ -70,6 +74,10 @@ public class ScarletSerpentEntity extends PathfinderMob {
 
 	public boolean isHoodFlared() {
 		return this.entityData.get(HOOD_FLARED);
+	}
+
+	public float getHoodProgress(float partialTick) {
+		return Mth.lerp(partialTick, previousHoodProgress, hoodProgress);
 	}
 
 	public int getStrikeTicks() {
@@ -142,7 +150,10 @@ public class ScarletSerpentEntity extends PathfinderMob {
 			this.entityData.set(STRIKE_TICKS, strikeTicks - 1);
 		}
 
-		if (!this.level().isClientSide()) {
+		if (this.level().isClientSide()) {
+			previousHoodProgress = hoodProgress;
+			hoodProgress = Mth.approach(hoodProgress, isHoodFlared() ? 1.0F : 0.0F, 0.2F);
+		} else {
 			updateTerritorialTargeting();
 		}
 	}

@@ -1,0 +1,3588 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "free",
+    "box_uv": false
+  },
+  "name": "Acrobat",
+  "resolution": {
+    "width": 128,
+    "height": 128
+  },
+  "elements": [
+    {
+      "name": "Waist and seat",
+      "from": [
+        -3.5,
+        10,
+        -1.75
+      ],
+      "to": [
+        3.5,
+        14,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        12,
+        0
+      ],
+      "uuid": "fe14d8b8-5fa1-4ab1-9cc7-ef838b81c603",
+      "faces": {
+        "north": {
+          "uv": [
+            75,
+            29,
+            82,
+            33
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            84,
+            29,
+            88,
+            33
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            90,
+            29,
+            97,
+            33
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            99,
+            29,
+            103,
+            33
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            105,
+            29,
+            112,
+            33
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            114,
+            29,
+            121,
+            33
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Fitted circus bodice",
+      "from": [
+        -3.0,
+        13,
+        -2
+      ],
+      "to": [
+        3.0,
+        24,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "uuid": "5afd0fd0-f1f4-4c71-bdf7-dd0518b6d230",
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            1,
+            7,
+            12
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            1,
+            13,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            15,
+            1,
+            21,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            23,
+            1,
+            27,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1,
+            36,
+            7,
+            40
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            36,
+            15,
+            40
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ivory shoulder bib",
+      "from": [
+        -3.25,
+        20.75,
+        -2.5
+      ],
+      "to": [
+        2.75,
+        22.75,
+        2.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "uuid": "d89fe1eb-4cba-4722-8a36-a913f7e0f8cd",
+      "faces": {
+        "up": {
+          "uv": [
+            1,
+            22,
+            7,
+            27
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            22,
+            15,
+            27
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            119,
+            42,
+            125,
+            44
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            47,
+            6,
+            49
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            47,
+            14,
+            49
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            47,
+            21,
+            49
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Crossed canvas harness",
+      "from": [
+        -0.5,
+        15,
+        -3
+      ],
+      "to": [
+        0.5,
+        23,
+        -2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        18,
+        -2
+      ],
+      "uuid": "3672f825-b8d1-4f68-ad26-bbd92ebb5f31",
+      "faces": {
+        "north": {
+          "uv": [
+            29,
+            1,
+            30,
+            9
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            1,
+            33,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            35,
+            1,
+            36,
+            9
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            38,
+            1,
+            39,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4,
+            59,
+            5,
+            60
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7,
+            59,
+            8,
+            60
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        26
+      ]
+    },
+    {
+      "name": "Wide rose sash",
+      "from": [
+        -3.5,
+        12,
+        -2.5
+      ],
+      "to": [
+        3.5,
+        14,
+        2.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "uuid": "d489e157-cf29-43af-b069-fafaa01a1541",
+      "faces": {
+        "up": {
+          "uv": [
+            17,
+            22,
+            24,
+            27
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            26,
+            22,
+            33,
+            27
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            23,
+            47,
+            30,
+            49
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            47,
+            37,
+            49
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            39,
+            47,
+            46,
+            49
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            47,
+            53,
+            49
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Knotted sash",
+      "from": [
+        2.5,
+        11,
+        -3
+      ],
+      "to": [
+        4.5,
+        13,
+        -1
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        12,
+        0
+      ],
+      "uuid": "d19f3dde-e498-48f9-9387-ad1f036b74de",
+      "faces": {
+        "north": {
+          "uv": [
+            55,
+            47,
+            57,
+            49
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            59,
+            47,
+            61,
+            49
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            63,
+            47,
+            65,
+            49
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            67,
+            47,
+            69,
+            49
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            71,
+            47,
+            73,
+            49
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            75,
+            47,
+            77,
+            49
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Loose sash",
+      "from": [
+        3,
+        7,
+        -2.5
+      ],
+      "to": [
+        5,
+        12,
+        -1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        3.5,
+        12,
+        -2
+      ],
+      "uuid": "7b132118-41d7-413c-848e-3c25acf1ca5d",
+      "faces": {
+        "north": {
+          "uv": [
+            35,
+            22,
+            37,
+            27
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            39,
+            22,
+            40,
+            27
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            42,
+            22,
+            44,
+            27
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            46,
+            22,
+            47,
+            27
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            10,
+            59,
+            12,
+            60
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            14,
+            59,
+            16,
+            60
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        27
+      ]
+    },
+    {
+      "name": "Neck",
+      "from": [
+        -1.5,
+        22.25,
+        -1.25
+      ],
+      "to": [
+        1.5,
+        25.25,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "uuid": "49473a56-d85d-4359-ba5a-86a773709268",
+      "faces": {
+        "north": {
+          "uv": [
+            85,
+            36,
+            88,
+            39
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            90,
+            36,
+            93,
+            39
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            95,
+            36,
+            98,
+            39
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            100,
+            36,
+            103,
+            39
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            105,
+            36,
+            108,
+            39
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            110,
+            36,
+            113,
+            39
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Face",
+      "from": [
+        -3.5,
+        24,
+        -3.25
+      ],
+      "to": [
+        3.5,
+        31,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "631e056f-61aa-495d-9ceb-478556ebe4ea",
+      "faces": {
+        "north": {
+          "uv": [
+            41,
+            1,
+            48,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            50,
+            1,
+            56,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            58,
+            1,
+            65,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            67,
+            1,
+            73,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            95,
+            1,
+            102,
+            7
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            104,
+            1,
+            111,
+            7
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Nose",
+      "from": [
+        -0.5,
+        26,
+        -4
+      ],
+      "to": [
+        0.5,
+        28,
+        -3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "5acfc8ef-0f22-4fe3-bdd5-2067610d3796",
+      "faces": {
+        "north": {
+          "uv": [
+            79,
+            47,
+            80,
+            49
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            82,
+            47,
+            83,
+            49
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            85,
+            47,
+            86,
+            49
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            88,
+            47,
+            89,
+            49
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            18,
+            59,
+            19,
+            60
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            21,
+            59,
+            22,
+            60
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ear",
+      "from": [
+        -4.0,
+        26,
+        -0.75
+      ],
+      "to": [
+        -3.0,
+        28,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "1b47f487-454a-4957-932a-10e53b8e1cfb",
+      "faces": {
+        "north": {
+          "uv": [
+            91,
+            47,
+            92,
+            49
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            94,
+            47,
+            96,
+            49
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            98,
+            47,
+            99,
+            49
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            101,
+            47,
+            103,
+            49
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            105,
+            47,
+            106,
+            49
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            108,
+            47,
+            109,
+            49
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ear",
+      "from": [
+        3.0,
+        26,
+        -0.75
+      ],
+      "to": [
+        4.0,
+        28,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "c7c63374-798b-45ed-ad26-d6f5ccb245d1",
+      "faces": {
+        "north": {
+          "uv": [
+            111,
+            47,
+            112,
+            49
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            114,
+            47,
+            116,
+            49
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            118,
+            47,
+            119,
+            49
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            121,
+            47,
+            123,
+            49
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            125,
+            47,
+            126,
+            49
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1,
+            51,
+            2,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Sculpted hair crown",
+      "from": [
+        -3.75,
+        29.5,
+        -3.25
+      ],
+      "to": [
+        3.25,
+        31.5,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "f05e1746-c86b-4906-aacd-d0eadd409d6e",
+      "faces": {
+        "up": {
+          "uv": [
+            113,
+            1,
+            120,
+            7
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1,
+            14,
+            8,
+            20
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            4,
+            51,
+            11,
+            53
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13,
+            51,
+            19,
+            53
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            21,
+            51,
+            28,
+            53
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            30,
+            51,
+            36,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Comb line",
+      "from": [
+        -3.75,
+        25.75,
+        2
+      ],
+      "to": [
+        3.25,
+        30.75,
+        4
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "4f2c99a6-bb0b-4d40-9575-225c28039991",
+      "faces": {
+        "north": {
+          "uv": [
+            49,
+            22,
+            56,
+            27
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            58,
+            22,
+            60,
+            27
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            62,
+            22,
+            69,
+            27
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            71,
+            22,
+            73,
+            27
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            38,
+            51,
+            45,
+            53
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            47,
+            51,
+            54,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Swept forelock",
+      "from": [
+        -3.5,
+        28.5,
+        -3.5
+      ],
+      "to": [
+        -0.5,
+        30.5,
+        -1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        30,
+        -3
+      ],
+      "uuid": "a5e71923-c4d8-4e7a-b5b7-1636832afbaf",
+      "faces": {
+        "north": {
+          "uv": [
+            56,
+            51,
+            59,
+            53
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            61,
+            51,
+            63,
+            53
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            65,
+            51,
+            68,
+            53
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            70,
+            51,
+            72,
+            53
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            74,
+            51,
+            77,
+            53
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            79,
+            51,
+            82,
+            53
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -14
+      ]
+    },
+    {
+      "name": "Ivory aerialist headband",
+      "from": [
+        -3.75,
+        29,
+        -3.75
+      ],
+      "to": [
+        4.25,
+        30,
+        3.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "69a0ce01-ecd5-4d09-8a4a-3b9b285e7dc3",
+      "faces": {
+        "up": {
+          "uv": [
+            75,
+            1,
+            83,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            85,
+            1,
+            93,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            24,
+            59,
+            32,
+            60
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            34,
+            59,
+            41,
+            60
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            43,
+            59,
+            51,
+            60
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            53,
+            59,
+            60,
+            60
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Tail of head ribbon",
+      "from": [
+        -2.75,
+        23.5,
+        3
+      ],
+      "to": [
+        -0.75,
+        29.5,
+        4
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        29,
+        3
+      ],
+      "uuid": "e2a6c6a2-dad6-4d01-aeef-6cc1cb4383ce",
+      "faces": {
+        "north": {
+          "uv": [
+            10,
+            14,
+            12,
+            20
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            14,
+            14,
+            15,
+            20
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            17,
+            14,
+            19,
+            20
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            21,
+            14,
+            22,
+            20
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            62,
+            59,
+            64,
+            60
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            66,
+            59,
+            68,
+            60
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        28,
+        0,
+        -22
+      ]
+    },
+    {
+      "name": "Tail of head ribbon",
+      "from": [
+        1.25,
+        23.5,
+        3
+      ],
+      "to": [
+        3.25,
+        29.5,
+        4
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        29,
+        3
+      ],
+      "uuid": "749ab580-c9f0-4fc6-b84d-11d2b5e11074",
+      "faces": {
+        "north": {
+          "uv": [
+            24,
+            14,
+            26,
+            20
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            28,
+            14,
+            29,
+            20
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            31,
+            14,
+            33,
+            20
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            35,
+            14,
+            36,
+            20
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            70,
+            59,
+            72,
+            60
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            74,
+            59,
+            76,
+            60
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        28,
+        0,
+        22
+      ]
+    },
+    {
+      "name": "Little hematic iron ear hoop",
+      "from": [
+        3.5,
+        25,
+        -1
+      ],
+      "to": [
+        4.5,
+        27,
+        0
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "0f01139d-325d-4f01-981f-a464502867d3",
+      "faces": {
+        "north": {
+          "uv": [
+            84,
+            51,
+            85,
+            53
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            87,
+            51,
+            88,
+            53
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            90,
+            51,
+            91,
+            53
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            93,
+            51,
+            94,
+            53
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            78,
+            59,
+            79,
+            60
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            81,
+            59,
+            82,
+            60
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper sleeve",
+      "from": [
+        -5.75,
+        17,
+        -1.25
+      ],
+      "to": [
+        -2.75,
+        23,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        22,
+        0
+      ],
+      "uuid": "4ec80f04-ec5f-491c-8c5e-9229bebbd88e",
+      "faces": {
+        "north": {
+          "uv": [
+            38,
+            14,
+            41,
+            20
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            43,
+            14,
+            46,
+            20
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            14,
+            51,
+            20
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            53,
+            14,
+            56,
+            20
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            115,
+            36,
+            118,
+            39
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            120,
+            36,
+            123,
+            39
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Shoulder gather",
+      "from": [
+        -6.25,
+        21.25,
+        -2.25
+      ],
+      "to": [
+        -2.25,
+        23.25,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        22,
+        0
+      ],
+      "uuid": "24f2dd34-febc-40c5-a450-8a9e08b6b8c1",
+      "faces": {
+        "up": {
+          "uv": [
+            17,
+            36,
+            21,
+            40
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            23,
+            36,
+            27,
+            40
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            96,
+            51,
+            100,
+            53
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            102,
+            51,
+            106,
+            53
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            108,
+            51,
+            112,
+            53
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            114,
+            51,
+            118,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower sleeve",
+      "from": [
+        -5.75,
+        12,
+        -1.5
+      ],
+      "to": [
+        -2.75,
+        17,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        17,
+        0
+      ],
+      "uuid": "ac1f7ac5-8b6e-4a08-bc97-f9d3a86018b0",
+      "faces": {
+        "north": {
+          "uv": [
+            75,
+            22,
+            78,
+            27
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            22,
+            83,
+            27
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            85,
+            22,
+            88,
+            27
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            90,
+            22,
+            93,
+            27
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1,
+            42,
+            4,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            6,
+            42,
+            9,
+            45
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Turned wrist cuff",
+      "from": [
+        -6.25,
+        12,
+        -2.25
+      ],
+      "to": [
+        -2.25,
+        14,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        17,
+        0
+      ],
+      "uuid": "9f9cd715-59f6-47a6-9de0-dbf8747049e5",
+      "faces": {
+        "up": {
+          "uv": [
+            29,
+            36,
+            33,
+            40
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            35,
+            36,
+            39,
+            40
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            120,
+            51,
+            124,
+            53
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            55,
+            5,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7,
+            55,
+            11,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            13,
+            55,
+            17,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hand",
+      "from": [
+        -5.75,
+        10,
+        -1.5
+      ],
+      "to": [
+        -2.75,
+        12,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        12,
+        0
+      ],
+      "uuid": "f511dd91-77c3-4f2d-8234-3619dd74e918",
+      "faces": {
+        "up": {
+          "uv": [
+            11,
+            42,
+            14,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            42,
+            19,
+            45
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            19,
+            55,
+            22,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            24,
+            55,
+            27,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            29,
+            55,
+            32,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            34,
+            55,
+            37,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Thumb",
+      "from": [
+        -3.75,
+        11,
+        -2.25
+      ],
+      "to": [
+        -2.75,
+        13,
+        -1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -4.25,
+        12,
+        0
+      ],
+      "uuid": "3276a76d-f192-486a-a152-889b069a4c3d",
+      "faces": {
+        "north": {
+          "uv": [
+            39,
+            55,
+            40,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            42,
+            55,
+            43,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            45,
+            55,
+            46,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            55,
+            49,
+            57
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            84,
+            59,
+            85,
+            60
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            87,
+            59,
+            88,
+            60
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper trouser",
+      "from": [
+        -3.5,
+        7,
+        -1.75
+      ],
+      "to": [
+        -0.5,
+        13,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        12,
+        0
+      ],
+      "uuid": "f8d33688-f189-4813-b83a-b8a46bae357b",
+      "faces": {
+        "north": {
+          "uv": [
+            58,
+            14,
+            61,
+            20
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            63,
+            14,
+            67,
+            20
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            69,
+            14,
+            72,
+            20
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            74,
+            14,
+            78,
+            20
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            41,
+            36,
+            44,
+            40
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            46,
+            36,
+            49,
+            40
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower trouser",
+      "from": [
+        -3.5,
+        2,
+        -1.5
+      ],
+      "to": [
+        -0.5,
+        7,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        7,
+        0
+      ],
+      "uuid": "484ec0b0-fd62-4071-8fb7-1a063b7e814a",
+      "faces": {
+        "north": {
+          "uv": [
+            95,
+            22,
+            98,
+            27
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            100,
+            22,
+            103,
+            27
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            105,
+            22,
+            108,
+            27
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            110,
+            22,
+            113,
+            27
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            21,
+            42,
+            24,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            26,
+            42,
+            29,
+            45
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stage boot",
+      "from": [
+        -3.75,
+        0.25,
+        -3
+      ],
+      "to": [
+        -0.75,
+        3.25,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        2,
+        0
+      ],
+      "uuid": "c7ebe40f-33cd-48dc-b1ec-55687ffc53b9",
+      "faces": {
+        "up": {
+          "uv": [
+            115,
+            22,
+            118,
+            27
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            120,
+            22,
+            123,
+            27
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            31,
+            42,
+            34,
+            45
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            36,
+            42,
+            41,
+            45
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            43,
+            42,
+            46,
+            45
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            42,
+            53,
+            45
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Boot edge",
+      "from": [
+        -4,
+        0,
+        -3.25
+      ],
+      "to": [
+        0,
+        1,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        2,
+        0
+      ],
+      "uuid": "8cf109a8-9028-4c16-a17b-3cef05b8ac70",
+      "faces": {
+        "up": {
+          "uv": [
+            1,
+            29,
+            5,
+            34
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7,
+            29,
+            11,
+            34
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            90,
+            59,
+            94,
+            60
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            96,
+            59,
+            101,
+            60
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            103,
+            59,
+            107,
+            60
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            109,
+            59,
+            114,
+            60
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper sleeve",
+      "from": [
+        2.75,
+        17,
+        -1.25
+      ],
+      "to": [
+        5.75,
+        23,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        22,
+        0
+      ],
+      "uuid": "12af68f9-2021-4c20-bbc3-b8dc6929ad5b",
+      "faces": {
+        "north": {
+          "uv": [
+            80,
+            14,
+            83,
+            20
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            85,
+            14,
+            88,
+            20
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            90,
+            14,
+            93,
+            20
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            95,
+            14,
+            98,
+            20
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            55,
+            42,
+            58,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            60,
+            42,
+            63,
+            45
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Shoulder gather",
+      "from": [
+        2.25,
+        21.25,
+        -2.25
+      ],
+      "to": [
+        6.25,
+        23.25,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        22,
+        0
+      ],
+      "uuid": "13cf9ea3-39c3-456e-bd5d-fe1fe36df5d1",
+      "faces": {
+        "up": {
+          "uv": [
+            51,
+            36,
+            55,
+            40
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            57,
+            36,
+            61,
+            40
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            51,
+            55,
+            55,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            57,
+            55,
+            61,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            63,
+            55,
+            67,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            69,
+            55,
+            73,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower sleeve",
+      "from": [
+        2.75,
+        12,
+        -1.5
+      ],
+      "to": [
+        5.75,
+        17,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        17,
+        0
+      ],
+      "uuid": "6b3a605c-37fd-44f9-bfdc-e18f9df3dec2",
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            29,
+            16,
+            34
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            18,
+            29,
+            21,
+            34
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            23,
+            29,
+            26,
+            34
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            28,
+            29,
+            31,
+            34
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            65,
+            42,
+            68,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            70,
+            42,
+            73,
+            45
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Turned wrist cuff",
+      "from": [
+        2.25,
+        12,
+        -2.25
+      ],
+      "to": [
+        6.25,
+        14,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        17,
+        0
+      ],
+      "uuid": "7c029b80-e69e-492b-beb9-877a029badb1",
+      "faces": {
+        "up": {
+          "uv": [
+            63,
+            36,
+            67,
+            40
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            69,
+            36,
+            73,
+            40
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            75,
+            55,
+            79,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            81,
+            55,
+            85,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            87,
+            55,
+            91,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            93,
+            55,
+            97,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hand",
+      "from": [
+        2.75,
+        10,
+        -1.5
+      ],
+      "to": [
+        5.75,
+        12,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        12,
+        0
+      ],
+      "uuid": "f1a7035d-a21b-4214-adc3-5660fdd465e2",
+      "faces": {
+        "up": {
+          "uv": [
+            75,
+            42,
+            78,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            42,
+            83,
+            45
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            99,
+            55,
+            102,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            104,
+            55,
+            107,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            109,
+            55,
+            112,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            114,
+            55,
+            117,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Thumb",
+      "from": [
+        2.75,
+        11,
+        -2.25
+      ],
+      "to": [
+        3.75,
+        13,
+        -1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        4.25,
+        12,
+        0
+      ],
+      "uuid": "9940871e-446c-47f9-9885-ad248225ba6c",
+      "faces": {
+        "north": {
+          "uv": [
+            119,
+            55,
+            120,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            122,
+            55,
+            123,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            125,
+            55,
+            126,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1,
+            59,
+            2,
+            61
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            116,
+            59,
+            117,
+            60
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            119,
+            59,
+            120,
+            60
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper trouser",
+      "from": [
+        0.5,
+        7,
+        -1.75
+      ],
+      "to": [
+        3.5,
+        13,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        12,
+        0
+      ],
+      "uuid": "d5b8a365-e718-43fd-8625-7f6a8c37ec21",
+      "faces": {
+        "north": {
+          "uv": [
+            100,
+            14,
+            103,
+            20
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            105,
+            14,
+            109,
+            20
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            111,
+            14,
+            114,
+            20
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            116,
+            14,
+            120,
+            20
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            75,
+            36,
+            78,
+            40
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            36,
+            83,
+            40
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower trouser",
+      "from": [
+        0.5,
+        2,
+        -1.5
+      ],
+      "to": [
+        3.5,
+        7,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        7,
+        0
+      ],
+      "uuid": "3a5787b7-c988-4d1d-83f6-409ce00eb906",
+      "faces": {
+        "north": {
+          "uv": [
+            33,
+            29,
+            36,
+            34
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            38,
+            29,
+            41,
+            34
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            43,
+            29,
+            46,
+            34
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            29,
+            51,
+            34
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            85,
+            42,
+            88,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            90,
+            42,
+            93,
+            45
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stage boot",
+      "from": [
+        0.25,
+        0.25,
+        -3
+      ],
+      "to": [
+        3.25,
+        3.25,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        2,
+        0
+      ],
+      "uuid": "636bafc7-3444-4614-9403-d1e1fe295c6f",
+      "faces": {
+        "up": {
+          "uv": [
+            53,
+            29,
+            56,
+            34
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            58,
+            29,
+            61,
+            34
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            95,
+            42,
+            98,
+            45
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            100,
+            42,
+            105,
+            45
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            107,
+            42,
+            110,
+            45
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            112,
+            42,
+            117,
+            45
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Boot edge",
+      "from": [
+        0,
+        0,
+        -3.25
+      ],
+      "to": [
+        4,
+        1,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        2,
+        0
+      ],
+      "uuid": "285eb934-985b-46b9-9a3c-2dbfa57c818e",
+      "faces": {
+        "up": {
+          "uv": [
+            63,
+            29,
+            67,
+            34
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            69,
+            29,
+            73,
+            34
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            122,
+            59,
+            126,
+            60
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            63,
+            6,
+            64
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            63,
+            12,
+            64
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14,
+            63,
+            19,
+            64
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hematic iron suspension clasp",
+      "type": "cube",
+      "uuid": "a09d43b0-b3c7-4b65-bb4d-176673ad2265",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            122,
+            1,
+            125,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            122,
+            6,
+            123,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            95,
+            9,
+            98,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            125,
+            6,
+            126,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            100,
+            9,
+            103,
+            10
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            105,
+            9,
+            108,
+            10
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -1.5,
+        16,
+        -4
+      ],
+      "to": [
+        1.5,
+        19,
+        -3
+      ]
+    },
+    {
+      "name": "Split rigging panel",
+      "type": "cube",
+      "uuid": "2a93be62-c0c4-4204-98cb-1a1e54e58f59",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        12,
+        -3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            122,
+            11,
+            124,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            126,
+            11,
+            127,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            125,
+            18,
+            127,
+            23
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            125,
+            25,
+            126,
+            30
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            110,
+            9,
+            112,
+            10
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            114,
+            9,
+            116,
+            10
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        1.5,
+        7,
+        -3.5
+      ],
+      "to": [
+        3.5,
+        12,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        12
+      ]
+    },
+    {
+      "name": "Carved bone headband pin",
+      "type": "cube",
+      "uuid": "ef4208fc-455f-41b6-bf32-c23f6926414c",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            118,
+            9,
+            119,
+            11
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            41,
+            10,
+            42,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            44,
+            10,
+            45,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            47,
+            10,
+            48,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            50,
+            10,
+            51,
+            11
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            53,
+            10,
+            54,
+            11
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        2.5,
+        28,
+        -4.5
+      ],
+      "to": [
+        3.5,
+        30,
+        -3.5
+      ]
+    }
+  ],
+  "outliner": [
+    {
+      "name": "Root",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "uuid": "47489066-fdbc-4a26-8a6e-e512c883debe",
+      "children": [
+        {
+          "name": "Waist",
+          "origin": [
+            0,
+            12,
+            0
+          ],
+          "uuid": "d160b0ef-7f70-4b18-9483-c158118d1146",
+          "children": [
+            {
+              "name": "Chest",
+              "origin": [
+                0,
+                14,
+                0
+              ],
+              "uuid": "378aea0b-01a7-4b7b-9785-13324409a5e7",
+              "children": [
+                "5afd0fd0-f1f4-4c71-bdf7-dd0518b6d230",
+                "d89fe1eb-4cba-4722-8a36-a913f7e0f8cd",
+                "3672f825-b8d1-4f68-ad26-bbd92ebb5f31",
+                "d489e157-cf29-43af-b069-fafaa01a1541",
+                {
+                  "name": "Head",
+                  "origin": [
+                    0,
+                    23.5,
+                    0
+                  ],
+                  "uuid": "335eb496-5e76-48d7-9931-db945ab699fe",
+                  "children": [
+                    "631e056f-61aa-495d-9ceb-478556ebe4ea",
+                    "5acfc8ef-0f22-4fe3-bdd5-2067610d3796",
+                    "1b47f487-454a-4957-932a-10e53b8e1cfb",
+                    "c7c63374-798b-45ed-ad26-d6f5ccb245d1",
+                    "f05e1746-c86b-4906-aacd-d0eadd409d6e",
+                    "4f2c99a6-bb0b-4d40-9575-225c28039991",
+                    "a5e71923-c4d8-4e7a-b5b7-1636832afbaf",
+                    "69a0ce01-ecd5-4d09-8a4a-3b9b285e7dc3",
+                    "e2a6c6a2-dad6-4d01-aeef-6cc1cb4383ce",
+                    "749ab580-c9f0-4fc6-b84d-11d2b5e11074",
+                    "0f01139d-325d-4f01-981f-a464502867d3",
+                    "ef4208fc-455f-41b6-bf32-c23f6926414c"
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                "49473a56-d85d-4359-ba5a-86a773709268",
+                {
+                  "name": "Left shoulder",
+                  "origin": [
+                    -4.25,
+                    22,
+                    0
+                  ],
+                  "uuid": "712d1142-4b85-42ff-9393-c7e70f598208",
+                  "children": [
+                    "4ec80f04-ec5f-491c-8c5e-9229bebbd88e",
+                    "24f2dd34-febc-40c5-a450-8a9e08b6b8c1",
+                    {
+                      "name": "Left elbow",
+                      "origin": [
+                        -4.25,
+                        17,
+                        0
+                      ],
+                      "uuid": "9b841eb6-7e54-4eca-a434-3e40baf077e1",
+                      "children": [
+                        "ac1f7ac5-8b6e-4a08-bc97-f9d3a86018b0",
+                        "9f9cd715-59f6-47a6-9de0-dbf8747049e5",
+                        {
+                          "name": "Left hand",
+                          "origin": [
+                            -4.25,
+                            12,
+                            0
+                          ],
+                          "uuid": "2a9c4494-2a99-44fb-b1d8-14102cb85477",
+                          "children": [
+                            "f511dd91-77c3-4f2d-8234-3619dd74e918",
+                            "3276a76d-f192-486a-a152-889b069a4c3d"
+                          ],
+                          "export": true,
+                          "isOpen": false
+                        }
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                {
+                  "name": "Right shoulder",
+                  "origin": [
+                    4.25,
+                    22,
+                    0
+                  ],
+                  "uuid": "8d12b4db-c305-44e6-be77-1b0919cf92c3",
+                  "children": [
+                    "12af68f9-2021-4c20-bbc3-b8dc6929ad5b",
+                    "13cf9ea3-39c3-456e-bd5d-fe1fe36df5d1",
+                    {
+                      "name": "Right elbow",
+                      "origin": [
+                        4.25,
+                        17,
+                        0
+                      ],
+                      "uuid": "d38c8d4e-82f4-44f0-96e4-563ac2ad3c91",
+                      "children": [
+                        "6b3a605c-37fd-44f9-bfdc-e18f9df3dec2",
+                        "7c029b80-e69e-492b-beb9-877a029badb1",
+                        {
+                          "name": "Right hand",
+                          "origin": [
+                            4.25,
+                            12,
+                            0
+                          ],
+                          "uuid": "200d7871-0599-4d10-a6eb-93e48126e69b",
+                          "children": [
+                            "f1a7035d-a21b-4214-adc3-5660fdd465e2",
+                            "9940871e-446c-47f9-9885-ad248225ba6c"
+                          ],
+                          "export": true,
+                          "isOpen": false
+                        }
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                "a09d43b0-b3c7-4b65-bb4d-176673ad2265"
+              ],
+              "export": true,
+              "isOpen": false
+            },
+            "fe14d8b8-5fa1-4ab1-9cc7-ef838b81c603",
+            "d19f3dde-e498-48f9-9387-ad1f036b74de",
+            "7b132118-41d7-413c-848e-3c25acf1ca5d",
+            {
+              "name": "Left hip",
+              "origin": [
+                -2,
+                12,
+                0
+              ],
+              "uuid": "648225d0-27a0-4987-9ed4-c72a680d59ee",
+              "children": [
+                "f8d33688-f189-4813-b83a-b8a46bae357b",
+                {
+                  "name": "Left knee",
+                  "origin": [
+                    -2,
+                    7,
+                    0
+                  ],
+                  "uuid": "60513120-13dd-4612-b219-b5964f19062d",
+                  "children": [
+                    "484ec0b0-fd62-4071-8fb7-1a063b7e814a",
+                    {
+                      "name": "Left ankle",
+                      "origin": [
+                        -2,
+                        2,
+                        0
+                      ],
+                      "uuid": "bb47f495-a460-47c7-bd23-5b7d486444c1",
+                      "children": [
+                        "c7ebe40f-33cd-48dc-b1ec-55687ffc53b9",
+                        "8cf109a8-9028-4c16-a17b-3cef05b8ac70"
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                }
+              ],
+              "export": true,
+              "isOpen": false
+            },
+            {
+              "name": "Right hip",
+              "origin": [
+                2,
+                12,
+                0
+              ],
+              "uuid": "cac31450-ad49-4ded-bba2-869ed0698361",
+              "children": [
+                "d5b8a365-e718-43fd-8625-7f6a8c37ec21",
+                {
+                  "name": "Right knee",
+                  "origin": [
+                    2,
+                    7,
+                    0
+                  ],
+                  "uuid": "ab0f15f8-04cf-4974-a65f-7c0a826de1a5",
+                  "children": [
+                    "3a5787b7-c988-4d1d-83f6-409ce00eb906",
+                    {
+                      "name": "Right ankle",
+                      "origin": [
+                        2,
+                        2,
+                        0
+                      ],
+                      "uuid": "42fea01d-6ff2-440b-b184-fd05a10d7a6d",
+                      "children": [
+                        "636bafc7-3444-4614-9403-d1e1fe295c6f",
+                        "285eb934-985b-46b9-9a3c-2dbfa57c818e"
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                }
+              ],
+              "export": true,
+              "isOpen": false
+            },
+            "2a93be62-c0c4-4204-98cb-1a1e54e58f59"
+          ],
+          "export": true,
+          "isOpen": false
+        }
+      ],
+      "export": true,
+      "isOpen": false
+    }
+  ],
+  "textures": [
+    {
+      "name": "acrobat.png",
+      "relative_path": "acrobat.png",
+      "mode": "bitmap",
+      "id": "0",
+      "uuid": "97f1b37d-e5ea-45ab-9628-336d18ee2a34",
+      "width": 128,
+      "height": 128,
+      "uv_width": 128,
+      "uv_height": 128,
+      "saved": true,
+      "visible": true,
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAHDklEQVR4nO2dbWwURRjH57ASC1KoBYGiJyUkbWppCorhpVrjNWlFEosktShGjPpBjCEqiQETY0xMbJQmRkPwm4kv1CYKiYqgJaExhUYRj0BrMcDVKpVWq20VS0JjzezdbOb2ZndnZ8feHvv/Jc1s52VndnfmmeeZeXYv8mntukmSIj74JzskVfMLzWM+veefv4zjh0qiRKVc0dIFxAs3TrtM/NIQqzDCgZ//yEjrGxw1wqHRS47nqH3yCcf0js7vPLXpvoVXbNOOHk9In2fm9Gm2aYd7k8+lrrrGCE/8dIGcHU7eg31HDkRoaF8ahII8fpTS0cvCDxP9aSOdxfckkiPZbzmvo7elLW6ETaujpPVYso5VS2Yb4ZrbS4QjnI1uL/UM+DhH0NlcVkBe7ky/PlMCsIdIoSF9gLyY59N5VMt5peW9V8n4vzMyjoE87/eOZcSZHcD6kOhIZqNZlO63nFe+2f0OeWztXLL6zlvNYzuKb77Bd33FGs6RC6RJAKaoUUQjmU/3W04FKo6Pfd3tmkek7PHpMvUMOJyjf+Ai0YlTXV5I/OZ8n1fcsog0rlhm/O197oXJDAnAHhyby60jmX+wfsup0Dc0So6c6jf+7Fg8P6kXqKbL5IkWe7NkpkralMybpa4EiuZyHi86gEw5Fe5eFtWqnPVpOAeVBro7RNasAB6RNi9CtVzY6R6YnWGbU9FMmV1clZG/7cQp87gpf7rwnJ8lLhhh896dRhij0mX5hkhddY251iMlASgqEsBLOVnmxuqSoSW+UpTX8n/98g3GYgdplaio1S39ENEJm4NDtw7w9qH25EORZOdrTwfiRuUy5fnpz6z3xIARfnRvw2RO6QBXO5tamqUGxz6X9GZCpAeN2QFyGTrPZbsNQb4fb3z8bVr6+pJF5nFkyx2rXHvLxoKpXRS51HCXEVLtmm2ylKQarRI38eVxIxRNUdbNqvIZs6Tz3v/sZq3tFMXVrL0tzeJIpBQ9L3l7Pu8idh3gqpAAwJntG1cKdQDpDjDVc3gsZVfTXsz3atW44ZPnbHWUuEVJZdvZMnmjmtvpFkfrY6ParW4+L//ArQRSArClVm1TQKoDi8R6lUVJjXvIq7udTmKdxvFL0KK67fI6EcgOwBBdhJ84kSSLSy5wOeXV3U7ZONm8D36x31QKT764NU3nC7RDiGiJ1U+cyFupymGTSzav7nbaxTGRrppXRCCtgKKtjbbr7Cpxw7vb0uZwnrjLApZT3mde3661nTJxVnEvk3fHrrdMCfBI2crckQDg/ydy9JN3J305OXb12iYdvvirdEO2KW4ZjxRPZuyH021Renx+eML4f0lRnu12aUKyTN/3I2YZ65qBSpyuLXLG6fErUvd9V1NyjSUnlECgH6tJGJgOoLrWsLh4DslF4tz16pAolQsWKrUDOkCIoeYhOkDIydPp3nRmZIyUzilQKiuyu2UY4XY+qQLHlDdZziuU0QF/vVVEsObgMY5XAr0ACRByMsxAN/OPba3qUl7YYoouOnZ9IGUOvWKpt8PN7E2Zu1TKUX65fIncdN1M85gSSylifB67eK9l/ZrZ7edOR5gXEIuDDgCybwbyGxdWZweVOJBjHQBMLfzOIAVKYMjJMAOnGt7s1LGF2uGwN2FHfxauOyhgCpBkR+dXrp7H7edOe4rXVdYPeWyvnEINkwrLK15uWHe1mL+cyHGCxjGzj762JGN+VaT8+dzaxNpRkX+tmXee1BUQKQcK3lx2avPyicGMdw/5l029xrGPX7h9OqaycRORaR/vG0CBDhBy0AFCDjpAyEEHCDmwAjRT/2ab3vcUW2Xzqb2+HuE/FOmkZe94qlpKG130+zVE5nyqHiyy1Dz/sJRWXCFpZchev6w27uRLqfv6Rax5YAs+FAmyOAWwbU+nLVE+jW2fyuZPfhw1uJwJyPVnrQPwnkOlpEA6TSV/ECkNyPVDCbxKYXO88oshOj1zssHE2N++yldZfBStCuKj68vJVMB/Q5BXPmW+d+h2vsrte+AVHHawEBRy0AFCTmRPU92k6Ncn7F6ajJUVCvOwX6ewS1c9hxWWRwb+BU9WzvrSZ0JQv9PLpE71F0aXEi/cM6LnI9Fur9k7KYiQACEHHSDkoAOEHG3rAGMdB7S6Qnm1c690+7P7VedTXWTj/tGdS0iAkIMOEHLQAUJO5OC2Ru6XQ8fNhK6zQ+bx43OKHNfF7ZwleOeIIMG7wouux+rqbk2P1deaxwd/+NE8fmldNKv34frzXZ7qp+sBkAAhBx0g5KRNAdodGkHg0e4PIOuIAIIBpoCQgw4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEN/8B7aGsp1y6R9YAAAAAElFTkSuQmCC"
+    }
+  ]
+}

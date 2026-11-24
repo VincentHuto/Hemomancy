@@ -17,13 +17,14 @@ class CircusPresentationRegressionTest {
 	@Test
 	void stiltWalkerRestoresAuthoredHeightAfterVanillaAnimation() throws IOException {
 		String model = source("client/model/entity/npc/CircusStiltWalkerModel.java");
-		int setup = model.indexOf("public void setupAnim");
-		int superCall = model.indexOf("super.setupAnim", setup);
-		assertTrue(model.indexOf("head.y = body.y = -24.0F", superCall) > superCall);
-		assertTrue(model.indexOf("rightLeg.y = leftLeg.y = -12.0F", superCall) > superCall);
-		assertTrue(model.indexOf("rightArm.y = leftArm.y = -22.0F", superCall) > superCall);
-		assertTrue(model.indexOf("rightLeg.xRot *= 0.15F", superCall) > superCall);
-		assertTrue(model.indexOf("leftLeg.xRot *= 0.15F", superCall) > superCall);
+		String rig = source("client/model/entity/npc/CircusJointedPerformerModel.java");
+		assertTrue(rig.contains("root.getAllParts().forEach(ModelPart::resetPose)"));
+		int vanilla = rig.indexOf("super.setupAnim(");
+		for (String part : new String[] { "body", "head", "rightArm", "leftArm", "rightLeg", "leftLeg" }) {
+			assertTrue(rig.indexOf("restorePivot(" + part + ")", vanilla) > vanilla, part);
+		}
+		assertTrue(model.contains("rightLeg.xRot *= 0.15F"));
+		assertTrue(model.contains("leftLeg.xRot *= 0.15F"));
 		assertFalse(model.contains("body.zRot = sway"));
 	}
 
@@ -120,10 +121,11 @@ class CircusPresentationRegressionTest {
 		String model = source("client/model/entity/npc/CircusKnifeThrowerModel.java");
 		assertTrue(entity.contains("actTick >= 5 && actTick < 30"));
 		assertTrue(entity.contains("actTick == 32 || actTick == 38 || actTick == 44"));
-		assertTrue(model.contains("root.addOrReplaceChild(\"juggle_knife_0\""));
-		assertTrue(model.contains("root.addOrReplaceChild(\"juggle_knife_1\""));
-		assertTrue(model.contains("root.addOrReplaceChild(\"juggle_knife_2\""));
+		assertTrue(model.contains("root.getChild(\"juggle_knife_0\""));
+		assertTrue(model.contains("root.getChild(\"juggle_knife_1\""));
+		assertTrue(model.contains("root.getChild(\"juggle_knife_2\""));
 		assertTrue(model.contains("knife.visible = entity.isJuggling()"));
+		assertTrue(model.contains("Iterables.concat(super.bodyParts(), List.of(jugglingKnives))"));
 	}
 
 	@Test

@@ -11,7 +11,7 @@ Hemomancy's authored fights and the plumbing they share. This page covers the no
 | Annetta Knowles (Broken Church) | dialogue with a Tooth Pecks jar (Harbinger) or a Draught of Still Mercy (Unstained, needs Clarity) | two routes: Phase 1 and the break into the Stained Priestess, or the purge into the Latent Infection with Annetta as an ally | `HEMOMANCY_REFERENCE.md` §entity table (Annetta rows), `LORE_REFERENCE.md` §11 |
 | Vesper, the Crowned Refusal then the Evening Star | the Living Sickle cut of the owned Bloom, owner-bound ordeal | phase 1 on the mount (ground moves, flight from 50%, burrow, three wounds, puppet roster); phase 2 in three acts | `HEMOMANCY_REFERENCE.md` §5.10 |
 | The Mycophant (Spawn Mother) | the 15-minute Gardens hunt or a Fruiting Lure, into the Nursery | the waking, the claim (100 to 60%), the split, the joining, the Last Brood below 25%, the yielding | `HEMOMANCY_REFERENCE.md` §Mycophant Hunt and Morphic Nursery |
-| Naeglerophaeon | breaking a Vagrant Mind's Dormant Ganglion | existing miniboss; this round only gave it a 70-tick opening | `HEMOMANCY_REFERENCE.md` §Naeglerophaeon |
+| Naeglerophaeon | breaking a Vagrant Mind's Dormant Ganglion | 70-tick opening, articulated Blockbench rig with a hooked capture axon | `HEMOMANCY_REFERENCE.md` §Naeglerophaeon |
 | Bloom Warden, Kindled Champion | Brined Court transgression / Head-tender challenge | Court minibosses on the shared plumbing | `docs/BRINED_COURT.md` |
 | Saints (Hemorath, Putriciel, Velorum, Seraphae) | mausoleum trials | the Saint combat kit (below); the `saint_rise` opening, one frame and one meter style each | `docs/SAINT_MAUSOLEUMS.md`, `HEMOMANCY_REFERENCE.md` §5.8 |
 
@@ -53,7 +53,7 @@ Hemomancy's authored fights and the plumbing they share. This page covers the no
 | Mycophant | `common/entity/boss/endgame/Mycophant*.java` (`MycophantEntity`, `MycophantController`, `MycophantMoves`, `MycophantSelectionRules`, `MycophantLastBrood`, hold kinds, hazards, tumors); client `MycophantAnimState` |
 | Naeglerophaeon | `common/entity/boss/endgame/Naeglerophaeon*.java` |
 | Court minibosses | `common/entity/boss/court/` |
-| Generators | `tools/model_export/annetta_kit.py`, `annetta_knowles.py` + `_anim.java`, `stained_priestess.py` + `_anim.java`, `latent_annetta_infection.py` + `_anim.java`, `annetta_pools.py`, `vesper_mount.py` + `_anim.java`, `mycophant.py` + `_anim.java` (reference blockout `tools/model_export/reference/spawn-mother-v8.html`) |
+| Generators | `tools/model_export/annetta_kit.py`, `annetta_knowles.py` + `_anim.java`, `stained_priestess.py` + `_anim.java`, `latent_annetta_infection.py` + `_anim.java`, `annetta_pools.py`, `vesper_mount.py` + `_anim.java`, `mycophant.py` from [MycophantSpawnMother.bbmodel](art/mycophant_spawn_mother/MycophantSpawnMother.bbmodel), with animation in `MycophantModel` |
 | Review clients | `gradle/review-clients.gradle` rows `annettaReviewClient`, `vesperReviewClient`, `mycophantReviewClient`, `bossPresentationReviewClient` (the last doubles as the Saint fight review with `-P<saint>FightReview`) |
 | Guardrails | `src/test/java/.../architecture/BossAnimationClockGuardrailTest`, `BossFrameworkGuardrailTest`, `BossPresentationBindingTest`, `SaintCombatKitGuardrailTest`, `BossDefinitionGuardrailTest` |
 | Config | `HemoClientConfig` section `boss_presentation`: `BOSS_BAR_FRAMES`, `CINEMATIC_BOSS_SCENES`, `BOSS_SCENE_SHAKE` |
@@ -114,7 +114,7 @@ Ruled 2026-11-13 (owner's answer sheet, chunk 07 of `owner_answers/`):
 - RV-21 (2026-11-13): boss fight numbers stay as built, except where CR-15 and CR-19 changed one. Vesper: the wound sites (carapace behind the throne, throat seam, under the tail base), wounds that open by themselves at their thresholds, hits that drain at 10% as a fallback, scabbing that floors at half, and the Sickle act at 33% (moved from 30%). Mycophant: the band numbers, the 8% fusion bonus and the raised Nursery ceiling. Annetta: `AnnettaPoolEntity` with its three pool kinds and the 1 HP early-death guard.
 - RV-82 (2026-11-13): the Broken Church spawns in swamp and dark forest, and thrall or puppet kills credit the owner.
 - RV-84 (2026-11-13): Vesper keeps his own manipulation caster, the mount's head and neck, and summoned Vespers that burrow with particles only.
-- RV-85 (2026-11-13): the Mycophant is she/her in player text, rendered at 2x with a 4.5 x 5 hitbox, brood funglings capped at 4, with the custom Pulp Bloom screen effect.
+- RV-85 (2026-11-13): the Mycophant is she/her in player text, has a 4.5 x 5 hitbox and a brood cap of 4 Funglings, and uses the custom Pulp Bloom screen effect. The original mesh rendered at 2x. The Blockbench-derived mesh uses 16 grid units per block directly.
 - CR-29 (2026-11-13): the Mycophant's brood clutch (funglings armouring her sac, expansion spec §14) and the amber failure beat before expulsion (rebuild spec §6.6) stay deferred. Neither is built.
 - CR-21 (2026-11-13): the Bloom Warden out-healing a D0 to D2 player is intended; the answer is amends (`BRINED_COURT.md`).
 - C-7 (2026-11-13): the Annetta encounter is promoted from Partial to implemented. CR-16 lowered her health to 51 (NQ-07-1, built 2026-11-15). The lancea lore line is FX-21's.
@@ -147,7 +147,7 @@ Annetta (Claude's, in the specs): the Priestess spawns face-down and emerges inv
 
 Vesper (Claude's, spec "Calls I made"): draining a wound feeds the player blood; a puppet kill tears a quarter; muster prefers uncalled shapes; sigil flares at awakening; the whole string roster, shield rip, tether break and once-only Harvest.
 
-Mycophant (Claude's, spec §14 and expansion §14): the translucent sac layer; a central nectar pool; brood funglings are flagged `FunglingEntity`; the 80% Wing Guard reduction; filled meters never lethal; band and sector thresholds, weights and kite-pressure numbers; shorter holds (5 s and 4 s); Claw Rake became the Rake String; grown brood is a scaled fungling; brood tumors are blocks placed only in owned fights; the Last Brood numbers (once below 25%, half damage, 5% floor, anchors 6 to 9 blocks out).
+Mycophant (Claude's, spec §14 and expansion §14): the original translucent sac layer; a central nectar pool; brood funglings are flagged `FunglingEntity`; the 80% Wing Guard reduction; filled meters never lethal; band and sector thresholds, weights and kite-pressure numbers; shorter holds (5 s and 4 s); Claw Rake became the Rake String; grown brood is a scaled fungling; brood tumors are blocks placed only in owned fights; the Last Brood numbers (once below 25%, half damage, 5% floor, anchors 6 to 9 blocks out).
 
 Overnight build, 2026-11-14 (P02; see `owner_answers/BUILD_LOG_2026-11-14.md`, "For the owner"):
 - The boss tag was built with exactly the old membership. The Seraphae Fragment and the Velorum Devotee are in it. (B15 then added the Ringmaster and folded in rite sacrifices and `puppet_attention_immune`.)

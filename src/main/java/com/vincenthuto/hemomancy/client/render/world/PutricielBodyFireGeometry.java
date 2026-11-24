@@ -493,20 +493,20 @@ final class PutricielBodyFireGeometry {
 	}
 
 	/**
-	 * The streams: the staff head and both censers leave a train of overlapping tongues along their last six ticks of
+	 * The streams: the staff head and censer leave a train of overlapping tongues along their last six ticks of
 	 * path, tapering 0.35 to 0.05 with age, whenever they move. Fire with body, never a ribbon line.
 	 */
 	private static void streams(PoseStack p, VertexConsumer v, Frame f, Moment m, double time, float age, Vec3 right, Vec3 up, Budget budget,
 			float settle, @Nullable PutricielEntity boss) {
 		if (boss == null) return;
 		PutricielAnimState motion = PutricielAnimState.of(boss);
-		for (int limb = 0; limb < 3; limb++) {
-			Flame fire = limb == 2 ? PutricielBodyFireRules.anchor(Region.STAFF, 1.0D, false, m) : PutricielBodyFireRules.anchor(Region.CENSER, limb, false, m);
+		for (int limb = 0; limb < 2; limb++) {
+			Flame fire = limb == 1 ? PutricielBodyFireRules.anchor(Region.STAFF, 1.0D, false, m) : PutricielBodyFireRules.anchor(Region.CENSER, limb, false, m);
 			if (fire.tongue() < 0.05F) continue;
 			Vec3 previous = null;
 			for (int j = 0; j <= STREAM_SAMPLES; j++) {
 				float back = STREAM_TICKS * j / STREAM_SAMPLES;
-				Vec3 world = limb == 2 ? motion.staffHeadAt(age - back) : motion.censerAt(limb, age - back);
+				Vec3 world = limb == 1 ? motion.staffHeadAt(age - back) : motion.censerAt(limb, age - back);
 				if (world == null) break;
 				if (previous != null) {
 					Vec3 step = previous.subtract(world);

@@ -21,6 +21,8 @@ public class MnemonicWhaleModel extends EntityModel<MnemonicWhaleEntity> {
 	private final ModelPart dorsal;
 	private final ModelPart leftFin;
 	private final ModelPart rightFin;
+	private final ModelPart leftWisp;
+	private final ModelPart rightWisp;
 
 	public MnemonicWhaleModel(ModelPart root) {
 		this.body = root.getChild("body");
@@ -29,27 +31,77 @@ public class MnemonicWhaleModel extends EntityModel<MnemonicWhaleEntity> {
 		this.dorsal = this.rearBody.getChild("dorsal");
 		this.leftFin = this.body.getChild("left_fin");
 		this.rightFin = this.body.getChild("right_fin");
+		this.leftWisp = this.tail.getChild("left_wisp");
+		this.rightWisp = this.tail.getChild("right_wisp");
 	}
 
 	public static LayerDefinition createBodyLayer() {
-		MeshDefinition meshdefinition = new MeshDefinition();
-		PartDefinition partdefinition = meshdefinition.getRoot();
+		MeshDefinition mesh = new MeshDefinition();
+		PartDefinition root = mesh.getRoot();
 
-		PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 17).addBox(-10.0F, -6.0F, -28.0F, 20.0F, 12.0F, 18.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 0).addBox(-8.0F, -5.0F, -10.0F, 16.0F, 10.0F, 28.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 18.0F, -8.0F));
+		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
+				.texOffs(1, 68).addBox(-6.0F, -11.0F, -36.0F, 12.0F, 14.0F, 2.0F)
+				.texOffs(57, 41).addBox(-8.0F, -13.0F, -34.0F, 16.0F, 18.0F, 5.0F)
+				.texOffs(1, 1).addBox(-10.0F, -13.0F, -29.0F, 20.0F, 19.0F, 19.0F)
+				.texOffs(193, 41).addBox(-7.0F, -16.0F, -31.0F, 14.0F, 3.0F, 14.0F)
+				.texOffs(69, 86).addBox(-5.0F, -14.0F, -17.0F, 10.0F, 3.0F, 9.0F)
+				.texOffs(157, 1).addBox(-6.0F, 5.0F, -32.0F, 12.0F, 3.0F, 23.0F)
+				.texOffs(1, 41).addBox(-9.0F, -9.0F, -10.0F, 18.0F, 16.0F, 9.0F)
+				.texOffs(81, 1).addBox(-8.0F, -7.0F, -1.0F, 16.0F, 13.0F, 21.0F), PartPose.offset(0.0F, 18.0F, -8.0F));
 
-		PartDefinition rear_body = body.addOrReplaceChild("rear_body", CubeListBuilder.create().texOffs(0, 70).addBox(-7.0F, -4.5F, -0.2F, 14.0F, 9.0F, 18.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 18.0F));
+		PartDefinition rear_body = body.addOrReplaceChild("rear_body", CubeListBuilder.create()
+				.texOffs(101, 41).addBox(-7.0F, -6.0F, -1.0F, 14.0F, 11.0F, 12.0F)
+				.texOffs(31, 68).addBox(-5.0F, -4.0F, 11.0F, 10.0F, 8.0F, 8.0F), PartPose.offset(0.0F, 0.0F, 18.0F));
 
-		PartDefinition tail = rear_body.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(0, 48).addBox(-4.0F, -2.5F, 0.0F, 8.0F, 5.0F, 18.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 48).addBox(-11.0F, -1.0F, 15.0F, 22.0F, 2.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 18.0F));
+		PartDefinition tail = rear_body.addOrReplaceChild("tail", CubeListBuilder.create()
+				.texOffs(155, 41).addBox(-3.0F, -3.0F, -1.0F, 6.0F, 6.0F, 12.0F)
+				.texOffs(231, 102).addBox(-2.0F, -1.0F, 10.0F, 4.0F, 3.0F, 5.0F)
+				.texOffs(183, 102).addBox(-6.0F, -1.0F, 8.0F, 4.0F, 2.0F, 7.0F)
+				.texOffs(197, 86).addBox(-10.0F, -1.0F, 8.0F, 4.0F, 2.0F, 8.0F)
+				.texOffs(229, 1).addBox(-14.0F, -1.0F, 9.0F, 4.0F, 2.0F, 9.0F)
+				.texOffs(223, 86).addBox(-18.0F, 0.0F, 10.0F, 4.0F, 1.0F, 9.0F)
+				.texOffs(1, 102).addBox(-21.0F, 0.0F, 12.0F, 3.0F, 1.0F, 9.0F)
+				.texOffs(45, 114).addBox(-23.0F, 0.0F, 15.0F, 2.0F, 1.0F, 7.0F)
+				.texOffs(207, 102).addBox(2.0F, -1.0F, 8.0F, 4.0F, 2.0F, 7.0F)
+				.texOffs(55, 102).addBox(6.0F, -1.0F, 8.0F, 4.0F, 2.0F, 8.0F)
+				.texOffs(169, 86).addBox(10.0F, -1.0F, 9.0F, 4.0F, 2.0F, 9.0F)
+				.texOffs(81, 102).addBox(14.0F, 0.0F, 10.0F, 4.0F, 1.0F, 9.0F)
+				.texOffs(109, 102).addBox(18.0F, 0.0F, 12.0F, 3.0F, 1.0F, 9.0F)
+				.texOffs(65, 114).addBox(21.0F, 0.0F, 15.0F, 2.0F, 1.0F, 7.0F), PartPose.offset(0.0F, 0.0F, 17.0F));
 
-		PartDefinition dorsal = rear_body.addOrReplaceChild("dorsal", CubeListBuilder.create().texOffs(0, 48).addBox(-1.0F, -6.0F, -2.0F, 2.0F, 6.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.5F, 4.0F));
+		rear_body.addOrReplaceChild("dorsal", CubeListBuilder.create()
+				.texOffs(69, 68).addBox(-2.0F, -3.0F, -6.0F, 4.0F, 3.0F, 13.0F)
+				.texOffs(163, 102).addBox(-1.0F, -5.0F, -1.0F, 2.0F, 2.0F, 7.0F), PartPose.offset(0.0F, -5.0F, 3.0F));
 
-		PartDefinition left_fin = body.addOrReplaceChild("left_fin", CubeListBuilder.create().texOffs(0, 48).addBox(-12.0F, 0.0F, -5.0F, 12.0F, 1.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(-8.0F, 2.0F, -8.0F));
+		tail.addOrReplaceChild("left_wisp", CubeListBuilder.create()
+				.texOffs(27, 102).addBox(-3.0F, -1.0F, -1.0F, 4.0F, 1.0F, 9.0F)
+				.texOffs(85, 114).addBox(-4.0F, 0.0F, 6.0F, 3.0F, 1.0F, 6.0F)
+				.texOffs(125, 114).addBox(-5.0F, 0.0F, 10.0F, 2.0F, 1.0F, 5.0F)
+				.texOffs(245, 68).addBox(-5.0F, 1.0F, 13.0F, 1.0F, 1.0F, 4.0F), PartPose.offset(-6.0F, 1.0F, 12.0F));
 
-		PartDefinition right_fin = body.addOrReplaceChild("right_fin", CubeListBuilder.create().texOffs(0, 48).mirror().addBox(0.0F, 0.0F, -5.0F, 12.0F, 1.0F, 10.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(8.0F, 2.0F, -8.0F));
+		tail.addOrReplaceChild("right_wisp", CubeListBuilder.create()
+				.texOffs(135, 102).addBox(-1.0F, -1.0F, -1.0F, 4.0F, 1.0F, 9.0F)
+				.texOffs(105, 114).addBox(1.0F, 0.0F, 6.0F, 3.0F, 1.0F, 6.0F)
+				.texOffs(141, 114).addBox(3.0F, 0.0F, 10.0F, 2.0F, 1.0F, 5.0F)
+				.texOffs(157, 114).addBox(4.0F, 1.0F, 13.0F, 1.0F, 1.0F, 4.0F), PartPose.offset(6.0F, 1.0F, 12.0F));
 
-		return LayerDefinition.create(meshdefinition, 128, 128);
+		body.addOrReplaceChild("left_fin", CubeListBuilder.create()
+				.texOffs(177, 68).addBox(-4.0F, 0.0F, -3.0F, 4.0F, 2.0F, 12.0F)
+				.texOffs(105, 68).addBox(-8.0F, 0.0F, -2.0F, 4.0F, 2.0F, 13.0F)
+				.texOffs(211, 68).addBox(-12.0F, 1.0F, 1.0F, 4.0F, 2.0F, 12.0F)
+				.texOffs(109, 86).addBox(-16.0F, 1.0F, 5.0F, 4.0F, 2.0F, 10.0F)
+				.texOffs(1, 114).addBox(-19.0F, 2.0F, 9.0F, 3.0F, 1.0F, 7.0F)
+				.texOffs(169, 114).addBox(-21.0F, 2.0F, 14.0F, 2.0F, 1.0F, 3.0F), PartPose.offset(-7.0F, 2.0F, -7.0F));
+
+		body.addOrReplaceChild("right_fin", CubeListBuilder.create()
+				.texOffs(1, 86).addBox(0.0F, 0.0F, -3.0F, 4.0F, 2.0F, 12.0F)
+				.texOffs(141, 68).addBox(4.0F, 0.0F, -2.0F, 4.0F, 2.0F, 13.0F)
+				.texOffs(35, 86).addBox(8.0F, 1.0F, 1.0F, 4.0F, 2.0F, 12.0F)
+				.texOffs(139, 86).addBox(12.0F, 1.0F, 5.0F, 4.0F, 2.0F, 10.0F)
+				.texOffs(23, 114).addBox(16.0F, 2.0F, 9.0F, 3.0F, 1.0F, 7.0F)
+				.texOffs(181, 114).addBox(19.0F, 2.0F, 14.0F, 2.0F, 1.0F, 3.0F), PartPose.offset(7.0F, 2.0F, -7.0F));
+
+		return LayerDefinition.create(mesh, 256, 128);
 	}
 
 
@@ -73,11 +125,15 @@ public class MnemonicWhaleModel extends EntityModel<MnemonicWhaleEntity> {
 		this.dorsal.zRot = swim * 0.05F;
 		this.leftFin.zRot = -0.2F + Mth.sin(ageInTicks * 0.06F) * 0.08F;
 		this.rightFin.zRot = 0.2F - Mth.sin(ageInTicks * 0.06F) * 0.08F;
+		this.leftWisp.yRot = Mth.sin(ageInTicks * 0.09F) * 0.16F;
+		this.rightWisp.yRot = Mth.sin(ageInTicks * 0.09F + 1.8F) * 0.16F;
+		this.leftWisp.xRot = swim * 0.08F;
+		this.rightWisp.xRot = Mth.sin(ageInTicks * 0.12F + 1.8F) * 0.08F;
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
-		this.body.render(poseStack, buffer, packedLight, packedOverlay);
+		this.body.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 	}
 }
 

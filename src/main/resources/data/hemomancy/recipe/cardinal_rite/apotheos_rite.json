@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:apotheos_rite",
   "id": "hemomancy:cardinal_rite/apotheos_rite",
   "bloodCost": 0,
   "riteType": "grand",

@@ -20,9 +20,13 @@ import net.minecraft.world.level.Level;
  */
 public final class BloodlickerEntity extends LeechEntity {
 	public static final int MAX_STORED_BLOOD = 100;
+	public static final int SIPHON_ANIMATION_TICKS = 16;
+	private static final byte SIPHON_EVENT = 70;
 	private static final String STORED_BLOOD_TAG = "StoredBlood";
 	private static final EntityDataAccessor<Integer> STORED_BLOOD =
 			SynchedEntityData.defineId(BloodlickerEntity.class, EntityDataSerializers.INT);
+
+	private int siphonAnimationStart = -SIPHON_ANIMATION_TICKS;
 
 	public BloodlickerEntity(EntityType<? extends BloodlickerEntity> type, Level level) {
 		super(type, level);
@@ -43,7 +47,23 @@ public final class BloodlickerEntity extends LeechEntity {
 	public void addSiphonedBlood(int amount) {
 		if (amount > 0) {
 			this.entityData.set(STORED_BLOOD, Math.min(MAX_STORED_BLOOD, getStoredBlood() + amount));
+			if (!level().isClientSide()) {
+				level().broadcastEntityEvent(this, SIPHON_EVENT);
+			}
 		}
+	}
+
+	@Override
+	public void handleEntityEvent(byte event) {
+		if (event == SIPHON_EVENT) {
+			siphonAnimationStart = tickCount;
+		} else {
+			super.handleEntityEvent(event);
+		}
+	}
+
+	public float getSiphonAnimationAge(float ageInTicks) {
+		return ageInTicks - siphonAnimationStart;
 	}
 
 	public int getStoredBlood() {

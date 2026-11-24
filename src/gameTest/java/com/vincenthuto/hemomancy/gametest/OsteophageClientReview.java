@@ -11,7 +11,10 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.*;
@@ -24,10 +27,10 @@ import java.nio.file.Files;
 /** Explicit, disposable Nether fixtures. Does not claim natural world spawning. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class OsteophageClientReview {
-    private static final String[] SCENES = {"perched", "flight", "hunting", "jar_perched", "jar_flight"};
+    private static final String[] SCENES = {"perched", "flight", "hunting", "feeding", "jar_perched", "jar_flight"};
     private static final BlockPos CENTER = new BlockPos(256, 72, 256);
     private static int scene, tick;
-    private static boolean started;
+    private static boolean started, capturedFeeding;
     private static volatile boolean ready;
     private static OsteophageEntity actor;
 
@@ -39,7 +42,7 @@ public final class OsteophageClientReview {
         try {
             if (scene == SCENES.length) {
                 Files.writeString(client.gameDirectory.toPath().resolve("osteophage-visuals.txt"),
-                        "Native Nether fixtures: perched, flight, hunting, perched jar, flight jar. Natural spawns and multiplayer not exercised.\n");
+                        "Native Nether fixtures: perched, flight, hunting, feeding, perched jar, flight jar. Natural spawns and multiplayer not exercised.\n");
                 client.stop(); return;
             }
             var server = client.getSingleplayerServer(); var uuid = client.player.getUUID();
@@ -58,6 +61,13 @@ public final class OsteophageClientReview {
             });
             if (SCENES[scene].equals("hunting") && tick % 5 == 0)
                 server.execute(() -> camera(server.getPlayerList().getPlayer(uuid), actor.position().add(0,.7,0), 5));
+            if (SCENES[scene].equals("feeding") && !capturedFeeding
+                    && client.level.getEntity(actor.getId()) instanceof OsteophageEntity displayed
+                    && displayed.getFeedingPose(0) > .75F) {
+                capturedFeeding = true;
+                Screenshot.grab(client.gameDirectory, "osteophage-feeding-bite.png", client.getMainRenderTarget(),
+                        message -> LogUtils.getLogger().info("OSTEOPHAGE_FEEDING_SCREENSHOT {}", message.getString()));
+            }
             if (tick == 45 || tick == 100) {
                 String name = "osteophage-" + SCENES[scene] + "-" + tick + ".png";
                 Screenshot.grab(client.gameDirectory, name, client.getMainRenderTarget(),
@@ -68,7 +78,13 @@ public final class OsteophageClientReview {
                         throw new IllegalStateException("Client jar did not receive the Osteophage specimen");
                 }
             }
-            if (tick > 130) { scene++; tick = 0; started = false; }
+            if (tick > 130) {
+                if (SCENES[scene].equals("feeding") && !capturedFeeding)
+                    throw new IllegalStateException("Client did not animate the bone pickup");
+                scene++;
+                tick = 0;
+                started = false;
+            }
         } catch (Exception exception) {
             LogUtils.getLogger().error("Osteophage native review failed", exception); client.stop();
         }
@@ -97,7 +113,7 @@ public final class OsteophageClientReview {
         actor.setPersistenceRequired(); actor.setPos(Vec3.atBottomCenterOf(seat)); actor.setYRot(0);
         boolean flying = scene.endsWith("flight");
         if (!flying) actor.finalizeSpawn(level, level.getCurrentDifficultyAt(seat), MobSpawnType.SPAWN_EGG, null);
-        actor.setNoAi(!scene.equals("hunting"));
+        actor.setNoAi(!scene.equals("hunting") && !scene.equals("feeding"));
         if (scene.startsWith("jar")) {
             level.setBlock(CENTER.below(), Blocks.BONE_BLOCK.defaultBlockState(), 2);
             level.setBlock(CENTER, BlockInit.specimen_jar.get().defaultBlockState(), 2);
@@ -109,6 +125,13 @@ public final class OsteophageClientReview {
                 Skeleton skeleton = EntityType.SKELETON.create(level);
                 skeleton.setPos(Vec3.atBottomCenterOf(CENTER.east(10).below(7)));
                 skeleton.setNoAi(true); skeleton.setPersistenceRequired(); level.addFreshEntity(skeleton);
+            }
+            if (scene.equals("feeding")) {
+                var bone = new ItemEntity(level, actor.getX() + .65, actor.getY() + .20, actor.getZ() + .65,
+                        new ItemStack(Items.BONE));
+                bone.setNoGravity(true);
+                bone.setDeltaMovement(Vec3.ZERO);
+                level.addFreshEntity(bone);
             }
             camera(player, actor.position().add(0,.7,0), flying ? 4.3 : 3.0);
         }

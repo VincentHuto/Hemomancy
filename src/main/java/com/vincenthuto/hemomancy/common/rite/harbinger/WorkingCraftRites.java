@@ -284,4 +284,8 @@ public final class WorkingCraftRites {
 	public static void clear() {
 		LAST_HINT.clear();
 	}
+
+	public static void logout(java.util.UUID player) {
+		LAST_HINT.remove(player);
+	}
 }

@@ -14,7 +14,7 @@ counts below come from the final check's test runs.
 | [1. Needs your answer](#1-needs-your-answer) | 8 | Write in "Your answer". "ok" accepts the recommendation. |
 | [2. Will be done unless you object](#2-will-be-done-unless-you-object) | 7 | Nothing, unless you disagree with a row. |
 | [3. Remaining work](#3-remaining-work) | 35 (9 ready now) | Pick what to build next. |
-| [4. Play and tune](#4-play-and-tune) | 180 | Play, watch, read, tune. |
+| [4. Play and tune](#4-play-and-tune) | 181 | Play, watch, read, tune. |
 | [5. Parked](#5-parked) | 38 | Nothing. |
 
 The plans behind the task numbers (for example "04 T5") are the chunk files in `docs/owner_answers/`. What the
@@ -210,7 +210,7 @@ built the rest. "Ready" means nothing open touches the row.
 
 | Task | What is left | Size | State |
 | --- | --- | --- | --- |
-| 13 T14 (D-21, CB-15) | The cost and offering pass over rites and crafts: feeds, anchor costs, offerings, the three `riteType` values that do not match their floor tier. The starting tables are in the chunk file. | L | held: after a play session |
+| 13 T14 (D-21, CB-15) | The cost and offering pass over rites and crafts: feeds, anchor costs, offerings. The starting tables are in the chunk file. | L | held: after a play session |
 
 ### Brined Court
 
@@ -268,7 +268,7 @@ are written one speaker at a time. These rows are not extra work.
 
 ## 4. Play and tune
 
-126 rows. Built things only you can judge by playing, watching, reading or hearing. This is the tweaking and
+127 rows. Built things only you can judge by playing, watching, reading or hearing. This is the tweaking and
 balancing list.
 
 ### Living blood and containers
@@ -468,6 +468,7 @@ balancing list.
 | FX-12 | Look at the map icons of the Bloodline Covenant (the Enthralling Filament), Hungering Earth (the Sanguine Formation) and Possession (Adipocere). Say if any should be drawn art. | Now |
 | PT-67 | Read the reworded refusal `message.hemomancy.chamber_visit.rite_unavailable`: "The Chamber does not answer, so no visit can begin. The rite will not take hold." The visit itself is proven in `chamberRiteReviewClient` (`build/build2/B25-shots/chamber-rite-visit.png`). | Now |
 | DS-4 | Read the 19 Liber lines and the new page "Blood Gourds" for lore and voice (the list is in the B25 section of `docs/owner_answers/BUILD_LOG_2.md`). The Possession and Visitation lines touch the 2026-10-31 rulings. | Now |
+| Sigil gouges | Look at the Ichorian Sigil gouges and the hovering form (2026-11-19, uncommitted): the seven stills in `build/sigil-gouge-client-review/screenshots/` (`runSigilGougeReviewClient`, drop `{"op":"open","name":"SigilGouge"}`), then in play. Every number is the builder's starting value. Strip: half-width 0.90, cut half-width 0.16, lip to 0.26, cut depth 0.30, blood risen to 0.55 of the depth (`IchorianSigilGougeGeometry`, `ichorian_sigil_gouge.fsh`). Timings: cut-in 20 ticks, fill and first glow run 40, vein creep 60, tendril rise 30 after the front, dimmer re-run every 160 (a sigil first seen awake re-runs on the game clock), and through a rite's ending the blood, veins and tendrils drain over 24 ticks, or 14 on a collapse, whose cuts then close over 16 (`IchorianSigilGougeStages`). Glow: settled 0.35 plus 0.25 on the beat plus a 0.4 re-run front, shown as its cube so the settled pulse stays an ember; veins at most 0.5 alpha, a root at most every 0.55 blocks, 55 percent of roots drawn. Form: hover 2.2 blocks, bob 0.08 over 80 ticks, turn rates Shunt 1.2 down to Seal 0.12 degrees a tick (`AwakenedIchorianSigilMotion`). Tendrils: a trunk and two offshoots a node, at most 12 nodes, trunks 68 to 100 percent of 60 percent of the way, root half-width 0.05 flaring then thinning to a hair, writhe 0.085 blocks at the tip, a swelling pulse of 24 percent, a hooked tip, halo at 0.45 opacity (`IchorianSigilNodeTendrilGeometry`). Each growth stands on the gouge and leaves it in the blood's colour at 0.62 brightness, turning crimson by 60 percent of the way up; a root of the same colour lies down the middle of every link that meets the node, 1.1 blocks long (or 0.45 of the link), thickening into the trunk's foot. Living form (`IchorianSigilFormGeometry`, `IchorianSigilFormRules`): shell 3.4 times a vessel's thickness at 0.32 alpha over a clot core at 2.1, sinew at 0.75 turns (1.0 on side vessels), ichor filament 1.1 times thickness, heartbeat about once a second, membranes a 0.24 dark skin with a 0.2 ichor glow; per-style signatures are the builder's picks; the Liber preview still uses the old body. Stills 8 and 9 of the review client are the close-ups. Links meet on mitred joints and a pattern's loose ends taper to a point over 0.75 blocks. Unreviewed calls: links cut in one by one and stay dry until the pattern closes; the form turns slowly in place instead of facing the caster or the Focus; it hovers over its pattern's own centre; tendrils stop short of the form; a late joiner sees the settled look with no replay; the trench look is written fresh rather than shared with the floor shader; a stepped link climbs the step where the ground does (each section set on the block under it); the node landmarks still go when the form peels up, so tendrils rise from the bare gouge ends; a sigil's gouges vanish when the rite leaves the phases that show sigils (inscription, ordeal, still interval). | Now |
 
 ### Brined Court
 

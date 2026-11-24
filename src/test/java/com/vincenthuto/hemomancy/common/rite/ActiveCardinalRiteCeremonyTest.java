@@ -45,17 +45,6 @@ final class ActiveCardinalRiteCeremonyTest {
 	}
 
 	@Test
-	void savedProfessionPhaseMigratesToCulmination() {
-		ActiveCardinalRite rite = rite(4, false, 0);
-		CompoundTag saved = rite.serialize();
-		saved.putString("Phase", "PROFESSION");
-
-		ActiveCardinalRite copy = ActiveCardinalRite.deserialize(saved);
-
-		assertEquals(CardinalRitePhase.CULMINATION, copy.getPhase());
-	}
-
-	@Test
 	void threeWaveRiteHasExactlyTwoBetweenWaveStillIntervals() {
 		ActiveCardinalRite rite = ActiveCardinalRite.interactive(UUID.randomUUID(), BlockPos.ZERO,
 				ResourceLocation.parse("hemomancy:cardinal_rite/grand"), 1200, 7, 6,

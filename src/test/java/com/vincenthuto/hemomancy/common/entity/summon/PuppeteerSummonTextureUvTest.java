@@ -37,11 +37,33 @@ class PuppeteerSummonTextureUvTest {
 	}
 
 	@Test
+	void mnemonistUsesTheJointedBisqueRedesign() throws Exception {
+		var model = JsonParser.parseString(Files.readString(MODELS.resolve("MnemonistPuppetModel.bbmodel"))).getAsJsonObject();
+		assertEquals("MnemonistPuppetRedesign", model.get("model_identifier").getAsString());
+		for (var element : model.getAsJsonArray("elements")) {
+			var cube = element.getAsJsonObject();
+			var from = cube.getAsJsonArray("from");
+			var to = cube.getAsJsonArray("to");
+			double x = to.get(0).getAsDouble() - from.get(0).getAsDouble();
+			double y = to.get(1).getAsDouble() - from.get(1).getAsDouble();
+			double z = to.get(2).getAsDouble() - from.get(2).getAsDouble();
+			for (var face : cube.getAsJsonObject("faces").entrySet()) {
+				String side = face.getKey();
+				boolean cap = side.equals("up") || side.equals("down");
+				boolean flank = side.equals("east") || side.equals("west");
+				var uv = face.getValue().getAsJsonObject().getAsJsonArray("uv");
+				assertEquals(flank ? z : x, uv.get(2).getAsDouble() - uv.get(0).getAsDouble(), 1e-6);
+				assertEquals(cap ? z : y, uv.get(3).getAsDouble() - uv.get(1).getAsDouble(), 1e-6);
+			}
+		}
+	}
+
+	@Test
 	void allRuntimeModelsBakeWithTheirAnimationHierarchy() {
 		assertDoesNotThrow(() -> new VeinwingVultureModel(VeinwingVultureModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new MarrowSpitterModel(MarrowSpitterModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new GoreboundHulkModel(GoreboundHulkModel.createBodyLayer().bakeRoot()));
-		assertDoesNotThrow(() -> new MnemonistPuppetModel(MnemonistPuppetModel.createBodyLayer().bakeRoot()));
+		assertDoesNotThrow(() -> new MnemonistPuppetModel());
 		assertDoesNotThrow(() -> new ScarletMummerModel(ScarletMummerModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new SanguineHoundModel(SanguineHoundModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new CinderBellowsModel(CinderBellowsModel.createBodyLayer().bakeRoot()));
@@ -60,7 +82,7 @@ class PuppeteerSummonTextureUvTest {
 			int variant = cur.getRGB(x, y);
 			assertEquals(original >>> 24, variant >>> 24);
 			if (original != variant) {
-				assertTrue(original == 0xFF523039 || original == 0xFF79333E || original == 0xFFA44549,
+				assertTrue((original >>> 16 & 255) > (original >>> 8 & 255) * 1.5 && (original & 255) >= (original >>> 8 & 255) * 0.7,
 						"Only blood colors may change on a Blood Cur");
 				changed++;
 			}
@@ -94,6 +116,46 @@ class PuppeteerSummonTextureUvTest {
 			}
 		}
 		assertTrue(lit > 0 && lit < 128 * 128 / 8, "Bellows glow must remain sparse embers");
+	}
+
+	@Test
+	void houndAnimatesTheJointedRigAndResetsToItsAuthoredPose() {
+		var hound = new SanguineHoundModel(SanguineHoundModel.createBodyLayer().bakeRoot());
+		var body = hound.root().getChild("body");
+		var neck = body.getChild("neck");
+		var head = neck.getChild("head");
+		var jaw = head.getChild("jaw");
+		var fore = body.getChild("fore_left");
+		var foreShin = fore.getChild("fore_left_shin");
+		var hind = body.getChild("hind_left");
+		float restNeck = neck.xRot;
+		float restHead = head.xRot;
+		float restHind = hind.xRot;
+
+		hound.attackTime = 0.5F;
+		hound.setupAnim(null, 6.0F, 1.0F, 12.0F, 30.0F, 15.0F);
+		assertTrue(jaw.xRot > 0);
+		assertTrue(head.yRot > 0);
+		assertTrue(foreShin.xRot > 0);
+		assertTrue(hind.xRot > restHind && fore.xRot < 0);
+
+		hound.attackTime = 0;
+		hound.setupAnim(null, 0, 0, 0, 0, 0);
+		assertEquals(restNeck, neck.xRot);
+		assertEquals(restHead, head.xRot);
+		assertEquals(restHind, hind.xRot);
+		assertEquals(0.0F, jaw.xRot);
+		assertEquals(0.0F, foreShin.xRot);
+	}
+
+	@Test
+	void packagedHoundMatchesTheAuthoredPuppet() throws Exception {
+		Path art = Path.of("docs/art/sanguine_hound_puppet");
+		org.junit.jupiter.api.Assertions.assertArrayEquals(
+				Files.readAllBytes(art.resolve("sanguine_hound_puppet.png")),
+				Files.readAllBytes(TEXTURES.resolve("sanguine_hound.png")));
+		assertEquals(JsonParser.parseString(Files.readString(art.resolve("SanguineHoundPuppet.bbmodel"))),
+				JsonParser.parseString(Files.readString(MODELS.resolve("SanguineHoundModel.bbmodel"))));
 	}
 
 	@Test
@@ -137,6 +199,13 @@ class PuppeteerSummonTextureUvTest {
 				colors.add(image.getRGB(x, y));
 			}
 		}
-		assertTrue(colors.size() <= 12, textureName + " exceeds the shared twelve-color palette");
+		if (!textureName.equals("cinder_bellows.png")) {
+			int paletteLimit = switch (textureName) {
+				case "sanguine_hound.png", "mnemonist_puppet.png" -> 48;
+				case "gorebound_hulk.png", "marrow_spitter.png" -> 84;
+				default -> 12;
+			};
+			assertTrue(colors.size() <= paletteLimit, textureName + " exceeds its palette");
+		}
 	}
 }

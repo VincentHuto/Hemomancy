@@ -8,6 +8,10 @@ Status (2026-11-14): the owner answered every rite row on 2026-11-13 and the ove
 
 A Harbinger Cardinal Rite is a floor, a Cardinal Focus at its centre, lit Iron Braziers carrying the recipe's offering signature, a medium seated in the Focus and a planted Living Staff. `HarbingerCardinalRiteEvents` ticks every rite; `ActiveCardinalRite` persists it; activation validates the floor, degree, offerings and the completion effect's `ACTIVATION` refusal before anything is escrowed; the daemon rises from the staff, anchors fill, the seal, the offering procession and a culmination follow; every ending passes through `CardinalRiteTermination` (`docs/HEMOMANCY_REFERENCE.md` §5.3).
 
+Only the Living Staff starts a Harbinger rite: every recipe names `"focus": "living_staff"`. A Sanguine Formation is a medium and seats in a Focus; its own trigger starts no current rite. Unstained rites start from the blood crafting key.
+
+Timers and edges: an untouched consecration collapses after ten minutes (not a station upgrade's); a caster away or in another dimension for 200 ticks abandons a ceremony, but station upgrades and Working crafts wait for their caster with no limit and hold their escrow; instability's bleed bites only in an ordeal; the wave deck is shuffled unseeded at the seal. Ordeal waves are rows of `CardinalRiteWave`. A rite's completion effect is the `completion_effect` its recipe names.
+
 Every Harbinger rite declares a `purpose`, and the purpose decides its floor style and default culmination (`CardinalRitePurpose`):
 
 | Purpose | Floor style | Default culmination | Meaning |
@@ -21,7 +25,7 @@ The serializer rejects a floor style that does not match the purpose unless the 
 
 `world` rites send the daemon out instead of merging it into the caster: Sanguine Eclipse and Pallid Shadow strike the sky (`"world_finale": "sky"`); every other world rite slams the ground (§5.3, "World rite finales").
 
-**Working crafts.** Machines, stations and constructs are `making` rites under `data/hemomancy/recipe/cardinal_rite/working/` (eighteen files, `covenant_throne` to `vascular_effigy`). The old Blood Structure `pattern`/`key` became `subject.pattern`/`subject.key`, `bloodCost` became `subject.feed`, the offhand catalyst became the Focus `medium`, and offerings became the `brazier_signature`; the rite's own `bloodCost` is 0. The subject stands on the floor's upper layer beside the Focus inside the bed (minor 3x1, lesser 5x2, greater 7x3, grand 9x4; `WorkingCraftBed`). Activation escrows the offerings (`RiteOfferingEscrow`, shared with station upgrades) and records the subject; the rite starts in `SUBJECT_FEEDING`, where the caster holds Blood Projection on the subject until the feed is met; the daemon draws the offerings in and the forging culmination swallows the structure and drops the result on the Focus. Recall, collapse or a changed subject block returns the escrow and leaves the structure standing; completion settles once (`CardinalFocusBlockEntity.settledCraft`). Station upgrades are the same Working rite with an upgrade-in-place subject; their contract is `docs/STATION_UPGRADES.md`.
+**Working crafts.** Machines, stations and constructs are `making` rites under `data/hemomancy/recipe/cardinal_rite/working/` (eighteen files, `covenant_throne` to `vascular_effigy`). The old Blood Structure `pattern`/`key` became `subject.pattern`/`subject.key`, `bloodCost` became `subject.feed`, the offhand catalyst became the Focus `medium`, and offerings became the `brazier_signature`; the rite's own `bloodCost` is 0. The subject stands on the floor's upper layer beside the Focus inside the bed (minor 3x1, lesser 5x2, greater 7x3, grand 9x4; `WorkingCraftBed`). Activation escrows the offerings (`RiteOfferingEscrow`, shared with station upgrades) and records the subject; the rite starts in `SUBJECT_FEEDING`, where the caster holds Blood Projection on the subject until the feed is met; the daemon draws the offerings in and the forging culmination swallows the structure and drops the result on the Focus. Recall, collapse or a changed subject block returns the escrow and leaves the structure standing; completion settles once (`CardinalFocusBlockEntity.settledCraft`). Station upgrades stand on Working floors and escrow their kit and offerings the same way, but they run as anchor ceremonies, not a subject feed: consecration, inscription, the seal, then `STATION_PROJECTION`, where the caster feeds the station's circuits before the finale. Their contract is `docs/STATION_UPGRADES.md`.
 
 **The floorless tier.** Blood Structures (`data/hemomancy/recipe/blood_structure/`) are hand-fed with Blood Projection, no floor, Focus or brazier, and take no offerings (the serializer rejects an `offerings` field). The pinned Harbinger roster is Dried Gourd, Hematic Iron Block, Liber Sanguinium, Living Staff, Iron Brazier, Vial Centrifuge, Ghastly Alembic, Hematic Stake and Mycelial Synapse, plus the two Unstained structures (Pallid Retort, Unstained Pillar) (`WorkingCraftRosterDataTest`; §25.1).
 
@@ -37,7 +41,7 @@ The serializer rejects a floor style that does not match the purpose unless the 
 
 | Part | Path |
 |---|---|
-| Lifecycle, kinds, activation, completion, termination | `src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/` (`HarbingerCardinalRiteEvents`, `RiteKind` enum: `SUCCESSION`, `STATION_UPGRADE`, `WORKING_CRAFT`, `PUPPETEER_TRIAL`, `COUNTDOWN`, `CEREMONY`; `CardinalRiteActivation`, `CardinalRiteCompletion`, `CardinalRiteCompletionEffects`, `CardinalRiteTermination`, `RiteOfferingEscrow`, `WorkingCraftRites`, `WorkingCraftSubjectMatcher`, `WorkingCraftDaemonPath`) |
+| Lifecycle, kinds, activation, completion, termination | `src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/` (`HarbingerCardinalRiteEvents`, `RiteKind` enum: `SUCCESSION`, `STATION_UPGRADE`, `WORKING_CRAFT`, `PUPPETEER_TRIAL`, `UNSTAINED`, `COUNTDOWN`, `CEREMONY`; `CardinalRiteActivation`, `CardinalRiteCompletion`, `CardinalRiteCompletionEffects`, `CardinalRiteTermination`, `RiteOfferingEscrow`, `WorkingCraftRites`, `WorkingCraftSubjectMatcher`, `WorkingCraftDaemonPath`) |
 | Rite state, purposes, rules | `common/rite/` (`ActiveCardinalRite`, `CardinalRitePurpose`, `CardinalRiteStationMatcher`, `CardinalRiteBrazierSignatureRules`, `WorkingCraftBed`, `WorkingCraftRecipeRules`, `CardinalRiteEscalation`, `CardinalRiteDaemonFinale`) |
 | Floors | `common/rite/floor/` (`CardinalRiteFloorDefinition`, `CardinalRiteFloorVisualRules`, `CardinalRiteBrazierSpace`, `CardinalRiteGashRules`); data `data/hemomancy/cardinal_rite_floor/` |
 | Floorless crafting | `common/rite/structure/` (`BloodStructureCrafting`, `BloodStructureFormation`) |
@@ -47,8 +51,9 @@ The serializer rejects a floor style that does not match the purpose unless the 
 | Tags | `data/hemomancy/tags/{block,item,entity_type}/rite_bound/{self,world,making,bond,any}.json` |
 | Liber map | `client/screen/skilltree/shared/` (`RitesAndCraftsTabController`, `RecipeMapPurposeGroup`, `HarbingerRecipeMapDefinitions`) |
 | JEI | `compat/jei/BloodStructureRecipeCategory`, `JEIPlugin` |
-| Shaders | `assets/hemomancy/shaders/core/world/cardinal_floor_membrane.*`, `apotheos_floor_funnel.*`, `cardinal_daemon_haze.*`, `blood_structure_warp.*` |
-| Review client | `riteFloorReviewClient` in `gradle/review-clients.gradle` (`hemomancy.riteFloorReview`, `riteFloorReviewSpecial`) |
+| Shaders | `assets/hemomancy/shaders/core/world/cardinal_floor_membrane.*`, `apotheos_floor_funnel.*`, `cardinal_daemon_haze.*`, `blood_structure_warp.*`, `ichorian_sigil_gouge.*` |
+| Sigil gouges and the living form | `common/rite/sigil/` (`IchorianSigilGougeStages`, `IchorianSigilGougeGeometry`, `AwakenedIchorianSigilMotion`), `client/data/SigilGougeClientState`, `client/render/world/` (`CardinalRiteBoundaryRenderer.drawSigilGouges`, `IchorianSigilNodeTendrilGeometry`), `common/entity/utility/AwakenedIchorianSigilEntity` |
+| Review clients | `riteFloorReviewClient` (`hemomancy.riteFloorReview`, `riteFloorReviewSpecial`) and `sigilGougeReviewClient` (`SigilGougeClientReview`, `hemomancy.sigilGougeReview`) in `gradle/review-clients.gradle` |
 | GameTests | `src/gameTest/.../RiteKindCharacterisationGameTests.java`, namespace `rite_kind_validation`; `WorkingCraftGameTests` |
 | Reference | `docs/HEMOMANCY_REFERENCE.md` §5.3 (flow, purposes, floors, special floors, rite spaces, braziers), §25.1 to §25.2; `wiki/Harbinger-Path.md` "Cardinal Rites" |
 
@@ -104,11 +109,40 @@ Owner sheet, recorded 2026-11-13 (built 2026-11-14 where it changed code):
 - NQ-13-2 (2026-11-15): hand Projection into a rite-locked station is refused and costs nothing (F-12).
 - NQ-13-3 (2026-11-15): the rite-ground claim stays as built: running rites only, plain Projection only. It is reopened only if play shows a Sculpting breaking a running rite's floor.
 - NQ-13-4 (2026-11-15): the other two icon pairs take existing items (Hungering Earth the Sanguine Formation, Possession Adipocere), with a no-shared-icon check.
-- NQ-13-5 (2026-11-15): the Liber lines cover the 19 Harbinger rites with no entry; the 18 Working crafts and the 5 Unstained rites are left out.
+- NQ-13-5 (2026-11-15): the Liber lines cover the 19 Harbinger rites with no entry; the 18 Working crafts and the Unstained rites are left out. (The row counted 5 Unstained rites; the data holds 17, all left out.)
 - UN-48 (2026-11-15): the solo ordeal stall was diagnosed first. It was a harness bug, so no lever was needed.
 - PT-38 (2026-11-13): the first Hematic Unbinding warns at activation, before the Nether Star is taken. The leader's first activation says the warning and starts nothing; a second inside ten minutes (`HematicUnbindingRules.CONFIRMATION_TICKS`, 12,000 ticks) starts the rite, and its completion dissolves the line with no second warning. One Nether Star in all. The window is session state (`HematicUnbindingRules`, cleared by `TransientServerStateEvents`), not root persistent data.
 
 ## Calls made without the user
+
+Ichorian Sigil rendering (2026-11-19, built uncommitted; spec `docs/superpowers/specs/2026-11-19-ichorian-sigil-rendering-design.md`, plan `docs/superpowers/plans/2026-11-19-ichorian-sigil-rendering.md`; the calls are the builder's and wait for the owner's look, row "Sigil gouges" in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md)):
+
+- Sigil links are gouges cut into the ground, drawn by their own `ichorian_sigil_gouge` shader on any ground: they cut in link by link as nodes are fed and stay dry until the pattern closes; then they fill, a glow front runs the pattern in node order and settles to an ember on the rite's heartbeat, veins creep from the lips and a branching, writhing growth rises from each node toward the form, stopping short of it. Links meet on mitred joints, and a pattern's loose ends taper to a point. The ribbon links are gone. Behaviour and numbers: `docs/HEMOMANCY_REFERENCE.md` §25.2 (the paragraph that starts "During Consecration").
+- An awakened sigil's links stay in the rite sync (`CardinalRiteInteractionHandler.groundSigils`); they used to drop out when the form peeled away. The node landmarks still go then (they are `activeSigils`), so the tendrils rise from the bare gouge ends.
+- A link between nodes at different heights is set on the ground under each cross-section (the renderer's `hugGround`), so it climbs the step where the ground does instead of running straight through the air or the block; the review's stepped still showed the straight strip floating off one side.
+- The node tendrils draw in the boundary's own unculled glow and core passes: HutosLib's tendril render types cull back faces, and the shared ribbon renderer's one-sided ribbons vanished there.
+- The living form hovers 2.2 blocks over its pattern's centre and turns slowly in place at a per-sigil rate instead of orbiting the rite; a form saved before the change discards itself on load.
+
+Correctness and kind pass (2026-11-18, asked for by the owner after the system analysis; the calls inside it are the builder's):
+
+- A Blood Domain's bleed belongs to its owner. While the owner is online it harms only what `ManipulationCombatHelper.canHarm(owner, target)` allows and names the owner (`indirectMagic(owner, owner)`), so villagers and NPCs still bleed but the owner's pets, teammates and protected players do not. While the owner is offline it bleeds only monsters (`Enemy`), with an unnamed source. Bloodline members are spared as before (`SanguineDominionEvents`, `CombatTargetingGuardrailTest.areaEffectsAskCanHarm`).
+- A collapse cracks only fragile cells that lie on the floor the rite was matched on (`CardinalRiteCeremonyRules.fragileFloorCells`); a rite with no matched floor cracks nothing. Every authored `fragile_offsets` entry already lands on its floor, so authored backlash is unchanged. The edit stays raw under RV-48; the allow-list reason now holds.
+- Three `riteType` values now name their floor's tier: Founding Fane `grand`, Hematic Unbinding `lesser`, Possession `grand`. `riteType` sizes the leash fallback, the threat ring and the boundary drawing. `CardinalRitePurposeDataTest.everyHarbingerRiteNamesTheTierOfItsFloor` holds every Harbinger rite to it. The three Unstained mismatches (Lethean Tide, Silver Dawn, Severed Covenant) are left for the Unstained ritual system (D-11).
+- Unstained rites are their own `RiteKind.UNSTAINED` (they were `COUNTDOWN`). The shared tick and the ending ask `bindsInBlood()` instead of the recipe's path. `CardinalRiteCompletion` still reads `isUnstained()` for path rules (preflight, Unstained completion, no rank-up or refund), because those are which path's rewards apply, not how the rite runs.
+- The ordeal engine asks the kind: `escrowedItsOfferings()` (station upgrades and crafts take nothing at the procession), `swallowsItsSubject()` (the craft finale) and `guttersOutUntouched()` (station upgrades never idle out). `ActiveCardinalRite` decides the station projection phase from the circuits its rite feeds. `RiteKindGuardrailTest` now also scans `CardinalRiteOrdealEngine`, `ActiveCardinalRite` and `CardinalRiteEscalation`, and keeps `.isUnstained()` out of the shared tick and the ending.
+- Sanguine Brotherhood and Hematic Fortification share a signature (one hematic iron powder on a Lesser Threshold floor). They never collide: Brotherhood's rank-up window closes at D4, the Degree Fortification opens at. Nothing changed.
+
+Structure and rules pass (2026-11-18, the owner's items 3 and 4 after the analysis; the calls inside it are the builder's):
+
+- Activation is one ordered list of named gates (`CardinalRiteActivation.GATES`), then `start`, `build` and `escrow`; `tryStart` only finds the station. Every refusal line and its order is unchanged. `RiteKindGuardrailTest.activationChecksItsGatesInOrder` keeps `tryStart` under 80 lines.
+- Ordeal waves are rows of `CardinalRiteWave` (objective, cue, checklist line, whether threats spawn and at what height); the engine, the interaction handler, the checklist and the wave rules switch on the row, never on an id string (`theOrdealAsksTheWaveTable`). An unknown or missing wave falls back to the Bloodlicker siphon, and `CardinalRiteWaveTest` fails if a recipe names a wave the table does not know.
+- A completion effect is keyed by the `completion_effect` its recipe names (27 recipes, ids equal to the old file names: `hemomancy:sanguine_dominion` and so on), not by the recipe's path. The Rite of Apotheos names `hemomancy:apotheos_rite`, a no-op effect that marks it for the shared Apotheos gates. The codec reads and writes the field; `everyNamedCompletionEffectRuns` (`rite_kind_validation`) fails if a named effect is not registered or a registered one is named by no rite.
+- Floorless crafts tick in their own subscriber (`BloodStructureTickEvents`, still once per level tick, F-11), and the Bloom's client list is resent by `QliphothBloomEvents`; the rite tick runs only rites.
+- The leash bleed and the Fargone drain pay through `BloodAccounting.payUpkeep` (intervals 1 and 20 ticks), so the diagnostics show them per tick. A dormant volume pays no upkeep; no Harbinger rite can run on one, since activation needs active blood.
+- The rite list goes to a viewer only when it differs from the last one it was sent (`LastSent` of the encoded list), replacing the empty-list rule.
+- `/tick freeze` stops a rite's client clocks: beat and ending ages, boundary growth, the escalation weather, the heartbeat and the rite-space motes wait on `AnimationTime.worldTicks()` (A-4). The heartbeat no longer strikes every tick while frozen.
+- The Hematic Unbinding warning and a Working craft's last hint are forgotten at logout.
+- Removed old-save code: the retired `sanguine_initiation` and `votary_rite` ids in the rite tick (a missing recipe already retires a rite), the `monolithic_script` to `palimpsest` rename and the `PROFESSION` phase on load. Kept: `legacy_sample` (a real refusal of a vial with no donor identity) and the lazy offering capture (late-matched stations and six GameTest fixtures use it).
 
 Overnight build, package P09 (2026-11-14), all the builder's calls:
 
@@ -136,7 +170,7 @@ Possession (`docs/archive/tracks/possession/01-rite-offerings.md`): Possession b
 
 ## Open questions
 
-Open questions live in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md). The one that belongs to this doc is NQ-10-3 (PT-31: the Sporitic Thurible is a D4 Working craft today, and the question decides whether it leaves that tier; the endgame area owns the row).
+Open questions live in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md). The play-and-tune row "Sigil gouges" holds the sigil rendering's numbers and unreviewed calls. The question that belongs to this doc is NQ-10-3 (PT-31: the Sporitic Thurible is a D4 Working craft today, and the question decides whether it leaves that tier; the endgame area owns the row).
 
 ## Proof owed and known gaps
 
@@ -146,7 +180,7 @@ Ruled and not built (the task numbers are in [chunk 13](owner_answers/13-rites-a
 
 Known failing or unproven:
 
-- PT-88: `apotheosRiteWithoutRescue` passed in the B25 runs. It failed in most runs before, so a later run that fails it is news.
+- PT-88: `apotheosRiteWithoutRescue` is required in the playthrough suite and passed in the B25 runs. It failed in most runs before the harness fix, so a later run that fails it is news.
 - The Chamber rite's visit path (PT-67) is proven only in a review client; the GameTest server has no Chamber.
 
 For the owner to play, look at or read:
@@ -159,6 +193,7 @@ For the owner to play, look at or read:
 - Look at the Bloodline Covenant, Hungering Earth and Possession map icons and say if any should be drawn art (FX-12).
 - Read the reworded Chamber refusal, `message.hemomancy.chamber_visit.rite_unavailable` (PT-67).
 - Read the 19 Liber lines and the new page "Blood Gourds" (DS-4). The Possession and Visitation lines touch the 2026-10-31 rulings.
+- Look at the sigil gouges and the hovering form: `build/sigil-gouge-client-review/screenshots/sigil-gouge-*.png` (open, completing, awake, low angle, stepped, night, two sigils), then tune the numbers listed in the "Sigil gouges" row.
 
 Other gaps:
 
@@ -184,4 +219,6 @@ Guardrails that hold the system: `RiteKindGuardrailTest`, `ActiveCardinalRiteNbt
 | 2026-11-14 | Second docs pass: the planned defaults of chunks 13 and 11 that touch rites are listed under "Calls made without the user", and the pointer names NQ-10-3 beside NQ-13-1. | [chunk 11](owner_answers/11-bloodline-and-throne.md) |
 
 What the audit asked for and where it stands: bug pass, server unification (`terminate()`, effect registry, data-driven waves, `RiteZone`) and client unification landed in the 2026-10-12 pass; the `RiteVariant` interface landed as `RiteKind` in step 11; effects (reactive membrane, culmination styles, collapse choreography, wave telegraphs, daemon geometry, `rite.*` sounds) landed on 2026-10-12 and 2026-10-13; gameplay archetypes, sigil modifiers beyond the Reservoir refund, the participatory procession and the Unstained stillness ceremony have not.
+| 2026-11-18 | Structure and rules pass: gated activation, the wave table, effects keyed by `completion_effect`, floorless and Bloom ticks apart, upkeep drains, changed-only rite sync, the freeze fix, logout forgetting, old-save code removed, doc drift fixed. | "Calls made without the user" above |
+| 2026-11-18 | Correctness and kind pass: owner-gated domain bleed, floor-only collapse backlash, three `riteType` fixes, `RiteKind.UNSTAINED` and the ordeal engine's kind hooks, with the guardrail widened. | "Calls made without the user" above |
 | 2026-11-15 | Package B25: the rite lock stops hand Projection (F-12), the "already attained" line, the 19 Liber lines, own map icons with a check, new group tints, the merged editor preview, the PT-88 harness fix and the Chamber visit review client. | [build log](owner_answers/BUILD_LOG_2.md) |

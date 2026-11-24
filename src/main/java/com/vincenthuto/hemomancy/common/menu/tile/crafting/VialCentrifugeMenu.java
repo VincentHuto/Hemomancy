@@ -62,44 +62,39 @@ public class VialCentrifugeMenu extends HemoContainerMenu {
 		this.te = te;
 		this.data = containerData;
 
-		// SLOTS — positioned for programmatic UI layout
-		// Blood flask slot (bottom-left, below blood bar)
+		// SLOTS — laid out as the machine: reservoir jar on the left, swing-bucket rotor in the splash bowl,
+		// fraction receivers on the right and the powder tray under the bowl (VialCentrifugeScreen draws them).
+		// Bloody flask pours in above the reservoir jar
 		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class,
-				VialCentrifugeBlockEntity.SLOT_BLOOD, 16, 8, 90) {
+				VialCentrifugeBlockEntity.SLOT_BLOOD, 16, 12, 16) {
 			@Override public boolean mayPlace(ItemStack stack) { return !te.isRiteLocked() && super.mayPlace(stack); }
 			@Override public boolean mayPickup(Player player) { return !te.isRiteLocked(); }
 		});
 
-		// Vial slots — ring arrangement centered around (77, 50)
-		// Radius 28, 8 slots at 45° increments (clockwise from top)
-		// Slot coords are center minus 8 to get top-left corner
-		addSlot(new CentrifugeSlot(te, 2, 69, 14));   // top
-		addSlot(new CentrifugeSlot(te, 3, 89, 22));   // top-right
-		addSlot(new CentrifugeSlot(te, 4, 97, 42));   // right
-		addSlot(new CentrifugeSlot(te, 5, 89, 62));   // bottom-right
-		addSlot(new CentrifugeSlot(te, 6, 69, 70));   // bottom
-		addSlot(new CentrifugeSlot(te, 7, 49, 62));   // bottom-left
-		addSlot(new CentrifugeSlot(te, 8, 41, 42));   // left
-		addSlot(new CentrifugeSlot(te, 9, 49, 22));   // top-left
+		// Buckets on the rotor: radius 28 around (80, 54), clockwise from the top, so each balanced pair
+		// (2,6) (3,7) (4,8) (5,9) sits opposite itself as on the model (VialCentrifugeRotorRules.slotAngle)
+		addSlot(new CentrifugeSlot(te, 2, 72, 18));   // top
+		addSlot(new CentrifugeSlot(te, 3, 92, 26));   // top-right
+		addSlot(new CentrifugeSlot(te, 4, 100, 46));  // right
+		addSlot(new CentrifugeSlot(te, 5, 92, 66));   // bottom-right
+		addSlot(new CentrifugeSlot(te, 6, 72, 74));   // bottom
+		addSlot(new CentrifugeSlot(te, 7, 52, 66));   // bottom-left
+		addSlot(new CentrifugeSlot(te, 8, 44, 46));   // left
+		addSlot(new CentrifugeSlot(te, 9, 52, 26));   // top-left
 
-		// Output slots (2x4 grid on the right, 18px spacing)
-		addSlot(new CentrifugeOutputSlot(te, 10, 128, 14));
-		addSlot(new CentrifugeOutputSlot(te, 11, 146, 14));
-		addSlot(new CentrifugeOutputSlot(te, 12, 128, 32));
-		addSlot(new CentrifugeOutputSlot(te, 13, 146, 32));
-		addSlot(new CentrifugeOutputSlot(te, 14, 128, 50));
-		addSlot(new CentrifugeOutputSlot(te, 15, 146, 50));
-		addSlot(new CentrifugeOutputSlot(te, 16, 128, 68));
-		addSlot(new CentrifugeOutputSlot(te, 17, 146, 68));
+		// Fraction receivers: a 2x4 rack fed by the bowl's spout
+		for (int row = 0; row < 4; row++)
+			for (int col = 0; col < 2; col++)
+				addSlot(new CentrifugeOutputSlot(te, 10 + row * 2 + col, 130 + col * 18, 22 + row * 18));
 
-		// Aux output (below output grid, within craft area)
-		addSlot(new CentrifugeOutputSlot(te, 18, 137, 88));
+		// Iron powder settles into the tray under the bowl
+		addSlot(new CentrifugeOutputSlot(te, 18, 72, 100));
 
-		// Flask output (next to blood input slot — empty flasks from consumed bloody flasks)
-		addSlot(new CentrifugeOutputSlot(te, VialCentrifugeBlockEntity.SLOT_FLASK_OUTPUT, 26, 90));
+		// The emptied flask drops out under the reservoir jar
+		addSlot(new CentrifugeOutputSlot(te, VialCentrifugeBlockEntity.SLOT_FLASK_OUTPUT, 12, 98));
 
 		// INVENTORY
-		addPlayerInventory(playerInv, 8, 122);
+		addPlayerInventory(playerInv, 8, 134);
 
 		this.addDataSlots(containerData);
 	}

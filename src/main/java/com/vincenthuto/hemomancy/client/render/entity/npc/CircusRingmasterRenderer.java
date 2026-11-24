@@ -49,7 +49,7 @@ public final class CircusRingmasterRenderer extends MobRenderer<CircusRingmaster
 	private boolean drawingFake;
 
 	public CircusRingmasterRenderer(EntityRendererProvider.Context context) {
-		super(context, new CircusRingmasterModel(context.bakeLayer(CircusRingmasterModel.LAYER_LOCATION)), 0.45F);
+		super(context, new CircusRingmasterModel(), 0.45F);
 		addLayer(new EyesLayer<>(this) {
 			@Override public RenderType renderType() { return GLOW; }
 		});

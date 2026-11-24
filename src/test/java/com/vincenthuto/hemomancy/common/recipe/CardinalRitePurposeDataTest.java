@@ -76,4 +76,18 @@ final class CardinalRitePurposeDataTest {
 		}
 		assertEquals(PURPOSES.keySet(), seen);
 	}
+
+	/** A rite's {@code riteType} sizes its leash, threat ring and boundary, so it names the tier of the floor it stands on. */
+	@Test
+	void everyHarbingerRiteNamesTheTierOfItsFloor() throws IOException {
+		try (var paths = Files.walk(RITE_ROOT)) {
+			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
+				JsonObject json = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
+				if (json.has("unstained") && json.get("unstained").getAsBoolean()) continue;
+				String floor = json.get("floor").getAsString();
+				assertEquals(floor.substring(floor.lastIndexOf('_') + 1), json.get("riteType").getAsString(),
+						path + " riteType against its floor " + floor);
+			}
+		}
+	}
 }

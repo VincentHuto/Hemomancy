@@ -12,9 +12,9 @@ public final class BombardierFlameAttack {
 
     public static void tickServer(PhlegethonticBombardier attacker) {
         int flameTick = attacker.getStateTick();
-        Vec3 nozzle = attacker.getAbdominalNozzlePosition(1.0F);
         Vec3 direction = BombardierFlameGeometry.sweepDirection(attacker.getLockedDirection(),
-                flameTick, PhlegethonticBombardier.FLAME_DURATION, 50.0);
+                flameTick, PhlegethonticBombardier.FLAME_DURATION, BombardierFlameGeometry.SWEEP_DEGREES);
+        Vec3 nozzle = BombardierFlameGeometry.valveMouth(attacker.raisedValvePivot(), direction);
         if (attacker.level() instanceof ServerLevel server) {
             ManipulationVisuals.burst(server, ManipulationVisuals.Form.BOMBARDIER_SWEEP,
                     nozzle, nozzle.add(direction.scale(PhlegethonticBombardier.MAX_FLAME_RANGE)), .35, 2);

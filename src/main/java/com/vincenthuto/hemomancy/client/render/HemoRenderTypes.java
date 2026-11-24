@@ -1360,6 +1360,27 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	/** The shader time of the Ichorian Sigil gouges, set once a frame before their batch. */
+	private static final SchoolRenderTypes.Clock ICHORIAN_SIGIL_GOUGE_CLOCK = new SchoolRenderTypes.Clock();
+
+	/**
+	 * Every Ichorian Sigil link gouged into the ground ({@code CardinalRiteBoundaryRenderer}): translucent, depth-tested,
+	 * writing no depth, unculled. Each link's stages ride its vertices, so one type serves every link of every rite;
+	 * only the shader time is a uniform.
+	 */
+	private static final RenderType ICHORIAN_SIGIL_GOUGE = SchoolRenderTypes.create(ICHORIAN_SIGIL_GOUGE_CLOCK,
+			"ichorian_sigil_gouge", ShaderInit.ICHORIAN_SIGIL_GOUGE, DefaultVertexFormat.NEW_ENTITY, false, false, 1.0F);
+
+	/** The one render type of the sigil gouges; call {@link #beginIchorianSigilGouge} with the frame's time first. */
+	public static RenderType ichorianSigilGouge() {
+		return ICHORIAN_SIGIL_GOUGE;
+	}
+
+	/** Sets the sigil gouges' shader time, in ticks, for the batch about to be drawn. */
+	public static void beginIchorianSigilGouge(double ticks) {
+		ICHORIAN_SIGIL_GOUGE_CLOCK.begin(ticks);
+	}
+
 	/**
 	 * The ward burning into an Apotheos on hallowed ground, drawn over the player model with its {@code skin}: charred
 	 * hyphae and crawling runes, in the same shader as the ward on the stone. Vertex rgb is the ward colour and alpha

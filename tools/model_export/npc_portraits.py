@@ -3,11 +3,12 @@
 The portrait is the `<texture>_portrait.png` companion DialogueScreen resolves next to the speaker texture (48 x 48):
 a render of the NPC's own model, head and shoulders, three-quarter view, over a backdrop for its side. Unlike the Court
 roles these models are hand-authored Java layer definitions, so the script reads `createBodyLayer()` straight from the
-model source and renders it with the model's own texture.
+model source for most NPCs. The four physical performers use their Blockbench projects.
 
     python tools/model_export/npc_portraits.py                 # every NPC below
     python tools/model_export/npc_portraits.py harbinger_vicar # one NPC
 """
+import json
 import math
 import re
 import sys
@@ -16,6 +17,8 @@ import numpy as np
 from PIL import Image
 
 from annetta_kit import ROOT
+from export_circus_performers import PROJECTS, ROLES, prepare
+from export_choir_keeper_java import FACES, relative, rotation
 from unstained_weapons import face_rects, local_point, render_quads, rot_matrix
 
 MODELS = ROOT / 'src/main/java/com/vincenthuto/hemomancy/client/model/entity/npc'
@@ -79,6 +82,7 @@ NPCS = {
 
 # Models whose crown or hat sits further above the head pivot frame this much further up (model px).
 LIFT = {'ringmaster': 3}
+CIRCUS_ROLES = {texture: role for role, texture in ROLES.items()}
 
 
 def number(text):
@@ -216,19 +220,55 @@ def model_quads(parts, hidden):
     return result
 
 
+def circus_quads(role):
+    project = json.loads((PROJECTS / f"Circus{role}Model.bbmodel").read_text(encoding="utf-8"))
+    prepare(project, role)
+    elements = {cube["uuid"]: cube for cube in project["elements"]}
+    root, = project["outliner"]
+    # Match the native FaceUvCube winding and independent face UVs.
+    corners = ((1, 0, 2, 3), (5, 1, 3, 7), (4, 5, 7, 6),
+               (0, 4, 6, 2), (0, 1, 5, 4), (6, 7, 3, 2))
+    quads = []
+
+    def visit(group):
+        for child in group["children"]:
+            if isinstance(child, dict):
+                if not child["name"].startswith("juggle_knife_"):
+                    visit(child)
+                continue
+            cube = elements[child]
+            a, b = cube["from"], cube["to"]
+            pivot = cube["origin"]
+            lo = relative((a[0], b[1], a[2]), pivot)
+            hi = relative((b[0], a[1], b[2]), pivot)
+            points = np.array([[hi[axis] if index & (1 << axis) else lo[axis] for axis in range(3)]
+                               for index in range(8)])
+            points = points @ rot_matrix(rotation(cube)).T + relative(pivot, root["origin"])
+            for face, indices in zip(FACES, corners):
+                u, v, U, V = cube["faces"][face]["uv"]
+                quads.append((points[list(indices)], np.array(((u, v), (U, v), (U, V), (u, V)))))
+    visit(root)
+    head = next(child for child in root["children"] if child["name"] == "head")
+    return quads, relative(head["origin"], root["origin"])[1]
+
+
 def mix(a, b, t):
     return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
 
 
 def portrait(npc):
     java_class, texture, side, (top, bottom), hidden = NPCS[npc]
-    parts = parse_model(java_class)
-    head = transforms(parts).get('head')
-    y = head[1, 3] if head is not None else 0.0
+    if npc in CIRCUS_ROLES:
+        quads, y = circus_quads(CIRCUS_ROLES[npc])
+    else:
+        parts = parse_model(java_class)
+        head = transforms(parts).get('head')
+        y = head[1, 3] if head is not None else 0.0
+        quads = model_quads(parts, hidden)
     atlas = Image.open(NPC / texture).convert('RGBA')
     lift = LIFT.get(npc, 0)
-    image = render_quads(model_quads(parts, hidden), atlas, -0.4, 0.06, 480,
-                         focus=(y - 12.5 - lift, y + 6.5 - lift))
+    focus = (y - 17.5, y + 8.5) if npc == 'stilt_walker' else (y - 12.5 - lift, y + 6.5 - lift)
+    image = render_quads(quads, atlas, -0.4, 0.06, 480, focus=focus)
     light = SIDES[side]['light']
     out = Image.new('RGB', image.size)
     px, src = out.load(), image.load()

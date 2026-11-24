@@ -45,6 +45,8 @@ import java.util.List;
 public class QliphothBloomEvents {
 
 	private static final int EFFECT_APPLICATION_INTERVAL_TICKS = 40;
+	/** Ticks between resends of every Bloom to every client. */
+	private static final int BLOOM_SYNC_INTERVAL_TICKS = 200;
 	private static final int REGEN_DURATION = 50;
 	private static final double BLOOD_REGEN_PER_TICK = 5.0;
 	private static final int POME_RIPEN_CHANCE = 80;
@@ -86,6 +88,11 @@ public class QliphothBloomEvents {
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
 		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
+		// Blooms outlive their rites, so their client list is resent on its own clock. Only the Overworld sends it,
+		// so another dimension's tick never overwrites the list with an empty set.
+		if (sLevel == sLevel.getServer().overworld() && sLevel.getGameTime() % BLOOM_SYNC_INTERVAL_TICKS == 0) {
+			HarbingerCardinalRiteEvents.syncQliphothBlooms(sLevel.getServer());
+		}
 		if (sLevel.getGameTime() % EFFECT_APPLICATION_INTERVAL_TICKS != 0) return;
 
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(sLevel.getServer().overworld());

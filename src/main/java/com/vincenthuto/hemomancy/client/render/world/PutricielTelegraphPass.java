@@ -266,10 +266,10 @@ final class PutricielTelegraphPass {
 		}
 		if (s.spore()) {
 			float wake = PutricielBloomRules.wake(m.age(), m.active());
-			for (int c = 0; c < 2 && wake > 0.0F; c++) {
-				List<Vec3> path = trail(s, m, c, -PutricielBloomRules.WAKE_LEAD, Math.min(m.age(), m.active() + 1.0F), 12);
+			if (wake > 0.0F) {
+				List<Vec3> path = trail(s, m, CENSER, -PutricielBloomRules.WAKE_LEAD, Math.min(m.age(), m.active() + 1.0F), 12);
 				PutricielSporeGeometry.wake(s.p(), s.spores(), path, Vec3.ZERO, s.right(), s.up(), s.time(), 0.32D,
-						PutricielBloomRules.fray(m.age(), m.active()), wake, m.seed() + 70 + c * 9);
+						PutricielBloomRules.fray(m.age(), m.active()), wake, m.seed() + 70);
 			}
 		}
 	}
@@ -331,9 +331,9 @@ final class PutricielTelegraphPass {
 		if (!s.spore()) return;
 		// the censer's swing up and its drop: the last ten ticks of the wind-up
 		float wake = HemoEasing.window(m.age(), -10.0F, -7.0F, m.active(), m.active() + PutricielBloomRules.WAKE_LINGER);
-		for (int c = 0; c < 2 && wake > 0.0F; c++) {
-			PutricielSporeGeometry.wake(s.p(), s.spores(), trail(s, m, c, -8.0F, Math.min(m.age(), 1.0F), 10), Vec3.ZERO, s.right(), s.up(),
-					s.time(), 0.26D, PutricielBloomRules.fray(m.age(), m.active()), wake * 0.8F, m.seed() + 90 + c);
+		if (wake > 0.0F) {
+			PutricielSporeGeometry.wake(s.p(), s.spores(), trail(s, m, CENSER, -8.0F, Math.min(m.age(), 1.0F), 10), Vec3.ZERO, s.right(), s.up(),
+					s.time(), 0.26D, PutricielBloomRules.fray(m.age(), m.active()), wake * 0.8F, m.seed() + 90);
 		}
 		Vec3 local = s.local(centre);
 		PutricielSporeGeometry.splash(s.p(), s.spores(), local, Vec3.ZERO, s.right(), s.up(), m.age(), 1.4D, 2.2D, 1.0F, m.seed() + 95);
@@ -684,10 +684,8 @@ final class PutricielTelegraphPass {
 				}
 			}
 		}
-		for (int c = 0; c < 2; c++) {
-			PutricielSporeGeometry.wake(s.p(), s.spores(), trail(s, m, c, clamped - 5.0F, clamped, 8), Vec3.ZERO, s.right(), s.up(), s.time(),
-					0.24D, PutricielBloomRules.fray(m.age(), m.active()), envelope * 0.8F, m.seed() + 200 + c);
-		}
+		PutricielSporeGeometry.wake(s.p(), s.spores(), trail(s, m, CENSER, clamped - 5.0F, clamped, 8), Vec3.ZERO,
+				s.right(), s.up(), s.time(), 0.24D, PutricielBloomRules.fray(m.age(), m.active()), envelope * 0.8F, m.seed() + 200);
 	}
 
 	/**
@@ -875,9 +873,9 @@ final class PutricielTelegraphPass {
 			PutricielFlameGeometry.sparks(s.p(), s.flame(), head.add(0.0D, 0.6D, 0.0D), lean, s.right(), s.up(), m.age(), 2.4D, 10,
 					m.seed() + 4, 1.0F);
 		}
-		// the sweep itself: fire along the staff head's and both censers' real paths through the swing
+		// the sweep itself: fire along the paths of the staff head and censer through the swing
 		float wake = PutricielBloomRules.wake(m.age(), m.active());
-		for (int limb = CENSER_LEFT; limb <= STAFF_HEAD && wake > 0.0F; limb++) {
+		for (int limb = CENSER; limb <= STAFF_HEAD && wake > 0.0F; limb++) {
 			if (limb == PALM) continue;
 			limbFire(s, m, limb, -PutricielBloomRules.WAKE_LEAD, Math.min(m.age(), m.active() + 1.0F), wake);
 		}
@@ -902,7 +900,7 @@ final class PutricielTelegraphPass {
 		}
 		if (!s.spore()) return;
 		if (m.age() < 1.0F) {
-			for (int c = CENSER_LEFT; c <= CENSER_RIGHT; c++) limbFire(s, m, c, -9.0F, Math.min(m.age(), 0.0F), burn.alpha());
+			limbFire(s, m, CENSER, -9.0F, Math.min(m.age(), 0.0F), burn.alpha());
 		}
 		if (m.age() < 0.0F) return;
 		Vec3 local = s.local(centre);
@@ -1377,8 +1375,8 @@ final class PutricielTelegraphPass {
 		}
 	}
 
-	/** The limbs whose real paths the renderer keeps: the two censers, the offering palm and the staff head. */
-	static final int CENSER_LEFT = 0, CENSER_RIGHT = 1, PALM = 2, STAFF_HEAD = 3;
+	/** The limbs whose real paths the renderer keeps: the censer, the offering palm and the staff head. */
+	static final int CENSER = 0, PALM = 1, STAFF_HEAD = 2;
 
 	/**
 	 * A limb's real path between two ages (ticks from the commit), camera-relative, oldest first: read from the trails

@@ -1,169 +1,74 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.aquatic;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.animation.KeyframeAnimations;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.util.Mth;
 
-public class BarbedUrchinModel<T extends Entity> extends HierarchicalModel<T> {
-	// This layer location should be baked with EntityRendererProvider.Context in
-	// the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("modelbarbedurchin"),
-			"main");
-	private final ModelPart whole;
+public final class BarbedUrchinModel extends HierarchicalModel<BarbedUrchinEntity> {
+    private final ModelPart body = BarbedUrchinMesh.createRoot();
+    private final ModelPart root = new ModelPart(List.of(), Map.of("barbed_urchin", body));
+    private final ModelPart[] crown = spines("crown", 5);
+    private final ModelPart[] shoulder = spines("shoulder", 10);
+    private final ModelPart[] equator = spines("equatorial", 10);
+    private final ModelPart[] lower = spines("lower", 10);
+    private final ModelPart[] feet = new ModelPart[5];
 
-	public BarbedUrchinModel(ModelPart root) {
-		this.whole = root.getChild("whole");
-	}
+    public BarbedUrchinModel() {
+        ModelPart tubeFeet = body.getChild("tube_feet");
+        for (int i = 0; i < feet.length; i++) {
+            feet[i] = tubeFeet.getChild("tube_foot_" + (i + 1));
+        }
+    }
 
-	public static LayerDefinition createBodyLayer() {
-		MeshDefinition meshdefinition = new MeshDefinition();
-		PartDefinition partdefinition = meshdefinition.getRoot();
+    private ModelPart[] spines(String name, int count) {
+        ModelPart ring = body.getChild(name + "_spines");
+        ModelPart[] hinges = new ModelPart[count];
+        for (int i = 0; i < count; i++) {
+            int number = i + 1;
+            String spine = name + "_spine_" + (number < 10 ? "0" : "") + number;
+            hinges[i] = ring.getChild(spine).getChild(spine + "_spine_hinge");
+        }
+        return hinges;
+    }
 
-		PartDefinition whole = partdefinition.addOrReplaceChild("whole", CubeListBuilder.create(),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
+    @Override
+    public ModelPart root() {
+        return root;
+    }
 
-		PartDefinition base = whole.addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 22).addBox(-5.0F,
-				-2.0F, -5.0F, 10.0F, 2.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+    @Override
+    public void setupAnim(BarbedUrchinEntity entity, float swing, float swingAmount,
+                          float age, float yaw, float pitch) {
+        float partialTick = Mth.clamp(age - entity.tickCount, 0.0F, 1.0F);
+        pose(entity.getVisualPuff(partialTick), age + entity.getId() * 1.9F, swing, swingAmount);
+    }
 
-		PartDefinition base2 = whole.addOrReplaceChild("base2",
-				CubeListBuilder.create().texOffs(0, 0)
-						.addBox(-6.0F, -2.25F, -6.0F, 12.0F, 10.0F, 12.0F, new CubeDeformation(0.0F)).texOffs(2, 2)
-						.addBox(-5.0F, -3.25F, -5.0F, 10.0F, 1.0F, 10.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, -9.75F, 0.0F));
+    void pose(float puff, float age, float swing, float swingAmount) {
+        float folded = 1.0F - puff * 0.5F;
+        float wave = age * 0.16F;
+        animateRing(crown, folded, -26.0F, 0.65F, wave);
+        animateRing(shoulder, folded, 22.0F, 1.15F, wave + 0.8F);
+        animateRing(equator, folded, 39.0F, 1.5F, wave + 1.6F);
+        animateRing(lower, folded, 25.0F, 1.0F, wave + 2.4F);
 
-		PartDefinition bone3 = base2.addOrReplaceChild("bone3",
-				CubeListBuilder.create().texOffs(32, 56)
-						.addBox(-8.0F, -4.25F, 4.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(32, 34)
-						.addBox(-8.0F, -3.25F, -4.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)),
-				PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.7854F, 0.0F));
+        float stride = Mth.clamp(swingAmount * 3.0F, 0.0F, 1.0F) * folded;
+        for (int i = 0; i < feet.length; i++) {
+            float phase = swing * 2.5F + i * Mth.TWO_PI / feet.length;
+            ModelPart foot = feet[i];
+            foot.xRot = foot.getInitialPose().xRot + Mth.sin(phase) * 0.15F * stride;
+            foot.y = foot.getInitialPose().y - Math.max(0.0F, Mth.cos(phase)) * 0.6F * stride;
+        }
+    }
 
-		PartDefinition bone2 = base2.addOrReplaceChild("bone2",
-				CubeListBuilder.create().texOffs(0, 56)
-						.addBox(-8.0F, -4.5F, 3.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(48, 11)
-						.addBox(-8.0F, -5.5F, 2.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(0, 45)
-						.addBox(-8.0F, -5.5F, 0.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(36, 0)
-						.addBox(-8.0F, -6.5F, -2.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(0, 34)
-						.addBox(-8.0F, -5.5F, -3.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 1.25F, 0.0F));
-
-		PartDefinition bone6 = bone2.addOrReplaceChild("bone6",
-				CubeListBuilder.create().texOffs(40, 22)
-						.addBox(-8.0F, -5.0F, -1.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(32, 45)
-						.addBox(-8.0F, -6.0F, 1.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)),
-				PartPose.offsetAndRotation(0.0F, -0.5F, 0.0F, 0.0F, -0.7854F, 0.0F));
-
-		PartDefinition bone = base2.addOrReplaceChild("bone",
-				CubeListBuilder.create().texOffs(72, 22)
-						.addBox(-8.0F, -5.5F, 3.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(68, 0)
-						.addBox(-8.0F, -5.5F, 2.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(0, 67)
-						.addBox(-8.0F, -5.5F, 0.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(64, 55)
-						.addBox(-8.0F, -5.5F, -2.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(64, 33)
-						.addBox(-8.0F, -5.5F, -3.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)),
-				PartPose.offsetAndRotation(0.0F, 1.25F, 0.0F, 0.0F, -1.5708F, 0.0F));
-
-		PartDefinition bone5 = bone.addOrReplaceChild("bone5",
-				CubeListBuilder.create().texOffs(64, 66)
-						.addBox(-8.0F, -15.0F, -1.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(32, 67)
-						.addBox(-8.0F, -15.0F, 1.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)),
-				PartPose.offsetAndRotation(0.0F, 8.5F, 0.0F, 0.0F, -0.7854F, 0.0F));
-
-		PartDefinition bone4 = bone.addOrReplaceChild("bone4",
-				CubeListBuilder.create().texOffs(64, 77)
-						.addBox(-8.0F, -5.5F, 4.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(64, 44)
-						.addBox(-8.0F, -5.5F, -4.0F, 16.0F, 11.0F, 0.0F, new CubeDeformation(0.0F)),
-				PartPose.offsetAndRotation(0.0F, 1.0F, 0.0F, 0.0F, 0.7854F, 0.0F));
-
-		return LayerDefinition.create(meshdefinition, 128, 128);
-	}
-
-	@Override
-	public ModelPart root() {
-		return this.whole;
-	}
-
-	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
-		whole.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
-	}
-
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks,
-			float netHeadYaw, float headPitch) {
-		this.root().getAllParts().forEach(ModelPart::resetPose);
-		entity.level().random.nextFloat();
-		this.animate(((BarbedUrchinEntity)entity).idleAnimationState, BarbedUrchinModel.IDLE, ageInTicks );
-
-	}
-
-	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(2f)
-			.looping()
-			.addAnimation("base2",
-					new AnimationChannel(AnimationChannel.Targets.SCALE,
-							new Keyframe(0f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(0.8343334f, KeyframeAnimations.scaleVec(0.95f, 0.95f, 0.95f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.0416767f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.2916767f, KeyframeAnimations.scaleVec(0.95f, 0.95f, 0.95f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.5f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(2f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM)))
-			.addAnimation("bone3",
-					new AnimationChannel(AnimationChannel.Targets.SCALE,
-							new Keyframe(0f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(0.8343334f, KeyframeAnimations.scaleVec(0.95f, 0.95f, 0.95f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.0416767f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.2916767f, KeyframeAnimations.scaleVec(0.95f, 0.95f, 0.95f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.5f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(2f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM)))
-			.addAnimation("bone2",
-					new AnimationChannel(AnimationChannel.Targets.SCALE,
-							new Keyframe(0f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(0.8343334f, KeyframeAnimations.scaleVec(0.95f, 0.95f, 0.95f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.0416767f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.2916767f, KeyframeAnimations.scaleVec(0.95f, 0.95f, 0.95f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.5f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(2f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM)))
-			.addAnimation("bone",
-					new AnimationChannel(AnimationChannel.Targets.SCALE,
-							new Keyframe(0f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(0.8343334f, KeyframeAnimations.scaleVec(0.95f, 0.95f, 0.95f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.0416767f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.2916767f, KeyframeAnimations.scaleVec(0.95f, 0.95f, 0.95f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(1.5f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM),
-							new Keyframe(2f, KeyframeAnimations.scaleVec(1f, 1f, 1f),
-									AnimationChannel.Interpolations.CATMULLROM)))
-			.build();
-
+    private static void animateRing(ModelPart[] hinges, float folded, float foldAngle, float travel, float wave) {
+        for (int i = 0; i < hinges.length; i++) {
+            ModelPart hinge = hinges[i];
+            float ripple = Mth.sin(wave + i * Mth.TWO_PI / hinges.length) * 3.0F * folded;
+            hinge.xRot = hinge.getInitialPose().xRot + (foldAngle * folded + ripple) * Mth.DEG_TO_RAD;
+            hinge.z = hinge.getInitialPose().z - travel * folded;
+        }
+    }
 }

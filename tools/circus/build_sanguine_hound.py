@@ -1,14 +1,17 @@
-"""Rebuild the Sanguine Hound's connected Java rig, painted atlas and portable BBModel.
+"""Bake the authored Hound into its in-game rig and atlases.
 
-Geometry, materials and animation live here; puppet_rig.py packs UVs, writes the Java model,
-exports the Blockbench file and paints the atlas so all three stay in step.
+The older anatomy and palette below remain the source for the Chamber true self.
 """
-from puppet_rig import ROOT, BBMODELS, build as build_rig, noise, front_edge, back_edge
+import json
+import math
+import re
 
-MODEL = BBMODELS / 'SanguineHoundModel.bbmodel'
+from PIL import Image
+
+from puppet_rig import ROOT, ASSETS, MODELS, BBMODELS, TEXTURES, noise, front_edge
+
 PALETTE = ['#140e12', '#2a1b20', '#523039', '#79333e', '#a44549', '#d06a5c',
            '#8a7e74', '#d8c9a8', '#4c4a52', '#807a84', '#2f2a33', '#6b4a2e']
-CUR_FLESH = {2: '#6e2030', 3: '#a3283a', 4: '#d4404a'}
 
 
 def anatomy():
@@ -104,76 +107,73 @@ def shade(material, side, px, py, w, h, gx, gy):
     raise ValueError('Unknown material ' + material)
 
 
-JAVA = r'''package com.vincenthuto.hemomancy.client.model.entity.summon;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.summon.SanguineHoundEntity;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-
-// Authored by tools/circus/build_sanguine_hound.py; regenerate the model, atlas and BBModel together.
-public class SanguineHoundModel extends EntityModel<SanguineHoundEntity> {
-	public static final ModelLayerLocation LAYER_LOCATION =
-			new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "sanguine_hound"), "main");
-
-	private final ModelPart root;
-	private final ModelPart head;
-	private final ModelPart frontLeftLeg;
-	private final ModelPart frontRightLeg;
-	private final ModelPart hindLeftLeg;
-	private final ModelPart hindRightLeg;
-	private final ModelPart tail;
-	private int color = -1;
-
-	public SanguineHoundModel(ModelPart root) {
-		this.root = root.getChild("root");
-		this.head = this.root.getChild("head");
-		this.frontLeftLeg = this.root.getChild("front_left_leg");
-		this.frontRightLeg = this.root.getChild("front_right_leg");
-		this.hindLeftLeg = this.root.getChild("hind_left_leg");
-		this.hindRightLeg = this.root.getChild("hind_right_leg");
-		this.tail = this.root.getChild("tail");
-	}
-
-	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = new MeshDefinition();
-        /* GEOMETRY */
-	}
-
-	@Override
-	public void setupAnim(SanguineHoundEntity entity, float limbSwing, float limbSwingAmount,
-			float ageInTicks, float netHeadYaw, float headPitch) {
-		this.head.yRot = netHeadYaw * Mth.DEG_TO_RAD;
-		this.head.xRot = headPitch * Mth.DEG_TO_RAD;
-		this.frontLeftLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.15F * limbSwingAmount;
-		this.frontRightLeg.xRot = Mth.cos(limbSwing * 0.6662F + Mth.PI) * 1.15F * limbSwingAmount;
-		this.hindLeftLeg.xRot = this.frontRightLeg.xRot;
-		this.hindRightLeg.xRot = this.frontLeftLeg.xRot;
-		this.tail.yRot = Mth.sin(ageInTicks * 0.12F) * 0.24F;
-	}
-
-	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
-			int packedOverlay, int packedColor) {
-		root.render(poseStack, buffer, packedLight, packedOverlay, color == -1 ? packedColor : color);
-	}
-
-	public void setColor(int color) {
-		this.color = color;
-	}
+# Warm the exposed blood tones on Curs while preserving the hardware and bone.
+CUR_BLOOD = {
+    '3c1624': '591529', '641c30': '8c1a30', '8c2739': 'b82a3d',
+    'ab3948': 'd84247', 'cd5b59': 'f66a62', 'a33345': 'cf3347',
+    'af6260': 'cc6260', '81434b': 'a74450', '35131f': '521220',
+    'be786e': 'db826f', '51232d': '63202c', '71313b': '8f2b3b',
+    '8e4349': 'a93b47', 'a55555': 'c44750', 'a5444c': 'c7404e',
+    '82253c': 'aa2942', '591c30': '791e33',
 }
-'''
+
+
+def java_numbers(values):
+    return ', '.join(f'{value:.8f}'.rstrip('0').rstrip('.') + 'F' for value in values)
+
+
+def java_geometry(model):
+    elements = {cube['uuid']: cube for cube in model['elements']}
+    lines = [
+        '\tpublic static LayerDefinition createBodyLayer() {',
+        '\t\tMeshDefinition mesh = new MeshDefinition();',
+    ]
+
+    def emit(group, parent, pivot):
+        name = group['name']
+        variable = re.sub(r'[^a-zA-Z0-9_]', '_', name)
+        origin = group['origin']
+        offset = [origin[0] - pivot[0], pivot[1] - origin[1], origin[2] - pivot[2]]
+        x, y, z = map(math.radians, group['rotation'])
+        pose = (f'offsetAndRotation({java_numbers([*offset, -x, y, -z])})'
+                if any(group['rotation']) else f'offset({java_numbers(offset)})')
+        lines.append(f'\t\tPartDefinition {variable} = {parent}.addOrReplaceChild("{name}", CubeListBuilder.create()')
+        for child in group['children']:
+            if isinstance(child, str):
+                cube = elements[child]
+                start, end = cube['from'], cube['to']
+                coords = [start[0] - origin[0], origin[1] - end[1], start[2] - origin[2]]
+                size = [high - low for low, high in zip(start, end)]
+                u, v = cube['uv_offset']
+                lines.append(f'\t\t\t\t.texOffs({u}, {v}).addBox({java_numbers(coords + size)})')
+        lines[-1] += f', PartPose.{pose});'
+        for child in group['children']:
+            if isinstance(child, dict):
+                emit(child, variable, origin)
+
+    for group in model['outliner']:
+        emit(group, 'mesh.getRoot()', [0, 24, 0])
+    size = model['resolution']
+    lines.extend([f'\t\treturn LayerDefinition.create(mesh, {size["width"]}, {size["height"]});', '\t}'])
+    return '\n'.join(lines)
 
 
 def build():
-    return build_rig('sanguine_hound', 'SanguineHoundModel', anatomy(), JAVA, shade, PALETTE, variants={'_cur': CUR_FLESH})
+    art = ROOT / 'docs/art/sanguine_hound_puppet'
+    model = (art / 'SanguineHoundPuppet.bbmodel').read_bytes()
+    atlas = art / 'sanguine_hound_puppet.png'
+    source = MODELS / 'SanguineHoundModel.java'
+    java = source.read_text(encoding='utf-8')
+    start = java.index('\t// BEGIN GENERATED HOUND GEOMETRY')
+    end = java.index('\t// END GENERATED HOUND GEOMETRY', start)
+    source.write_text(java[:start] + '\t// BEGIN GENERATED HOUND GEOMETRY\n'
+                      + java_geometry(json.loads(model)) + '\n' + java[end:], encoding='utf-8', newline='\n')
+    (BBMODELS / 'SanguineHoundModel.bbmodel').write_bytes(model)
+    (ASSETS / TEXTURES / 'sanguine_hound.png').write_bytes(atlas.read_bytes())
+    cur = Image.open(atlas).convert('RGBA')
+    swaps = {tuple(bytes.fromhex(a)): tuple(bytes.fromhex(b)) for a, b in CUR_BLOOD.items()}
+    cur.putdata([(*swaps.get((r, g, b), (r, g, b)), a) for r, g, b, a in cur.get_flattened_data()])
+    cur.save(ASSETS / TEXTURES / 'sanguine_hound_cur.png')
 
 
 if __name__ == '__main__':

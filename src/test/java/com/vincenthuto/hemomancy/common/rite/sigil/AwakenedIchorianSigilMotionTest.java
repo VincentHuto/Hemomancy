@@ -3,104 +3,77 @@ package com.vincenthuto.hemomancy.common.rite.sigil;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class AwakenedIchorianSigilMotionTest {
-	@Test
-	void beginsOnTheInscribedSurfaceAndFinishesPeelingAtTheOrbit() {
-		var start = AwakenedIchorianSigilMotion.position(
-				4.5D, 65.1D, 0.5D,
-				0.5D, 67.5D, 0.5D,
-				2.0D, 0.0D, 0);
-		var peeled = AwakenedIchorianSigilMotion.position(
-				4.5D, 65.1D, 0.5D,
-				0.5D, 67.5D, 0.5D,
-				2.0D, 0.0D, 30);
+	private static final double HOVER_X = 0.5D;
+	private static final double HOVER_Y = 67.3D;
+	private static final double HOVER_Z = 1.5D;
 
-		assertPosition(start, 4.5D, 65.1D, 0.5D);
-		assertPosition(peeled, 2.5D, 67.5D, 0.5D);
+	@Test
+	void beginsOnTheInscribedSurfaceAndFinishesPeelingAtTheHoverPoint() {
+		var start = position(0);
+		var peeled = position(AwakenedIchorianSigilMotion.PEEL_TICKS);
+
+		assertEquals(4.5D, start.x(), 0.0001D);
+		assertEquals(65.1D, start.y(), 0.0001D);
+		assertEquals(0.5D, start.z(), 0.0001D);
+		assertEquals(HOVER_X, peeled.x(), 0.0001D);
+		assertEquals(HOVER_Z, peeled.z(), 0.0001D);
+		assertTrue(Math.abs(peeled.y() - HOVER_Y) <= AwakenedIchorianSigilMotion.BOB_AMPLITUDE + 1.0E-6D);
 		assertEquals(0.0F, AwakenedIchorianSigilMotion.peelProgress(0), 0.0001F);
 		assertEquals(0.5F, AwakenedIchorianSigilMotion.peelProgress(15), 0.0001F);
 		assertEquals(1.0F, AwakenedIchorianSigilMotion.peelProgress(30), 0.0001F);
 	}
 
 	@Test
-	void orbitsTheRiteAfterPeelingFree() {
-		var quarterOrbit = AwakenedIchorianSigilMotion.position(
-				4.5D, 65.1D, 0.5D,
-				0.5D, 67.5D, 0.5D,
-				2.0D, 0.0D, 90);
-
-		assertPosition(quarterOrbit, 0.5D, 67.5D, 2.5D);
-	}
-
-	@Test
-	void everyKnownSigilHasADistinctFlightSignature() {
-		List<String> sigils = List.of(
-				"reservoir", "bastion", "hematic_lattice", "mnemonic",
-				"suture", "shunt", "seal", "cage", "lens");
-		Set<String> signatures = new HashSet<>();
-
-		for (String sigil : sigils) {
-			StringBuilder signature = new StringBuilder();
-			for (int age : List.of(60, 90, 120)) {
-				var position = personalityPosition(sigil, age);
-				signature.append(Math.round(position.x() * 100.0D)).append(':')
-						.append(Math.round(position.y() * 100.0D)).append(':')
-						.append(Math.round(position.z() * 100.0D)).append('|');
-			}
-			signatures.add(signature.toString());
-		}
-
-		assertEquals(9, signatures.size(), "each sigil needs a recognizable trajectory");
-	}
-
-	@Test
-	void ritualFunctionShapesTheMovementPersonality() {
-		var reservoir = personalityPosition("reservoir", 90);
-		var bastion = personalityPosition("bastion", 90);
-		var seal = personalityPosition("seal", 90);
-		var lens = personalityPosition("lens", 90);
-
-		assertTrue(horizontalDistance(reservoir) < horizontalDistance(bastion),
-				"the blood reservoir stays tucked safely inside the warden's patrol");
-		assertTrue(reservoir.y() < 67.5D, "the weighty reservoir flies low");
-		assertTrue(horizontalDistance(seal) < 0.75D, "the silencing seal holds near the ritual heart");
-		assertTrue(lens.y() > 68.0D, "the revealing lens scans from above");
-	}
-
-	@Test
-	void everyPersonalityRemainsInsideItsAssignedOrbitRadius() {
-		for (String sigil : List.of(
-				"reservoir", "bastion", "hematic_lattice", "mnemonic",
-				"suture", "shunt", "seal", "cage", "lens")) {
-			for (int age = 30; age <= 510; age += 7) {
-				assertTrue(horizontalDistance(personalityPosition(sigil, age)) <= 2.0001D,
-						sigil + " escaped the ritual space at age " + age);
-			}
+	void holdsItsPointAndOnlyBobs() {
+		for (int age = AwakenedIchorianSigilMotion.PEEL_TICKS; age <= 2000; age++) {
+			var position = position(age);
+			assertEquals(HOVER_X, position.x(), 0.0D, "drifted in x at age " + age);
+			assertEquals(HOVER_Z, position.z(), 0.0D, "drifted in z at age " + age);
+			assertTrue(Math.abs(position.y() - HOVER_Y) <= AwakenedIchorianSigilMotion.BOB_AMPLITUDE + 1.0E-6D,
+					"bobbed too far at age " + age);
 		}
 	}
 
 	@Test
-	void livingFlightNeverSnapsBetweenAngularWaypoints() {
-		for (String sigil : List.of("bastion", "cage")) {
-			var previous = personalityPosition(sigil, 30);
-			for (int age = 31; age <= 300; age++) {
-				var current = personalityPosition(sigil, age);
-				double movement = Math.sqrt(
-						(current.x() - previous.x()) * (current.x() - previous.x())
-								+ (current.y() - previous.y()) * (current.y() - previous.y())
-								+ (current.z() - previous.z()) * (current.z() - previous.z()));
-				assertTrue(movement <= 0.4D,
-						sigil + " snapped " + movement + " blocks at age " + age);
-				previous = current;
-			}
+	void theBobNeverSnaps() {
+		var previous = position(AwakenedIchorianSigilMotion.PEEL_TICKS);
+		for (int age = AwakenedIchorianSigilMotion.PEEL_TICKS + 1; age <= 600; age++) {
+			var current = position(age);
+			assertTrue(Math.abs(current.y() - previous.y()) <= 0.02D, "snapped at age " + age);
+			previous = current;
 		}
+	}
+
+	@Test
+	void hoverPointSitsOverThePatternCentre() {
+		IchorianSigilDefinition sigil = new IchorianSigilDefinition(
+				ResourceLocation.parse("hemomancy:test_triangle"),
+				IchorianSigilDefinition.Kind.SUPPORT, 1, 0, "Test", "Test", 0, 0,
+				List.of(new IchorianSigilDefinition.Node(-2, 0),
+						new IchorianSigilDefinition.Node(2, 0),
+						new IchorianSigilDefinition.Node(0, 2)),
+				List.of(), Optional.empty());
+
+		var hover = AwakenedIchorianSigilMotion.hoverPoint(sigil, 10.0D, 64.0D, 20.0D);
+
+		assertEquals(10.0D, hover.x(), 0.001D);
+		assertEquals(66.2D, hover.y(), 0.001D);
+		assertEquals(20.667D, hover.z(), 0.001D);
+	}
+
+	@Test
+	void eachSigilTurnsAtItsOwnRate() {
+		assertEquals(120.0F, AwakenedIchorianSigilMotion.turnYaw(id("shunt"), 0.0F, 100.0F), 0.001F);
+		assertEquals(12.0F, AwakenedIchorianSigilMotion.turnYaw(id("seal"), 0.0F, 100.0F), 0.001F);
+		assertEquals(40.0F, AwakenedIchorianSigilMotion.turnYaw(id("shunt"), 40.0F, 0.0F), 0.001F);
+		assertEquals(50.0F, AwakenedIchorianSigilMotion.turnYaw(id("unknown_sigil"), 0.0F, 100.0F), 0.001F);
 	}
 
 	@Test
@@ -116,16 +89,14 @@ final class AwakenedIchorianSigilMotionTest {
 		assertPosition(third, 6.0D, 3.0D, -3.0D);
 	}
 
-	private static AwakenedIchorianSigilMotion.Position personalityPosition(String path, int age) {
+	private static AwakenedIchorianSigilMotion.Position position(int age) {
 		return AwakenedIchorianSigilMotion.position(
-				ResourceLocation.fromNamespaceAndPath("hemomancy", path),
 				4.5D, 65.1D, 0.5D,
-				0.5D, 67.5D, 0.5D,
-				2.0D, 0.0D, age);
+				HOVER_X, HOVER_Y, HOVER_Z, age);
 	}
 
-	private static double horizontalDistance(AwakenedIchorianSigilMotion.Position position) {
-		return Math.hypot(position.x() - 0.5D, position.z() - 0.5D);
+	private static ResourceLocation id(String path) {
+		return ResourceLocation.fromNamespaceAndPath("hemomancy", path);
 	}
 
 	private static void assertPosition(AwakenedIchorianSigilMotion.Position actual,

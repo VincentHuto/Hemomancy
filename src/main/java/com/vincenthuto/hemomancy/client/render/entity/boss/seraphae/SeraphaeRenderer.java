@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 /**
- * Saint Seraphae at render scale 2.0 (16 texels per block), with her white vessel layer and her gold nerve layer kept
+ * Saint Seraphae with one model unit per texel, with her white vessel layer and her gold nerve layer kept
  * apart. After drawing it records the world offsets of her irons, hands, heart and nerve tips, which her chains and
  * move geometry read, and keeps her hands and tips in the world frame by frame ({@link SeraphaeAnimState#handAt},
  * {@link SeraphaeAnimState#tipAt}) so a reach or a lash drawn along them follows the animation. In her ending she

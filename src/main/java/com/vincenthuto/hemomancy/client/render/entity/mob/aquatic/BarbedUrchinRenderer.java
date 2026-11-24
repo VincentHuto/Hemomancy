@@ -2,57 +2,36 @@ package com.vincenthuto.hemomancy.client.render.entity.mob.aquatic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.BarbedUrchinBigModel;
-import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.BarbedUrchinMidModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.BarbedUrchinModel;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
-
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class BarbedUrchinRenderer extends MobRenderer<BarbedUrchinEntity, EntityModel<BarbedUrchinEntity>> {
+public final class BarbedUrchinRenderer extends MobRenderer<BarbedUrchinEntity, BarbedUrchinModel> {
+    private static final ResourceLocation TEXTURE =
+            Hemomancy.rloc("textures/entity/barbed_urchin/model_barbed_urchin.png");
 
-	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/barbed_urchin/model_barbed_urchin.png");
-	private int puffStateO = 3;
+    public BarbedUrchinRenderer(EntityRendererProvider.Context context) {
+        super(context, new BarbedUrchinModel(), 0.1F);
+    }
 
-	private final EntityModel<BarbedUrchinEntity> small= this.getModel();
-	private final EntityModel<BarbedUrchinEntity> mid;
-	private final EntityModel<BarbedUrchinEntity> big ;
+    @Override
+    public void render(BarbedUrchinEntity entity, float yaw, float partialTick, PoseStack stack,
+                       MultiBufferSource buffer, int light) {
+        shadowRadius = 0.1F + 0.1F * entity.getVisualPuff(partialTick);
+        super.render(entity, yaw, partialTick, stack, buffer, light);
+    }
 
-	public BarbedUrchinRenderer(Context renderManagerIn) {
-		super(renderManagerIn, new BarbedUrchinModel<BarbedUrchinEntity>(renderManagerIn.bakeLayer(BarbedUrchinModel.LAYER_LOCATION)),
-				0.5F);
-		this.mid = new BarbedUrchinMidModel<BarbedUrchinEntity>(renderManagerIn.bakeLayer(BarbedUrchinMidModel.LAYER_LOCATION));
-		this.big = new BarbedUrchinBigModel<BarbedUrchinEntity>(renderManagerIn.bakeLayer(BarbedUrchinBigModel.LAYER_LOCATION));
+    @Override
+    protected void scale(BarbedUrchinEntity entity, PoseStack stack, float partialTick) {
+        float scale = 0.43F + 0.095F * entity.getVisualPuff(partialTick);
+        stack.scale(scale, scale, scale);
+    }
 
-	}
-
-	@Override
-	public void render(BarbedUrchinEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack,
-			MultiBufferSource pBuffer, int pPackedLight) {
-		int i = pEntity.getPuffState();
-		if (i != this.puffStateO) {
-			if (i == 0) {
-				this.model = this.small;
-			} else if (i == 1) {
-				this.model = this.mid;
-			} else {
-				this.model = this.big;
-			}
-		}
-
-		this.puffStateO = i;
-		this.shadowRadius = 0.1F + 0.1F * (float) i;
-		super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
-	}
-
-	@Override
-	public ResourceLocation getTextureLocation(BarbedUrchinEntity entity) {
-		return TEXTURE;
-
-	}
-
+    @Override
+    public ResourceLocation getTextureLocation(BarbedUrchinEntity entity) {
+        return TEXTURE;
+    }
 }

@@ -1,274 +1,141 @@
-"""The Venous Strider: a tall heron with pale bare skin, a veined cloak of folded wings and long jointed legs.
+"""Bake the Venous Strider Blockbench project into its Java mesh and runtime atlases.
 
-Emits VenousStriderMesh.java (animation lives in the hand-written VenousStriderModel), the atlas and its emissive layer.
+    python tools/model_export/venous_strider.py
+    python tools/model_export/venous_strider.py --check
 
-    python tools/model_export/venous_strider.py            # mesh + textures
-    python tools/model_export/venous_strider.py --preview  # also build/venous_strider_preview.png
-    node tools/model_export/java_model_to_bbmodel.mjs src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/animal/VenousStriderMesh.java --texture textures/entity/venous_strider/model_venous_strider.png --out src/main/resources/assets/hemomancy/models/entity/bbmodel
-
-Model space: head at -z, feet on y = 0 under the root. Legs hang from the root rather than the tilted body, so their angles
-only have to cancel each other for the feet to stand flat. A bird's visible backward joint is its ankle: tibia slants back,
-tarsus forward. Whole-number cube sizes at 16 px per block.
+Edit and save VenousStriderModel.bbmodel with the painted atlas embedded before rebaking.
 """
 import argparse
+import base64
+import io
+import json
 import math
+from pathlib import Path
+from struct import iter_unpack
 
 from PIL import Image
 
-import hemomancy_books as hb
-import unstained_weapons as uw
-from vampire_bat import java_source, mirror_left, posed
-
-ROOT = uw.ROOT
+ROOT = Path(__file__).resolve().parents[2]
+ASSETS = ROOT / 'src/main/resources/assets/hemomancy'
+PROJECT = ASSETS / 'models/entity/bbmodel/VenousStriderModel.bbmodel'
+TEXTURES = ASSETS / 'textures/entity/venous_strider'
 JAVA = ROOT / 'src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/animal/VenousStriderMesh.java'
-TEXTURES = uw.ASSETS / 'textures/entity/venous_strider'
 
-CLEAR = (0, 0, 0, 0)
-
-TIBIA, TARSUS, FOOT = 6, 7, 1
-TIBIA_ANGLE, TARSUS_ANGLE = 18, -14
-HIP_HEIGHT = TIBIA * math.cos(math.radians(TIBIA_ANGLE)) + TARSUS * math.cos(math.radians(TARSUS_ANGLE)) + FOOT
-BODY_TILT = -12
-NECK_ANGLES = (35, -55, 45)
-NECK_LENGTHS = (4, 5, 3)
-HEAD_ANGLE = 6
-
-
-def left_leg(r):
-    r.part('left_leg', 'root', (2, -HIP_HEIGHT, 1), (TIBIA_ANGLE, 0, 0))
-    r.cube('left_leg', (-1, -2, -1, 2, 4, 2), 'thigh')
-    r.cube('left_leg', (-0.5, 2, -0.5, 1, TIBIA - 2, 1), 'shin')
-    r.part('left_tarsus', 'left_leg', (0, TIBIA, 0), (TARSUS_ANGLE - TIBIA_ANGLE, 0, 0))
-    r.cube('left_tarsus', (-0.5, 0, -0.5, 1, TARSUS, 1), 'shin')
-    r.part('left_foot', 'left_tarsus', (0, TARSUS, 0), (-TARSUS_ANGLE, 0, 0))
-    r.cube('left_foot', (-0.5, 0, -4, 1, FOOT, 4), 'toe')
-    r.cube('left_foot', (-0.5, 0, 0, 1, FOOT, 2), 'toe')
-    for name, turn in (('left_toe_out', -32), ('left_toe_in', 32)):
-        r.part(name, 'left_foot', (0, 0, -0.5), (0, turn, 0))
-        r.cube(name, (-0.5, 0, -3, 1, FOOT, 3), 'toe')
+# Dim vessels and a small amber glint, added by the renderer's existing breath cycle.
+GLOW_COLORS = {
+    (157, 75, 88): (74, 14, 23),
+    (135, 64, 76): (52, 9, 16),
+    (165, 92, 101): (57, 15, 21),
+    (190, 122, 123): (67, 20, 23),
+    (190, 138, 130): (39, 10, 13),
+    (228, 147, 81): (108, 54, 22),
+}
 
 
-def left_wing(r):
-    # Folded along the flank; it hinges along z at the shoulder and its primaries hinge at the wrist.
-    r.part('left_wing', 'body', (2.5, -3, -5), (0, 0, -4))
-    r.cube('left_wing', (0, 0, 0, 1, 5, 8), 'wing')
-    r.part('left_primaries', 'left_wing', (0, 0, 8), (0, -8, 0))
-    r.cube('left_primaries', (1, 0, 0, 0, 4, 7), 'primaries')
+def float_args(values):
+    return ', '.join(f'{value if abs(value) >= 0.0000005 else 0.0:.6f}'.rstrip('0').rstrip('.')
+                     + 'F' for value in values)
 
 
-def strider():
-    r = uw.Rig('venous_strider', 'VenousStriderMesh', 'venous_strider')
-    r.parts[0]['pivot'] = (0, 24, 0)
-    r.part('body', 'root', (0, -HIP_HEIGHT - 1, 0), (BODY_TILT, 0, 0))
-    r.cube('body', (-2.5, -3, -6, 5, 6, 6), 'breast')
-    r.cube('body', (-2, -3, 0, 4, 5, 5), 'breast')
+def mesh_source(model):
+    elements = {element['uuid']: element for element in model['elements']}
+    width, height = (model['resolution'][key] for key in ('width', 'height'))
+    lines = [
+        'package com.vincenthuto.hemomancy.client.model.entity.mob.animal;',
+        '',
+        'import net.minecraft.client.model.geom.PartPose;',
+        'import net.minecraft.client.model.geom.builders.CubeDeformation;',
+        'import net.minecraft.client.model.geom.builders.CubeListBuilder;',
+        'import net.minecraft.client.model.geom.builders.LayerDefinition;',
+        'import net.minecraft.client.model.geom.builders.MeshDefinition;',
+        'import net.minecraft.client.model.geom.builders.PartDefinition;',
+        '',
+        '/** Baked from VenousStriderModel.bbmodel by tools/model_export/venous_strider.py. */',
+        'public final class VenousStriderMesh {',
+        '\tprivate VenousStriderMesh() {',
+        '\t}',
+        '',
+        '\tpublic static LayerDefinition createBodyLayer() {',
+        '\t\tMeshDefinition mesh = new MeshDefinition();',
+    ]
 
-    r.part('tail', 'body', (0, -2, 5), (-10, 0, 0))
-    r.cube('tail', (-2, 0, 0, 4, 1, 6), 'tail')
+    def add_part(name, variable, parent, origin, parent_origin, rotation, boxes, has_children=False):
+        # Blockbench's Java entity codec reflects X and Y and keeps Z.
+        offset = [(coordinate - ancestor) * sign
+                  for coordinate, ancestor, sign in zip(origin, parent_origin, (-1, -1, 1))]
+        pose = f'PartPose.offset({float_args(offset)})'
+        if any(rotation):
+            radians = [math.radians(degrees * sign) for degrees, sign in zip(rotation, (-1, -1, 1))]
+            pose = f'PartPose.offsetAndRotation({float_args(offset + radians)})'
+        prefix = f'PartDefinition {variable} = ' if has_children else ''
+        lines.append(f'\t\t{prefix}{parent}.addOrReplaceChild("{name}", CubeListBuilder.create()')
+        for box in boxes:
+            lo, hi = box['from'], box['to']
+            x, y, z = origin
+            dimensions = [b - a for a, b in zip(lo, hi)]
+            values = [x - hi[0], y - hi[1], lo[2] - z] + dimensions
+            u, v = box['uv_offset']
+            mirror = '.mirror()' if box.get('mirror_uv') else ''
+            deformation = f", new CubeDeformation({float_args([box['inflate']])})" if box.get('inflate') else ''
+            lines.append(f'\t\t\t\t.texOffs({u}, {v}){mirror}.addBox({float_args(values)}{deformation})'
+                         + ('.mirror(false)' if mirror else ''))
+        lines[-1] += f', {pose});'
 
-    previous, net = 'body', BODY_TILT
-    for i, (name, angle, length) in enumerate(zip(('neck_base', 'neck_mid', 'neck_top'), NECK_ANGLES, NECK_LENGTHS)):
-        pivot = (0, -2, -5) if i == 0 else (0, -NECK_LENGTHS[i - 1], 0)
-        r.part(name, previous, pivot, (angle, 0, 0))
-        r.cube(name, (-1, -length, -1, 2, length + 1, 2), 'veined_neck' if name == 'neck_mid' else 'neck')
-        previous, net = name, net + angle
+    def walk(group, parent, parent_origin):
+        name = group['name']
+        children = group['children']
+        elements_here = [elements[child] for child in children if isinstance(child, str)]
+        subgroups = [child for child in children if isinstance(child, dict)]
+        direct = [box for box in elements_here if not any(box.get('rotation', []))]
+        rotated = [box for box in elements_here if any(box.get('rotation', []))]
+        add_part(name, name, parent, group['origin'], parent_origin, group.get('rotation', []),
+                 direct, bool(subgroups or rotated))
+        for index, box in enumerate(rotated, 1):
+            add_part(f'{name}_cube_{index}', None, name, box['origin'], group['origin'], box['rotation'], [box])
+        for child in subgroups:
+            walk(child, name, group['origin'])
 
-    r.part('head', 'neck_top', (0, -NECK_LENGTHS[2], 0), (HEAD_ANGLE - net, 0, 0))
-    r.cube('head', (-1, -2, -2, 2, 3, 3), 'skull')
-    r.cube('head', (-0.5, -1, -8, 1, 1, 6), 'bill')
-    r.part('jaw', 'head', (0, 0, -2))
-    r.cube('jaw', (-0.5, 0, -5, 1, 1, 5), 'jaw')
-    r.part('crest', 'head', (0, -2, 0), (-14, 0, 0))
-    r.cube('crest', (0, -1, 0, 0, 3, 8), 'crest')
-
-    left_wing(r)
-    left_leg(r)
-    mirror_left(r)
-    return r
-
-
-# ---------------------------------------------------------------- painting
-
-SKIN = (214, 180, 176)
-SKIN_LIGHT = (228, 202, 194)
-SKIN_DARK = (188, 148, 150)
-PLUME = (112, 92, 108)
-PLUME_LIGHT = (138, 116, 128)
-PLUME_DARK = (82, 64, 82)
-OXBLOOD = (96, 32, 44)
-OXBLOOD_DEEP = (58, 20, 32)
-LEG = (76, 44, 58)
-LEG_LIGHT = (122, 84, 92)
-TOE = (52, 30, 42)
-BILL = (198, 178, 150)
-BILL_DARK = (150, 122, 104)
-BILL_TIP = (96, 32, 44)
-EYE = (24, 14, 18)
-GLINT = (255, 86, 62)
-VEIN = (168, 76, 88)
-VEIN_WING = (150, 66, 80)
-VEIN_GLOW = (92, 14, 22)
-
-# Vessels across the folded wing as (z, y) from the shoulder: a trunk along the arm and shafts that fan off it.
-WING_VESSELS = (((0, 2), (4, 2), (8, 3)), ((3, 2), (5, 4)))
-
-
-def segment_distance(z, y, a, b):
-    dz, dy = b[0] - a[0], b[1] - a[1]
-    t = max(0, min(1, ((z - a[0]) * dz + (y - a[1]) * dy) / (dz * dz + dy * dy)))
-    return math.hypot(z - a[0] - dz * t, y - a[1] - dy * t)
-
-
-def lit(rgb, glow=None):
-    return rgb + (255,), (glow or rgb) + (255,)
+    for group in model['outliner']:
+        walk(group, 'mesh.getRoot()', (0, 24, 0))
+    lines.extend([f'\t\treturn LayerDefinition.create(mesh, {width}, {height});', '\t}', '}', ''])
+    return '\n'.join(lines).encode()
 
 
-def flat(rgb):
-    return rgb + (255,), None
-
-
-def speckle(t, base, light, dark):
-    return light if t['n'] > 0.95 else dark if t['n'] < 0.05 else base
-
-
-def breast(t):
-    # Model y points down, so a cube's 'down' face is the top.
-    if t['face'] == 'down':
-        return flat(PLUME)
-    if t['face'] == 'north' and t['u'] == t['fw'] // 2 and t['v'] < t['fh'] - 1:
-        return lit(VEIN, VEIN_GLOW)
-    return flat(speckle(t, SKIN, SKIN_LIGHT, SKIN_DARK))
-
-
-def neck(t):
-    # One vessel winding down the bare throat: it steps across the column every three texels.
-    if t['face'] == 'north' and t['u'] == (t['v'] // 3) % 2:
-        return lit(VEIN, VEIN_GLOW)
-    if t['face'] == 'south':
-        return flat(SKIN_DARK)
-    return flat(SKIN)
-
-
-def veined_neck(t):
-    # A branch comes round to the side of the neck here, the one stretch a side view shows.
-    if t['face'] in ('west', 'east') and t['u'] == 0 and 1 <= t['v'] <= 3:
-        return lit(VEIN, VEIN_GLOW)
-    return neck(t)
-
-
-def skull(t):
-    if t['face'] in ('west', 'east') and t['u'] == 1 and t['v'] == 1:
-        return lit(GLINT, tuple(c // 2 for c in GLINT))
-    if t['face'] in ('west', 'east') and t['u'] == (0 if t['face'] == 'east' else 2) and t['v'] == 1:
-        return flat(EYE)
-    if t['face'] == 'down':
-        return flat(PLUME_DARK)
-    return flat(SKIN_LIGHT if t['face'] == 'up' or t['v'] == t['fh'] - 1 else SKIN)
-
-
-def bill(t):
-    return flat(BILL_TIP if t['gz'] < HEAD_ORIGIN_Z - 7 else BILL_DARK if t['face'] == 'up' else BILL)
-
-
-def jaw(t):
-    return flat(BILL_DARK)
-
-
-def crest(t):
-    # Rooted at the skull, then parting into two streamers that thin toward the back.
-    along = t['gz'] - HEAD_ORIGIN_Z
-    if t['v'] == 1 and along > 3 or t['v'] == 2 and along > 6 or t['v'] == 0 and along > 7:
-        return CLEAR, None
-    return flat(OXBLOOD if along < 4 else OXBLOOD_DEEP)
-
-
-def wing(t):
-    if t['face'] in ('west', 'east'):
-        z, y = t['gz'] - WING_ORIGIN_Z, t['gy'] + 0.5 - WING_ORIGIN_Y
-        if any(segment_distance(z, y, a, b) < 0.35 for vessel in WING_VESSELS for a, b in zip(vessel, vessel[1:])):
-            return lit(VEIN_WING, VEIN_GLOW)
-    if t['face'] == 'down':
-        return flat(PLUME_DARK)
-    # Rows of covert feathers: each row's lower edge darker.
-    return flat(PLUME_DARK if t['v'] % 2 == 1 and (t['u'] + t['v']) % 4 == 0 else speckle(t, PLUME, PLUME_LIGHT, PLUME))
-
-
-def primaries(t):
-    # Long feathers sweeping to a low point at the tail end, oxblood at the tips.
-    along = t['gz'] - PRIMARIES_ORIGIN_Z
-    if along >= 7 - (t['fh'] - 1 - t['v']):
-        return CLEAR, None
-    return flat(OXBLOOD_DEEP if along >= 5 else OXBLOOD if along >= 3 else PLUME_DARK if t['v'] % 2 else PLUME)
-
-
-def tail(t):
-    if t['face'] in ('down', 'up'):
-        return flat(OXBLOOD if t['u'] % 2 == 0 else OXBLOOD_DEEP)
-    return flat(OXBLOOD_DEEP)
-
-
-def thigh(t):
-    return flat(PLUME_DARK if t['v'] == t['fh'] - 1 else speckle(t, PLUME, PLUME_LIGHT, PLUME_DARK))
-
-
-def shin(t):
-    # Pale at the ankle, where the skin stretches over the joint.
-    return flat(LEG_LIGHT if t['v'] == 0 and t['fh'] >= 6 else LEG)
-
-
-def toe(t):
-    return flat(TOE)
-
-
-PAINTERS = dict(breast=breast, neck=neck, veined_neck=veined_neck, skull=skull, bill=bill, jaw=jaw, crest=crest, wing=wing, primaries=primaries,
-                tail=tail, thigh=thigh, shin=shin, toe=toe)
-
-
-def paint(material, t):
-    return PAINTERS[material](t)
-
-
-# ---------------------------------------------------------------- preview
-
-STEP = {'left_leg': (TIBIA_ANGLE - 42, 0, 0), 'left_tarsus': (TARSUS_ANGLE - TIBIA_ANGLE + 62, 0, 0),
-        'left_foot': (-TARSUS_ANGLE + 30, 0, 0), 'right_leg': (TIBIA_ANGLE + 16, 0, 0)}
-
-
-def preview(rig, image):
-    poses = [({}, 0.65, 0.2), ({}, math.pi - 0.65, 0.2), ({}, math.pi / 2, 0.02), ({}, 0, 0.02), ({}, math.pi / 2, 1.4),
-             (STEP, math.pi / 2, 0.02)]
-    tiles = [uw.render_quads(posed(rig, **pose), image, yaw, pitch, size=420) for pose, yaw, pitch in poses]
-    sheet = Image.new('RGB', (420 * 3, 420 * 2))
-    for i, tile in enumerate(tiles):
-        sheet.paste(tile, ((i % 3) * 420, (i // 3) * 420))
-    out = ROOT / 'build/venous_strider_preview.png'
-    out.parent.mkdir(exist_ok=True)
-    sheet.save(out)
-    print('preview ->', out)
-
-
-HEAD_ORIGIN_Z = WING_ORIGIN_Z = WING_ORIGIN_Y = PRIMARIES_ORIGIN_Z = 0
+def bake():
+    model = json.loads(PROJECT.read_text(encoding='utf-8'))
+    if model['meta']['model_format'] != 'modded_entity' or not model['meta']['box_uv']:
+        raise ValueError('Expected a Modded Entity project with box UVs')
+    (texture,) = model['textures']
+    atlas_bytes = base64.b64decode(texture['source'].split(',', 1)[1], validate=True)
+    with Image.open(io.BytesIO(atlas_bytes)) as atlas:
+        size = model['resolution']
+        if atlas.size != (size['width'], size['height']):
+            raise ValueError('The project UV resolution must match its embedded texture')
+        pixels = iter_unpack('4B', atlas.convert('RGBA').tobytes())
+        glow = Image.new('RGBA', atlas.size)
+        glow.putdata([GLOW_COLORS[(r, g, b)] + (255,) if a and (r, g, b) in GLOW_COLORS else (0, 0, 0, 0)
+                      for r, g, b, a in pixels])
+    buffer = io.BytesIO()
+    glow.save(buffer, format='PNG')
+    return {
+        JAVA: mesh_source(model),
+        TEXTURES / 'model_venous_strider.png': atlas_bytes,
+        TEXTURES / 'model_venous_strider_glow.png': buffer.getvalue(),
+    }
 
 
 def main():
-    global HEAD_ORIGIN_Z, WING_ORIGIN_Z, WING_ORIGIN_Y, PRIMARIES_ORIGIN_Z
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--preview', action='store_true')
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check', action='store_true', help='Verify that the generated mesh and atlases are current')
     args = parser.parse_args()
-    rig = strider()
-    world = uw.part_world(rig)
-    HEAD_ORIGIN_Z = world['head'][2]
-    WING_ORIGIN_Y, WING_ORIGIN_Z = world['left_wing'][1], world['left_wing'][2]
-    PRIMARIES_ORIGIN_Z = world['left_primaries'][2]
-    size = hb.layout(rig)
-    image, glow = uw.paint_atlas(rig, size, paint)
-    TEXTURES.mkdir(parents=True, exist_ok=True)
-    image.save(TEXTURES / 'model_venous_strider.png')
-    glow.save(TEXTURES / 'model_venous_strider_glow.png')
-    JAVA.write_text(java_source(rig, size), encoding='utf-8')
-    print(f'venous_strider: {sum(len(p["cubes"]) for p in rig.parts)} cubes, atlas {size[0]}x{size[1]}, height {HIP_HEIGHT:.2f} at hip')
-    if args.preview:
-        preview(rig, image)
+    for path, data in bake().items():
+        if args.check:
+            existing = path.read_bytes().replace(b'\r\n', b'\n') if path == JAVA else path.read_bytes()
+            if existing != data:
+                parser.exit(1, f'Stale generated asset: {path.relative_to(ROOT)}\n')
+        else:
+            path.write_bytes(data)
+        print(path.relative_to(ROOT))
 
 
 if __name__ == '__main__':

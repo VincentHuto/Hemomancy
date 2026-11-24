@@ -1,15 +1,20 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.hemorath;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathAnimState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathModel;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.entity.boss.SaintRiseRender;
 import com.vincenthuto.hemomancy.client.render.layer.mob.HemorathVesselLayer;
+import com.vincenthuto.hemomancy.common.entity.boss.BossFootprint;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathHaloPath;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathMove;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathVisualRules;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.core.BlockPos;
@@ -19,12 +24,14 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 /**
- * Saint Hemorath: the hunched skeleton from {@code tools/model_export/hemorath.py} at one render scale (2.0, so its two
- * texels a unit land at 16 px a block), with his vessels lit by the meter ({@link HemorathVesselLayer}). Each frame it
+ * Saint Hemorath's Blockbench rig, with his vessels lit by the meter ({@link HemorathVesselLayer}). Each frame it
  * records the core, claw and staff head in world space for the reliquary geometry.
  */
 public class HemorathRenderer extends MobRenderer<HemorathEntity, HemorathModel<HemorathEntity>> {
 	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/boss/hemorath/hemorath.png");
+	private static final RenderType HALO_TEXTURE = RenderType.entityCutout(TEXTURE);
+	// The ring's outer course is authored at a radius of 3.9 model units.
+	private static final float FLIGHT_SCALE = (float) (HemorathHaloPath.RIM_RADIUS * 16 / 3.9D);
 	private static final float SHADOW = 1.5F;
 	/**
 	 * The block light his bone never falls below: his chamber's boss floor is lit only from the walls and the vault, and
@@ -33,7 +40,7 @@ public class HemorathRenderer extends MobRenderer<HemorathEntity, HemorathModel<
 	private static final int LIGHT_FLOOR = 8;
 
 	public HemorathRenderer(Context context) {
-		super(context, new HemorathModel<>(context.bakeLayer(HemorathModel.LAYER_LOCATION)), SHADOW);
+		super(context, new HemorathModel<>(), SHADOW);
 		this.addLayer(new HemorathVesselLayer<>(this));
 	}
 
@@ -61,6 +68,28 @@ public class HemorathRenderer extends MobRenderer<HemorathEntity, HemorathModel<
 		HemorathAnimState.of(entity).attachments(offset(model.core(), bodyYaw, scale),
 				offset(model.claw(), bodyYaw, scale), offset(model.staffHead(), bodyYaw, scale), entity.getPosition(partial),
 				AnimationTime.age(entity, partial));
+		renderHaloFlight(entity, partial, poses, buffers, light);
+	}
+
+	private void renderHaloFlight(HemorathEntity entity, float partial, PoseStack poses, MultiBufferSource buffers, int light) {
+		if (entity.isInvisible() || entity.syncedEndingTick() >= 0) return;
+		var view = entity.view();
+		var frame = view.frame();
+		if (view.moveId() != HemorathMove.SPIKED_HALO.id() || frame == null) return;
+		float age = view.moveTime(partial) - HemorathMove.SPIKED_HALO.timeline(view.inputs()).windup();
+		if (age < 0 || age > HemorathHaloPath.FLIGHT_TICKS) return;
+		double[] local = HemorathHaloPath.at(age);
+		double[] forward = BossFootprint.Shapes.forward(frame);
+		Vec3 origin = entity.getPosition(partial);
+		poses.pushPose();
+		poses.translate(frame.origin().x - origin.x + forward[0] * local[0] - forward[1] * local[1],
+				frame.floorY() + HemorathHaloPath.FLIGHT_HEIGHT - origin.y,
+				frame.origin().z - origin.z + forward[1] * local[0] + forward[0] * local[1]);
+		poses.mulPose(Axis.YP.rotation(age * .5F));
+		poses.mulPose(Axis.XP.rotationDegrees(90));
+		poses.scale(FLIGHT_SCALE, FLIGHT_SCALE, FLIGHT_SCALE);
+		model.renderFlyingHalo(poses, buffers.getBuffer(HALO_TEXTURE), light);
+		poses.popPose();
 	}
 
 	private static Vec3 offset(Vector3f point, float yaw, float scale) {

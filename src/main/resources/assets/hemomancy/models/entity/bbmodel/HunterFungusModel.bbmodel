@@ -1,0 +1,3575 @@
+{
+  "meta": {
+    "format_version": "4.0",
+    "model_format": "modded_entity",
+    "box_uv": true
+  },
+  "name": "Hunter Fungus",
+  "model_identifier": "HunterFungus",
+  "modded_entity_flip_y": true,
+  "resolution": {
+    "width": 128,
+    "height": 128
+  },
+  "elements": [
+    {
+      "name": "Fleshy trunk",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        6,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "b9d91225-0acc-54c3-8951-985e968001fd",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -4,
+        4,
+        -4
+      ],
+      "to": [
+        4,
+        9,
+        7
+      ],
+      "uv_offset": [
+        1,
+        1
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            1,
+            12,
+            12,
+            17
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            12,
+            12,
+            20,
+            17
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            20,
+            12,
+            31,
+            17
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            31,
+            12,
+            39,
+            17
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            20,
+            12,
+            12,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            28,
+            1,
+            20,
+            12
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ventral bulb",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        6,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "3a91cb37-ae7a-5bf1-b483-e1cb153e213e",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -3,
+        3,
+        -2
+      ],
+      "to": [
+        3,
+        6,
+        6
+      ],
+      "uv_offset": [
+        41,
+        1
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            41,
+            9,
+            49,
+            12
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            49,
+            9,
+            55,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            55,
+            9,
+            63,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            63,
+            9,
+            69,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            55,
+            9,
+            49,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            61,
+            1,
+            55,
+            9
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Dorsal crust",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        6,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "eb4c2cd0-f99f-522f-a5cc-a5ef10f3800f",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -3,
+        9,
+        -2
+      ],
+      "to": [
+        3,
+        11,
+        6
+      ],
+      "uv_offset": [
+        71,
+        1
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            71,
+            9,
+            79,
+            11
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            79,
+            9,
+            85,
+            11
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            85,
+            9,
+            93,
+            11
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            93,
+            9,
+            99,
+            11
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            85,
+            9,
+            79,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            91,
+            1,
+            85,
+            9
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Rump",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        6,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "8c3a03b8-133e-56ff-81c7-eb599efa17f1",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -3,
+        5,
+        6
+      ],
+      "to": [
+        3,
+        9,
+        9
+      ],
+      "uv_offset": [
+        101,
+        1
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            101,
+            4,
+            104,
+            8
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            104,
+            4,
+            110,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            110,
+            4,
+            113,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            113,
+            4,
+            119,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            110,
+            4,
+            104,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            116,
+            1,
+            110,
+            4
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Covered spore sac 1",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -2,
+        10,
+        4
+      ],
+      "rotation": [
+        0,
+        0,
+        15
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "32351857-1e80-5165-b225-4c23c3572a59",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -3,
+        10,
+        3
+      ],
+      "to": [
+        -1,
+        12,
+        5
+      ],
+      "uv_offset": [
+        1,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            1,
+            21,
+            3,
+            23
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            3,
+            21,
+            5,
+            23
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            5,
+            21,
+            7,
+            23
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7,
+            21,
+            9,
+            23
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            5,
+            21,
+            3,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7,
+            19,
+            5,
+            21
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Covered spore sac 2",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        1,
+        10.5,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        -12
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "f20ecabc-1d40-5dba-aa26-ff2c8cf4b147",
+      "visibility": true,
+      "export": true,
+      "from": [
+        0,
+        10.5,
+        5
+      ],
+      "to": [
+        2,
+        12.5,
+        7
+      ],
+      "uv_offset": [
+        11,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            11,
+            21,
+            13,
+            23
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            13,
+            21,
+            15,
+            23
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15,
+            21,
+            17,
+            23
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            17,
+            21,
+            19,
+            23
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15,
+            21,
+            13,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            17,
+            19,
+            15,
+            21
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Covered spore sac 3",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        3,
+        9.5,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        15
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "5cca5583-54a1-587e-bdc5-e724c70132b7",
+      "visibility": true,
+      "export": true,
+      "from": [
+        2,
+        9.5,
+        2
+      ],
+      "to": [
+        4,
+        11.5,
+        4
+      ],
+      "uv_offset": [
+        21,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            21,
+            21,
+            23,
+            23
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            23,
+            21,
+            25,
+            23
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            25,
+            21,
+            27,
+            23
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            27,
+            21,
+            29,
+            23
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            25,
+            21,
+            23,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            27,
+            19,
+            25,
+            21
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Neck",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        7,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "3c811050-ce79-54ed-9bb1-ed5475f60421",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -3,
+        5,
+        -7
+      ],
+      "to": [
+        3,
+        9,
+        -3
+      ],
+      "uv_offset": [
+        31,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            31,
+            23,
+            35,
+            27
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            35,
+            23,
+            41,
+            27
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            41,
+            23,
+            45,
+            27
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            45,
+            23,
+            51,
+            27
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            41,
+            23,
+            35,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            47,
+            19,
+            41,
+            23
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Maw recess",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        7,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "2cf017e5-71b8-573e-ad02-c7b0a9032cc2",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -3.5,
+        4,
+        -8
+      ],
+      "to": [
+        3.5,
+        8,
+        -5
+      ],
+      "uv_offset": [
+        53,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            53,
+            22,
+            56,
+            26
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            56,
+            22,
+            63,
+            26
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            63,
+            22,
+            66,
+            26
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            66,
+            22,
+            73,
+            26
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            63,
+            22,
+            56,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            70,
+            19,
+            63,
+            22
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Gill mantle",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        8,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "f4c67e80-dda6-568b-b8f4-8997c6f8675a",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -5,
+        7,
+        -11
+      ],
+      "to": [
+        5,
+        9,
+        -3
+      ],
+      "uv_offset": [
+        75,
+        19
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            75,
+            27,
+            83,
+            29
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            83,
+            27,
+            93,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            93,
+            27,
+            101,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            101,
+            27,
+            111,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            93,
+            27,
+            83,
+            19
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            103,
+            19,
+            93,
+            27
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Overhanging cap lip",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        8,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "bcf6e5ea-9b58-5517-abf9-be50f0d8c611",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -7,
+        8,
+        -12
+      ],
+      "to": [
+        7,
+        10,
+        -2
+      ],
+      "uv_offset": [
+        1,
+        31
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            1,
+            41,
+            11,
+            43
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            11,
+            41,
+            25,
+            43
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            25,
+            41,
+            35,
+            43
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            35,
+            41,
+            49,
+            43
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            25,
+            41,
+            11,
+            31
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            39,
+            31,
+            25,
+            41
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Cap shoulder",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        8,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "f292fca1-8427-5d75-a167-dde9344d2796",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -6,
+        10,
+        -11
+      ],
+      "to": [
+        6,
+        12,
+        -2
+      ],
+      "uv_offset": [
+        51,
+        31
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            51,
+            40,
+            60,
+            42
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            60,
+            40,
+            72,
+            42
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            72,
+            40,
+            81,
+            42
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            81,
+            40,
+            93,
+            42
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            72,
+            40,
+            60,
+            31
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            84,
+            31,
+            72,
+            40
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Raised nasal ridge",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        8,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "36225ef0-8bf3-5489-be16-06d74cd29d67",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -4,
+        12,
+        -9
+      ],
+      "to": [
+        4,
+        13,
+        -2
+      ],
+      "uv_offset": [
+        95,
+        31
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            95,
+            38,
+            102,
+            39
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            102,
+            38,
+            110,
+            39
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            110,
+            38,
+            117,
+            39
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            117,
+            38,
+            125,
+            39
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            110,
+            38,
+            102,
+            31
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            118,
+            31,
+            110,
+            38
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Cap crown",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        8,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "7ca72cf1-7ed6-5e2c-826f-8e904dbf913d",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -3,
+        13,
+        -7
+      ],
+      "to": [
+        3,
+        14,
+        -3
+      ],
+      "uv_offset": [
+        1,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            1,
+            49,
+            5,
+            50
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            5,
+            49,
+            11,
+            50
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11,
+            49,
+            15,
+            50
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            15,
+            49,
+            21,
+            50
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            11,
+            49,
+            5,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            17,
+            45,
+            11,
+            49
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hanging gill 1",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -4,
+        7,
+        -8
+      ],
+      "rotation": [
+        10,
+        0,
+        16
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "ffa0676d-a1f4-5e11-8a12-28a8596f5dea",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -4.5,
+        5.5,
+        -10.25
+      ],
+      "to": [
+        -3.5,
+        7.5,
+        -7.25
+      ],
+      "uv_offset": [
+        23,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            23,
+            48,
+            26,
+            50
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            26,
+            48,
+            27,
+            50
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            27,
+            48,
+            30,
+            50
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            30,
+            48,
+            31,
+            50
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            27,
+            48,
+            26,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            28,
+            45,
+            27,
+            48
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hanging gill 2",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -2,
+        7,
+        -8
+      ],
+      "rotation": [
+        10,
+        0,
+        8
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "85d46791-718b-5066-8fb7-af056be9918a",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -2.5,
+        6.0,
+        -10.25
+      ],
+      "to": [
+        -1.5,
+        8.0,
+        -7.25
+      ],
+      "uv_offset": [
+        33,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            33,
+            48,
+            36,
+            50
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            36,
+            48,
+            37,
+            50
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            37,
+            48,
+            40,
+            50
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            40,
+            48,
+            41,
+            50
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            37,
+            48,
+            36,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            38,
+            45,
+            37,
+            48
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hanging gill 3",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        7,
+        -8
+      ],
+      "rotation": [
+        10,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "ce270f35-5752-5387-b26b-13dc559169a3",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -0.5,
+        5.5,
+        -10.25
+      ],
+      "to": [
+        0.5,
+        7.5,
+        -7.25
+      ],
+      "uv_offset": [
+        43,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            43,
+            48,
+            46,
+            50
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            46,
+            48,
+            47,
+            50
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            47,
+            48,
+            50,
+            50
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            50,
+            48,
+            51,
+            50
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            47,
+            48,
+            46,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            45,
+            47,
+            48
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hanging gill 4",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        2,
+        7,
+        -8
+      ],
+      "rotation": [
+        10,
+        0,
+        -8
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "9075a676-b830-54db-8721-7b3a76691804",
+      "visibility": true,
+      "export": true,
+      "from": [
+        1.5,
+        6.0,
+        -10.25
+      ],
+      "to": [
+        2.5,
+        8.0,
+        -7.25
+      ],
+      "uv_offset": [
+        53,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            53,
+            48,
+            56,
+            50
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            56,
+            48,
+            57,
+            50
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            57,
+            48,
+            60,
+            50
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            60,
+            48,
+            61,
+            50
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            57,
+            48,
+            56,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            58,
+            45,
+            57,
+            48
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hanging gill 5",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        4,
+        7,
+        -8
+      ],
+      "rotation": [
+        10,
+        0,
+        -16
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "fec0a74d-9231-5e81-8d5e-8fdde4151f0a",
+      "visibility": true,
+      "export": true,
+      "from": [
+        3.5,
+        5.5,
+        -10.25
+      ],
+      "to": [
+        4.5,
+        7.5,
+        -7.25
+      ],
+      "uv_offset": [
+        63,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            63,
+            48,
+            66,
+            50
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            66,
+            48,
+            67,
+            50
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            67,
+            48,
+            70,
+            50
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            70,
+            48,
+            71,
+            50
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            67,
+            48,
+            66,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            68,
+            45,
+            67,
+            48
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower gill fan",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        5,
+        -6
+      ],
+      "rotation": [
+        9,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "ad9c8213-ed6c-573b-a509-28880b619d3c",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -4,
+        3,
+        -10
+      ],
+      "to": [
+        4,
+        5,
+        -5
+      ],
+      "uv_offset": [
+        73,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            73,
+            50,
+            78,
+            52
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            78,
+            50,
+            86,
+            52
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            86,
+            50,
+            91,
+            52
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            91,
+            50,
+            99,
+            52
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            86,
+            50,
+            78,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            94,
+            45,
+            86,
+            50
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower gill fold 1",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        5,
+        -6
+      ],
+      "rotation": [
+        12,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "08502481-2b59-58f5-8475-5fedb8f01024",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -3.5,
+        4,
+        -10.5
+      ],
+      "to": [
+        -2.5,
+        5,
+        -8.5
+      ],
+      "uv_offset": [
+        101,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            101,
+            47,
+            103,
+            48
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            103,
+            47,
+            104,
+            48
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            104,
+            47,
+            106,
+            48
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            106,
+            47,
+            107,
+            48
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            104,
+            47,
+            103,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            105,
+            45,
+            104,
+            47
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower gill fold 2",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        5,
+        -6
+      ],
+      "rotation": [
+        12,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "a652d9a5-ef16-55cf-b2e9-62106ecb059e",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -1.5,
+        4,
+        -10.5
+      ],
+      "to": [
+        -0.5,
+        5,
+        -8.5
+      ],
+      "uv_offset": [
+        109,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            109,
+            47,
+            111,
+            48
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            111,
+            47,
+            112,
+            48
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            112,
+            47,
+            114,
+            48
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            114,
+            47,
+            115,
+            48
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            112,
+            47,
+            111,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            113,
+            45,
+            112,
+            47
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower gill fold 3",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        5,
+        -6
+      ],
+      "rotation": [
+        12,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "28b5ca95-d9d2-5cc8-bee7-a3f1d4e812b8",
+      "visibility": true,
+      "export": true,
+      "from": [
+        0.5,
+        4,
+        -10.5
+      ],
+      "to": [
+        1.5,
+        5,
+        -8.5
+      ],
+      "uv_offset": [
+        117,
+        45
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            117,
+            47,
+            119,
+            48
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            119,
+            47,
+            120,
+            48
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            120,
+            47,
+            122,
+            48
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            122,
+            47,
+            123,
+            48
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            120,
+            47,
+            119,
+            45
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            121,
+            45,
+            120,
+            47
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower gill fold 4",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        0,
+        5,
+        -6
+      ],
+      "rotation": [
+        12,
+        0,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "dff9978f-6b14-5bd9-b475-f53eeadc3c58",
+      "visibility": true,
+      "export": true,
+      "from": [
+        2.5,
+        4,
+        -10.5
+      ],
+      "to": [
+        3.5,
+        5,
+        -8.5
+      ],
+      "uv_offset": [
+        1,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            1,
+            56,
+            3,
+            57
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            3,
+            56,
+            4,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4,
+            56,
+            6,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6,
+            56,
+            7,
+            57
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4,
+            56,
+            3,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5,
+            54,
+            4,
+            56
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Shoulder knot",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        3.25,
+        6,
+        -2.5
+      ],
+      "rotation": [
+        -14,
+        0,
+        23
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "009b44e3-d938-5478-8cca-96d6ec326595",
+      "visibility": true,
+      "export": true,
+      "from": [
+        1.75,
+        4,
+        -4.0
+      ],
+      "to": [
+        4.75,
+        8,
+        -1.0
+      ],
+      "uv_offset": [
+        9,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            9,
+            57,
+            12,
+            61
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            12,
+            57,
+            15,
+            61
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15,
+            57,
+            18,
+            61
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            18,
+            57,
+            21,
+            61
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15,
+            57,
+            12,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            18,
+            54,
+            15,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hyphal shin",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        4.75,
+        3,
+        -3.5
+      ],
+      "rotation": [
+        20,
+        0,
+        -9
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "1e8cd782-c885-51a1-a90d-32dd434b673f",
+      "visibility": true,
+      "export": true,
+      "from": [
+        3.75,
+        0.5,
+        -4.5
+      ],
+      "to": [
+        5.75,
+        4.5,
+        -2.5
+      ],
+      "uv_offset": [
+        23,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            23,
+            56,
+            25,
+            60
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            25,
+            56,
+            27,
+            60
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            27,
+            56,
+            29,
+            60
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            29,
+            56,
+            31,
+            60
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            27,
+            56,
+            25,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            29,
+            54,
+            27,
+            56
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Padded foot",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        5,
+        0.5,
+        -4.0
+      ],
+      "rotation": [
+        0,
+        -12,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "d4c14a8e-f0f0-5b58-a393-940db8822db5",
+      "visibility": true,
+      "export": true,
+      "from": [
+        3.5,
+        0,
+        -5.5
+      ],
+      "to": [
+        6.5,
+        1,
+        -2.5
+      ],
+      "uv_offset": [
+        33,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            33,
+            57,
+            36,
+            58
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            36,
+            57,
+            39,
+            58
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            39,
+            57,
+            42,
+            58
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            42,
+            57,
+            45,
+            58
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            39,
+            57,
+            36,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            42,
+            54,
+            39,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Shoulder knot",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -3.25,
+        6,
+        -2.5
+      ],
+      "rotation": [
+        -14,
+        0,
+        -23
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "609c7089-fc9d-5324-bda3-a1f574358174",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -4.75,
+        4,
+        -4.0
+      ],
+      "to": [
+        -1.75,
+        8,
+        -1.0
+      ],
+      "uv_offset": [
+        47,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            47,
+            57,
+            50,
+            61
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            50,
+            57,
+            53,
+            61
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            53,
+            57,
+            56,
+            61
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            56,
+            57,
+            59,
+            61
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            53,
+            57,
+            50,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            56,
+            54,
+            53,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hyphal shin",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -4.75,
+        3,
+        -3.5
+      ],
+      "rotation": [
+        20,
+        0,
+        9
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "8b6cab32-a159-5523-b6cb-50203c8b0b8a",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -5.75,
+        0.5,
+        -4.5
+      ],
+      "to": [
+        -3.75,
+        4.5,
+        -2.5
+      ],
+      "uv_offset": [
+        61,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            61,
+            56,
+            63,
+            60
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            63,
+            56,
+            65,
+            60
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            65,
+            56,
+            67,
+            60
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            67,
+            56,
+            69,
+            60
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            65,
+            56,
+            63,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            67,
+            54,
+            65,
+            56
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Padded foot",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -5,
+        0.5,
+        -4.0
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "0e83fa73-19af-5c79-b8da-97d27678fdeb",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -6.5,
+        0,
+        -5.5
+      ],
+      "to": [
+        -3.5,
+        1,
+        -2.5
+      ],
+      "uv_offset": [
+        71,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            71,
+            57,
+            74,
+            58
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            74,
+            57,
+            77,
+            58
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            77,
+            57,
+            80,
+            58
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            80,
+            57,
+            83,
+            58
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            77,
+            57,
+            74,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            54,
+            77,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Shoulder knot",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        3.25,
+        6,
+        5
+      ],
+      "rotation": [
+        23,
+        0,
+        23
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "bda573d5-bec2-573e-af1c-8b5feb3dbcb7",
+      "visibility": true,
+      "export": true,
+      "from": [
+        1.75,
+        4,
+        3.5
+      ],
+      "to": [
+        4.75,
+        8,
+        6.5
+      ],
+      "uv_offset": [
+        85,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            85,
+            57,
+            88,
+            61
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            88,
+            57,
+            91,
+            61
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            91,
+            57,
+            94,
+            61
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            94,
+            57,
+            97,
+            61
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            91,
+            57,
+            88,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            94,
+            54,
+            91,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hyphal shin",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        4.75,
+        3,
+        6.5
+      ],
+      "rotation": [
+        -22,
+        0,
+        -9
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "18f3d554-ed81-5cea-a74b-30330b5a267a",
+      "visibility": true,
+      "export": true,
+      "from": [
+        3.75,
+        0.5,
+        5.5
+      ],
+      "to": [
+        5.75,
+        4.5,
+        7.5
+      ],
+      "uv_offset": [
+        99,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            99,
+            56,
+            101,
+            60
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            101,
+            56,
+            103,
+            60
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            103,
+            56,
+            105,
+            60
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            105,
+            56,
+            107,
+            60
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            103,
+            56,
+            101,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            105,
+            54,
+            103,
+            56
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Padded foot",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        5,
+        0.5,
+        6.0
+      ],
+      "rotation": [
+        0,
+        -22,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "e8a04bd2-a15a-5b35-8027-12721b6d738e",
+      "visibility": true,
+      "export": true,
+      "from": [
+        3.5,
+        0,
+        4.5
+      ],
+      "to": [
+        6.5,
+        1,
+        7.5
+      ],
+      "uv_offset": [
+        109,
+        54
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            109,
+            57,
+            112,
+            58
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            112,
+            57,
+            115,
+            58
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            115,
+            57,
+            118,
+            58
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            118,
+            57,
+            121,
+            58
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            115,
+            57,
+            112,
+            54
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            118,
+            54,
+            115,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Shoulder knot",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -3.25,
+        6,
+        5
+      ],
+      "rotation": [
+        23,
+        0,
+        -23
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "dec73740-4f23-52b8-b102-9d7558aef9b7",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -4.75,
+        4,
+        3.5
+      ],
+      "to": [
+        -1.75,
+        8,
+        6.5
+      ],
+      "uv_offset": [
+        1,
+        63
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            1,
+            66,
+            4,
+            70
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            4,
+            66,
+            7,
+            70
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            7,
+            66,
+            10,
+            70
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            10,
+            66,
+            13,
+            70
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            7,
+            66,
+            4,
+            63
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            10,
+            63,
+            7,
+            66
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hyphal shin",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -4.75,
+        3,
+        6.5
+      ],
+      "rotation": [
+        -22,
+        0,
+        9
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "3313c9a4-4a07-5dd1-abcd-0d84d8b6b62d",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -5.75,
+        0.5,
+        5.5
+      ],
+      "to": [
+        -3.75,
+        4.5,
+        7.5
+      ],
+      "uv_offset": [
+        15,
+        63
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            15,
+            65,
+            17,
+            69
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            17,
+            65,
+            19,
+            69
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            19,
+            65,
+            21,
+            69
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            21,
+            65,
+            23,
+            69
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            19,
+            65,
+            17,
+            63
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            21,
+            63,
+            19,
+            65
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Padded foot",
+      "type": "cube",
+      "box_uv": true,
+      "origin": [
+        -5,
+        0.5,
+        6.0
+      ],
+      "rotation": [
+        0,
+        22,
+        0
+      ],
+      "autouv": 0,
+      "color": 0,
+      "uuid": "00b0f6a3-ba33-548b-8ba4-347b05a7966c",
+      "visibility": true,
+      "export": true,
+      "from": [
+        -6.5,
+        0,
+        4.5
+      ],
+      "to": [
+        -3.5,
+        1,
+        7.5
+      ],
+      "uv_offset": [
+        25,
+        63
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            25,
+            66,
+            28,
+            67
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            28,
+            66,
+            31,
+            67
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            31,
+            66,
+            34,
+            67
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            34,
+            66,
+            37,
+            67
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            31,
+            66,
+            28,
+            63
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            34,
+            63,
+            31,
+            66
+          ],
+          "texture": 0
+        }
+      }
+    }
+  ],
+  "outliner": [
+    {
+      "name": "root",
+      "uuid": "91e27a54-4be5-54a7-98b3-8a924c623de0",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": 0,
+      "export": true,
+      "visibility": true,
+      "isOpen": true,
+      "children": [
+        {
+          "name": "trunk",
+          "uuid": "8d352b2f-08c3-58f6-83cb-ad24656c685f",
+          "origin": [
+            0,
+            6,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": 0,
+          "export": true,
+          "visibility": true,
+          "isOpen": false,
+          "children": [
+            "b9d91225-0acc-54c3-8951-985e968001fd",
+            "3a91cb37-ae7a-5bf1-b483-e1cb153e213e",
+            "eb4c2cd0-f99f-522f-a5cc-a5ef10f3800f",
+            "8c3a03b8-133e-56ff-81c7-eb599efa17f1",
+            "32351857-1e80-5165-b225-4c23c3572a59",
+            "f20ecabc-1d40-5dba-aa26-ff2c8cf4b147",
+            "5cca5583-54a1-587e-bdc5-e724c70132b7",
+            {
+              "name": "head",
+              "uuid": "63cbf2c1-584a-5b09-bffb-af585f9c9257",
+              "origin": [
+                0,
+                7,
+                -4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "color": 0,
+              "export": true,
+              "visibility": true,
+              "isOpen": false,
+              "children": [
+                "3c811050-ce79-54ed-9bb1-ed5475f60421",
+                "2cf017e5-71b8-573e-ad02-c7b0a9032cc2",
+                {
+                  "name": "cap",
+                  "uuid": "6663b663-cbc4-5ce0-8d52-4ee0b9af03c4",
+                  "origin": [
+                    0,
+                    8,
+                    -7
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "color": 0,
+                  "export": true,
+                  "visibility": true,
+                  "isOpen": false,
+                  "children": [
+                    "f4c67e80-dda6-568b-b8f4-8997c6f8675a",
+                    "bcf6e5ea-9b58-5517-abf9-be50f0d8c611",
+                    "f292fca1-8427-5d75-a167-dde9344d2796",
+                    "36225ef0-8bf3-5489-be16-06d74cd29d67",
+                    "7ca72cf1-7ed6-5e2c-826f-8e904dbf913d",
+                    "ffa0676d-a1f4-5e11-8a12-28a8596f5dea",
+                    "85d46791-718b-5066-8fb7-af056be9918a",
+                    "ce270f35-5752-5387-b26b-13dc559169a3",
+                    "9075a676-b830-54db-8721-7b3a76691804",
+                    "fec0a74d-9231-5e81-8d5e-8fdde4151f0a"
+                  ]
+                },
+                {
+                  "name": "jaw",
+                  "uuid": "c9b02228-c14b-5c1b-9647-bb3c50d737ef",
+                  "origin": [
+                    0,
+                    5,
+                    -6
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "color": 0,
+                  "export": true,
+                  "visibility": true,
+                  "isOpen": false,
+                  "children": [
+                    "ad9c8213-ed6c-573b-a509-28880b619d3c",
+                    "08502481-2b59-58f5-8475-5fedb8f01024",
+                    "a652d9a5-ef16-55cf-b2e9-62106ecb059e",
+                    "28b5ca95-d9d2-5cc8-bee7-a3f1d4e812b8",
+                    "dff9978f-6b14-5bd9-b475-f53eeadc3c58"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "front left leg",
+              "uuid": "315bf5b3-b9ef-5332-a3f3-1e27ad1b901b",
+              "origin": [
+                3.25,
+                6,
+                -2.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "color": 0,
+              "export": true,
+              "visibility": true,
+              "isOpen": false,
+              "children": [
+                "009b44e3-d938-5478-8cca-96d6ec326595",
+                {
+                  "name": "front left ankle",
+                  "uuid": "ffcd42fc-ea21-5977-99d1-4c5e2e4b79de",
+                  "origin": [
+                    4.75,
+                    3,
+                    -3.5
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "color": 0,
+                  "export": true,
+                  "visibility": true,
+                  "isOpen": false,
+                  "children": [
+                    "1e8cd782-c885-51a1-a90d-32dd434b673f",
+                    "d4c14a8e-f0f0-5b58-a393-940db8822db5"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "front right leg",
+              "uuid": "4ff48667-b6f5-545c-9171-fde92aa122ca",
+              "origin": [
+                -3.25,
+                6,
+                -2.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "color": 0,
+              "export": true,
+              "visibility": true,
+              "isOpen": false,
+              "children": [
+                "609c7089-fc9d-5324-bda3-a1f574358174",
+                {
+                  "name": "front right ankle",
+                  "uuid": "6be3ee0c-4091-5a99-9aba-d8de05b617e7",
+                  "origin": [
+                    -4.75,
+                    3,
+                    -3.5
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "color": 0,
+                  "export": true,
+                  "visibility": true,
+                  "isOpen": false,
+                  "children": [
+                    "8b6cab32-a159-5523-b6cb-50203c8b0b8a",
+                    "0e83fa73-19af-5c79-b8da-97d27678fdeb"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "hind left leg",
+              "uuid": "c6a1f2aa-ce7f-5de1-b857-066125ee0157",
+              "origin": [
+                3.25,
+                6,
+                5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "color": 0,
+              "export": true,
+              "visibility": true,
+              "isOpen": false,
+              "children": [
+                "bda573d5-bec2-573e-af1c-8b5feb3dbcb7",
+                {
+                  "name": "hind left ankle",
+                  "uuid": "0c64d461-3854-5223-ab13-f37c25fc4aa4",
+                  "origin": [
+                    4.75,
+                    3,
+                    6.5
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "color": 0,
+                  "export": true,
+                  "visibility": true,
+                  "isOpen": false,
+                  "children": [
+                    "18f3d554-ed81-5cea-a74b-30330b5a267a",
+                    "e8a04bd2-a15a-5b35-8027-12721b6d738e"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "hind right leg",
+              "uuid": "93e4ab38-2222-51e2-b886-f5a2f6597ff3",
+              "origin": [
+                -3.25,
+                6,
+                5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "color": 0,
+              "export": true,
+              "visibility": true,
+              "isOpen": false,
+              "children": [
+                "dec73740-4f23-52b8-b102-9d7558aef9b7",
+                {
+                  "name": "hind right ankle",
+                  "uuid": "19148a93-cb3d-5d69-b516-069790bd2d83",
+                  "origin": [
+                    -4.75,
+                    3,
+                    6.5
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "color": 0,
+                  "export": true,
+                  "visibility": true,
+                  "isOpen": false,
+                  "children": [
+                    "3313c9a4-4a07-5dd1-abcd-0d84d8b6b62d",
+                    "00b0f6a3-ba33-548b-8ba4-347b05a7966c"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "hunter_fungus.png",
+      "id": "0",
+      "folder": "",
+      "namespace": "",
+      "particle": false,
+      "render_mode": "default",
+      "render_sides": "auto",
+      "visible": true,
+      "mode": "bitmap",
+      "saved": true,
+      "uuid": "a6a2ebad-3612-564e-ac7f-85aada23d264",
+      "relative_path": "../../../textures/entity/hunter_fungus/hunter_fungus.png",
+      "width": 128,
+      "height": 128,
+      "uv_width": 128,
+      "uv_height": 128,
+      "source": "data:image/png;base64,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"
+    }
+  ]
+}

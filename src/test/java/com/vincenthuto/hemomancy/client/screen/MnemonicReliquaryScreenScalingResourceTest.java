@@ -31,10 +31,12 @@ public final class MnemonicReliquaryScreenScalingResourceTest {
 				"this.imageHeight = currentGuiHeight;");
 		assertContains("mnemonic reliquary screen should scale item icons with the panel", screen,
 				"renderScaledItem");
-		assertContains("mnemonic reliquary counter should stay in the top-left corner", screen,
-				"int x = guiLeft + scaled(6);");
-		assertContains("mnemonic reliquary counter should render from its left edge", screen,
-				"graphics.drawString(font, text, x, y, 0xFFDD2222);");
+		assertContains("casket parts should be laid out in scaled panel pixels", screen,
+				"private int px(int value)");
+		assertContains("a crowded side wall should shrink its drawer icons rather than run past its foot", screen,
+				"if (needed <= bottom - top || size <= minSize) break;");
+		assertContains("the memorized counter should be a translated plaque on the lid", screen,
+				"Component.translatable(\"screen.hemomancy.mnemonic_reliquary.memorized\", used, maxSlots)");
 		assertNotContains("mnemonic reliquary screen should not center against the fixed width", screen,
 				"guiLeft = (this.width - GUI_WIDTH) / 2;");
 		assertNotContains("mnemonic reliquary screen should not center against the fixed height", screen,

@@ -31,7 +31,7 @@ import java.util.WeakHashMap;
  * {@link HemorathPoseBlend}, resolution B-8), the bank of springs that carry the secondary motion and the censers'
  * pendulums ({@link HemorathSpring}), what the body is doing in the world (ground speed, the turn, a hit landing), and
  * the attachment points and world trails the renderer records each frame for the world geometry (core, palm, face,
- * staff foot and head, eight sacs, two censers), and the body fire's seventy anchors with their velocities
+ * staff foot and head, eight spore outlets, one censer), and the body fire anchors with their velocities
  * ({@link #fireAnchors()}, revision R1) and the moment the fire is read at ({@link #fireMoment()}).
  */
 public final class PutricielAnimState {
@@ -53,7 +53,7 @@ public final class PutricielAnimState {
 	private final HemorathSpring busy = new HemorathSpring();
 	private final HemorathSpring flinch = new HemorathSpring();
 	private final PutricielTrail palmTrail = new PutricielTrail();
-	private final PutricielTrail[] censerTrails = {new PutricielTrail(), new PutricielTrail()};
+	private final PutricielTrail[] censerTrails = {new PutricielTrail()};
 	private final PutricielTrail staffHeadTrail = new PutricielTrail();
 
 	private boolean detached;
@@ -97,7 +97,7 @@ public final class PutricielAnimState {
 	private Vec3 core = new Vec3(0, 1.8, 0), palm = new Vec3(1, 1.8, 0), face = new Vec3(0, 3.0, 0), staffFoot = Vec3.ZERO,
 			staffHead = new Vec3(-1.2, 3.4, 0);
 	private Vec3[] sacs = new Vec3[SACS];
-	private Vec3[] censers = {new Vec3(-1.5, 2.2, 0), new Vec3(-1.7, 2, 0)};
+	private Vec3[] censers = {new Vec3(-1.05, 2.32, -.3)};
 
 	private PutricielAnimState() {
 		for (int i = 0; i < SPRINGS; i++) springs[i] = new HemorathSpring();
@@ -397,7 +397,7 @@ public final class PutricielAnimState {
 		return Float.isNaN(bodyYaw) ? 0.0F : bodyYaw * Mth.DEG_TO_RAD;
 	}
 
-	/** Where the body stands this frame, in model units (eight a block), for the censers' pendulums. */
+	/** Where the body stands this frame, in model units, for the censers' pendulums. */
 	public double worldX() {
 		return worldX * PutricielGait.BLOCK;
 	}
@@ -458,7 +458,7 @@ public final class PutricielAnimState {
 
 	/**
 	 * As {@link #attachments(Vec3, Vec3, Vec3, Vec3, Vec3[], Vec3[])}, also recording the staff head and keeping the
-	 * world positions of the palm, both censers and the staff head at {@code age} for their trails.
+	 * world positions of the palm, censer and staff head at {@code age} for their trails.
 	 */
 	public void attachments(Vec3 core, Vec3 palm, Vec3 face, Vec3 staffFoot, Vec3 staffHead, Vec3[] sacs, Vec3[] censers,
 			Vec3 origin, float age) {

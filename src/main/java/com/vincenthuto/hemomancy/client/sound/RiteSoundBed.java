@@ -32,7 +32,8 @@ public final class RiteSoundBed {
 			stopAll();
 			return;
 		}
-		if (mc.isPaused()) return;
+		// A frozen world holds its game time, so the heartbeat would strike every client tick.
+		if (!com.vincenthuto.hemomancy.client.render.AnimationTime.worldTicks()) return;
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
 		RiteWorldState.World world = nearest(RiteWorldState.worlds(), camera);
 		if (world == null || !world.center().equals(following)) {

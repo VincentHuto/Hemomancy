@@ -39,11 +39,7 @@ const MODELS = [
     source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/annetta/LatentAnnettaInfectionModel.java",
     texture: "textures/entity/boss/annetta/latent_annetta_infection.png",
   },
-  {
-    name: "PutricielModel",
-    source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/putriciel/PutricielModel.java",
-    texture: "textures/entity/boss/putriciel/putriciel.png",
-  },
+  // Putriciel's Java layer is generated from the authored PutricielVestment.bbmodel.
   {
     name: "VelorumModel",
     source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/velorum/VelorumModel.java",

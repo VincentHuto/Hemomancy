@@ -25,15 +25,15 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 /**
- * Putriciel at render scale 2.0 (the rig is generated at 0.7, so the atlas lands at 16 px per block): the base model,
+ * The authored cuboid vestments and their fitted effect masks: the base model,
  * the char layer (the growths burned, each at its own staggered char), the spore glow, the ember layer (the Flammeus
  * fire, never in the rot) and the burning layer (what burns under the body fire, one region at a time). Each frame it
- * captures the posed attachment points, the limb trails and the seventy fire anchors for the world geometry, and
+ * captures the posed attachment points, the limb trails and the fire anchors for the world geometry, and
  * through the ending it sinks the body into the floor where it kneels (the rise's sink played backwards). While the
  * fire burns it lights the body it is on.
  */
 public class PutricielRenderer extends MobRenderer<PutricielEntity, PutricielModel<PutricielEntity>> {
-	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/boss/putriciel/putriciel.png");
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_vestment.png");
 	/** How far the body sinks into the tomb by the ending's last beat. */
 	private static final float ENDING_SINK = 1.6F;
 	/**

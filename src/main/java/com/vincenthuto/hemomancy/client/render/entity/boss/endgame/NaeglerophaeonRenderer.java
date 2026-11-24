@@ -20,8 +20,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonEntity> {
-    private static final ResourceLocation TEXTURE=Hemomancy.rloc("textures/entity/naeglerophaeon_cube_palette.png");
-    private static final ResourceLocation DRAINED_TEXTURE=Hemomancy.rloc("textures/entity/naeglerophaeon_cube_palette_drained.png");
+    private static final ResourceLocation TEXTURE=Hemomancy.rloc("textures/entity/naeglerophaeon_redesign.png");
+    private static final ResourceLocation DRAINED_TEXTURE=Hemomancy.rloc("textures/entity/naeglerophaeon_redesign_drained.png");
     private static final ResourceLocation EYE_MARKER=Hemomancy.rloc("textures/entity/naeglerophaeon_eye_marker.png");
     private static final LightningTestConfig ARC=new LightningTestConfig(LightningTestConfig.Backend.BOLT,
             0xDDFF424D,0xDDFF424D,0xFFFFFFAB,32,0,0,0,18,3,4,3,.025F,.009F,true,0,false,2);
@@ -91,9 +91,9 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
                 Math.toRadians(Mth.rotLerp(partial,entity.xRotO,entity.getXRot())),entity.animationPhase(),
                 now-entity.animationStart(),victim==null?null:victim.getPosition(partial).subtract(origin),
                 victim==null?0:Math.toRadians(Mth.rotLerp(partial,victim.yRotO,victim.getYRot())),
-                victim==null?1.8:victim.getBbHeight(),state.pose.offsets(origin),
+                victim==null?1.8:victim.getBbHeight(),
                 state.lastTail==null?null:Arrays.stream(state.lastTail).map(p->p.subtract(origin)).toArray(Vec3[]::new),
-                capturing || state.releaseTick==Long.MIN_VALUE?0:Math.max(0,1-(now-state.releaseTick)/40.0),
+                capturing || state.releaseTick==Long.MIN_VALUE?0:HemoEasing.smoothstep(1-(now-state.releaseTick)/40.0),
                 state.huntBlend,state.pose.turnLag(partial),entity.isEnraged());
         float lookWeight=switch(entity.animationPhase()) {
             case NaeglerophaeonEntity.CAPTURE -> (float)HemoEasing.smoothstep(input.phaseTicks()/20);
@@ -102,25 +102,8 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
                     (float)HemoEasing.smoothstep(input.releaseBlend());
             default -> 0;
         };
-        boolean dynamicTail=capturing || input.releaseBlend()>0 && state.lastTail!=null;
-        Vec3[] tail=null;
-        if(dynamicTail) {
-            tail=NaeglerophaeonBlockModel.tailPoints(input);
-            if(capturing && input.victim()!=null) {
-                var reach=new NaeglerophaeonModel.Input(input.time(),input.seed(),input.yaw(),input.pitch(),
-                        NaeglerophaeonEntity.GRAB,input.phaseTicks(),input.victim(),input.victimYaw(),
-                        input.victimHeight(),input.history(),null,0,input.hunting(),input.turns());
-                Vec3[] target=NaeglerophaeonModel.build(reach,1).centers()[12];
-                double blend=entity.animationPhase()==NaeglerophaeonEntity.CAPTURE
-                        ?HemoEasing.smoothstep(input.phaseTicks()/20):1;
-                for(int j=0;j<tail.length;j++)
-                    tail[j]=tail[j].lerp(NaeglerophaeonModel.sample(target,j/48D),blend);
-            } else if(input.releaseBlend()>0 && input.releasedTail()!=null) {
-                for(int j=0;j<tail.length;j++)
-                    tail[j]=tail[j].lerp(NaeglerophaeonModel.sample(input.releasedTail(),j/48D),input.releaseBlend());
-            }
-        }
-        if(capturing && tail!=null) state.lastTail=Arrays.stream(tail).map(p->p.add(origin)).toArray(Vec3[]::new);
+        var frame=NaeglerophaeonBlockModel.pose(input,state.lookDirection,lookWeight);
+        if(capturing) state.lastTail=Arrays.stream(frame.tail()).map(p->p.add(origin)).toArray(Vec3[]::new);
         int overlay=LivingEntityRenderer.getOverlayCoords(entity,0);
         boolean drained=input.drained();
         ResourceLocation texture=drained?DRAINED_TEXTURE:TEXTURE;
@@ -128,23 +111,19 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
         for(int pass=0;pass<(markEyes?4:3);pass++) {
             if(drained && pass==1) continue;
             RenderType material=entity.isInvisible()?RenderType.outline(texture):pass==0?RenderType.entityCutoutNoCull(texture)
-                    :pass==1?RenderType.eyes(texture):pass==2?RenderType.entityTranslucent(texture)
+                    :pass==1?RenderType.eyes(texture):pass==2?RenderType.entityTranslucentCull(texture)
                     :RenderType.eyes(EYE_MARKER);
             VertexConsumer consumer=buffers.getBuffer(material);
-            NaeglerophaeonBlockModel.render(stack,consumer,pass,input,light,overlay,dynamicTail,
-                    state.lookDirection,lookWeight,markEyes);
-            if(dynamicTail) NaeglerophaeonBlockModel.renderCaptureTail(stack,consumer,pass,tail,light,overlay);
+            NaeglerophaeonBlockModel.render(frame,stack,consumer,pass,light,overlay,drained,markEyes);
         }
         if(!drained && !entity.isInvisible() && entity.isAlive() && entityRenderDispatcher.distanceToSqr(entity)<64*64 && state.lastTick!=tick) {
             state.lastTick=tick;
-            if(entity.animationPhase()==NaeglerophaeonEntity.OVERLOAD) overloadTailBolts(entity,state,input,origin,partial);
-            Vec3[] tips=null;
+            if(entity.animationPhase()==NaeglerophaeonEntity.OVERLOAD) overloadTailBolts(entity,state,input,frame.tail(),origin,partial);
             for(var pulse:NaeglerophaeonModel.pulses(tick,entity.getId())) if(pulse.spark()) {
                 int slot=pulse.limb()/4;
                 if(state.sparks[slot]==pulse.event()) continue;
                 state.sparks[slot]=pulse.event();
-                if(tips==null) tips=NaeglerophaeonBlockModel.tips(input);
-                Vec3 localTip=tips[pulse.limb()];
+                Vec3 localTip=frame.tips()[pulse.limb()];
                 if(localTip==null) continue;
                 Vec3 from=localTip.add(origin);
                 Vec3 forward=localTip.subtract(0,.8,0).normalize();
@@ -158,17 +137,17 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
         super.render(entity,yaw,partial,stack,buffers,light);
     }
     /** Lightning crawls the hanging tail as each pulse climbs toward the crown. */
-    private static void overloadTailBolts(NaeglerophaeonEntity entity,State state,NaeglerophaeonModel.Input input,Vec3 origin,float partial) {
+    private static void overloadTailBolts(NaeglerophaeonEntity entity,State state,NaeglerophaeonModel.Input input,Vec3[] tail,Vec3 origin,float partial) {
         long ticks=(long)input.phaseTicks();
         long pulse=ticks/30;
         int moment=(int)Math.floorMod(ticks,30);
         if(moment%3!=0 && !(moment==22 && state.lastOverloadPulse!=pulse)) return;
-        Vec3[] tail=NaeglerophaeonBlockModel.tailPoints(input);
         long seed=entity.getId()*31L+ticks;
         int climb=Math.max(1,47-moment*2);
         for(int i=0;i<2;i++) {
             int from=Math.clamp(climb+(i==0?-3:3),1,47);
-            Vec3 a=tail[from].add(origin), b=tail[Math.max(0,from-5)].add(origin)
+            Vec3 a=NaeglerophaeonModel.sample(tail,from/48.0).add(origin);
+            Vec3 b=NaeglerophaeonModel.sample(tail,Math.max(0,from-5)/48.0).add(origin)
                     .add(Math.sin(seed+i)*.45,Math.cos(seed*.7+i)*.3,Math.cos(seed+i)*.45);
             BoltRenderer.INSTANCE.add(LightningTestBoltFactory.create(a,b,seed+i,ARC.outerColor(),.03F,ARC),partial);
             BoltRenderer.INSTANCE.add(LightningTestBoltFactory.create(a,b,seed+i,ARC.innerColor(),.01F,ARC),partial);

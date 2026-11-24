@@ -49,8 +49,8 @@ final class CardinalRiteProgressionResourceTest {
 		assertDegreeAndType("sanguine_fervor", 3, "lesser");
 		assertDegreeAndType("sanguine_eclipse", 4, "greater");
 		assertDegreeAndType("scarlet_summons", 5, "greater");
-		assertDegreeAndType("hematic_unbinding", 5, "greater");
-		assertDegreeAndType("founding_fane", 5, "greater");
+		assertDegreeAndType("hematic_unbinding", 5, "lesser");
+		assertDegreeAndType("founding_fane", 5, "grand");
 		assertDegreeAndType("pallid_shadow", 6, "grand");
 	}
 
@@ -156,10 +156,7 @@ final class CardinalRiteProgressionResourceTest {
 	@Test
 	void everyEffectOnlyHarbingerRiteHasAnExplicitCompletionPath() throws IOException {
 		String completionSource = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
-		completionSource += Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/upgrade/StationUpgradeCatalog.java"));
-		completionSource += Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"));
 		try (var paths = Files.list(ROOT)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
 				JsonObject json = read(path);
@@ -171,10 +168,28 @@ final class CardinalRiteProgressionResourceTest {
 				String id = path.getFileName().toString().replace(".json", "");
 				assertTrue(com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.isRecipe(
 						net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/" + id))
+						|| json.has("completion_effect")
 						|| completionSource.contains("\"cardinal_rite/" + id + "\""),
-						id + " has neither a material result nor a named completion path");
+						id + " has neither a material result nor a named completion effect");
 			}
 		}
+	}
+
+	/** A completion effect is named by the recipe that runs it, once, in the effect's own namespace. */
+	@Test
+	void completionEffectsAreNamedOncePerRite() throws IOException {
+		java.util.Map<String, String> named = new java.util.TreeMap<>();
+		try (var paths = Files.walk(ROOT)) {
+			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
+				JsonObject json = read(path);
+				if (!json.has("completion_effect")) continue;
+				String effect = json.get("completion_effect").getAsString();
+				assertTrue(effect.startsWith("hemomancy:"), path + " names " + effect);
+				String previous = named.put(effect, path.getFileName().toString());
+				assertTrue(previous == null, effect + " is named by both " + previous + " and " + path.getFileName());
+			}
+		}
+		assertEquals(27, named.size(), "the rites with a bespoke completion: " + named.keySet());
 	}
 
 	private static void assertPromotion(String id, int degree, String form, List<String> offerings)

@@ -349,13 +349,13 @@ Working crafts (18). Feed is held Projection into the subject.
 | `resonant_forge` | minor | 3 | 500 | ferric_binder | wax_cylinder |
 | `somatic_loom` | lesser | 3 | 150 | sanguine_formation | string, neurotic_enzyme |
 | `morphling_cradle` | lesser | 4 | 200 | sanguine_formation | spore_sac |
-| `sporitic_thurible` | lesser | 4 | 1000 | spore_sac | chain, brown_mushroom |
+| `sporitic_thurible` | lesser | 8 | 1000 | spore_sac | chain, brown_mushroom |
 | `fungal_implantation_pylon` | lesser | 4 | 1200 | hyphal_substrate | neurotic_spores, bone_meal |
 | `mycelial_lantern` | lesser | 3 | 2500 (750 after T9) | ferric_binder | brown_mushroom, glowstone_dust |
 | `mnemonic_reliquary` | greater | 3 | 75 | sanguine_formation | book |
 | `runic_chisel_station` | greater | 4 | 100 | sanguine_formation | flint, iron_ingot |
 | `mason_effigy` | greater | 4 | 150 | runic_motif_paper | 2x #flowers |
-| `sanguine_monolith` | greater | 6 | 175 | sanguine_formation | sanguine_quintessence, echo_shard |
+| `sanguine_monolith` | greater | 5 | 175 | sanguine_formation | sanguine_quintessence, echo_shard |
 | `morphling_incubator` | greater | 5 | 200 | morphling_polyp | swollen_leech, slime_ball |
 | `somnolent_seat` | greater | 3 | 250 | sanguine_formation | 2x blood_crystal, 2x ender_pearl |
 | `vacant_effigy` | greater | 5 | 250 | sanguine_formation | armor_stand, blood_stained_stone |
@@ -430,7 +430,8 @@ follows the authored ceremony, not the floor tier: the grand Curved Horn rite co
 Founding 452. Several offerings are single vanilla items (clay ball for Sanguine Dominion, rabbit's foot for Eternal
 Covenant, a book for Scarlet Summons, charcoal for Apotheos). Three files have a `riteType` that does not match their
 floor's tier (`founding_fane` greater on a grand floor, `hematic_unbinding` greater on a lesser floor,
-`possession_rite` lesser on a grand floor). The first two are in the 2026-10-12 audit.
+`possession_rite` lesser on a grand floor). The first two are in the 2026-10-12 audit. All three were fixed on 2026-11-18
+(see `docs/CARDINAL_RITES.md`).
 
 Puppeteer ordeals (7). These are the only rites with a `bloodCost`.
 

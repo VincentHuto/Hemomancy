@@ -47,11 +47,7 @@ public final class CardinalRiteChecklist {
 		if (wave == null) return Component.translatable("message.hemomancy.cardinal_rite_checklist.endure_the_ordeal");
 		if (CardinalRiteWaveRules.objective(wave) != CardinalRiteWaveRules.Objective.SURVIVE)
 			return CardinalRiteWaveRules.deadlineHint(wave);
-		return Component.translatable(switch (wave) {
-			case "bloodlicker_siphon" -> "message.hemomancy.cardinal_rite_checklist.defend_the_boundary_from_bloodlickers";
-			case "fargone_dive" -> "message.hemomancy.cardinal_rite_checklist.survive_the_fargone_assault";
-			case "rogue_will" -> "message.hemomancy.cardinal_rite_checklist.drive_the_rogue_will_from_the_boundary";
-			default -> "message.hemomancy.cardinal_rite_checklist.endure_the_current_ordeal";
-		});
+		return Component.translatable(CardinalRiteWave.byId(wave).map(CardinalRiteWave::checklistKey)
+				.orElse("message.hemomancy.cardinal_rite_checklist.endure_the_current_ordeal"));
 	}
 }

@@ -72,7 +72,7 @@ class PutricielFireResourceTest {
 
 	/** The purifier's own fire (revision R1): the ember and burning layers carry no green or yellow texel either. */
 	@ParameterizedTest
-	@ValueSource(strings = {"putriciel_embers.png", "putriciel_burning.png"})
+	@ValueSource(strings = {"putriciel_vestment_embers.png", "putriciel_vestment_burning.png"})
 	void putricielsBodyFireIsNeverGreenOrYellow(String name) throws IOException {
 		BufferedImage atlas = ImageIO.read(RepoPaths.ASSETS.resolve("textures/entity/boss/putriciel/" + name).toFile());
 		int lit = 0;

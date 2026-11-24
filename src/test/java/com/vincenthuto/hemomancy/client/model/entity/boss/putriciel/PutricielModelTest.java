@@ -90,7 +90,7 @@ class PutricielModelTest {
         pose(model, state(null, 0, PutricielStage.ROT, 0, 1000), 0, 0);
         float rot = chest.xRot;
         pose(model, state(null, 0, PutricielStage.BURNING, 0, 1000), 0, 0);
-        assertTrue(rot - chest.xRot > .2F, "18 degrees hunched in the rot, 2 in the fire");
+        assertTrue(rot - chest.xRot > .1F, "the rot hunch eases into an upright cleansing stance");
     }
 
     @Test
@@ -99,11 +99,12 @@ class PutricielModelTest {
         var model = model(root);
         pose(model, state(PutricielMove.OFFERING, 30, PutricielStage.BURNING, PutricielOpenings.OFFERING_ID, 1000), 0, 0);
         Vector3f palm = model.palm();
-        // the renderer's offset at scale 2: model -z is ahead, y is measured down from 1.501
-        float ahead = -palm.z * 2, up = (1.501F - palm.y) * 2;
+        // The renderer's ground-relative conversion, with model -z ahead.
+        float scale = com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielVisualRules.SCALE;
+        float ahead = -palm.z * scale, up = (1.501F - palm.y) * scale;
         assertEquals(0.7F, ahead, .15F, "PutricielEntity.PALM_FORWARD");
         assertEquals(2.45F, up, .15F, "PutricielEntity.PALM_UP");
-        assertEquals(0.0F, -palm.x * 2, .2F, "the palm is held at the body's centre line");
+        assertEquals(0.0F, -palm.x * scale, .2F, "the palm is held at the body's centre line");
     }
 
     @Test
@@ -192,22 +193,23 @@ class PutricielModelTest {
         model.pose(a, rest, 40, 0, 0);
         assertEquals(24, at(new Vector3f(0, model.staffLength, 0), top, hips, chest, arm, forearm, hand, staff).y, .3F);
         assertEquals(1, direction(new Vector3f(0, 1, 0), top, hips, chest, arm, forearm, hand, staff).y, 1e-3F);
-        for (String side : new String[]{"left", "right"})
-            assertEquals(1, direction(new Vector3f(0, 1, 0), top, hips, chest, arm, forearm, hand, staff, head,
-                    head.getChild("staff_chain_" + side)).y, 1e-3F, side + " censer hangs plumb");
+        var pendant = head.getChild("censer_chain");
+        assertEquals(1, model.censers().length);
+        assertEquals(1, direction(new Vector3f(0, 1, 0), top, hips, chest, arm, forearm, hand, staff, head,
+                pendant).y, 1e-3F, "the censer hangs plumb");
         // a bowed, leaning body: the censers still hang true
         a[PutricielModel.BOW] = .6F;
         a[PutricielModel.LEAN] = .2F;
         model.pose(a, rest, 40, 0, 0);
         assertEquals(1, direction(new Vector3f(0, 1, 0), top, hips, chest, arm, forearm, hand, staff, head,
-                head.getChild("staff_chain_left")).y, 1e-3F);
+                pendant).y, 1e-3F);
         // swung out and flung: the chain follows the staff's head outward
         a[PutricielModel.STAFF_PLANT] = 0;
         a[PutricielModel.STAFF_TILT] = 1.2F;
         a[PutricielModel.CENSER_FLING] = 1.0F;
         model.pose(a, rest, 40, 0, 0);
         Vector3f chain = direction(new Vector3f(0, 1, 0), top, hips, chest, arm, forearm, hand, staff, head,
-                head.getChild("staff_chain_right"));
+                pendant);
         assertTrue(chain.z < -.5F, "a flung censer swings out ahead along the staff (" + chain + ")");
     }
 
@@ -217,7 +219,7 @@ class PutricielModelTest {
             var thigh = hips.getChild(side + "_thigh");
             var shin = thigh.getChild(side + "_shin");
             var foot = shin.getChild(side + "_foot");
-            lowest = Math.max(lowest, at(new Vector3f(0, .25F, 0), top, hips, thigh, shin, foot).y);
+            lowest = Math.max(lowest, at(new Vector3f(0, PutricielGait.SOLE, 0), top, hips, thigh, shin, foot).y);
             lowest = Math.max(lowest, at(new Vector3f(), top, hips, thigh, shin).y + PutricielGait.KNEE_PAD);
         }
         return lowest;
@@ -333,7 +335,7 @@ class PutricielModelTest {
 
     @Test
     void exportedFaceUvsMatchTheBakedJavaModel() {
-        var project = ResourceReader.asset("models/entity/bbmodel/bosses/PutricielModel.bbmodel");
+        var project = ResourceReader.asset("models/entity/bbmodel/bosses/PutricielVestment.bbmodel");
         int width = project.getAsJsonObject("resolution").get("width").getAsInt();
         int height = project.getAsJsonObject("resolution").get("height").getAsInt();
         var expected = new ArrayList<String>();
@@ -381,60 +383,49 @@ class PutricielModelTest {
     }
 
     @Test
-    void theRigCarriesLegsTheFaceTheSeamsEightSacsAndFiveNodules() {
-        var hips = PutricielModel.createBodyLayer().bakeRoot().getChild("root").getChild("hips");
+    void theAuthoredRigCarriesItsVeilCenserLegsAndOfferingHand() {
+        var root = PutricielModel.createBodyLayer().bakeRoot();
+        var hips = root.getChild("root").getChild("hips");
         var chest = hips.getChild("chest");
         for (String side : new String[]{"left", "right"}) {
-            assertNotNull(hips.getChild(side + "_thigh").getChild(side + "_shin").getChild(side + "_foot"));
+            assertFalse(hips.getChild(side + "_thigh").getChild(side + "_shin").getChild(side + "_foot").cubes.isEmpty());
         }
-        assertNotNull(chest.getChild("head").getChild("purifier_face"));
-        assertNotNull(chest.getChild("head").getChild("face_vines"));
-        assertNotNull(chest.getChild("eschar_seams"));
-        assertNotNull(chest.getChild("spore_cluster").getChild("spore_3"));
-        assertNotNull(chest.getChild("back_colony").getChild("back_spore_0"));
-        assertNotNull(chest.getChild("back_colony").getChild("back_spore_1"));
+        assertNotNull(chest.getChild("head").getChild("veil"));
         var hand = chest.getChild("right_arm").getChild("right_forearm").getChild("right_hand");
-        for (int i = 0; i < 5; i++) assertNotNull(hand.getChild("palm_nodule_" + i));
-        assertNotNull(hand.getChild("offering_drips"));
+        for (int i = 0; i < 4; i++) assertFalse(hand.getChild("offering_finger_" + i).cubes.isEmpty());
         var staff = chest.getChild("left_arm").getChild("left_forearm").getChild("left_hand").getChild("staff");
-        assertNotNull(staff.getChild("staff_foot"));
-        assertNotNull(staff.getChild("staff_head").getChild("staff_chain_left").getChild("censer_left"));
-        assertNotNull(staff.getChild("staff_head").getChild("staff_chain_right").getChild("censer_right"));
+        var pendant = staff.getChild("staff_head").getChild("censer_chain");
+        assertTrue(pendant.getChild("censer_bowl").getAllParts().anyMatch(part -> !part.cubes.isEmpty()));
+        var model = model(root);
+        model.pose(still(), state(null, 0, PutricielStage.ROT, 0, 1000), 40, 0, 0);
+        assertEquals(8, model.sacPoints().length);
+        assertEquals(1, model.censers().length);
     }
 
     @Test
-    void savedGeometryUsesTheQuarterUnitGridAndHalfAUnitAtLeast() {
-        PutricielModel.createBodyLayer().bakeRoot().getAllParts().forEach(part -> {
-            for (float c : new float[]{part.x, part.y, part.z}) assertEquals(Math.round(c * 4), c * 4, .0001F);
-            for (var cube : part.cubes) {
-                for (float c : new float[]{cube.minX, cube.minY, cube.minZ, cube.maxX, cube.maxY, cube.maxZ})
-                    assertEquals(Math.round(c * 4), c * 4, .0001F);
-                assertTrue(cube.maxX - cube.minX >= .5F);
-                assertTrue(cube.maxY - cube.minY >= .5F);
-                assertTrue(cube.maxZ - cube.minZ >= .5F);
-            }
-        });
-    }
-
-    @Test
-    void sixteenPixelsPerBlockAtRenderScale() {
-        // 2 texture pixels a model unit (putriciel.py kit.SCALE), 16 units a block, drawn at PutricielVisualRules.SCALE
-        var project = ResourceReader.asset("models/entity/bbmodel/bosses/PutricielModel.bbmodel");
-        int width = project.getAsJsonObject("resolution").get("width").getAsInt();
-        assertEquals(16.0F, 2 * 16 / com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielVisualRules.SCALE, 1.0E-6F);
-        assertTrue(width >= 256);
+    void allAuthoredElementsAreCuboidsWithAtLeastHalfUnitDimensions() {
+        var project = ResourceReader.asset("models/entity/bbmodel/bosses/PutricielVestment.bbmodel");
+        for (var item : project.getAsJsonArray("elements")) {
+            var cube = item.getAsJsonObject();
+            assertEquals("cube", cube.get("type").getAsString());
+            assertTrue(cube.get("box_uv").getAsBoolean());
+            var from = cube.getAsJsonArray("from");
+            var to = cube.getAsJsonArray("to");
+            for (int i = 0; i < 3; i++)
+                assertTrue(to.get(i).getAsFloat() - from.get(i).getAsFloat() >= .49999F);
+        }
     }
 
     @Test
     void embeddedTextureMatchesRuntimeAndGlowStaysOnVisibleSurfaces() throws Exception {
-        var project = ResourceReader.asset("models/entity/bbmodel/bosses/PutricielModel.bbmodel");
-        var path = ResourceReader.path("assets/hemomancy/textures/entity/boss/putriciel/putriciel.png");
+        var project = ResourceReader.asset("models/entity/bbmodel/bosses/PutricielVestment.bbmodel");
+        var path = ResourceReader.path("assets/hemomancy/textures/entity/boss/putriciel/putriciel_vestment.png");
         var embedded = project.getAsJsonArray("textures").get(0).getAsJsonObject().get("source").getAsString();
         assertArrayEquals(Files.readAllBytes(path), Base64.getDecoder().decode(embedded.split(",", 2)[1]));
         assertEquals(project.getAsJsonArray("elements").size(), PutricielModel.createBodyLayer().bakeRoot()
                 .getAllParts().mapToInt(p -> p.cubes.size()).sum());
         var base = ImageIO.read(path.toFile());
-        var glow = ImageIO.read(ResourceReader.path("assets/hemomancy/textures/entity/boss/putriciel/putriciel_glow.png").toFile());
+        var glow = ImageIO.read(ResourceReader.path("assets/hemomancy/textures/entity/boss/putriciel/putriciel_vestment_glow.png").toFile());
         assertEquals(base.getWidth(), glow.getWidth());
         assertEquals(base.getHeight(), glow.getHeight());
         int lit = 0, dark = 0;
@@ -457,10 +448,10 @@ class PutricielModelTest {
     }
 
     @Test
-    void seventyFireAnchorsStandOnTheirRegionsPartsWithUnitNormals() {
+    void fireAnchorsStandOnTheirRegionsPartsWithUnitNormals() {
         var model = model(PutricielModel.createBodyLayer().bakeRoot());
         Vector3f[][] anchors = restAnchors(model);
-        assertEquals(70, PutricielFireAnchors.COUNT, "R1.1's seventy anchors");
+        assertEquals(54, PutricielFireAnchors.COUNT);
         int[] perRegion = new int[PutricielFireAnchors.Region.values().length];
         java.util.Set<Integer> orders = new java.util.HashSet<>();
         for (int i = 0; i < PutricielFireAnchors.COUNT; i++) {
@@ -476,7 +467,7 @@ class PutricielModelTest {
             float size = PutricielFireAnchors.size(i);
             assertTrue(size >= 0.0F && size <= 1.0F, part + "'s size sits in its region's tongue range");
         }
-        assertArrayEquals(new int[]{12, 2, 19, 15, 9, 6, 7}, perRegion, "staff, censers, back, shoulders, crown, chest, hem");
+        assertArrayEquals(new int[]{12, 1, 19, 8, 6, 4, 4}, perRegion, "staff, censers, back, shoulders, crown, chest, hem");
         for (int order = 1; order < PutricielFireAnchors.COUNT; order++)
             assertTrue(PutricielFireAnchors.kindleTick(order) >= PutricielFireAnchors.kindleTick(order - 1), "kindle order is by tick");
         assertEquals(16.0F, PutricielFireAnchors.kindleTick(0), 1.0E-4F, "the chest tears and the grip wrap catch first, at 16");
@@ -498,26 +489,16 @@ class PutricielModelTest {
         List<float[]> above = new ArrayList<>();
         for (int i = 0; i < PutricielFireAnchors.COUNT; i++) {
             String part = PutricielModel.ANCHOR_PARTS[i];
-            if (!part.startsWith("staff_wrap_") && !part.equals("staff_head")) continue;
+            if (!part.startsWith("staff_wrap_") && !part.startsWith("box_reliquary") && !part.equals("staff_head")) continue;
             float along = new Vector3f(anchors[0][i]).sub(foot).dot(axis);
             assertTrue(along > -0.05F && along < length + 0.6F, part + " stands on the staff, between its foot and its head");
             if (along >= gripAt - 1.0E-3F) above.add(new float[]{along, PutricielModel.ANCHOR_KINDLE[i]});
         }
-        assertTrue(above.size() >= 7, "three wraps, three prongs and the head bar's ends above the grip");
+        assertTrue(above.size() >= 6, "wraps and ironwork carry the fire from the grip to the finial");
         above.sort((a, b) -> Float.compare(a[0], b[0]));
         for (int i = 1; i < above.size(); i++)
             assertTrue(above.get(i)[1] >= above.get(i - 1)[1] - 0.6F, "the fire climbs the shaft from the grip wrap to the head");
         assertEquals(16.0F, PutricielModel.ANCHOR_KINDLE[grip], 1.0E-4F, "the grip wrap catches first");
-    }
-
-    @Test
-    void theStoleTheStaffWrapsAndTheMossExist() {
-        var chest = PutricielModel.createBodyLayer().bakeRoot().getChild("root").getChild("hips").getChild("chest");
-        assertNotNull(chest.getChild("stole_left"));
-        assertNotNull(chest.getChild("stole_right"));
-        var staff = chest.getChild("left_arm").getChild("left_forearm").getChild("left_hand").getChild("staff");
-        for (int i = 0; i < 4; i++) assertFalse(staff.getChild("staff_wrap_" + i).cubes.isEmpty(), "wrap " + i);
-        assertTrue(chest.getChild("back_colony").getChild("back_shelf_0").cubes.size() > 4, "a moss tuft at the shelf's root");
     }
 
     private static PutricielBodyFireRules.Moment ignition(float t) {
@@ -538,10 +519,10 @@ class PutricielModelTest {
             assertEquals(PutricielFireAnchors.kindleOrder(part), PutricielModel.GROWTH_ORDERS[i]);
         }
         // the chest's sacs before the back's root shelf, the root shelf before the outermost
-        int sac = PutricielFireAnchors.kindleOrder("spore_0"), rootShelf = PutricielFireAnchors.kindleOrder("back_shelf_4"),
-                outer = PutricielFireAnchors.kindleOrder("back_shelf_10");
-        assertTrue(sac < rootShelf && rootShelf < outer, "kindle order " + sac + " < " + rootShelf + " < " + outer);
-        int iRoot = PutricielFireAnchors.growthIndex("back_shelf_4"), iOuter = PutricielFireAnchors.growthIndex("back_shelf_10");
+        int sac = PutricielFireAnchors.kindleOrder("back_spore_0"), rootShelf = PutricielFireAnchors.kindleOrder("back_shelf_9"),
+                outer = PutricielFireAnchors.kindleOrder("back_shelf_2");
+        assertTrue(sac < outer && rootShelf < outer, "the fire reaches the inner colony and spores before the outer shelf");
+        int iRoot = PutricielFireAnchors.growthIndex("back_shelf_9"), iOuter = PutricielFireAnchors.growthIndex("back_shelf_2");
         assertTrue(PutricielFireAnchors.growth(iRoot, ignition(21)) < PutricielFireAnchors.growth(iOuter, ignition(21)) - 0.3F,
                 "the fire reaches the colony's root before its outer shelves");
         var burnt = PutricielBodyFireRules.Moment.of(PutricielStage.BURNING, 400, 0);
@@ -550,8 +531,6 @@ class PutricielModelTest {
         // the Embering: the root shelf regrows before the outer one, the knuckle before the shoulder
         var early = PutricielBodyFireRules.Moment.of(PutricielStage.EMBERING, 12, 0);
         assertTrue(PutricielFireAnchors.growth(iRoot, early) > PutricielFireAnchors.growth(iOuter, early), "regrows from the root outward");
-        assertTrue(PutricielFireAnchors.regrowRank("knuckle_growth") < PutricielFireAnchors.regrowRank("right_shoulder_shelf_0"),
-                "the arms regrow from their tips inward");
     }
 
     @Test
@@ -561,12 +540,12 @@ class PutricielModelTest {
         var colony = root.getChild("root").getChild("hips").getChild("chest").getChild("back_colony");
         var ignition = state(PutricielMove.IGNITION, 21, PutricielStage.IGNITING, 0, 1000);
         pose(model, ignition, 0, 0);
-        assertTrue(colony.getChild("back_shelf_4").xScale < colony.getChild("back_shelf_10").xScale - 0.3F,
+        assertTrue(colony.getChild("back_shelf_9").xScale < colony.getChild("back_shelf_2").xScale - 0.3F,
                 "the root shelf has burnt while the outermost waits for the fire");
         var embering = PutricielAnimState.detached();
         embering.set(0, -1, PutricielStage.EMBERING, 60, -1, 0, -1, 0, 2, 1000);
         model.pose(still(), embering, 40, 0, 0);
-        for (int i = 0; i < 11; i++) assertEquals(1.0F, colony.getChild("back_shelf_" + i).xScale, 1.0E-3F, "shelf " + i + " regrown");
+        for (int i = 0; i < 10; i++) assertEquals(1.0F, colony.getChild("back_shelf_" + i).xScale, 1.0E-3F, "shelf " + i + " regrown");
     }
 
     @Test

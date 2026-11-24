@@ -1,9 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import org.junit.jupiter.api.Test;
+import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 
@@ -18,6 +22,26 @@ final class ScarletSerpentRulesTest {
 		selectsTextureVariantFromSpawnBiome();
 		spawnlistIncludesSwampsForBrownVariant();
 		textureVariantsExist();
+	}
+
+	@Test
+	void redesignedAtlasMatchesTheAuthoringTextureAndAllBiomeVariants() throws IOException {
+		Path folder = Path.of("src/main/resources/assets/hemomancy/textures/entity/scarlet_serpent");
+		Path source = Path.of("docs/art/scarlet_serpent/scarlet_serpent.png");
+		Path base = folder.resolve("model_scarlet_serpent.png");
+		assertArrayEquals(Files.readAllBytes(source), Files.readAllBytes(base));
+		var atlas = ImageIO.read(base.toFile());
+		for (String suffix : new String[]{"_desert", "_swamp"}) {
+			var variant = ImageIO.read(folder.resolve("model_scarlet_serpent" + suffix + ".png").toFile());
+			assertEquals("texture width", atlas.getWidth(), variant.getWidth());
+			assertEquals("texture height", atlas.getHeight(), variant.getHeight());
+			assertNotEquals(-1L, Files.mismatch(base, folder.resolve("model_scarlet_serpent" + suffix + ".png")));
+			for (int y = 0; y < atlas.getHeight(); y++) {
+				for (int x = 0; x < atlas.getWidth(); x++) {
+					assertEquals("variant alpha", atlas.getRGB(x, y) >>> 24, variant.getRGB(x, y) >>> 24);
+				}
+			}
+		}
 	}
 
 	private static void flaresBeforeItStrikes() {
@@ -62,7 +86,7 @@ final class ScarletSerpentRulesTest {
 				localYaw + ScarletSerpentSlitherRules.segmentPropagatedYaw(segment - 1, waveTime, movement),
 				propagatedYaw);
 		assertNotClose("middle segments should not move independently", localYaw, propagatedYaw);
-		assertEquals("body segment count", 9, ScarletSerpentSlitherRules.BODY_SEGMENT_COUNT);
+		assertEquals("body segment count", 14, ScarletSerpentSlitherRules.BODY_SEGMENT_COUNT);
 	}
 
 	private static void lootTableUsesCompleteNumberProviders() throws IOException {

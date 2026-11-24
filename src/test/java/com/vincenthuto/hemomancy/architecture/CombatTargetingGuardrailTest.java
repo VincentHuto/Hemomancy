@@ -113,6 +113,14 @@ class CombatTargetingGuardrailTest {
 				"common/capability/player/harbinger/scar/ScarsEntityEventHandler.java"), "public static void playerTickScars(");
 		SourceAssertions.assertContains("Saprovitta trail", trail, "ManipulationCombatHelper.canHarm(player, candidate))");
 		SourceAssertions.assertContains("Saprovitta trail names its wearer", trail, "damageSources().indirectMagic(player, player)");
+		String dominion = SourceAssertions.methodBody(SourceAssertions.readMainJava(
+				"common/rite/harbinger/SanguineDominionEvents.java"), "public static void onLevelTick(");
+		SourceAssertions.assertContains("a Blood Domain bleeds only what its owner may harm", dominion,
+				"ManipulationCombatHelper.canHarm(owner, entity)");
+		SourceAssertions.assertContains("a Blood Domain names its owner", dominion,
+				"damageSources().indirectMagic(owner, owner)");
+		SourceAssertions.assertContains("an absent owner's domain bleeds only monsters", dominion,
+				"entity instanceof Enemy");
 		SourceAssertions.assertContains("Verdigris Aura", SourceAssertions.methodBody(SourceAssertions.readMainJava(
 				"common/effect/VerdigrisAuraEffect.java"), "public boolean applyEffectTick("),
 				"ManipulationCombatHelper.canHarmFor(entity, target)");

@@ -21,7 +21,7 @@ public final class IchorianSigilPreviewRenderer {
 				IchorianSigilPreviewCycle.sample(elapsedTicks, partialTick);
 		float animationAge = cycle.animationAgeTicks();
 		AwakenedIchorianSigilPose sigilPose = AwakenedIchorianSigilPoseCalculator.calculate(
-				sigil, cycle.morphAgeTicks(), animationAge, 0.0F);
+				sigil, cycle.morphAgeTicks(), animationAge);
 		sigilPose = new AwakenedIchorianSigilPose(
 				sigilPose.landmarks(),
 				sigilPose.primaryVessels().stream()
@@ -31,7 +31,7 @@ public final class IchorianSigilPreviewRenderer {
 				sigilPose.secondaryVessels(), sigilPose.membranes(),
 				sigilPose.detachment(), sigilPose.migration(), sigilPose.quickening(), sigilPose.scale());
 		AwakenedIchorianSigilBodyAnimation.BodyPose body =
-				AwakenedIchorianSigilBodyAnimation.pose(sigil.id(), animationAge, 0.0F);
+				AwakenedIchorianSigilBodyAnimation.pose(sigil.id(), animationAge);
 		float extent = Math.max(0.8F, AwakenedIchorianSigilPoseCalculator.tierScale(sigil.tier()));
 		float scale = Math.min(areaW, areaH) / (extent * 2.35F);
 

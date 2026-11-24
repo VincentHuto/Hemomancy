@@ -44,12 +44,15 @@ public final class OsteophageEntity extends PathfinderMob {
             OsteophageEntity.class, EntityDataSerializers.INT);
     private static final int PERCHED = 0, FORAGING = 1, HUNTING = 2, RETURNING = 3;
     private static final int SEARCH_RADIUS = 20;
+    private static final byte FEEDING_EVENT = 70;
+    private static final int FEEDING_ANIMATION_TICKS = 12;
 
     @Nullable private BlockPos perch;
     @Nullable private ItemEntity targetBone;
     private int feedingCooldown, pursuitTicks, attackCooldown;
     private boolean liningUp = true;
     private float previousFlightPose, flightPose;
+    private int feedingAnimationTicks;
 
     public OsteophageEntity(EntityType<? extends OsteophageEntity> type, Level level) {
         super(type, level);
@@ -75,6 +78,22 @@ public final class OsteophageEntity extends PathfinderMob {
 
     public float getFlightPoseAmount(float partialTick) {
         return Mth.lerp(partialTick, previousFlightPose, flightPose);
+    }
+
+    @Override
+    public void handleEntityEvent(byte event) {
+        if (event == FEEDING_EVENT) {
+            feedingAnimationTicks = FEEDING_ANIMATION_TICKS;
+        } else {
+            super.handleEntityEvent(event);
+        }
+    }
+
+    public float getFeedingPose(float partialTick) {
+        if (feedingAnimationTicks == 0) return 0;
+        float phase = Mth.clamp((FEEDING_ANIMATION_TICKS - feedingAnimationTicks + partialTick)
+                / FEEDING_ANIMATION_TICKS, 0, 1);
+        return Mth.sin(phase * Mth.PI) * (.35F + .65F * Mth.abs(Mth.sin(phase * Mth.TWO_PI * 2)));
     }
 
     public static boolean canSpawnHere(EntityType<? extends OsteophageEntity> type, LevelAccessor level,
@@ -138,6 +157,7 @@ public final class OsteophageEntity extends PathfinderMob {
         setNoGravity(true);
         previousFlightPose = flightPose;
         flightPose = Mth.clamp(flightPose + (isFlying() ? .16F : -.12F), 0, 1);
+        if (feedingAnimationTicks > 0) feedingAnimationTicks--;
         if (level().isClientSide || isNoAi()) return;
         if (feedingCooldown > 0) feedingCooldown--;
         if (attackCooldown > 0) attackCooldown--;
@@ -204,6 +224,7 @@ public final class OsteophageEntity extends PathfinderMob {
             stack.shrink(1);
             if (stack.isEmpty()) targetBone.discard(); else targetBone.setItem(stack);
             heal(2);
+            level().broadcastEntityEvent(this, FEEDING_EVENT);
             level().playSound(null, blockPosition(), SoundEvents.FOX_EAT, SoundSource.NEUTRAL, .65F, .65F);
             if (level() instanceof ServerLevel server)
                 server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.BONE)),
@@ -325,5 +346,6 @@ public final class OsteophageEntity extends PathfinderMob {
         if (level().isClientSide && tag.contains("Flying")) seated = !tag.getBoolean("Flying");
         entityData.set(ACTIVITY, seated ? PERCHED : RETURNING);
         previousFlightPose = flightPose = seated ? 0 : 1;
+        feedingAnimationTicks = 0;
     }
 }

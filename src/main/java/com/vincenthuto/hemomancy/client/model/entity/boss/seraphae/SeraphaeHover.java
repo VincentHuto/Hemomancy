@@ -7,11 +7,11 @@ import com.vincenthuto.hemomancy.common.util.HemoEasing;
  * blocks over the floor and glides. Her velocity is read in her own frame (forward and to her right) so she leans into
  * a glide and banks into a slide; her hanging legs fold just enough that the soles never pass through the floor when
  * she sinks; a hanging panel of her gown flares out just enough that its hem lies on the floor instead of through it.
- * Model units throughout (render scale 2: eight to a block; the model's feet at y 24). JVM-tested.
+ * Model units throughout (sixteen to a block; the model's feet at y 24). JVM-tested.
  */
 public final class SeraphaeHover {
-	/** Model units in a block at render scale 2. */
-	public static final float BLOCK = 8.0F;
+	/** Model units in a block. */
+	public static final float BLOCK = 16.0F;
 	/** Her hover over the floor, in blocks (the server's {@code SeraphaeEntity.HOVER}). */
 	public static final float HOVER = 0.35F;
 	/** The floor's model y beneath her: her feet are at 24 and she hovers over it. */
@@ -19,9 +19,9 @@ public final class SeraphaeHover {
 	/** Her full glide speed in blocks a tick (the server's {@code SeraphaeEntity.GLIDE_SPEED}). */
 	public static final float GLIDE = 0.11F;
 	/** The thigh and the shin to the sole, in model units. */
-	public static final float THIGH = 5.5F, SHIN = 5.5F;
+	public static final float THIGH = 10.0F, SHIN = 10.0F;
 	/** A sole or a hem keeps this far over the floor. */
-	public static final float CLEARANCE = 0.25F;
+	public static final float CLEARANCE = 0.5F;
 	/** The most the knees fold to clear the floor; per unit, the thigh comes forward this share of the fold. */
 	public static final float FOLD_MAX = 2.2F, THIGH_SHARE = 0.4F;
 

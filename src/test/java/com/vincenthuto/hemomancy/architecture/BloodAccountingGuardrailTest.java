@@ -96,6 +96,17 @@ class BloodAccountingGuardrailTest {
 				"pay with BloodAccounting.pay(player, amount, Source), or list a non-player volume here with a reason");
 	}
 
+	/** A rite's recurring bleeds are upkeep, shown per tick in the diagnostics, not a stream of one-off payments. */
+	@Test
+	void riteDrainsPayAsUpkeep() {
+		SourceAssertions.assertContains("the leash bleeds a straying caster every tick",
+				SourceAssertions.readMainJava("common/rite/harbinger/HarbingerCardinalRiteEvents.java"),
+				"BloodAccounting.payUpkeep(caster, CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK, BOUNDARY, 1, false)");
+		SourceAssertions.assertContains("fargone threats bleed the caster once a second",
+				SourceAssertions.readMainJava("common/rite/harbinger/CardinalRiteOrdealEngine.java"),
+				"BloodAccounting.payUpkeep(caster, drain, THREAT_DRAIN, THREAT_PRESSURE_INTERVAL_TICKS, false)");
+	}
+
 	@Test
 	void subtractBloodVolumeNeverPaysForAPlayer() throws IOException {
 		assertEquals(counts(SUBTRACTS), found(SUBTRACT),

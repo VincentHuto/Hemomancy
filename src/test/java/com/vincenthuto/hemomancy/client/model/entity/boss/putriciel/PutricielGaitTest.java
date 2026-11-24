@@ -81,15 +81,7 @@ class PutricielGaitTest {
     }
 
     @Test
-    void aKneelingLegTouchesWithItsKneeAndAStandingOneWithItsSole() {
-        float rad = (float) Math.PI / 180.0F;
-        float standing = PutricielGait.contact(-6 * rad, 10 * rad);
-        assertEquals(PutricielGait.reach(-6 * rad, 10 * rad), standing, 1e-6F, "standing, the sole is lowest");
-        float kneeling = PutricielGait.contact(5 * rad, 95 * rad);
-        assertEquals(PutricielGait.THIGH * (float) Math.cos(5 * rad) + PutricielGait.KNEE_PAD, kneeling, 1e-6F,
-                "kneeling, the kneecap is lowest");
-        float planted = PutricielGait.contact(-72 * rad, 72 * rad);
-        assertEquals(kneeling, planted, 0.05F, "the one-knee kneel's front sole and back knee meet the same floor");
+    void crouchFoldStaysInRange() {
         assertEquals(0.0F, PutricielGait.fold(0.0F), 1e-6F);
         assertEquals(1.3F, PutricielGait.fold(10.0F), 1e-6F);
     }

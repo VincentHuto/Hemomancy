@@ -6,8 +6,6 @@ import java.util.List;
 
 public final class CardinalRiteFootprintRules {
 	public static final float MARKER_CLEARANCE = 0.75F;
-	public static final float AWAKENED_SIGIL_CLEARANCE = 1.25F;
-	public static final float MIN_AWAKENED_SIGIL_ORBIT_RADIUS = 1.5F;
 
 	private CardinalRiteFootprintRules() {
 	}
@@ -28,11 +26,6 @@ public final class CardinalRiteFootprintRules {
 		for (BlockPos point : sigilPoints) farthest = Math.max(farthest, horizontalDistance(point));
 		float contentRadius = farthest > 0.0D ? (float) farthest + MARKER_CLEARANCE : 0.0F;
 		return Math.max(safeRadius(fallbackRadius), Math.max(safeRadius(floorRadius), contentRadius));
-	}
-
-	public static float awakenedSigilOrbitRadius(float footprintRadius) {
-		float safeFootprint = Float.isFinite(footprintRadius) ? Math.max(0.0F, footprintRadius) : 0.0F;
-		return Math.max(MIN_AWAKENED_SIGIL_ORBIT_RADIUS, safeFootprint - AWAKENED_SIGIL_CLEARANCE);
 	}
 
 	private static float safeRadius(float radius) {

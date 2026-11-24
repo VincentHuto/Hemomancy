@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "completion_effect": "hemomancy:illuminatus_rite",
   "bloodCost": 0,
   "riteType": "greater",
   "purpose": "self",

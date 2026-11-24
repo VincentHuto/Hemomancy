@@ -27,7 +27,7 @@ public class MycelialLanternMenu extends HemoContainerMenu {
     public static final int SLOT_COUNT = MycelialLanternBlockEntity.INVENTORY_SIZE;
     public static final int DATA_COUNT = 4;
     public static final int CULTURE_SLOT_X = 80;
-    public static final int CULTURE_SLOT_Y = 48;
+    public static final int CULTURE_SLOT_Y = 32;
 
     private final MycelialLanternBlockEntity te;
     private final ContainerData dataAccess;
@@ -57,14 +57,14 @@ public class MycelialLanternMenu extends HemoContainerMenu {
             }
         });
 
-        this.addSlot(new Slot(te, BLOOD_SLOT, 8, 84) {
+        this.addSlot(new Slot(te, BLOOD_SLOT, 34, 89) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return isBloodContainer(stack);
             }
         });
 
-        this.addSlot(new FurnaceResultSlot(playerInv.player, te, OUTPUT_SLOT, 134, 48) {
+        this.addSlot(new FurnaceResultSlot(playerInv.player, te, OUTPUT_SLOT, 130, 89) {
             @Override
             public void onTake(Player player, ItemStack stack) {
                 super.onTake(player, stack);
@@ -76,7 +76,7 @@ public class MycelialLanternMenu extends HemoContainerMenu {
             }
         });
 
-        this.addSlot(new Slot(te, EMPTY_CONTAINER_SLOT, 30, 84) {
+        this.addSlot(new Slot(te, EMPTY_CONTAINER_SLOT, 56, 89) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;

@@ -79,9 +79,8 @@ public final class CardinalRiteEventClientState {
 	}
 
 	public static void tick() {
-		var minecraft = net.minecraft.client.Minecraft.getInstance();
-		// Beats age with the world: a paused game must not skip a rite's ending.
-		if (minecraft.level == null || minecraft.isPaused()) return;
+		// Beats age with the world: a paused or frozen game must not skip a rite's ending.
+		if (!com.vincenthuto.hemomancy.client.render.AnimationTime.worldTicks()) return;
 		clientTicks++;
 		EVENTS.removeIf(event -> clientTicks - event.receivedTick() > EVENT_LIFETIME_TICKS);
 		GHOSTS.removeIf(ghost -> clientTicks - ghost.startTick() > GHOST_LIFETIME_TICKS);

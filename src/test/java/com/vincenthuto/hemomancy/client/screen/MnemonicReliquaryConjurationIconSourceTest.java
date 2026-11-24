@@ -21,7 +21,7 @@ class MnemonicReliquaryConjurationIconSourceTest {
 		assertContains("reliquary should render conjuration manipulations with their conjured item",
 				screen, "new ItemStack(conjuration.getItem().get())");
 		assertContains("known manipulation rendering should use fallback icon lookup",
-				screen, "renderManipulationIcon(graphics, icon.manip, icon.x, icon.y);");
+				screen, "renderManipulationIcon(graphics, icon.manip, icon.x, icon.y, icon.size);");
 		assertContains("drag rendering should use fallback icon lookup",
 				screen, "renderManipulationIcon(graphics, draggingManip");
 		assertContains("the shared renderer should retain conjuration item fallback",
@@ -37,7 +37,9 @@ class MnemonicReliquaryConjurationIconSourceTest {
 		assertShowsEnglish("family icons should explain the mode indicator on hover",
 				screen, "Hold to choose variation");
 		assertContains("family variants should wrap beneath the baseline icon",
-				screen, "int y = heldFamilyIcon.y + (i / cols + 1) * (currentIconSize + gap);");
+				screen, ": heldFamilyIcon.y + heldFamilyIcon.size + gap + (i / cols) * step;");
+		assertContains("family variants should open upward from a drawer low on the wall",
+				screen, "int y = opensUp ? heldFamilyIcon.y - (i / cols + 1) * step");
 		assertContains("the family dropdown should hide already memorized forms",
 				screen, "private List<BloodManipulation> unmemorizedFamilyForms(BloodManipulation baseline)");
 		assertContains("the family dropdown should only add an unmemorized baseline",

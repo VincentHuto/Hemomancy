@@ -12,11 +12,15 @@ import net.minecraft.resources.ResourceLocation;
 public class MortarboundRenderer extends MobRenderer<MortarboundEntity, MortarboundModel> {
     private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/mortarbound.png");
     public MortarboundRenderer(EntityRendererProvider.Context context) {
-        super(context, new MortarboundModel(context.bakeLayer(MortarboundModel.LAYER_LOCATION)), .2F);
+        super(context, new MortarboundModel(), .2F);
     }
     @Override protected void setupRotations(MortarboundEntity entity, PoseStack pose, float bob, float bodyYaw, float partialTick, float scale) {
         super.setupRotations(entity, pose, bob, bodyYaw, partialTick, scale);
         pose.mulPose(Axis.YP.rotationDegrees(bodyYaw - entity.wallFace().toYRot()));
     }
+    @Override protected float getShadowRadius(MortarboundEntity entity) {
+        return super.getShadowRadius(entity) * entity.emergence(0);
+    }
+
     @Override public ResourceLocation getTextureLocation(MortarboundEntity entity) { return TEXTURE; }
 }

@@ -1,358 +1,102 @@
-"""Velorum's veiled frost saint, authored from the supplied Shadow and Frost sheet.
-
-python tools/model_export/velorum.py --preview
-
-Writes the Java rig, portable Blockbench project, fitted base/glow atlases and
-review renders. Saved geometry and pivots use the shared quarter-unit grid.
-
-Revision 2026-11-06 (Frozen Cruor): every piece of his ice is Frozen Cruor, blood arrested where it stood: glassy
-oxblood with darker clots held inside, black-red where it is thick, thin and lit at its edges, pale hoarfrost crusted on
-its upper faces and its points. Blue lives only in the lantern crystals (frost light). The glow atlas carries the cruor
-at a faint dull red (about 0.15 of its own glow at the layer's rest strength) beside the crystals and the Bow's seam;
-velorum_cruor_glow.png carries the cruor alone at full CRUOR_GLOW, for the Eclipse (0.8), when it is the room's light.
-"""
-import argparse
+"""Bake Velorum's authored Blockbench rig and aligned emissive atlases."""
 import base64
 import json
-import math
-import subprocess
+from io import BytesIO
+from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image
+
 import annetta_kit as kit
-from annetta_kit import Rig, ROOT, ASSETS, layout, paint_atlases, entity_java_source, quads, add, mix
-from hemorath import snap, euler, chain
 
-kit.SCALE = 1           # 16 px per block at render scale 1 (texel-density ruling)
-JAVA = ROOT / 'src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/velorum/VelorumModel.java'
-TEXTURES = ASSETS / 'textures/entity/boss/velorum'
-BBMODEL = ASSETS / 'models/entity/bbmodel/bosses/VelorumModel.bbmodel'
-
-
-def icicle(r, parent, x, y, z, length=3):
-    r.cube(parent, (x - .25, y, z - .25, .5, length - .75, .5), 'ice')
-    # the point carries the hoarfrost crust
-    r.cube(parent, (x - .25, y + length - .75, z - .25, .25, .75, .25), 'ice', point=True)
-
-
-def lantern(r, name, parent, pivot, small=False):
-    r.part(name, parent, pivot)
-    half, height = (1.25, 3.5) if small else (2, 5.5)
-    for y in (0, -height):
-        r.cube(name, (-half - .25, y, -half - .25, half * 2 + .5, .5, half * 2 + .5), 'iron')
-    # Open bars around the floating crystal rather than an opaque blue box.
-    for x in (-half, half - .25):
-        for z in (-half, half - .25):
-            r.cube(name, (x, -height, z, .25, height, .25), 'iron')
-    r.cube(name, (-half, -height - .5, -half, half * 2, .5, half * 2), 'iron')
-    r.cube(name, (-half + .5, -height - 1, -half + .5, half * 2 - 1, .5, half * 2 - 1), 'iron')
-    r.cube(name, (-.25, -height - 3, -.25, .5, 2, .5), 'iron')
-    r.cube(name, (-1, -height - 2.5, -.25, 2, .5, .5), 'iron')
-    r.part(name + '_crystal', name, (0, -height / 2 if small else -2.75, 0), (0, 45, 15))
-    crystal = name + '_crystal'
-    r.cube(crystal, (-.5, -1, -.5, 1, 2, 1), 'crystal')
-    # The light itself is its own part, so the Guttering Lantern shrinks the light and never the cage.
-    r.part(name + '_core', crystal)
-    r.cube(name + '_core', (-.25, -1.5, -.25, .5, 3, .5), 'crystal')
-    for i, (x, z) in enumerate(((-half, -half), (half, -half), (-half, half), (half, half))):
-        icicle(r, name, x, .5, z, 2 + i * .5)
-    if not small:
-        for x in (-half, half):
-            icicle(r, name, x, -height + .5, 0, 3)
-            r.cube(name, (x - .25, -height - 2, -.25, .5, 2, .5), 'iron')
+kit.SCALE = 1
+PROJECT = kit.ASSETS / 'models/entity/bbmodel/bosses/VelorumModel.bbmodel'
+TEXTURES = kit.ASSETS / 'textures/entity/boss/velorum'
+JAVA = kit.ROOT / 'src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/velorum/VelorumModel.java'
+ALIASES = {
+    'pelvis': 'hips', 'torso': 'chest', 'still_hour_halo': 'halo',
+    'right_upper_arm': 'left_arm', 'right_forearm': 'left_forearm', 'right_hand': 'left_hand',
+    'left_upper_arm': 'right_arm', 'left_forearm': 'right_forearm', 'left_hand': 'right_hand',
+    'lantern_staff': 'staff', 'rime_lantern': 'staff_lantern', 'lantern_light': 'staff_lantern_core',
+    'pectoral_reliquary': 'breast_seam',
+}
 
 
-def arm(r, side, sign):
-    name = f'{side}_arm'
-    r.part(name, 'chest', (sign * 4.5, -5.25, 0), (-5, 0, -38 if sign > 0 else 55))
-    r.cube(name, (-1.5, -1, -1.75, 3, 3, 3.5), 'shadow')
-    r.cube(name, (-.75, 1, -.75, 1.5, 6.5, 1.5), 'bone')
-    r.cube(name, (-1.75, -.75, -2, 3.5, 1, 4), 'iron')
-    for i in range(3):
-        r.cube(name, (-1.75, i * 1.25, -2, 3.5, .5, .75), 'rime_iron')
-        icicle(r, name, -1.5 + i * 1.5, .5, -2, 1.5 + i * .5)
-    r.cube(name, (-2, -.5, -1.75, 4, 2, 3.5), 'mantle')
-    r.cube(name, (-2, -.75, -1.75, 4, .25, 3.5), 'veil')
-    for i in range(4):
-        r.cube(name, (-2 + i, 1.5, -1.75, .5, 1.5 + (i % 2), .5), 'veil')
-    fore = f'{side}_forearm'
-    r.part(fore, name, (0, 6.5, 0), (-15, 0, -85 if sign > 0 else 90))
-    r.cube(fore, (-.75, -.5, -.5, .5, 7, 1), 'bone')
-    r.cube(fore, (.25, -.5, -.5, .5, 7, 1), 'bone')
-    r.cube(fore, (-1, 5.5, -.75, 2, .75, 1.5), 'iron')
-    hand = f'{side}_hand'
-    r.part(hand, fore, (0, 6.5, 0), (-10, 0, 0 if sign > 0 else 15))
-    r.cube(hand, (-1, -.5, -.5, 2, 2.5, 1), 'bone')
-    for i, length in enumerate((2, 2.75, 3, 2.25)):
-        finger = f'{side}_finger_{i}'
-        r.part(finger, hand, (-.75 + i * .5, 1.5, -.25),
-               (-75 if sign > 0 else -18, 0, 0 if sign > 0 else (i - 1.5) * 13))
-        r.cube(finger, (-.25, -.25, -.25, .5, 1.5 if sign > 0 else length, .5), 'bone')
-        r.part(finger + '_tip', finger, (0, 1.25 if sign > 0 else length - .25, 0),
-               (-90 if sign > 0 else -32, 0, 0))
-        r.cube(finger + '_tip', (-.25, 0, -.25, .5, 1.25, .5), 'bone')
-    r.part(side + '_thumb', hand, (sign * 1, 0, 0), (-35, 0, -sign * 45))
-    r.cube(side + '_thumb', (-.25, 0, -.25, .5, 2.25, .5), 'bone')
-    # These cuffs counter the arm rotations, so their shredded cloth and ice hang down.
-    world = kit.transforms(r)
-    sleeve = side + '_sleeve'
-    r.part(sleeve, fore, (0, 3.5, .5), euler(world[fore][:3, :3].T))
-    for i in range(6):
-        length = 7 + (i * 3 % 5)
-        r.cube(sleeve, (-2.25 + i * .75, 0, -.5 + (i % 2) * .25, .75, length, .5), 'veil')
-        r.cube(sleeve, (-2.25 + i * .75, length, -.5 + (i % 2) * .25, .25, 1.5, .5), 'veil')
-        if i % 2 == 0:
-            icicle(r, sleeve, -2 + i * .75, length - .5, -.5, 2.5)
-    if sign < 0:
-        r.part('claw_ice', hand, (0, 1.5, 0), euler(world[hand][:3, :3].T))
-        for i in range(3):
-            icicle(r, 'claw_ice', -1 + i, 0, -.5, 2.5 + i * .75)
+def read_rig(project):
+    rig = kit.Rig('velorum', 'VelorumModel', 'velorum')
+    elements = {cube['uuid']: cube for cube in project['elements']}
+
+    hanger = next(cube for cube in elements.values() if cube['name'] == 'lantern_hanging_prayer')
+    pendant_origin = (hanger['from'][0] + .5, hanger['to'][1], -.15)
+
+    def visit(group, parent, origin):
+        name = ALIASES.get(group['name'], group['name'])
+        x, y, z = group['origin']
+        rx, ry, rz = group.get('rotation', (0, 0, 0))
+        if parent is not None:
+            rig.part(name, parent, (x-origin[0], origin[1]-y, z-origin[2]), (-rx, ry, -rz))
+        for child in group['children']:
+            if isinstance(child, dict):
+                visit(child, name, (x, y, z))
+                continue
+            cube = elements[child]
+            low, high = cube['from'], cube['to']
+            w, h, d = (round(b-a, 5) for a,b in zip(low, high))
+            u, v = cube['uv_offset']
+            label = cube['name']
+            target, px, py, pz = name, x, y, z
+            if label.startswith('held_'):
+                target = label
+                px, py, pz = low[0]+w/2, high[1], low[2]+d/2
+                rig.part(target, name, (px-x, y-py, pz-z))
+            elif label.endswith('_votive_glass'):
+                target = label
+                px, py, pz = low[0] + w / 2, high[1], low[2] + d / 2
+                rig.part(target, name, (px-x, y-py, pz-z))
+            elif label in ('lantern_hanging_prayer', 'lantern_prayer_weight'):
+                target = 'lantern_pendant'
+                px, py, pz = pendant_origin
+                if label == 'lantern_hanging_prayer':
+                    rig.part(target, name, (px-x, y-py, pz-z))
+            rig.cube(target, (low[0]-px, py-high[1], low[2]-pz, w, h, d), 'authored', uv=(u,v))
+
+    visit(project['outliner'][0], None, (0, 0, 0))
+    return rig
 
 
-def saint():
-    r = Rig('velorum', 'VelorumModel', 'velorum')
-    r.part('hips', pivot=(0, 10, 0))
-    r.cube('hips', (-3, -1, -2.25, 6, 8, 4.5), 'shadow')
-    r.part('chest', 'hips', (0, -8, 0), (1, 0, 0))     # more upright and rigid than before: dignity, not drift
-    r.cube('chest', (-3.5, -6, -2.5, 7, 12, 5), 'shadow')
-    r.cube('chest', (-2.5, -6.5, -2.75, 5, 1, 5.5), 'rime_iron')
-    for side, sign in (('left', 1), ('right', -1)):
-        r.part(side + '_stole', 'chest', (sign * 2.75, -6, -2.75), (0, 0, -sign * 8))
-        r.cube(side + '_stole', (-.5, 0, -.25, 1, 16, .5), 'veil')
-        for i in range(3):
-            icicle(r, side + '_stole', -.25 + i * .25, 15, -.25, 2 + i)
-        arm(r, side, sign)
-    # Scalloped chains crossing the dark vestments; individual links remain open.
-    r.part('pectoral_chains', 'chest')
-    for row in range(1):
-        for i in range(7):
-            x = -3 + i
-            y = snap(-4 + row * 2 + (3 - abs(x)) * .6)
-            name = f'chest_link_{row}_{i}'
-            r.part(name, 'pectoral_chains', (x, y, -3), (0, 0, -x * 15))
-            for box in ((-.5, -.25, -.25, .25, 1, .5), (.25, -.25, -.25, .25, 1, .5),
-                        (-.25, -.25, -.25, .5, .25, .5), (-.25, .5, -.25, .5, .25, .5)):
-                r.cube(name, box, 'rime_iron')
-    chain(r, 'waist_chain', 'chest', (0, 4, -3), 7)
-    # The Bow's seam: three thin cracks across the breast, base-dark, lit in the glow atlas (shown only in the Bow).
-    r.part('breast_seam', 'chest', (0, -2.5, -2.5))
-    r.cube('breast_seam', (-1.75, -.25, -.25, 1.5, .25, .25), 'seam')
-    r.cube('breast_seam', (-.5, 0, -.25, 1.25, .25, .25), 'seam')
-    r.cube('breast_seam', (.5, .25, -.25, 1.25, .25, .25), 'seam')
-    r.part('breast_reliquary', 'chest', (0, 3.5, -3.5), (0, 0, 45))
-    r.cube('breast_reliquary', (-.75, -.75, -.25, 1.5, 1.5, .5), 'rime_iron')
-    r.cube('breast_reliquary', (-.25, -.25, -.5, .5, .5, .25), 'crystal')
-    chain(r, 'side_chain', 'chest', (-5, -5.5, 1), 10)
-    lantern(r, 'side_lantern', 'side_chain', (0, 19, 0), True)
-
-    r.part('head', 'chest', (0, -8, -.5), (4, 0, 0))
-    r.cube('head', (-2.25, -5.5, -1.75, 4.5, 6, 3.5), 'void')
-    r.cube('head', (-2.75, -6.5, -2.25, 5.5, 1, 4.5), 'veil')
-    r.cube('head', (-2, -7, -1.75, 4, .5, 3.5), 'veil')
-    r.part('back_veil', 'head')
-    for i in range(7):
-        length = 9 + (i * 2 % 4) * .5
-        r.cube('back_veil', (-2.5 + i * .75, -5.75, 1.75, .75, length, .5), 'veil')
-        r.cube('back_veil', (-2.5 + i * .75, length - 5.75, 1.75, .25, 1.5, .5), 'veil')
-    r.part('face_veil', 'head')
-    for i in range(9):
-        name = f'veil_strip_{i}'
-        r.part(name, 'face_veil', (-2.75 + i * .75, -5.75, -2.5 - (i % 2) * .25),
-               (0, 0, (i - 4) * -1.5))
-        length = 6.5 + (i * 3 % 5) * .5
-        r.cube(name, (-.25, 0, -.25, .75, length, .5), 'veil')
-        r.cube(name, (-.25, length, -.25, .25, .75 + (i % 3) * .5, .5), 'veil')
-    for sign in (-1, 1):
-        name = 'cowl_left' if sign > 0 else 'cowl_right'
-        r.part(name, 'head', (sign * 2.5, -5, 0), (-4, 0, -sign * 9))
-        r.cube(name, (-.5, -.5, -2, 1, 10, 4), 'veil')
-        r.cube(name, (-.5, 9.5, 0, .5, 2.5, 2), 'veil')
-    # Deep, plain hood and a knotted rope replace the courtly silhouette.
-    r.part('monastic_hood', 'head', (0, -3, .5))
-    r.cube('monastic_hood', (-3, -4.5, -2.75, 6, 1.5, 5.5), 'mantle')
-    for sign in (-1, 1):
-        r.cube('monastic_hood', (sign * 2.5 - .5, -3, -2.75, 1, 7, 5), 'mantle')
-    r.part('knotted_cord', 'hips', (0, -1, -2.75))
-    r.cube('knotted_cord', (-3, -.25, -.25, 6, .5, .5), 'cord')
-    r.cube('knotted_cord', (-.5, -.5, -.5, 1, 1, 1), 'cord')
-    # the tails are their own part under the knot, so they hang plumb and swing off his hips
-    r.part('knotted_cord_tails', 'knotted_cord', (0, .5, 0))
-    for i in range(2):
-        r.cube('knotted_cord_tails', (-.75 + i, 0, -.25, .5, 6 + i, .5), 'cord')
-    r.part('halo', 'head', (0, -3.5, 3))
-    for i in range(20):
-        angle = math.radians(i * 18)
-        name = f'halo_segment_{i}'
-        r.part(name, 'halo', (snap(math.sin(angle) * 7.25), snap(-math.cos(angle) * 7.25), 0), (0, 0, i * 18))
-        r.cube(name, (-1.25, -.25, -.25, 2.5, .5, .5), 'iron')
-        if i % 2 == 0:
-            r.cube(name, (-.25, -2.25, -.25, .5, 2.5, .5), 'rime_iron')
-            r.cube(name, (-.75, -1.5, -.25, 1.5, .25, .5), 'iron')
-    for i, x in enumerate((-7.25, -5, 5, 7.25)):
-        chain(r, f'halo_chain_{i}', 'halo', (x, 0, 0), 2 + i % 2)
-        # Each hanging icicle is its own part, so the Splinter Crown can tilt and drop it.
-        r.part(f'halo_icicle_{i}', f'halo_chain_{i}', (0, 3 + (i % 2) * 1.5, 0))
-        icicle(r, f'halo_icicle_{i}', 0, 0, 0, 2 + (i % 2))
-
-    # A dark inner skirt and overlapping wider mantle strips form a flared, ragged train.
-    for i in range(16):
-        a = math.radians(i * 22.5)
-        name = f'robe_panel_{i}'
-        r.part(name, 'hips', (snap(math.sin(a) * 3), 0, snap(math.cos(a) * 2)), (8, i * 22.5, 0))
-        length = 12 + (i % 3) * .5
-        r.cube(name, (-1.25, -1, -.25, 2.5, length, .5), 'shadow')
-        r.cube(name, (-1.25, length - 1, -.25, .75, 1.5, .5), 'shadow')
-    for i in range(9):
-        a = math.radians(-95 + i * 23.75)
-        name = f'mantle_panel_{i}'
-        r.part(name, 'chest', (snap(math.sin(a) * 3.5), -5.5, snap(math.cos(a) * 2.5)),
-               (12, math.degrees(a), 0))
-        material = 'veil' if i in (0, 8) else 'mantle'
-        r.cube(name, (-1.5, 0, 0, 3, 16, .5), material)
-        r.part(name + '_train', name, (0, 15.5, 0), (12, 0, 0))
-        r.cube(name + '_train', (-1.75, 0, 0, 3.5, 12, .5), material)
-        for j in range(3):
-            r.cube(name + '_train', (-1 + j * .75, 5, 0, .5, 1 + (j % 2) * .5, .5), material)
-        if i % 2 == 0:
-            icicle(r, name, -1, 11, -.25, 3.5)
-    r.part('hem_frost', pivot=(0, 23.5, 0))
-    for i in range(12):
-        angle = i * 30
-        a = math.radians(angle)
-        name = f'frost_trail_{i}'
-        r.part(name, 'hem_frost', (snap(math.sin(a) * 5), 0, snap(math.cos(a) * 4)), (0, angle, 0))
-        r.cube(name, (-.5, 0, 0, 1, .5, 2 + (i % 3)), 'ice')
-
-    world = kit.transforms(r)
-    hand = world['left_hand']
-    pivot = (0, 1, -1)
-    bottom = snap(24 - (hand[:3, :3] @ pivot + hand[:3, 3])[1])
-    r.part('staff', 'left_hand', pivot, euler(hand[:3, :3].T))
-    r.cube('staff', (-.5, -15, -.5, 1, bottom + 15, 1), 'iron')
-    r.cube('staff', (-1, bottom - .75, -1, 2, .75, 2), 'rime_iron')
-    for y in (-13, -8, -3, 3, 9, bottom - 1.5):
-        r.cube('staff', (-.75, y, -.75, 1.5, .75, 1.5), 'rime_iron')
-    lantern(r, 'staff_lantern', 'staff', (0, -13, 0))
-    r.cube('staff', (-.25, -5, -.25, 4, .5, .5), 'iron')
-    chain(r, 'pendant_chain', 'staff', (3.5, -5, 0), 9)
-    lantern(r, 'pendant_lantern', 'pendant_chain', (0, 17.5, 0), True)
-    # the halo chains' links crusted with frozen cruor, as all his ice now is
-    for part in r.parts:
-        if part['name'].startswith('halo_chain_') and '_link_' in part['name']:
-            for cube in part['cubes']:
-                cube['material'] = 'cruor'
-    # Retain animated nodes but strip the ornamental veil and pectoral metalwork.
-    for part in r.parts:
-        if part['name'].startswith(('veil_strip_', 'chest_link_')) or part['name'] == 'breast_reliquary':
-            part['cubes'].clear()
-        if part['name'].startswith('halo_segment_'):
-            part['cubes'] = part['cubes'][:1]
-    for part in r.parts:
-        assert all(snap(v) == v for v in part['pivot']), part['name']
-        for cube in part['cubes']:
-            assert all(snap(v) == v for v in cube['box']), cube
-            assert min(cube['box'][3:]) >= .25, cube
-    return r
-
-
-# Frozen Cruor (design revision 2026-11-06, R.2)
-CRUOR_DEEP = (26, 5, 8)
-CRUOR = (58, 14, 20)
-CRUOR_LIT = (106, 28, 38)
-CLOT = (18, 3, 10)
-HOAR = (220, 232, 244)
-CRUOR_GLOW = ((90, 26, 34), (138, 36, 48))
-# the cruor's glow in the shared glow atlas: faint always (about 0.15 at the layer's rest strength)
-CRUOR_GLOW_SHARE = .2
-
-
-def cruor(cube, t):
-    """Frozen Cruor glass: oxblood, black-red at its thick heart, lit thin at its edges, clots held inside it, the
-    hoarfrost crust on its up faces, its top edge and its points. No blue."""
-    u, v = t['u'], t['v']
-    edge = t['side'] and (u == 0 or u == t['fw'] - 1)
-    centre = abs(t['fu'] - .5) < .26 and t['side']
-    rgb = mix(CRUOR, CRUOR_DEEP, .55) if centre else CRUOR
-    rgb = add(rgb, (t['n'] - .5) * 10)
-    if edge:
-        rgb = mix(rgb, CRUOR_LIT, .7)
-    # one to three clots a shard, inside the glass: small dark nodules away from the faces' rims
-    clot = ((int(t['gx'] * 4) * 73856093) ^ (int(t['gy'] * 4) * 19349663) ^ (int(t['gz'] * 4) * 83492791)) % 97
-    if t['side'] and not edge and clot < 6:
-        rgb = mix(rgb, CLOT, .85)
-    if t['face'] == 'up' or (t['side'] and v == 0) or cube.get('point'):
-        rgb = mix(rgb, HOAR, .72 if t['face'] == 'up' or cube.get('point') else .5)
-    elif t['side'] and t['n'] > .93:
-        rgb = mix(rgb, HOAR, .4)         # a feather of hoarfrost caught on the glass
-    return rgb
-
-
-def cruor_glow(cube, t):
-    """The cruor's own dull glow; the frost crust does not glow."""
-    if t['face'] == 'up' or cube.get('point'):
-        return None
-    return mix(*CRUOR_GLOW, t['n'])
-
-
-def paint(cube, t, glow=False, cruor_only=False):
-    mat = cube['material']
-    u, v = t['u'], t['v']
-    noise = (t['n'] - .5) * 9
-    lit = False
-    if mat in ('ice', 'cruor'):
-        g = cruor_glow(cube, t)
-        if cruor_only:
-            return (0, 0, 0, 0) if g is None else (*g, 255)
-        if glow:
-            return (0, 0, 0, 0) if g is None else (*(int(c * CRUOR_GLOW_SHARE) for c in g), 255)
-        return (*cruor(cube, t), 255)
-    if cruor_only:
-        return (0, 0, 0, 0)
-    if mat == 'crystal':
-        rgb = mix((75, 119, 214), (213, 242, 255), t['fu'])
-        lit = True
-    elif mat in ('iron', 'rime_iron'):
-        # hematic iron: a dark blue-grey patina; no silver, brass, bronze or copper on a blood-side body
-        patina = kit.smooth(t['gx'], t['gy'], t['gz'], scale=2, seed=9)
-        rgb = mix((36, 38, 51), (96, 102, 122), patina)
-        if u == 0 or v == 0:
-            rgb = add(rgb, 18)
-        if mat == 'rime_iron' and (t['face'] == 'up' or v == 0):
-            rgb = (196, 214, 236)      # a one-texel pale frost edge on its upper faces
-    elif mat == 'seam':
-        rgb = (14, 18, 30)
-        lit = True
-    elif mat == 'bone':
-        rgb = add((180, 186, 201), noise)
-        if u == 0:
-            rgb = (101, 112, 140)
-    elif mat == 'void':
-        rgb = (10, 12, 23)
-    else:
-        pale = mat == 'cord'
-        rgb = (199, 201, 215) if pale else ((25, 28, 35) if mat == 'shadow' else (40, 43, 51))
-        rgb = add(rgb, (-12, -4, 4, -2)[u % 4] + noise)
-        if t['side'] and (u == 0 or u == t['fw'] - 1):
-            rgb = (156, 166, 192) if pale else (80, 90, 127)
-        if t['side'] and v > t['fh'] - 3 and t['n'] > .38:
-            rgb = mix(rgb, (174, 188, 214), .55)
-        if pale and t['n'] > .94:
-            rgb = (126, 138, 165)
-    return (*rgb, 255) if not glow else ((*rgb, 255) if lit else (0, 0, 0, 0))
+def glow_atlases(project, base):
+    frost = Image.new('RGBA', base.size)
+    eclipse = Image.new('RGBA', base.size)
+    for cube in project['elements']:
+        name = cube['name']
+        light = name == 'cold_lantern_light'
+        cruor = any(word in name for word in ('cruor', 'votive_glass', 'reliquary_saddle', 'outer_arch', 'keystone', 'prayer_weight'))
+        if not (light or cruor):
+            continue
+        for face in cube['faces'].values():
+            u, v, U, V = face['uv']
+            for x in range(min(u,U), max(u,U)):
+                for y in range(min(v,V), max(v,V)):
+                    r,g,b,a = base.getpixel((x,y))
+                    if light:
+                        frost.putpixel((x,y), (r,g,b,a))
+                    elif r > 1.5 * g:
+                        eclipse.putpixel((x,y), (min(160, r+22), g, b, a))
+                        frost.putpixel((x,y), (r//4, g//5, b//5, a))
+    return frost, eclipse
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--preview', action='store_true')
-    args = parser.parse_args()
-    rig = saint()
-    size = layout(rig, 256)
-    base, glow, cruor_glow_atlas = paint_atlases(rig, size, [paint, lambda c, t: paint(c, t, True),
-                                                             lambda c, t: paint(c, t, cruor_only=True)])
-    TEXTURES.mkdir(parents=True, exist_ok=True)
-    base.save(TEXTURES / 'velorum.png')
-    glow.save(TEXTURES / 'velorum_glow.png')
-    cruor_glow_atlas.save(TEXTURES / 'velorum_cruor_glow.png')
-    source = entity_java_source(rig, size, 'VelorumEntity', 'velorum.py',
+    project = json.loads(PROJECT.read_text(encoding='utf-8'))
+    png = base64.b64decode(project['textures'][0]['source'].split(',', 1)[1], validate=True)
+    base = Image.open(BytesIO(png)).convert('RGBA')
+    assert base.size == (project['resolution']['width'], project['resolution']['height'])
+    rig = read_rig(project)
+    frost, eclipse = glow_atlases(project, base)
+    (TEXTURES / 'velorum.png').write_bytes(png)
+    frost.save(TEXTURES / 'velorum_glow.png')
+    eclipse.save(TEXTURES / 'velorum_cruor_glow.png')
+    java = kit.entity_java_source(
+        rig, base.size, 'VelorumEntity', 'velorum.py',
         package='com.vincenthuto.hemomancy.client.model.entity.boss.velorum',
         entity_package='com.vincenthuto.hemomancy.common.entity.boss.saint.velorum',
         extra_imports='import com.vincenthuto.hemomancy.client.render.AnimationTime;\n'
@@ -360,41 +104,11 @@ def main():
                       'import com.vincenthuto.hemomancy.common.util.HemoEasing;\n'
                       'import org.joml.Quaternionf;\nimport org.joml.Matrix3f;\n\n'
                       'import static com.vincenthuto.hemomancy.common.util.HemoEasing.catmullRom;\n',
-        extra_fields='',
-        extra_methods=(ROOT / 'tools/model_export/velorum_anim.java').read_text(encoding='utf-8'))
-    source = source.replace('public class VelorumModel extends HierarchicalModel<VelorumEntity>',
-                            'public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T>')
-    source = source.replace('import net.minecraft.world.entity.HumanoidArm;\n', '')
-    JAVA.write_text(source, encoding='utf-8')
-    subprocess.run(['node', str(ROOT / 'tools/model_export/java_model_to_bbmodel.mjs'), '--source', str(JAVA),
-                    '--texture', 'textures/entity/boss/velorum/velorum.png', '--output', str(BBMODEL)],
-                   cwd=ROOT, check=True)
-    project = json.loads(BBMODEL.read_text())
-    project['textures'][0]['source'] = 'data:image/png;base64,' + base64.b64encode(
-        (TEXTURES / 'velorum.png').read_bytes()).decode('ascii')
-    BBMODEL.write_text(json.dumps(project, indent=2) + '\n', encoding='utf-8')
-    print(f'Velorum: {sum(len(p["cubes"]) for p in rig.parts)} cubes; {len(rig.parts)} joints; atlas {base.size}')
-    if args.preview:
-        def posed(overrides):
-            world = kit.transforms(rig, overrides)
-            for name, parent in (('staff', 'left_hand'), ('left_sleeve', 'left_forearm'),
-                                 ('right_sleeve', 'right_forearm'), ('claw_ice', 'right_hand')):
-                part = next(p for p in rig.parts if p['name'] == name)
-                rotation = euler(world[parent][:3, :3].T)
-                overrides[name] = tuple(a - b for a, b in zip(rotation, part['rotation']))
-            return quads(rig, overrides=overrides)
-        stable = posed({})
-        nova = posed({'chest': (-7, 0, 0), 'right_arm': (-8, 0, 15)})
-        veil = posed({'head': (12, 0, 0), 'right_arm': (-18, 0, 20)})
-        kit.preview_sheet([(stable, base, 0, 0), (stable, base, .55, -.06), (stable, base, math.pi, 0),
-                           (stable, base, math.pi / 2, 0), (nova, base, .3, 0), (veil, base, .3, 0)],
-                          ROOT / 'build/velorum_preview.png', cols=3)
-        preview = Image.open(ROOT / 'build/velorum_preview.png')
-        draw = ImageDraw.Draw(preview)
-        for i, label in enumerate(('FRONT', 'THREE QUARTER', 'BACK', 'SIDE', 'FROST NOVA', 'WINTER VEIL')):
-            draw.text(((i % 3) * 420 + 14, (i // 3) * 420 + 12), label, fill=(201, 217, 247))
-        preview.save(ROOT / 'build/velorum_preview.png')
-        kit.render_quads(stable, base, .35, -.06, 1100).save(ROOT / 'build/velorum_portrait.png')
+        extra_methods=Path(__file__).with_name('velorum_anim.java').read_text(encoding='utf-8'),
+    )
+    java = java.replace('public class VelorumModel extends HierarchicalModel<VelorumEntity>',
+                        'public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T>')
+    JAVA.write_text(java.replace('import net.minecraft.world.entity.HumanoidArm;\n', ''), encoding='utf-8')
 
 
 if __name__ == '__main__':

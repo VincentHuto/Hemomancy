@@ -1,192 +1,113 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.monster;
 
+import com.google.gson.JsonParser;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
 import net.minecraft.client.model.geom.ModelPart;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 
-import javax.imageio.ImageIO;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ExcoriatedModelTest {
+    private static final Path ASSETS = Path.of("src/main/resources/assets/hemomancy");
 
     @Test
-    void vesselGlowExcludesTheHaunches() {
-        var model = new ExcoriatedModel(ExcoriatedModel.createBodyLayer().bakeRoot());
-        var vertices = new CountingVertexConsumer();
-
-        model.renderVessels(new PoseStack(), vertices, 0, 0, 0xFFFFFFFF);
-
-        assertEquals(24, vertices.count);
+    void installedAtlasMatchesTheEditableAshHunter() throws Exception {
+        var installed = ASSETS.resolve("models/entity/bbmodel/excoriated.bbmodel");
+        var project = JsonParser.parseString(Files.readString(installed)).getAsJsonObject();
+        assertEquals("Phlegethontic Ash Hunter", project.get("name").getAsString());
+        String embedded = project.getAsJsonArray("textures").get(0).getAsJsonObject().get("source").getAsString();
+        assertArrayEquals(Base64.getDecoder().decode(embedded.substring(embedded.indexOf(',') + 1)),
+                Files.readAllBytes(ASSETS.resolve("textures/entity/excoriated/ash_hunter.png")));
     }
 
     @Test
-    void latestBlockbenchExportGeometryIsBaked() {
-        var body = ExcoriatedModel.createBodyLayer().bakeRoot()
-                .getChild("root").getChild("horse_body");
-        var frontLeftHoof = body.getChild("front_left")
-                .getChild("front_left_lower").getChild("front_left_hoof");
-        var abdomen = body.getChild("human_torso").getChild("human_abdomen_r1").cubes.getFirst();
-
-        assertAll(
-                () -> assertEquals(59, body.getAllParts().mapToInt(part -> part.cubes.size()).sum()),
-                () -> assertEquals(8.9F, frontLeftHoof.y),
-                () -> assertEquals(-1F, frontLeftHoof.z),
-                () -> assertEquals(3F, abdomen.maxZ - abdomen.minZ));
-    }
-
-    @Test
-    void blockbenchExportPivotsArePreserved() {
-        var body = ExcoriatedModel.createBodyLayer().bakeRoot()
-                .getChild("root").getChild("horse_body");
-        var frontLeft = body.getChild("front_left");
-        var frontRight = body.getChild("front_right");
-        var hindLeft = body.getChild("hind_left");
-        var hindRight = body.getChild("hind_right");
-        var torso = body.getChild("human_torso");
-
-        assertAll(
-                () -> assertEquals(4F, frontLeft.x),
-                () -> assertEquals(.5F, frontLeft.getChild("front_left_lower").x),
-                () -> assertEquals(-4F, frontRight.x),
-                () -> assertEquals(-.5F, frontRight.getChild("front_right_lower").x),
-                () -> assertEquals(3.5F, hindLeft.x),
-                () -> assertEquals(-3.5F, hindRight.x),
-                () -> assertEquals(4F, torso.getChild("left_arm").x),
-                () -> assertEquals(-4F, torso.getChild("right_arm").x));
-    }
-
-    @Test
-    void approvedTextureAndExportedCubesAreInstalled() throws Exception {
-        Path assets = Path.of("src/main/resources/assets/hemomancy");
-        Path texturePath = assets.resolve("textures/entity/excoriated/excoriated.png");
-        assertTrue(Files.isRegularFile(texturePath));
-        var texture = ImageIO.read(texturePath.toFile());
-        assertEquals(256, texture.getWidth());
-        assertEquals(256, texture.getHeight());
-        var layer = ExcoriatedModel.createBodyLayer().bakeRoot();
-        assertEquals(59, layer.getAllParts().mapToInt(part -> part.cubes.size()).sum());
-        assertDoesNotThrow(() -> new ExcoriatedModel(layer));
-    }
-
-    @Test
-    void drawingHandFollowsStringWithoutForearmCrossingChest() {
-        var layer = ExcoriatedModel.createBodyLayer().bakeRoot();
-        var model = new ExcoriatedModel(layer);
-        var torso = layer.getChild("root").getChild("horse_body").getChild("human_torso");
-        var right = torso.getChild("right_arm");
-        var forearm = right.getChild("right_forearm");
-        var left = torso.getChild("left_arm");
-        var leftForearm = left.getChild("left_forearm");
-        var bow = leftForearm.getChild("fused_bow");
-        var string = bow.getChild("bowstring");
-        float chestFront = zBounds(torso.getChild("human_ribcage_r1"))[0];
-        for (int frame = 0; frame <= 40; frame++) {
-            layer.getAllParts().forEach(ModelPart::resetPose);
-            model.animateDraw(frame / 40F);
-            Vector3f hand = origin(right, forearm, forearm.getChild("right_hand"));
-            Vector3f nock = origin(left, leftForearm, bow, string, string.getChild("arrow"));
-            assertEquals(.35F, hand.x - nock.x, .002F, "hand X at frame " + frame);
-            assertEquals(0, hand.y - nock.y, .002F, "hand Y at frame " + frame);
-            assertEquals(1, hand.z - nock.z, .002F, "hand Z at frame " + frame);
-            assertTrue(zBounds(right, forearm, forearm.getChild("right_drawing_forearm_r1"))[1] < chestFront,
-                    "Forearm must remain in front of the ribcage at frame " + frame);
-        }
-    }
-
-    private static Vector3f origin(ModelPart... chain) {
-        PoseStack pose = new PoseStack();
-        for (ModelPart part : chain) part.translateAndRotate(pose);
-        return pose.last().pose().transformPosition(new Vector3f()).mul(16);
-    }
-
-    @Test
-    void idleArmsHangOutsideTheBodyWithHandAndBowNearTheGround() {
-        var layer = ExcoriatedModel.createBodyLayer().bakeRoot();
-        var model = new ExcoriatedModel(layer);
-        var root = layer.getChild("root");
+    void compiledRigKeepsTheBowOnTheLeftAndCollapsesToOneStretchableStringPerLimb() {
+        var model = new ExcoriatedModel();
+        var root = model.root();
+        assertEquals(198, root.getAllParts().mapToInt(part -> part.cubes.size()).sum());
         var body = root.getChild("horse_body");
         var torso = body.getChild("human_torso");
-        var left = torso.getChild("left_arm");
-        var leftFore = left.getChild("left_forearm");
-        var right = torso.getChild("right_arm");
-        var rightFore = right.getChild("right_forearm");
-        for (int age = 0; age <= 200; age += 5) {
-            layer.getAllParts().forEach(ModelPart::resetPose);
-            model.animateArms(0, 0, age, age * .6F, .5F);
-            Vector3f hand = origin(root, body, torso, right, rightFore, rightFore.getChild("right_hand"));
-            Vector3f bow = origin(root, body, torso, left, leftFore, leftFore.getChild("fused_bow"));
-            assertTrue(hand.x < -6 && bow.x > 6,
-                    "Resting limbs must stay outside the horse's flanks: hand=" + hand + ", bow=" + bow);
-            assertTrue(hand.y > 17 && hand.y < 25, "Hanging hand must reach ground height: " + hand);
-            assertTrue(bow.y > 16 && bow.y < 24, "Bow must drag close to the ground: " + bow);
-            var bowPart = leftFore.getChild("fused_bow");
-            float tipHeight = axisBounds(1, root, body, torso, left, leftFore, bowPart, bowPart.getChild("bow_lower_3_r1"))[1];
-            assertTrue(tipHeight > 22 && tipHeight < 24.8F, "Trailing bow tip must skim the ground: " + tipHeight);
-            assertEquals(1, left.xScale * left.getChild("left_upper_arm_r1").xScale, .0001F);
-            assertEquals(1, left.xScale * leftFore.getChild("fused_bow").xScale, .0001F);
-        }
+        assertTrue(torso.getChild("left_arm").x > 0);
+        var bow = torso.getChild("left_arm").getChild("left_forearm").getChild("fused_bow");
+        var string = bow.getChild("bowstring");
+        assertTrue(string.hasChild("upper_string"));
+        assertTrue(string.hasChild("lower_string"));
     }
 
     @Test
-    void raiseAndLowerTransitionsJoinIdleAndAimingWithoutSnapping() {
-        assertEquals(0, ExcoriatedModel.armReadiness(0, 0));
-        assertEquals(0, ExcoriatedModel.armReadiness(1, 0));
-        assertEquals(1, ExcoriatedModel.armReadiness(1, 8));
-        assertEquals(1, ExcoriatedModel.armReadiness(2, 0));
-        assertEquals(0, ExcoriatedModel.armReadiness(2, 8));
-        var layer = ExcoriatedModel.createBodyLayer().bakeRoot();
-        var model = new ExcoriatedModel(layer);
-        var torso = layer.getChild("root").getChild("horse_body").getChild("human_torso");
+    void drawReachesTheAuthoredAimAndReleaseHidesTheHarpoon() {
+        var model = new ExcoriatedModel();
+        var body = model.root().getChild("horse_body");
+        var torso = body.getChild("human_torso");
         var left = torso.getChild("left_arm");
-        var fore = left.getChild("left_forearm");
-        Vector3f previous = null;
-        for (int frame = 0; frame <= 160; frame++) {
-            layer.getAllParts().forEach(ModelPart::resetPose);
-            float time = frame / 20F;
-            model.animateArms(ExcoriatedModel.armReadiness(1, time), time / 20F, 0, 0, 0);
-            Vector3f bow = origin(left, fore, fore.getChild("fused_bow"));
-            assertTrue(bow.isFinite());
-            if (previous != null) assertTrue(previous.distance(bow) < 1.5F, "Bow jumped between transition frames");
-            previous = bow;
+        var forearm = left.getChild("left_forearm");
+        var bow = forearm.getChild("fused_bow");
+        var arrow = bow.getChild("harpoon");
+        var right = torso.getChild("right_arm");
+        var rightForearm = right.getChild("right_forearm");
+        var hand = rightForearm.getChild("right_hand");
+
+        model.pose(0, 0, 0, 0, 0, ExcoriatedEntity.IDLE, 0, false, false, 0);
+        Vector3f idle = point(left, forearm, bow);
+        assertFalse(arrow.visible);
+
+        Vector3f previous = idle;
+        for (int i = 0; i <= 80; i++) {
+            model.pose(0, 0, 0, 0, 0, ExcoriatedEntity.DRAW, i / 4F, false, false, 0);
+            Vector3f anchor = point(left, forearm, bow);
+            assertTrue(anchor.x > 0 && anchor.isFinite());
+            assertTrue(anchor.distance(previous) < 1.75F, "bow jumped at frame " + i);
+            previous = anchor;
         }
-        assertEquals(1, left.xScale);
-        assertEquals(0, left.xRot, .0001F);
-        assertEquals(0, fore.xRot, .0001F);
-    }
+        assertTrue(previous.y < idle.y - 6);
+        assertTrue(arrow.visible);
+        assertTrue(point(left, forearm, bow, arrow).distance(point(right, rightForearm, hand)) < 1.25F);
 
-    private static float[] zBounds(ModelPart... chain) {
-        return axisBounds(2, chain);
-    }
-
-    private static float[] axisBounds(int axis, ModelPart... chain) {
-        PoseStack pose = new PoseStack();
-        for (ModelPart part : chain) part.translateAndRotate(pose);
-        float min = Float.POSITIVE_INFINITY, max = Float.NEGATIVE_INFINITY;
-        for (var cube : chain[chain.length - 1].cubes) {
-            for (float x : new float[]{cube.minX, cube.maxX})
-                for (float y : new float[]{cube.minY, cube.maxY})
-                    for (float z : new float[]{cube.minZ, cube.maxZ}) {
-                        float transformed = pose.last().pose().transformPosition(new Vector3f(x, y, z).div(16)).get(axis) * 16;
-                        min = Math.min(min, transformed);
-                        max = Math.max(max, transformed);
-                    }
+        var string = bow.getChild("bowstring");
+        for (String name : new String[]{"upper_string", "lower_string"}) {
+            var segment = string.getChild(name);
+            assertTrue(segment.yScale > 0);
+            assertEquals(0, point(new Vector3f(0, .5F, 0), segment).distance(point(arrow)), .01F);
         }
-        return new float[]{min, max};
+        model.pose(0, 0, 0, 0, 0, ExcoriatedEntity.FIRE, 0, false, false, 0);
+        assertFalse(arrow.visible);
+        model.pose(0, 0, 0, 0, 0, ExcoriatedEntity.FIRE, 8, false, false, 0);
+        assertTrue(point(left, forearm, bow).distance(idle) < .001F);
     }
 
-    private static final class CountingVertexConsumer implements VertexConsumer {
-        private int count;
+    @Test
+    void wadingBendsTheHocksAndRearLeadsIntoBreath() {
+        var model = new ExcoriatedModel();
+        var body = model.root().getChild("horse_body");
+        var left = body.getChild("front_left");
+        var right = body.getChild("front_right");
+        model.pose(1.5F, 1, 0, 0, 0, ExcoriatedEntity.IDLE, 0, false, false, 0);
+        assertEquals(left.xRot, -right.xRot, .001F);
+        var knee = left.getChild("front_left_lower");
+        float dry = knee.xRot;
+        model.pose(1.5F, 1, 0, 0, 0, ExcoriatedEntity.IDLE, 0, true, false, 0);
+        assertTrue(knee.xRot < dry);
+        model.pose(0, 0, 0, 0, 0, ExcoriatedEntity.REAR, 20, false, false, 0);
+        float raised = body.xRot;
+        assertTrue(raised < 0);
+        model.pose(0, 0, 0, 0, 0, ExcoriatedEntity.BREATH, 0, false, false, 0);
+        assertEquals(raised, body.xRot);
+        model.pose(0, 0, 0, 0, 0, ExcoriatedEntity.BREATH, 12, false, false, 0);
+        assertEquals(0F, body.xRot, .001F);
+    }
 
-        @Override public VertexConsumer addVertex(float x, float y, float z) { count++; return this; }
-        @Override public VertexConsumer setColor(int red, int green, int blue, int alpha) { return this; }
-        @Override public VertexConsumer setUv(float u, float v) { return this; }
-        @Override public VertexConsumer setUv1(int u, int v) { return this; }
-        @Override public VertexConsumer setUv2(int u, int v) { return this; }
-        @Override public VertexConsumer setNormal(float x, float y, float z) { return this; }
+    private static Vector3f point(ModelPart... chain) {
+        return point(new Vector3f(), chain);
+    }
+
+    private static Vector3f point(Vector3f offset, ModelPart... chain) {
+        var pose = new PoseStack();
+        for (var part : chain) part.translateAndRotate(pose);
+        return pose.last().pose().transformPosition(offset.div(16)).mul(16);
     }
 }

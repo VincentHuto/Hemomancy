@@ -41,6 +41,7 @@ public final class CentrifugeClientReview {
                 var level = player.serverLevel();
                 level.setBlockAndUpdate(reviewPos, BlockInit.vial_centrifuge.get().defaultBlockState()
                         .setValue(StationTierProperty.STAGE, stage));
+                stock((VialCentrifugeBlockEntity) level.getBlockEntity(reviewPos), stage);
             });
             ticks = 0;
             return;
@@ -49,7 +50,11 @@ public final class CentrifugeClientReview {
             if (mc.level.getBlockEntity(reviewPos) instanceof VialCentrifugeBlockEntity) {
                 mc.getSingleplayerServer().execute(() -> {
                     var player = mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());
-                    player.openMenu((VialCentrifugeBlockEntity) player.serverLevel().getBlockEntity(reviewPos), reviewPos);
+                    var machine = (VialCentrifugeBlockEntity) player.serverLevel().getBlockEntity(reviewPos);
+                    // Start the spin as the menu opens so the capture lands mid-run
+                    if (stage == 2 && !machine.isProcessing())
+                        Hemomancy.LOGGER.info("CENTRIFUGE_CLIENT_REVIEW spin {}", machine.attemptStartup(null));
+                    player.openMenu(machine, reviewPos);
                 });
                 ticks = 0;
             }
@@ -62,6 +67,24 @@ public final class CentrifugeClientReview {
         mc.player.closeContainer();
         opening = false;
         ticks = 0;
+    }
+
+    /**
+     * Stage 0 shows an unbalanced load (the empty partners warn), stage 1 a balanced load with results waiting,
+     * stage 2 a spin under way.
+     */
+    private static void stock(VialCentrifugeBlockEntity machine, int stage) {
+        var blood = machine.getBloodCapability();
+        if (blood != null) blood.fill(150 + stage * 200);
+        for (int slot = 2; slot <= 19; slot++) machine.setItem(slot, net.minecraft.world.item.ItemStack.EMPTY);
+        machine.setItem(VialCentrifugeBlockEntity.SLOT_BLOOD,
+                new net.minecraft.world.item.ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.bloody_flask.get()));
+        int[] loaded = stage == 0 ? new int[]{2, 3, 4} : new int[]{2, 4, 6, 8};
+        if (stage == 2) loaded = new int[]{2, 3, 4, 5, 6, 7, 8, 9};
+        for (int slot : loaded) machine.setItem(slot, CentrifugeUpgradeGameTests.sample("minecraft:cow"));
+        if (stage == 1) machine.setItem(18, new net.minecraft.world.item.ItemStack(
+                com.vincenthuto.hemomancy.common.init.ItemInit.hematic_iron_powder.get(), 3));
+        machine.sendUpdates();
     }
 
     private static int worldTicks;

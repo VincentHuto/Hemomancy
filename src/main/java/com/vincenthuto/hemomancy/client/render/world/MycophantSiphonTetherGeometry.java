@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantAnimState;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantVisualRules;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -38,8 +39,12 @@ final class MycophantSiphonTetherGeometry {
 			float yaw = Mth.rotLerp(partial, boss.yBodyRotO, boss.yBodyRot) * Mth.DEG_TO_RAD;
 			Vec3 forward = new Vec3(-Mth.sin(yaw), 0.0D, Mth.cos(yaw));
 			Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
-			double[] at = MycophantVisualRules.siphonMouth();
-			Vec3 mouth = base.add(right.scale(at[0])).add(0.0D, at[1], 0.0D).add(forward.scale(at[2]));
+			Vec3 offset = MycophantAnimState.of(boss).siphonMouth(boss.tickCount);
+			if (offset == null) {
+				double[] at = MycophantVisualRules.siphonMouth();
+				offset = new Vec3(at[0], at[1], at[2]);
+			}
+			Vec3 mouth = base.add(right.scale(offset.x)).add(0.0D, offset.y, 0.0D).add(forward.scale(offset.z));
 			Vec3 chest = target.getPosition(partial).add(0.0D, target.getBbHeight() * 0.62D, 0.0D);
 			draw(poses, vertices, mouth.subtract(camera), chest.subtract(camera), time, boss.getId());
 		}
@@ -52,7 +57,7 @@ final class MycophantSiphonTetherGeometry {
 		for (int i = 0; i <= STATIONS; i++) {
 			double t = (double) i / STATIONS;
 			double droop = Math.sin(Math.PI * t) * sag;
-			double sway = Math.sin(time * 0.15D + t * 4.0D + seed) * 0.06D;
+			double sway = Math.sin(time * 0.15D + t * 4.0D + seed) * Math.sin(Math.PI * t) * 0.06D;
 			spine.add(from.lerp(to, t).add(sway, -droop, sway * 0.5D));
 		}
 		float pulse = MycophantVisualRules.tetherPulse((float) time);

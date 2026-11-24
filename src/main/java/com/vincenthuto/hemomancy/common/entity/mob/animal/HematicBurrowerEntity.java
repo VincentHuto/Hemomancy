@@ -3,6 +3,9 @@ package com.vincenthuto.hemomancy.common.entity.mob.animal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -26,11 +29,24 @@ import java.util.Comparator;
 import java.util.EnumSet;
 
 public class HematicBurrowerEntity extends PathfinderMob {
+	private static final EntityDataAccessor<Boolean> DIGGING =
+			SynchedEntityData.defineId(HematicBurrowerEntity.class, EntityDataSerializers.BOOLEAN);
+
 	private int frightenedTicks;
 	private int diggingTicks;
 
 	public HematicBurrowerEntity(EntityType<? extends HematicBurrowerEntity> type, Level level) {
 		super(type, level);
+	}
+
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DIGGING, false);
+	}
+
+	public boolean isDigging() {
+		return this.entityData.get(DIGGING);
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
@@ -88,6 +104,7 @@ public class HematicBurrowerEntity extends PathfinderMob {
 
 	private void startDigging() {
 		this.diggingTicks = HematicBurrowerRules.DIG_PARTICLE_TICKS;
+		this.entityData.set(DIGGING, true);
 		this.getNavigation().stop();
 		this.level().playSound(null, this.blockPosition(), SoundEvents.GRAVEL_BREAK, SoundSource.NEUTRAL,
 				0.8F, 0.65F + this.random.nextFloat() * 0.2F);

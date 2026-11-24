@@ -1,0 +1,5113 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "free",
+    "box_uv": false
+  },
+  "name": "Dagger Thrower",
+  "resolution": {
+    "width": 128,
+    "height": 128
+  },
+  "elements": [
+    {
+      "name": "Waist and seat",
+      "from": [
+        -3.5,
+        10,
+        -1.75
+      ],
+      "to": [
+        3.5,
+        14,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        12,
+        0
+      ],
+      "uuid": "992198c4-1379-44e2-b61f-39f1f2599870",
+      "faces": {
+        "north": {
+          "uv": [
+            100,
+            31,
+            107,
+            35
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            109,
+            31,
+            113,
+            35
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            115,
+            31,
+            122,
+            35
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1,
+            38,
+            5,
+            42
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            7,
+            38,
+            14,
+            42
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            38,
+            23,
+            42
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Costume body",
+      "from": [
+        -4.0,
+        13,
+        -2
+      ],
+      "to": [
+        4.0,
+        24,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "uuid": "32c88e93-40d0-481c-95d7-9302886d09b0",
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            1,
+            9,
+            12
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11,
+            1,
+            15,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            17,
+            1,
+            25,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            27,
+            1,
+            31,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            25,
+            38,
+            33,
+            42
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            35,
+            38,
+            43,
+            42
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Frogged scarlet doublet",
+      "from": [
+        -2.5,
+        14,
+        -3
+      ],
+      "to": [
+        2.5,
+        23,
+        -2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "uuid": "069f7f1e-2739-457c-a090-e648d1159291",
+      "faces": {
+        "north": {
+          "uv": [
+            47,
+            1,
+            52,
+            10
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            54,
+            1,
+            55,
+            10
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            57,
+            1,
+            62,
+            10
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            1,
+            65,
+            10
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            18,
+            67,
+            23,
+            68
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            25,
+            67,
+            30,
+            68
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Diagonal leather harness",
+      "from": [
+        -1,
+        13,
+        -3.5
+      ],
+      "to": [
+        1,
+        24,
+        -2.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        18,
+        -3
+      ],
+      "uuid": "832d402d-6b6d-4c0f-9439-b61fb89c3d18",
+      "faces": {
+        "north": {
+          "uv": [
+            33,
+            1,
+            35,
+            12
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            37,
+            1,
+            38,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            40,
+            1,
+            42,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            44,
+            1,
+            45,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            67,
+            34,
+            68
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            36,
+            67,
+            38,
+            68
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -34
+      ]
+    },
+    {
+      "name": "Sheathed knife grip",
+      "from": [
+        -2.5,
+        16,
+        -4
+      ],
+      "to": [
+        -1.5,
+        19,
+        -3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2.5,
+        16,
+        -4
+      ],
+      "uuid": "298acace-772e-4979-bcac-ab624d8a7545",
+      "faces": {
+        "north": {
+          "uv": [
+            45,
+            44,
+            46,
+            47
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            44,
+            49,
+            47
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            51,
+            44,
+            52,
+            47
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            54,
+            44,
+            55,
+            47
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            40,
+            67,
+            41,
+            68
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            43,
+            67,
+            44,
+            68
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -24
+      ]
+    },
+    {
+      "name": "Sheath collar",
+      "from": [
+        -3.0,
+        16,
+        -4.5
+      ],
+      "to": [
+        -1.0,
+        17,
+        -3.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2.5,
+        16,
+        -4
+      ],
+      "uuid": "7c8f480c-2fc5-4f78-bde2-3c4df1bdff0c",
+      "faces": {
+        "north": {
+          "uv": [
+            46,
+            67,
+            48,
+            68
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            50,
+            67,
+            51,
+            68
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            53,
+            67,
+            55,
+            68
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            57,
+            67,
+            58,
+            68
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            60,
+            67,
+            62,
+            68
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            67,
+            66,
+            68
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -24
+      ]
+    },
+    {
+      "name": "Sheathed knife grip",
+      "from": [
+        -0.5,
+        18,
+        -4
+      ],
+      "to": [
+        0.5,
+        21,
+        -3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -0.5,
+        18,
+        -4
+      ],
+      "uuid": "5fb7bf2c-3cd0-4277-9861-a7427f934664",
+      "faces": {
+        "north": {
+          "uv": [
+            57,
+            44,
+            58,
+            47
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            60,
+            44,
+            61,
+            47
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            63,
+            44,
+            64,
+            47
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            66,
+            44,
+            67,
+            47
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            68,
+            67,
+            69,
+            68
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            71,
+            67,
+            72,
+            68
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -24
+      ]
+    },
+    {
+      "name": "Sheath collar",
+      "from": [
+        -1.0,
+        18,
+        -4.5
+      ],
+      "to": [
+        1.0,
+        19,
+        -3.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -0.5,
+        18,
+        -4
+      ],
+      "uuid": "7543d9f0-17cd-46d0-a017-bfdc02222a9c",
+      "faces": {
+        "north": {
+          "uv": [
+            74,
+            67,
+            76,
+            68
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            78,
+            67,
+            79,
+            68
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            81,
+            67,
+            83,
+            68
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            85,
+            67,
+            86,
+            68
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            88,
+            67,
+            90,
+            68
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            92,
+            67,
+            94,
+            68
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -24
+      ]
+    },
+    {
+      "name": "Sheathed knife grip",
+      "from": [
+        1.5,
+        20,
+        -4
+      ],
+      "to": [
+        2.5,
+        23,
+        -3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        1.5,
+        20,
+        -4
+      ],
+      "uuid": "653708ca-605c-41f6-b2c1-2583eccf3d5a",
+      "faces": {
+        "north": {
+          "uv": [
+            69,
+            44,
+            70,
+            47
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            72,
+            44,
+            73,
+            47
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            75,
+            44,
+            76,
+            47
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            78,
+            44,
+            79,
+            47
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            96,
+            67,
+            97,
+            68
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            99,
+            67,
+            100,
+            68
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -24
+      ]
+    },
+    {
+      "name": "Sheath collar",
+      "from": [
+        1.0,
+        20,
+        -4.5
+      ],
+      "to": [
+        3.0,
+        21,
+        -3.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        1.5,
+        20,
+        -4
+      ],
+      "uuid": "8bf3b5e9-2c6c-4bb7-9479-4920d1c53cae",
+      "faces": {
+        "north": {
+          "uv": [
+            102,
+            67,
+            104,
+            68
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            106,
+            67,
+            107,
+            68
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            109,
+            67,
+            111,
+            68
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            113,
+            67,
+            114,
+            68
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            116,
+            67,
+            118,
+            68
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            120,
+            67,
+            122,
+            68
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -24
+      ]
+    },
+    {
+      "name": "Lined riding skirt",
+      "from": [
+        -4,
+        7,
+        1
+      ],
+      "to": [
+        -1,
+        14,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        13,
+        1
+      ],
+      "uuid": "aaaa295d-800d-4b69-b312-8d583da6f163",
+      "faces": {
+        "north": {
+          "uv": [
+            67,
+            1,
+            70,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            72,
+            1,
+            74,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            76,
+            1,
+            79,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            81,
+            1,
+            83,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            114,
+            50,
+            117,
+            52
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            119,
+            50,
+            122,
+            52
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        14,
+        0,
+        12
+      ]
+    },
+    {
+      "name": "Lined riding skirt",
+      "from": [
+        1,
+        7,
+        1
+      ],
+      "to": [
+        4,
+        14,
+        3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        13,
+        1
+      ],
+      "uuid": "1bf68dac-a995-4fb2-93ee-ca60c0e5352d",
+      "faces": {
+        "north": {
+          "uv": [
+            85,
+            1,
+            88,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            90,
+            1,
+            92,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            94,
+            1,
+            97,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            99,
+            1,
+            101,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            124,
+            50,
+            127,
+            52
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1,
+            55,
+            4,
+            57
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        14,
+        0,
+        -12
+      ]
+    },
+    {
+      "name": "Knife belt",
+      "from": [
+        -4,
+        12,
+        -2.5
+      ],
+      "to": [
+        4,
+        13,
+        2.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        12,
+        0
+      ],
+      "uuid": "546c6367-ab8e-468e-b069-5634531107fb",
+      "faces": {
+        "up": {
+          "uv": [
+            54,
+            23,
+            62,
+            28
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            23,
+            72,
+            28
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            1,
+            71,
+            9,
+            72
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11,
+            71,
+            16,
+            72
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            18,
+            71,
+            26,
+            72
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            28,
+            71,
+            33,
+            72
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Neck",
+      "from": [
+        -1.5,
+        22.25,
+        -1.25
+      ],
+      "to": [
+        1.5,
+        25.25,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "uuid": "ffd6def3-4966-4a93-87b3-c7f1d0f30c6d",
+      "faces": {
+        "north": {
+          "uv": [
+            81,
+            44,
+            84,
+            47
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            86,
+            44,
+            89,
+            47
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            91,
+            44,
+            94,
+            47
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            96,
+            44,
+            99,
+            47
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            101,
+            44,
+            104,
+            47
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            106,
+            44,
+            109,
+            47
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Face",
+      "from": [
+        -3.5,
+        24,
+        -3.25
+      ],
+      "to": [
+        3.5,
+        31,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "f088c468-2b96-4394-9a04-914db48bfec4",
+      "faces": {
+        "north": {
+          "uv": [
+            103,
+            1,
+            110,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            112,
+            1,
+            118,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            120,
+            1,
+            127,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1,
+            14,
+            7,
+            21
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            71,
+            14,
+            78,
+            20
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            14,
+            87,
+            20
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Nose",
+      "from": [
+        -0.5,
+        26,
+        -4
+      ],
+      "to": [
+        0.5,
+        28,
+        -3
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "3a922d83-b406-47dc-b56f-c1a7de2c8c3a",
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            55,
+            7,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            55,
+            10,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            55,
+            13,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15,
+            55,
+            16,
+            57
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            35,
+            71,
+            36,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            38,
+            71,
+            39,
+            72
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ear",
+      "from": [
+        -4.0,
+        26,
+        -0.75
+      ],
+      "to": [
+        -3.0,
+        28,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "cf00aabf-303d-4c9d-8883-d42b2921795e",
+      "faces": {
+        "north": {
+          "uv": [
+            18,
+            55,
+            19,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            21,
+            55,
+            23,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            25,
+            55,
+            26,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            28,
+            55,
+            30,
+            57
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            55,
+            33,
+            57
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            35,
+            55,
+            36,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Ear",
+      "from": [
+        3.0,
+        26,
+        -0.75
+      ],
+      "to": [
+        4.0,
+        28,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "3a49079d-c06f-4ae3-b67e-17ad78831fb8",
+      "faces": {
+        "north": {
+          "uv": [
+            38,
+            55,
+            39,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            41,
+            55,
+            43,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            45,
+            55,
+            46,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            55,
+            50,
+            57
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            52,
+            55,
+            53,
+            57
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            55,
+            55,
+            56,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Sculpted hair crown",
+      "from": [
+        -3.75,
+        29.5,
+        -3.25
+      ],
+      "to": [
+        3.25,
+        31.5,
+        2.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "4bbd706c-79ea-42b8-a615-32b2d8215771",
+      "faces": {
+        "up": {
+          "uv": [
+            89,
+            14,
+            96,
+            20
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            98,
+            14,
+            105,
+            20
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            58,
+            55,
+            65,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            67,
+            55,
+            73,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            75,
+            55,
+            82,
+            57
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            84,
+            55,
+            90,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Comb line",
+      "from": [
+        -3.75,
+        25.75,
+        2
+      ],
+      "to": [
+        3.25,
+        30.75,
+        4
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "b3c8e0a2-4a56-4de7-a083-06bfc22a7052",
+      "faces": {
+        "north": {
+          "uv": [
+            74,
+            23,
+            81,
+            28
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            83,
+            23,
+            85,
+            28
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            87,
+            23,
+            94,
+            28
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            96,
+            23,
+            98,
+            28
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            92,
+            55,
+            99,
+            57
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            101,
+            55,
+            108,
+            57
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Swept side hood",
+      "from": [
+        1.75,
+        26,
+        -3
+      ],
+      "to": [
+        3.75,
+        32,
+        4
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        29,
+        0
+      ],
+      "uuid": "65c54884-79a5-4027-87eb-33cd8a474118",
+      "faces": {
+        "up": {
+          "uv": [
+            9,
+            14,
+            11,
+            21
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            13,
+            14,
+            15,
+            21
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            107,
+            14,
+            109,
+            20
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            111,
+            14,
+            118,
+            20
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            120,
+            14,
+            122,
+            20
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1,
+            23,
+            8,
+            29
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -9
+      ]
+    },
+    {
+      "name": "Hood crown fold",
+      "from": [
+        -1.5,
+        30.5,
+        -3
+      ],
+      "to": [
+        3.5,
+        32.5,
+        4
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        23.5,
+        0
+      ],
+      "uuid": "51b2debb-c6eb-468e-93cf-eeb4588678d3",
+      "faces": {
+        "up": {
+          "uv": [
+            17,
+            14,
+            22,
+            21
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            24,
+            14,
+            29,
+            21
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            110,
+            55,
+            115,
+            57
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            117,
+            55,
+            124,
+            57
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1,
+            59,
+            6,
+            61
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            59,
+            15,
+            61
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Visible copper forelock",
+      "from": [
+        -3.5,
+        28.5,
+        -3.75
+      ],
+      "to": [
+        -0.5,
+        30.5,
+        -1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2.5,
+        29,
+        -3.5
+      ],
+      "uuid": "fe37bb89-f22c-4f3b-bedf-8c3b8b706112",
+      "faces": {
+        "north": {
+          "uv": [
+            17,
+            59,
+            20,
+            61
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            22,
+            59,
+            24,
+            61
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            26,
+            59,
+            29,
+            61
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            31,
+            59,
+            33,
+            61
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            35,
+            59,
+            38,
+            61
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            40,
+            59,
+            43,
+            61
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        12
+      ]
+    },
+    {
+      "name": "Ivory neckerchief",
+      "from": [
+        -3.5,
+        22,
+        -2.75
+      ],
+      "to": [
+        3.5,
+        24,
+        1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        14,
+        0
+      ],
+      "uuid": "8cd4d329-546d-435d-93df-b30cb78c1503",
+      "faces": {
+        "up": {
+          "uv": [
+            45,
+            38,
+            52,
+            42
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            54,
+            38,
+            61,
+            42
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            45,
+            59,
+            52,
+            61
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            54,
+            59,
+            58,
+            61
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            60,
+            59,
+            67,
+            61
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            69,
+            59,
+            73,
+            61
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper sleeve",
+      "from": [
+        -6.75,
+        16,
+        -1.25
+      ],
+      "to": [
+        -3.75,
+        23,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        22,
+        0
+      ],
+      "uuid": "59ec4575-d5de-4373-a51a-fbab7d0c16ec",
+      "faces": {
+        "north": {
+          "uv": [
+            31,
+            14,
+            34,
+            21
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            36,
+            14,
+            39,
+            21
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            41,
+            14,
+            44,
+            21
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            46,
+            14,
+            49,
+            21
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            111,
+            44,
+            114,
+            47
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            116,
+            44,
+            119,
+            47
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Shoulder gather",
+      "from": [
+        -7.25,
+        21.25,
+        -2.25
+      ],
+      "to": [
+        -3.25,
+        23.25,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        22,
+        0
+      ],
+      "uuid": "3a44b3f5-2b58-4ad5-9b7e-76922ffefd36",
+      "faces": {
+        "up": {
+          "uv": [
+            63,
+            38,
+            67,
+            42
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            69,
+            38,
+            73,
+            42
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            75,
+            59,
+            79,
+            61
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            81,
+            59,
+            85,
+            61
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            87,
+            59,
+            91,
+            61
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            93,
+            59,
+            97,
+            61
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower sleeve",
+      "from": [
+        -6.75,
+        11,
+        -1.5
+      ],
+      "to": [
+        -3.75,
+        16,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        16,
+        0
+      ],
+      "uuid": "9182c340-d30b-4423-b43f-8ddcf1474a3a",
+      "faces": {
+        "north": {
+          "uv": [
+            100,
+            23,
+            103,
+            28
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            105,
+            23,
+            108,
+            28
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            110,
+            23,
+            113,
+            28
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            115,
+            23,
+            118,
+            28
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            121,
+            44,
+            124,
+            47
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1,
+            50,
+            4,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Turned wrist cuff",
+      "from": [
+        -7.25,
+        11,
+        -2.25
+      ],
+      "to": [
+        -3.25,
+        13,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        16,
+        0
+      ],
+      "uuid": "71eca3eb-decd-44fe-8474-f1b72204a7fd",
+      "faces": {
+        "up": {
+          "uv": [
+            75,
+            38,
+            79,
+            42
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            81,
+            38,
+            85,
+            42
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            99,
+            59,
+            103,
+            61
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            105,
+            59,
+            109,
+            61
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            111,
+            59,
+            115,
+            61
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            117,
+            59,
+            121,
+            61
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hand",
+      "from": [
+        -6.75,
+        9,
+        -1.5
+      ],
+      "to": [
+        -3.75,
+        11,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        11,
+        0
+      ],
+      "uuid": "2c6852ef-d4c1-4481-a7b8-553a39391a96",
+      "faces": {
+        "up": {
+          "uv": [
+            6,
+            50,
+            9,
+            53
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11,
+            50,
+            14,
+            53
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            123,
+            59,
+            126,
+            61
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            63,
+            4,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6,
+            63,
+            9,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11,
+            63,
+            14,
+            65
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Thumb",
+      "from": [
+        -4.75,
+        10,
+        -2.25
+      ],
+      "to": [
+        -3.75,
+        12,
+        -1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        11,
+        0
+      ],
+      "uuid": "e2d655bd-4a21-42fc-ace0-dd770c22bdb4",
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            63,
+            17,
+            65
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            19,
+            63,
+            20,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            22,
+            63,
+            23,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            25,
+            63,
+            26,
+            65
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            41,
+            71,
+            42,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            44,
+            71,
+            45,
+            72
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Dagger 1 grip",
+      "from": [
+        -5.75,
+        9,
+        -2.5
+      ],
+      "to": [
+        -4.75,
+        11,
+        -1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -2.5
+      ],
+      "uuid": "90ca4b63-300c-4b70-8289-f10cb075aeac",
+      "faces": {
+        "north": {
+          "uv": [
+            28,
+            63,
+            29,
+            65
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            31,
+            63,
+            32,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            34,
+            63,
+            35,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            37,
+            63,
+            38,
+            65
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            47,
+            71,
+            48,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            50,
+            71,
+            51,
+            72
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -38
+      ]
+    },
+    {
+      "name": "Dagger 1 guard",
+      "from": [
+        -6.25,
+        8,
+        -2.5
+      ],
+      "to": [
+        -4.25,
+        9,
+        -1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -2.5
+      ],
+      "uuid": "e55677bc-e8d4-4b30-83e3-739c359b32e4",
+      "faces": {
+        "north": {
+          "uv": [
+            53,
+            71,
+            55,
+            72
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            57,
+            71,
+            58,
+            72
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            60,
+            71,
+            62,
+            72
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            71,
+            65,
+            72
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            67,
+            71,
+            69,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            71,
+            71,
+            73,
+            72
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -38
+      ]
+    },
+    {
+      "name": "Dagger 1 steel",
+      "from": [
+        -6.25,
+        4,
+        -2.5
+      ],
+      "to": [
+        -4.25,
+        8,
+        -1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -2.5
+      ],
+      "uuid": "2378f4bb-fd5b-4c5d-8cf8-99a341df7d5f",
+      "faces": {
+        "north": {
+          "uv": [
+            87,
+            38,
+            89,
+            42
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            91,
+            38,
+            92,
+            42
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            94,
+            38,
+            96,
+            42
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            98,
+            38,
+            99,
+            42
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            75,
+            71,
+            77,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            79,
+            71,
+            81,
+            72
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -38
+      ]
+    },
+    {
+      "name": "Dagger 1 tip",
+      "from": [
+        -5.75,
+        3,
+        -2.5
+      ],
+      "to": [
+        -4.75,
+        4,
+        -1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -2.5
+      ],
+      "uuid": "bb12b4f9-c7eb-4d5e-a8a6-23992b44b45b",
+      "faces": {
+        "north": {
+          "uv": [
+            83,
+            71,
+            84,
+            72
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            86,
+            71,
+            87,
+            72
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            89,
+            71,
+            90,
+            72
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            92,
+            71,
+            93,
+            72
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            95,
+            71,
+            96,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            98,
+            71,
+            99,
+            72
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -38
+      ]
+    },
+    {
+      "name": "Dagger 2 grip",
+      "from": [
+        -5.75,
+        9,
+        -2.0
+      ],
+      "to": [
+        -4.75,
+        11,
+        -1.0
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -2.0
+      ],
+      "uuid": "1264d744-c7ef-4261-bb5d-f8b0d0bc4a0c",
+      "faces": {
+        "north": {
+          "uv": [
+            40,
+            63,
+            41,
+            65
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            43,
+            63,
+            44,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            46,
+            63,
+            47,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            49,
+            63,
+            50,
+            65
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            101,
+            71,
+            102,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            104,
+            71,
+            105,
+            72
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -13
+      ]
+    },
+    {
+      "name": "Dagger 2 guard",
+      "from": [
+        -6.25,
+        8,
+        -2.0
+      ],
+      "to": [
+        -4.25,
+        9,
+        -1.0
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -2.0
+      ],
+      "uuid": "a95cfe74-1c13-4bec-8e4c-22494693797f",
+      "faces": {
+        "north": {
+          "uv": [
+            107,
+            71,
+            109,
+            72
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            111,
+            71,
+            112,
+            72
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            114,
+            71,
+            116,
+            72
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            118,
+            71,
+            119,
+            72
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            121,
+            71,
+            123,
+            72
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            125,
+            71,
+            127,
+            72
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -13
+      ]
+    },
+    {
+      "name": "Dagger 2 steel",
+      "from": [
+        -6.25,
+        4,
+        -2.0
+      ],
+      "to": [
+        -4.25,
+        8,
+        -1.0
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -2.0
+      ],
+      "uuid": "8809dd60-63f5-4ae2-8015-d0d029342118",
+      "faces": {
+        "north": {
+          "uv": [
+            101,
+            38,
+            103,
+            42
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            105,
+            38,
+            106,
+            42
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            108,
+            38,
+            110,
+            42
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            112,
+            38,
+            113,
+            42
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1,
+            74,
+            3,
+            75
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5,
+            74,
+            7,
+            75
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -13
+      ]
+    },
+    {
+      "name": "Dagger 2 tip",
+      "from": [
+        -5.75,
+        3,
+        -2.0
+      ],
+      "to": [
+        -4.75,
+        4,
+        -1.0
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -2.0
+      ],
+      "uuid": "4c042434-4dfb-4f3b-873c-0f6dba3b8710",
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            74,
+            10,
+            75
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            74,
+            13,
+            75
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            15,
+            74,
+            16,
+            75
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            18,
+            74,
+            19,
+            75
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            21,
+            74,
+            22,
+            75
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            24,
+            74,
+            25,
+            75
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        -13
+      ]
+    },
+    {
+      "name": "Dagger 3 grip",
+      "from": [
+        -5.75,
+        9,
+        -1.5
+      ],
+      "to": [
+        -4.75,
+        11,
+        -0.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -1.5
+      ],
+      "uuid": "e360a1cf-4de2-45f7-a8b1-6a6c59693ba1",
+      "faces": {
+        "north": {
+          "uv": [
+            52,
+            63,
+            53,
+            65
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            55,
+            63,
+            56,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            58,
+            63,
+            59,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            61,
+            63,
+            62,
+            65
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            27,
+            74,
+            28,
+            75
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            30,
+            74,
+            31,
+            75
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        12
+      ]
+    },
+    {
+      "name": "Dagger 3 guard",
+      "from": [
+        -6.25,
+        8,
+        -1.5
+      ],
+      "to": [
+        -4.25,
+        9,
+        -0.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -1.5
+      ],
+      "uuid": "347d94fb-1b6b-4abf-bd0e-81d0c8d155ed",
+      "faces": {
+        "north": {
+          "uv": [
+            33,
+            74,
+            35,
+            75
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            37,
+            74,
+            38,
+            75
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            40,
+            74,
+            42,
+            75
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            44,
+            74,
+            45,
+            75
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            47,
+            74,
+            49,
+            75
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            51,
+            74,
+            53,
+            75
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        12
+      ]
+    },
+    {
+      "name": "Dagger 3 steel",
+      "from": [
+        -6.25,
+        4,
+        -1.5
+      ],
+      "to": [
+        -4.25,
+        8,
+        -0.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -1.5
+      ],
+      "uuid": "4cf974c9-c1cf-45ca-b0e7-601cf0709deb",
+      "faces": {
+        "north": {
+          "uv": [
+            115,
+            38,
+            117,
+            42
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            119,
+            38,
+            120,
+            42
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            122,
+            38,
+            124,
+            42
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            126,
+            38,
+            127,
+            42
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            55,
+            74,
+            57,
+            75
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            59,
+            74,
+            61,
+            75
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        12
+      ]
+    },
+    {
+      "name": "Dagger 3 tip",
+      "from": [
+        -5.75,
+        3,
+        -1.5
+      ],
+      "to": [
+        -4.75,
+        4,
+        -0.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        10,
+        -1.5
+      ],
+      "uuid": "6e7ecfcc-0bd0-4444-9c44-169e6975e203",
+      "faces": {
+        "north": {
+          "uv": [
+            63,
+            74,
+            64,
+            75
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            66,
+            74,
+            67,
+            75
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            69,
+            74,
+            70,
+            75
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            72,
+            74,
+            73,
+            75
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            75,
+            74,
+            76,
+            75
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            78,
+            74,
+            79,
+            75
+          ],
+          "texture": 0
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        12
+      ]
+    },
+    {
+      "name": "Upper trouser",
+      "from": [
+        -3.5,
+        7,
+        -1.75
+      ],
+      "to": [
+        -0.5,
+        13,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        12,
+        0
+      ],
+      "uuid": "e482313b-9326-49dd-bc54-3c4bed289b27",
+      "faces": {
+        "north": {
+          "uv": [
+            10,
+            23,
+            13,
+            29
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            15,
+            23,
+            19,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            21,
+            23,
+            24,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            26,
+            23,
+            30,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1,
+            44,
+            4,
+            48
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            6,
+            44,
+            9,
+            48
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower trouser",
+      "from": [
+        -3.5,
+        2,
+        -1.5
+      ],
+      "to": [
+        -0.5,
+        7,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        7,
+        0
+      ],
+      "uuid": "5674b38a-1b50-487b-933a-1d5423610b8f",
+      "faces": {
+        "north": {
+          "uv": [
+            120,
+            23,
+            123,
+            28
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            31,
+            4,
+            36
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6,
+            31,
+            9,
+            36
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11,
+            31,
+            14,
+            36
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            50,
+            19,
+            53
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            21,
+            50,
+            24,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stage boot",
+      "from": [
+        -3.75,
+        0.25,
+        -3
+      ],
+      "to": [
+        -0.75,
+        3.25,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        2,
+        0
+      ],
+      "uuid": "860efa36-c0f2-4849-b60f-ad4693cef28b",
+      "faces": {
+        "up": {
+          "uv": [
+            16,
+            31,
+            19,
+            36
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            21,
+            31,
+            24,
+            36
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            26,
+            50,
+            29,
+            53
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            31,
+            50,
+            36,
+            53
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            38,
+            50,
+            41,
+            53
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            43,
+            50,
+            48,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Boot edge",
+      "from": [
+        -4,
+        0,
+        -3.25
+      ],
+      "to": [
+        0,
+        1,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -2,
+        2,
+        0
+      ],
+      "uuid": "7c1b2d2a-69e3-4f2c-a855-828b4cf8b1a8",
+      "faces": {
+        "up": {
+          "uv": [
+            26,
+            31,
+            30,
+            36
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            31,
+            36,
+            36
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            81,
+            74,
+            85,
+            75
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            87,
+            74,
+            92,
+            75
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            94,
+            74,
+            98,
+            75
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            100,
+            74,
+            105,
+            75
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper sleeve",
+      "from": [
+        3.75,
+        16,
+        -1.25
+      ],
+      "to": [
+        6.75,
+        23,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        5.25,
+        22,
+        0
+      ],
+      "uuid": "7c2aa424-0988-430d-8378-e12ed4952e5c",
+      "faces": {
+        "north": {
+          "uv": [
+            51,
+            14,
+            54,
+            21
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            56,
+            14,
+            59,
+            21
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            61,
+            14,
+            64,
+            21
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            66,
+            14,
+            69,
+            21
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            50,
+            50,
+            53,
+            53
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            55,
+            50,
+            58,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Shoulder gather",
+      "from": [
+        3.25,
+        21.25,
+        -2.25
+      ],
+      "to": [
+        7.25,
+        23.25,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        5.25,
+        22,
+        0
+      ],
+      "uuid": "636dbcbd-b4d7-4a31-9fc5-bbcc53889d27",
+      "faces": {
+        "up": {
+          "uv": [
+            11,
+            44,
+            15,
+            48
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            17,
+            44,
+            21,
+            48
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            64,
+            63,
+            68,
+            65
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            70,
+            63,
+            74,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            76,
+            63,
+            80,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            82,
+            63,
+            86,
+            65
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower sleeve",
+      "from": [
+        3.75,
+        11,
+        -1.5
+      ],
+      "to": [
+        6.75,
+        16,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        5.25,
+        16,
+        0
+      ],
+      "uuid": "a6ab2446-d144-45ed-9330-27f620a00998",
+      "faces": {
+        "north": {
+          "uv": [
+            38,
+            31,
+            41,
+            36
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            43,
+            31,
+            46,
+            36
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            31,
+            51,
+            36
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            53,
+            31,
+            56,
+            36
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            60,
+            50,
+            63,
+            53
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            65,
+            50,
+            68,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Turned wrist cuff",
+      "from": [
+        3.25,
+        11,
+        -2.25
+      ],
+      "to": [
+        7.25,
+        13,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        5.25,
+        16,
+        0
+      ],
+      "uuid": "ac3b8d3a-e7e7-4774-8d26-ac4776b50cce",
+      "faces": {
+        "up": {
+          "uv": [
+            23,
+            44,
+            27,
+            48
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            29,
+            44,
+            33,
+            48
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            88,
+            63,
+            92,
+            65
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            94,
+            63,
+            98,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            100,
+            63,
+            104,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            106,
+            63,
+            110,
+            65
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Hand",
+      "from": [
+        3.75,
+        9,
+        -1.5
+      ],
+      "to": [
+        6.75,
+        11,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        5.25,
+        11,
+        0
+      ],
+      "uuid": "5ca33adc-67c0-47d6-ae99-09d758d6df3d",
+      "faces": {
+        "up": {
+          "uv": [
+            70,
+            50,
+            73,
+            53
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            75,
+            50,
+            78,
+            53
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            112,
+            63,
+            115,
+            65
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            117,
+            63,
+            120,
+            65
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            122,
+            63,
+            125,
+            65
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1,
+            67,
+            4,
+            69
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Thumb",
+      "from": [
+        3.75,
+        10,
+        -2.25
+      ],
+      "to": [
+        4.75,
+        12,
+        -1.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        5.25,
+        11,
+        0
+      ],
+      "uuid": "780e48a0-4e1b-45f6-a37f-da7da0cb1c26",
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            67,
+            7,
+            69
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            67,
+            10,
+            69
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            67,
+            13,
+            69
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15,
+            67,
+            16,
+            69
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            107,
+            74,
+            108,
+            75
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            110,
+            74,
+            111,
+            75
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Upper trouser",
+      "from": [
+        0.5,
+        7,
+        -1.75
+      ],
+      "to": [
+        3.5,
+        13,
+        2.25
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        12,
+        0
+      ],
+      "uuid": "0235902a-43b0-4f21-8fa5-7e9d436baaa1",
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            23,
+            35,
+            29
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            37,
+            23,
+            41,
+            29
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            43,
+            23,
+            46,
+            29
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            23,
+            52,
+            29
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            35,
+            44,
+            38,
+            48
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            40,
+            44,
+            43,
+            48
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Lower trouser",
+      "from": [
+        0.5,
+        2,
+        -1.5
+      ],
+      "to": [
+        3.5,
+        7,
+        1.5
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        7,
+        0
+      ],
+      "uuid": "88b92e79-a21d-4d0f-b686-289dcb42e3a7",
+      "faces": {
+        "north": {
+          "uv": [
+            58,
+            31,
+            61,
+            36
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            63,
+            31,
+            66,
+            36
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            68,
+            31,
+            71,
+            36
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            73,
+            31,
+            76,
+            36
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            50,
+            83,
+            53
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            85,
+            50,
+            88,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Stage boot",
+      "from": [
+        0.25,
+        0.25,
+        -3
+      ],
+      "to": [
+        3.25,
+        3.25,
+        2
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        2,
+        0
+      ],
+      "uuid": "ce2e9349-23a6-42f8-9913-7acc1e10cdaa",
+      "faces": {
+        "up": {
+          "uv": [
+            78,
+            31,
+            81,
+            36
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            83,
+            31,
+            86,
+            36
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            90,
+            50,
+            93,
+            53
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            95,
+            50,
+            100,
+            53
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            102,
+            50,
+            105,
+            53
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            107,
+            50,
+            112,
+            53
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Boot edge",
+      "from": [
+        0,
+        0,
+        -3.25
+      ],
+      "to": [
+        4,
+        1,
+        1.75
+      ],
+      "type": "cube",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        2,
+        2,
+        0
+      ],
+      "uuid": "865ce675-96ef-4d26-90f3-432799a27ee4",
+      "faces": {
+        "up": {
+          "uv": [
+            88,
+            31,
+            92,
+            36
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            94,
+            31,
+            98,
+            36
+          ],
+          "texture": 0
+        },
+        "north": {
+          "uv": [
+            113,
+            74,
+            117,
+            75
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            119,
+            74,
+            124,
+            75
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1,
+            77,
+            5,
+            78
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            7,
+            77,
+            12,
+            78
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Bone harness seal",
+      "type": "cube",
+      "uuid": "e72a8652-a30a-496c-954a-cd13ff089c2f",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        21,
+        -5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            124,
+            10,
+            127,
+            13
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            124,
+            15,
+            125,
+            18
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            124,
+            30,
+            127,
+            33
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            125,
+            20,
+            126,
+            23
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            67,
+            10,
+            70,
+            11
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            72,
+            10,
+            75,
+            11
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -1.5,
+        19.5,
+        -5
+      ],
+      "to": [
+        1.5,
+        22.5,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        -25
+      ]
+    },
+    {
+      "name": "Layered hematic iron cap",
+      "type": "cube",
+      "uuid": "f22fb4bf-1c58-4fdf-9680-aeb3afb54730",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        -5.25,
+        22,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            77,
+            10,
+            80,
+            11
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            82,
+            10,
+            86,
+            11
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            88,
+            10,
+            91,
+            11
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            93,
+            10,
+            97,
+            11
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            14,
+            77,
+            17,
+            81
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            19,
+            77,
+            22,
+            81
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -6.75,
+        22.75,
+        -2.25
+      ],
+      "to": [
+        -3.75,
+        23.75,
+        1.75
+      ]
+    },
+    {
+      "name": "Layered hematic iron cap",
+      "type": "cube",
+      "uuid": "644af15f-6d4f-4e17-90cb-9e4bf2c58ce0",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        5.25,
+        22,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            99,
+            10,
+            102,
+            11
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            104,
+            10,
+            108,
+            11
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            110,
+            10,
+            113,
+            11
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            115,
+            10,
+            119,
+            11
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            24,
+            77,
+            27,
+            81
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            29,
+            77,
+            32,
+            81
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        3.75,
+        22.75,
+        -2.25
+      ],
+      "to": [
+        6.75,
+        23.75,
+        1.75
+      ]
+    },
+    {
+      "name": "Sutured knife keeper",
+      "type": "cube",
+      "uuid": "64f81975-d47b-4bae-83be-383fcf8aedf4",
+      "box_uv": false,
+      "autouv": 0,
+      "origin": [
+        0,
+        12,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            34,
+            77,
+            36,
+            81
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            126,
+            44,
+            127,
+            48
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            38,
+            77,
+            40,
+            81
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            126,
+            74,
+            127,
+            78
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            125,
+            25,
+            127,
+            26
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            124,
+            35,
+            126,
+            36
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        2,
+        8,
+        -3
+      ],
+      "to": [
+        4,
+        12,
+        -2
+      ]
+    }
+  ],
+  "outliner": [
+    {
+      "name": "Root",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "uuid": "2e3ecb96-70c7-47c1-8bf4-85a19648586c",
+      "children": [
+        {
+          "name": "Waist",
+          "origin": [
+            0,
+            12,
+            0
+          ],
+          "uuid": "a68f73eb-7fa5-4c48-b7d8-94505c0e43ea",
+          "children": [
+            {
+              "name": "Chest",
+              "origin": [
+                0,
+                14,
+                0
+              ],
+              "uuid": "b5b03e6e-838a-4893-a757-5d719059bf0c",
+              "children": [
+                "32c88e93-40d0-481c-95d7-9302886d09b0",
+                "069f7f1e-2739-457c-a090-e648d1159291",
+                "832d402d-6b6d-4c0f-9439-b61fb89c3d18",
+                "298acace-772e-4979-bcac-ab624d8a7545",
+                "7c8f480c-2fc5-4f78-bde2-3c4df1bdff0c",
+                "5fb7bf2c-3cd0-4277-9861-a7427f934664",
+                "7543d9f0-17cd-46d0-a017-bfdc02222a9c",
+                "653708ca-605c-41f6-b2c1-2583eccf3d5a",
+                "8bf3b5e9-2c6c-4bb7-9479-4920d1c53cae",
+                {
+                  "name": "Head",
+                  "origin": [
+                    0,
+                    23.5,
+                    0
+                  ],
+                  "uuid": "dbfa21be-330e-4888-9790-923d87f5e0ec",
+                  "children": [
+                    "f088c468-2b96-4394-9a04-914db48bfec4",
+                    "3a922d83-b406-47dc-b56f-c1a7de2c8c3a",
+                    "cf00aabf-303d-4c9d-8883-d42b2921795e",
+                    "3a49079d-c06f-4ae3-b67e-17ad78831fb8",
+                    "4bbd706c-79ea-42b8-a615-32b2d8215771",
+                    "b3c8e0a2-4a56-4de7-a083-06bfc22a7052",
+                    "65c54884-79a5-4027-87eb-33cd8a474118",
+                    "51b2debb-c6eb-468e-93cf-eeb4588678d3",
+                    "fe37bb89-f22c-4f3b-bedf-8c3b8b706112"
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                "ffd6def3-4966-4a93-87b3-c7f1d0f30c6d",
+                "8cd4d329-546d-435d-93df-b30cb78c1503",
+                {
+                  "name": "Left shoulder",
+                  "origin": [
+                    -5.25,
+                    22,
+                    0
+                  ],
+                  "uuid": "a08d05d4-9f3f-40ea-83b5-f4abe2d86680",
+                  "children": [
+                    "59ec4575-d5de-4373-a51a-fbab7d0c16ec",
+                    "3a44b3f5-2b58-4ad5-9b7e-76922ffefd36",
+                    {
+                      "name": "Left elbow",
+                      "origin": [
+                        -5.25,
+                        16,
+                        0
+                      ],
+                      "uuid": "535fd288-0b64-4871-894d-c6229b579a86",
+                      "children": [
+                        "9182c340-d30b-4423-b43f-8ddcf1474a3a",
+                        "71eca3eb-decd-44fe-8474-f1b72204a7fd",
+                        {
+                          "name": "Left hand",
+                          "origin": [
+                            -5.25,
+                            11,
+                            0
+                          ],
+                          "uuid": "8e4c6450-9df4-4498-87da-8c12f78ef281",
+                          "children": [
+                            "2c6852ef-d4c1-4481-a7b8-553a39391a96",
+                            "e2d655bd-4a21-42fc-ace0-dd770c22bdb4",
+                            {
+                              "name": "Throwing daggers",
+                              "origin": [
+                                -5.25,
+                                10,
+                                -1
+                              ],
+                              "uuid": "551dcc25-e839-4de7-b2d5-43159829abc2",
+                              "children": [
+                                "90ca4b63-300c-4b70-8289-f10cb075aeac",
+                                "e55677bc-e8d4-4b30-83e3-739c359b32e4",
+                                "2378f4bb-fd5b-4c5d-8cf8-99a341df7d5f",
+                                "bb12b4f9-c7eb-4d5e-a8a6-23992b44b45b",
+                                "1264d744-c7ef-4261-bb5d-f8b0d0bc4a0c",
+                                "a95cfe74-1c13-4bec-8e4c-22494693797f",
+                                "8809dd60-63f5-4ae2-8015-d0d029342118",
+                                "4c042434-4dfb-4f3b-873c-0f6dba3b8710",
+                                "e360a1cf-4de2-45f7-a8b1-6a6c59693ba1",
+                                "347d94fb-1b6b-4abf-bd0e-81d0c8d155ed",
+                                "4cf974c9-c1cf-45ca-b0e7-601cf0709deb",
+                                "6e7ecfcc-0bd0-4444-9c44-169e6975e203"
+                              ],
+                              "export": true,
+                              "isOpen": false
+                            }
+                          ],
+                          "export": true,
+                          "isOpen": false
+                        }
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    },
+                    "f22fb4bf-1c58-4fdf-9680-aeb3afb54730"
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                {
+                  "name": "Right shoulder",
+                  "origin": [
+                    5.25,
+                    22,
+                    0
+                  ],
+                  "uuid": "55535dec-13db-4b61-b1fe-63987c27e3f5",
+                  "children": [
+                    "7c2aa424-0988-430d-8378-e12ed4952e5c",
+                    "636dbcbd-b4d7-4a31-9fc5-bbcc53889d27",
+                    {
+                      "name": "Right elbow",
+                      "origin": [
+                        5.25,
+                        16,
+                        0
+                      ],
+                      "uuid": "a3bc4a64-870e-41a3-8bf8-9933317637ef",
+                      "children": [
+                        "a6ab2446-d144-45ed-9330-27f620a00998",
+                        "ac3b8d3a-e7e7-4774-8d26-ac4776b50cce",
+                        {
+                          "name": "Right hand",
+                          "origin": [
+                            5.25,
+                            11,
+                            0
+                          ],
+                          "uuid": "582102f7-a2b6-401d-af66-68c6a2e5c2c3",
+                          "children": [
+                            "5ca33adc-67c0-47d6-ae99-09d758d6df3d",
+                            "780e48a0-4e1b-45f6-a37f-da7da0cb1c26"
+                          ],
+                          "export": true,
+                          "isOpen": false
+                        }
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    },
+                    "644af15f-6d4f-4e17-90cb-9e4bf2c58ce0"
+                  ],
+                  "export": true,
+                  "isOpen": false
+                },
+                "e72a8652-a30a-496c-954a-cd13ff089c2f"
+              ],
+              "export": true,
+              "isOpen": false
+            },
+            "992198c4-1379-44e2-b61f-39f1f2599870",
+            "aaaa295d-800d-4b69-b312-8d583da6f163",
+            "1bf68dac-a995-4fb2-93ee-ca60c0e5352d",
+            "546c6367-ab8e-468e-b069-5634531107fb",
+            {
+              "name": "Left hip",
+              "origin": [
+                -2,
+                12,
+                0
+              ],
+              "uuid": "32758d42-d8ba-4602-a1fc-a3bef6ef7c6c",
+              "children": [
+                "e482313b-9326-49dd-bc54-3c4bed289b27",
+                {
+                  "name": "Left knee",
+                  "origin": [
+                    -2,
+                    7,
+                    0
+                  ],
+                  "uuid": "62d33454-6b35-4f84-b831-8fc92a36325f",
+                  "children": [
+                    "5674b38a-1b50-487b-933a-1d5423610b8f",
+                    {
+                      "name": "Left ankle",
+                      "origin": [
+                        -2,
+                        2,
+                        0
+                      ],
+                      "uuid": "105808ff-294d-42b8-b71d-5c57d3d84291",
+                      "children": [
+                        "860efa36-c0f2-4849-b60f-ad4693cef28b",
+                        "7c1b2d2a-69e3-4f2c-a855-828b4cf8b1a8"
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                }
+              ],
+              "export": true,
+              "isOpen": false
+            },
+            {
+              "name": "Right hip",
+              "origin": [
+                2,
+                12,
+                0
+              ],
+              "uuid": "21a53c2e-1706-4964-aeef-d97a12dc2385",
+              "children": [
+                "0235902a-43b0-4f21-8fa5-7e9d436baaa1",
+                {
+                  "name": "Right knee",
+                  "origin": [
+                    2,
+                    7,
+                    0
+                  ],
+                  "uuid": "98afcf22-3961-492c-a44c-2531588ba72d",
+                  "children": [
+                    "88b92e79-a21d-4d0f-b686-289dcb42e3a7",
+                    {
+                      "name": "Right ankle",
+                      "origin": [
+                        2,
+                        2,
+                        0
+                      ],
+                      "uuid": "04114eff-e880-4557-bc1b-f0b1645adbbe",
+                      "children": [
+                        "ce2e9349-23a6-42f8-9913-7acc1e10cdaa",
+                        "865ce675-96ef-4d26-90f3-432799a27ee4"
+                      ],
+                      "export": true,
+                      "isOpen": false
+                    }
+                  ],
+                  "export": true,
+                  "isOpen": false
+                }
+              ],
+              "export": true,
+              "isOpen": false
+            },
+            "64f81975-d47b-4bae-83be-383fcf8aedf4"
+          ],
+          "export": true,
+          "isOpen": false
+        }
+      ],
+      "export": true,
+      "isOpen": false
+    }
+  ],
+  "textures": [
+    {
+      "name": "dagger_thrower.png",
+      "relative_path": "dagger_thrower.png",
+      "mode": "bitmap",
+      "id": "0",
+      "uuid": "3111800c-4fd5-455a-ba58-1eba4e2d4be2",
+      "width": 128,
+      "height": 128,
+      "uv_width": 128,
+      "uv_height": 128,
+      "saved": true,
+      "visible": true,
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAH+UlEQVR4nO2deWwUVRzH3+iq5SiyUnpACy0tRyxQqC0SJXIU5AiFGiwQrygGEgkVYjQoURJFUMBE/jCE8AdqasoRkjZSsZEWUAFNqJwtlEIPpEApRQoiN6yZ2c7szOzcO7ud6ft+kua9ee83b2Y6v/n93r3MF89P8pEOhEmKsnReeusDW++j6tY94iSe6ncj5DKmzXyRCxvOXgzKa2y4zIWPhHwV4Go8fORU23VFgabb/3FhTnyCRE4t3ez5Q7rHW7rxdPI4Fx65dFVIO3HzXy58umu0kDYizmtIru7hw6B7Tozqpnr9cMusKJii+/WOHzdcUYbPN4LrLUD69CfJxz+8zIWdkeLyQ9yfPG4XrleA6tJr5PPXtnNhZ+STb1aTP5j+QXElUvr7raxlBeDNkR5qcqGeH24LwJt+N1BWWMn9VZVsJQsHPCSjxmRz8TU5vRTlWbOv5C7E+Zp1AD1fJZdTeomhnm8F9suvLt1uSFbs853OlNezuJB9qWcvXSdrv9rCHY8dnaoon5zSW7M8tXyJAohhX5DRFxqO843CfvkvzZ1EirfsIie2Wf/CB/fsEYiTHvryEZQRv3QzFTw1xGWoKkCoLy8SL9+sBQDBqCqAW+CbeVyceC3LJSzOUz23fPdRIT5zZAYXLttUQlbNk57Dp7EhC59vRfbGXb9c74S+qrLvbvCnszJK5RbXHCTFe3cyfF7ljo1cp19U12ZSX3+pc7QCgE0WQOwDtXwUL6eWbvZ8xmutKzh3yw5Bs+2gcnFeh3aJR5LBzc2knvj/fYxbxwI+tFkBaIB3AfWNARfg0Rt06HNZ6i+LGv6WHA9v7+IVU9Gs3h7l4buGa463KHYX66WximtEzmratytnqd77nr3HiFH6etW/r9LKJsPlTPDFknDg+kogMM+A5Hgyu2A5Z0E9akOGQlvx8h0LlwB2Ix7MUhvk0hrsYlHqKEYrgHIesWNAAXQSBdAbUNBDbU6A22kI4X8i5kyjv+ZtN6EMcnnMDCjoodYX4HZSbLKKaclxls8V92TK0+U9m2o9olm5Cxi+KciG7DHqAJSDZqAKSXM/dVRH09dhKpfZMXGabk/gvqHpXHiu6QJpbfM3O0aK0liU0jtKdkLMo5rP8+eZFmKGgkkJQX6cNedsvKbVP5t4SMxjQroco+cU/nhRc66g2bRncqcG3Ut+zkAhDhcAAi5Aq0OhX/uXBtwFbxnF1jHz1GkhbevUPB8qgZQDBaAcj9zkW5k4yZsXJ8o2Xb1FEr1diF3UtN4TKm/hPMcOkhL7BMXnrFvLKCqAVofCPp0LxfT0Gn5ZTpAFnbwfwO7JIiWVxJWUr6uSHLO9f/k5G33iCSHM0iUfWJ4R5G2uMdS2Hjeou+T495PaU5uj73YJe3s4FLxheu60sZOD+jVYy8bHjfaTqJ27qn3iq1gBUAmkHI9SW5HXHL00vR43pxDKM8a4+LmNAAtAOZ2yEgiUqVu/kwtLG85zYWHNQcaj1FYUo5kmqgwZpbEl9K1PzBLSM7r4uY0AC+AgVss6aZT4pXynqXQxb08NXvwiNAPVmhVKHK6qJkYZr7P5kpE1BGI+W/u+at6v+/8yXM7Qo3Wa6x3kFMiuq3et+TPGc+HiFd9x4cCkJCFv0Zs5jslDJZByoACUAwWgHCgA5UABKEcyGKRVuy+QHdtda257EFgmrnUf02KdtVYxMyN4/x7x+gqzafzmj3qrkM8fv2GoJcWvfBbLzR+UJqTBAlCO6zqCnNajlkncjesUIDlWOsYOQgMugHJcZwGWFFU4askWKaqwt7wNxbYWV14nnRbGMn9QmlDxZyamDg0aIBDvj6NVE62OSjNUcw/3BArfuduWa8RK0PT8cAGUExEXwM7NF+JX/MvNRqfFquYl9oo2Jf/sE87el6DJwc8fEQUQL8yQL9LQyjMqLzaBTiTRwc/vukogCOaj/bsYqxVCxUrg8gXPkUhvvSKubFndqkatPPFmjWpr9adnJSrK8Js5quVbLSOUTSNjb3oVf39J7beZ+LUSvFx5XZWgMKgEUg4UgHKgAJQj7BZu1Z/kj4oO8nXyvW+U/KHWnjpa/jD/nUWkI7iyfltYy++1cHZYy79/+kDQ0PMbG4qxTRztwAVQDhSAcpjfVi/w2TGlyQgHDtuz565dpNv8C+RO8OtG3x3r/9kQFoByoACUAwWgHN3BICU/L0+7tiu43a43bZwlIztFcizfb0e8x454f51+qYGp02ZIj4uRHH/fUis5HhN/x97rVRyRHJedDOf1unHPVyv6t5fVtpdf638/23cHfkSSBxaAcqAAlKPbDDTCC0s3OmuiJjAM8+XcXEf8ZOqreZmKY/lqS6UutN1XrDukJAf2ww+lflAm89dv5YyTHBftke6fKt50wQjZaf0VyxoW44voc8EFUA4UgHKYn1au8XVG0xYpk50dGxg+DyezZoxRdIX/XDf/U30JVwOzjmEBKAcKQDnMuldyTLcCJk+Zw4XLNpWQVfP8O1DzWEm7e0raYyYnY+V6NDNthP2tID4OC0A5lixAXHyWat62Q8eF+OzMYYbkujdr76PP7mlr9h6BMQvgsbLcevN7WY7oPALWmPNzCRPS0rARI1JVfTv7ZRupA4jljm3W3ue2sOagldsEBkAdAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEhH8D8qHGK8pZgySwAAAABJRU5ErkJggg=="
+    }
+  ]
+}

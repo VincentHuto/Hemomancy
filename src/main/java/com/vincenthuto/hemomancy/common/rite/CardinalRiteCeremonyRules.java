@@ -1,6 +1,13 @@
 package com.vincenthuto.hemomancy.common.rite;
 
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import net.minecraft.core.BlockPos;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Central tuning and deterministic ceremony rules. Values live here rather
@@ -54,6 +61,21 @@ public final class CardinalRiteCeremonyRules {
 
 	public static int fragileBlocksOnCollapse(int formIndex) {
 		return COLLAPSE_FRAGILE_BLOCKS[clampForm(formIndex)];
+	}
+
+	/**
+	 * The cells a collapse may break, in the recipe's order: each fragile offset from the Focus that lands on a cell of
+	 * the rite's own floor. An offset off the floor, or a rite with no matched floor, breaks nothing.
+	 */
+	public static List<BlockPos> fragileFloorCells(List<BlockPos> offsets, BlockPos focus,
+			Collection<BlockPos> floorCells) {
+		Set<BlockPos> floor = new HashSet<>(floorCells);
+		List<BlockPos> cells = new ArrayList<>();
+		for (BlockPos offset : offsets) {
+			BlockPos cell = focus.offset(offset);
+			if (floor.contains(cell)) cells.add(cell);
+		}
+		return cells;
 	}
 
 	public static float collapseDamage(int formIndex) {

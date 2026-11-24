@@ -355,7 +355,7 @@ public final class MycophantClientReview {
         if (pov) boss.setEncounterOwner(player.getUUID());
         if (name.equals("rematch_pov")) boss.setRematchIntro(true);
         if (dummy != null) boss.setTarget(dummy);
-        if (name.equals("live_phase_two") || name.equals("live_last_brood")) forcePhaseTwo(boss);
+        if (name.equals("live_phase_two") || name.equals("live_last_brood") || name.equals("yield")) forcePhaseTwo(boss);
         level.addFreshEntity(boss);
         actor = boss;
 

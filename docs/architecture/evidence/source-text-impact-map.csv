@@ -1,4 +1,5 @@
 test_file,test_style,pinned_file,pinned_kind,resolution
+src/test/java/com/vincenthuto/hemomancy/architecture/AnimationTimeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ClientTickEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/ArchitectureStandardsIndexTest.java,junit,docs/architecture/ARCHITECTURE_STANDARDS.md,doc,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/AttachmentAccessTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/HemoCapabilityAccess.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/AttachmentAccessTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/HemoCapabilityRegistrar.java,java,exact
@@ -19,6 +20,8 @@ src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTes
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/unstained/white_humor/WhiteHumorVolume.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/summon/BloodThrallEntity.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodVolumeServerPacket.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteOrdealEngine.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/BlockBloodVolume.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/BloodContainerTransfer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/IBloodReservoir.java,java,base-dir
@@ -81,6 +84,7 @@ src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTes
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationCombatHelper.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/verb/strand/StrandHits.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/verb/strand/StrandService.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/SanguineDominionEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/unstained/PaleConsecrationEvents.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/world/GardensNetwork.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/CommonClientIsolationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,helper
@@ -292,8 +296,12 @@ src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,tools/review,tool,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,tools/worldgen/mausoleum,tool,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/ResourceLocationStyleGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/Hemomancy.java,java,by-name
+src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/event/BloodStructureTickEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java,java,helper
-src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteActivation.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteActivation.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/QliphothBloomEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/registry/GuiLayerRegistrar.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/SaintCombatKitGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/registry/SaintClientStyles.java,java,helper
@@ -3277,7 +3285,6 @@ src/test/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteLayeredRecipeD
 src/test/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteLayeredRecipeDataTest.java,junit,src/main/resources/data/hemomancy/recipe/cardinal_rite/sanguine_attunement.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteProgressionResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletion.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteProgressionResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteProgressionResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteProgressionResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/upgrade/StationUpgradeCatalog.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteProgressionResourceTest.java,junit,src/main/resources/data/hemomancy/recipe/cardinal_rite,resource,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/recipe/CardinalRitePurposeDataTest.java,junit,src/main/resources/data/hemomancy/recipe/cardinal_rite,resource,exact-dir
@@ -3445,6 +3452,7 @@ src/test/java/com/vincenthuto/hemomancy/common/rite/BrazierItemAbsorptionRiteSou
 src/test/java/com/vincenthuto/hemomancy/common/rite/BrazierItemAbsorptionRiteSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/rite/BrazierItemAbsorptionRiteSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/brazier/BrazierRites.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/rite/BrazierItemAbsorptionRiteSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/rite/IronBrazierBlockEntity.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/rite/CardinalRiteWaveTest.java,junit,src/main/resources/data/hemomancy/recipe/cardinal_rite,resource,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/rite/HarbingerParticleBoundaryTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/rite/HarbingerParticleBoundaryTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/rite/HarbingerParticleBoundaryTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierSpecialOfferingEffects.java,java,base-dir

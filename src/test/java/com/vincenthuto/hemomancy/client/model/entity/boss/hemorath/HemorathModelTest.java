@@ -19,15 +19,27 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HemorathModelTest {
+    @Test
+    void theRedesignedMeshBakesEveryFlatChainLink() {
+        var project = ResourceReader.asset("models/entity/bbmodel/bosses/HemorathModel.bbmodel");
+        assertEquals("Saint Hemorath - The Hollow Vessel", project.get("name").getAsString());
+        long projectPlanes = project.getAsJsonArray("elements").asList().stream()
+                .map(e -> e.getAsJsonObject()).filter(e -> e.get("name").getAsString().matches("Link [0-9]{2}")).count();
+        assertEquals(13, projectPlanes);
+        long bakedPlanes = HemorathMesh.createRoot().getAllParts()
+                .flatMap(part -> part.cubes.stream()).filter(cube -> cube.maxZ == cube.minZ).count();
+        assertEquals(projectPlanes, bakedPlanes);
+    }
+
     private static float[] still() {
         return new float[HemorathModel.CHANNELS];
     }
 
     @Test
     void ribsPartWithTheMeterAndTheEndingFoldsHimIntoHisVestments() {
-        var root = HemorathModel.createBodyLayer().bakeRoot();
+        var root = HemorathMesh.createRoot();
         var model = new HemorathModel<>(root);
-        var hips = root.getChild("root").getChild("hips");
+        var hips = root.getChild("hips");
         var rib = hips.getChild("chest").getChild("ribcage").getChild("left_rib_3");
         model.pose(still(), 0, 0, 1000, 0, 20, 0, 0, 0, 0);
         float rest = rib.zRot, restY = hips.y;
@@ -41,25 +53,23 @@ class HemorathModelTest {
 
     @Test
     void openRibcageAndHeldStaffFollowTheArticulatedSkeleton() {
-        var hips = HemorathModel.createBodyLayer().bakeRoot().getChild("root").getChild("hips");
+        var hips = HemorathMesh.createRoot().getChild("hips");
         var chest = hips.getChild("chest");
         for (var cube : chest.getChild("ribcage").cubes)
             assertTrue(cube.maxX - cube.minX <= 1, "Only the narrow sternum may fill the center of the rib cage");
         for (String side : new String[]{"left", "right"}) {
             assertNotNull(chest.getChild("ribcage").getChild(side + "_rib_0"));
             assertNotNull(chest.getChild(side + "_arm").getChild(side + "_forearm").getChild(side + "_hand"));
-            assertNotNull(chest.getChild(side + "_shoulder_chain"));
             assertNotNull(chest.getChild(side + "_arm").getChild(side + "_arm_vessel"));
         }
         assertNotNull(chest.getChild("head").getChild("face_cords").getChild("face_cords_left"));
         assertNotNull(chest.getChild("head").getChild("face_cords").getChild("face_cords_right"));
-        assertNotNull(chest.getChild("halo").getChild("halo_segment_0"));
-        assertNotNull(chest.getChild("halo").getChild("halo_spike_7"));
-        assertNotNull(chest.getChild("halo").getChild("halo_chain_left").getChild("halo_chain_left_pendant"));
-        assertNotNull(chest.getChild("left_shoulder_chain").getChild("left_shoulder_chain_pendant"));
-        for (String stage : new String[]{"vessel_cords", "vessel_lobes", "vessel_mass"}) assertNotNull(chest.getChild(stage));
+        assertFalse(chest.getChild("halo").cubes.isEmpty());
+        for (String stage : new String[]{"vessel_cords", "vessel_lobes", "vessel_mass"})
+            assertNotNull(chest.getChild("ribcage").getChild(stage));
         var rightHand = chest.getChild("right_arm").getChild("right_forearm").getChild("right_hand");
-        assertNotNull(rightHand.getChild("claw_chain"));
+        assertNotNull(chest.getChild("right_arm").getChild("right_forearm").getChild("claw_chain"));
+        for (int i = 0; i < 4; i++) assertEquals(1, rightHand.getChild("right_finger_" + i).cubes.size());
         assertNotNull(chest.getChild("right_arm").getChild("right_forearm").getChild("spike_patch_0"));
         assertNotNull(chest.getChild("head").getChild("spike_patch_8"));
         assertNotNull(chest.getChild("left_arm").getChild("left_forearm").getChild("left_hand")
@@ -68,17 +78,17 @@ class HemorathModelTest {
 
     @Test
     void theRestPoseIsHollowAndTheVesselFillsFromInside() {
-        var root = HemorathModel.createBodyLayer().bakeRoot();
+        var root = HemorathMesh.createRoot();
         var model = new HemorathModel<>(root);
-        var chest = root.getChild("root").getChild("hips").getChild("chest");
+        var chest = root.getChild("hips").getChild("chest");
         model.pose(still(), 0, 0, 1000, 0, 20, 0, 0, 0, 0);
-        assertFalse(chest.getChild("vessel_lobes").visible, "The hollow rest hides the lobes");
-        assertFalse(chest.getChild("vessel_mass").visible, "The hollow rest hides the heart mass");
-        assertTrue(chest.getChild("vessel_cords").visible, "Dried cords always show");
+        assertFalse(chest.getChild("ribcage").getChild("vessel_lobes").visible, "The hollow rest hides the lobes");
+        assertFalse(chest.getChild("ribcage").getChild("vessel_mass").visible, "The hollow rest hides the heart mass");
+        assertTrue(chest.getChild("ribcage").getChild("vessel_cords").visible, "Dried cords always show");
         assertFalse(chest.getChild("right_arm").getChild("right_forearm").getChild("spike_patch_0").visible);
         model.pose(still(), .8F, 4, 1000, 0, 20, 0, 0, 0, 0);
-        var lobes = chest.getChild("vessel_lobes");
-        assertTrue(lobes.visible && chest.getChild("vessel_mass").visible);
+        var lobes = chest.getChild("ribcage").getChild("vessel_lobes");
+        assertTrue(lobes.visible && chest.getChild("ribcage").getChild("vessel_mass").visible);
         assertTrue(lobes.xScale >= .8F && lobes.xScale <= 1.15F);
         assertTrue(chest.getChild("right_arm").getChild("right_forearm").getChild("spike_patch_0").visible);
     }
@@ -112,9 +122,9 @@ class HemorathModelTest {
 
     @Test
     void everyTrackKeepsTheStaffOneRigidPoleAndReturnsToTheSameIdle() {
-        var root = HemorathModel.createBodyLayer().bakeRoot();
+        var root = HemorathMesh.createRoot();
         var model = new HemorathModel<>(root);
-        var top = root.getChild("root");
+        var top = root;
         var hips = top.getChild("hips");
         var chest = hips.getChild("chest");
         var arm = chest.getChild("left_arm");
@@ -172,10 +182,10 @@ class HemorathModelTest {
     }
 
     @Test
-    void atRestTheStaffStandsPlumbOnTheFloor() {
-        var root = HemorathModel.createBodyLayer().bakeRoot();
+    void atRestTheStaffLeansIntoHisGripAndStaysOnTheFloor() {
+        var root = HemorathMesh.createRoot();
         var model = new HemorathModel<>(root);
-        var top = root.getChild("root");
+        var top = root;
         var hips = top.getChild("hips");
         var chest = hips.getChild("chest");
         var arm = chest.getChild("left_arm");
@@ -190,9 +200,9 @@ class HemorathModelTest {
 
     @Test
     void theKneesFoldAndTheHipsSinkUntilTheSolesMeetTheFloor() {
-        var root = HemorathModel.createBodyLayer().bakeRoot();
+        var root = HemorathMesh.createRoot();
         var model = new HemorathModel<>(root);
-        var top = root.getChild("root");
+        var top = root;
         var hips = top.getChild("hips");
         model.pose(still(), 0, 0, 1000, 0, 20, 0, 0, 0, 0);
         float restSole = sole(top, hips), restHips = hips.y;
@@ -212,46 +222,85 @@ class HemorathModelTest {
         float lowest = -Float.MAX_VALUE;
         for (String side : new String[]{"left", "right"}) {
             var leg = hips.getChild(side + "_leg");
-            lowest = Math.max(lowest, at(new Vector3f(0, 6.25F, 0), top, hips, leg, leg.getChild(side + "_shin")).y);
+            lowest = Math.max(lowest, at(new Vector3f(0, .92F, -.9F), top, hips, leg, leg.getChild(side + "_shin"),
+                    leg.getChild(side + "_shin").getChild(side + "_foot")).y);
         }
         return lowest;
     }
 
     @Test
-    void theHangingChainsStayPlumbWhenHeBowsAndTheStaffSwings() {
-        var root = HemorathModel.createBodyLayer().bakeRoot();
+    void theStaffChainsHangFromTheCrownAsThePoleSwings() {
+        var root = HemorathMesh.createRoot();
         var model = new HemorathModel<>(root);
-        var top = root.getChild("root");
-        var hips = top.getChild("hips");
+        var hips = root.getChild("hips");
         var chest = hips.getChild("chest");
-        float[] a = rest(.5F);
-        a[HemorathModel.BOW] += .6F;
-        a[HemorathModel.LEAN] += .2F;
-        a[HemorathModel.HIP_SWAY] += .1F;
-        model.pose(a, .5F, 0, 1000, 0, 20, 0, 0, 0, 0);
-        for (String name : new String[]{"left_shoulder_chain", "right_shoulder_chain_front"})
-            assertEquals(1, direction(new Vector3f(0, 1, 0), top, hips, chest, chest.getChild(name)).y, 3e-3F,
-                    name + " hangs plumb but for its idle sway");
-        var halo = chest.getChild("halo");
-        assertEquals(1, direction(new Vector3f(0, 1, 0), top, hips, chest, halo, halo.getChild("halo_chain_left")).y,
-                3e-3F);
-        a[HemorathModel.STAFF_PLANT] = 0;
-        a[HemorathModel.STAFF_X] = 1.2F;
-        model.pose(a, .5F, 0, 1000, 0, 20, 0, 0, 0, 0);
         var arm = chest.getChild("left_arm");
         var forearm = arm.getChild("left_forearm");
         var hand = forearm.getChild("left_hand");
         var staff = hand.getChild("staff");
         var crown = staff.getChild("staff_crown");
-        assertEquals(1, direction(new Vector3f(0, 1, 0), top, hips, chest, arm, forearm, hand, staff, crown,
-                crown.getChild("staff_chain_right")).y, 3e-3F, "the crown chains hang plumb off a swung staff");
+        float[] a = rest(.5F);
+        a[HemorathModel.BOW] += .6F;
+        a[HemorathModel.STAFF_PLANT] = 0;
+        a[HemorathModel.STAFF_X] = 1.2F;
+        model.pose(a, .5F, 0, 1000, 0, 20, 0, 0, 0, 0);
+        for (String name : new String[]{"staff_chain_outer", "staff_chain_inner"}) {
+            var chain = crown.getChild(name);
+            assertEquals(1, direction(new Vector3f(0, 1, 0), root, hips, chest, arm, forearm, hand,
+                    staff, crown, chain).y, 3e-3F, name + " hangs plumb off a swung staff");
+            assertEquals(0, chain.getChild(name + "_link_0").cubes.getFirst().maxZ
+                    - chain.getChild(name + "_link_0").cubes.getFirst().minZ);
+        }
+    }
+
+    @Test
+    void theLumbarBridgeStaysSeatedWhileHeBowsAndTwists() {
+        var root = HemorathMesh.createRoot();
+        var model = new HemorathModel<>(root);
+        var hips = root.getChild("hips");
+        var chest = hips.getChild("chest");
+        var spine = chest.getChild("spine");
+        var bridge = spine.getChild("lumbar");
+        for (float bend : new float[]{-.2F, 0, .5F, .9F}) {
+            float[] a = rest(.5F);
+            a[HemorathModel.BOW] = bend;
+            a[HemorathModel.TWIST] = .32F;
+            model.pose(a, .5F, 0, 1000, 0, 20, 0, 0, 0, 0);
+            var sacrum = at(new Vector3f(), root, hips, hips.getChild("sacrum_joint"));
+            var start = at(new Vector3f(), root, hips, chest, spine, bridge);
+            assertEquals(0, start.distance(sacrum), .002F);
+            var top = at(new Vector3f(), root, hips, chest, spine, spine.getChild("lumbar_top"));
+            var axis = direction(new Vector3f(0, -1, 0), root, hips, chest, spine, bridge).normalize();
+            assertEquals(1, axis.dot(top.sub(start).normalize()), .002F);
+        }
+    }
+
+    @Test
+    void theGrippingHandTurnsWithTheStaffOnEveryTrack() {
+        var root = HemorathMesh.createRoot();
+        var model = new HemorathModel<>(root);
+        var hips = root.getChild("hips");
+        var chest = hips.getChild("chest");
+        var arm = chest.getChild("left_arm");
+        var forearm = arm.getChild("left_forearm");
+        var hand = forearm.getChild("left_hand");
+        var staff = hand.getChild("staff");
+        var grip = hand.getChild("staff_grip");
+        var down = direction(new Vector3f(0, 1, 0), staff);
+        for (var move : HemorathMove.values()) {
+            float[] a = rest(.5F);
+            HemorathModel.move(a, move, move.baseWindup(), 0);
+            model.pose(a, .5F, 0, 1000, 0, 20, 0, 0, 0, 0);
+            assertEquals(1, direction(new Vector3f(0, 1, 0), staff)
+                    .dot(direction(new Vector3f(down), grip)), .002F, move.toString());
+        }
     }
 
     @Test
     void theLiftedHaloRidesTheClaw() {
-        var root = HemorathModel.createBodyLayer().bakeRoot();
+        var root = HemorathMesh.createRoot();
         var model = new HemorathModel<>(root);
-        var top = root.getChild("root");
+        var top = root;
         var hips = top.getChild("hips");
         var chest = hips.getChild("chest");
         float[] a = rest(.5F);
@@ -260,10 +309,10 @@ class HemorathModelTest {
         model.pose(a, .5F, 0, 1000, 0, 20, 0, 0, 0, 0);
         var arm = chest.getChild("right_arm");
         var forearm = arm.getChild("right_forearm");
-        Vector3f grip = at(new Vector3f(0, 3, -.25F), top, hips, chest, arm, forearm, forearm.getChild("right_hand"));
+        Vector3f grip = at(new Vector3f(.2F, 1.25F, -.65F), top, hips, chest, arm, forearm, forearm.getChild("right_hand"));
         var halo = chest.getChild("halo");
         Vector3f centre = at(new Vector3f(), top, hips, chest, halo);
-        assertEquals(6.25F, centre.distance(grip), .05F, "the claw holds the ring by its lower edge");
+        assertEquals(3.8F, centre.distance(grip), .05F, "the claw holds the ring by its lower edge");
         assertTrue(centre.y < grip.y, "the ring stands above the claw");
     }
 
@@ -340,16 +389,16 @@ class HemorathModelTest {
 
     @Test
     void neutralStaffFootReachesTheFloorWhileTheHandKeepsItsGrip() {
-        var root = HemorathModel.createBodyLayer().bakeRoot();
-        var hips = root.getChild("root").getChild("hips");
+        var root = HemorathMesh.createRoot();
+        var hips = root.getChild("hips");
         var chest = hips.getChild("chest");
         var arm = chest.getChild("left_arm");
         var forearm = arm.getChild("left_forearm");
         var hand = forearm.getChild("left_hand");
         var staff = hand.getChild("staff");
         PoseStack pose = new PoseStack();
-        for (var part : new ModelPart[]{hips, chest, arm, forearm, hand, staff}) part.translateAndRotate(pose);
-        float end = staff.cubes.stream().map(c -> c.maxY).max(Float::compare).orElseThrow();
+        for (var part : new ModelPart[]{root, hips, chest, arm, forearm, hand, staff}) part.translateAndRotate(pose);
+        float end = staff.getChild("staff_foot").y;
         var foot = pose.last().pose().transformPosition(new Vector3f(0, end / 16, 0)).mul(16);
         assertEquals(24, foot.y, .2F);
     }
@@ -367,7 +416,7 @@ class HemorathModelTest {
                         uv.get(2).getAsFloat(), uv.get(3).getAsFloat()));
             }
         var collector = new UvCollector(width, height);
-        HemorathModel.createBodyLayer().bakeRoot().render(new PoseStack(), collector, 0, 0, -1);
+        new HemorathModel<>().root().render(new PoseStack(), collector, 0, 0, -1);
         Collections.sort(exported);
         Collections.sort(collector.faces);
         assertEquals(exported, collector.faces);
@@ -404,18 +453,17 @@ class HemorathModelTest {
     }
 
     @Test
-    void allSavedGeometryUsesQuarterUnitsAndHasRealThickness() {
-        HemorathModel.createBodyLayer().bakeRoot().getAllParts().forEach(part -> {
-            for (float coordinate : new float[]{part.x, part.y, part.z})
-                assertEquals(Math.round(coordinate * 4), coordinate * 4, .0001F);
+    void onlyChainRingsHaveZeroDepth() {
+        var parts = HemorathMesh.createRoot().getAllParts().toList();
+        int planes = 0;
+        for (ModelPart part : parts) {
             for (var cube : part.cubes) {
-                for (float coordinate : new float[]{cube.minX, cube.minY, cube.minZ, cube.maxX, cube.maxY, cube.maxZ})
-                    assertEquals(Math.round(coordinate * 4), coordinate * 4, .0001F);
-                assertTrue(cube.maxX - cube.minX >= .25F);
-                assertTrue(cube.maxY - cube.minY >= .25F);
-                assertTrue(cube.maxZ - cube.minZ >= .25F);
+                assertTrue(cube.maxX > cube.minX && cube.maxY > cube.minY);
+                assertTrue(cube.maxZ >= cube.minZ);
+                if (cube.maxZ == cube.minZ) planes++;
             }
-        });
+        }
+        assertEquals(13, planes);
     }
 
     @Test
@@ -424,8 +472,8 @@ class HemorathModelTest {
         var basePath = ResourceReader.path("assets/hemomancy/textures/entity/boss/hemorath/hemorath.png");
         String embedded = project.getAsJsonArray("textures").get(0).getAsJsonObject().get("source").getAsString();
         assertArrayEquals(Files.readAllBytes(basePath), Base64.getDecoder().decode(embedded.split(",", 2)[1]));
-        assertEquals(project.getAsJsonArray("elements").size(), HemorathModel.createBodyLayer().bakeRoot()
-                .getAllParts().mapToInt(p -> p.cubes.size()).sum());
+        assertEquals(project.getAsJsonArray("elements").size(), new HemorathModel<>().root()
+                .getAllParts().filter(p -> p.visible).mapToInt(p -> p.cubes.size()).sum());
         var base = ImageIO.read(basePath.toFile());
         var glow = ImageIO.read(ResourceReader.path(
                 "assets/hemomancy/textures/entity/boss/hemorath/hemorath_overload.png").toFile());

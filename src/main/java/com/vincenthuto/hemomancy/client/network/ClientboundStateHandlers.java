@@ -138,7 +138,7 @@ public final class ClientboundStateHandlers {
 
 	static void handle(final PacketSyncActiveRites msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ActiveRiteClientData.set(msg.entries());
+			ActiveRiteClientData.set(msg.entries(), ctx.player().level().getGameTime());
 		});
 	}
 

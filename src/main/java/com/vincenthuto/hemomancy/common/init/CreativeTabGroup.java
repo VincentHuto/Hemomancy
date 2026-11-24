@@ -120,7 +120,8 @@ public enum CreativeTabGroup {
 	/** Spawn eggs; they always close the section, in this order. */
 	CREATURES(List.of(
 			"spawn_egg_leech", "spawn_egg_chitinite", "spawn_egg_fervent_chitinite", "spawn_egg_hemolymphopoda",
-			"spawn_egg_hematic_burrower", "spawn_egg_crimson_doe", "spawn_egg_venous_strider", "spawn_egg_peacock_spider",
+			"spawn_egg_hematic_burrower", "spawn_egg_crimson_doe", "spawn_egg_sanguine_ram",
+			"spawn_egg_venous_strider", "spawn_egg_peacock_spider",
 			"spawn_egg_scarlet_serpent", "spawn_egg_desiccant", "spawn_egg_venom_rib_centipede",
 			"spawn_egg_luminal_cicada", "spawn_egg_lantern_tick", "spawn_egg_tooth_pecks",
 			"spawn_egg_morphling_polyp", "spawn_egg_bog_revenant", "spawn_egg_thirster", "spawn_egg_fargone",

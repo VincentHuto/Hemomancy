@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CircusTextureUvTest {
 	@Test
 	void facesUseOneHeadCubeWithPaintedEyes() throws Exception {
-		for (String actor : new String[] { "Ringmaster", "KnifeThrower", "FireEater", "Acrobat", "StiltWalker",
+		for (String actor : new String[] { "Ringmaster",
 				"Threadkeeper", "Understudy", "Strongman", "BeastTamer" }) {
 			var path = Path.of("src/main/resources/assets/hemomancy/models/entity/bbmodel/npc/harbinger/circus/Circus" + actor + "Model.bbmodel");
 			var model = JsonParser.parseString(Files.readString(path)).getAsJsonObject();

@@ -20,6 +20,8 @@ import java.util.function.Predicate;
 final class BlockShellFaces {
 	private static final float UV_SCALE = 0.37f;
 	private static final float FACE_OFFSET = 0.002f;
+	/** A single face's texture coordinates repeat every this many blocks. */
+	static final int UV_WRAP = 512;
 
 	private BlockShellFaces() {
 	}
@@ -46,12 +48,15 @@ final class BlockShellFaces {
 
 	/**
 	 * One unit face of {@code pos} with a flat normal, for a caller that keeps its own set of visible faces. UVs are
-	 * the world face coordinate times the shell's UV scale, as for the shell.
+	 * the world face coordinate wrapped to {@link #UV_WRAP} blocks, times the shell's UV scale: raw world coordinates
+	 * far from spawn leave the shader's per-cell hash and the UV interpolation without the precision to draw a glyph.
 	 */
 	static void emitFace(VertexConsumer consumer, PoseStack.Pose pose, BlockPos pos, Direction direction, Vec3 camera,
 			int color) {
-		emitFace(consumer, pose, direction, facePlane(pos, direction), faceU(pos, direction), faceV(pos, direction),
-				1, 1, null, camera, color);
+		int u = faceU(pos, direction);
+		int v = faceV(pos, direction);
+		emitFace(consumer, pose, direction, facePlane(pos, direction), u, v, 1, 1, Math.floorMod(u, UV_WRAP),
+				Math.floorMod(v, UV_WRAP), null, camera, color);
 	}
 
 	private static void emitExposedFaces(VertexConsumer consumer, PoseStack.Pose pose, Direction direction,
@@ -70,8 +75,9 @@ final class BlockShellFaces {
 
 	private static void emitUnitFace(VertexConsumer consumer, PoseStack.Pose pose, Direction direction,
 			Set<BlockPos> positions, BlockPos pos, Vec3 camera, int color) {
-		emitFace(consumer, pose, direction, facePlane(pos, direction), faceU(pos, direction),
-				faceV(pos, direction), 1, 1, positions, camera, color);
+		int u = faceU(pos, direction);
+		int v = faceV(pos, direction);
+		emitFace(consumer, pose, direction, facePlane(pos, direction), u, v, 1, 1, u, v, positions, camera, color);
 	}
 
 	private static int facePlane(BlockPos pos, Direction direction) {
@@ -100,14 +106,15 @@ final class BlockShellFaces {
 	}
 
 	private static void emitFace(VertexConsumer consumer, PoseStack.Pose pose, Direction direction,
-			int plane, int u0, int v0, int width, int height, Set<BlockPos> positions, Vec3 camera, int color) {
+			int plane, int u0, int v0, int width, int height, int texU, int texV, Set<BlockPos> positions, Vec3 camera,
+			int color) {
 		int u1 = u0 + width;
 		int v1 = v0 + height;
 		float surface = plane + direction.getAxisDirection().getStep() * FACE_OFFSET;
-		float texU0 = u0 * UV_SCALE;
-		float texV0 = v0 * UV_SCALE;
-		float texU1 = u1 * UV_SCALE;
-		float texV1 = v1 * UV_SCALE;
+		float texU0 = texU * UV_SCALE;
+		float texV0 = texV * UV_SCALE;
+		float texU1 = (texU + width) * UV_SCALE;
+		float texV1 = (texV + height) * UV_SCALE;
 		switch (direction) {
 			case DOWN -> emitQuad(consumer, pose,
 					x(u0, camera), y(surface, camera), z(v1, camera), texU0, texV1,

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.projectile;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ExcoriatedModel;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.RecallBarbEntity;
 import net.minecraft.client.model.geom.*;
@@ -17,8 +18,9 @@ import net.minecraft.world.phys.Vec3;
 
 public final class RecallBarbRenderer extends EntityRenderer<RecallBarbEntity> {
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(Hemomancy.rloc("recall_barb"),"main");
+    static final ResourceLocation BOX_UV_TEXTURE = Hemomancy.rloc("textures/entity/excoriated/excoriated.png");
     private final ModelPart barb;
-    public RecallBarbRenderer(EntityRendererProvider.Context context) {super(context);barb=context.bakeLayer(LAYER);}
+    public RecallBarbRenderer(EntityRendererProvider.Context context) {super(context);barb=ExcoriatedModel.createRecallBarb();}
     public static LayerDefinition layer() {
         var mesh=new MeshDefinition();var cubes=CubeListBuilder.create().texOffs(128,0).addBox(-8,-.4F,-.4F,16,.8F,.8F)
                 .texOffs(0,128).addBox(-5,-.65F,-.65F,7,1.3F,1.3F);
@@ -30,6 +32,9 @@ public final class RecallBarbRenderer extends EntityRenderer<RecallBarbEntity> {
         pose.pushPose();
         pose.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partial,entity.yRotO,entity.getYRot())-90));
         pose.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partial,entity.xRotO,entity.getXRot())));
+        // The authored harpoon points diagonally across the bow. Put its tip at the projectile origin.
+        pose.translate(-1.45, 0, 0);
+        pose.mulPose(Axis.YN.rotationDegrees(48.7F));
         barb.render(pose,buffers.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity))),light,OverlayTexture.NO_OVERLAY);
         pose.popPose();
         if(entity.victimId()>=0 && entity.level().getEntity(entity.archerId()) instanceof com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity owner

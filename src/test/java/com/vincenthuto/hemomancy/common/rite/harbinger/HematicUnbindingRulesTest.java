@@ -27,6 +27,16 @@ final class HematicUnbindingRulesTest {
 	}
 
 	@Test
+	void aLeaderWhoLogsOutIsWarnedAgain() {
+		UUID leader = UUID.randomUUID();
+		UUID line = UUID.randomUUID();
+		assertEquals(HematicUnbindingRules.Decision.WARN, HematicUnbindingRules.activate(leader, line, 100));
+		HematicUnbindingRules.logout(leader);
+		assertEquals(HematicUnbindingRules.Decision.WARN, HematicUnbindingRules.activate(leader, line, 200),
+				"the warning is session state and goes with the session");
+	}
+
+	@Test
 	void theFirstActivationWarnsAndASecondInsideTheWindowStartsTheRiteOnce() {
 		UUID leader = UUID.randomUUID();
 		UUID line = UUID.randomUUID();

@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteWave;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteWaveRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
@@ -58,6 +59,8 @@ public final class CardinalRiteOrdealEngine {
 	static final BlockPos[] FALSE_OMEN_OFFSETS = {
 			new BlockPos(2, 1, 2), new BlockPos(-2, 1, -2), new BlockPos(2, 1, -2)
 	};
+	/** Threats press on the rite once a second. */
+	private static final int THREAT_PRESSURE_INTERVAL_TICKS = 20;
 	/** Blood the covenant presses out of every anchor each second until the Seal is traced. */
 	private static final int COVENANT_PRESSURE_ML = 4;
 
@@ -66,12 +69,18 @@ public final class CardinalRiteOrdealEngine {
 
 	public static void tick(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
+		tick(RiteKind.of(rite, recipe), level, caster, rite, recipe);
+	}
+
+	/** Runs the rite's current phase, asking its kind where kinds differ. */
+	static void tick(RiteKind kind, ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
+			CardinalRiteRecipe recipe) {
 		if ((rite.getPhase() == CardinalRitePhase.OFFERING_PROCESSION
 				|| rite.getPhase() == CardinalRitePhase.CULMINATION)
 				&& !level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(rite.getCenterPos()))) return;
 		rite.tick();
 			switch (rite.getPhase()) {
-			case CONSECRATION -> tickConsecration(level, caster, rite, recipe);
+			case CONSECRATION -> tickConsecration(kind, caster, rite);
 			case INSCRIPTION -> {
 				drawSupportSockets(level, rite, recipe);
 				drawAllyStations(level, rite);
@@ -79,8 +88,8 @@ public final class CardinalRiteOrdealEngine {
 			case STATION_PROJECTION -> rite.tryFinishStationProjection();
 			case ORDEAL -> tickOrdeal(level, caster, rite, recipe);
 			case STILL_INTERVAL -> tickStillInterval(caster, rite, recipe);
-			case OFFERING_PROCESSION -> tickOfferingProcession(level, caster, rite);
-			case CULMINATION -> tickCulmination(level, caster, rite, recipe);
+			case OFFERING_PROCESSION -> tickOfferingProcession(kind, level, caster, rite);
+			case CULMINATION -> tickCulmination(kind, level, caster, rite, recipe);
 			default -> {
 			}
 		}
@@ -92,9 +101,9 @@ public final class CardinalRiteOrdealEngine {
 	 * is taken from its brazier when it starts (a tampered brazier collapses the
 	 * rite) and swells the daemon when it arrives.
 	 */
-	private static void tickOfferingProcession(ServerLevel level, ServerPlayer caster,
+	private static void tickOfferingProcession(RiteKind kind, ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite) {
-		if (rite.isWorkingCraft()) {
+		if (kind.swallowsItsSubject()) {
 			tickCraftProcession(level, caster, rite);
 			return;
 		}
@@ -116,7 +125,7 @@ public final class CardinalRiteOrdealEngine {
 			ActiveCardinalRite.RiteOffering offering = rite.getCurrentOffering();
 			if (offering == null) break;
 			ItemStack drawn = offering.stack() == null ? ItemStack.EMPTY : offering.stack().copy();
-			if (!StationUpgradeRites.isRite(rite.getRecipeId()) && !rite.isWorkingCraft()) {
+			if (!kind.escrowedItsOfferings()) {
 				// Station upgrades and Working crafts escrowed their offerings at activation; others are taken now.
 				if (!(level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier)) {
 					rite.markCollapsed();
@@ -232,9 +241,9 @@ public final class CardinalRiteOrdealEngine {
 		}
 	}
 
-	private static void tickCulmination(ServerLevel level, ServerPlayer caster,
+	private static void tickCulmination(RiteKind kind, ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		if (rite.isWorkingCraft()) {
+		if (kind.swallowsItsSubject()) {
 			tickCraftCulmination(level, caster, rite);
 			return;
 		}
@@ -347,9 +356,8 @@ public final class CardinalRiteOrdealEngine {
 				0.5D + CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT * scale * 0.5D, 0.0D);
 	}
 
-	private static void tickConsecration(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
-			CardinalRiteRecipe recipe) {
-		if (!StationUpgradeRites.isRite(rite.getRecipeId())) rite.incrementIdleTicks();
+	private static void tickConsecration(RiteKind kind, ServerPlayer caster, ActiveCardinalRite rite) {
+		if (kind.guttersOutUntouched()) rite.incrementIdleTicks();
 		if (rite.getIdleTicks() >= CardinalRiteCeremonyRules.CONSECRATION_TIMEOUT_TICKS) {
 			rite.markCollapsed();
 			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_untouched_consecration_gutters_out").withStyle(ChatFormatting.DARK_RED), false);
@@ -364,19 +372,19 @@ public final class CardinalRiteOrdealEngine {
 		pruneThreats(level, rite);
 		ResourceLocation sigilId = CardinalRiteInteractionHandler.sigilForWave(rite);
 		boolean traced = false;
-		if ("false_omens".equals(currentWave(rite))) drawFalseOmens(level, rite);
+		if (currentKind(rite) == CardinalRiteWave.FALSE_OMENS) drawFalseOmens(level, rite);
 		if (sigilId != null) {
 			String wave = currentWave(rite);
 			CardinalRiteInteractionHandler.SigilPlacement placement =
 					CardinalRiteInteractionHandler.resolveWaveSigilPlacement(
-							sigilId, wave.startsWith("discover_"), rite.getCurrentWave(),
+							sigilId, CardinalRiteWave.discoveredSigil(wave) != null, rite.getCurrentWave(),
 							CardinalRiteInteractionHandler.supportSigils(recipe), recipe);
 			String progressKey = placement.progressKey();
 			drawSigil(level, rite, sigilId,
 					new BlockPos(placement.x(), placement.y(), placement.z()), progressKey);
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(sigilId);
 			traced = sigil != null && rite.getSigilProgress().getOrDefault(progressKey, 0) >= sigil.nodes().size();
-			if ("covenant_pressure".equals(wave) && !traced && rite.getPhaseTicks() % 20 == 0) {
+			if (currentKind(rite) == CardinalRiteWave.COVENANT_PRESSURE && !traced && rite.getPhaseTicks() % 20 == 0) {
 				applyCovenantPressure(rite);
 			}
 			if (traced && rite.areAnchorsConsecrated()) {
@@ -476,55 +484,42 @@ public final class CardinalRiteOrdealEngine {
 
 	private static void beginWave(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
 		String wave = currentWave(rite);
-		String cue = switch (wave) {
-			case "bloodlicker_siphon" -> "message.hemomancy.cardinal_rite_ordeal_engine.bloodlickers_crawl_for_the_anchors";
-			case "fargone_dive" -> "message.hemomancy.cardinal_rite_ordeal_engine.a_fargone_stoops_toward_your_living_blood";
-			case "rogue_will" -> "message.hemomancy.cardinal_rite_ordeal_engine.a_rogue_will_claws_at_the_boundary";
-			case "false_omens" -> "message.hemomancy.cardinal_rite_ordeal_engine.counterfeit_anchors_bloom";
-			case "covenant_pressure" -> "message.hemomancy.cardinal_rite_ordeal_engine.the_covenant_presses_on_every_anchor";
-			default -> wave.startsWith("discover_")
-					? "message.hemomancy.cardinal_rite_ordeal_engine.an_unknown_ichorian_shape_wakes"
-					: "message.hemomancy.cardinal_rite_ordeal_engine.a_response_sigil_is_demanded";
-		};
-		caster.displayClientMessage(Component.translatable(cue).withStyle(ChatFormatting.DARK_RED), false);
+		CardinalRiteWave kind = CardinalRiteWave.of(wave);
+		caster.displayClientMessage(Component.translatable(kind.cueKey()).withStyle(ChatFormatting.DARK_RED), false);
 		caster.displayClientMessage(HemoText.translatable("message.hemomancy.cardinal_rite_ordeal_engine.restore_every_anchor_before_advancing",
 				CardinalRiteWaveRules.deadlineHint(wave)).withStyle(ChatFormatting.GRAY), false);
-		List<Vec3> spawns = spawnsThreats(wave) ? threatSpawnPoints(rite, wave) : List.of();
+		List<Vec3> spawns = kind.spawnsThreats() ? threatSpawnPoints(rite, kind) : List.of();
 		CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.WAVE_START, rite.getCurrentWave(), wave,
 				spawns, ItemStack.EMPTY);
 		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_WAVE_START, 1.2F, 1.0F);
 	}
 
-	private static boolean spawnsThreats(String wave) {
-		return !wave.startsWith("discover_") && !"response_sigil".equals(wave) && !"covenant_pressure".equals(wave);
-	}
-
 	/** Threats step out of the fog where the wave's warning struck. */
 	private static void spawnWave(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
-		String wave = currentWave(rite);
-		if (spawnsThreats(wave)) spawnThreats(level, caster, rite, wave);
+		CardinalRiteWave kind = currentKind(rite);
+		if (kind.spawnsThreats()) spawnThreats(level, caster, rite, kind);
 	}
 
-	private static List<Vec3> threatSpawnPoints(ActiveCardinalRite rite, String wave) {
+	private static List<Vec3> threatSpawnPoints(ActiveCardinalRite rite, CardinalRiteWave wave) {
 		int count = Math.max(1, 1 + rite.getDegree() / 3);
 		List<Vec3> points = new ArrayList<>(count);
 		double radius = rite.getRiteSize() / 2.0D + 4.0D;
 		for (int i = 0; i < count; i++) {
 			double angle = Math.PI * 2.0D * i / count;
 			points.add(new Vec3(rite.getCenterPos().getX() + 0.5D + Math.cos(angle) * radius,
-					rite.getCenterPos().getY() + ("fargone_dive".equals(wave) ? 5.0D : 1.0D),
+					rite.getCenterPos().getY() + wave.spawnHeight(),
 					rite.getCenterPos().getZ() + 0.5D + Math.sin(angle) * radius));
 		}
 		return points;
 	}
 
 	private static void spawnThreats(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
-			String wave) {
+			CardinalRiteWave wave) {
 		for (Vec3 point : threatSpawnPoints(rite, wave)) {
 			Entity entity = switch (wave) {
-				case "fargone_dive" -> EntityInit.fargone.get().create(level);
-				case "rogue_will" -> EntityInit.will.get().create(level);
-				case "false_omens" -> EntityInit.blood_drunk_puppeteer.get().create(level);
+				case FARGONE_DIVE -> EntityInit.fargone.get().create(level);
+				case ROGUE_WILL -> EntityInit.will.get().create(level);
+				case FALSE_OMENS -> EntityInit.blood_drunk_puppeteer.get().create(level);
 				default -> EntityInit.bloodlicker.get().create(level);
 			};
 			if (entity == null) continue;
@@ -540,12 +535,11 @@ public final class CardinalRiteOrdealEngine {
 
 	private static void applyThreatPressure(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
-		if (rite.getPhaseTicks() % 20 != 0) return;
-		String wave = currentWave(rite);
+		if (rite.getPhaseTicks() % THREAT_PRESSURE_INTERVAL_TICKS != 0) return;
 		int active = rite.getRiteThreats().size();
 		if (active == 0) return;
-		switch (wave) {
-			case "bloodlicker_siphon" -> {
+		switch (currentKind(rite)) {
+			case BLOODLICKER_SIPHON -> {
 				for (UUID threatId : rite.getRiteThreats()) {
 					Entity threat = level.getEntity(threatId);
 					if (!(threat instanceof Mob mob)) continue;
@@ -569,7 +563,7 @@ public final class CardinalRiteOrdealEngine {
 					}
 				}
 			}
-			case "fargone_dive" -> {
+			case FARGONE_DIVE -> {
 				var volume = HemoCapabilityAccess.getBloodVolume(caster);
 				int touching = (int) rite.getRiteThreats().stream()
 						.map(level::getEntity).filter(java.util.Objects::nonNull)
@@ -577,11 +571,11 @@ public final class CardinalRiteOrdealEngine {
 						.count();
 				int drain = Math.min(touching * 5, (int) volume.getBloodVolume());
 				if (drain > 0) {
-					BloodAccounting.pay(caster, drain, THREAT_DRAIN);
+					BloodAccounting.payUpkeep(caster, drain, THREAT_DRAIN, THREAT_PRESSURE_INTERVAL_TICKS, false);
 				}
 			}
-			case "rogue_will" -> rite.addInstability(active);
-			case "false_omens" -> {
+			case ROGUE_WILL -> rite.addInstability(active);
+			case FALSE_OMENS -> {
 				if (rite.getPhaseTicks() % 60 == 0) rite.addInstability(active * 2);
 			}
 			default -> {
@@ -795,6 +789,10 @@ public final class CardinalRiteOrdealEngine {
 	private static String currentWave(ActiveCardinalRite rite) {
 		return rite.getCurrentWave() < rite.getWaveDeck().size()
 				? rite.getWaveDeck().get(rite.getCurrentWave())
-				: "bloodlicker_siphon";
+				: CardinalRiteWave.FALLBACK.id();
+	}
+
+	private static CardinalRiteWave currentKind(ActiveCardinalRite rite) {
+		return CardinalRiteWave.of(currentWave(rite));
 	}
 }

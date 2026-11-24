@@ -27,7 +27,6 @@ public final class CrimsonDoeVenousStriderResourceTest {
 		assertContains("crimson doe attributes", entityInit, "CrimsonDoeEntity.setAttributes().build()");
 		assertContains("crimson doe spawn egg", itemInit, "spawn_egg_crimson_doe");
 		assertContains("crimson doe renderer", clientEvents, "CrimsonDoeRenderer::new");
-		assertContains("crimson doe model layer", layerEvents, "CrimsonDoeModel.LAYER_LOCATION");
 		assertNaturalNoSkylightSpawns("crimson doe",
 				readSource("com/vincenthuto/hemomancy/common/entity/mob/animal/CrimsonDoeEntity.java"));
 

@@ -11,10 +11,10 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ChalybeateSnailRenderer extends MobRenderer<ChalybeateSnailEntity, ChalybeateSnailModel> {
 	private static final ResourceLocation TEXTURE = Hemomancy.rloc(
-			"textures/entity/chalybeate_snail/model_chalybeate_snail.png");
+			"textures/entity/chalybeate_snail/chalybeate_sclerites_snail.png");
 
 	public ChalybeateSnailRenderer(Context context) {
-		super(context, new ChalybeateSnailModel(context.bakeLayer(ChalybeateSnailModel.LAYER_LOCATION)), 0.35F);
+		super(context, new ChalybeateSnailModel(), 0.35F);
 	}
 
 	@Override
@@ -27,7 +27,8 @@ public class ChalybeateSnailRenderer extends MobRenderer<ChalybeateSnailEntity, 
 
 	@Override
 	protected void scale(ChalybeateSnailEntity entity, PoseStack poseStack, float partialTickTime) {
-		poseStack.scale(0.92F, 0.92F, 0.92F);
+		// Fit the taller whorl to the snail's low vent-crawling silhouette.
+		poseStack.scale(0.92F, 0.56F, 0.92F);
 	}
 
 	@Override

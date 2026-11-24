@@ -22,6 +22,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -40,7 +41,7 @@ import java.util.UUID;
  * cicada flash and the Will banishment are their own private methods, called by reflection; the Drudge burst is its
  * entity event. Then a Blood Lantern Jelly's motes, a Chalybeate Snail harvested with a knapper and a Prism Cuttle's
  * flash, both their own private methods, by reflection; the jelly and the cuttle float in glass tanks. The camera
- * player is a flying creative player so the spider sees someone. Shots land in
+ * player switches from flying Creative to Survival for the final Mortarbound ambush. Shots land in
  * build/ecology-particle-review/screenshots. Excluded from release jars.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
@@ -49,6 +50,8 @@ public final class EcologyParticleClientReview {
 	private static final byte DRUDGE_BURST_EVENT = 61;
 	private static int ticks;
 	private static int shot;
+	private static int ambushStart;
+	private static boolean capturedWindup;
 	private static BlockPos row;
 	private static ChoirKeeperEntity keeper;
 	private static ItemEntity eye;
@@ -63,12 +66,15 @@ public final class EcologyParticleClientReview {
 			{new double[]{0.5, 2.4, -3.4, 0.5, 1.4, 0.5}, "keeper_eats_eye"},
 			{new double[]{4.5, 2.0, -2.4, 4.5, 0.4, 0.5}, "cicada_flash"},
 			{new double[]{8.5, 2.0, -2.4, 8.5, 0.6, 0.5}, "none"},
-			{new double[]{12.5, 2.0, -3.4, 12.5, 1.2, 0.5}, "mortarbound_struck"},
+			{new double[]{12.5, 2.0, -4.4, 12.5, 1.5, 0.5}, "mortarbound_embedded"},
+			{new double[]{10.6, 2.2, -4.6, 12.5, 1.5, 0.2}, "mortarbound_emerged"},
 			{new double[]{16.5, 2.0, -3.4, 16.5, 1.0, 0.5}, "will_banished"},
 			{new double[]{20.5, 2.0, -3.4, 20.5, 0.9, 0.5}, "drudge_burst"},
 			{new double[]{24.5, 1.6, -2.4, 24.5, 0.5, 0.5}, "none"},
 			{new double[]{28.5, 1.4, -2.2, 28.5, 0.3, 0.5}, "snail_harvest"},
-			{new double[]{32.5, 1.6, -2.4, 32.5, 0.4, 0.5}, "cuttle_flash"}};
+			{new double[]{30.7, 1.15, 1.35, 32.5, 0.40, 0.5}, "cuttle_swim"},
+			{new double[]{30.7, 1.15, 1.35, 32.5, 0.40, 0.5}, "cuttle_flash"},
+			{new double[]{33.3, 0.85, -1.1, 32.5, 0.35, 0.5}, "cuttle_recovered"}};
 
 	@SubscribeEvent
 	public static void tick(ClientTickEvent.Post event) {
@@ -113,8 +119,20 @@ public final class EcologyParticleClientReview {
 		}
 		if (ticks < 80 || row == null) return;
 		int local = (ticks - 80) % 60;
+		if (shot == SHOTS.length) {
+			if (local == 0 && ambushStart == 0) {
+				ambushStart = ticks;
+				server.execute(() -> {
+					var player = server.getPlayerList().getPlayer(uuid);
+					player.setGameMode(GameType.SURVIVAL);
+					player.teleportTo(player.serverLevel(), mortarbound.getX() - .8, row.getY(),
+							mortarbound.getZ() - 2.25, -19.6F, 0F);
+				});
+			}
+			if (ambushStart > 0) captureAmbush(mc);
+			return;
+		}
 		if (local == 0) {
-			if (shot == SHOTS.length) { mc.stop(); return; }
 			double[] at = (double[]) SHOTS[shot][0];
 			server.execute(() -> {
 				var player = server.getPlayerList().getPlayer(uuid);
@@ -125,7 +143,7 @@ public final class EcologyParticleClientReview {
 				player.teleportTo(player.serverLevel(), x, y - player.getEyeHeight(), z, yaw, pitch);
 			});
 		}
-		if (shot < SHOTS.length && local == 30) {
+		if (shot < SHOTS.length && local == ("mortarbound_emerged".equals(SHOTS[shot][1]) ? 14 : 30)) {
 			String action = (String) SHOTS[shot][1];
 			server.execute(() -> act(server.overworld(), action));
 		}
@@ -135,6 +153,28 @@ public final class EcologyParticleClientReview {
 			if (shot == 0) Hemomancy.LOGGER.info("ECOLOGY_PARTICLE_REVIEW eye eaten: {}", eye != null && !eye.isAlive());
 			Hemomancy.LOGGER.info("ECOLOGY_PARTICLE_REVIEW captured {}", shot);
 			shot++;
+		}
+	}
+
+	private static void captureAmbush(Minecraft mc) {
+		if (mc.level.getEntity(mortarbound.getId()) instanceof MortarboundEntity mob) {
+			int phase = mob.attackAnimationTicks();
+			if (!capturedWindup && phase > 0 && phase <= 5) {
+				capturedWindup = true;
+				Screenshot.grab(mc.gameDirectory, "mortarbound-windup.png", mc.getMainRenderTarget(), message -> {});
+				Hemomancy.LOGGER.info("ECOLOGY_PARTICLE_REVIEW Mortarbound windup {}", phase);
+			}
+			if (capturedWindup && phase < 0 && mc.player.getHealth() < mc.player.getMaxHealth()) {
+				Screenshot.grab(mc.gameDirectory, "mortarbound-strike-recovery.png", mc.getMainRenderTarget(), message -> {});
+				Hemomancy.LOGGER.info("ECOLOGY_PARTICLE_REVIEW Mortarbound recovery {}, player health {}",
+						phase, mc.player.getHealth());
+				mc.stop();
+				return;
+			}
+		}
+		if (ticks - ambushStart >= 140) {
+			Hemomancy.LOGGER.error("ECOLOGY_PARTICLE_REVIEW Mortarbound ambush did not complete");
+			mc.stop();
 		}
 	}
 
@@ -159,7 +199,7 @@ public final class EcologyParticleClientReview {
 				}
 			}
 			case "cicada_flash" -> privateEffect(cicada, LuminalCicadaEntity.class, "flash");
-			case "mortarbound_struck" -> {
+			case "mortarbound_emerged" -> {
 				boolean hurt = mortarbound.hurt(level.damageSources().playerAttack(striker(level, mortarbound)), 0.5F);
 				Hemomancy.LOGGER.info("ECOLOGY_PARTICLE_REVIEW mortarbound struck: {}, alive {}", hurt, mortarbound.isAlive());
 			}

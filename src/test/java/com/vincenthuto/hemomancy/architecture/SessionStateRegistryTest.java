@@ -81,6 +81,16 @@ class SessionStateRegistryTest {
 				"LanternTickLightManager.logout(serverPlayer);");
 	}
 
+	/** A rite's per-player session maps let a leaving player go, not only a stopping server. */
+	@Test
+	void riteSessionMapsForgetALeavingPlayer() {
+		String session = SourceAssertions.methodBody(SourceAssertions.read(RepoPaths.MAIN_JAVA.resolve(HUB)),
+				"public static void endPlayerSession(");
+		for (String owner : List.of("HematicUnbindingRules", "WorkingCraftRites", "CardinalRiteSync")) {
+			SourceAssertions.assertContains(owner + " forgets the player at logout", session, owner + ".logout(");
+		}
+	}
+
 	@Test
 	void onlyTheHubListensForServerStartAndStop() throws Exception {
 		List<String> offending = new ArrayList<>();

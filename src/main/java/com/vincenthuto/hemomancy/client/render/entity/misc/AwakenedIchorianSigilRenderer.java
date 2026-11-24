@@ -33,6 +33,12 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		if (sigilId == null) return;
 		IchorianSigilDefinition sigil = IchorianSigilRegistry.get(sigilId);
 		if (sigil == null || sigil.nodes().isEmpty()) return;
+		// A form with an anatomy is a living body drawn on the living-blood material with the manipulation visuals
+		// (client/render/world/IchorianSigilFormGeometry); only a sigil without one keeps the flat shape here.
+		if (sigil.awakenedForm().isPresent()) {
+			super.render(entity, yaw, partialTick, stack, buffers, packedLight);
+			return;
+		}
 
 		float time = AnimationTime.age(entity, partialTick);
 		float peel = entity.getPeelProgress(partialTick);
@@ -41,29 +47,13 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		stack.pushPose();
 		stack.mulPose(Axis.YP.rotationDegrees(AwakenedIchorianSigilFacing.renderYaw(
 				entity.getRenderFacingYaw(partialTick))));
-		stack.mulPose(Axis.XP.rotationDegrees(entity.getRenderFacingPitch(partialTick)));
-		stack.mulPose(Axis.ZP.rotationDegrees(entity.getRenderBankRoll(partialTick)));
-		sigil.awakenedForm().ifPresent(anatomy -> stack.mulPose(Axis.YP.rotationDegrees(
-				AwakenedIchorianSigilFacing.authoredForwardCorrection(
-						anatomy.forward().x, anatomy.forward().z))));
 		AwakenedIchorianSigilBodyAnimation.BodyPose body =
-				AwakenedIchorianSigilBodyAnimation.pose(
-						sigilId, time, entity.getRenderMovementSpeed(partialTick));
+				AwakenedIchorianSigilBodyAnimation.pose(sigilId, time);
 		stack.translate(body.offsetX(), body.offsetY(), body.offsetZ());
 		stack.mulPose(Axis.YP.rotationDegrees(body.yawDegrees()));
 		stack.mulPose(Axis.XP.rotationDegrees(body.pitchDegrees()));
 		stack.mulPose(Axis.ZP.rotationDegrees(body.rollDegrees()));
 		stack.scale(body.scaleX(), body.scaleY(), body.scaleZ());
-		if (sigil.awakenedForm().isPresent()) {
-			AwakenedIchorianSigilPose pose =
-					AwakenedIchorianSigilPoseCalculator.calculate(
-							sigil, time, entity.getRenderMovementSpeed(partialTick));
-			AwakenedIchorianSigilGeometryRenderer.render(
-					pose, stack, buffers, time, color, sigil.id().hashCode());
-			stack.popPose();
-			super.render(entity, yaw, partialTick, stack, buffers, packedLight);
-			return;
-		}
 		stack.mulPose(Axis.XP.rotationDegrees(90.0F * peel));
 		stack.scale(SHAPE_SCALE, SHAPE_SCALE, SHAPE_SCALE);
 		renderShape(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), stack.last().pose(),

@@ -34,6 +34,7 @@ import java.util.EnumSet;
 
 public class LuminalCicadaEntity extends PathfinderMob {
 	private static final byte FLASH_EVENT = 62;
+	private static final int FLASH_ANIMATION_TICKS = 8;
 	private static final ParticleColor FLASH_LIGHT = new ParticleColor(255, 240, 210);
 	private static final EntityDataAccessor<Byte> DATA_CLING_FACE = SynchedEntityData.defineId(
 			LuminalCicadaEntity.class, EntityDataSerializers.BYTE);
@@ -136,7 +137,7 @@ public class LuminalCicadaEntity extends PathfinderMob {
 	@Override
 	public void handleEntityEvent(byte id) {
 		if (id == FLASH_EVENT) {
-			this.flashTicks = 8;
+			this.flashTicks = FLASH_ANIMATION_TICKS;
 		} else {
 			super.handleEntityEvent(id);
 		}
@@ -144,6 +145,10 @@ public class LuminalCicadaEntity extends PathfinderMob {
 
 	public boolean isFlashing() {
 		return this.flashTicks > 0;
+	}
+
+	public float getFlashStrength(float partialTick) {
+		return Mth.clamp((this.flashTicks - partialTick) / FLASH_ANIMATION_TICKS, 0.0F, 1.0F);
 	}
 
 	@Override

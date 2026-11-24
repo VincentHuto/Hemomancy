@@ -13,15 +13,13 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import net.minecraft.util.Mth;
 
 public final class CrimsonDoeRenderer extends MobRenderer<CrimsonDoeEntity, CrimsonDoeModel> {
-	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/crimson_doe/model_crimson_doe.png");
-	private static final RenderType GLOW = RenderType.eyes(Hemomancy.rloc("textures/entity/crimson_doe/model_crimson_doe_glow.png"));
-	private static final float HEARTBEAT_TICKS = 36.0F;
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/crimson_doe/model_crimson_doe_redesign.png");
+	private static final RenderType GLOW = RenderType.eyes(Hemomancy.rloc("textures/entity/crimson_doe/model_crimson_doe_redesign_glow.png"));
 
 	public CrimsonDoeRenderer(EntityRendererProvider.Context context) {
-		super(context, new CrimsonDoeModel(context.bakeLayer(CrimsonDoeModel.LAYER_LOCATION)), 0.5F);
+		super(context, new CrimsonDoeModel(), 0.5F);
 		addLayer(new GlowLayer(this));
 	}
 
@@ -39,18 +37,9 @@ public final class CrimsonDoeRenderer extends MobRenderer<CrimsonDoeEntity, Crim
 		@Override
 		public void render(PoseStack pose, MultiBufferSource buffers, int light, CrimsonDoeEntity entity, float limbSwing,
 				float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-			int level = (int) (255 * (0.35F + 0.65F * heartbeat((ageInTicks + entity.getId() * 7) / HEARTBEAT_TICKS % 1.0F)));
+			int level = (int) (255 * (0.35F + 0.65F * CrimsonDoeModel.heartbeat(ageInTicks, entity.getId())));
 			getParentModel().renderToBuffer(pose, buffers.getBuffer(GLOW), light, OverlayTexture.NO_OVERLAY,
 					FastColor.ARGB32.color(255, level, level, level));
-		}
-
-		private static float heartbeat(float cycle) {
-			return Math.max(pulse(cycle, 0.0F, 0.14F), 0.7F * pulse(cycle, 0.2F, 0.14F));
-		}
-
-		private static float pulse(float cycle, float start, float width) {
-			float at = (cycle - start) / width;
-			return at < 0.0F || at > 1.0F ? 0.0F : Mth.sin(at * Mth.PI);
 		}
 	}
 }

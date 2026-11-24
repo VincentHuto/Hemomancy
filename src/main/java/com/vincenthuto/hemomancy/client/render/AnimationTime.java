@@ -18,6 +18,15 @@ public final class AnimationTime {
 	private AnimationTime() {
 	}
 
+	/**
+	 * Whether the world advances this client tick: a level is loaded, the game is not paused and its ticking is not
+	 * frozen (a {@code /tick step} counts). A client clock that ages or spawns per tick waits while this is false.
+	 */
+	public static boolean worldTicks() {
+		Minecraft minecraft = Minecraft.getInstance();
+		return minecraft.level != null && !minecraft.isPaused() && minecraft.level.tickRateManager().runsNormally();
+	}
+
 	/** The frame's partial tick; it reads 1 while the game's ticking is frozen. */
 	public static float partialTick() {
 		return Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);

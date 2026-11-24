@@ -41,8 +41,8 @@ public class GhastlyAlembicMenu extends HemoContainerMenu {
 	public static final int SLOT_COUNT      = 6;
 	public static final int DATA_COUNT      = GhastlyAlembicBlockEntity.NUM_DATA_VALUES;
 
-	// Crafting area height — matches the screen's layout
-	public static final int CRAFT_AREA_HEIGHT = 80;
+	// Crafting area height: the screen draws the still in this band, the player inventory sits below it
+	public static final int CRAFT_AREA_HEIGHT = 108;
 
 	private static final int INV_START  = SLOT_COUNT;
 	private static final int INV_END    = INV_START + 27;
@@ -86,13 +86,11 @@ public class GhastlyAlembicMenu extends HemoContainerMenu {
 		this.data = containerData;
 		this.level = playerInventory.player.level();
 
-		// Container slots — positions designed for custom-rendered screen
-		// Input slot: left-center of crafting area
-		this.addSlot(new Slot(container, INGREDIENT_SLOT, 44, 32));
-		// Flask slot: underneath the blood volume bar (extraction zone)
-		this.addSlot(new GhastlyAlembicFlaskSlot(this, container, FLASK_SLOT, 155, 58));
-		// Result slot: right of crafting area
-		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32) {
+		// Slots sit on the still the screen draws: the charge in the cucurbit, the vessels on the tap at its foot,
+		// the catalysts on the retort stand's dosing shelf and the result in the receiving vial under the beak.
+		this.addSlot(new Slot(container, INGREDIENT_SLOT, 66, 52));
+		this.addSlot(new GhastlyAlembicFlaskSlot(this, container, FLASK_SLOT, 26, 62));
+		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 132, 54) {
 			@Override public void onTake(Player player, ItemStack stack) {
 				GhastlyAlembicMenu.this.container.onPlayerExtract(player, stack);
 				if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
@@ -100,10 +98,9 @@ public class GhastlyAlembicMenu extends HemoContainerMenu {
 				super.onTake(player, stack);
 			}
 		});
-		// Catalyst slot: top-left corner of the crafting area
-		this.addSlot(new Slot(container, CATALYST_SLOT, 8, 8));
+		this.addSlot(new Slot(container, CATALYST_SLOT, 8, 22));
 		// Flask output slot: accepts a blood gourd to fill from the tank
-		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, FLASK_OUTPUT_SLOT, 134, 58) {
+		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, FLASK_OUTPUT_SLOT, 26, 84) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return stack.getItem() instanceof BloodGourdItem;
@@ -114,7 +111,7 @@ public class GhastlyAlembicMenu extends HemoContainerMenu {
 				return stack.getItem() instanceof BloodGourdItem ? 1 : super.getMaxStackSize(stack);
 			}
 		});
-		this.addSlot(new Slot(container, CATALYST_2_SLOT, 8, 58) {
+		this.addSlot(new Slot(container, CATALYST_2_SLOT, 27, 22) {
 			@Override public boolean mayPlace(ItemStack stack) {
 				return GhastlyAlembicMenu.this.container.tier().hasSecondCatalyst()
 						&& GhastlyAlembicMenu.this.container.canPlaceItem(CATALYST_2_SLOT, stack);

@@ -492,6 +492,7 @@ hemomancy:spawn_egg_fervent_chitinite
 hemomancy:spawn_egg_hemolymphopoda
 hemomancy:spawn_egg_hematic_burrower
 hemomancy:spawn_egg_crimson_doe
+hemomancy:spawn_egg_sanguine_ram
 hemomancy:spawn_egg_venous_strider
 hemomancy:spawn_egg_peacock_spider
 hemomancy:spawn_egg_scarlet_serpent

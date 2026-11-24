@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.putriciel;
 
+import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielVisualRules;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
@@ -15,16 +16,16 @@ import com.vincenthuto.hemomancy.common.util.HemoEasing;
  * </ul>
  * Feet are placed along the facing in model units (negative ahead of the hip); a leg reaches a foot by its thigh angle
  * (positive: foot behind). Also the legs' contact with the floor: the soles, and the knees when kneeling, decide how
- * far the hips sink. Model units throughout (render scale 2: eight to a block). JVM-tested.
+ * far the hips sink. Model units throughout (twelve to a block). JVM-tested.
  */
 public final class PutricielGait {
-	/** Model units in a block at render scale 2. */
-	public static final float BLOCK = 8.0F;
-	/** The thigh, and the shin to the ankle, in model units (putriciel.py legs after the 0.7 rescale). */
-	public static final float THIGH = 3.25F;
-	public static final float SHIN = 2.75F;
+	/** Model units in a block at the renderer scale. */
+	public static final float BLOCK = 16.0F / PutricielVisualRules.SCALE;
+	/** The thigh, and the shin to the ankle, in the authored Blockbench rig. */
+	public static final float THIGH = 7.88F;
+	public static final float SHIN = 7.35F;
 	/** The sole below the ankle of a foot held flat. */
-	public static final float SOLE = 0.25F;
+	public static final float SOLE = 2.2F;
 	/** How far below the knee joint the kneecap meets the floor. */
 	public static final float KNEE_PAD = 0.75F;
 	/** The shamble's lunge (PutricielLocomotion.STEP) and the stride's two steps (14 ticks at 0.11). */
@@ -99,16 +100,6 @@ public final class PutricielGait {
 	/** A short jolt after a foot lands at phase {@code land}: the body taking the weight. */
 	public static float landing(float p, float land) {
 		return HemoEasing.pulse(wrap(p - land) * 3.0F, 0.12F, 0.9F);
-	}
-
-	/** How far below the hip joint a leg's flat sole hangs, from the thigh's absolute pitch and the knee's bend. */
-	public static float reach(float thigh, float knee) {
-		return THIGH * (float) Math.cos(thigh) + SHIN * (float) Math.cos(thigh + knee) + SOLE;
-	}
-
-	/** How far below the hip joint the leg touches the floor first: its sole, or its kneecap when it kneels. */
-	public static float contact(float thigh, float knee) {
-		return Math.max(reach(thigh, knee), THIGH * (float) Math.cos(thigh) + KNEE_PAD);
 	}
 
 	/** The knees' fold for a crouch, radians: the thigh comes forward by it and the knee bends twice as far. */

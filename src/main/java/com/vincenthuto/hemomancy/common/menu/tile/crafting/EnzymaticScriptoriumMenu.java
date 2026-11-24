@@ -34,6 +34,17 @@ import java.util.Comparator;
 import java.util.List;
 
 public final class EnzymaticScriptoriumMenu extends HemoContainerMenu {
+    /**
+     * The screen is the block seen from above with the reader at the bottom: the eight jars stand on the block's
+     * half-circle of arms (180 to 0 degrees, the back left open for the riser) around the book on the hub, and the
+     * shard cup sits on the stem's reader side. Slot corners, jar order as {@link EnumBloodTemper}.
+     */
+    public static final int[][] JAR_SLOTS = {
+            {8, 82}, {14, 56}, {33, 36}, {60, 23}, {124, 23}, {151, 36}, {170, 56}, {176, 82}};
+    public static final int HUB_X = 100, HUB_Y = 88;
+    public static final int[] ITEM_SLOT = {92, 80}, LAPIS_SLOT = {66, 104}, SHARD_SLOT = {92, 104};
+    public static final int INVENTORY_TOP = 163;
+
     private final EnzymaticScriptoriumBlockEntity station;
     private final Player player;
     private final ContainerData data;
@@ -55,7 +66,7 @@ public final class EnzymaticScriptoriumMenu extends HemoContainerMenu {
         this.packages = (List<EnchantmentInstance>[]) new List<?>[3];
         for (int i = 0; i < 8; i++) {
             final int temper = i;
-            addSlot(new Slot(station, i, 12 + (i % 4) * 23, 28 + (i / 4) * 25) {
+            addSlot(new Slot(station, i, JAR_SLOTS[i][0], JAR_SLOTS[i][1]) {
                 @Override public boolean mayPlace(ItemStack stack) {
                     return !station.isRiteLocked() && stack.getItem() instanceof EnzymeItem enzyme
                             && enzyme.getTend() == EnumBloodTemper.values()[temper];
@@ -64,20 +75,20 @@ public final class EnzymaticScriptoriumMenu extends HemoContainerMenu {
                 @Override public int getMaxStackSize() { return 64; }
             });
         }
-        addSlot(new Slot(station, EnzymaticScriptoriumBlockEntity.ITEM, 113, 29) {
+        addSlot(new Slot(station, EnzymaticScriptoriumBlockEntity.ITEM, ITEM_SLOT[0], ITEM_SLOT[1]) {
             @Override public boolean mayPlace(ItemStack stack) { return !station.isRiteLocked() && !stack.is(Items.BOOK)
                     && (stack.isEnchantable() || stack.has(DataComponentInit.SCRIPTORIUM_PROVENANCE.get())); }
             @Override public boolean mayPickup(Player player) { return !station.isRiteLocked(); }
         });
-        addSlot(new Slot(station, EnzymaticScriptoriumBlockEntity.LAPIS, 138, 29) {
+        addSlot(new Slot(station, EnzymaticScriptoriumBlockEntity.LAPIS, LAPIS_SLOT[0], LAPIS_SLOT[1]) {
             @Override public boolean mayPlace(ItemStack stack) { return !station.isRiteLocked() && stack.is(Items.LAPIS_LAZULI); }
             @Override public boolean mayPickup(Player player) { return !station.isRiteLocked(); }
         });
-        addSlot(new Slot(station, EnzymaticScriptoriumBlockEntity.SHARD, 163, 29) {
+        addSlot(new Slot(station, EnzymaticScriptoriumBlockEntity.SHARD, SHARD_SLOT[0], SHARD_SLOT[1]) {
             @Override public boolean mayPlace(ItemStack stack) { return !station.isRiteLocked() && stack.is(ItemInit.blood_crystal_shard.get()); }
             @Override public boolean mayPickup(Player player) { return !station.isRiteLocked(); }
         });
-        addPlayerInventory(inventory, 27, 132);
+        addPlayerInventory(inventory, 27, INVENTORY_TOP + 6);
         addDataSlots(data);
         if (!player.level().isClientSide) refresh();
     }

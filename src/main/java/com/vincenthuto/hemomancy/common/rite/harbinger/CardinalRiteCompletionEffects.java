@@ -62,6 +62,7 @@ import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -102,7 +103,7 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 
 /**
- * What each Harbinger Cardinal Rite does when it resolves, keyed by recipe path.
+ * What each Harbinger Cardinal Rite does when it resolves, keyed by the {@code completion_effect} its recipe names.
  * <p>
  * Every effect may name a refusal: a condition the rite needs that the world or
  * caster does not currently meet. Refusals are checked when the rite is started,
@@ -137,36 +138,44 @@ public final class CardinalRiteCompletionEffects {
 	 */
 	public record Context(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe, BlockPos center) {
-		public String path() {
-			return recipe.getId().getPath();
+		/** The completion effect the rite's recipe names, or null. */
+		public ResourceLocation effect() {
+			return recipe.getCompletionEffect();
 		}
 	}
 
 	private record Effect(BiFunction<Context, Stage, Component> refusal, Predicate<Context> apply) {
 	}
 
-	private static final Map<String, Effect> EFFECTS = new HashMap<>();
+	private static final ResourceLocation APOTHEOS = Hemomancy.rloc("apotheos_rite");
+	private static final ResourceLocation BLOODLINE_FOUNDING = Hemomancy.rloc("bloodline_founding");
+	private static final ResourceLocation BLOODLINE_RECALL = Hemomancy.rloc("bloodline_recall");
+
+	private static final Map<ResourceLocation, Effect> EFFECTS = new HashMap<>();
 
 	static {
-		effect("cardinal_rite/sanguine_attunement", ctx -> completeSanguineAttunement(ctx.caster()));
-		effect("cardinal_rite/crimson_beacon", ctx -> completeCrimsonBeacon(ctx.level(), ctx.caster(), ctx.center()));
-		effect("cardinal_rite/vascular_mending", ctx -> completeVascularMending(ctx.caster()));
-		effect("cardinal_rite/hematic_fortification", ctx -> completeHematicFortification(ctx.caster()));
-		effect("cardinal_rite/hungering_earth", ctx -> completeHungeringEarth(ctx.level(), ctx.caster(), ctx.center()));
-		register("cardinal_rite/rooted_vein",
+		// The Rite of Apotheos resolves through its rank-up; its id names it for the shared Apotheos gates.
+		effect(APOTHEOS, ctx -> {
+		});
+		effect(Hemomancy.rloc("sanguine_attunement"), ctx -> completeSanguineAttunement(ctx.caster()));
+		effect(Hemomancy.rloc("crimson_beacon"), ctx -> completeCrimsonBeacon(ctx.level(), ctx.caster(), ctx.center()));
+		effect(Hemomancy.rloc("vascular_mending"), ctx -> completeVascularMending(ctx.caster()));
+		effect(Hemomancy.rloc("hematic_fortification"), ctx -> completeHematicFortification(ctx.caster()));
+		effect(Hemomancy.rloc("hungering_earth"), ctx -> completeHungeringEarth(ctx.level(), ctx.caster(), ctx.center()));
+		register(Hemomancy.rloc("rooted_vein"),
 				(ctx, stage) -> rootedVeinRefusal(ctx.level(), ctx.center()),
 				ctx -> {
 					completeRootedVein(ctx.level(), ctx.center());
 					return true;
 				});
-		register("cardinal_rite/scarlet_summons", CardinalRiteCompletionEffects::summonsRefusal,
+		register(Hemomancy.rloc("scarlet_summons"), CardinalRiteCompletionEffects::summonsRefusal,
 				ctx -> {
 					completeScarletSummons(ctx.level(), ctx.caster(), ctx.center());
 					return true;
 				});
-		effect("cardinal_rite/sanguine_dominion",
+		effect(Hemomancy.rloc("sanguine_dominion"),
 				ctx -> completeSanguineDominion(ctx.level(), ctx.caster(), ctx.center()));
-		register("cardinal_rite/eternal_covenant",
+		register(Hemomancy.rloc("eternal_covenant"),
 				(ctx, stage) -> HemoCapabilityAccess.getInitiatoryDegree(ctx.caster()).isEternalCovenantSealed()
 						? Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_is_already_sealed_its")
 						: null,
@@ -174,29 +183,29 @@ public final class CardinalRiteCompletionEffects {
 					completeEternalCovenant(ctx.caster());
 					return true;
 				});
-		effect("cardinal_rite/ancestral_communion", ctx -> completeAncestralCommunion(ctx.level(), ctx.caster()));
-		register("cardinal_rite/hematic_unbinding", (ctx, stage) -> leaderRefusal(ctx, Component.translatable("message.hemomancy.cardinal_rite_completion_effects.hematic_unbinding")),
+		effect(Hemomancy.rloc("ancestral_communion"), ctx -> completeAncestralCommunion(ctx.level(), ctx.caster()));
+		register(Hemomancy.rloc("hematic_unbinding"), (ctx, stage) -> leaderRefusal(ctx, Component.translatable("message.hemomancy.cardinal_rite_completion_effects.hematic_unbinding")),
 				ctx -> {
 					completeHematicUnbinding(ctx.level(), ctx.caster());
 					return true;
 				});
-		effect(com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.RITE_PATH,
+		effect(Hemomancy.rloc("pallid_vessel_rite"),
 				ctx -> com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.recordRite(ctx.caster()));
-		effect("cardinal_rite/pallid_shadow",
+		effect(Hemomancy.rloc("pallid_shadow"),
 				ctx -> completePallidShadow(ctx.level(), ctx.caster(), ctx.center(), ctx.rite().getRiteSize()));
-		register("cardinal_rite/bloom_of_qliphoth",
+		register(Hemomancy.rloc("bloom_of_qliphoth"),
 				(ctx, stage) -> bloomRefusal(ctx.level(), ctx.center()),
 				ctx -> {
 					completeBloomOfQliphoth(ctx.level(), ctx.caster(), ctx.center());
 					return true;
 				});
-		effect("cardinal_rite/sanguine_fervor",
+		effect(Hemomancy.rloc("sanguine_fervor"),
 				ctx -> completeSanguineFervor(ctx.level(), ctx.caster(), ctx.center()));
-		effect("cardinal_rite/covenant_vigil", ctx -> completeCovenantVigil(ctx.level(), ctx.caster(), ctx.rite()));
+		effect(Hemomancy.rloc("covenant_vigil"), ctx -> completeCovenantVigil(ctx.level(), ctx.caster(), ctx.rite()));
 		// Degree advancement only; territorial consecration belongs to Founding Fane.
-		effect("cardinal_rite/illuminatus_rite", ctx -> HarbingerAdvancementGranter.grantIfNotDone(ctx.caster(),
+		effect(Hemomancy.rloc("illuminatus_rite"), ctx -> HarbingerAdvancementGranter.grantIfNotDone(ctx.caster(),
 				HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED));
-		register("cardinal_rite/sanguine_eclipse",
+		register(Hemomancy.rloc("sanguine_eclipse"),
 				(ctx, stage) -> BloodMoonSavedData.get(ctx.level().getServer().overworld()).isActive()
 						? Component.translatable("message.hemomancy.cardinal_rite_completion_effects.a_blood_moon_already_reigns_over")
 						: null,
@@ -204,10 +213,10 @@ public final class CardinalRiteCompletionEffects {
 					completeSanguineEclipse(ctx.level(), ctx.caster());
 					return true;
 				});
-		register("cardinal_rite/founding_fane",
+		register(Hemomancy.rloc("founding_fane"),
 				(ctx, stage) -> faneRefusal(ctx.level(), ctx.caster(), ctx.center().above(3)),
 				ctx -> completeFoundingFane(ctx.level(), ctx.caster(), ctx.center()));
-		register("cardinal_rite/bloodline_recall",
+		register(Hemomancy.rloc("bloodline_recall"),
 				(ctx, stage) -> {
 					Bloodline line = BloodlineSavedData.get(ctx.level().getServer().overworld())
 							.getBloodlineForPlayer(ctx.caster().getUUID());
@@ -217,7 +226,7 @@ public final class CardinalRiteCompletionEffects {
 				},
 				ctx -> true);
 		// One line per player: a leader or member cannot found a second line (EarlyInitiation.canJoin agrees).
-		register("cardinal_rite/bloodline_founding",
+		register(Hemomancy.rloc("bloodline_founding"),
 				(ctx, stage) -> {
 					Bloodline line = BloodlineSavedData.get(ctx.level().getServer().overworld())
 							.getBloodlineForPlayer(ctx.caster().getUUID());
@@ -227,22 +236,22 @@ public final class CardinalRiteCompletionEffects {
 							: null;
 				},
 				ctx -> true);
-		effect("cardinal_rite/exsanguination", ctx -> ctx.caster().displayClientMessage(
+		effect(Hemomancy.rloc("exsanguination"), ctx -> ctx.caster().displayClientMessage(
 				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_lifeblood_crystallizes_sanguine_quintessence").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false));
-		effect("cardinal_rite/initiate_rite", ctx -> {
+		effect(Hemomancy.rloc("initiate_rite"), ctx -> {
 			giveOrDropAtRite(ctx.level(), ctx.caster(), ctx.center(), new ItemStack(ItemInit.sanguine_blob.get()));
 			ctx.caster().displayClientMessage(
 					Component.translatable("hemomancy.rite.initiate_rite.blob_granted")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		});
-		register("cardinal_rite/chamber_of_will", (ctx, stage) -> ChamberVisitService.riteRefusal(ctx.caster()), ctx -> {
+		register(Hemomancy.rloc("chamber_of_will"), (ctx, stage) -> ChamberVisitService.riteRefusal(ctx.caster()), ctx -> {
 			ChamberVisitService.beginRiteVisit(ctx.caster());
 			return true;
 		});
-		register("cardinal_rite/visitation_rite",
+		register(Hemomancy.rloc("visitation_rite"),
 				(ctx, stage) -> VisitationService.refusal(ctx.caster()),
 				ctx -> VisitationService.visit(ctx.caster()));
-		register("cardinal_rite/possession_rite",
+		register(Hemomancy.rloc("possession_rite"),
 				(ctx, stage) -> PossessionService.refusal(ctx.caster(),
 						PossessionService.findSurrogate(ctx.level(), riteBounds(ctx), ctx.center(), ctx.caster())),
 				ctx -> {
@@ -275,16 +284,27 @@ public final class CardinalRiteCompletionEffects {
 		return new AABB(ctx.center()).inflate(radius, 4.0, radius);
 	}
 
-	private static void effect(String path, Consumer<Context> apply) {
-		register(path, (ctx, stage) -> null, ctx -> {
+	private static void effect(ResourceLocation id, Consumer<Context> apply) {
+		register(id, (ctx, stage) -> null, ctx -> {
 			apply.accept(ctx);
 			return true;
 		});
 	}
 
-	private static void register(String path, BiFunction<Context, Stage, Component> refusal,
+	private static void register(ResourceLocation id, BiFunction<Context, Stage, Component> refusal,
 			Predicate<Context> apply) {
-		EFFECTS.put(path, new Effect(refusal, apply));
+		if (EFFECTS.put(id, new Effect(refusal, apply)) != null) {
+			throw new IllegalStateException("Duplicate cardinal rite completion effect " + id);
+		}
+	}
+
+	/** Every registered completion effect, for the check that each is named by a recipe. */
+	public static Set<ResourceLocation> ids() {
+		return Set.copyOf(EFFECTS.keySet());
+	}
+
+	private static Effect effectOf(Context ctx) {
+		return ctx.effect() == null ? null : EFFECTS.get(ctx.effect());
 	}
 
 	/**
@@ -296,23 +316,23 @@ public final class CardinalRiteCompletionEffects {
 			Component common = commonRefusal(ctx);
 			if (common != null) return common;
 		}
-		Effect effect = EFFECTS.get(ctx.path());
+		Effect effect = effectOf(ctx);
 		return effect == null ? null : effect.refusal().apply(ctx, stage);
 	}
 
 	/** Applies the rite's effect; false aborts completion before the shared rewards. */
 	public static boolean apply(Context ctx) {
-		Effect effect = EFFECTS.get(ctx.path());
+		Effect effect = effectOf(ctx);
 		return effect == null || effect.apply().test(ctx);
 	}
 
 	/** Shapes the rite's result item before it drops; bloodline ledgers are signed here. */
 	public static ItemStack shapeResult(Context ctx, ItemStack result) {
 		if (!(result.getItem() instanceof UnsignedLedgerItem)) return result;
-		if ("cardinal_rite/bloodline_founding".equals(ctx.path())) {
+		if (BLOODLINE_FOUNDING.equals(ctx.effect())) {
 			presignBloodlineLedger(ctx.level(), ctx.caster(), result);
 			HarbingerAdvancementGranter.grantIfNotDone(ctx.caster(), HarbingerAdvancementGranter.ADV_BLOOD_IS_BOUND);
-		} else if ("cardinal_rite/bloodline_recall".equals(ctx.path())) {
+		} else if (BLOODLINE_RECALL.equals(ctx.effect())) {
 			recallBloodlineLedger(ctx.level(), ctx.caster(), result);
 		}
 		return result;
@@ -344,7 +364,7 @@ public final class CardinalRiteCompletionEffects {
 	}
 
 	static boolean isApotheos(CardinalRiteRecipe recipe) {
-		return recipe != null && "cardinal_rite/apotheos_rite".equals(recipe.getId().getPath());
+		return recipe != null && APOTHEOS.equals(recipe.getCompletionEffect());
 	}
 
 	static boolean hasQliphothCommunion(ServerPlayer player) {

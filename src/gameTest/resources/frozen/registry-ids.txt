@@ -786,6 +786,7 @@ minecraft:entity_type hemomancy:qliphoth_seed_item
 minecraft:entity_type hemomancy:recall_barb
 minecraft:entity_type hemomancy:ringmaster_pattern
 minecraft:entity_type hemomancy:sanguine_hound
+minecraft:entity_type hemomancy:sanguine_ram
 minecraft:entity_type hemomancy:sanguis_lancea
 minecraft:entity_type hemomancy:scarlet_mummer
 minecraft:entity_type hemomancy:scarlet_serpent
@@ -1603,6 +1604,7 @@ minecraft:item hemomancy:spawn_egg_phlegethosoma
 minecraft:item hemomancy:spawn_egg_prism_cuttle
 minecraft:item hemomancy:spawn_egg_pyrosome
 minecraft:item hemomancy:spawn_egg_sanguine_hound
+minecraft:item hemomancy:spawn_egg_sanguine_ram
 minecraft:item hemomancy:spawn_egg_scarlet_mummer
 minecraft:item hemomancy:spawn_egg_scarlet_serpent
 minecraft:item hemomancy:spawn_egg_siphonophore

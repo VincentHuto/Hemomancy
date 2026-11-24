@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncQliphothBlooms;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.*;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorGeometry;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.*;
 import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
@@ -98,19 +99,6 @@ public class HarbingerCardinalRiteEvents {
 	public static void onLevelTick(LevelTickEvent.Post event) {
 		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 
-		// Tick pending blood structure crafts (delayed block breaking)
-		PendingBloodCraftManager.tick(sLevel);
-		BloodStructureFeedManager.tick(sLevel);
-		BloodInfusionManager.tick(sLevel);
-
-		// Periodically sync Qliphoth Bloom data to clients for tree rendering
-		// (must be outside the active-rite block since blooms persist after rites end)
-		// Only sync from the overworld to prevent other dimension ticks from overwriting
-		// the client bloom list with an empty set.
-		if (sLevel == sLevel.getServer().overworld() && sLevel.getGameTime() % 200 == 0) {
-			syncQliphothBlooms(sLevel.getServer());
-		}
-
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
 		if (sLevel.getGameTime() % 20 == 0) {
 			for (ServerPlayer player : sLevel.players()) {
@@ -158,9 +146,7 @@ public class HarbingerCardinalRiteEvents {
 
 			BlockPos center = rite.getCenterPos();
 			int riteSize = rite.getRiteSize();
-			if ((recipe == null && rite.getPhase() != CardinalRitePhase.COUNTDOWN)
-					|| rite.getRecipeId().getPath().equals("cardinal_rite/sanguine_initiation")
-					|| rite.getRecipeId().getPath().equals("cardinal_rite/votary_rite")) {
+			if (recipe == null && rite.getPhase() != CardinalRitePhase.COUNTDOWN) {
 				Hemomancy.LOGGER.warn("Retiring active cardinal rite {} at {} because its recipe no longer exists",
 						rite.getRecipeId(), center);
 				CardinalRiteTermination.end(sLevel, caster, rite, Outcome.RETIRED);
@@ -171,7 +157,7 @@ public class HarbingerCardinalRiteEvents {
 				savedData.setDirty();
 				continue;
 			}
-			boolean unstained = recipe != null && recipe.isUnstained();
+			boolean unstained = !kind.bindsInBlood();
 			if (recipe != null && recipe.hasLayeredStation() && kind.capturesOfferingsAsItRuns()
 					&& !rite.hasCapturedOfferingItinerary()) {
 				CardinalRiteStationMatcher.StationMatch station =
@@ -241,7 +227,7 @@ public class HarbingerCardinalRiteEvents {
 					caster.displayClientMessage(Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_stillness_breaks_return_to_the").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 				} else {
 					caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
-					BloodAccounting.pay(caster, CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK, BOUNDARY);
+					BloodAccounting.payUpkeep(caster, CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK, BOUNDARY, 1, false);
 					caster.displayClientMessage(
 							Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_rite_binds_you_return_to").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 							true);
@@ -809,9 +795,9 @@ public class HarbingerCardinalRiteEvents {
 		}
 		if (recipe != null && recipe.getCeremony() != null) {
 			int remaining = CardinalRiteCeremonyRules.fragileBlocksOnCollapse(failureProfile);
-			for (BlockPos offset : recipe.getCeremony().fragileOffsets()) {
+			for (BlockPos pos : CardinalRiteCeremonyRules.fragileFloorCells(recipe.getCeremony().fragileOffsets(),
+					rite.getCenterPos(), floorCells(rite))) {
 				if (remaining <= 0) break;
-				BlockPos pos = rite.getCenterPos().offset(offset);
 				BlockState state = level.getBlockState(pos);
 				float hardness = state.getDestroySpeed(level, pos);
 				if (state.isAir() || level.getBlockEntity(pos) != null || hardness < 0.0F || hardness > 5.0F) {
@@ -837,6 +823,14 @@ public class HarbingerCardinalRiteEvents {
 		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_BACKLASH, 1.0F, 1.1F);
 		spawnBrokenAnchorDispersal(level, rite, recipe);
 		caster.displayClientMessage(Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_cardinal_boundary_collapses_into_backlash").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+	}
+
+	/** The blocks of the floor the rite was matched on, around its Focus; none when it matched no floor. */
+	private static List<BlockPos> floorCells(ActiveCardinalRite rite) {
+		if (rite.getMatchedFloorId() == null || rite.getFloorForwards() == null) return List.of();
+		return CardinalRiteFloorRegistry.get(rite.getMatchedFloorId())
+				.map(floor -> CardinalRiteFloorGeometry.cells(floor, rite.getCenterPos(), rite.getFloorForwards()))
+				.orElse(List.of());
 	}
 
 	//

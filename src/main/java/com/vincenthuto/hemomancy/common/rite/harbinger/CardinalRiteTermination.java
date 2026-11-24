@@ -80,7 +80,7 @@ public final class CardinalRiteTermination {
 			com.vincenthuto.hemomancy.common.rite.zone.RiteSpaces.consecrate(level, rite, recipe);
 		}
 		// Unstained rites keep their own still-water presentation; blood-rite endings are Harbinger-only.
-		if (recipe == null || !recipe.isUnstained()) {
+		if (kind.bindsInBlood()) {
 			CardinalRiteBeats.send(level, rite, outcome.beat(), style == null ? "" : style);
 		}
 	}

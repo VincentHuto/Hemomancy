@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.client.data.SigilGougeClientState;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.world.floor.AnchorSores;
 import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteCeremonyLayout;
@@ -29,7 +30,8 @@ import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAnchorVisualRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLandmarkGeometry;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilGougeGeometry;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilGougeStages;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
@@ -57,6 +59,7 @@ import org.joml.Matrix4f;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -93,12 +96,24 @@ public class CardinalRiteBoundaryRenderer {
 	private static final float BLOOM_WIDTH = 0.15F;
 	/** Bloom sits just above the vessel so the additive pass never z-fights the depth-writing core. */
 	private static final float BLOOM_LIFT = 0.004F;
+	/** A sigil gouge's strip sits this far over the ground it hugs (as the straight strip sits over its nodes' ground). */
+	private static final double GOUGE_GROUND_LIFT = 0.012D;
+	/** A mitred link end's slanted edge reaches at most this far down the link, in blocks. */
+	private static final double GOUGE_MITRE_REACH = 1.2D;
+	/** Added to a link body's vein reach when its first or last node is a loose end of the pattern. */
+	private static final int GOUGE_LOOSE_START = 8000;
+	private static final int GOUGE_LOOSE_END = 16000;
+	/** How many blocks below a gouge section's straight-line height the ground under it is looked for. */
+	private static final int GROUND_SCAN_DEPTH = 3;
+	/** The node tendrils' halo is held faint, so a ring of them stays thin threads rather than soft red strokes. */
+	private static final float NODE_TENDRIL_GLOW_OPACITY = 0.45F;
+	/** A node growth's foot and roots take the sigil's ichor colour at this brightness; the pool itself is darker. */
+	private static final float NODE_TENDRIL_BLOOD_BRIGHTNESS = 0.62F;
 	private static final int SOCKET_SEGMENTS = 24;
 	private static final float SOCKET_RADIUS = CardinalRiteCeremonyLayout.SOCKET_RADIUS;
 	private static final float SOCKET_CORE_WIDTH = CardinalRiteCeremonyLayout.SOCKET_CORE_WIDTH;
 	private static final double BOUNDARY_SOCKET_WAVE_FADE_ANGLE = 0.20D;
 	private static final int SOCKET_STAIN_SEGMENTS = 16;
-	private static final int SIGIL_VESSEL_SEGMENTS = 7;
 	private static final float EFFECT_Y = 0.024F;
 
 	// ── Undulation ──
@@ -190,12 +205,24 @@ public class CardinalRiteBoundaryRenderer {
 		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 		for (RiteFrame frame : frames) {
 			drawRite(poseStack, glowVC, Pass.GLOW, frame, currentTime, partialTick, cam);
+			// The sigil node tendrils are one-sided ribbons, so they go in the boundary's unculled passes.
+			drawSigilNodeTendrils(poseStack, glowVC, frame, currentTime, cam, true);
 		}
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
+
+		// Sigil links are gouges cut into the ground, drawn by their own shader under the vessels.
+		RenderType gouge = HemoRenderTypes.ichorianSigilGouge();
+		HemoRenderTypes.beginIchorianSigilGouge(currentTime);
+		VertexConsumer gougeVC = buffer.getBuffer(gouge);
+		for (RiteFrame frame : frames) {
+			drawSigilGouges(poseStack, gougeVC, frame, currentTime, cam);
+		}
+		buffer.endBatch(gouge);
 
 		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
 		for (RiteFrame frame : frames) {
 			drawRite(poseStack, coreVC, Pass.CORE, frame, currentTime, partialTick, cam);
+			drawSigilNodeTendrils(poseStack, coreVC, frame, currentTime, cam, false);
 		}
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
 
@@ -466,7 +493,6 @@ public class CardinalRiteBoundaryRenderer {
 		drawImpactShock(vc, pass, frame);
 		if (pass == Pass.BLOOM) return;
 		boolean glow = pass == Pass.GLOW;
-		drawSigilSegments(stack, vc, frame, time, cam, glow);
 		drawSanguineBlobs(stack, vc, frame, time, cam, glow);
 	}
 
@@ -1014,54 +1040,222 @@ public class CardinalRiteBoundaryRenderer {
 
 	// ── Sigils, landmarks and staff tendrils (world space) ──
 
-	private static void drawSigilSegments(PoseStack stack, VertexConsumer consumer, RiteFrame frame,
-			float currentTime, Vec3 cam, boolean glow) {
+	/**
+	 * Each sigil link as a strip of ground that the gouge shader cuts open, fills and veins. The stages ride the
+	 * vertices (see {@code ichorian_sigil_gouge.vsh}): UV0 across and down the link, UV1 the cut-in and fill, UV2 the
+	 * glow and vein reach, the normal the link's seed, how far down the link and the across direction's angle.
+	 */
+	private static void drawSigilGouges(PoseStack stack, VertexConsumer consumer, RiteFrame frame, float time,
+			Vec3 cam) {
 		ActiveRiteData.RiteEntry rite = frame.entry;
 		if (rite.getSigilSegments().isEmpty() || frame.fade <= 0.001F) return;
-		float beat = frame.heartbeat;
-		float halfWidth = glow ? 0.18F : 0.055F;
-		float alpha = (glow ? 0.20F + beat * 0.20F : 0.72F + beat * 0.24F) * frame.fade;
 		Matrix4f matrix = stack.last().pose();
-		IchorianSigilRenderPalette.Color vesselColor = IchorianSigilRenderPalette.vessel(glow);
-		List<IchorianSigilOrganicGeometry.Sample> samples = new ArrayList<>(SIGIL_VESSEL_SEGMENTS + 1);
+		Level level = Minecraft.getInstance().level;
+		float drain = gougeDrain(frame);
+		float close = frame.ending == null ? 1.0F
+				: IchorianSigilGougeStages.close(frame.endingAge, CardinalRiteEndingRules.violent(frame.ending));
+		BlockPos center = rite.getCenter();
 		for (ActiveRiteData.SigilSegment segment : rite.getSigilSegments()) {
-			long seed = Double.doubleToLongBits(segment.startX())
-					^ Long.rotateLeft(Double.doubleToLongBits(segment.startZ()), 17)
-					^ Long.rotateLeft(Double.doubleToLongBits(segment.endX()), 31)
-					^ segment.color();
-			samples.clear();
-			for (int step = 0; step <= SIGIL_VESSEL_SEGMENTS; step++) {
-				samples.add(IchorianSigilOrganicGeometry.sample(
-						segment.startX(), segment.startY(), segment.startZ(),
-						segment.endX(), segment.endY(), segment.endZ(),
-						currentTime, seed, step, SIGIL_VESSEL_SEGMENTS, halfWidth));
+			List<IchorianSigilGougeGeometry.Cross> strip = IchorianSigilGougeGeometry.strip(
+					segment.startX(), segment.startY(), segment.startZ(),
+					segment.endX(), segment.endY(), segment.endZ());
+			if (strip.size() < 2) continue;
+			if (level != null) strip = hugGround(level, strip);
+			float linkAge = SigilGougeClientState.linkAge(center, segment.sigilKey(), segment.linkIndex(), time);
+			float cutIn = IchorianSigilGougeStages.cutIn(linkAge) * close;
+			if (cutIn <= 0.001F) continue;
+			float awakeAge = SigilGougeClientState.awakeAge(center, segment.sigilKey(), time);
+			int cutInCode = stageCode(cutIn);
+			int fillCode = stageCode(IchorianSigilGougeStages.fill(awakeAge) * drain);
+			int veinCode = stageCode(IchorianSigilGougeStages.veinReach(awakeAge) * drain);
+			IchorianSigilRenderPalette.Color ichor = IchorianSigilRenderPalette.authoredIchor(segment.color(), false);
+			IchorianSigilGougeGeometry.Cross first = strip.get(0);
+			IchorianSigilGougeGeometry.Cross last = strip.get(strip.size() - 1);
+			double length = last.alongBlocks();
+			double acrossX = first.rightX() - first.leftX();
+			double acrossZ = first.rightZ() - first.leftZ();
+			double acrossLength = Math.max(Math.hypot(acrossX, acrossZ), 1.0e-6D);
+			acrossX /= acrossLength;
+			acrossZ /= acrossLength;
+			double runX = segment.endX() - segment.startX();
+			double runZ = segment.endZ() - segment.startZ();
+			double runLength = Math.max(Math.hypot(runX, runZ), 1.0e-6D);
+			runX /= runLength;
+			runZ /= runLength;
+			float acrossAngle = (float) (Math.atan2(acrossZ, acrossX) / Math.PI);
+			// A node only this link reaches is a loose end of the pattern: the cut tapers to a point there. Where
+			// another link shares the node, both end on the line that halves the bend between them, so the two cuts
+			// meet edge to edge as one channel and neither is drawn over the other. The newest link's far node is a
+			// loose end until the next link is cut from it.
+			double[] startArm = neighbourArm(rite, segment, segment.startX(), segment.startZ());
+			double[] endArm = neighbourArm(rite, segment, segment.endX(), segment.endZ());
+			int looseCode = (startArm == null ? GOUGE_LOOSE_START : 0) + (endArm == null ? GOUGE_LOOSE_END : 0);
+			GougeVertex vertex = new GougeVertex(consumer, matrix, cam, ichor, frame.fade, cutInCode, fillCode,
+					veinCode + looseCode, linkSeed(segment), acrossAngle, (float) length, awakeAge, segment,
+					Math.max(1, segment.linkCount()), frame.heartbeat, drain);
+			GougeSection start = startArm == null ? GougeSection.square(first)
+					: GougeSection.mitre(first, runX, runZ, runX, runZ, acrossX, acrossZ, startArm, length);
+			GougeSection end = endArm == null ? GougeSection.square(last)
+					: GougeSection.mitre(last, -runX, -runZ, runX, runZ, acrossX, acrossZ, endArm, length);
+			GougeSection from = start;
+			for (int index = 1; index < strip.size() - 1; index++) {
+				IchorianSigilGougeGeometry.Cross cross = strip.get(index);
+				// Sections inside a mitred end's reach would cross its slanted edge.
+				if (cross.alongBlocks() <= start.reach() + 0.02D
+						|| cross.alongBlocks() >= length - end.reach() - 0.02D) {
+					continue;
+				}
+				GougeSection to = GougeSection.square(cross);
+				vertex.quad(from, to);
+				from = to;
 			}
-			for (IchorianSigilOrganicGeometry.RibbonSegment vessel
-					: IchorianSigilOrganicGeometry.ribbonSegments(samples)) {
-				drawOrganicSigilSection(consumer, matrix, vessel, cam,
-						vesselColor.red(), vesselColor.green(), vesselColor.blue(), alpha, glow);
-			}
+			vertex.quad(from, end);
 		}
 	}
 
-	private static void drawOrganicSigilSection(VertexConsumer consumer, Matrix4f matrix,
-			IchorianSigilOrganicGeometry.RibbonSegment segment,
-			Vec3 cam, float red, float green, float blue, float alpha, boolean glow) {
-		IchorianSigilOrganicGeometry.RibbonJoint start = segment.start();
-		IchorianSigilOrganicGeometry.RibbonJoint end = segment.end();
-		float startRed = Math.min(1.0F, red * start.redIntensity());
-		float endRed = Math.min(1.0F, red * end.redIntensity());
-		float startY = (float) (start.centerY() - cam.y);
-		float endY = (float) (end.centerY() - cam.y);
-		RiteQuads.emitQuad(consumer, matrix,
-				(float) (start.leftX() - cam.x), startY,
-				(float) (start.leftZ() - cam.z), startRed, green, blue, glow ? 0.0F : alpha,
-				(float) (start.rightX() - cam.x), startY,
-				(float) (start.rightZ() - cam.z), startRed, green, blue, alpha,
-				(float) (end.rightX() - cam.x), endY,
-				(float) (end.rightZ() - cam.z), endRed, green, blue, alpha,
-				(float) (end.leftX() - cam.x), endY,
-				(float) (end.leftZ() - cam.z), endRed, green, blue, glow ? 0.0F : alpha);
+	/**
+	 * Sets each cross-section on the ground under its centre line, so a link between nodes at different heights climbs
+	 * the step where the ground does instead of running straight through the air or the block. A section with no ground
+	 * within reach of its straight-line height keeps that height.
+	 */
+	private static List<IchorianSigilGougeGeometry.Cross> hugGround(Level level,
+			List<IchorianSigilGougeGeometry.Cross> strip) {
+		List<IchorianSigilGougeGeometry.Cross> hugged = new ArrayList<>(strip.size());
+		BlockPos.MutableBlockPos scan = new BlockPos.MutableBlockPos();
+		for (IchorianSigilGougeGeometry.Cross cross : strip) {
+			double x = (cross.leftX() + cross.rightX()) * 0.5D;
+			double z = (cross.leftZ() + cross.rightZ()) * 0.5D;
+			double y = cross.y();
+			int top = (int) Math.floor(y) + 1;
+			for (int by = top; by >= top - GROUND_SCAN_DEPTH; by--) {
+				scan.set(Math.floor(x), by, Math.floor(z));
+				var shape = level.getBlockState(scan).getCollisionShape(level, scan);
+				if (shape.isEmpty()) continue;
+				y = by + shape.max(net.minecraft.core.Direction.Axis.Y) + GOUGE_GROUND_LIFT;
+				break;
+			}
+			hugged.add(new IchorianSigilGougeGeometry.Cross(cross.leftX(), cross.leftZ(), cross.rightX(), cross.rightZ(),
+					y, cross.along(), cross.alongBlocks()));
+		}
+		return hugged;
+	}
+
+	/**
+	 * The unit direction, away from the node at (x, z), of another link of the same sigil that starts or ends there;
+	 * null if this link is the only one that reaches it.
+	 */
+	private static double[] neighbourArm(ActiveRiteData.RiteEntry rite, ActiveRiteData.SigilSegment link, double x,
+			double z) {
+		for (ActiveRiteData.SigilSegment other : rite.getSigilSegments()) {
+			if (other == link || !other.sigilKey().equals(link.sigilKey())) continue;
+			boolean atStart = sameNode(other.startX(), other.startZ(), x, z);
+			if (!atStart && !sameNode(other.endX(), other.endZ(), x, z)) continue;
+			double armX = atStart ? other.endX() - other.startX() : other.startX() - other.endX();
+			double armZ = atStart ? other.endZ() - other.startZ() : other.startZ() - other.endZ();
+			double armLength = Math.hypot(armX, armZ);
+			if (armLength < 0.05D) continue;
+			return new double[] {armX / armLength, armZ / armLength};
+		}
+		return null;
+	}
+
+	private static boolean sameNode(double ax, double az, double bx, double bz) {
+		return Math.abs(ax - bx) < 1.0e-3D && Math.abs(az - bz) < 1.0e-3D;
+	}
+
+	/** 1 while the rite lives; through its ending, how much blood, vein and tendril the gouges still hold. */
+	private static float gougeDrain(RiteFrame frame) {
+		if (frame.ending == null) return 1.0F;
+		return IchorianSigilGougeStages.drain(frame.endingAge, CardinalRiteEndingRules.violent(frame.ending));
+	}
+
+	/** The glow at one cross-section, from where it lies in the whole pattern (node order). */
+	private static float gougeGlow(float awakeAge, ActiveRiteData.SigilSegment segment, float along, float linkCount,
+			float beat) {
+		return IchorianSigilGougeStages.glow(awakeAge, (segment.linkIndex() + along) / linkCount, beat);
+	}
+
+	/** A 0..1 stage value as the vertex shader reads it from UV1 and UV2: thousandths. */
+	private static int stageCode(float value) {
+		return Math.round(HemoEasing.clamp01(value) * 1000.0F);
+	}
+
+	/** -1..1, steady for a link of a sigil, so each cut tears the same way every frame. */
+	private static float linkSeed(ActiveRiteData.SigilSegment segment) {
+		int hash = segment.sigilKey().hashCode() * 31 + segment.linkIndex();
+		hash ^= hash >>> 16;
+		hash *= 0x45D9F3B;
+		hash ^= hash >>> 16;
+		return (hash & 0xFFFF) / 32767.5F - 1.0F;
+	}
+
+	/**
+	 * One edge across a link's strip: its left and right corners, how far down the link each lies, and how far out
+	 * from the centre line they are as a share of the strip's half-width.
+	 */
+	private record GougeSection(double leftX, double leftZ, double leftBlocks, double rightX, double rightZ,
+			double rightBlocks, double y, float across, double reach) {
+		/** A section square across the link. */
+		static GougeSection square(IchorianSigilGougeGeometry.Cross cross) {
+			return new GougeSection(cross.leftX(), cross.leftZ(), cross.alongBlocks(), cross.rightX(), cross.rightZ(),
+					cross.alongBlocks(), cross.y(), 1.0F, 0.0D);
+		}
+
+		/**
+		 * A link's end cut on the slant that halves the bend to the neighbouring link (whose direction away from the
+		 * node is arm). Inward is this link's own direction away from the node, run its direction from first node to
+		 * last. On a sharp bend the strip narrows at the node, so its slanted edge never reaches further down the link
+		 * than GOUGE_MITRE_REACH or 0.45 of its length.
+		 */
+		static GougeSection mitre(IchorianSigilGougeGeometry.Cross end, double inwardX, double inwardZ, double runX,
+				double runZ, double acrossX, double acrossZ, double[] arm, double length) {
+			double seamX = inwardX + arm[0];
+			double seamZ = inwardZ + arm[1];
+			double seam = Math.hypot(seamX, seamZ);
+			// Two links in one straight line meet square.
+			if (seam < 1.0e-4D) return square(end);
+			seamX /= seam;
+			seamZ /= seam;
+			double seamAcross = seamX * acrossX + seamZ * acrossZ;
+			double seamAlong = seamX * runX + seamZ * runZ;
+			// A link folded straight back over its neighbour has no bend to halve.
+			if (Math.abs(seamAcross) < 0.05D) return square(end);
+			double maxReach = Math.min(GOUGE_MITRE_REACH, length * 0.45D);
+			double half = Math.min(IchorianSigilGougeGeometry.STRIP_HALF_WIDTH,
+					maxReach * Math.abs(seamAcross) / Math.max(Math.abs(seamAlong), 1.0e-6D));
+			// A step along the seam that carries a point this far out to the link's right.
+			double step = half / seamAcross;
+			double slant = step * seamAlong;
+			double nodeX = (end.leftX() + end.rightX()) * 0.5D;
+			double nodeZ = (end.leftZ() + end.rightZ()) * 0.5D;
+			return new GougeSection(nodeX - seamX * step, nodeZ - seamZ * step, end.alongBlocks() - slant,
+					nodeX + seamX * step, nodeZ + seamZ * step, end.alongBlocks() + slant, end.y(),
+					(float) (half / IchorianSigilGougeGeometry.STRIP_HALF_WIDTH), Math.abs(slant));
+		}
+	}
+
+	/** Writes one link's strip corners with the stage values shared by the whole link. */
+	private record GougeVertex(VertexConsumer consumer, Matrix4f matrix, Vec3 cam,
+			IchorianSigilRenderPalette.Color ichor, float fade, int cutIn, int fill, int veinReach, float seed,
+			float acrossAngle, float length, float awakeAge, ActiveRiteData.SigilSegment segment, float linkCount,
+			float beat, float drain) {
+		void quad(GougeSection from, GougeSection to) {
+			corner(from.leftX(), from.y(), from.leftZ(), -from.across(), from.leftBlocks());
+			corner(from.rightX(), from.y(), from.rightZ(), from.across(), from.rightBlocks());
+			corner(to.rightX(), to.y(), to.rightZ(), to.across(), to.rightBlocks());
+			corner(to.leftX(), to.y(), to.leftZ(), -to.across(), to.leftBlocks());
+		}
+
+		private void corner(double x, double y, double z, float across, double alongBlocks) {
+			float along = HemoEasing.clamp01((float) (alongBlocks / length));
+			float glow = gougeGlow(awakeAge, segment, along, linkCount, beat) * drain;
+			consumer.addVertex(matrix, (float) (x - cam.x), (float) (y - cam.y), (float) (z - cam.z))
+					.setColor(ichor.red(), ichor.green(), ichor.blue(), fade)
+					.setUv(across, (float) alongBlocks)
+					.setUv1(cutIn, fill)
+					.setUv2(stageCode(glow), veinReach)
+					.setNormal(seed, along * 2.0F - 1.0F, acrossAngle);
+		}
 	}
 
 	private static void drawSanguineBlobs(PoseStack stack, VertexConsumer consumer, RiteFrame frame,
@@ -1096,6 +1290,50 @@ public class CardinalRiteBoundaryRenderer {
 				rite.staffPlantingRenderTicks(partialTick), staffMeltTicks(frame, partialTick));
 		CardinalRiteStaffTendrilRenderer.render(poseStack, consumer, rite.getCenter(),
 				currentTime, camera, visibilityProgress, glowPass);
+	}
+
+	/** Each awakened sigil's node tendrils, risen once its glow front has run the pattern. */
+	private static void drawSigilNodeTendrils(PoseStack poseStack, VertexConsumer consumer, RiteFrame frame,
+			float time, Vec3 camera, boolean glowPass) {
+		ActiveRiteData.RiteEntry rite = frame.entry;
+		if (rite.getSigilSegments().isEmpty() || frame.fade <= 0.001F) return;
+		Map<String, List<ActiveRiteData.SigilSegment>> bySigil = new LinkedHashMap<>();
+		for (ActiveRiteData.SigilSegment segment : rite.getSigilSegments()) {
+			if (segment.awakened()) bySigil.computeIfAbsent(segment.sigilKey(), key -> new ArrayList<>()).add(segment);
+		}
+		BlockPos center = rite.getCenter();
+		float drain = gougeDrain(frame);
+		for (Map.Entry<String, List<ActiveRiteData.SigilSegment>> sigil : bySigil.entrySet()) {
+			float rise = IchorianSigilGougeStages.tendrilRise(SigilGougeClientState.awakeAge(center, sigil.getKey(), time))
+					* drain;
+			if (rise <= 0.0F) continue;
+			List<Vec3> nodes = IchorianSigilNodeTendrilGeometry.nodes(sigil.getValue());
+			Vec3 hover = IchorianSigilNodeTendrilGeometry.hoverPoint(nodes);
+			// The growths stand on the gouge's own surface, not on the node landmarks' height over it.
+			List<Vec3> feet = new ArrayList<>(nodes.size());
+			for (Vec3 node : nodes) feet.add(node.subtract(0.0D, IchorianSigilGougeGeometry.SURFACE_DROP, 0.0D));
+			long seed = center.asLong() * 31L + sigil.getKey().hashCode();
+			// They leave the gouge in its blood's colour, a little brighter than the pool so they read as raised from it.
+			IchorianSigilRenderPalette.Color ichor = IchorianSigilRenderPalette.authoredIchor(
+					sigil.getValue().get(0).color(), false);
+			float lit = 255.0F * NODE_TENDRIL_BLOOD_BRIGHTNESS;
+			int bloodColor = Math.round(ichor.red() * lit) << 16 | Math.round(ichor.green() * lit) << 8
+					| Math.round(ichor.blue() * lit);
+			List<IchorianSigilNodeTendrilGeometry.Strand> strands = new ArrayList<>(
+					IchorianSigilNodeTendrilGeometry.roots(sigil.getValue(), feet, seed, time, rise, bloodColor));
+			strands.addAll(IchorianSigilNodeTendrilGeometry.strands(feet, hover, seed, time, rise, bloodColor));
+			List<IchorianSigilNodeTendrilGeometry.Strand> faded = new ArrayList<>(strands.size());
+			for (IchorianSigilNodeTendrilGeometry.Strand strand : strands) {
+				List<IchorianSigilNodeTendrilGeometry.Joint> joints = new ArrayList<>(strand.joints().size());
+				for (IchorianSigilNodeTendrilGeometry.Joint joint : strand.joints()) {
+					joints.add(new IchorianSigilNodeTendrilGeometry.Joint(joint.center(), joint.halfWidth(),
+							joint.opacity() * frame.fade * (glowPass ? NODE_TENDRIL_GLOW_OPACITY : 1.0F),
+							joint.tint(), joint.groundAligned()));
+				}
+				faded.add(new IchorianSigilNodeTendrilGeometry.Strand(strand.index(), joints));
+			}
+			SanguineTendrilRibbonRenderer.render(poseStack, consumer, faded, camera, glowPass);
+		}
 	}
 
 	private static float staffMeltTicks(RiteFrame frame, float partialTick) {

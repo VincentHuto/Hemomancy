@@ -24,6 +24,8 @@ public final class HemorathHaloPath {
 	/** Above the floor: under it you are safe only flat on the ground, which no one is; over it, a jump clears. */
 	public static final double LOW = 0.4D;
 	public static final double HIGH = 2.2D;
+	public static final double FLIGHT_HEIGHT = (LOW + HIGH) * 0.5D;
+	public static final double RIM_RADIUS = 0.84D;
 
 	private static final List<double[]> POINTS = build();
 	private static final double LENGTH = length(POINTS);

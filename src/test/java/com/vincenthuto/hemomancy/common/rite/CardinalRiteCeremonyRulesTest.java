@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.common.rite;
 
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService;
+import net.minecraft.core.BlockPos;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class CardinalRiteCeremonyRulesTest {
@@ -24,6 +26,19 @@ public final class CardinalRiteCeremonyRulesTest {
 				"fragile damage blocks");
 		assertEquals(3, CardinalRiteCeremonyRules.fragileBlocksOnCollapse("collapse"),
 				"collapse fragile blocks");
+	}
+
+	@Test
+	void aCollapseBreaksOnlyFragileCellsOfItsOwnFloor() {
+		BlockPos focus = new BlockPos(10, 64, -3);
+		List<BlockPos> floor = List.of(focus.offset(1, 0, 1), focus.offset(-1, 0, -1), focus.offset(0, 0, 1));
+		List<BlockPos> offsets = List.of(new BlockPos(1, 0, 1), new BlockPos(4, 0, 4), new BlockPos(1, 1, 1),
+				new BlockPos(-1, 0, -1));
+		assertEquals(List.of(focus.offset(1, 0, 1), focus.offset(-1, 0, -1)),
+				CardinalRiteCeremonyRules.fragileFloorCells(offsets, focus, floor),
+				"offsets off the floor, or above it, are never broken");
+		assertEquals(List.of(), CardinalRiteCeremonyRules.fragileFloorCells(offsets, focus, List.of()),
+				"a rite with no matched floor breaks nothing");
 	}
 
 	@Test

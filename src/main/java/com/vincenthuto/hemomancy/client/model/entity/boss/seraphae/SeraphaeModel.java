@@ -40,326 +40,364 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 
 	protected final ModelPart root;
 	protected final ModelPart body;
-	protected final ModelPart waistShackle;
-	protected final ModelPart leftMantle;
-	protected final ModelPart rightMantle;
+	protected final ModelPart unclosingEye;
 	protected final ModelPart head;
-	protected final ModelPart hair;
-	protected final ModelPart leftHairLock;
-	protected final ModelPart rightHairLock;
-	protected final ModelPart veil;
-	protected final ModelPart leftVeilTail;
-	protected final ModelPart rightVeilTail;
-	protected final ModelPart halo;
-	protected final ModelPart haloSegment0;
-	protected final ModelPart haloSegment1;
-	protected final ModelPart haloSegment3;
-	protected final ModelPart haloSegment4;
-	protected final ModelPart haloSegment5;
-	protected final ModelPart haloSegment6;
-	protected final ModelPart haloSegment8;
-	protected final ModelPart haloSegment9;
-	protected final ModelPart haloSegment10;
-	protected final ModelPart haloSegment11;
-	protected final ModelPart leftWing;
-	protected final ModelPart leftWingShackle;
-	protected final ModelPart leftTrunkUpper0;
-	protected final ModelPart leftTrunkUpper0BranchA;
-	protected final ModelPart leftTrunkUpper0BranchB;
-	protected final ModelPart leftTrunkUpper1;
-	protected final ModelPart leftTrunkUpper1BranchA;
-	protected final ModelPart leftTrunkUpper1BranchB;
-	protected final ModelPart leftTrunkUpper2;
-	protected final ModelPart leftTrunkUpper2BranchA;
-	protected final ModelPart leftTrunkUpper2BranchB;
-	protected final ModelPart leftTrunkUpperTip;
-	protected final ModelPart leftTrunkUpperTip0;
-	protected final ModelPart leftTrunkUpperTip1;
-	protected final ModelPart leftTrunkUpperTip2;
-	protected final ModelPart leftTrunkUpperTip3;
-	protected final ModelPart leftTrunkMiddle0;
-	protected final ModelPart leftTrunkMiddle0BranchA;
-	protected final ModelPart leftTrunkMiddle0BranchB;
-	protected final ModelPart leftTrunkMiddle1;
-	protected final ModelPart leftTrunkMiddle1BranchA;
-	protected final ModelPart leftTrunkMiddle1BranchB;
-	protected final ModelPart leftTrunkMiddle2;
-	protected final ModelPart leftTrunkMiddle2BranchA;
-	protected final ModelPart leftTrunkMiddle2BranchB;
-	protected final ModelPart leftTrunkMiddleTip;
-	protected final ModelPart leftTrunkMiddleTip0;
-	protected final ModelPart leftTrunkMiddleTip1;
-	protected final ModelPart leftTrunkMiddleTip2;
-	protected final ModelPart leftTrunkMiddleTip3;
-	protected final ModelPart leftTrunkLower0;
-	protected final ModelPart leftTrunkLower0BranchA;
-	protected final ModelPart leftTrunkLower0BranchB;
-	protected final ModelPart leftTrunkLower1;
-	protected final ModelPart leftTrunkLower1BranchA;
-	protected final ModelPart leftTrunkLower1BranchB;
-	protected final ModelPart leftTrunkLower2;
-	protected final ModelPart leftTrunkLower2BranchA;
-	protected final ModelPart leftTrunkLower2BranchB;
-	protected final ModelPart leftTrunkLowerTip;
-	protected final ModelPart leftTrunkLowerTip0;
-	protected final ModelPart leftTrunkLowerTip1;
-	protected final ModelPart leftTrunkLowerTip2;
-	protected final ModelPart leftTrunkLowerTip3;
-	protected final ModelPart leftArm;
-	protected final ModelPart leftForearm;
-	protected final ModelPart leftWristShackle;
-	protected final ModelPart leftHand;
-	protected final ModelPart leftThumb;
-	protected final ModelPart leftFingers;
-	protected final ModelPart leftChain;
-	protected final ModelPart leftChainLink0;
-	protected final ModelPart leftChainLink1;
-	protected final ModelPart leftChainLink2;
-	protected final ModelPart leftChainLink3;
-	protected final ModelPart leftChainLink4;
-	protected final ModelPart leftChainLink5;
-	protected final ModelPart leftChainLink6;
-	protected final ModelPart leftLeg;
-	protected final ModelPart leftShin;
-	protected final ModelPart rightWing;
-	protected final ModelPart rightWingShackle;
-	protected final ModelPart rightTrunkUpper0;
-	protected final ModelPart rightTrunkUpper0BranchA;
-	protected final ModelPart rightTrunkUpper0BranchB;
-	protected final ModelPart rightTrunkUpper1;
-	protected final ModelPart rightTrunkUpper1BranchA;
-	protected final ModelPart rightTrunkUpper1BranchB;
-	protected final ModelPart rightTrunkUpper2;
-	protected final ModelPart rightTrunkUpper2BranchA;
-	protected final ModelPart rightTrunkUpper2BranchB;
-	protected final ModelPart rightTrunkUpperTip;
-	protected final ModelPart rightTrunkUpperTip0;
-	protected final ModelPart rightTrunkUpperTip1;
-	protected final ModelPart rightTrunkUpperTip2;
-	protected final ModelPart rightTrunkUpperTip3;
-	protected final ModelPart rightTrunkMiddle0;
-	protected final ModelPart rightTrunkMiddle0BranchA;
-	protected final ModelPart rightTrunkMiddle0BranchB;
-	protected final ModelPart rightTrunkMiddle1;
-	protected final ModelPart rightTrunkMiddle1BranchA;
-	protected final ModelPart rightTrunkMiddle1BranchB;
-	protected final ModelPart rightTrunkMiddle2;
-	protected final ModelPart rightTrunkMiddle2BranchA;
-	protected final ModelPart rightTrunkMiddle2BranchB;
-	protected final ModelPart rightTrunkMiddleTip;
-	protected final ModelPart rightTrunkMiddleTip0;
-	protected final ModelPart rightTrunkMiddleTip1;
-	protected final ModelPart rightTrunkMiddleTip2;
-	protected final ModelPart rightTrunkMiddleTip3;
-	protected final ModelPart rightTrunkLower0;
-	protected final ModelPart rightTrunkLower0BranchA;
-	protected final ModelPart rightTrunkLower0BranchB;
-	protected final ModelPart rightTrunkLower1;
-	protected final ModelPart rightTrunkLower1BranchA;
-	protected final ModelPart rightTrunkLower1BranchB;
-	protected final ModelPart rightTrunkLower2;
-	protected final ModelPart rightTrunkLower2BranchA;
-	protected final ModelPart rightTrunkLower2BranchB;
-	protected final ModelPart rightTrunkLower3;
-	protected final ModelPart rightTrunkLower3BranchA;
-	protected final ModelPart rightTrunkLower3BranchB;
-	protected final ModelPart rightTrunkLowerTip;
-	protected final ModelPart rightTrunkLowerTip0;
-	protected final ModelPart rightTrunkLowerTip1;
-	protected final ModelPart rightTrunkLowerTip2;
-	protected final ModelPart rightTrunkLowerTip3;
-	protected final ModelPart rightArm;
-	protected final ModelPart rightForearm;
-	protected final ModelPart rightWristShackle;
-	protected final ModelPart rightHand;
-	protected final ModelPart rightThumb;
-	protected final ModelPart rightFingers;
-	protected final ModelPart rightChain;
-	protected final ModelPart rightChainLink0;
-	protected final ModelPart rightChainLink1;
-	protected final ModelPart rightChainLink2;
-	protected final ModelPart rightChainLink3;
-	protected final ModelPart rightChainLink4;
-	protected final ModelPart rightChainLink5;
-	protected final ModelPart rightChainLink6;
+	protected final ModelPart nursesVeil;
+	protected final ModelPart veilTail1;
+	protected final ModelPart veilTail2;
+	protected final ModelPart veilTail3;
+	protected final ModelPart veilTail4;
+	protected final ModelPart segmentedBoneHalo;
+	protected final ModelPart haloBone01;
+	protected final ModelPart haloBone02;
+	protected final ModelPart haloBone03;
+	protected final ModelPart haloBone04;
+	protected final ModelPart haloBone05;
+	protected final ModelPart haloBone06;
+	protected final ModelPart haloBone07;
+	protected final ModelPart haloBone08;
+	protected final ModelPart haloBone09;
+	protected final ModelPart haloBone10;
+	protected final ModelPart haloSuture5;
+	protected final ModelPart haloSuture7;
+	protected final ModelPart haloSuture8;
+	protected final ModelPart shreddedVestments;
+	protected final ModelPart frontLeft;
+	protected final ModelPart frontRight;
+	protected final ModelPart outerLeft;
+	protected final ModelPart outerRight;
+	protected final ModelPart trainLeft;
+	protected final ModelPart trainRight;
+	protected final ModelPart rightLining;
+	protected final ModelPart leftLining;
+	protected final ModelPart centralStole;
 	protected final ModelPart rightLeg;
 	protected final ModelPart rightShin;
-	protected final ModelPart robePanel0;
-	protected final ModelPart robePanel1;
-	protected final ModelPart robePanel2;
-	protected final ModelPart robePanel3;
-	protected final ModelPart robePanel4;
-	protected final ModelPart robePanel5;
-	protected final ModelPart gownFront;
-	protected final ModelPart waistChain;
-	protected final ModelPart waistChainLink0;
-	protected final ModelPart waistChainLink1;
-	protected final ModelPart waistChainLink2;
-	protected final ModelPart waistChainLink3;
-	protected final ModelPart waistChainLink4;
-	protected final ModelPart waistChainLink5;
+	protected final ModelPart leftLeg;
+	protected final ModelPart leftShin;
+	protected final ModelPart rightArm;
+	protected final ModelPart rightForearm;
+	protected final ModelPart rightWristChain;
+	protected final ModelPart rightWristChain1;
+	protected final ModelPart rightWristChain2;
+	protected final ModelPart rightWristChain3;
+	protected final ModelPart rightWristChain4;
+	protected final ModelPart rightWristChain5;
+	protected final ModelPart rightHand;
+	protected final ModelPart rightFinger1;
+	protected final ModelPart rightFinger2;
+	protected final ModelPart rightFinger3;
+	protected final ModelPart rightFinger4;
+	protected final ModelPart rightThumb;
+	protected final ModelPart leftArm;
+	protected final ModelPart leftForearm;
+	protected final ModelPart leftWristChain;
+	protected final ModelPart leftWristChain1;
+	protected final ModelPart leftWristChain2;
+	protected final ModelPart leftWristChain3;
+	protected final ModelPart leftWristChain4;
+	protected final ModelPart leftHand;
+	protected final ModelPart leftFinger1;
+	protected final ModelPart leftFinger2;
+	protected final ModelPart leftFinger3;
+	protected final ModelPart leftFinger4;
+	protected final ModelPart leftThumb;
+	protected final ModelPart girdleChain;
+	protected final ModelPart girdleChain1;
+	protected final ModelPart girdleChain2;
+	protected final ModelPart girdleChain3;
+	protected final ModelPart girdleChain4;
+	protected final ModelPart girdleChain5;
+	protected final ModelPart rightNerveWing;
+	protected final ModelPart rightWingChain;
+	protected final ModelPart rightWingChain1;
+	protected final ModelPart rightWingChain2;
+	protected final ModelPart rightWingChain3;
+	protected final ModelPart rightAscendingNerve;
+	protected final ModelPart rightNerve1Trunk1;
+	protected final ModelPart rightNerve1Trunk2;
+	protected final ModelPart rightNerve1Trunk3;
+	protected final ModelPart rightNerve1Trunk4;
+	protected final ModelPart rightNerve1Branch1;
+	protected final ModelPart rightNerve1Dendrite1;
+	protected final ModelPart rightNerve1Branch2;
+	protected final ModelPart rightNerve1Dendrite2;
+	protected final ModelPart rightNerve1Fork2;
+	protected final ModelPart rightNerve1Branch3;
+	protected final ModelPart rightNerve1Dendrite3;
+	protected final ModelPart rightNerve1Fork3;
+	protected final ModelPart rightNerve1Terminal1;
+	protected final ModelPart rightNerve1Terminal2;
+	protected final ModelPart rightNerve1Terminal3;
+	protected final ModelPart rightLateralNerve;
+	protected final ModelPart rightNerve2Trunk1;
+	protected final ModelPart rightNerve2Trunk2;
+	protected final ModelPart rightNerve2Trunk3;
+	protected final ModelPart rightNerve2Trunk4;
+	protected final ModelPart rightNerve2Branch1;
+	protected final ModelPart rightNerve2Dendrite1;
+	protected final ModelPart rightNerve2Branch2;
+	protected final ModelPart rightNerve2Dendrite2;
+	protected final ModelPart rightNerve2Fork2;
+	protected final ModelPart rightNerve2Branch3;
+	protected final ModelPart rightNerve2Dendrite3;
+	protected final ModelPart rightNerve2Fork3;
+	protected final ModelPart rightNerve2Terminal1;
+	protected final ModelPart rightNerve2Terminal2;
+	protected final ModelPart rightNerve2Terminal3;
+	protected final ModelPart rightDescendingNerve;
+	protected final ModelPart rightNerve3Trunk1;
+	protected final ModelPart rightNerve3Trunk2;
+	protected final ModelPart rightNerve3Trunk3;
+	protected final ModelPart rightNerve3Trunk4;
+	protected final ModelPart rightNerve3Branch1;
+	protected final ModelPart rightNerve3Dendrite1;
+	protected final ModelPart rightNerve3Branch2;
+	protected final ModelPart rightNerve3Dendrite2;
+	protected final ModelPart rightNerve3Fork2;
+	protected final ModelPart rightNerve3Branch3;
+	protected final ModelPart rightNerve3Dendrite3;
+	protected final ModelPart rightNerve3Fork3;
+	protected final ModelPart rightNerve3Terminal1;
+	protected final ModelPart rightNerve3Terminal2;
+	protected final ModelPart rightNerve3Terminal3;
+	protected final ModelPart leftNerveWing;
+	protected final ModelPart leftWingChain;
+	protected final ModelPart leftWingChain1;
+	protected final ModelPart leftWingChain2;
+	protected final ModelPart leftWingChain3;
+	protected final ModelPart leftAscendingNerve;
+	protected final ModelPart leftNerve1Trunk1;
+	protected final ModelPart leftNerve1Trunk2;
+	protected final ModelPart leftNerve1Trunk3;
+	protected final ModelPart leftNerve1Trunk4;
+	protected final ModelPart leftNerve1Branch1;
+	protected final ModelPart leftNerve1Dendrite1;
+	protected final ModelPart leftNerve1Branch2;
+	protected final ModelPart leftNerve1Dendrite2;
+	protected final ModelPart leftNerve1Fork2;
+	protected final ModelPart leftNerve1Branch3;
+	protected final ModelPart leftNerve1Dendrite3;
+	protected final ModelPart leftNerve1Fork3;
+	protected final ModelPart leftNerve1Terminal1;
+	protected final ModelPart leftNerve1Terminal2;
+	protected final ModelPart leftNerve1Terminal3;
+	protected final ModelPart leftLateralNerve;
+	protected final ModelPart leftNerve2Trunk1;
+	protected final ModelPart leftNerve2Trunk2;
+	protected final ModelPart leftNerve2Trunk3;
+	protected final ModelPart leftNerve2Trunk4;
+	protected final ModelPart leftNerve2Branch1;
+	protected final ModelPart leftNerve2Dendrite1;
+	protected final ModelPart leftNerve2Branch2;
+	protected final ModelPart leftNerve2Dendrite2;
+	protected final ModelPart leftNerve2Fork2;
+	protected final ModelPart leftNerve2Branch3;
+	protected final ModelPart leftNerve2Dendrite3;
+	protected final ModelPart leftNerve2Fork3;
+	protected final ModelPart leftNerve2Terminal1;
+	protected final ModelPart leftNerve2Terminal2;
+	protected final ModelPart leftNerve2Terminal3;
+	protected final ModelPart leftDescendingNerve;
+	protected final ModelPart leftNerve3Trunk1;
+	protected final ModelPart leftNerve3Trunk2;
+	protected final ModelPart leftNerve3Trunk3;
+	protected final ModelPart leftNerve3Trunk4;
+	protected final ModelPart leftNerve3Trunk5;
+	protected final ModelPart leftNerve3Branch1;
+	protected final ModelPart leftNerve3Dendrite1;
+	protected final ModelPart leftNerve3Branch2;
+	protected final ModelPart leftNerve3Dendrite2;
+	protected final ModelPart leftNerve3Fork2;
+	protected final ModelPart leftNerve3Branch3;
+	protected final ModelPart leftNerve3Dendrite3;
+	protected final ModelPart leftNerve3Fork3;
+	protected final ModelPart leftNerve3Branch4;
+	protected final ModelPart leftNerve3Dendrite4;
+	protected final ModelPart leftNerve3Terminal1;
+	protected final ModelPart leftNerve3Terminal2;
+	protected final ModelPart leftNerve3Terminal3;
 
 	public SeraphaeModel(ModelPart root) {
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
-		this.waistShackle = this.body.getChild("waist_shackle");
-		this.leftMantle = this.body.getChild("left_mantle");
-		this.rightMantle = this.body.getChild("right_mantle");
+		this.unclosingEye = this.body.getChild("unclosing_eye");
 		this.head = this.body.getChild("head");
-		this.hair = this.head.getChild("hair");
-		this.leftHairLock = this.head.getChild("left_hair_lock");
-		this.rightHairLock = this.head.getChild("right_hair_lock");
-		this.veil = this.head.getChild("veil");
-		this.leftVeilTail = this.head.getChild("left_veil_tail");
-		this.rightVeilTail = this.head.getChild("right_veil_tail");
-		this.halo = this.body.getChild("halo");
-		this.haloSegment0 = this.halo.getChild("halo_segment_0");
-		this.haloSegment1 = this.halo.getChild("halo_segment_1");
-		this.haloSegment3 = this.halo.getChild("halo_segment_3");
-		this.haloSegment4 = this.halo.getChild("halo_segment_4");
-		this.haloSegment5 = this.halo.getChild("halo_segment_5");
-		this.haloSegment6 = this.halo.getChild("halo_segment_6");
-		this.haloSegment8 = this.halo.getChild("halo_segment_8");
-		this.haloSegment9 = this.halo.getChild("halo_segment_9");
-		this.haloSegment10 = this.halo.getChild("halo_segment_10");
-		this.haloSegment11 = this.halo.getChild("halo_segment_11");
-		this.leftWing = this.body.getChild("left_wing");
-		this.leftWingShackle = this.leftWing.getChild("left_wing_shackle");
-		this.leftTrunkUpper0 = this.leftWing.getChild("left_trunk_upper_0");
-		this.leftTrunkUpper0BranchA = this.leftTrunkUpper0.getChild("left_trunk_upper_0_branch_a");
-		this.leftTrunkUpper0BranchB = this.leftTrunkUpper0.getChild("left_trunk_upper_0_branch_b");
-		this.leftTrunkUpper1 = this.leftTrunkUpper0.getChild("left_trunk_upper_1");
-		this.leftTrunkUpper1BranchA = this.leftTrunkUpper1.getChild("left_trunk_upper_1_branch_a");
-		this.leftTrunkUpper1BranchB = this.leftTrunkUpper1.getChild("left_trunk_upper_1_branch_b");
-		this.leftTrunkUpper2 = this.leftTrunkUpper1.getChild("left_trunk_upper_2");
-		this.leftTrunkUpper2BranchA = this.leftTrunkUpper2.getChild("left_trunk_upper_2_branch_a");
-		this.leftTrunkUpper2BranchB = this.leftTrunkUpper2.getChild("left_trunk_upper_2_branch_b");
-		this.leftTrunkUpperTip = this.leftTrunkUpper2.getChild("left_trunk_upper_tip");
-		this.leftTrunkUpperTip0 = this.leftTrunkUpperTip.getChild("left_trunk_upper_tip_0");
-		this.leftTrunkUpperTip1 = this.leftTrunkUpperTip.getChild("left_trunk_upper_tip_1");
-		this.leftTrunkUpperTip2 = this.leftTrunkUpperTip.getChild("left_trunk_upper_tip_2");
-		this.leftTrunkUpperTip3 = this.leftTrunkUpperTip.getChild("left_trunk_upper_tip_3");
-		this.leftTrunkMiddle0 = this.leftWing.getChild("left_trunk_middle_0");
-		this.leftTrunkMiddle0BranchA = this.leftTrunkMiddle0.getChild("left_trunk_middle_0_branch_a");
-		this.leftTrunkMiddle0BranchB = this.leftTrunkMiddle0.getChild("left_trunk_middle_0_branch_b");
-		this.leftTrunkMiddle1 = this.leftTrunkMiddle0.getChild("left_trunk_middle_1");
-		this.leftTrunkMiddle1BranchA = this.leftTrunkMiddle1.getChild("left_trunk_middle_1_branch_a");
-		this.leftTrunkMiddle1BranchB = this.leftTrunkMiddle1.getChild("left_trunk_middle_1_branch_b");
-		this.leftTrunkMiddle2 = this.leftTrunkMiddle1.getChild("left_trunk_middle_2");
-		this.leftTrunkMiddle2BranchA = this.leftTrunkMiddle2.getChild("left_trunk_middle_2_branch_a");
-		this.leftTrunkMiddle2BranchB = this.leftTrunkMiddle2.getChild("left_trunk_middle_2_branch_b");
-		this.leftTrunkMiddleTip = this.leftTrunkMiddle2.getChild("left_trunk_middle_tip");
-		this.leftTrunkMiddleTip0 = this.leftTrunkMiddleTip.getChild("left_trunk_middle_tip_0");
-		this.leftTrunkMiddleTip1 = this.leftTrunkMiddleTip.getChild("left_trunk_middle_tip_1");
-		this.leftTrunkMiddleTip2 = this.leftTrunkMiddleTip.getChild("left_trunk_middle_tip_2");
-		this.leftTrunkMiddleTip3 = this.leftTrunkMiddleTip.getChild("left_trunk_middle_tip_3");
-		this.leftTrunkLower0 = this.leftWing.getChild("left_trunk_lower_0");
-		this.leftTrunkLower0BranchA = this.leftTrunkLower0.getChild("left_trunk_lower_0_branch_a");
-		this.leftTrunkLower0BranchB = this.leftTrunkLower0.getChild("left_trunk_lower_0_branch_b");
-		this.leftTrunkLower1 = this.leftTrunkLower0.getChild("left_trunk_lower_1");
-		this.leftTrunkLower1BranchA = this.leftTrunkLower1.getChild("left_trunk_lower_1_branch_a");
-		this.leftTrunkLower1BranchB = this.leftTrunkLower1.getChild("left_trunk_lower_1_branch_b");
-		this.leftTrunkLower2 = this.leftTrunkLower1.getChild("left_trunk_lower_2");
-		this.leftTrunkLower2BranchA = this.leftTrunkLower2.getChild("left_trunk_lower_2_branch_a");
-		this.leftTrunkLower2BranchB = this.leftTrunkLower2.getChild("left_trunk_lower_2_branch_b");
-		this.leftTrunkLowerTip = this.leftTrunkLower2.getChild("left_trunk_lower_tip");
-		this.leftTrunkLowerTip0 = this.leftTrunkLowerTip.getChild("left_trunk_lower_tip_0");
-		this.leftTrunkLowerTip1 = this.leftTrunkLowerTip.getChild("left_trunk_lower_tip_1");
-		this.leftTrunkLowerTip2 = this.leftTrunkLowerTip.getChild("left_trunk_lower_tip_2");
-		this.leftTrunkLowerTip3 = this.leftTrunkLowerTip.getChild("left_trunk_lower_tip_3");
-		this.leftArm = this.body.getChild("left_arm");
-		this.leftForearm = this.leftArm.getChild("left_forearm");
-		this.leftWristShackle = this.leftForearm.getChild("left_wrist_shackle");
-		this.leftHand = this.leftForearm.getChild("left_hand");
-		this.leftThumb = this.leftHand.getChild("left_thumb");
-		this.leftFingers = this.leftHand.getChild("left_fingers");
-		this.leftChain = this.leftForearm.getChild("left_chain");
-		this.leftChainLink0 = this.leftChain.getChild("left_chain_link_0");
-		this.leftChainLink1 = this.leftChain.getChild("left_chain_link_1");
-		this.leftChainLink2 = this.leftChain.getChild("left_chain_link_2");
-		this.leftChainLink3 = this.leftChain.getChild("left_chain_link_3");
-		this.leftChainLink4 = this.leftChain.getChild("left_chain_link_4");
-		this.leftChainLink5 = this.leftChain.getChild("left_chain_link_5");
-		this.leftChainLink6 = this.leftChain.getChild("left_chain_link_6");
-		this.leftLeg = this.root.getChild("left_leg");
+		this.nursesVeil = this.head.getChild("nurses_veil");
+		this.veilTail1 = this.nursesVeil.getChild("veil_tail_1");
+		this.veilTail2 = this.nursesVeil.getChild("veil_tail_2");
+		this.veilTail3 = this.nursesVeil.getChild("veil_tail_3");
+		this.veilTail4 = this.nursesVeil.getChild("veil_tail_4");
+		this.segmentedBoneHalo = this.head.getChild("segmented_bone_halo");
+		this.haloBone01 = this.segmentedBoneHalo.getChild("halo_bone_01");
+		this.haloBone02 = this.segmentedBoneHalo.getChild("halo_bone_02");
+		this.haloBone03 = this.segmentedBoneHalo.getChild("halo_bone_03");
+		this.haloBone04 = this.segmentedBoneHalo.getChild("halo_bone_04");
+		this.haloBone05 = this.segmentedBoneHalo.getChild("halo_bone_05");
+		this.haloBone06 = this.segmentedBoneHalo.getChild("halo_bone_06");
+		this.haloBone07 = this.segmentedBoneHalo.getChild("halo_bone_07");
+		this.haloBone08 = this.segmentedBoneHalo.getChild("halo_bone_08");
+		this.haloBone09 = this.segmentedBoneHalo.getChild("halo_bone_09");
+		this.haloBone10 = this.segmentedBoneHalo.getChild("halo_bone_10");
+		this.haloSuture5 = this.segmentedBoneHalo.getChild("halo_suture_5");
+		this.haloSuture7 = this.segmentedBoneHalo.getChild("halo_suture_7");
+		this.haloSuture8 = this.segmentedBoneHalo.getChild("halo_suture_8");
+		this.shreddedVestments = this.body.getChild("shredded_vestments");
+		this.frontLeft = this.shreddedVestments.getChild("front_left");
+		this.frontRight = this.shreddedVestments.getChild("front_right");
+		this.outerLeft = this.shreddedVestments.getChild("outer_left");
+		this.outerRight = this.shreddedVestments.getChild("outer_right");
+		this.trainLeft = this.shreddedVestments.getChild("train_left");
+		this.trainRight = this.shreddedVestments.getChild("train_right");
+		this.rightLining = this.shreddedVestments.getChild("right_lining");
+		this.leftLining = this.shreddedVestments.getChild("left_lining");
+		this.centralStole = this.shreddedVestments.getChild("central_stole");
+		this.rightLeg = this.shreddedVestments.getChild("right_leg");
+		this.rightShin = this.rightLeg.getChild("right_shin");
+		this.leftLeg = this.shreddedVestments.getChild("left_leg");
 		this.leftShin = this.leftLeg.getChild("left_shin");
-		this.rightWing = this.body.getChild("right_wing");
-		this.rightWingShackle = this.rightWing.getChild("right_wing_shackle");
-		this.rightTrunkUpper0 = this.rightWing.getChild("right_trunk_upper_0");
-		this.rightTrunkUpper0BranchA = this.rightTrunkUpper0.getChild("right_trunk_upper_0_branch_a");
-		this.rightTrunkUpper0BranchB = this.rightTrunkUpper0.getChild("right_trunk_upper_0_branch_b");
-		this.rightTrunkUpper1 = this.rightTrunkUpper0.getChild("right_trunk_upper_1");
-		this.rightTrunkUpper1BranchA = this.rightTrunkUpper1.getChild("right_trunk_upper_1_branch_a");
-		this.rightTrunkUpper1BranchB = this.rightTrunkUpper1.getChild("right_trunk_upper_1_branch_b");
-		this.rightTrunkUpper2 = this.rightTrunkUpper1.getChild("right_trunk_upper_2");
-		this.rightTrunkUpper2BranchA = this.rightTrunkUpper2.getChild("right_trunk_upper_2_branch_a");
-		this.rightTrunkUpper2BranchB = this.rightTrunkUpper2.getChild("right_trunk_upper_2_branch_b");
-		this.rightTrunkUpperTip = this.rightTrunkUpper2.getChild("right_trunk_upper_tip");
-		this.rightTrunkUpperTip0 = this.rightTrunkUpperTip.getChild("right_trunk_upper_tip_0");
-		this.rightTrunkUpperTip1 = this.rightTrunkUpperTip.getChild("right_trunk_upper_tip_1");
-		this.rightTrunkUpperTip2 = this.rightTrunkUpperTip.getChild("right_trunk_upper_tip_2");
-		this.rightTrunkUpperTip3 = this.rightTrunkUpperTip.getChild("right_trunk_upper_tip_3");
-		this.rightTrunkMiddle0 = this.rightWing.getChild("right_trunk_middle_0");
-		this.rightTrunkMiddle0BranchA = this.rightTrunkMiddle0.getChild("right_trunk_middle_0_branch_a");
-		this.rightTrunkMiddle0BranchB = this.rightTrunkMiddle0.getChild("right_trunk_middle_0_branch_b");
-		this.rightTrunkMiddle1 = this.rightTrunkMiddle0.getChild("right_trunk_middle_1");
-		this.rightTrunkMiddle1BranchA = this.rightTrunkMiddle1.getChild("right_trunk_middle_1_branch_a");
-		this.rightTrunkMiddle1BranchB = this.rightTrunkMiddle1.getChild("right_trunk_middle_1_branch_b");
-		this.rightTrunkMiddle2 = this.rightTrunkMiddle1.getChild("right_trunk_middle_2");
-		this.rightTrunkMiddle2BranchA = this.rightTrunkMiddle2.getChild("right_trunk_middle_2_branch_a");
-		this.rightTrunkMiddle2BranchB = this.rightTrunkMiddle2.getChild("right_trunk_middle_2_branch_b");
-		this.rightTrunkMiddleTip = this.rightTrunkMiddle2.getChild("right_trunk_middle_tip");
-		this.rightTrunkMiddleTip0 = this.rightTrunkMiddleTip.getChild("right_trunk_middle_tip_0");
-		this.rightTrunkMiddleTip1 = this.rightTrunkMiddleTip.getChild("right_trunk_middle_tip_1");
-		this.rightTrunkMiddleTip2 = this.rightTrunkMiddleTip.getChild("right_trunk_middle_tip_2");
-		this.rightTrunkMiddleTip3 = this.rightTrunkMiddleTip.getChild("right_trunk_middle_tip_3");
-		this.rightTrunkLower0 = this.rightWing.getChild("right_trunk_lower_0");
-		this.rightTrunkLower0BranchA = this.rightTrunkLower0.getChild("right_trunk_lower_0_branch_a");
-		this.rightTrunkLower0BranchB = this.rightTrunkLower0.getChild("right_trunk_lower_0_branch_b");
-		this.rightTrunkLower1 = this.rightTrunkLower0.getChild("right_trunk_lower_1");
-		this.rightTrunkLower1BranchA = this.rightTrunkLower1.getChild("right_trunk_lower_1_branch_a");
-		this.rightTrunkLower1BranchB = this.rightTrunkLower1.getChild("right_trunk_lower_1_branch_b");
-		this.rightTrunkLower2 = this.rightTrunkLower1.getChild("right_trunk_lower_2");
-		this.rightTrunkLower2BranchA = this.rightTrunkLower2.getChild("right_trunk_lower_2_branch_a");
-		this.rightTrunkLower2BranchB = this.rightTrunkLower2.getChild("right_trunk_lower_2_branch_b");
-		this.rightTrunkLower3 = this.rightTrunkLower2.getChild("right_trunk_lower_3");
-		this.rightTrunkLower3BranchA = this.rightTrunkLower3.getChild("right_trunk_lower_3_branch_a");
-		this.rightTrunkLower3BranchB = this.rightTrunkLower3.getChild("right_trunk_lower_3_branch_b");
-		this.rightTrunkLowerTip = this.rightTrunkLower3.getChild("right_trunk_lower_tip");
-		this.rightTrunkLowerTip0 = this.rightTrunkLowerTip.getChild("right_trunk_lower_tip_0");
-		this.rightTrunkLowerTip1 = this.rightTrunkLowerTip.getChild("right_trunk_lower_tip_1");
-		this.rightTrunkLowerTip2 = this.rightTrunkLowerTip.getChild("right_trunk_lower_tip_2");
-		this.rightTrunkLowerTip3 = this.rightTrunkLowerTip.getChild("right_trunk_lower_tip_3");
 		this.rightArm = this.body.getChild("right_arm");
 		this.rightForearm = this.rightArm.getChild("right_forearm");
-		this.rightWristShackle = this.rightForearm.getChild("right_wrist_shackle");
+		this.rightWristChain = this.rightForearm.getChild("right_wrist_chain");
+		this.rightWristChain1 = this.rightWristChain.getChild("right_wrist_chain_1");
+		this.rightWristChain2 = this.rightWristChain.getChild("right_wrist_chain_2");
+		this.rightWristChain3 = this.rightWristChain.getChild("right_wrist_chain_3");
+		this.rightWristChain4 = this.rightWristChain.getChild("right_wrist_chain_4");
+		this.rightWristChain5 = this.rightWristChain.getChild("right_wrist_chain_5");
 		this.rightHand = this.rightForearm.getChild("right_hand");
+		this.rightFinger1 = this.rightHand.getChild("right_finger_1");
+		this.rightFinger2 = this.rightHand.getChild("right_finger_2");
+		this.rightFinger3 = this.rightHand.getChild("right_finger_3");
+		this.rightFinger4 = this.rightHand.getChild("right_finger_4");
 		this.rightThumb = this.rightHand.getChild("right_thumb");
-		this.rightFingers = this.rightHand.getChild("right_fingers");
-		this.rightChain = this.rightForearm.getChild("right_chain");
-		this.rightChainLink0 = this.rightChain.getChild("right_chain_link_0");
-		this.rightChainLink1 = this.rightChain.getChild("right_chain_link_1");
-		this.rightChainLink2 = this.rightChain.getChild("right_chain_link_2");
-		this.rightChainLink3 = this.rightChain.getChild("right_chain_link_3");
-		this.rightChainLink4 = this.rightChain.getChild("right_chain_link_4");
-		this.rightChainLink5 = this.rightChain.getChild("right_chain_link_5");
-		this.rightChainLink6 = this.rightChain.getChild("right_chain_link_6");
-		this.rightLeg = this.root.getChild("right_leg");
-		this.rightShin = this.rightLeg.getChild("right_shin");
-		this.robePanel0 = this.body.getChild("robe_panel_0");
-		this.robePanel1 = this.body.getChild("robe_panel_1");
-		this.robePanel2 = this.body.getChild("robe_panel_2");
-		this.robePanel3 = this.body.getChild("robe_panel_3");
-		this.robePanel4 = this.body.getChild("robe_panel_4");
-		this.robePanel5 = this.body.getChild("robe_panel_5");
-		this.gownFront = this.body.getChild("gown_front");
-		this.waistChain = this.body.getChild("waist_chain");
-		this.waistChainLink0 = this.waistChain.getChild("waist_chain_link_0");
-		this.waistChainLink1 = this.waistChain.getChild("waist_chain_link_1");
-		this.waistChainLink2 = this.waistChain.getChild("waist_chain_link_2");
-		this.waistChainLink3 = this.waistChain.getChild("waist_chain_link_3");
-		this.waistChainLink4 = this.waistChain.getChild("waist_chain_link_4");
-		this.waistChainLink5 = this.waistChain.getChild("waist_chain_link_5");
+		this.leftArm = this.body.getChild("left_arm");
+		this.leftForearm = this.leftArm.getChild("left_forearm");
+		this.leftWristChain = this.leftForearm.getChild("left_wrist_chain");
+		this.leftWristChain1 = this.leftWristChain.getChild("left_wrist_chain_1");
+		this.leftWristChain2 = this.leftWristChain.getChild("left_wrist_chain_2");
+		this.leftWristChain3 = this.leftWristChain.getChild("left_wrist_chain_3");
+		this.leftWristChain4 = this.leftWristChain.getChild("left_wrist_chain_4");
+		this.leftHand = this.leftForearm.getChild("left_hand");
+		this.leftFinger1 = this.leftHand.getChild("left_finger_1");
+		this.leftFinger2 = this.leftHand.getChild("left_finger_2");
+		this.leftFinger3 = this.leftHand.getChild("left_finger_3");
+		this.leftFinger4 = this.leftHand.getChild("left_finger_4");
+		this.leftThumb = this.leftHand.getChild("left_thumb");
+		this.girdleChain = this.body.getChild("girdle_chain");
+		this.girdleChain1 = this.girdleChain.getChild("girdle_chain_1");
+		this.girdleChain2 = this.girdleChain.getChild("girdle_chain_2");
+		this.girdleChain3 = this.girdleChain.getChild("girdle_chain_3");
+		this.girdleChain4 = this.girdleChain.getChild("girdle_chain_4");
+		this.girdleChain5 = this.girdleChain.getChild("girdle_chain_5");
+		this.rightNerveWing = this.body.getChild("right_nerve_wing");
+		this.rightWingChain = this.rightNerveWing.getChild("right_wing_chain");
+		this.rightWingChain1 = this.rightWingChain.getChild("right_wing_chain_1");
+		this.rightWingChain2 = this.rightWingChain.getChild("right_wing_chain_2");
+		this.rightWingChain3 = this.rightWingChain.getChild("right_wing_chain_3");
+		this.rightAscendingNerve = this.rightNerveWing.getChild("right_ascending_nerve");
+		this.rightNerve1Trunk1 = this.rightAscendingNerve.getChild("right_nerve_1_trunk_1");
+		this.rightNerve1Trunk2 = this.rightNerve1Trunk1.getChild("right_nerve_1_trunk_2");
+		this.rightNerve1Trunk3 = this.rightNerve1Trunk2.getChild("right_nerve_1_trunk_3");
+		this.rightNerve1Trunk4 = this.rightNerve1Trunk3.getChild("right_nerve_1_trunk_4");
+		this.rightNerve1Branch1 = this.rightNerve1Trunk2.getChild("right_nerve_1_branch_1");
+		this.rightNerve1Dendrite1 = this.rightNerve1Branch1.getChild("right_nerve_1_dendrite_1");
+		this.rightNerve1Branch2 = this.rightNerve1Trunk3.getChild("right_nerve_1_branch_2");
+		this.rightNerve1Dendrite2 = this.rightNerve1Branch2.getChild("right_nerve_1_dendrite_2");
+		this.rightNerve1Fork2 = this.rightNerve1Branch2.getChild("right_nerve_1_fork_2");
+		this.rightNerve1Branch3 = this.rightNerve1Trunk4.getChild("right_nerve_1_branch_3");
+		this.rightNerve1Dendrite3 = this.rightNerve1Branch3.getChild("right_nerve_1_dendrite_3");
+		this.rightNerve1Fork3 = this.rightNerve1Branch3.getChild("right_nerve_1_fork_3");
+		this.rightNerve1Terminal1 = this.rightNerve1Trunk4.getChild("right_nerve_1_terminal_1");
+		this.rightNerve1Terminal2 = this.rightNerve1Trunk4.getChild("right_nerve_1_terminal_2");
+		this.rightNerve1Terminal3 = this.rightNerve1Trunk4.getChild("right_nerve_1_terminal_3");
+		this.rightLateralNerve = this.rightNerveWing.getChild("right_lateral_nerve");
+		this.rightNerve2Trunk1 = this.rightLateralNerve.getChild("right_nerve_2_trunk_1");
+		this.rightNerve2Trunk2 = this.rightNerve2Trunk1.getChild("right_nerve_2_trunk_2");
+		this.rightNerve2Trunk3 = this.rightNerve2Trunk2.getChild("right_nerve_2_trunk_3");
+		this.rightNerve2Trunk4 = this.rightNerve2Trunk3.getChild("right_nerve_2_trunk_4");
+		this.rightNerve2Branch1 = this.rightNerve2Trunk2.getChild("right_nerve_2_branch_1");
+		this.rightNerve2Dendrite1 = this.rightNerve2Branch1.getChild("right_nerve_2_dendrite_1");
+		this.rightNerve2Branch2 = this.rightNerve2Trunk3.getChild("right_nerve_2_branch_2");
+		this.rightNerve2Dendrite2 = this.rightNerve2Branch2.getChild("right_nerve_2_dendrite_2");
+		this.rightNerve2Fork2 = this.rightNerve2Branch2.getChild("right_nerve_2_fork_2");
+		this.rightNerve2Branch3 = this.rightNerve2Trunk4.getChild("right_nerve_2_branch_3");
+		this.rightNerve2Dendrite3 = this.rightNerve2Branch3.getChild("right_nerve_2_dendrite_3");
+		this.rightNerve2Fork3 = this.rightNerve2Branch3.getChild("right_nerve_2_fork_3");
+		this.rightNerve2Terminal1 = this.rightNerve2Trunk4.getChild("right_nerve_2_terminal_1");
+		this.rightNerve2Terminal2 = this.rightNerve2Trunk4.getChild("right_nerve_2_terminal_2");
+		this.rightNerve2Terminal3 = this.rightNerve2Trunk4.getChild("right_nerve_2_terminal_3");
+		this.rightDescendingNerve = this.rightNerveWing.getChild("right_descending_nerve");
+		this.rightNerve3Trunk1 = this.rightDescendingNerve.getChild("right_nerve_3_trunk_1");
+		this.rightNerve3Trunk2 = this.rightNerve3Trunk1.getChild("right_nerve_3_trunk_2");
+		this.rightNerve3Trunk3 = this.rightNerve3Trunk2.getChild("right_nerve_3_trunk_3");
+		this.rightNerve3Trunk4 = this.rightNerve3Trunk3.getChild("right_nerve_3_trunk_4");
+		this.rightNerve3Branch1 = this.rightNerve3Trunk2.getChild("right_nerve_3_branch_1");
+		this.rightNerve3Dendrite1 = this.rightNerve3Branch1.getChild("right_nerve_3_dendrite_1");
+		this.rightNerve3Branch2 = this.rightNerve3Trunk3.getChild("right_nerve_3_branch_2");
+		this.rightNerve3Dendrite2 = this.rightNerve3Branch2.getChild("right_nerve_3_dendrite_2");
+		this.rightNerve3Fork2 = this.rightNerve3Branch2.getChild("right_nerve_3_fork_2");
+		this.rightNerve3Branch3 = this.rightNerve3Trunk4.getChild("right_nerve_3_branch_3");
+		this.rightNerve3Dendrite3 = this.rightNerve3Branch3.getChild("right_nerve_3_dendrite_3");
+		this.rightNerve3Fork3 = this.rightNerve3Branch3.getChild("right_nerve_3_fork_3");
+		this.rightNerve3Terminal1 = this.rightNerve3Trunk4.getChild("right_nerve_3_terminal_1");
+		this.rightNerve3Terminal2 = this.rightNerve3Trunk4.getChild("right_nerve_3_terminal_2");
+		this.rightNerve3Terminal3 = this.rightNerve3Trunk4.getChild("right_nerve_3_terminal_3");
+		this.leftNerveWing = this.body.getChild("left_nerve_wing");
+		this.leftWingChain = this.leftNerveWing.getChild("left_wing_chain");
+		this.leftWingChain1 = this.leftWingChain.getChild("left_wing_chain_1");
+		this.leftWingChain2 = this.leftWingChain.getChild("left_wing_chain_2");
+		this.leftWingChain3 = this.leftWingChain.getChild("left_wing_chain_3");
+		this.leftAscendingNerve = this.leftNerveWing.getChild("left_ascending_nerve");
+		this.leftNerve1Trunk1 = this.leftAscendingNerve.getChild("left_nerve_1_trunk_1");
+		this.leftNerve1Trunk2 = this.leftNerve1Trunk1.getChild("left_nerve_1_trunk_2");
+		this.leftNerve1Trunk3 = this.leftNerve1Trunk2.getChild("left_nerve_1_trunk_3");
+		this.leftNerve1Trunk4 = this.leftNerve1Trunk3.getChild("left_nerve_1_trunk_4");
+		this.leftNerve1Branch1 = this.leftNerve1Trunk2.getChild("left_nerve_1_branch_1");
+		this.leftNerve1Dendrite1 = this.leftNerve1Branch1.getChild("left_nerve_1_dendrite_1");
+		this.leftNerve1Branch2 = this.leftNerve1Trunk3.getChild("left_nerve_1_branch_2");
+		this.leftNerve1Dendrite2 = this.leftNerve1Branch2.getChild("left_nerve_1_dendrite_2");
+		this.leftNerve1Fork2 = this.leftNerve1Branch2.getChild("left_nerve_1_fork_2");
+		this.leftNerve1Branch3 = this.leftNerve1Trunk4.getChild("left_nerve_1_branch_3");
+		this.leftNerve1Dendrite3 = this.leftNerve1Branch3.getChild("left_nerve_1_dendrite_3");
+		this.leftNerve1Fork3 = this.leftNerve1Branch3.getChild("left_nerve_1_fork_3");
+		this.leftNerve1Terminal1 = this.leftNerve1Trunk4.getChild("left_nerve_1_terminal_1");
+		this.leftNerve1Terminal2 = this.leftNerve1Trunk4.getChild("left_nerve_1_terminal_2");
+		this.leftNerve1Terminal3 = this.leftNerve1Trunk4.getChild("left_nerve_1_terminal_3");
+		this.leftLateralNerve = this.leftNerveWing.getChild("left_lateral_nerve");
+		this.leftNerve2Trunk1 = this.leftLateralNerve.getChild("left_nerve_2_trunk_1");
+		this.leftNerve2Trunk2 = this.leftNerve2Trunk1.getChild("left_nerve_2_trunk_2");
+		this.leftNerve2Trunk3 = this.leftNerve2Trunk2.getChild("left_nerve_2_trunk_3");
+		this.leftNerve2Trunk4 = this.leftNerve2Trunk3.getChild("left_nerve_2_trunk_4");
+		this.leftNerve2Branch1 = this.leftNerve2Trunk2.getChild("left_nerve_2_branch_1");
+		this.leftNerve2Dendrite1 = this.leftNerve2Branch1.getChild("left_nerve_2_dendrite_1");
+		this.leftNerve2Branch2 = this.leftNerve2Trunk3.getChild("left_nerve_2_branch_2");
+		this.leftNerve2Dendrite2 = this.leftNerve2Branch2.getChild("left_nerve_2_dendrite_2");
+		this.leftNerve2Fork2 = this.leftNerve2Branch2.getChild("left_nerve_2_fork_2");
+		this.leftNerve2Branch3 = this.leftNerve2Trunk4.getChild("left_nerve_2_branch_3");
+		this.leftNerve2Dendrite3 = this.leftNerve2Branch3.getChild("left_nerve_2_dendrite_3");
+		this.leftNerve2Fork3 = this.leftNerve2Branch3.getChild("left_nerve_2_fork_3");
+		this.leftNerve2Terminal1 = this.leftNerve2Trunk4.getChild("left_nerve_2_terminal_1");
+		this.leftNerve2Terminal2 = this.leftNerve2Trunk4.getChild("left_nerve_2_terminal_2");
+		this.leftNerve2Terminal3 = this.leftNerve2Trunk4.getChild("left_nerve_2_terminal_3");
+		this.leftDescendingNerve = this.leftNerveWing.getChild("left_descending_nerve");
+		this.leftNerve3Trunk1 = this.leftDescendingNerve.getChild("left_nerve_3_trunk_1");
+		this.leftNerve3Trunk2 = this.leftNerve3Trunk1.getChild("left_nerve_3_trunk_2");
+		this.leftNerve3Trunk3 = this.leftNerve3Trunk2.getChild("left_nerve_3_trunk_3");
+		this.leftNerve3Trunk4 = this.leftNerve3Trunk3.getChild("left_nerve_3_trunk_4");
+		this.leftNerve3Trunk5 = this.leftNerve3Trunk4.getChild("left_nerve_3_trunk_5");
+		this.leftNerve3Branch1 = this.leftNerve3Trunk2.getChild("left_nerve_3_branch_1");
+		this.leftNerve3Dendrite1 = this.leftNerve3Branch1.getChild("left_nerve_3_dendrite_1");
+		this.leftNerve3Branch2 = this.leftNerve3Trunk3.getChild("left_nerve_3_branch_2");
+		this.leftNerve3Dendrite2 = this.leftNerve3Branch2.getChild("left_nerve_3_dendrite_2");
+		this.leftNerve3Fork2 = this.leftNerve3Branch2.getChild("left_nerve_3_fork_2");
+		this.leftNerve3Branch3 = this.leftNerve3Trunk4.getChild("left_nerve_3_branch_3");
+		this.leftNerve3Dendrite3 = this.leftNerve3Branch3.getChild("left_nerve_3_dendrite_3");
+		this.leftNerve3Fork3 = this.leftNerve3Branch3.getChild("left_nerve_3_fork_3");
+		this.leftNerve3Branch4 = this.leftNerve3Trunk5.getChild("left_nerve_3_branch_4");
+		this.leftNerve3Dendrite4 = this.leftNerve3Branch4.getChild("left_nerve_3_dendrite_4");
+		this.leftNerve3Terminal1 = this.leftNerve3Trunk5.getChild("left_nerve_3_terminal_1");
+		this.leftNerve3Terminal2 = this.leftNerve3Trunk5.getChild("left_nerve_3_terminal_2");
+		this.leftNerve3Terminal3 = this.leftNerve3Trunk5.getChild("left_nerve_3_terminal_3");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -369,603 +407,624 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		PartDefinition root = mesh.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.ZERO);
 
 		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
-				.texOffs(0, 0).addBox(-2.5F, -9.0F, -1.5F, 5.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(17, 0).addBox(-2.0F, -6.0F, -1.5F, 4.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(32, 0).addBox(-2.0F, -3.0F, -1.5F, 4.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(47, 0).addBox(-2.5F, -0.5F, -1.5F, 5.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(64, 0).addBox(-1.0F, -10.5F, -1.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(73, 0).addBox(-0.5F, -8.5F, -2.0F, 1.0F, 8.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(77, 0).addBox(-0.5F, -7.5F, -2.5F, 1.0F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(81, 0).addBox(-2.5F, -0.5F, -2.0F, 5.0F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(93, 0).addBox(-2.5F, -0.5F, 1.5F, 5.0F, 1.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(105, 0).addBox(-3.0F, -0.5F, -1.5F, 0.5F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(113, 0).addBox(2.5F, -0.5F, -1.5F, 0.5F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(121, 0).addBox(-0.5F, -1.0F, -2.5F, 1.0F, 1.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(125, 0).addBox(-0.5F, -0.5F, -3.0F, 0.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 13.0F, 0.0F));
+				.texOffs(0, 0).addBox(-6.0F, -14.0F, -3.5F, 12.0F, 10.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(39, 0).addBox(-5.0F, -4.0F, -3.0F, 10.0F, 7.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(74, 0).addBox(-2.0F, -18.0F, -2.0F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
+				.texOffs(91, 0).addBox(-5.0F, -15.0F, -3.6F, 10.0F, 3.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(126, 0).addBox(-1.0F, -12.0F, 3.52F, 2.0F, 12.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(133, 0).addBox(-5.5F, -1.0F, -4.0F, 11.0F, 3.0F, 9.0F, new CubeDeformation(0.0F))
+				.texOffs(174, 0).addBox(-2.0F, -1.6F, -5.8F, 4.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.0F, 0.0F));
 
-		body.addOrReplaceChild("waist_shackle", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, -2.0F));
-
-		body.addOrReplaceChild("left_mantle", CubeListBuilder.create()
-				.texOffs(0, 10).addBox(-1.0F, -0.5F, -1.5F, 2.0F, 3.5F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, -9.0F, 0.0F, 0.0F, 0.0F, -0.3491F));
-
-		body.addOrReplaceChild("right_mantle", CubeListBuilder.create()
-				.texOffs(11, 10).addBox(-1.0F, -0.5F, -1.5F, 2.0F, 3.5F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, -9.0F, 0.0F, 0.0F, 0.0F, 0.3491F));
+		body.addOrReplaceChild("unclosing_eye", CubeListBuilder.create()
+				.texOffs(187, 0).addBox(-4.0F, -3.0F, -1.0F, 8.0F, 6.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(208, 0).addBox(-3.5F, -2.0F, -2.0F, 7.0F, 4.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(227, 0).addBox(-3.0F, -2.5F, -1.5F, 6.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(242, 0).addBox(-2.5F, 1.5F, -1.5F, 5.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -8.6F, -3.5F));
 
 		PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create()
-				.texOffs(22, 10).addBox(-2.0F, -5.0F, -2.0F, 4.0F, 4.5F, 3.5F, new CubeDeformation(0.0F))
-				.texOffs(38, 10).addBox(-1.5F, -1.0F, -1.5F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -10.0F, 0.0F, 0.1047F, 0.0F, -0.0698F));
-
-		head.addOrReplaceChild("hair", CubeListBuilder.create()
-				.texOffs(51, 10).addBox(-2.5F, -5.5F, -2.0F, 5.0F, 1.0F, 4.5F, new CubeDeformation(0.0F))
-				.texOffs(71, 10).addBox(-2.5F, -5.0F, 1.5F, 5.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		head.addOrReplaceChild("left_hair_lock", CubeListBuilder.create()
-				.texOffs(84, 10).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, -4.0F, -1.0F, -0.0698F, 0.0F, -0.1396F));
-
-		head.addOrReplaceChild("right_hair_lock", CubeListBuilder.create()
-				.texOffs(89, 10).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, -4.0F, -1.0F, -0.0698F, 0.0F, 0.1396F));
+				.texOffs(0, 18).addBox(-5.0F, -10.0F, -4.0F, 10.0F, 10.0F, 8.0F, new CubeDeformation(0.0F))
+				.texOffs(37, 18).addBox(-3.5F, -1.0F, -3.5F, 7.0F, 2.0F, 7.0F, new CubeDeformation(0.0F))
+				.texOffs(66, 18).addBox(-5.5F, -11.0F, -4.5F, 11.0F, 3.0F, 9.0F, new CubeDeformation(0.0F))
+				.texOffs(107, 18).addBox(-5.2F, -9.0F, 1.9F, 10.0F, 11.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(134, 18).addBox(-5.4F, -9.0F, -2.0F, 1.5F, 9.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(148, 18).addBox(4.0F, -9.0F, -1.5F, 1.5F, 8.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -16.4F, 0.0F, 0.0873F, -0.0698F, 0.0873F));
 
-		head.addOrReplaceChild("veil", CubeListBuilder.create()
-				.texOffs(94, 10).addBox(-2.5F, -6.0F, -2.0F, 5.0F, 0.5F, 4.5F, new CubeDeformation(0.0F))
-				.texOffs(114, 10).addBox(-3.0F, -5.5F, -0.5F, 0.5F, 8.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 22).addBox(2.5F, -5.5F, -0.5F, 0.5F, 8.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(8, 22).addBox(-2.5F, -5.5F, 2.0F, 5.0F, 10.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(20, 22).addBox(-2.5F, -5.0F, -2.5F, 5.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
+		PartDefinition nursesVeil = head.addOrReplaceChild("nurses_veil", CubeListBuilder.create()
+				.texOffs(162, 18).addBox(-6.0F, -1.0F, -4.0F, 12.0F, 3.0F, 8.0F, new CubeDeformation(0.0F))
+				.texOffs(203, 18).addBox(-6.5F, 1.0F, 1.3F, 13.0F, 12.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -10.5F, 1.6F, -0.0F, -0.0F, -0.0698F));
 
-		head.addOrReplaceChild("left_veil_tail", CubeListBuilder.create()
-				.texOffs(32, 22).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 8.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.5F, -0.5F, 1.5F, -0.0873F, 0.0F, -0.1396F));
+		nursesVeil.addOrReplaceChild("veil_tail_1", CubeListBuilder.create()
+				.texOffs(236, 18).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-6.0F, 10.0F, 2.8F, -0.3316F, -0.0F, -0.2094F));
 
-		head.addOrReplaceChild("right_veil_tail", CubeListBuilder.create()
-				.texOffs(38, 22).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 9.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, -0.5F, 1.5F, -0.0873F, 0.0F, 0.1396F));
+		nursesVeil.addOrReplaceChild("veil_tail_2", CubeListBuilder.create()
+				.texOffs(0, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, 11.0F, 4.0F, -0.3316F, -0.0F, 0.1396F));
 
-		PartDefinition halo = body.addOrReplaceChild("halo", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, -14.0F, 3.5F, -0.0873F, 0.0F, 0.0F));
+		nursesVeil.addOrReplaceChild("veil_tail_3", CubeListBuilder.create()
+				.texOffs(11, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0F, 11.0F, 3.6F, -0.3316F, -0.0F, -0.1745F));
 
-		halo.addOrReplaceChild("halo_segment_0", CubeListBuilder.create()
-				.texOffs(44, 22).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(55, 22).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(63, 22).addBox(-0.5F, -2.5F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(68, 22).addBox(-0.5F, -3.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -7.0F, 0.0F));
+		nursesVeil.addOrReplaceChild("veil_tail_4", CubeListBuilder.create()
+				.texOffs(22, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.0F, 9.0F, 3.0F, -0.3316F, -0.0F, 0.2618F));
 
-		halo.addOrReplaceChild("halo_segment_1", CubeListBuilder.create()
-				.texOffs(73, 22).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(84, 22).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.5F, -6.0F, 0.0F, 0.0F, 0.0F, 0.5236F));
+		PartDefinition segmentedBoneHalo = head.addOrReplaceChild("segmented_bone_halo", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, -6.0F, 5.0F, -0.0F, 0.0F, -0.0873F));
 
-		halo.addOrReplaceChild("halo_segment_3", CubeListBuilder.create()
-				.texOffs(92, 22).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(103, 22).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(111, 22).addBox(-0.5F, -2.5F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(116, 22).addBox(-0.5F, -3.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(7.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.5708F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_01", CubeListBuilder.create()
+				.texOffs(33, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(12.7442F, 4.1408F, 0.0F, -0.0F, -0.0F, 0.6283F));
 
-		halo.addOrReplaceChild("halo_segment_4", CubeListBuilder.create()
-				.texOffs(0, 34).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(11, 34).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(6.0F, 3.5F, 0.0F, 0.0F, 0.0F, 2.0944F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_02", CubeListBuilder.create()
+				.texOffs(44, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 7.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(6.8524F, 11.1735F, 0.0F, 0.0F, 0.0F, 1.2566F));
 
-		halo.addOrReplaceChild("halo_segment_5", CubeListBuilder.create()
-				.texOffs(19, 34).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(30, 34).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(38, 34).addBox(-0.5F, -2.5F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(43, 34).addBox(-0.5F, -3.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.5F, 6.0F, 0.0F, 0.0F, 0.0F, 2.618F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_03", CubeListBuilder.create()
+				.texOffs(55, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 13.4F, 0.0F, 0.0F, 0.0F, 1.885F));
 
-		halo.addOrReplaceChild("halo_segment_6", CubeListBuilder.create()
-				.texOffs(48, 34).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(59, 34).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0F, 0.0F, 3.1416F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_04", CubeListBuilder.create()
+				.texOffs(66, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-7.8763F, 10.8408F, -0.0F, 0.0F, -0.0F, 2.5133F));
 
-		halo.addOrReplaceChild("halo_segment_8", CubeListBuilder.create()
-				.texOffs(67, 34).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(78, 34).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-6.0F, 3.5F, 0.0F, 0.0F, 0.0F, 4.1888F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_05", CubeListBuilder.create()
+				.texOffs(77, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 7.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-12.7442F, 3.0642F, -0.0F, 0.0F, -0.0F, 3.1416F));
 
-		halo.addOrReplaceChild("halo_segment_9", CubeListBuilder.create()
-				.texOffs(86, 34).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(97, 34).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(105, 34).addBox(-0.5F, -2.5F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(110, 34).addBox(-0.5F, -3.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-7.0F, 0.0F, 0.0F, 0.0F, 0.0F, 4.7124F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_06", CubeListBuilder.create()
+				.texOffs(88, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-12.7442F, -4.1408F, 0.0F, -0.0F, -0.0F, -2.5133F));
 
-		halo.addOrReplaceChild("halo_segment_10", CubeListBuilder.create()
-				.texOffs(115, 34).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 38).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(8, 38).addBox(-0.5F, -2.5F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(13, 38).addBox(-0.5F, -3.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-6.0F, -3.5F, 0.0F, 0.0F, 0.0F, 5.236F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_07", CubeListBuilder.create()
+				.texOffs(99, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-7.8763F, -10.8408F, 0.0F, -0.0F, -0.0F, -1.885F));
 
-		halo.addOrReplaceChild("halo_segment_11", CubeListBuilder.create()
-				.texOffs(18, 38).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(29, 38).addBox(-1.5F, -0.5F, -1.0F, 3.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.5F, -6.0F, 0.0F, 0.0F, 0.0F, 5.7596F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_08", CubeListBuilder.create()
+				.texOffs(110, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.4F, 0.0F, -0.0F, -0.0F, -1.2566F));
 
-		PartDefinition leftWing = body.addOrReplaceChild("left_wing", CubeListBuilder.create()
-				.texOffs(37, 38).addBox(-1.0F, -1.5F, -1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(46, 38).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(59, 38).addBox(-1.5F, 0.5F, -1.5F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, -7.5F, 1.5F, 0.0F, -0.2094F, 0.0F));
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_09", CubeListBuilder.create()
+				.texOffs(121, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(7.8763F, -10.8408F, 0.0F, -0.0F, 0.0F, -0.6283F));
 
-		leftWing.addOrReplaceChild("left_wing_shackle", CubeListBuilder.create(), PartPose.ZERO);
+		segmentedBoneHalo.addOrReplaceChild("halo_bone_10", CubeListBuilder.create()
+				.texOffs(132, 37).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(12.7442F, -4.1408F, -0.0F, -0.0F, 0.0F, -0.0F));
 
-		PartDefinition leftTrunkUpper0 = leftWing.addOrReplaceChild("left_trunk_upper_0", CubeListBuilder.create()
-				.texOffs(72, 38).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(77, 38).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.5F, 0.5F, 0.2618F, 0.1745F, -2.5307F));
+		segmentedBoneHalo.addOrReplaceChild("halo_suture_5", CubeListBuilder.create()
+				.texOffs(143, 37).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-11.5972F, -3.7682F, 0.28F, 0.0F, 0.0F, 1.885F));
 
-		leftTrunkUpper0.addOrReplaceChild("left_trunk_upper_0_branch_a", CubeListBuilder.create()
-				.texOffs(82, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.1571F, 0.0F, 0.5585F));
+		segmentedBoneHalo.addOrReplaceChild("halo_suture_7", CubeListBuilder.create()
+				.texOffs(156, 37).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -12.194F, 0.28F, 0.0F, -0.0F, 3.1416F));
 
-		leftTrunkUpper0.addOrReplaceChild("left_trunk_upper_0_branch_b", CubeListBuilder.create()
-				.texOffs(85, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, 0.1571F, 0.0F, -0.5585F));
+		segmentedBoneHalo.addOrReplaceChild("halo_suture_8", CubeListBuilder.create()
+				.texOffs(169, 37).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(7.1675F, -9.8652F, 0.28F, -0.0F, -0.0F, -2.5133F));
 
-		PartDefinition leftTrunkUpper1 = leftTrunkUpper0.addOrReplaceChild("left_trunk_upper_1", CubeListBuilder.create()
-				.texOffs(88, 38).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(93, 38).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0698F, 0.0F, 0.1396F));
+		PartDefinition shreddedVestments = body.addOrReplaceChild("shredded_vestments", CubeListBuilder.create()
+				.texOffs(182, 37).addBox(-6.0F, 0.0F, -4.0F, 12.0F, 6.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 1.5F, 0.0F));
 
-		leftTrunkUpper1.addOrReplaceChild("left_trunk_upper_1_branch_a", CubeListBuilder.create()
-				.texOffs(98, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, -0.1571F, 0.0F, 0.6632F));
+		shreddedVestments.addOrReplaceChild("front_left", CubeListBuilder.create()
+				.texOffs(225, 37).addBox(-3.0F, 0.0F, -1.0F, 6.0F, 20.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(242, 37).addBox(-2.5F, 19.9F, -1.0F, 4.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.1F, 2.0F, -3.1F, -0.1745F, -0.0F, 0.1396F));
 
-		leftTrunkUpper1.addOrReplaceChild("left_trunk_upper_1_branch_b", CubeListBuilder.create()
-				.texOffs(101, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, 0.1571F, 0.0F, -0.6632F));
+		shreddedVestments.addOrReplaceChild("front_right", CubeListBuilder.create()
+				.texOffs(0, 60).addBox(-3.0F, 0.0F, -1.0F, 6.0F, 16.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(17, 60).addBox(-2.5F, 15.9F, -1.0F, 4.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.1F, 2.0F, -3.2F, -0.0873F, -0.0F, -0.192F));
 
-		PartDefinition leftTrunkUpper2 = leftTrunkUpper1.addOrReplaceChild("left_trunk_upper_2", CubeListBuilder.create()
-				.texOffs(104, 38).addBox(-0.5F, 0.0F, -0.5F, 0.5F, 5.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0698F, 0.0F, 0.1396F));
+		shreddedVestments.addOrReplaceChild("outer_left", CubeListBuilder.create()
+				.texOffs(30, 60).addBox(-2.5F, 0.0F, -1.0F, 5.0F, 21.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(45, 60).addBox(-2.0F, 20.9F, -1.0F, 3.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.0F, 2.0F, -0.4F, 0.0873F, -0.0F, 0.2618F));
 
-		leftTrunkUpper2.addOrReplaceChild("left_trunk_upper_2_branch_a", CubeListBuilder.create()
-				.texOffs(107, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, -0.1571F, 0.0F, 0.7679F));
+		shreddedVestments.addOrReplaceChild("outer_right", CubeListBuilder.create()
+				.texOffs(56, 60).addBox(-2.5F, 0.0F, -1.0F, 5.0F, 22.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(71, 60).addBox(-2.0F, 21.9F, -1.0F, 3.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.2F, 2.0F, -0.4F, 0.1745F, -0.0F, -0.2443F));
 
-		leftTrunkUpper2.addOrReplaceChild("left_trunk_upper_2_branch_b", CubeListBuilder.create()
-				.texOffs(110, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, 0.1571F, 0.0F, -0.7679F));
+		shreddedVestments.addOrReplaceChild("train_left", CubeListBuilder.create()
+				.texOffs(82, 60).addBox(-3.5F, 0.0F, -1.0F, 7.0F, 22.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(101, 60).addBox(-3.0F, 21.9F, -1.0F, 5.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.1F, 2.0F, 3.7F, 0.2618F, -0.0F, 0.1396F));
 
-		PartDefinition leftTrunkUpperTip = leftTrunkUpper2.addOrReplaceChild("left_trunk_upper_tip", CubeListBuilder.create()
-				.texOffs(113, 38).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 5.0F, 0.0F));
+		shreddedVestments.addOrReplaceChild("train_right", CubeListBuilder.create()
+				.texOffs(116, 60).addBox(-3.5F, 0.0F, -1.0F, 7.0F, 19.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(135, 60).addBox(-3.0F, 18.9F, -1.0F, 5.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.1F, 2.0F, 3.9F, 0.2793F, -0.0F, -0.1745F));
 
-		leftTrunkUpperTip.addOrReplaceChild("left_trunk_upper_tip_0", CubeListBuilder.create()
-				.texOffs(118, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.4712F));
+		shreddedVestments.addOrReplaceChild("right_lining", CubeListBuilder.create()
+				.texOffs(150, 60).addBox(-2.0F, 0.0F, -1.0F, 4.0F, 14.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.6F, 2.0F, 1.6F, 0.2094F, -0.0F, 0.2269F));
 
-		leftTrunkUpperTip.addOrReplaceChild("left_trunk_upper_tip_1", CubeListBuilder.create()
-				.texOffs(121, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1571F));
+		shreddedVestments.addOrReplaceChild("left_lining", CubeListBuilder.create()
+				.texOffs(163, 60).addBox(-2.0F, 0.0F, -1.0F, 4.0F, 16.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.2F, 2.0F, 1.5F, 0.2618F, -0.0F, -0.2618F));
 
-		leftTrunkUpperTip.addOrReplaceChild("left_trunk_upper_tip_2", CubeListBuilder.create()
-				.texOffs(124, 38).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1571F));
+		shreddedVestments.addOrReplaceChild("central_stole", CubeListBuilder.create()
+				.texOffs(176, 60).addBox(-1.5F, 0.0F, -1.0F, 3.0F, 25.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(187, 60).addBox(-1.0F, 24.9F, -1.0F, 1.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.6F, 2.0F, -4.5F, -0.0524F, -0.0F, 0.0524F));
 
-		leftTrunkUpperTip.addOrReplaceChild("left_trunk_upper_tip_3", CubeListBuilder.create()
-				.texOffs(0, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.4712F));
-
-		PartDefinition leftTrunkMiddle0 = leftWing.addOrReplaceChild("left_trunk_middle_0", CubeListBuilder.create()
-				.texOffs(3, 47).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(8, 47).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -0.5F, 1.0F, 0.3491F, 0.3142F, -1.9548F));
-
-		leftTrunkMiddle0.addOrReplaceChild("left_trunk_middle_0_branch_a", CubeListBuilder.create()
-				.texOffs(13, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.5F, 0.0F, -0.1571F, 0.0F, 0.5585F));
-
-		leftTrunkMiddle0.addOrReplaceChild("left_trunk_middle_0_branch_b", CubeListBuilder.create()
-				.texOffs(16, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.5F, 0.0F, 0.1571F, 0.0F, -0.5585F));
-
-		PartDefinition leftTrunkMiddle1 = leftTrunkMiddle0.addOrReplaceChild("left_trunk_middle_1", CubeListBuilder.create()
-				.texOffs(19, 47).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(24, 47).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.0F, 0.0F, 0.0698F, 0.0F, 0.1396F));
-
-		leftTrunkMiddle1.addOrReplaceChild("left_trunk_middle_1_branch_a", CubeListBuilder.create()
-				.texOffs(29, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.1571F, 0.0F, 0.6632F));
-
-		leftTrunkMiddle1.addOrReplaceChild("left_trunk_middle_1_branch_b", CubeListBuilder.create()
-				.texOffs(32, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, 0.1571F, 0.0F, -0.6632F));
-
-		PartDefinition leftTrunkMiddle2 = leftTrunkMiddle1.addOrReplaceChild("left_trunk_middle_2", CubeListBuilder.create()
-				.texOffs(35, 47).addBox(-0.5F, 0.0F, -0.5F, 0.5F, 6.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0698F, 0.0F, 0.1396F));
-
-		leftTrunkMiddle2.addOrReplaceChild("left_trunk_middle_2_branch_a", CubeListBuilder.create()
-				.texOffs(38, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, -0.1571F, 0.0F, 0.7679F));
-
-		leftTrunkMiddle2.addOrReplaceChild("left_trunk_middle_2_branch_b", CubeListBuilder.create()
-				.texOffs(41, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, 0.1571F, 0.0F, -0.7679F));
-
-		PartDefinition leftTrunkMiddleTip = leftTrunkMiddle2.addOrReplaceChild("left_trunk_middle_tip", CubeListBuilder.create()
-				.texOffs(44, 47).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 6.0F, 0.0F));
-
-		leftTrunkMiddleTip.addOrReplaceChild("left_trunk_middle_tip_0", CubeListBuilder.create()
-				.texOffs(49, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.4712F));
-
-		leftTrunkMiddleTip.addOrReplaceChild("left_trunk_middle_tip_1", CubeListBuilder.create()
-				.texOffs(52, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1571F));
-
-		leftTrunkMiddleTip.addOrReplaceChild("left_trunk_middle_tip_2", CubeListBuilder.create()
-				.texOffs(55, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1571F));
-
-		leftTrunkMiddleTip.addOrReplaceChild("left_trunk_middle_tip_3", CubeListBuilder.create()
-				.texOffs(58, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.4712F));
-
-		PartDefinition leftTrunkLower0 = leftWing.addOrReplaceChild("left_trunk_lower_0", CubeListBuilder.create()
-				.texOffs(61, 47).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(66, 47).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.5F, 0.5F, 0.4363F, 0.4189F, -1.3963F));
-
-		leftTrunkLower0.addOrReplaceChild("left_trunk_lower_0_branch_a", CubeListBuilder.create()
-				.texOffs(71, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.1571F, 0.0F, 0.5585F));
-
-		leftTrunkLower0.addOrReplaceChild("left_trunk_lower_0_branch_b", CubeListBuilder.create()
-				.texOffs(74, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, 0.1571F, 0.0F, -0.5585F));
-
-		PartDefinition leftTrunkLower1 = leftTrunkLower0.addOrReplaceChild("left_trunk_lower_1", CubeListBuilder.create()
-				.texOffs(77, 47).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(82, 47).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0698F, 0.0F, 0.1396F));
-
-		leftTrunkLower1.addOrReplaceChild("left_trunk_lower_1_branch_a", CubeListBuilder.create()
-				.texOffs(87, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, -0.1571F, 0.0F, 0.6632F));
-
-		leftTrunkLower1.addOrReplaceChild("left_trunk_lower_1_branch_b", CubeListBuilder.create()
-				.texOffs(90, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, 0.1571F, 0.0F, -0.6632F));
-
-		PartDefinition leftTrunkLower2 = leftTrunkLower1.addOrReplaceChild("left_trunk_lower_2", CubeListBuilder.create()
-				.texOffs(93, 47).addBox(-0.5F, 0.0F, -0.5F, 0.5F, 5.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0698F, 0.0F, 0.1396F));
-
-		leftTrunkLower2.addOrReplaceChild("left_trunk_lower_2_branch_a", CubeListBuilder.create()
-				.texOffs(96, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, -0.1571F, 0.0F, 0.7679F));
-
-		leftTrunkLower2.addOrReplaceChild("left_trunk_lower_2_branch_b", CubeListBuilder.create()
-				.texOffs(99, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, 0.1571F, 0.0F, -0.7679F));
-
-		PartDefinition leftTrunkLowerTip = leftTrunkLower2.addOrReplaceChild("left_trunk_lower_tip", CubeListBuilder.create()
-				.texOffs(102, 47).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 5.0F, 0.0F));
-
-		leftTrunkLowerTip.addOrReplaceChild("left_trunk_lower_tip_0", CubeListBuilder.create()
-				.texOffs(107, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.4712F));
-
-		leftTrunkLowerTip.addOrReplaceChild("left_trunk_lower_tip_1", CubeListBuilder.create()
-				.texOffs(110, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1571F));
-
-		leftTrunkLowerTip.addOrReplaceChild("left_trunk_lower_tip_2", CubeListBuilder.create()
-				.texOffs(113, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1571F));
-
-		leftTrunkLowerTip.addOrReplaceChild("left_trunk_lower_tip_3", CubeListBuilder.create()
-				.texOffs(116, 47).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.4712F));
-
-		PartDefinition leftArm = body.addOrReplaceChild("left_arm", CubeListBuilder.create()
-				.texOffs(119, 47).addBox(-1.0F, -0.5F, -1.0F, 2.0F, 3.5F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 57).addBox(-0.5F, 2.5F, -0.5F, 1.5F, 3.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.0F, -8.5F, 0.0F, -0.2094F, 0.0F, -0.8727F));
-
-		PartDefinition leftForearm = leftArm.addOrReplaceChild("left_forearm", CubeListBuilder.create()
-				.texOffs(7, 57).addBox(-0.5F, -0.5F, -0.5F, 1.5F, 5.0F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(14, 57).addBox(-1.0F, 3.0F, -1.0F, 2.5F, 1.5F, 2.5F, new CubeDeformation(0.0F))
-				.texOffs(25, 57).addBox(0.0F, 3.5F, -1.5F, 0.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F, -0.3142F, 0.0F, 0.1745F));
-
-		leftForearm.addOrReplaceChild("left_wrist_shackle", CubeListBuilder.create(), PartPose.offset(0.0F, 4.0F, 0.0F));
-
-		PartDefinition leftHand = leftForearm.addOrReplaceChild("left_hand", CubeListBuilder.create()
-				.texOffs(28, 57).addBox(-0.5F, 0.0F, -0.5F, 1.5F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F, -0.1745F, 0.0F, -0.1396F));
-
-		leftHand.addOrReplaceChild("left_thumb", CubeListBuilder.create()
-				.texOffs(34, 57).addBox(0.0F, 0.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0F, 0.5F, -0.5F, 0.0F, 0.0F, 0.4363F));
-
-		leftHand.addOrReplaceChild("left_fingers", CubeListBuilder.create()
-				.texOffs(37, 57).addBox(-0.5F, 0.0F, -0.5F, 1.5F, 1.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 2.0F, 0.0F));
-
-		PartDefinition leftChain = leftForearm.addOrReplaceChild("left_chain", CubeListBuilder.create(), PartPose.offsetAndRotation(1.0F, 4.5F, 0.0F, 0.3931F, -0.3523F, 0.6214F));
-
-		leftChain.addOrReplaceChild("left_chain_link_0", CubeListBuilder.create()
-				.texOffs(43, 57).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(46, 57).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(49, 57).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(53, 57).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		leftChain.addOrReplaceChild("left_chain_link_1", CubeListBuilder.create()
-				.texOffs(57, 57).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(60, 57).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(63, 57).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(67, 57).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		leftChain.addOrReplaceChild("left_chain_link_2", CubeListBuilder.create()
-				.texOffs(71, 57).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(74, 57).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(77, 57).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(81, 57).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 4.0F, 0.0F));
-
-		leftChain.addOrReplaceChild("left_chain_link_3", CubeListBuilder.create()
-				.texOffs(85, 57).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(88, 57).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(91, 57).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(95, 57).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		leftChain.addOrReplaceChild("left_chain_link_4", CubeListBuilder.create()
-				.texOffs(99, 57).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(102, 57).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(105, 57).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(109, 57).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 8.0F, 0.0F));
-
-		leftChain.addOrReplaceChild("left_chain_link_5", CubeListBuilder.create()
-				.texOffs(113, 57).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(116, 57).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(119, 57).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(123, 57).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		leftChain.addOrReplaceChild("left_chain_link_6", CubeListBuilder.create()
-				.texOffs(0, 65).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(3, 65).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(6, 65).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(10, 65).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 12.0F, 0.0F));
-
-		PartDefinition leftLeg = root.addOrReplaceChild("left_leg", CubeListBuilder.create()
-				.texOffs(14, 65).addBox(-1.0F, -0.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0F, 13.0F, 0.0F, -0.0698F, 0.0F, -0.0698F));
-
-		leftLeg.addOrReplaceChild("left_shin", CubeListBuilder.create()
-				.texOffs(23, 65).addBox(-0.5F, -0.5F, -0.5F, 1.5F, 5.5F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(30, 65).addBox(-0.5F, 4.5F, -1.0F, 1.5F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, 0.2443F, 0.0F, 0.0F));
-
-		PartDefinition rightWing = body.addOrReplaceChild("right_wing", CubeListBuilder.create()
-				.texOffs(38, 65).addBox(-1.0F, -1.5F, -1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(47, 65).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(60, 65).addBox(-1.5F, 0.5F, -1.5F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, -7.5F, 1.5F, 0.0F, 0.2094F, 0.0F));
-
-		rightWing.addOrReplaceChild("right_wing_shackle", CubeListBuilder.create(), PartPose.ZERO);
-
-		PartDefinition rightTrunkUpper0 = rightWing.addOrReplaceChild("right_trunk_upper_0", CubeListBuilder.create()
-				.texOffs(73, 65).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(78, 65).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.5F, 0.5F, 0.2618F, -0.1745F, 2.5307F));
-
-		rightTrunkUpper0.addOrReplaceChild("right_trunk_upper_0_branch_a", CubeListBuilder.create()
-				.texOffs(83, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.1571F, 0.0F, 0.5585F));
-
-		rightTrunkUpper0.addOrReplaceChild("right_trunk_upper_0_branch_b", CubeListBuilder.create()
-				.texOffs(86, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, 0.1571F, 0.0F, -0.5585F));
-
-		PartDefinition rightTrunkUpper1 = rightTrunkUpper0.addOrReplaceChild("right_trunk_upper_1", CubeListBuilder.create()
-				.texOffs(89, 65).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(94, 65).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0698F, 0.0F, -0.1396F));
-
-		rightTrunkUpper1.addOrReplaceChild("right_trunk_upper_1_branch_a", CubeListBuilder.create()
-				.texOffs(99, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, -0.1571F, 0.0F, 0.6632F));
-
-		rightTrunkUpper1.addOrReplaceChild("right_trunk_upper_1_branch_b", CubeListBuilder.create()
-				.texOffs(102, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, 0.1571F, 0.0F, -0.6632F));
-
-		PartDefinition rightTrunkUpper2 = rightTrunkUpper1.addOrReplaceChild("right_trunk_upper_2", CubeListBuilder.create()
-				.texOffs(105, 65).addBox(-0.5F, 0.0F, -0.5F, 0.5F, 5.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0698F, 0.0F, -0.1396F));
-
-		rightTrunkUpper2.addOrReplaceChild("right_trunk_upper_2_branch_a", CubeListBuilder.create()
-				.texOffs(108, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, -0.1571F, 0.0F, 0.7679F));
-
-		rightTrunkUpper2.addOrReplaceChild("right_trunk_upper_2_branch_b", CubeListBuilder.create()
-				.texOffs(111, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, 0.1571F, 0.0F, -0.7679F));
-
-		PartDefinition rightTrunkUpperTip = rightTrunkUpper2.addOrReplaceChild("right_trunk_upper_tip", CubeListBuilder.create()
-				.texOffs(114, 65).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 5.0F, 0.0F));
-
-		rightTrunkUpperTip.addOrReplaceChild("right_trunk_upper_tip_0", CubeListBuilder.create()
-				.texOffs(119, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.4712F));
-
-		rightTrunkUpperTip.addOrReplaceChild("right_trunk_upper_tip_1", CubeListBuilder.create()
-				.texOffs(122, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1571F));
-
-		rightTrunkUpperTip.addOrReplaceChild("right_trunk_upper_tip_2", CubeListBuilder.create()
-				.texOffs(125, 65).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1571F));
-
-		rightTrunkUpperTip.addOrReplaceChild("right_trunk_upper_tip_3", CubeListBuilder.create()
-				.texOffs(0, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.4712F));
-
-		PartDefinition rightTrunkMiddle0 = rightWing.addOrReplaceChild("right_trunk_middle_0", CubeListBuilder.create()
-				.texOffs(3, 74).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(8, 74).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -0.5F, 1.0F, 0.3491F, -0.3142F, 1.9548F));
-
-		rightTrunkMiddle0.addOrReplaceChild("right_trunk_middle_0_branch_a", CubeListBuilder.create()
-				.texOffs(13, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.1571F, 0.0F, 0.5585F));
-
-		rightTrunkMiddle0.addOrReplaceChild("right_trunk_middle_0_branch_b", CubeListBuilder.create()
-				.texOffs(16, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, 0.1571F, 0.0F, -0.5585F));
-
-		PartDefinition rightTrunkMiddle1 = rightTrunkMiddle0.addOrReplaceChild("right_trunk_middle_1", CubeListBuilder.create()
-				.texOffs(19, 74).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(24, 74).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0698F, 0.0F, -0.1396F));
-
-		rightTrunkMiddle1.addOrReplaceChild("right_trunk_middle_1_branch_a", CubeListBuilder.create()
-				.texOffs(29, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, -0.1571F, 0.0F, 0.6632F));
-
-		rightTrunkMiddle1.addOrReplaceChild("right_trunk_middle_1_branch_b", CubeListBuilder.create()
-				.texOffs(32, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, 0.1571F, 0.0F, -0.6632F));
-
-		PartDefinition rightTrunkMiddle2 = rightTrunkMiddle1.addOrReplaceChild("right_trunk_middle_2", CubeListBuilder.create()
-				.texOffs(35, 74).addBox(-0.5F, 0.0F, -0.5F, 0.5F, 5.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0698F, 0.0F, -0.1396F));
-
-		rightTrunkMiddle2.addOrReplaceChild("right_trunk_middle_2_branch_a", CubeListBuilder.create()
-				.texOffs(38, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, -0.1571F, 0.0F, 0.7679F));
-
-		rightTrunkMiddle2.addOrReplaceChild("right_trunk_middle_2_branch_b", CubeListBuilder.create()
-				.texOffs(41, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, 0.1571F, 0.0F, -0.7679F));
-
-		PartDefinition rightTrunkMiddleTip = rightTrunkMiddle2.addOrReplaceChild("right_trunk_middle_tip", CubeListBuilder.create()
-				.texOffs(44, 74).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 5.0F, 0.0F));
-
-		rightTrunkMiddleTip.addOrReplaceChild("right_trunk_middle_tip_0", CubeListBuilder.create()
-				.texOffs(49, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.4712F));
-
-		rightTrunkMiddleTip.addOrReplaceChild("right_trunk_middle_tip_1", CubeListBuilder.create()
-				.texOffs(52, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1571F));
-
-		rightTrunkMiddleTip.addOrReplaceChild("right_trunk_middle_tip_2", CubeListBuilder.create()
-				.texOffs(55, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1571F));
-
-		rightTrunkMiddleTip.addOrReplaceChild("right_trunk_middle_tip_3", CubeListBuilder.create()
-				.texOffs(58, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.4712F));
-
-		PartDefinition rightTrunkLower0 = rightWing.addOrReplaceChild("right_trunk_lower_0", CubeListBuilder.create()
-				.texOffs(61, 74).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(66, 74).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.5F, 0.5F, 0.4363F, -0.4189F, 1.3963F));
-
-		rightTrunkLower0.addOrReplaceChild("right_trunk_lower_0_branch_a", CubeListBuilder.create()
-				.texOffs(71, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, -0.1571F, 0.0F, 0.5585F));
-
-		rightTrunkLower0.addOrReplaceChild("right_trunk_lower_0_branch_b", CubeListBuilder.create()
-				.texOffs(74, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.5F, 0.0F, 0.1571F, 0.0F, -0.5585F));
-
-		PartDefinition rightTrunkLower1 = rightTrunkLower0.addOrReplaceChild("right_trunk_lower_1", CubeListBuilder.create()
-				.texOffs(77, 74).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(82, 74).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 0.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0698F, 0.0F, -0.1396F));
-
-		rightTrunkLower1.addOrReplaceChild("right_trunk_lower_1_branch_a", CubeListBuilder.create()
-				.texOffs(87, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, -0.1571F, 0.0F, 0.6632F));
-
-		rightTrunkLower1.addOrReplaceChild("right_trunk_lower_1_branch_b", CubeListBuilder.create()
-				.texOffs(90, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, 0.1571F, 0.0F, -0.6632F));
-
-		PartDefinition rightTrunkLower2 = rightTrunkLower1.addOrReplaceChild("right_trunk_lower_2", CubeListBuilder.create()
-				.texOffs(93, 74).addBox(-0.5F, 0.0F, -0.5F, 0.5F, 5.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0698F, 0.0F, -0.1396F));
-
-		rightTrunkLower2.addOrReplaceChild("right_trunk_lower_2_branch_a", CubeListBuilder.create()
-				.texOffs(96, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, -0.1571F, 0.0F, 0.7679F));
-
-		rightTrunkLower2.addOrReplaceChild("right_trunk_lower_2_branch_b", CubeListBuilder.create()
-				.texOffs(99, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.5F, 0.0F, 0.1571F, 0.0F, -0.7679F));
-
-		PartDefinition rightTrunkLower3 = rightTrunkLower2.addOrReplaceChild("right_trunk_lower_3", CubeListBuilder.create()
-				.texOffs(102, 74).addBox(-0.5F, 0.0F, -0.5F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F, 0.0698F, 0.0F, -0.6981F));
-
-		rightTrunkLower3.addOrReplaceChild("right_trunk_lower_3_branch_a", CubeListBuilder.create()
-				.texOffs(105, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, 0.0F, -0.1571F, 0.0F, 0.8727F));
-
-		rightTrunkLower3.addOrReplaceChild("right_trunk_lower_3_branch_b", CubeListBuilder.create()
-				.texOffs(108, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, 0.0F, 0.1571F, 0.0F, -0.8727F));
-
-		PartDefinition rightTrunkLowerTip = rightTrunkLower3.addOrReplaceChild("right_trunk_lower_tip", CubeListBuilder.create()
-				.texOffs(111, 74).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 2.5F, 0.0F));
-
-		rightTrunkLowerTip.addOrReplaceChild("right_trunk_lower_tip_0", CubeListBuilder.create()
-				.texOffs(116, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.4712F));
-
-		rightTrunkLowerTip.addOrReplaceChild("right_trunk_lower_tip_1", CubeListBuilder.create()
-				.texOffs(119, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1571F));
-
-		rightTrunkLowerTip.addOrReplaceChild("right_trunk_lower_tip_2", CubeListBuilder.create()
-				.texOffs(122, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1571F));
-
-		rightTrunkLowerTip.addOrReplaceChild("right_trunk_lower_tip_3", CubeListBuilder.create()
-				.texOffs(125, 74).addBox(-0.5F, 0.0F, 0.0F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.4712F));
-
-		PartDefinition rightArm = body.addOrReplaceChild("right_arm", CubeListBuilder.create()
-				.texOffs(0, 83).addBox(-1.0F, -0.5F, -1.0F, 2.0F, 3.5F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(9, 83).addBox(-0.5F, 2.5F, -0.5F, 1.5F, 3.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.0F, -8.5F, 0.0F, -0.2094F, 0.0F, 0.8727F));
-
-		PartDefinition rightForearm = rightArm.addOrReplaceChild("right_forearm", CubeListBuilder.create()
-				.texOffs(16, 83).addBox(-0.5F, -0.5F, -0.5F, 1.5F, 5.0F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(23, 83).addBox(-1.0F, 3.0F, -1.0F, 2.5F, 1.5F, 2.5F, new CubeDeformation(0.0F))
-				.texOffs(34, 83).addBox(0.0F, 3.5F, -1.5F, 0.5F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F, -0.3142F, 0.0F, -0.1745F));
-
-		rightForearm.addOrReplaceChild("right_wrist_shackle", CubeListBuilder.create(), PartPose.offset(0.0F, 4.0F, 0.0F));
-
-		PartDefinition rightHand = rightForearm.addOrReplaceChild("right_hand", CubeListBuilder.create()
-				.texOffs(37, 83).addBox(-0.5F, 0.0F, -0.5F, 1.5F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F, -0.1745F, 0.0F, 0.1396F));
-
-		rightHand.addOrReplaceChild("right_thumb", CubeListBuilder.create()
-				.texOffs(43, 83).addBox(0.0F, 0.0F, 0.0F, 0.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 0.5F, -0.5F, 0.0F, 0.0F, -0.4363F));
-
-		rightHand.addOrReplaceChild("right_fingers", CubeListBuilder.create()
-				.texOffs(46, 83).addBox(-0.5F, 0.0F, -0.5F, 1.5F, 1.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 2.0F, 0.0F));
-
-		PartDefinition rightChain = rightForearm.addOrReplaceChild("right_chain", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.0F, 4.5F, 0.0F, 0.3931F, 0.3523F, -0.6214F));
-
-		rightChain.addOrReplaceChild("right_chain_link_0", CubeListBuilder.create()
-				.texOffs(52, 83).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(55, 83).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(58, 83).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(62, 83).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
-
-		rightChain.addOrReplaceChild("right_chain_link_1", CubeListBuilder.create()
-				.texOffs(66, 83).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(69, 83).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(72, 83).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(76, 83).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		rightChain.addOrReplaceChild("right_chain_link_2", CubeListBuilder.create()
-				.texOffs(80, 83).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(83, 83).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(86, 83).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(90, 83).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 4.0F, 0.0F));
-
-		rightChain.addOrReplaceChild("right_chain_link_3", CubeListBuilder.create()
-				.texOffs(94, 83).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(97, 83).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(100, 83).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(104, 83).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		rightChain.addOrReplaceChild("right_chain_link_4", CubeListBuilder.create()
-				.texOffs(108, 83).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(111, 83).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(114, 83).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(118, 83).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 8.0F, 0.0F));
-
-		rightChain.addOrReplaceChild("right_chain_link_5", CubeListBuilder.create()
-				.texOffs(122, 83).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(125, 83).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(0, 91).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(4, 91).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
-
-		rightChain.addOrReplaceChild("right_chain_link_6", CubeListBuilder.create()
-				.texOffs(8, 91).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(11, 91).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(14, 91).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(18, 91).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 12.0F, 0.0F));
-
-		PartDefinition rightLeg = root.addOrReplaceChild("right_leg", CubeListBuilder.create()
-				.texOffs(22, 91).addBox(-1.0F, -0.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0F, 13.0F, 0.0F, -0.0698F, 0.0F, 0.0698F));
+		PartDefinition rightLeg = shreddedVestments.addOrReplaceChild("right_leg", CubeListBuilder.create()
+				.texOffs(194, 60).addBox(-1.8F, 0.0F, -1.5F, 4.0F, 10.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.3F, 1.0F, 0.5F, 0.1047F, -0.0F, 0.0698F));
 
 		rightLeg.addOrReplaceChild("right_shin", CubeListBuilder.create()
-				.texOffs(31, 91).addBox(-0.5F, -0.5F, -0.5F, 1.5F, 5.5F, 1.5F, new CubeDeformation(0.0F))
-				.texOffs(38, 91).addBox(-0.5F, 4.5F, -1.0F, 1.5F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, 0.2443F, 0.0F, 0.0F));
+				.texOffs(209, 60).addBox(-1.7F, 0.0F, -1.5F, 3.0F, 8.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(222, 60).addBox(-1.8F, 7.0F, -2.7F, 4.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, 0.2094F, -0.0F, 0.0F));
 
-		body.addOrReplaceChild("robe_panel_0", CubeListBuilder.create()
-				.texOffs(46, 91).addBox(-1.5F, -0.5F, -0.5F, 3.0F, 10.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(54, 91).addBox(-1.5F, 10.0F, -0.5F, 1.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.5F, 1.0F, -1.5F, 0.1047F, 0.0F, 0.1745F));
+		PartDefinition leftLeg = shreddedVestments.addOrReplaceChild("left_leg", CubeListBuilder.create()
+				.texOffs(241, 60).addBox(-1.8F, 0.0F, -1.5F, 4.0F, 10.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.3F, 1.0F, 0.5F, 0.1047F, -0.0F, -0.0698F));
 
-		body.addOrReplaceChild("robe_panel_1", CubeListBuilder.create()
-				.texOffs(59, 91).addBox(-1.5F, -0.5F, -0.5F, 3.0F, 11.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(67, 91).addBox(-1.5F, 10.5F, -0.5F, 1.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.5F, 1.0F, -1.5F, 0.1047F, 0.0F, -0.1745F));
+		leftLeg.addOrReplaceChild("left_shin", CubeListBuilder.create()
+				.texOffs(0, 88).addBox(-1.7F, 0.0F, -1.5F, 3.0F, 8.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(13, 88).addBox(-1.8F, 7.0F, -2.7F, 4.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, 0.2793F, -0.0F, 0.0F));
 
-		body.addOrReplaceChild("robe_panel_2", CubeListBuilder.create()
-				.texOffs(72, 91).addBox(-1.5F, -0.5F, -0.5F, 3.0F, 11.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(80, 91).addBox(-1.5F, 10.5F, -0.5F, 1.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.5F, 1.0F, 1.5F, -0.1047F, 0.0F, 0.1571F));
+		PartDefinition rightArm = body.addOrReplaceChild("right_arm", CubeListBuilder.create()
+				.texOffs(32, 88).addBox(-2.5F, -1.2F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(53, 88).addBox(-2.6F, 4.0F, -2.6F, 5.0F, 2.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(74, 88).addBox(-1.7F, 4.0F, -1.6F, 3.0F, 7.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.7F, -12.0F, 0.0F, -0.1745F, -0.0F, 0.576F));
 
-		body.addOrReplaceChild("robe_panel_3", CubeListBuilder.create()
-				.texOffs(85, 91).addBox(-1.5F, -0.5F, -0.5F, 3.0F, 10.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(93, 91).addBox(-1.5F, 9.5F, -0.5F, 1.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.5F, 1.0F, 1.5F, -0.1047F, 0.0F, -0.1571F));
+		PartDefinition rightForearm = rightArm.addOrReplaceChild("right_forearm", CubeListBuilder.create()
+				.texOffs(87, 88).addBox(-1.8F, 0.0F, -1.7F, 4.0F, 10.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(102, 88).addBox(-2.5F, 7.4F, -2.3F, 5.0F, 3.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(123, 88).addBox(-1.5F, 7.6F, -3.2F, 3.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.4F, 0.0F, -0.4887F, -0.1396F, -0.2443F));
 
-		body.addOrReplaceChild("robe_panel_4", CubeListBuilder.create()
-				.texOffs(98, 91).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 10.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(108, 91).addBox(-2.0F, 10.0F, -0.5F, 2.0F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, 1.0F, 0.0F, 0.1047F, 1.5708F, 0.2094F));
+		PartDefinition rightWristChain = rightForearm.addOrReplaceChild("right_wrist_chain", CubeListBuilder.create(), PartPose.offsetAndRotation(1.2F, 9.4F, 1.8F, 0.7156F, -0.0F, -0.2269F));
 
-		body.addOrReplaceChild("robe_panel_5", CubeListBuilder.create()
-				.texOffs(114, 91).addBox(-2.0F, -0.5F, -0.5F, 4.0F, 10.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(0, 104).addBox(-2.0F, 9.5F, -0.5F, 2.0F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.5F, 1.0F, 0.0F, 0.1047F, 1.5708F, -0.2094F));
+		rightWristChain.addOrReplaceChild("right_wrist_chain_1", CubeListBuilder.create()
+				.texOffs(134, 88).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(139, 88).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(144, 88).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(149, 88).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.1745F, 0.0F));
 
-		body.addOrReplaceChild("gown_front", CubeListBuilder.create()
-				.texOffs(6, 104).addBox(-1.5F, 0.0F, -0.5F, 3.0F, 10.0F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(14, 104).addBox(-1.5F, 10.0F, -0.5F, 1.5F, 1.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.0F, -2.0F, 0.0873F, 0.0F, 0.0F));
+		rightWristChain.addOrReplaceChild("right_wrist_chain_2", CubeListBuilder.create()
+				.texOffs(154, 88).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(159, 88).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(164, 88).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(169, 88).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2062F, 3.04F, 0.0F, 0.0F, 1.309F, 0.0F));
 
-		PartDefinition waistChain = body.addOrReplaceChild("waist_chain", CubeListBuilder.create(), PartPose.offset(-2.0F, 1.0F, -2.5F));
+		rightWristChain.addOrReplaceChild("right_wrist_chain_3", CubeListBuilder.create()
+				.texOffs(174, 88).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(179, 88).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(184, 88).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(189, 88).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.3153F, 6.08F, -0.0F, 0.0F, -0.1745F, 0.0F));
 
-		waistChain.addOrReplaceChild("waist_chain_link_0", CubeListBuilder.create()
-				.texOffs(19, 104).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(22, 104).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(25, 104).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(29, 104).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.ZERO);
+		rightWristChain.addOrReplaceChild("right_wrist_chain_4", CubeListBuilder.create()
+				.texOffs(194, 88).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(199, 88).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(204, 88).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(209, 88).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2762F, 9.12F, -0.0F, 0.0F, 1.309F, 0.0F));
 
-		waistChain.addOrReplaceChild("waist_chain_link_1", CubeListBuilder.create()
-				.texOffs(33, 104).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(36, 104).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(39, 104).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(43, 104).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
+		rightWristChain.addOrReplaceChild("right_wrist_chain_5", CubeListBuilder.create()
+				.texOffs(214, 88).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(219, 88).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(224, 88).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(229, 88).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.1072F, 12.16F, -0.0F, 0.0F, -0.1745F, 0.0F));
 
-		waistChain.addOrReplaceChild("waist_chain_link_2", CubeListBuilder.create()
-				.texOffs(47, 104).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(50, 104).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(53, 104).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(57, 104).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 4.0F, 0.0F));
+		PartDefinition rightHand = rightForearm.addOrReplaceChild("right_hand", CubeListBuilder.create()
+				.texOffs(234, 88).addBox(-1.8F, 0.0F, -1.0F, 4.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, -0.5F, -0.0524F, -0.3142F, -0.2094F));
 
-		waistChain.addOrReplaceChild("waist_chain_link_3", CubeListBuilder.create()
-				.texOffs(61, 104).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(64, 104).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(67, 104).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(71, 104).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
+		rightHand.addOrReplaceChild("right_finger_1", CubeListBuilder.create()
+				.texOffs(249, 88).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.46F, 3.3F, 0.2F, -0.192F, 0.0F, 0.2094F));
 
-		waistChain.addOrReplaceChild("waist_chain_link_4", CubeListBuilder.create()
-				.texOffs(75, 104).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(78, 104).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(81, 104).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(85, 104).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 8.0F, 0.0F));
+		rightHand.addOrReplaceChild("right_finger_2", CubeListBuilder.create()
+				.texOffs(0, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.36F, 3.3F, 0.2F, -0.192F, 0.0F, 0.0698F));
 
-		waistChain.addOrReplaceChild("waist_chain_link_5", CubeListBuilder.create()
-				.texOffs(89, 104).addBox(-1.0F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(92, 104).addBox(0.5F, 0.0F, 0.0F, 0.5F, 2.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(95, 104).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-				.texOffs(99, 104).addBox(-0.5F, 2.0F, 0.0F, 1.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
+		rightHand.addOrReplaceChild("right_finger_3", CubeListBuilder.create()
+				.texOffs(5, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.76F, 3.3F, 0.2F, -0.192F, 0.0F, -0.0698F));
 
-		return LayerDefinition.create(meshdefinition, 128, 128);
+		rightHand.addOrReplaceChild("right_finger_4", CubeListBuilder.create()
+				.texOffs(10, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.8F, 3.3F, 0.2F, -0.192F, 0.0F, -0.2094F));
+
+		rightHand.addOrReplaceChild("right_thumb", CubeListBuilder.create()
+				.texOffs(15, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.7F, 1.0F, -0.2F, -0.2618F, -0.0F, -0.733F));
+
+		PartDefinition leftArm = body.addOrReplaceChild("left_arm", CubeListBuilder.create()
+				.texOffs(20, 102).addBox(-2.5F, -1.2F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(41, 102).addBox(-2.6F, 4.0F, -2.6F, 5.0F, 2.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(62, 102).addBox(-1.7F, 4.0F, -1.6F, 3.0F, 7.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.7F, -12.0F, 0.0F, -0.3316F, -0.0F, -0.576F));
+
+		PartDefinition leftForearm = leftArm.addOrReplaceChild("left_forearm", CubeListBuilder.create()
+				.texOffs(75, 102).addBox(-1.8F, 0.0F, -1.7F, 4.0F, 10.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(90, 102).addBox(-2.5F, 7.4F, -2.3F, 5.0F, 3.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(111, 102).addBox(-1.5F, 7.6F, -3.2F, 3.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.4F, 0.0F, -0.7854F, 0.1396F, 0.2443F));
+
+		PartDefinition leftWristChain = leftForearm.addOrReplaceChild("left_wrist_chain", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.2F, 9.4F, 1.8F, 1.1519F, 0.0F, 0.2269F));
+
+		leftWristChain.addOrReplaceChild("left_wrist_chain_1", CubeListBuilder.create()
+				.texOffs(122, 102).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(127, 102).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(132, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(137, 102).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.1745F, -0.0F));
+
+		leftWristChain.addOrReplaceChild("left_wrist_chain_2", CubeListBuilder.create()
+				.texOffs(142, 102).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(147, 102).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(152, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(157, 102).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2061F, 3.04F, -0.0F, 0.0F, 1.309F, -0.0F));
+
+		leftWristChain.addOrReplaceChild("left_wrist_chain_3", CubeListBuilder.create()
+				.texOffs(162, 102).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(167, 102).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(172, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(177, 102).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.3153F, 6.08F, 0.0F, 0.0F, -0.1745F, -0.0F));
+
+		leftWristChain.addOrReplaceChild("left_wrist_chain_4", CubeListBuilder.create()
+				.texOffs(182, 102).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(187, 102).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(192, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(197, 102).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2762F, 9.12F, 0.0F, 0.0F, 1.309F, -0.0F));
+
+		PartDefinition leftHand = leftForearm.addOrReplaceChild("left_hand", CubeListBuilder.create()
+				.texOffs(202, 102).addBox(-1.8F, 0.0F, -1.0F, 4.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, -0.5F, 0.0524F, 0.3142F, 0.2094F));
+
+		leftHand.addOrReplaceChild("left_finger_1", CubeListBuilder.create()
+				.texOffs(217, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.46F, 3.3F, 0.2F, -0.192F, -0.0F, 0.2094F));
+
+		leftHand.addOrReplaceChild("left_finger_2", CubeListBuilder.create()
+				.texOffs(222, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.36F, 3.3F, 0.2F, -0.192F, -0.0F, 0.0698F));
+
+		leftHand.addOrReplaceChild("left_finger_3", CubeListBuilder.create()
+				.texOffs(227, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.76F, 3.3F, 0.2F, -0.192F, -0.0F, -0.0698F));
+
+		leftHand.addOrReplaceChild("left_finger_4", CubeListBuilder.create()
+				.texOffs(232, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.8F, 3.3F, 0.2F, -0.192F, -0.0F, -0.2094F));
+
+		leftHand.addOrReplaceChild("left_thumb", CubeListBuilder.create()
+				.texOffs(237, 102).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.7F, 1.0F, -0.2F, -0.2618F, -0.0F, 0.733F));
+
+		PartDefinition girdleChain = body.addOrReplaceChild("girdle_chain", CubeListBuilder.create(), PartPose.offsetAndRotation(-3.4F, 0.8F, -3.9F, -0.1571F, -0.0F, 0.4363F));
+
+		girdleChain.addOrReplaceChild("girdle_chain_1", CubeListBuilder.create()
+				.texOffs(242, 102).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(247, 102).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(5, 116).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.0F, -0.1745F, 0.0F));
+
+		girdleChain.addOrReplaceChild("girdle_chain_2", CubeListBuilder.create()
+				.texOffs(10, 116).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(15, 116).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(20, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(25, 116).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2061F, 3.04F, 0.0F, -0.0F, 1.309F, 0.0F));
+
+		girdleChain.addOrReplaceChild("girdle_chain_3", CubeListBuilder.create()
+				.texOffs(30, 116).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(35, 116).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(40, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(45, 116).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.3153F, 6.08F, -0.0F, -0.0F, -0.1745F, 0.0F));
+
+		girdleChain.addOrReplaceChild("girdle_chain_4", CubeListBuilder.create()
+				.texOffs(50, 116).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(55, 116).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(60, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(65, 116).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2762F, 9.12F, 0.0F, -0.0F, 1.309F, 0.0F));
+
+		girdleChain.addOrReplaceChild("girdle_chain_5", CubeListBuilder.create()
+				.texOffs(70, 116).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(75, 116).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(80, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(85, 116).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.1072F, 12.16F, -0.0F, -0.0F, -0.1745F, 0.0F));
+
+		PartDefinition rightNerveWing = body.addOrReplaceChild("right_nerve_wing", CubeListBuilder.create()
+				.texOffs(90, 116).addBox(-2.9F, -3.3F, -1.1F, 6.0F, 8.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(113, 116).addBox(-3.4F, -0.5F, -0.9F, 7.0F, 3.0F, 6.0F, new CubeDeformation(0.0F))
+				.texOffs(140, 116).addBox(-1.1F, -0.5F, 4.4F, 2.0F, 2.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.6F, -10.4F, 4.5F, 0.0F, -0.0698F, 0.0F));
+
+		PartDefinition rightWingChain = rightNerveWing.addOrReplaceChild("right_wing_chain", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.4F, 1.5F, 4.3F, 0.3665F, -0.0F, 0.8727F));
+
+		rightWingChain.addOrReplaceChild("right_wing_chain_1", CubeListBuilder.create()
+				.texOffs(148, 116).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(153, 116).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(158, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(163, 116).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.1745F, 0.0F));
+
+		rightWingChain.addOrReplaceChild("right_wing_chain_2", CubeListBuilder.create()
+				.texOffs(168, 116).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(173, 116).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(178, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(183, 116).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2062F, 3.04F, 0.0F, 0.0F, 1.309F, 0.0F));
+
+		rightWingChain.addOrReplaceChild("right_wing_chain_3", CubeListBuilder.create()
+				.texOffs(188, 116).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(193, 116).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(198, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(203, 116).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.3153F, 6.08F, -0.0F, 0.0F, -0.1745F, 0.0F));
+
+		PartDefinition rightAscendingNerve = rightNerveWing.addOrReplaceChild("right_ascending_nerve", CubeListBuilder.create(), PartPose.ZERO);
+
+		PartDefinition rightNerve1Trunk1 = rightAscendingNerve.addOrReplaceChild("right_nerve_1_trunk_1", CubeListBuilder.create()
+				.texOffs(208, 116).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 13.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.1698F, 0.0F, 2.6012F));
+
+		PartDefinition rightNerve1Trunk2 = rightNerve1Trunk1.addOrReplaceChild("right_nerve_1_trunk_2", CubeListBuilder.create()
+				.texOffs(225, 116).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 14.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 11.8322F, 0.0F, 0.0618F, -0.0226F, -0.1324F));
+
+		PartDefinition rightNerve1Trunk3 = rightNerve1Trunk2.addOrReplaceChild("right_nerve_1_trunk_3", CubeListBuilder.create()
+				.texOffs(0, 134).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 14.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 13.1529F, -0.0F, -0.0698F, -0.0501F, -0.2157F));
+
+		PartDefinition rightNerve1Trunk4 = rightNerve1Trunk3.addOrReplaceChild("right_nerve_1_trunk_4", CubeListBuilder.create()
+				.texOffs(32, 134).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 12.9615F, 0.0F, 0.0558F, -0.071F, -0.4724F));
+
+		PartDefinition rightNerve1Branch1 = rightNerve1Trunk2.addOrReplaceChild("right_nerve_1_branch_1", CubeListBuilder.create()
+				.texOffs(238, 116).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 13.1529F, -0.0F, -0.1072F, 0.0684F, 0.2968F));
+
+		rightNerve1Branch1.addOrReplaceChild("right_nerve_1_dendrite_1", CubeListBuilder.create()
+				.texOffs(247, 116).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.8959F, 0.0F, 0.1398F, -0.0594F, -0.554F));
+
+		PartDefinition rightNerve1Branch2 = rightNerve1Trunk3.addOrReplaceChild("right_nerve_1_branch_2", CubeListBuilder.create()
+				.texOffs(13, 134).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 12.9615F, 0.0F, -0.0498F, 0.0269F, 0.1728F));
+
+		rightNerve1Branch2.addOrReplaceChild("right_nerve_1_dendrite_2", CubeListBuilder.create()
+				.texOffs(22, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.7447F, 0.0F, 0.1349F, -0.021F, -0.2051F));
+
+		rightNerve1Branch2.addOrReplaceChild("right_nerve_1_fork_2", CubeListBuilder.create()
+				.texOffs(27, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.7447F, 0.0F, -0.1732F, -0.1025F, -1.4927F));
+
+		PartDefinition rightNerve1Branch3 = rightNerve1Trunk4.addOrReplaceChild("right_nerve_1_branch_3", CubeListBuilder.create()
+				.texOffs(41, 134).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 10.3923F, 0.0F, 0.0196F, 0.1519F, 0.8955F));
+
+		rightNerve1Branch3.addOrReplaceChild("right_nerve_1_dendrite_3", CubeListBuilder.create()
+				.texOffs(50, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.1542F, 0.0F, 0.1096F, -0.0619F, -0.4547F));
+
+		rightNerve1Branch3.addOrReplaceChild("right_nerve_1_fork_3", CubeListBuilder.create()
+				.texOffs(55, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.1542F, 0.0F, -0.1406F, -0.1381F, -1.7473F));
+
+		rightNerve1Trunk4.addOrReplaceChild("right_nerve_1_terminal_1", CubeListBuilder.create()
+				.texOffs(60, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 9.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 10.3923F, 0.0F, 0.0029F, 0.1009F, 0.5426F));
+
+		rightNerve1Trunk4.addOrReplaceChild("right_nerve_1_terminal_2", CubeListBuilder.create()
+				.texOffs(65, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 10.3923F, 0.0F, -0.0098F, -0.0456F, -0.2347F));
+
+		rightNerve1Trunk4.addOrReplaceChild("right_nerve_1_terminal_3", CubeListBuilder.create()
+				.texOffs(70, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 10.3923F, 0.0F, 0.1007F, -0.1644F, -1.008F));
+
+		PartDefinition rightLateralNerve = rightNerveWing.addOrReplaceChild("right_lateral_nerve", CubeListBuilder.create(), PartPose.ZERO);
+
+		PartDefinition rightNerve2Trunk1 = rightLateralNerve.addOrReplaceChild("right_nerve_2_trunk_1", CubeListBuilder.create()
+				.texOffs(75, 134).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 11.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.3F, 0.2218F, 0.0F, 1.7682F));
+
+		PartDefinition rightNerve2Trunk2 = rightNerve2Trunk1.addOrReplaceChild("right_nerve_2_trunk_2", CubeListBuilder.create()
+				.texOffs(92, 134).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 13.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 10.4542F, -0.0F, -0.0428F, -0.0071F, -0.0315F));
+
+		PartDefinition rightNerve2Trunk3 = rightNerve2Trunk2.addOrReplaceChild("right_nerve_2_trunk_3", CubeListBuilder.create()
+				.texOffs(119, 134).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 14.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 12.3628F, 0.0F, 0.071F, 0.0278F, 0.1541F));
+
+		PartDefinition rightNerve2Trunk4 = rightNerve2Trunk3.addOrReplaceChild("right_nerve_2_trunk_4", CubeListBuilder.create()
+				.texOffs(151, 134).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 13.0476F, 0.0F, 0.1182F, -0.0074F, -0.0294F));
+
+		PartDefinition rightNerve2Branch1 = rightNerve2Trunk2.addOrReplaceChild("right_nerve_2_branch_1", CubeListBuilder.create()
+				.texOffs(105, 134).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 12.3628F, 0.0F, 0.0211F, -0.1611F, -1.1171F));
+
+		rightNerve2Branch1.addOrReplaceChild("right_nerve_2_dendrite_1", CubeListBuilder.create()
+				.texOffs(114, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 9.089F, -0.0F, 0.1578F, 0.0221F, 0.2244F));
+
+		PartDefinition rightNerve2Branch2 = rightNerve2Trunk3.addOrReplaceChild("right_nerve_2_branch_2", CubeListBuilder.create()
+				.texOffs(132, 134).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 13.0476F, 0.0F, -0.1016F, 0.1382F, 0.5819F));
+
+		rightNerve2Branch2.addOrReplaceChild("right_nerve_2_dendrite_2", CubeListBuilder.create()
+				.texOffs(141, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.6076F, 0.0F, 0.2092F, -0.0459F, -0.4521F));
+
+		rightNerve2Branch2.addOrReplaceChild("right_nerve_2_fork_2", CubeListBuilder.create()
+				.texOffs(146, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.6076F, 0.0F, -0.2819F, -0.0587F, -0.5936F));
+
+		PartDefinition rightNerve2Branch3 = rightNerve2Trunk4.addOrReplaceChild("right_nerve_2_branch_3", CubeListBuilder.create()
+				.texOffs(160, 134).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 11.1803F, -0.0F, -0.0211F, -0.3464F, -1.2286F));
+
+		rightNerve2Branch3.addOrReplaceChild("right_nerve_2_dendrite_3", CubeListBuilder.create()
+				.texOffs(169, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 9.089F, -0.0F, 0.1578F, 0.0221F, 0.2244F));
+
+		rightNerve2Branch3.addOrReplaceChild("right_nerve_2_fork_3", CubeListBuilder.create()
+				.texOffs(174, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 9.089F, -0.0F, -0.2236F, 0.095F, 1.2787F));
+
+		rightNerve2Trunk4.addOrReplaceChild("right_nerve_2_terminal_1", CubeListBuilder.create()
+				.texOffs(179, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 9.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 11.1803F, -0.0F, -0.1627F, 0.1585F, 0.4304F));
+
+		rightNerve2Trunk4.addOrReplaceChild("right_nerve_2_terminal_2", CubeListBuilder.create()
+				.texOffs(184, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 11.1803F, -0.0F, -0.1689F, -0.1173F, -0.3125F));
+
+		rightNerve2Trunk4.addOrReplaceChild("right_nerve_2_terminal_3", CubeListBuilder.create()
+				.texOffs(189, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 11.1803F, -0.0F, 0.035F, -0.3263F, -1.0827F));
+
+		PartDefinition rightDescendingNerve = rightNerveWing.addOrReplaceChild("right_descending_nerve", CubeListBuilder.create(), PartPose.ZERO);
+
+		PartDefinition rightNerve3Trunk1 = rightDescendingNerve.addOrReplaceChild("right_nerve_3_trunk_1", CubeListBuilder.create()
+				.texOffs(194, 134).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 11.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, 0.0F, 0.2544F, -0.0F, 0.9273F));
+
+		PartDefinition rightNerve3Trunk2 = rightNerve3Trunk1.addOrReplaceChild("right_nerve_3_trunk_2", CubeListBuilder.create()
+				.texOffs(211, 134).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 13.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 10.3325F, 0.0F, -0.0759F, 0.0082F, 0.0317F));
+
+		PartDefinition rightNerve3Trunk3 = rightNerve3Trunk2.addOrReplaceChild("right_nerve_3_trunk_3", CubeListBuilder.create()
+				.texOffs(238, 134).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 14.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.4032F, 0.0F, 0.1606F, 0.0635F, 0.3604F));
+
+		PartDefinition rightNerve3Trunk4 = rightNerve3Trunk3.addOrReplaceChild("right_nerve_3_trunk_4", CubeListBuilder.create()
+				.texOffs(19, 152).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 13.0629F, 0.0F, 0.0578F, 0.1519F, 0.4677F));
+
+		PartDefinition rightNerve3Branch1 = rightNerve3Trunk2.addOrReplaceChild("right_nerve_3_branch_1", CubeListBuilder.create()
+				.texOffs(224, 134).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.4032F, 0.0F, 0.1193F, -0.098F, -0.5771F));
+
+		rightNerve3Branch1.addOrReplaceChild("right_nerve_3_dendrite_1", CubeListBuilder.create()
+				.texOffs(233, 134).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 7.9158F, 0.0F, 0.0384F, 0.1098F, 0.4121F));
+
+		PartDefinition rightNerve3Branch2 = rightNerve3Trunk3.addOrReplaceChild("right_nerve_3_branch_2", CubeListBuilder.create()
+				.texOffs(0, 152).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 13.0629F, 0.0F, 0.0648F, -0.269F, -0.9472F));
+
+		rightNerve3Branch2.addOrReplaceChild("right_nerve_3_dendrite_2", CubeListBuilder.create()
+				.texOffs(9, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.3672F, -0.0F, 0.0544F, 0.109F, 0.4357F));
+
+		rightNerve3Branch2.addOrReplaceChild("right_nerve_3_fork_2", CubeListBuilder.create()
+				.texOffs(14, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.3672F, -0.0F, -0.2032F, 0.2536F, 1.5385F));
+
+		PartDefinition rightNerve3Branch3 = rightNerve3Trunk4.addOrReplaceChild("right_nerve_3_branch_3", CubeListBuilder.create()
+				.texOffs(28, 152).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.775F, -0.0F, 0.2084F, -0.3475F, -1.4774F));
+
+		rightNerve3Branch3.addOrReplaceChild("right_nerve_3_dendrite_3", CubeListBuilder.create()
+				.texOffs(37, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.8238F, 0.0F, 0.0687F, 0.1077F, 0.4568F));
+
+		rightNerve3Branch3.addOrReplaceChild("right_nerve_3_fork_3", CubeListBuilder.create()
+				.texOffs(42, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.8238F, 0.0F, -0.1978F, 0.2403F, 1.5594F));
+
+		rightNerve3Trunk4.addOrReplaceChild("right_nerve_3_terminal_1", CubeListBuilder.create()
+				.texOffs(47, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 9.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.775F, -0.0F, -0.14F, 0.1657F, 0.4776F));
+
+		rightNerve3Trunk4.addOrReplaceChild("right_nerve_3_terminal_2", CubeListBuilder.create()
+				.texOffs(52, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.775F, -0.0F, -0.1573F, -0.0968F, -0.2702F));
+
+		rightNerve3Trunk4.addOrReplaceChild("right_nerve_3_terminal_3", CubeListBuilder.create()
+				.texOffs(57, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.775F, -0.0F, 0.0288F, -0.3036F, -1.0373F));
+
+		PartDefinition leftNerveWing = body.addOrReplaceChild("left_nerve_wing", CubeListBuilder.create()
+				.texOffs(62, 152).addBox(-2.9F, -3.3F, -1.1F, 6.0F, 8.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(85, 152).addBox(-3.4F, -0.5F, -0.9F, 7.0F, 3.0F, 6.0F, new CubeDeformation(0.0F))
+				.texOffs(112, 152).addBox(-1.1F, -0.5F, 4.4F, 2.0F, 2.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.6F, -10.4F, 4.5F, 0.0F, 0.0698F, 0.0F));
+
+		PartDefinition leftWingChain = leftNerveWing.addOrReplaceChild("left_wing_chain", CubeListBuilder.create(), PartPose.offsetAndRotation(1.4F, 1.5F, 4.3F, 0.3665F, -0.0F, -0.8727F));
+
+		leftWingChain.addOrReplaceChild("left_wing_chain_1", CubeListBuilder.create()
+				.texOffs(120, 152).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(125, 152).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(130, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(135, 152).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.1745F, 0.0F));
+
+		leftWingChain.addOrReplaceChild("left_wing_chain_2", CubeListBuilder.create()
+				.texOffs(140, 152).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(145, 152).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(150, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(155, 152).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2061F, 3.04F, -0.0F, 0.0F, 1.309F, 0.0F));
+
+		leftWingChain.addOrReplaceChild("left_wing_chain_3", CubeListBuilder.create()
+				.texOffs(160, 152).addBox(-1.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(165, 152).addBox(0.5F, 0.0F, -0.5F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(170, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(175, 152).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.3153F, 6.08F, 0.0F, 0.0F, -0.1745F, 0.0F));
+
+		PartDefinition leftAscendingNerve = leftNerveWing.addOrReplaceChild("left_ascending_nerve", CubeListBuilder.create(), PartPose.ZERO);
+
+		PartDefinition leftNerve1Trunk1 = leftAscendingNerve.addOrReplaceChild("left_nerve_1_trunk_1", CubeListBuilder.create()
+				.texOffs(180, 152).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 13.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.1698F, -0.0F, -2.6012F));
+
+		PartDefinition leftNerve1Trunk2 = leftNerve1Trunk1.addOrReplaceChild("left_nerve_1_trunk_2", CubeListBuilder.create()
+				.texOffs(197, 152).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 14.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 11.8322F, 0.0F, 0.0618F, 0.0226F, 0.1324F));
+
+		PartDefinition leftNerve1Trunk3 = leftNerve1Trunk2.addOrReplaceChild("left_nerve_1_trunk_3", CubeListBuilder.create()
+				.texOffs(224, 152).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 14.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 13.1529F, -0.0F, -0.0698F, 0.0501F, 0.2157F));
+
+		PartDefinition leftNerve1Trunk4 = leftNerve1Trunk3.addOrReplaceChild("left_nerve_1_trunk_4", CubeListBuilder.create()
+				.texOffs(0, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.9615F, 0.0F, 0.0558F, 0.071F, 0.4724F));
+
+		PartDefinition leftNerve1Branch1 = leftNerve1Trunk2.addOrReplaceChild("left_nerve_1_branch_1", CubeListBuilder.create()
+				.texOffs(210, 152).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 13.1529F, -0.0F, -0.1072F, -0.0684F, -0.2968F));
+
+		leftNerve1Branch1.addOrReplaceChild("left_nerve_1_dendrite_1", CubeListBuilder.create()
+				.texOffs(219, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.8959F, 0.0F, 0.1398F, 0.0594F, 0.554F));
+
+		PartDefinition leftNerve1Branch2 = leftNerve1Trunk3.addOrReplaceChild("left_nerve_1_branch_2", CubeListBuilder.create()
+				.texOffs(237, 152).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.9615F, 0.0F, -0.0498F, -0.0269F, -0.1728F));
+
+		leftNerve1Branch2.addOrReplaceChild("left_nerve_1_dendrite_2", CubeListBuilder.create()
+				.texOffs(246, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 9.7447F, 0.0F, 0.1349F, 0.021F, 0.2051F));
+
+		leftNerve1Branch2.addOrReplaceChild("left_nerve_1_fork_2", CubeListBuilder.create()
+				.texOffs(251, 152).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 9.7447F, 0.0F, -0.1732F, 0.1025F, 1.4927F));
+
+		PartDefinition leftNerve1Branch3 = leftNerve1Trunk4.addOrReplaceChild("left_nerve_1_branch_3", CubeListBuilder.create()
+				.texOffs(9, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.3923F, 0.0F, 0.0196F, -0.1519F, -0.8955F));
+
+		leftNerve1Branch3.addOrReplaceChild("left_nerve_1_dendrite_3", CubeListBuilder.create()
+				.texOffs(18, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 7.1542F, 0.0F, 0.1096F, 0.0619F, 0.4547F));
+
+		leftNerve1Branch3.addOrReplaceChild("left_nerve_1_fork_3", CubeListBuilder.create()
+				.texOffs(23, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 7.1542F, 0.0F, -0.1406F, 0.1381F, 1.7473F));
+
+		leftNerve1Trunk4.addOrReplaceChild("left_nerve_1_terminal_1", CubeListBuilder.create()
+				.texOffs(28, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 9.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.3923F, 0.0F, 0.0029F, -0.1009F, -0.5426F));
+
+		leftNerve1Trunk4.addOrReplaceChild("left_nerve_1_terminal_2", CubeListBuilder.create()
+				.texOffs(33, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.3923F, 0.0F, -0.0098F, 0.0456F, 0.2347F));
+
+		leftNerve1Trunk4.addOrReplaceChild("left_nerve_1_terminal_3", CubeListBuilder.create()
+				.texOffs(38, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.3923F, 0.0F, 0.1007F, 0.1644F, 1.008F));
+
+		PartDefinition leftLateralNerve = leftNerveWing.addOrReplaceChild("left_lateral_nerve", CubeListBuilder.create(), PartPose.ZERO);
+
+		PartDefinition leftNerve2Trunk1 = leftLateralNerve.addOrReplaceChild("left_nerve_2_trunk_1", CubeListBuilder.create()
+				.texOffs(43, 170).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 10.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 0.0F, 0.3F, 0.3483F, -0.0F, -1.8073F));
+
+		PartDefinition leftNerve2Trunk2 = leftNerve2Trunk1.addOrReplaceChild("left_nerve_2_trunk_2", CubeListBuilder.create()
+				.texOffs(60, 170).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 11.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.083F, -0.0F, -0.0332F, 0.0754F, 0.2094F));
+
+		PartDefinition leftNerve2Trunk3 = leftNerve2Trunk2.addOrReplaceChild("left_nerve_2_trunk_3", CubeListBuilder.create()
+				.texOffs(87, 170).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 12.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.4502F, -0.0F, 0.0883F, -0.0042F, -0.0134F));
+
+		PartDefinition leftNerve2Trunk4 = leftNerve2Trunk3.addOrReplaceChild("left_nerve_2_trunk_4", CubeListBuilder.create()
+				.texOffs(119, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 10.7975F, 0.0F, 0.1291F, 0.0155F, 0.0371F));
+
+		PartDefinition leftNerve2Branch1 = leftNerve2Trunk2.addOrReplaceChild("left_nerve_2_branch_1", CubeListBuilder.create()
+				.texOffs(73, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.4502F, -0.0F, -0.0777F, 0.2525F, 0.9498F));
+
+		leftNerve2Branch1.addOrReplaceChild("left_nerve_2_dendrite_1", CubeListBuilder.create()
+				.texOffs(82, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.089F, -0.0F, 0.1578F, -0.0221F, -0.2244F));
+
+		PartDefinition leftNerve2Branch2 = leftNerve2Trunk3.addOrReplaceChild("left_nerve_2_branch_2", CubeListBuilder.create()
+				.texOffs(100, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 10.7975F, 0.0F, -0.1523F, -0.304F, -0.8503F));
+
+		leftNerve2Branch2.addOrReplaceChild("left_nerve_2_dendrite_2", CubeListBuilder.create()
+				.texOffs(109, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.6076F, 0.0F, 0.2092F, 0.0459F, 0.4521F));
+
+		leftNerve2Branch2.addOrReplaceChild("left_nerve_2_fork_2", CubeListBuilder.create()
+				.texOffs(114, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.6076F, 0.0F, -0.2819F, 0.0587F, 0.5936F));
+
+		PartDefinition leftNerve2Branch3 = leftNerve2Trunk4.addOrReplaceChild("left_nerve_2_branch_3", CubeListBuilder.create()
+				.texOffs(128, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.5885F, -0.0F, -0.2269F, 0.4182F, 0.8764F));
+
+		leftNerve2Branch3.addOrReplaceChild("left_nerve_2_dendrite_3", CubeListBuilder.create()
+				.texOffs(137, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.089F, -0.0F, 0.1578F, -0.0221F, -0.2244F));
+
+		leftNerve2Branch3.addOrReplaceChild("left_nerve_2_fork_3", CubeListBuilder.create()
+				.texOffs(142, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.089F, -0.0F, -0.2236F, -0.095F, -1.2787F));
+
+		leftNerve2Trunk4.addOrReplaceChild("left_nerve_2_terminal_1", CubeListBuilder.create()
+				.texOffs(147, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 9.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.5885F, -0.0F, -0.2283F, -0.3523F, -0.6889F));
+
+		leftNerve2Trunk4.addOrReplaceChild("left_nerve_2_terminal_2", CubeListBuilder.create()
+				.texOffs(152, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.5885F, -0.0F, -0.3456F, 0.0148F, 0.0256F));
+
+		leftNerve2Trunk4.addOrReplaceChild("left_nerve_2_terminal_3", CubeListBuilder.create()
+				.texOffs(157, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.5885F, -0.0F, -0.1769F, 0.3699F, 0.735F));
+
+		PartDefinition leftDescendingNerve = leftNerveWing.addOrReplaceChild("left_descending_nerve", CubeListBuilder.create(), PartPose.ZERO);
+
+		PartDefinition leftNerve3Trunk1 = leftDescendingNerve.addOrReplaceChild("left_nerve_3_trunk_1", CubeListBuilder.create()
+				.texOffs(162, 170).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, 0.0F, 0.3456F, -0.0F, -0.9273F));
+
+		PartDefinition leftNerve3Trunk2 = leftNerve3Trunk1.addOrReplaceChild("left_nerve_3_trunk_2", CubeListBuilder.create()
+				.texOffs(179, 170).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 13.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.6283F, 0.0F, -0.1407F, 0.0638F, 0.1785F));
+
+		PartDefinition leftNerve3Trunk3 = leftNerve3Trunk2.addOrReplaceChild("left_nerve_3_trunk_3", CubeListBuilder.create()
+				.texOffs(206, 170).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 11.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.1326F, 0.0F, 0.1119F, -0.0502F, -0.2517F));
+
+		PartDefinition leftNerve3Trunk4 = leftNerve3Trunk3.addOrReplaceChild("left_nerve_3_trunk_4", CubeListBuilder.create()
+				.texOffs(238, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.002F, -0.0F, 0.1503F, -0.2397F, -0.8901F));
+
+		PartDefinition leftNerve3Trunk5 = leftNerve3Trunk4.addOrReplaceChild("left_nerve_3_trunk_5", CubeListBuilder.create()
+				.texOffs(10, 187).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.9911F, -0.0F, 0.1677F, 0.1974F, 0.6003F));
+
+		PartDefinition leftNerve3Branch1 = leftNerve3Trunk2.addOrReplaceChild("left_nerve_3_branch_1", CubeListBuilder.create()
+				.texOffs(192, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.1326F, 0.0F, 0.082F, 0.0701F, 0.3556F));
+
+		leftNerve3Branch1.addOrReplaceChild("left_nerve_3_dendrite_1", CubeListBuilder.create()
+				.texOffs(201, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.9158F, 0.0F, 0.0384F, -0.1098F, -0.4121F));
+
+		PartDefinition leftNerve3Branch2 = leftNerve3Trunk3.addOrReplaceChild("left_nerve_3_branch_2", CubeListBuilder.create()
+				.texOffs(219, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.002F, -0.0F, 0.0069F, 0.1804F, 0.619F));
+
+		leftNerve3Branch2.addOrReplaceChild("left_nerve_3_dendrite_2", CubeListBuilder.create()
+				.texOffs(228, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.3672F, -0.0F, 0.0544F, -0.109F, -0.4357F));
+
+		leftNerve3Branch2.addOrReplaceChild("left_nerve_3_fork_2", CubeListBuilder.create()
+				.texOffs(233, 170).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.3672F, -0.0F, -0.2032F, -0.2536F, -1.5385F));
+
+		PartDefinition leftNerve3Branch3 = leftNerve3Trunk4.addOrReplaceChild("left_nerve_3_branch_3", CubeListBuilder.create()
+				.texOffs(247, 170).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.9911F, -0.0F, 0.2417F, 0.3402F, 1.5749F));
+
+		leftNerve3Branch3.addOrReplaceChild("left_nerve_3_dendrite_3", CubeListBuilder.create()
+				.texOffs(0, 187).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.8238F, 0.0F, 0.0687F, -0.1077F, -0.4568F));
+
+		leftNerve3Branch3.addOrReplaceChild("left_nerve_3_fork_3", CubeListBuilder.create()
+				.texOffs(5, 187).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 8.8238F, 0.0F, -0.1978F, -0.2403F, -1.5594F));
+
+		PartDefinition leftNerve3Branch4 = leftNerve3Trunk5.addOrReplaceChild("left_nerve_3_branch_4", CubeListBuilder.create()
+				.texOffs(19, 187).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 4.6303F, -0.0F, -0.0382F, 0.3629F, 0.9154F));
+
+		leftNerve3Branch4.addOrReplaceChild("left_nerve_3_dendrite_4", CubeListBuilder.create()
+				.texOffs(28, 187).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 9.2849F, -0.0F, 0.0815F, -0.1059F, -0.4757F));
+
+		leftNerve3Trunk5.addOrReplaceChild("left_nerve_3_terminal_1", CubeListBuilder.create()
+				.texOffs(33, 187).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 9.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 4.6303F, -0.0F, -0.0694F, -0.3817F, -0.9937F));
+
+		leftNerve3Trunk5.addOrReplaceChild("left_nerve_3_terminal_2", CubeListBuilder.create()
+				.texOffs(38, 187).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 4.6303F, -0.0F, -0.256F, -0.107F, -0.2262F));
+
+		leftNerve3Trunk5.addOrReplaceChild("left_nerve_3_terminal_3", CubeListBuilder.create()
+				.texOffs(43, 187).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0F, 4.6303F, -0.0F, -0.1887F, 0.2192F, 0.4839F));
+
+		return LayerDefinition.create(meshdefinition, 256, 256);
 	}
 
 	@Override
@@ -1005,7 +1064,7 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 	private ModelPart[] robes;
 	private float[] robeLength;
 	private float[][] robeOut;
-	private ModelPart[] leftLinks, rightLinks, waistLinks;
+	private ModelPart[] leftLinks, rightLinks, waistLinks, leftWingLinks, rightWingLinks;
 	private List<NervePart> nerveParts;
 	private java.util.IdentityHashMap<ModelPart, NervePart> nerveIndex;
 
@@ -1014,32 +1073,31 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		trunks = new ModelPart[6][];
 		branches = new ModelPart[6][];
 		tips = new ModelPart[6][];
-		String[] names = {"upper", "middle", "lower"};
 		for (int side = 0; side < 2; side++) {
-			ModelPart wing = side == 0 ? leftWing : rightWing;
+			ModelPart wing = side == 0 ? leftNerveWing : rightNerveWing;
 			String prefix = side == 0 ? "left" : "right";
+			String[] regions = {"ascending", "lateral", "descending"};
 			for (int place = 0; place < 3; place++) {
 				List<ModelPart> chain = new java.util.ArrayList<>();
 				List<ModelPart> forks = new java.util.ArrayList<>();
-				String stem = prefix + "_trunk_" + names[place];
-				ModelPart segment = wing.getChild(stem + "_0");
-				chain.add(segment);
-				for (int i = 1; segment.hasChild(stem + "_" + i); i++) {
-					segment = segment.getChild(stem + "_" + i);
+				String stem = prefix + "_nerve_" + (place + 1);
+				ModelPart segment = wing.getChild(prefix + "_" + regions[place] + "_nerve");
+				int index = side * 3 + place;
+				for (int i = 1; segment.hasChild(stem + "_trunk_" + i); i++) {
+					segment = segment.getChild(stem + "_trunk_" + i);
 					chain.add(segment);
+					if (segment.hasChild(stem + "_branch_" + (i - 1))) {
+						forks.add(segment.getChild(stem + "_branch_" + (i - 1)));
+					}
 				}
-				for (int i = 0; i < chain.size(); i++) {
-					forks.add(chain.get(i).getChild(stem + "_" + i + "_branch_a"));
-					forks.add(chain.get(i).getChild(stem + "_" + i + "_branch_b"));
-				}
-				trunks[side * 3 + place] = chain.toArray(new ModelPart[0]);
-				branches[side * 3 + place] = forks.toArray(new ModelPart[0]);
-				ModelPart tip = segment.getChild(stem + "_tip");
-				tips[side * 3 + place] = new ModelPart[]{tip, tip.getChild(stem + "_tip_0"), tip.getChild(stem + "_tip_1"),
-						tip.getChild(stem + "_tip_2"), tip.getChild(stem + "_tip_3")};
+				trunks[index] = chain.toArray(ModelPart[]::new);
+				branches[index] = forks.toArray(ModelPart[]::new);
+				tips[index] = new ModelPart[]{segment.getChild(stem + "_terminal_1"),
+						segment.getChild(stem + "_terminal_2"), segment.getChild(stem + "_terminal_3")};
 			}
 		}
-		robes = new ModelPart[]{robePanel0, robePanel1, robePanel2, robePanel3, robePanel4, robePanel5, gownFront};
+		robes = new ModelPart[]{frontLeft, frontRight, outerLeft, outerRight, trainLeft, trainRight,
+				leftLining, rightLining, centralStole};
 		robeLength = new float[robes.length];
 		robeOut = new float[robes.length][];
 		for (int i = 0; i < robes.length; i++) {
@@ -1047,91 +1105,105 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 			float x = robes[i].x, z = robes[i].z, length = (float) Math.sqrt(x * x + z * z);
 			robeOut[i] = length < 1.0E-4F ? new float[]{0, -1} : new float[]{x / length, z / length};
 		}
-		leftLinks = links(leftChain, "left_chain", 7);
-		rightLinks = links(rightChain, "right_chain", 7);
-		waistLinks = links(waistChain, "waist_chain", 6);
+		leftLinks = links(leftWristChain, "left_wrist_chain", 4);
+		rightLinks = links(rightWristChain, "right_wrist_chain", 5);
+		waistLinks = links(girdleChain, "girdle_chain", 5);
+		leftWingLinks = links(leftWingChain, "left_wing_chain", 3);
+		rightWingLinks = links(rightWingChain, "right_wing_chain", 3);
 		nerveParts = List.of(
-		new NervePart(leftTrunkUpper0, 0, 0, 0),
-		new NervePart(leftTrunkUpper0BranchA, 0, 0, 0),
-		new NervePart(leftTrunkUpper0BranchB, 0, 0, 0),
-		new NervePart(leftTrunkUpper1, 0, 0, 1),
-		new NervePart(leftTrunkUpper1BranchA, 0, 0, 1),
-		new NervePart(leftTrunkUpper1BranchB, 0, 0, 1),
-		new NervePart(leftTrunkUpper2, 0, 0, 2),
-		new NervePart(leftTrunkUpper2BranchA, 0, 0, 2),
-		new NervePart(leftTrunkUpper2BranchB, 0, 0, 2),
-		new NervePart(leftTrunkUpperTip0, 0, 0, 3),
-		new NervePart(leftTrunkUpperTip1, 0, 0, 3),
-		new NervePart(leftTrunkUpperTip2, 0, 0, 3),
-		new NervePart(leftTrunkUpperTip3, 0, 0, 3),
-		new NervePart(leftTrunkMiddle0, 0, 1, 0),
-		new NervePart(leftTrunkMiddle0BranchA, 0, 1, 0),
-		new NervePart(leftTrunkMiddle0BranchB, 0, 1, 0),
-		new NervePart(leftTrunkMiddle1, 0, 1, 1),
-		new NervePart(leftTrunkMiddle1BranchA, 0, 1, 1),
-		new NervePart(leftTrunkMiddle1BranchB, 0, 1, 1),
-		new NervePart(leftTrunkMiddle2, 0, 1, 2),
-		new NervePart(leftTrunkMiddle2BranchA, 0, 1, 2),
-		new NervePart(leftTrunkMiddle2BranchB, 0, 1, 2),
-		new NervePart(leftTrunkMiddleTip0, 0, 1, 3),
-		new NervePart(leftTrunkMiddleTip1, 0, 1, 3),
-		new NervePart(leftTrunkMiddleTip2, 0, 1, 3),
-		new NervePart(leftTrunkMiddleTip3, 0, 1, 3),
-		new NervePart(leftTrunkLower0, 0, 2, 0),
-		new NervePart(leftTrunkLower0BranchA, 0, 2, 0),
-		new NervePart(leftTrunkLower0BranchB, 0, 2, 0),
-		new NervePart(leftTrunkLower1, 0, 2, 1),
-		new NervePart(leftTrunkLower1BranchA, 0, 2, 1),
-		new NervePart(leftTrunkLower1BranchB, 0, 2, 1),
-		new NervePart(leftTrunkLower2, 0, 2, 2),
-		new NervePart(leftTrunkLower2BranchA, 0, 2, 2),
-		new NervePart(leftTrunkLower2BranchB, 0, 2, 2),
-		new NervePart(leftTrunkLowerTip0, 0, 2, 3),
-		new NervePart(leftTrunkLowerTip1, 0, 2, 3),
-		new NervePart(leftTrunkLowerTip2, 0, 2, 3),
-		new NervePart(leftTrunkLowerTip3, 0, 2, 3),
-		new NervePart(rightTrunkUpper0, 1, 0, 0),
-		new NervePart(rightTrunkUpper0BranchA, 1, 0, 0),
-		new NervePart(rightTrunkUpper0BranchB, 1, 0, 0),
-		new NervePart(rightTrunkUpper1, 1, 0, 1),
-		new NervePart(rightTrunkUpper1BranchA, 1, 0, 1),
-		new NervePart(rightTrunkUpper1BranchB, 1, 0, 1),
-		new NervePart(rightTrunkUpper2, 1, 0, 2),
-		new NervePart(rightTrunkUpper2BranchA, 1, 0, 2),
-		new NervePart(rightTrunkUpper2BranchB, 1, 0, 2),
-		new NervePart(rightTrunkUpperTip0, 1, 0, 3),
-		new NervePart(rightTrunkUpperTip1, 1, 0, 3),
-		new NervePart(rightTrunkUpperTip2, 1, 0, 3),
-		new NervePart(rightTrunkUpperTip3, 1, 0, 3),
-		new NervePart(rightTrunkMiddle0, 1, 1, 0),
-		new NervePart(rightTrunkMiddle0BranchA, 1, 1, 0),
-		new NervePart(rightTrunkMiddle0BranchB, 1, 1, 0),
-		new NervePart(rightTrunkMiddle1, 1, 1, 1),
-		new NervePart(rightTrunkMiddle1BranchA, 1, 1, 1),
-		new NervePart(rightTrunkMiddle1BranchB, 1, 1, 1),
-		new NervePart(rightTrunkMiddle2, 1, 1, 2),
-		new NervePart(rightTrunkMiddle2BranchA, 1, 1, 2),
-		new NervePart(rightTrunkMiddle2BranchB, 1, 1, 2),
-		new NervePart(rightTrunkMiddleTip0, 1, 1, 3),
-		new NervePart(rightTrunkMiddleTip1, 1, 1, 3),
-		new NervePart(rightTrunkMiddleTip2, 1, 1, 3),
-		new NervePart(rightTrunkMiddleTip3, 1, 1, 3),
-		new NervePart(rightTrunkLower0, 1, 2, 0),
-		new NervePart(rightTrunkLower0BranchA, 1, 2, 0),
-		new NervePart(rightTrunkLower0BranchB, 1, 2, 0),
-		new NervePart(rightTrunkLower1, 1, 2, 1),
-		new NervePart(rightTrunkLower1BranchA, 1, 2, 1),
-		new NervePart(rightTrunkLower1BranchB, 1, 2, 1),
-		new NervePart(rightTrunkLower2, 1, 2, 2),
-		new NervePart(rightTrunkLower2BranchA, 1, 2, 2),
-		new NervePart(rightTrunkLower2BranchB, 1, 2, 2),
-		new NervePart(rightTrunkLower3, 1, 2, 3),
-		new NervePart(rightTrunkLower3BranchA, 1, 2, 3),
-		new NervePart(rightTrunkLower3BranchB, 1, 2, 3),
-		new NervePart(rightTrunkLowerTip0, 1, 2, 3),
-		new NervePart(rightTrunkLowerTip1, 1, 2, 3),
-		new NervePart(rightTrunkLowerTip2, 1, 2, 3),
-		new NervePart(rightTrunkLowerTip3, 1, 2, 3)
+				new NervePart(rightNerve1Trunk1, 1, 0, 0),
+				new NervePart(rightNerve1Trunk2, 1, 0, 1),
+				new NervePart(rightNerve1Trunk3, 1, 0, 2),
+				new NervePart(rightNerve1Trunk4, 1, 0, 3),
+				new NervePart(rightNerve1Branch1, 1, 0, 1),
+				new NervePart(rightNerve1Dendrite1, 1, 0, 1),
+				new NervePart(rightNerve1Branch2, 1, 0, 2),
+				new NervePart(rightNerve1Dendrite2, 1, 0, 2),
+				new NervePart(rightNerve1Fork2, 1, 0, 2),
+				new NervePart(rightNerve1Branch3, 1, 0, 3),
+				new NervePart(rightNerve1Dendrite3, 1, 0, 3),
+				new NervePart(rightNerve1Fork3, 1, 0, 3),
+				new NervePart(rightNerve1Terminal1, 1, 0, 3),
+				new NervePart(rightNerve1Terminal2, 1, 0, 3),
+				new NervePart(rightNerve1Terminal3, 1, 0, 3),
+				new NervePart(rightNerve2Trunk1, 1, 1, 0),
+				new NervePart(rightNerve2Trunk2, 1, 1, 1),
+				new NervePart(rightNerve2Trunk3, 1, 1, 2),
+				new NervePart(rightNerve2Trunk4, 1, 1, 3),
+				new NervePart(rightNerve2Branch1, 1, 1, 1),
+				new NervePart(rightNerve2Dendrite1, 1, 1, 1),
+				new NervePart(rightNerve2Branch2, 1, 1, 2),
+				new NervePart(rightNerve2Dendrite2, 1, 1, 2),
+				new NervePart(rightNerve2Fork2, 1, 1, 2),
+				new NervePart(rightNerve2Branch3, 1, 1, 3),
+				new NervePart(rightNerve2Dendrite3, 1, 1, 3),
+				new NervePart(rightNerve2Fork3, 1, 1, 3),
+				new NervePart(rightNerve2Terminal1, 1, 1, 3),
+				new NervePart(rightNerve2Terminal2, 1, 1, 3),
+				new NervePart(rightNerve2Terminal3, 1, 1, 3),
+				new NervePart(rightNerve3Trunk1, 1, 2, 0),
+				new NervePart(rightNerve3Trunk2, 1, 2, 1),
+				new NervePart(rightNerve3Trunk3, 1, 2, 2),
+				new NervePart(rightNerve3Trunk4, 1, 2, 3),
+				new NervePart(rightNerve3Branch1, 1, 2, 1),
+				new NervePart(rightNerve3Dendrite1, 1, 2, 1),
+				new NervePart(rightNerve3Branch2, 1, 2, 2),
+				new NervePart(rightNerve3Dendrite2, 1, 2, 2),
+				new NervePart(rightNerve3Fork2, 1, 2, 2),
+				new NervePart(rightNerve3Branch3, 1, 2, 3),
+				new NervePart(rightNerve3Dendrite3, 1, 2, 3),
+				new NervePart(rightNerve3Fork3, 1, 2, 3),
+				new NervePart(rightNerve3Terminal1, 1, 2, 3),
+				new NervePart(rightNerve3Terminal2, 1, 2, 3),
+				new NervePart(rightNerve3Terminal3, 1, 2, 3),
+				new NervePart(leftNerve1Trunk1, 0, 0, 0),
+				new NervePart(leftNerve1Trunk2, 0, 0, 1),
+				new NervePart(leftNerve1Trunk3, 0, 0, 2),
+				new NervePart(leftNerve1Trunk4, 0, 0, 3),
+				new NervePart(leftNerve1Branch1, 0, 0, 1),
+				new NervePart(leftNerve1Dendrite1, 0, 0, 1),
+				new NervePart(leftNerve1Branch2, 0, 0, 2),
+				new NervePart(leftNerve1Dendrite2, 0, 0, 2),
+				new NervePart(leftNerve1Fork2, 0, 0, 2),
+				new NervePart(leftNerve1Branch3, 0, 0, 3),
+				new NervePart(leftNerve1Dendrite3, 0, 0, 3),
+				new NervePart(leftNerve1Fork3, 0, 0, 3),
+				new NervePart(leftNerve1Terminal1, 0, 0, 3),
+				new NervePart(leftNerve1Terminal2, 0, 0, 3),
+				new NervePart(leftNerve1Terminal3, 0, 0, 3),
+				new NervePart(leftNerve2Trunk1, 0, 1, 0),
+				new NervePart(leftNerve2Trunk2, 0, 1, 1),
+				new NervePart(leftNerve2Trunk3, 0, 1, 2),
+				new NervePart(leftNerve2Trunk4, 0, 1, 3),
+				new NervePart(leftNerve2Branch1, 0, 1, 1),
+				new NervePart(leftNerve2Dendrite1, 0, 1, 1),
+				new NervePart(leftNerve2Branch2, 0, 1, 2),
+				new NervePart(leftNerve2Dendrite2, 0, 1, 2),
+				new NervePart(leftNerve2Fork2, 0, 1, 2),
+				new NervePart(leftNerve2Branch3, 0, 1, 3),
+				new NervePart(leftNerve2Dendrite3, 0, 1, 3),
+				new NervePart(leftNerve2Fork3, 0, 1, 3),
+				new NervePart(leftNerve2Terminal1, 0, 1, 3),
+				new NervePart(leftNerve2Terminal2, 0, 1, 3),
+				new NervePart(leftNerve2Terminal3, 0, 1, 3),
+				new NervePart(leftNerve3Trunk1, 0, 2, 0),
+				new NervePart(leftNerve3Trunk2, 0, 2, 1),
+				new NervePart(leftNerve3Trunk3, 0, 2, 2),
+				new NervePart(leftNerve3Trunk4, 0, 2, 3),
+				new NervePart(leftNerve3Trunk5, 0, 2, 3),
+				new NervePart(leftNerve3Branch1, 0, 2, 1),
+				new NervePart(leftNerve3Dendrite1, 0, 2, 1),
+				new NervePart(leftNerve3Branch2, 0, 2, 2),
+				new NervePart(leftNerve3Dendrite2, 0, 2, 2),
+				new NervePart(leftNerve3Fork2, 0, 2, 2),
+				new NervePart(leftNerve3Branch3, 0, 2, 3),
+				new NervePart(leftNerve3Dendrite3, 0, 2, 3),
+				new NervePart(leftNerve3Fork3, 0, 2, 3),
+				new NervePart(leftNerve3Branch4, 0, 2, 3),
+				new NervePart(leftNerve3Dendrite4, 0, 2, 3),
+				new NervePart(leftNerve3Terminal1, 0, 2, 3),
+				new NervePart(leftNerve3Terminal2, 0, 2, 3),
+				new NervePart(leftNerve3Terminal3, 0, 2, 3)
 		);
 		nerveIndex = new java.util.IdentityHashMap<>();
 		for (NervePart nerve : nerveParts) nerveIndex.put(nerve.part(), nerve);
@@ -1139,7 +1211,7 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 
 	private static ModelPart[] links(ModelPart chain, String name, int count) {
 		ModelPart[] links = new ModelPart[count];
-		for (int i = 0; i < count; i++) links[i] = chain.getChild(name + "_link_" + i);
+		for (int i = 0; i < count; i++) links[i] = chain.getChild(name + "_" + (i + 1));
 		return links;
 	}
 
@@ -1788,7 +1860,7 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 	 * through, then rises back.
 	 */
 	/** The deepest the plant sinks her, in model units (three quarters of a block). */
-	static final float PLANT_REACH = 6.0F;
+	static final float PLANT_REACH = 12.0F;
 
 	static void healedGround(float[] a, float t, float aim) {
 		a[PLANT] += catmullRom(t, 0, 0, 22, 0, 26, 0.45F, 28, 0.95F, 29, 1.0F, 36, 1.0F, 42, 0.4F, 48, 0, 52, 0);
@@ -2174,7 +2246,7 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		root.getAllParts().forEach(ModelPart::resetPose);
 		float jitter = a[JITTER], tremor = a[TREMOR], flinch = a[FLINCH];
 		// the whole of her: her hover and a turn about her own axis
-		root.y -= a[LIFT];
+		root.y -= a[LIFT] * 2.0F;
 		root.yRot += a[TURN];
 		// the torso from the waist, the head trailing it
 		body.xRot += a[LEAN] - a[ARCH] * 0.45F - flinch * 0.4F + shake(age, 1, jitter) + tremble(age, 1, tremor);
@@ -2199,14 +2271,18 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		poseLegs(a, age);
 		poseCloth(a, age);
 		// the irons' chains: the wrists' only while slipped, all hanging plumb and swinging
-		leftChain.visible = slipped(restraints, SeraphaeRestraint.LEFT_WRIST);
-		rightChain.visible = slipped(restraints, SeraphaeRestraint.RIGHT_WRIST);
+		leftWristChain.visible = slipped(restraints, SeraphaeRestraint.LEFT_WRIST);
+		rightWristChain.visible = slipped(restraints, SeraphaeRestraint.RIGHT_WRIST);
 		Quaternionf chest = rotation(body);
-		hangChain(leftChain, leftLinks, new Quaternionf(chest).mul(rotation(leftArm)).mul(rotation(leftForearm)),
-				room(root, body, leftArm, leftForearm, leftChain), a, age, 0.0F);
-		hangChain(rightChain, rightLinks, new Quaternionf(chest).mul(rotation(rightArm)).mul(rotation(rightForearm)),
-				room(root, body, rightArm, rightForearm, rightChain), a, age, 0.6F);
-		hangChain(waistChain, waistLinks, chest, room(root, body, waistChain), a, age, 1.3F);
+		hangChain(leftWristChain, leftLinks, new Quaternionf(chest).mul(rotation(leftArm)).mul(rotation(leftForearm)),
+				room(root, body, leftArm, leftForearm, leftWristChain), a, age, 0.0F);
+		hangChain(rightWristChain, rightLinks, new Quaternionf(chest).mul(rotation(rightArm)).mul(rotation(rightForearm)),
+				room(root, body, rightArm, rightForearm, rightWristChain), a, age, 0.6F);
+		hangChain(girdleChain, waistLinks, chest, room(root, body, girdleChain), a, age, 1.3F);
+		hangChain(leftWingChain, leftWingLinks, new Quaternionf(chest).mul(rotation(leftNerveWing)),
+				room(root, body, leftNerveWing, leftWingChain), a, age, 1.7F);
+		hangChain(rightWingChain, rightWingLinks, new Quaternionf(chest).mul(rotation(rightNerveWing)),
+				room(root, body, rightNerveWing, rightWingChain), a, age, 2.1F);
 	}
 
 	private static boolean slipped(int restraints, SeraphaeRestraint restraint) {
@@ -2232,8 +2308,8 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		float fore = a[armCh(left, A_FORE)], wrist = a[armCh(left, A_WRIST)], open = a[armCh(left, A_HAND)];
 		float cross = a[WRISTS_CROSS];
 		ModelPart arm = left ? leftArm : rightArm, forearm = left ? leftForearm : rightForearm;
-		ModelPart hand = left ? leftHand : rightHand, fingers = left ? leftFingers : rightFingers;
-		ModelPart thumb = left ? leftThumb : rightThumb, mantle = left ? leftMantle : rightMantle;
+		ModelPart hand = left ? leftHand : rightHand;
+		ModelPart thumb = left ? leftThumb : rightThumb;
 		arm.xRot -= raise + cross * 1.1F + shake(age, 5 + sign, jitter) + tremble(age, 5 + sign, tremor);
 		arm.zRot -= sign * (out - cross * 0.9F);
 		forearm.xRot -= fore + cross * 0.5F + a[left ? LAG_FORE_L : LAG_FORE_R];
@@ -2241,18 +2317,18 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		hand.xRot += wrist - a[left ? LAG_HAND_L : LAG_HAND_R] + shake(age, 8 + sign, jitter);
 		hand.yRot += sign * twist * 0.6F;
 		// open spreads the fingers back and the thumb out; closed curls them toward the palm
-		fingers.xRot += -Math.max(0.0F, open) * 0.35F + Math.max(0.0F, -open) * 1.4F + tremble(age, 9 + sign, tremor);
+		float curl = -Math.max(0.0F, open) * 0.35F + Math.max(0.0F, -open) * 1.4F;
+		for (int i = 1; i <= 4; i++) {
+			ModelPart finger = hand.getChild((left ? "left" : "right") + "_finger_" + i);
+			finger.xRot += curl + tremble(age, 9 + i + sign, tremor);
+			finger.zRot += (2.5F - i) * Math.max(0.0F, open) * 0.13F;
+		}
 		thumb.zRot += sign * (Math.max(0.0F, open) * 0.35F - Math.max(0.0F, -open) * 0.4F);
-		// the shoulder linen follows the arm a little
-		mantle.zRot -= sign * Mth.clamp(out, -0.5F, 1.2F) * 0.3F;
-		mantle.xRot -= Mth.clamp(raise, -1.0F, 1.6F) * 0.25F;
 	}
 
-	/** The palm's model y (feet at 24, larger is lower) through the posed rig. */
+	/** The model-space height of the palm, with positive Y down. */
 	float palm(boolean left) {
-		Vector3f at = left ? point(new Vector3f(0.25F / 16F, 1.0F / 16F, 0), root, body, leftArm, leftForearm, leftHand, leftFingers)
-				: point(new Vector3f(0.25F / 16F, 1.0F / 16F, 0), root, body, rightArm, rightForearm, rightHand, rightFingers);
-		return at.y * 16.0F;
+		return handPoint(left).y * 16.0F;
 	}
 
 	/**
@@ -2267,7 +2343,7 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		float fold = a[wingCh(left, W_FOLD)], spread = a[wingCh(left, W_SPREAD)], fan = a[wingCh(left, W_TIPS)];
 		float sweep = a[wingCh(left, W_SWEEP)] + a[left ? WING_LAG_L : WING_LAG_R];
 		float raise = a[wingCh(left, W_RAISE)] + a[left ? WING_DROP_L : WING_DROP_R];
-		ModelPart plexus = left ? leftWing : rightWing;
+		ModelPart plexus = left ? leftNerveWing : rightNerveWing;
 		plexus.yRot += sign * (sweep - fold * 0.4F);
 		plexus.zRot -= sign * raise;
 		plexus.xRot += shake(age, 10 + side, jitter) + tremble(age, 10 + side, tremor);
@@ -2278,7 +2354,12 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 			float tRaise = a[TRUNK_RAISE + index] + spread * (1 - place) * 0.38F - fold * FOLD_RAISE[place];
 			float curl = a[TRUNK_CURL + index] + fold * 0.45F;
 			float lagForward = a[TRUNK_LAG + index], lagUp = a[TRUNK_DROP + index];
-			ModelPart first = chain[0];
+			ModelPart first = plexus.getChild((left ? "left" : "right")
+					+ switch (place) {
+						case 0 -> "_ascending_nerve";
+						case 1 -> "_lateral_nerve";
+						default -> "_descending_nerve";
+					});
 			Quaternionf rest = new Quaternionf().rotationZYX(first.zRot, first.yRot, first.xRot);
 			setRotation(first, new Quaternionf().rotationZYX(-sign * tRaise, sign * tSweep, 0).mul(rest));
 			float since = SeraphaeNerveFlashRules.sinceIdle(seed, index, age);
@@ -2298,9 +2379,11 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 				branch.zRot += (i % 2 == 0 ? 1.0F : -1.0F) * (Math.max(-0.4F, spread) * 0.12F + Math.max(0.0F, fan) * 0.08F);
 			}
 			ModelPart[] tipFan = tips[index];
-			tipFan[0].xRot += -lagForward * 0.6F - curl * 0.2F;
 			float open = fan + spread * 0.3F + twitch * 4.0F;
-			for (int k = 1; k < tipFan.length; k++) tipFan[k].zRot += (k - 2.5F) * 0.3F * open;
+			for (int k = 0; k < tipFan.length; k++) {
+				tipFan[k].xRot += -lagForward * 0.6F - curl * 0.2F;
+				tipFan[k].zRot += sign * (k - 1) * 0.3F * open;
+			}
 		}
 	}
 
@@ -2310,12 +2393,12 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 	 */
 	private void poseLegs(float[] a, float age) {
 		float kneel = a[KNEEL], trail = a[TRAIL] + a[LEG_LAG];
-		float hip = root.y + leftLeg.y;
+		float hip = point(new Vector3f(), root, body, shreddedVestments, leftLeg).y * 16.0F;
 		for (int side = 0; side < 2; side++) {
 			ModelPart leg = side == 0 ? leftLeg : rightLeg, shin = side == 0 ? leftShin : rightShin;
 			leg.xRot += -kneel * 1.0F + trail * 0.35F + Mth.sin(age * 0.04F + side) * 0.03F;
 			shin.xRot += kneel * 1.9F + Math.max(0.0F, trail) * 0.25F;
-			float fold = SeraphaeHover.foldToClear(leg.xRot, shin.xRot, SeraphaeHover.FLOOR - hip);
+			float fold = SeraphaeHover.foldToClear(body.xRot + leg.xRot, shin.xRot, SeraphaeHover.FLOOR - hip);
 			leg.xRot -= fold * SeraphaeHover.THIGH_SHARE;
 			shin.xRot += fold;
 		}
@@ -2341,21 +2424,21 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 			Quaternionf swing = new Quaternionf().rotationZYX(a[ROBE_Z] * (1.0F + i * 0.08F), 0, a[ROBE_X] + wave);
 			Quaternionf world = new Quaternionf(swing).mul(hang).mul(rest);
 			if (oz < 0.0F && kneeTilt > 0.0F) world = new Quaternionf().rotationX(-kneeTilt * -oz).mul(world);
-			Vector3f pivot = chest.transform(new Vector3f(panel.x, panel.y, panel.z)).add(body.x, body.y + root.y, body.z);
+			Vector3f pivot = chest.transform(new Vector3f(panel.x + shreddedVestments.x, panel.y + shreddedVestments.y, panel.z + shreddedVestments.z)).add(body.x, body.y + root.y, body.z);
 			Vector3f hangs = world.transform(new Vector3f(0, 1, 0));
 			float flare = SeraphaeHover.flare(hangs.y, -(ox * hangs.x + oz * hangs.z), SeraphaeHover.FLOOR - pivot.y,
 					robeLength[i]);
 			if (flare > 0.0F) world = new Quaternionf().rotationAxis(flare, oz, 0, -ox).mul(world);
 			setRotation(panel, new Quaternionf(unchest).mul(world));
 		}
-		leftVeilTail.xRot += a[VEIL_X] + Mth.sin(age * .065F - 1) * .04F;
-		rightVeilTail.xRot += a[VEIL_X] * 1.1F + Mth.sin(age * .065F) * .04F;
-		leftVeilTail.zRot += a[VEIL_Z];
-		rightVeilTail.zRot += a[VEIL_Z];
-		leftHairLock.xRot += a[HAIR] + Mth.sin(age * .052F) * .03F;
-		rightHairLock.xRot += a[HAIR] * 0.9F - Mth.sin(age * .052F + .5F) * .03F;
-		halo.xRot += a[HALO_X];
-		halo.zRot += a[HALO_Z] + Mth.sin(age * .045F) * .02F;
+		for (int i = 1; i <= 4; i++) {
+			ModelPart tail = nursesVeil.getChild("veil_tail_" + i);
+			tail.xRot += a[VEIL_X] * (0.9F + i * 0.05F) + Mth.sin(age * .065F - i) * .04F;
+			tail.zRot += a[VEIL_Z];
+		}
+		nursesVeil.xRot += a[HAIR] * 0.3F;
+		segmentedBoneHalo.xRot += a[HALO_X];
+		segmentedBoneHalo.zRot += a[HALO_Z] + Mth.sin(age * .045F) * .02F;
 	}
 
 	/** How far below a part's pivot the floor lies, model units, through the posed rig. */
@@ -2379,9 +2462,9 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		for (int i = 0; i < links.length; i++) {
 			ModelPart link = links[i];
 			float rest = link.yRot;
-			if (!lying && y + LINK > room - SeraphaeHover.CLEARANCE) lying = true;
+			if (!lying && y + LINK_HEIGHT > room - SeraphaeHover.CLEARANCE) lying = true;
 			if (lying) {
-				y = Math.min(y, room - SeraphaeHover.CLEARANCE - 0.5F);
+				y = Math.min(y, room - SeraphaeHover.CLEARANCE - 1.0F);
 				link.x = x;
 				link.y = y;
 				link.z = z;
@@ -2403,7 +2486,8 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 	}
 
 	/** A chain link's pitch, model units. */
-	private static final float LINK = 2.0F;
+	private static final float LINK = 3.04F;
+	private static final float LINK_HEIGHT = 4.0F;
 
 	/** The rotation a part applies, as a quaternion. */
 	private static Quaternionf rotation(ModelPart part) {
@@ -2438,7 +2522,7 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 		parts();
 		switch (region) {
 			case BODY -> root.render(poses, consumer, light, overlay, color);
-			case CHEST -> walk(root, poses, consumer, light, overlay, part -> part == body ? color : 0);
+			case CHEST -> walk(root, poses, consumer, light, overlay, part -> part == unclosingEye ? color : 0);
 			case ARMS -> {
 				java.util.Set<ModelPart> arms = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
 				arms.addAll(leftArm.getAllParts().toList());
@@ -2471,41 +2555,46 @@ public class SeraphaeModel<T extends SeraphaeEntity> extends HierarchicalModel<T
 	}
 
 	public Vector3f wristShackle(boolean left) {
-		return left ? point(new Vector3f(), root, body, leftArm, leftForearm, leftWristShackle)
-				: point(new Vector3f(), root, body, rightArm, rightForearm, rightWristShackle);
+		return point(new Vector3f(0, 9.0F / 16F, -2.2F / 16F), root, body,
+				left ? leftArm : rightArm, left ? leftForearm : rightForearm);
 	}
 
 	public Vector3f wingShackle(boolean left) {
-		return left ? point(new Vector3f(), root, body, leftWing, leftWingShackle)
-				: point(new Vector3f(), root, body, rightWing, rightWingShackle);
+		return point(new Vector3f(0, 1.0F / 16F, 4.0F / 16F), root, body, left ? leftNerveWing : rightNerveWing);
 	}
 
 	public Vector3f waistPoint() {
-		return point(new Vector3f(), root, body, waistShackle);
+		return point(new Vector3f(0, 0, -5.8F / 16F), root, body);
 	}
 
 	public Vector3f heartPoint() {
-		return point(new Vector3f(0, -6.75F / 16F, -2.5F / 16F), root, body);
+		return point(new Vector3f(0, 0, -2.0F / 16F), root, body, unclosingEye);
 	}
 
 	public Vector3f handPoint(boolean left) {
-		return left ? point(new Vector3f(0, 2.5F / 16F, 0), root, body, leftArm, leftForearm, leftHand, leftFingers)
-				: point(new Vector3f(0, 2.5F / 16F, 0), root, body, rightArm, rightForearm, rightHand, rightFingers);
+		return point(new Vector3f(0, 2.0F / 16F, -0.8F / 16F), root, body,
+				left ? leftArm : rightArm, left ? leftForearm : rightForearm, left ? leftHand : rightHand);
 	}
 
-	/** The tip fan of trunk {@code index} (0..2 left, 3..5 right), through its jointed segments. */
+	/** The middle dendrite of the selected trunk, following every bend back to the wing root. */
 	public Vector3f tipPoint(int index) {
 		parts();
-		ModelPart wing = index < 3 ? leftWing : rightWing;
+		ModelPart wing = index < 3 ? leftNerveWing : rightNerveWing;
+		String region = switch (index % 3) {
+			case 0 -> "_ascending_nerve";
+			case 1 -> "_lateral_nerve";
+			default -> "_descending_nerve";
+		};
+		ModelPart wrapper = wing.getChild((index < 3 ? "left" : "right") + region);
 		ModelPart[] chain = trunks[index];
-		ModelPart[] all = new ModelPart[3 + chain.length + 1];
-		all[0] = root;
-		all[1] = body;
-		all[2] = wing;
-		System.arraycopy(chain, 0, all, 3, chain.length);
-		all[all.length - 1] = tips[index][0];
-		return point(new Vector3f(0, DENDRITE_REACH, 0), all);
+		ModelPart[] path = new ModelPart[5 + chain.length];
+		path[0] = root;
+		path[1] = body;
+		path[2] = wing;
+		path[3] = wrapper;
+		System.arraycopy(chain, 0, path, 4, chain.length);
+		ModelPart tip = tips[index][1];
+		path[path.length - 1] = tip;
+		return point(new Vector3f(0, tip.cubes.getFirst().maxY / 16.0F, 0), path);
 	}
-
-	private static final float DENDRITE_REACH = 2F / 16F;
 }

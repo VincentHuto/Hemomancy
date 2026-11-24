@@ -240,6 +240,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			throw new JsonSyntaxException("Cardinal rite " + pRecipeId + " " + finaleViolation);
 		}
 		recipe.setDaemonFinale(CardinalRiteDaemonFinale.resolve(purpose, worldFinale));
+		if (pJson.has("completion_effect")) {
+			recipe.setCompletionEffect(ResourceLocation.parse(GsonHelper.getAsString(pJson, "completion_effect")));
+		}
 		recipe.setMedium(mediumFromJson(pJson, pRecipeId, jsonOps));
 		recipe.setConsumeMediumOnSuccess(CardinalRiteMediumRules.consumeOnSuccessFromNullable(
 				pJson.has("consume_medium_on_success")
@@ -332,7 +335,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 
 	private static final MapCodec<CardinalRiteRecipe> CODEC = RecipeCodecJson.bridge("CardinalRiteRecipe", "cardinal_rite/unknown",
 			CardinalRiteRecipeSerializer::fromJsonObject, CardinalRiteRecipeSerializer::encode,
-			"id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key", "result", "required_degree", "required_purity", "required_clarity", "breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor", "required_structure", "brazier_signature", "optional_offerings", "medium", "consume_medium_on_success", "puppeteer_trial", "purpose", "special", "world_finale", "subject");
+			"id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key", "result", "required_degree", "required_purity", "required_clarity", "breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor", "required_structure", "brazier_signature", "optional_offerings", "medium", "consume_medium_on_success", "puppeteer_trial", "purpose", "special", "world_finale", "completion_effect", "subject");
 
 	private static <T> RecordBuilder<T> encode(CardinalRiteRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
 		prefix.add("id", ops.createString(recipe.getId().toString()));
@@ -394,6 +397,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		if (recipe.getPurpose() != null) prefix.add("purpose", ops.createString(recipe.getPurpose().id()));
 		if (recipe.isSpecial()) prefix.add("special", ops.createBoolean(true));
 		if (recipe.getDaemonFinale() == CardinalRiteDaemonFinale.SKY) prefix.add("world_finale", ops.createString("sky"));
+		if (recipe.getCompletionEffect() != null) {
+			prefix.add("completion_effect", ops.createString(recipe.getCompletionEffect().toString()));
+		}
 		if (recipe.hasMedium()) {
 			prefix.add("medium", Ingredient.CODEC.encodeStart(ops, recipe.getMedium()));
 		}
@@ -530,6 +536,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		recipe.setPurpose(CardinalRitePurpose.byId(pBuffer.readUtf()));
 		recipe.setSpecial(pBuffer.readBoolean());
 		recipe.setDaemonFinale(pBuffer.readEnum(CardinalRiteDaemonFinale.class));
+		if (pBuffer.readBoolean()) recipe.setCompletionEffect(pBuffer.readResourceLocation());
 		if (pBuffer.readBoolean()) {
 			recipe.setCeremony(readCeremony(pBuffer));
 		}
@@ -621,6 +628,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		pBuffer.writeUtf(pRecipe.getPurpose() == null ? "" : pRecipe.getPurpose().id());
 		pBuffer.writeBoolean(pRecipe.isSpecial());
 		pBuffer.writeEnum(pRecipe.getDaemonFinale());
+		pBuffer.writeBoolean(pRecipe.getCompletionEffect() != null);
+		if (pRecipe.getCompletionEffect() != null) pBuffer.writeResourceLocation(pRecipe.getCompletionEffect());
 		pBuffer.writeBoolean(pRecipe.getCeremony() != null);
 		if (pRecipe.getCeremony() != null) {
 			writeCeremony(pBuffer, pRecipe.getCeremony());

@@ -993,7 +993,7 @@
       "uuid": "7b82700b-a0ef-5a2b-ad12-3f4481cee673",
       "uv_width": 16,
       "uv_height": 16,
-      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABWklEQVR4nK2Rv0sCYRjHv4pTf8CLR4P6Itxw0BAah1MSmItTwa1NbRI11SRNCU1iNAu1OLscgujkDzwkjBsMeY4bQrkxsDnuHhQJE4Se6XkfPt/neb/PE3obvAJQhAAw87zJlACoSQmAc4fc+ci7uDXMZns+8sJcnXneOq0IMZmSQ66alNQYG+dpRYh8LgsgDMBsts1mG0Fw7063vzDfqTF+LlZk4UBm9LPTawYiDrkJGeNHq9JoAboa5+fJVWHV4unlrlau+wLmACzUOBMOuflcdt3Mw03Vsok1EfHxRctmDrkAEjLGBniOEySPJaNWrls2hS6P0tglwjvRACJ7+1EA0UPB1nnrAL4/55sFWNLHGX1VZc1mQTSgq/f1njYEYNlULBkA6K8JiaB3Txtatr/HlCZ5FGH8T6Z5zZZNKc2/kWVTp9tfHWGDgP0VSwb/hOltpn/tZDsN4AeXHK67YUTu2AAAAABJRU5ErkJggg==",
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABoElEQVR4nJVPQUsbYRB98+23m2z06A8oxR7qoUfP7bVoNakHFQ+FHIJQEaRIsKhYUUKwXiItOXgSRC9GUz14MD/BNhIphCIiFC8Be7Am2W93pizpUaO+gZmBmTfvDa1+Sr7u7y8Wdpll8G38oFj0PD8+lNjbKQA0kBj8truX+3qolGLmgAOqft8GEItc/rnuAigasf/eNDo6XGN8Zra1JkUBOzMf8ssrqffjn6l2UWp6xrG11pYxvogEAWtbC4upV5Tz3HUjk+NfZhZGl+c36406nVU2mk0DCIsoIiuEMsYPmAnkONrzjLK6UslMfj09Njqvq9Xf0ahjTEBEtm1BwghPEKIRR0QaDW9qKrtTyCbi037g69OTKinyPN+2LWYxxidFVviiaB1mpVTtqvbyVZJFWJiyc+/wGKhHbQOgF896bh2MjfTeqdDpxjrdWOlorXS01urvt7S4NFwuH5fLx4tLw+0tKQDF/SyAiVRmIpUB0P3k6f0KD0dIeNM3DSCXT+fyaQC/zs/aEHSrzH7cajlpv/2fcF2/AfDjZ+Uhlv4BuI27ugO1DxYAAAAASUVORK5CYII=",
       "mode": "bitmap",
       "namespace": "hemomancy",
       "folder": "item"

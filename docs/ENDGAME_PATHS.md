@@ -15,6 +15,8 @@ Degree 7 is Archon for everyone, a full stage. After the ninth Pome tears the Fu
 | Home | The Fungal Gardens (a personal Fane there) | The Saint mausoleums (the ring door answers them, hallowed ground tolerates them) |
 | Title | `hemomancy.degree.8.apotheos` | `hemomancy.degree.8.silentium` (`DegreeTitles.titleKey`) |
 
+Operators can set Degree VIII and its path directly with `/hemo degree set apotheos [player]` or `/hemo degree set silent [player]`.
+
 Severance is the player's own act: cutting their Qliphoth tree in the Rite of Pruning, an ego death and a cut with the hive. It is not a place. The Gardens dimension is a 3D projection of the higher-dimensional being into the space above the world. Sculk and the Antecedent were the hive's first failed attempt and touch neither D7 nor D8. Unstained, unaligned and sub-D7 players never enter the dimension; the Overworld `fungal_gardens` biome is a different place anyone can walk.
 
 **Apotheos body** (`docs/HEMOMANCY_REFERENCE.md` §5.6a): never eats, hunger pinned at 17 (sprint, no natural regen); every `FOOD` item refused, plus potions and milk inside the Gardens; the Morphic Tonic (Bloody Jug thrown into morphic nectar) is the one remedy. Only an Apotheos drinks it, and only in the Gardens (the dimension or the Overworld biome): it purges harmful effects and gives Morphic Mending for 10 seconds, 1 health every 25 ticks and 2.5 mL of blood a tick (8 health and 500 mL in all; `MorphicTonicRules`). Spore load (`spore_load` attachment, 0 to 100, not kept through death) gathers 2 per second in the dimension and 0.5 in the Overworld biome, replaces the food bar, burns 25 for 6 health on key U with a 100-tick cooldown; crouching still on `fungal_network_ground` for 2 seconds regrows 2 health per second.

@@ -21,7 +21,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
  */
 public class PutricielCharLayer<T extends PutricielEntity> extends RenderLayer<T, PutricielModel<T>> {
 	private static final RenderType CHAR = RenderType.entityTranslucent(
-			Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_charred.png"));
+			Hemomancy.rloc("textures/entity/boss/putriciel/putriciel_vestment_charred.png"));
 
 	public PutricielCharLayer(RenderLayerParent<T, PutricielModel<T>> parent) {
 		super(parent);

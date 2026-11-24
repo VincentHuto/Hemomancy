@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hemomancy · NPC dialogue study</title>
+<link rel="stylesheet" href="study.css">
+<body>
+<header class="review">
+  <div><small>HEMOMANCY / UI STUDY</small><h1>NPC dialogue</h1></div>
+  <label>Material <select id="theme"><option value="blood">Blood</option><option value="unstained">Unstained</option><option value="fungal">Fungal</option><option value="still">Still Waters</option><option value="circus">Crimson Troupe</option></select></label>
+</header>
+<main class="scene" data-theme="blood">
+  <section class="frame" aria-label="Alchemist dialogue preview">
+    <aside>
+      <button class="identity" data-go="home">
+        <img class="portrait" src="assets/portrait.png" alt="">
+        <span>The <br>Alchemist</span>
+      </button>
+      <nav aria-label="Dialogue destinations">
+        <button data-go="quests"><img src="assets/quests.png" alt="">Quest Work</button>
+        <button data-go="inquiries"><img src="assets/inquiries.png" alt="">Inquiries</button>
+        <button data-go="conversation"><img src="assets/conversation.png" alt="">Conversation</button>
+        <button data-go="trade"><img src="assets/trade.png" alt="">Trade</button>
+      </nav>
+      <button class="important" data-go="important"><img src="assets/turn_in.png" alt="">Important <b>1</b></button>
+    </aside>
+    <div class="page">
+      <div class="path"><span id="path"></span><img src="assets/alchemist.png" alt=""></div>
+      <article id="content" tabindex="-1" aria-labelledby="page-title"></article>
+      <footer><button id="back" data-go="home">← Back</button><button data-go="closed">Leave <kbd>Esc</kbd></button></footer>
+    </div>
+  </section>
+  <button class="reopen" data-go="home" hidden>Speak to the Alchemist</button>
+</main>
+<script src="copy.js"></script>
+<script src="study.js"></script>
+</body>
+</html>
